@@ -12,6 +12,10 @@
     "Rive": {
       "swift": "Rive",
       "kotlin": "Rive"
+    },
+    "RiveView": {
+      "swift": "HybridRiveView",
+      "kotlin": "HybridRiveView"
     }
   },
   "ignorePaths": ["node_modules"]
