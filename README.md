@@ -5,18 +5,20 @@ Rive React Native
 ## Installation
 
 ```sh
-npm install react-native-rive
+npm install react-native-rive react-native-nitro-modules
+
+> `react-native-nitro-modules` is required as this library relies on [Nitro Modules](https://nitro.margelo.com/).
 ```
 
 ## Usage
 
 
 ```js
-import { RiveView } from "react-native-rive";
+import { multiply } from 'react-native-rive';
 
 // ...
 
-<RiveView color="tomato" />
+const result = multiply(3, 7);
 ```
 
 

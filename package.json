@@ -18,6 +18,7 @@
     "android",
     "ios",
     "cpp",
+    "nitrogen",
     "*.podspec",
     "react-native.config.js",
     "!ios/build",
@@ -65,7 +66,6 @@
     "@eslint/eslintrc": "^3.3.0",
     "@eslint/js": "^9.22.0",
     "@evilmartians/lefthook": "^1.5.0",
-    "@react-native-community/cli": "15.0.0-alpha.2",
     "@react-native/babel-preset": "0.79.2",
     "@react-native/eslint-config": "^0.78.0",
     "@release-it/conventional-changelog": "^9.0.2",
@@ -139,6 +139,13 @@
     "output": "lib",
     "targets": [
       [
+        "custom",
+        {
+          "script": "nitrogen",
+          "clean": "nitrogen/"
+        }
+      ],
+      [
         "module",
         {
           "esm": true
@@ -152,22 +159,9 @@
       ]
     ]
   },
-  "codegenConfig": {
-    "name": "RiveViewSpec",
-    "type": "all",
-    "jsSrcsDir": "src",
-    "android": {
-      "javaPackageName": "com.rive"
-    },
-    "ios": {
-      "componentProvider": {
-        "RiveView": "RiveView"
-      }
-    }
-  },
   "create-react-native-library": {
-    "languages": "kotlin-objc",
-    "type": "fabric-view",
+    "languages": "kotlin-swift",
+    "type": "nitro-module",
     "version": "0.50.2"
   }
 }

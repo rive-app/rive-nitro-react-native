@@ -1,17 +1,18 @@
 {
   "$schema": "https://nitro.margelo.com/nitro.schema.json",
-  "cxxNamespace": ["reactnativerive"],
+  "cxxNamespace": ["rive"],
   "ios": {
-    "iosModuleName": "ReactNativeRive"
+    "iosModuleName": "Rive"
   },
   "android": {
-    "androidNamespace": ["reactnativerive"],
-    "androidCxxLibName": "ReactNativeRive"
+    "androidNamespace": ["rive"],
+    "androidCxxLibName": "rive"
   },
   "autolinking": {
-    "RiveFileFactory": {
-      "swift": "HybridRiveFileFactory",
-      "kotlin": "HybridRiveFileFactory"
+    "Rive": {
+      "swift": "Rive",
+      "kotlin": "Rive"
     }
-  }
+  },
+  "ignorePaths": ["node_modules"]
 }

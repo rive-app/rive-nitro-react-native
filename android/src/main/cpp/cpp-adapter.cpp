@@ -1,6 +1,6 @@
 #include <jni.h>
-#include "ReactNativeRiveOnLoad.hpp"
+#include "riveOnLoad.hpp"
 
 JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM* vm, void*) {
-  return margelo::nitro::reactnativerive::initialize(vm);
+  return margelo::nitro::rive::initialize(vm);
 }

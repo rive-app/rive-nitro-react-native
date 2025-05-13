@@ -1,11 +1,8 @@
 import { NitroModules } from 'react-native-nitro-modules';
-import type { RiveFileFactory } from './specs/RiveFile.nitro';
+import type { Rive } from './specs/Rive.nitro';
 
-export { default as RiveView } from './RiveViewNativeComponent';
-export * from './RiveViewNativeComponent';
-export * from './specs/RiveFile.nitro';
+const RiveHybridObject = NitroModules.createHybridObject<Rive>('Rive');
 
-export const RiveFileConstructors =
-  NitroModules.createHybridObject<RiveFileFactory>('RiveFileFactory');
-
-console.log('RiveFileFactory', RiveFileConstructors.add(1, 9));
+export function multiply(a: number, b: number): number {
+  return RiveHybridObject.multiply(a, b);
+}

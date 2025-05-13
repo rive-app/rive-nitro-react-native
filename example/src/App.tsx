@@ -1,10 +1,12 @@
-import { View, StyleSheet } from 'react-native';
-import { RiveView } from 'react-native-rive';
+import { Text, View, StyleSheet } from 'react-native';
+import { multiply } from 'react-native-rive';
+
+const result = multiply(3, 7);
 
 export default function App() {
   return (
     <View style={styles.container}>
-      <RiveView color="#32a852" style={styles.box} />
+      <Text>Result: {result}</Text>
     </View>
   );
 }
@@ -14,10 +16,5 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  box: {
-    width: 60,
-    height: 60,
-    marginVertical: 20,
   },
 });
