@@ -2008,7 +2008,7 @@ SPEC CHECKSUMS:
   ReactAppDependencyProvider: d5dcc564f129632276bd3184e60f053fcd574d6b
   ReactCodegen: fda99a79c866370190e162083a35602fdc314e5d
   ReactCommon: 4d0da92a5eb8da86c08e3ec34bd23ab439fb2461
-  Rive: d78367a433fc043b9b60f5fc657b884ebf0b02a5
+  Rive: 7b49f5fe78bd9bd9dc5b8cf786841a0db1f4d55d
   RiveRuntime: 1e72d73bea430242387177b9d0aa95126406b462
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   Yoga: c758bfb934100bb4bf9cbaccb52557cee35e8bdf

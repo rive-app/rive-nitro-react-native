@@ -13,6 +13,14 @@
       "swift": "Rive",
       "kotlin": "Rive"
     },
+    "RiveFileFactory": {
+      "swift": "HybridRiveFileFactory",
+      "kotlin": "HybridRiveFileFactory"
+    },
+    "RiveFile": {
+      "swift": "HybridRiveFile",
+      "kotlin": "HybridRiveFile"
+    },
     "RiveView": {
       "swift": "HybridRiveView",
       "kotlin": "HybridRiveView"
