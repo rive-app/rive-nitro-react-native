@@ -16,7 +16,7 @@ import {
 } from 'react-native-rive';
 import { useRef, useState, useEffect } from 'react';
 
-type LoadingMethod = 'URL' | 'Resource' | 'ArrayBuffer';
+type LoadingMethod = 'URL' | 'Resource' | 'ArrayBuffer' | 'Source';
 
 interface CustomRiveViewProps {
   loadingMethod: LoadingMethod;
@@ -60,26 +60,31 @@ const CustomRiveView = ({ loadingMethod, title }: CustomRiveViewProps) => {
 
     const loadRiveFile = async () => {
       try {
-        let riveFile: RiveFile | null = null;
+        let file: RiveFile | null = null;
 
         switch (loadingMethod) {
           case 'URL':
-            riveFile = await RiveFileFactory.fromURL(networkGraphicURL);
+            file = await RiveFileFactory.fromURL(networkGraphicURL);
             break;
           case 'Resource':
-            riveFile = await RiveFileFactory.fromResource('rewards');
+            file = await RiveFileFactory.fromResource('rewards');
             break;
           case 'ArrayBuffer':
             const arrayBuffer =
               await downloadFileAsArrayBuffer(networkGraphicURL);
             if (arrayBuffer) {
-              riveFile = await RiveFileFactory.fromBytes(arrayBuffer);
+              file = await RiveFileFactory.fromBytes(arrayBuffer);
             }
+            break;
+          case 'Source':
+            file = await RiveFileFactory.fromSource(
+              require('../assets/rive/rating.riv')
+            );
             break;
         }
 
-        if (riveFile) {
-          setRiveFile(riveFile);
+        if (file) {
+          setRiveFile(file);
         }
       } catch (error) {
         console.error(`Error loading Rive file from ${loadingMethod}:`, error);
@@ -99,7 +104,7 @@ const CustomRiveView = ({ loadingMethod, title }: CustomRiveViewProps) => {
           style={styles.rive}
           autoBind={false}
           autoPlay={true}
-          fit={Fit.Cover}
+          fit={Fit.Contain}
           file={riveFile}
           hybridRef={{
             f: (ref) => {
@@ -115,13 +120,14 @@ const CustomRiveView = ({ loadingMethod, title }: CustomRiveViewProps) => {
 };
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState<LoadingMethod>('URL');
+  const [activeTab, setActiveTab] = useState<LoadingMethod>('Source');
 
   const renderContent = () => {
     const titles = {
       URL: 'Loading from URL',
       Resource: 'Loading from Resource',
       ArrayBuffer: 'Loading from ArrayBuffer',
+      Source: 'Loading from Source',
     };
 
     return (
@@ -133,6 +139,19 @@ export default function App() {
     <View style={styles.container}>
       {renderContent()}
       <View style={styles.tabBar}>
+        <TouchableOpacity
+          style={[styles.tab, activeTab === 'Source' && styles.activeTab]}
+          onPress={() => setActiveTab('Source')}
+        >
+          <Text
+            style={[
+              styles.tabText,
+              activeTab === 'Source' && styles.activeTabText,
+            ]}
+          >
+            Source
+          </Text>
+        </TouchableOpacity>
         <TouchableOpacity
           style={[styles.tab, activeTab === 'URL' && styles.activeTab]}
           onPress={() => setActiveTab('URL')}
