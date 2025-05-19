@@ -3,7 +3,7 @@ import type { HybridObject } from 'react-native-nitro-modules';
 export interface RiveFile
   extends HybridObject<{ ios: 'swift'; android: 'kotlin' }> {
   readonly name: string;
-  release(): void;
+  release(): void; // TODO: Switch to `dispose`: https://github.com/mrousavy/nitro/issues/668
 }
 
 export interface RiveFileFactory

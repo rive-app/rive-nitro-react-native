@@ -47,3 +47,4 @@ export type { RiveFile } from './specs/RiveFile.nitro';
 export { Fit } from './core/Fit';
 export { Alignment } from './core/Alignment';
 export { RiveFileFactory } from './core/RiveFile';
+export { useRive } from './hooks/useRive';

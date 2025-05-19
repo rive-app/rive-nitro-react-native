@@ -5,16 +5,15 @@ import {
   ActivityIndicator,
   TouchableOpacity,
 } from 'react-native';
-import type { HybridView } from 'react-native-nitro-modules';
 import {
   Fit,
   RiveView,
   type RiveFile,
-  type RiveViewMethods,
-  type RiveViewProps,
   RiveFileFactory,
+  useRive,
 } from 'react-native-rive';
-import { useRef, useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { downloadFileAsArrayBuffer } from './helpers/fileHelpers';
 
 type LoadingMethod = 'URL' | 'Resource' | 'ArrayBuffer' | 'Source';
 
@@ -25,41 +24,22 @@ interface CustomRiveViewProps {
 
 const networkGraphicURL = 'https://cdn.rive.app/animations/vehicles.riv';
 
-// TODO: Investigate better ways for the view to retrigger the graphic when the RiveFile is updated
-// This likely just requires better native equality checks
 const CustomRiveView = ({ loadingMethod, title }: CustomRiveViewProps) => {
-  const riveRef = useRef<HybridView<RiveViewProps, RiveViewMethods>>(null);
+  const { setHybridRef } = useRive();
   const [riveFile, setRiveFile] = useState<RiveFile | null>(null);
-
-  const downloadFileAsArrayBuffer = async (
-    url: string
-  ): Promise<ArrayBuffer | null> => {
-    try {
-      const response = await fetch(url);
-      if (!response.ok) {
-        console.error(`Failed to fetch file: ${response.statusText}`);
-        return null;
-      }
-      const blob = await response.blob();
-      const arrayBuffer = await new Promise<ArrayBuffer>((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result as ArrayBuffer);
-        reader.onerror = () => reject(reader.error);
-        reader.readAsArrayBuffer(blob);
-      });
-      return arrayBuffer;
-    } catch (error) {
-      console.error('Error downloading file:', error);
-      return null;
-    }
-  };
+  const riveFileRef = useRef<RiveFile | null>(null);
 
   useEffect(() => {
-    // Reset the riveFile state when loading method changes
-    setRiveFile(null);
+    let isMounted = true;
 
     const loadRiveFile = async () => {
       try {
+        // Release the current file before loading a new one
+        if (riveFileRef.current) {
+          riveFileRef.current.release();
+          riveFileRef.current = null;
+        }
+
         let file: RiveFile | null = null;
 
         switch (loadingMethod) {
@@ -83,14 +63,25 @@ const CustomRiveView = ({ loadingMethod, title }: CustomRiveViewProps) => {
             break;
         }
 
-        if (file) {
+        if (file && isMounted) {
+          riveFileRef.current = file;
           setRiveFile(file);
         }
       } catch (error) {
         console.error(`Error loading Rive file from ${loadingMethod}:`, error);
       }
     };
+
+    setRiveFile(null);
     loadRiveFile();
+
+    return () => {
+      isMounted = false;
+      if (riveFileRef.current) {
+        riveFileRef.current.release();
+        riveFileRef.current = null;
+      }
+    };
   }, [loadingMethod]);
 
   return (
@@ -100,19 +91,12 @@ const CustomRiveView = ({ loadingMethod, title }: CustomRiveViewProps) => {
         <ActivityIndicator style={styles.rive} size="large" color="#0000ff" />
       ) : (
         <RiveView
-          key={`${loadingMethod}-${riveFile ? 'loaded' : 'loading'}`}
           style={styles.rive}
           autoBind={false}
           autoPlay={true}
           fit={Fit.Contain}
           file={riveFile}
-          hybridRef={{
-            f: (ref) => {
-              if (ref) {
-                riveRef.current = ref;
-              }
-            },
-          }}
+          hybridRef={setHybridRef}
         />
       )}
     </View>
@@ -124,10 +108,10 @@ export default function App() {
 
   const renderContent = () => {
     const titles = {
+      Source: 'Loading from Source',
       URL: 'Loading from URL',
       Resource: 'Loading from Resource',
       ArrayBuffer: 'Loading from ArrayBuffer',
-      Source: 'Loading from Source',
     };
 
     return (
