@@ -1,183 +1,73 @@
 import {
-  Text,
   View,
+  Text,
   StyleSheet,
-  ActivityIndicator,
   TouchableOpacity,
+  ScrollView,
 } from 'react-native';
-import {
-  Fit,
-  RiveView,
-  type RiveFile,
-  RiveFileFactory,
-  useRive,
-} from 'react-native-rive';
-import { useState, useEffect, useRef } from 'react';
-import { downloadFileAsArrayBuffer } from './helpers/fileHelpers';
+import { useState } from 'react';
+import RiveFileLoadingExample from './pages/RiveFileLoadingExample';
+import TemplatePage from './pages/TemplatePage';
 
-type LoadingMethod = 'URL' | 'Resource' | 'ArrayBuffer' | 'Source';
-
-interface CustomRiveViewProps {
-  loadingMethod: LoadingMethod;
+type Page = {
+  id: string;
   title: string;
-}
-
-const networkGraphicURL = 'https://cdn.rive.app/animations/vehicles.riv';
-
-const CustomRiveView = ({ loadingMethod, title }: CustomRiveViewProps) => {
-  const { setHybridRef } = useRive();
-  const [riveFile, setRiveFile] = useState<RiveFile | null>(null);
-  const riveFileRef = useRef<RiveFile | null>(null);
-
-  useEffect(() => {
-    let isMounted = true;
-
-    const loadRiveFile = async () => {
-      try {
-        // Release the current file before loading a new one
-        if (riveFileRef.current) {
-          riveFileRef.current.release();
-          riveFileRef.current = null;
-        }
-
-        let file: RiveFile | null = null;
-
-        switch (loadingMethod) {
-          case 'URL':
-            file = await RiveFileFactory.fromURL(networkGraphicURL);
-            break;
-          case 'Resource':
-            file = await RiveFileFactory.fromResource('rewards');
-            break;
-          case 'ArrayBuffer':
-            const arrayBuffer =
-              await downloadFileAsArrayBuffer(networkGraphicURL);
-            if (arrayBuffer) {
-              file = await RiveFileFactory.fromBytes(arrayBuffer);
-            }
-            break;
-          case 'Source':
-            file = await RiveFileFactory.fromSource(
-              require('../assets/rive/rating.riv')
-            );
-            break;
-        }
-
-        if (file && isMounted) {
-          riveFileRef.current = file;
-          setRiveFile(file);
-        }
-      } catch (error) {
-        console.error(`Error loading Rive file from ${loadingMethod}:`, error);
-      }
-    };
-
-    setRiveFile(null);
-    loadRiveFile();
-
-    return () => {
-      isMounted = false;
-      if (riveFileRef.current) {
-        riveFileRef.current.release();
-        riveFileRef.current = null;
-      }
-    };
-  }, [loadingMethod]);
-
-  return (
-    <View style={styles.container}>
-      <Text style={styles.title}>{title}</Text>
-      {!riveFile ? (
-        <ActivityIndicator style={styles.rive} size="large" color="#0000ff" />
-      ) : (
-        <RiveView
-          style={styles.rive}
-          autoBind={false}
-          autoPlay={true}
-          fit={Fit.Contain}
-          file={riveFile}
-          hybridRef={setHybridRef}
-        />
-      )}
-    </View>
-  );
+  component: React.ComponentType;
 };
 
-export default function App() {
-  const [activeTab, setActiveTab] = useState<LoadingMethod>('Source');
+const pages: Page[] = [
+  {
+    id: 'rive-file-loading',
+    title: 'Rive File Loading Examples',
+    component: RiveFileLoadingExample,
+  },
+  {
+    id: 'template',
+    title: 'Template Page',
+    component: TemplatePage,
+  },
+];
 
-  const renderContent = () => {
-    const titles = {
-      Source: 'Loading from Source',
-      URL: 'Loading from URL',
-      Resource: 'Loading from Resource',
-      ArrayBuffer: 'Loading from ArrayBuffer',
-    };
+export default function App() {
+  const [currentPage, setCurrentPage] = useState<string | null>(null);
+
+  const renderPage = () => {
+    if (!currentPage) {
+      return (
+        <ScrollView style={styles.container}>
+          <Text style={styles.header}>Rive React Native Examples</Text>
+          <View style={styles.buttonContainer}>
+            {pages.map((page) => (
+              <TouchableOpacity
+                key={page.id}
+                style={styles.button}
+                onPress={() => setCurrentPage(page.id)}
+              >
+                <Text style={styles.buttonText}>{page.title}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </ScrollView>
+      );
+    }
+
+    const PageComponent = pages.find((p) => p.id === currentPage)?.component;
+    if (!PageComponent) return null;
 
     return (
-      <CustomRiveView loadingMethod={activeTab} title={titles[activeTab]} />
+      <View style={styles.pageContainer}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => setCurrentPage(null)}
+        >
+          <Text style={styles.backButtonText}>← Back to Examples</Text>
+        </TouchableOpacity>
+        <PageComponent />
+      </View>
     );
   };
 
-  return (
-    <View style={styles.container}>
-      {renderContent()}
-      <View style={styles.tabBar}>
-        <TouchableOpacity
-          style={[styles.tab, activeTab === 'Source' && styles.activeTab]}
-          onPress={() => setActiveTab('Source')}
-        >
-          <Text
-            style={[
-              styles.tabText,
-              activeTab === 'Source' && styles.activeTabText,
-            ]}
-          >
-            Source
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.tab, activeTab === 'URL' && styles.activeTab]}
-          onPress={() => setActiveTab('URL')}
-        >
-          <Text
-            style={[
-              styles.tabText,
-              activeTab === 'URL' && styles.activeTabText,
-            ]}
-          >
-            URL
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.tab, activeTab === 'Resource' && styles.activeTab]}
-          onPress={() => setActiveTab('Resource')}
-        >
-          <Text
-            style={[
-              styles.tabText,
-              activeTab === 'Resource' && styles.activeTabText,
-            ]}
-          >
-            Resource
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.tab, activeTab === 'ArrayBuffer' && styles.activeTab]}
-          onPress={() => setActiveTab('ArrayBuffer')}
-        >
-          <Text
-            style={[
-              styles.tabText,
-              activeTab === 'ArrayBuffer' && styles.activeTabText,
-            ]}
-          >
-            ArrayBuffer
-          </Text>
-        </TouchableOpacity>
-      </View>
-    </View>
-  );
+  return renderPage();
 }
 
 const styles = StyleSheet.create({
@@ -185,38 +75,40 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
   },
-  title: {
-    fontSize: 20,
+  header: {
+    fontSize: 28,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginTop: 20,
-    marginBottom: 10,
+    marginTop: 40,
+    marginBottom: 30,
   },
-  rive: {
+  buttonContainer: {
+    padding: 20,
+  },
+  button: {
+    backgroundColor: '#007AFF',
+    padding: 15,
+    borderRadius: 10,
+    marginBottom: 15,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  pageContainer: {
     flex: 1,
-  },
-  tabBar: {
-    flexDirection: 'row',
-    height: 60,
-    borderTopWidth: 1,
-    borderTopColor: '#ccc',
     backgroundColor: '#fff',
   },
-  tab: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+  backButton: {
+    padding: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
   },
-  activeTab: {
-    borderTopWidth: 2,
-    borderTopColor: '#007AFF',
-  },
-  tabText: {
-    fontSize: 14,
-    color: '#666',
-  },
-  activeTabText: {
+  backButtonText: {
     color: '#007AFF',
+    fontSize: 16,
     fontWeight: 'bold',
   },
 });
