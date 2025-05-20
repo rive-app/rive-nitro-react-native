@@ -44,7 +44,9 @@ export const RiveView = getHostComponent<RiveViewProps, RiveViewMethods>(
 
 export type { RiveViewProps, RiveViewMethods };
 export type { RiveFile } from './specs/RiveFile.nitro';
+export type { ViewModel, ViewModelInstance } from './specs/ViewModel.nitro';
 export { Fit } from './core/Fit';
 export { Alignment } from './core/Alignment';
 export { RiveFileFactory } from './core/RiveFile';
 export { useRive } from './hooks/useRive';
+export { ArtboardByIndex, ArtboardByName } from './specs/ArtboardBy';

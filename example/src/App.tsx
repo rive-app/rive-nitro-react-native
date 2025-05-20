@@ -7,6 +7,7 @@ import {
 } from 'react-native';
 import { useState } from 'react';
 import RiveFileLoadingExample from './pages/RiveFileLoadingExample';
+import DataBindingExample from './pages/RiveDataBindingExample';
 import TemplatePage from './pages/TemplatePage';
 
 type Page = {
@@ -20,6 +21,11 @@ const pages: Page[] = [
     id: 'rive-file-loading',
     title: 'Rive File Loading Examples',
     component: RiveFileLoadingExample,
+  },
+  {
+    id: 'rive-data-binding',
+    title: 'Rive Data Binding Example',
+    component: DataBindingExample,
   },
   {
     id: 'template',

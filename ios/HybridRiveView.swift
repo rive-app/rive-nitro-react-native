@@ -20,8 +20,12 @@ class HybridRiveView : HybridRiveViewSpec {
   var fit: Fit?
   
   // MARK: View Methods
-  func play() { riveView?.play() }
-  func pause() { riveView?.pause() }
+  func bindViewModelInstance(viewModelInstance: (any HybridViewModelInstanceSpec)) throws {
+    guard let hybridViewModelInstance = viewModelInstance as? HybridViewModelInstance else { return }
+    riveView?.bindViewModelInstance(viewModelInstance: hybridViewModelInstance.viewModelInstance)
+  }
+  func play() throws { riveView?.play() }
+  func pause() throws { riveView?.pause() }
   
   // MARK: Views
   var view: UIView = RiveReactNativeView()

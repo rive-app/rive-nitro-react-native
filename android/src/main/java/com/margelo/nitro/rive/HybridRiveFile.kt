@@ -9,16 +9,36 @@ import com.facebook.proguard.annotations.DoNotStrip
 class HybridRiveFile : HybridRiveFileSpec() {
   var riveFile: File? = null
 
-  override val name: String
-    get() = ""
+  override val viewModelCount: Double?
+    get() = riveFile?.viewModelCount?.toDouble()
+
+  override fun viewModelByIndex(index: Double): HybridViewModelSpec? {
+    val vm = riveFile?.getViewModelByIndex(index.toInt()) ?: return null;
+    return HybridViewModel(vm)
+  }
+
+  override fun viewModelByName(name: String): HybridViewModelSpec? {
+    val vm = riveFile?.getViewModelByName(name) ?: return null;
+    return HybridViewModel(vm)
+  }
+
+  override fun defaultArtboardViewModel(artboardBy: ArtboardBy?): HybridViewModelSpec? {
+    try {
+      val artboard = when (artboardBy?.type) {
+        ArtboardByTypes.INDEX -> riveFile?.artboard(artboardBy.index!!.toInt())
+        ArtboardByTypes.NAME -> riveFile?.artboard(artboardBy.name!!)
+        null -> riveFile?.firstArtboard
+      } ?: return null
+
+      val vm = riveFile?.defaultViewModelForArtboard(artboard) ?: return null
+      return HybridViewModel(vm)
+    } catch (e: Exception) {
+      return null
+    }
+  }
 
   override fun release() {
     riveFile?.release()
     riveFile = null
-  }
-
-  // Not sure how well this works, or if it's guaranteed to be called! But adding it.
-  protected fun finalize() {
-    release()
   }
 }

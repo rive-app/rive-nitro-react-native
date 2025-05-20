@@ -5,6 +5,7 @@ import type {
 } from 'react-native-nitro-modules';
 import type { RiveFile } from './RiveFile.nitro';
 import { Fit } from '../core/Fit';
+import type { ViewModelInstance } from './ViewModel.nitro';
 
 /**
  * Props interface for the RiveView component.
@@ -31,6 +32,8 @@ export interface RiveViewProps extends HybridViewProps {
  * Extends HybridViewMethods to include Rive-specific methods.
  */
 export interface RiveViewMethods extends HybridViewMethods {
+  /** Binds the view model instance to the Rive view */
+  bindViewModelInstance(viewModelInstance: ViewModelInstance): void;
   /** Starts playing the Rive graphic */
   play(): void;
   /** Pauses the the Rive graphic */

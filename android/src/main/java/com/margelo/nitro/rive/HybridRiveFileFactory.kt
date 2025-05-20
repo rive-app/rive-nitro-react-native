@@ -28,7 +28,7 @@ class HybridRiveFileFactory : HybridRiveFileFactorySpec() {
         hybridRiveFile.riveFile = riveFile
         hybridRiveFile
       } catch (e: Exception) {
-        throw RuntimeException("Failed to download Rive file: ${e.message}")
+        throw Error("Failed to download Rive file: ${e.message}")
       }
     }
   }
@@ -69,7 +69,7 @@ class HybridRiveFileFactory : HybridRiveFileFactorySpec() {
         hybridRiveFile.riveFile = riveFile
         hybridRiveFile
       } catch (e: Exception) {
-        throw RuntimeException("Failed to load Rive file from bytes: ${e.message}")
+        throw Error("Failed to load Rive file from bytes: ${e.message}")
       }
     }
   }

@@ -1,6 +1,5 @@
 package com.margelo.nitro.rive
 
-import android.util.Log
 import androidx.annotation.Keep
 import com.facebook.proguard.annotations.DoNotStrip
 import com.facebook.react.uimanager.ThemedReactContext
@@ -41,6 +40,10 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
   //endregion
 
   //region View Methods
+  override fun bindViewModelInstance(viewModelInstance: HybridViewModelInstanceSpec) = executeOnUiThread {
+    val hybridVmi = viewModelInstance as? HybridViewModelInstance ?: return@executeOnUiThread;
+    view.bindViewModelInstance(hybridVmi.viewModelInstance)
+  }
   override fun play() = executeOnUiThread { view.play() }
   override fun pause() = executeOnUiThread { view.pause() }
   //endregion

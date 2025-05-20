@@ -6,6 +6,7 @@ import com.facebook.react.uimanager.ThemedReactContext
 import app.rive.runtime.kotlin.RiveAnimationView
 import app.rive.runtime.kotlin.core.File
 import app.rive.runtime.kotlin.core.Fit
+import app.rive.runtime.kotlin.core.ViewModelInstance
 
 data class ViewConfiguration(
   val artboardName: String?,
@@ -26,6 +27,10 @@ class RiveReactNativeView(private val context: ThemedReactContext) : FrameLayout
   }
 
   //region Public Methods (API)
+  fun bindViewModelInstance(vmi: ViewModelInstance) {
+    riveAnimationView?.controller?.stateMachines?.first()?.viewModelInstance = vmi
+  }
+
   fun play() {
     riveAnimationView?.play();
   }

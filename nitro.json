@@ -21,6 +21,14 @@
       "swift": "HybridRiveFile",
       "kotlin": "HybridRiveFile"
     },
+    "ViewModel": {
+      "swift": "HybridViewModel",
+      "kotlin": "HybridViewModel"
+    },
+    "ViewModelInstance": {
+      "swift": "HybridViewModelInstance",
+      "kotlin": "HybridViewModelInstance"
+    },
     "RiveView": {
       "swift": "HybridRiveView",
       "kotlin": "HybridRiveView"

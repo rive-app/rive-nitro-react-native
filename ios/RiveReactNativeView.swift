@@ -19,6 +19,10 @@ class RiveReactNativeView: UIView {
   var autoPlay: Bool = true
   
   // MARK: - Public Methods
+  func bindViewModelInstance(viewModelInstance: RiveDataBindingViewModel.Instance) {
+    baseViewModel?.riveModel?.stateMachine?.bind(viewModelInstance: viewModelInstance)
+  }
+  
   func play() {
     baseViewModel?.play()
   }
