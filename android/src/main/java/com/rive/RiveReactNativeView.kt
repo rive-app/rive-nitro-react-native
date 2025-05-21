@@ -18,7 +18,7 @@ data class ViewConfiguration(
 )
 
 @SuppressLint("ViewConstructor")
-class RiveReactNativeView(private val context: ThemedReactContext) : FrameLayout(context) {
+class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
   private var riveAnimationView: RiveAnimationView? = null
 
   init {
