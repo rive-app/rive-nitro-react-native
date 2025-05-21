@@ -21,8 +21,8 @@ class HybridRiveView : HybridRiveViewSpec {
   
   // MARK: View Methods
   func bindViewModelInstance(viewModelInstance: (any HybridViewModelInstanceSpec)) throws {
-    guard let hybridViewModelInstance = viewModelInstance as? HybridViewModelInstance else { return }
-    riveView?.bindViewModelInstance(viewModelInstance: hybridViewModelInstance.viewModelInstance)
+    guard let viewModelInstance = (viewModelInstance as? HybridViewModelInstance)?.viewModelInstance else { return }
+    riveView?.bindViewModelInstance(viewModelInstance: viewModelInstance)
   }
   func play() throws { riveView?.play() }
   func pause() throws { riveView?.pause() }
