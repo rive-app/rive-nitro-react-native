@@ -5,75 +5,86 @@ import {
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
-import { useState } from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 import RiveFileLoadingExample from './pages/RiveFileLoadingExample';
 import DataBindingExample from './pages/RiveDataBindingExample';
 import TemplatePage from './pages/TemplatePage';
 
-type Page = {
-  id: string;
-  title: string;
-  component: React.ComponentType;
+type RootStackParamList = {
+  Home: undefined;
+  RiveFileLoading: undefined;
+  RiveDataBinding: undefined;
+  Template: undefined;
 };
 
-const pages: Page[] = [
-  {
-    id: 'rive-file-loading',
-    title: 'Rive File Loading Examples',
-    component: RiveFileLoadingExample,
-  },
-  {
-    id: 'rive-data-binding',
-    title: 'Rive Data Binding Example',
-    component: DataBindingExample,
-  },
-  {
-    id: 'template',
-    title: 'Template Page',
-    component: TemplatePage,
-  },
-];
+const Stack = createStackNavigator<RootStackParamList>();
+
+function HomeScreen({ navigation }: { navigation: any }) {
+  return (
+    <ScrollView style={styles.container}>
+      <Text style={styles.header}>Rive React Native Examples</Text>
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => navigation.navigate('RiveFileLoading')}
+        >
+          <Text style={styles.buttonText}>Rive File Loading Examples</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => navigation.navigate('RiveDataBinding')}
+        >
+          <Text style={styles.buttonText}>Rive Data Binding Example</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => navigation.navigate('Template')}
+        >
+          <Text style={styles.buttonText}>Template Page</Text>
+        </TouchableOpacity>
+      </View>
+    </ScrollView>
+  );
+}
 
 export default function App() {
-  const [currentPage, setCurrentPage] = useState<string | null>(null);
-
-  const renderPage = () => {
-    if (!currentPage) {
-      return (
-        <ScrollView style={styles.container}>
-          <Text style={styles.header}>Rive React Native Examples</Text>
-          <View style={styles.buttonContainer}>
-            {pages.map((page) => (
-              <TouchableOpacity
-                key={page.id}
-                style={styles.button}
-                onPress={() => setCurrentPage(page.id)}
-              >
-                <Text style={styles.buttonText}>{page.title}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        </ScrollView>
-      );
-    }
-
-    const PageComponent = pages.find((p) => p.id === currentPage)?.component;
-    if (!PageComponent) return null;
-
-    return (
-      <View style={styles.pageContainer}>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => setCurrentPage(null)}
-        >
-          <Text style={styles.backButtonText}>← Back to Examples</Text>
-        </TouchableOpacity>
-        <PageComponent />
-      </View>
-    );
-  };
-
-  return renderPage();
+  return (
+    <NavigationContainer>
+      <Stack.Navigator
+        screenOptions={{
+          headerStyle: {
+            backgroundColor: '#323232',
+          },
+          headerTintColor: '#fff',
+          headerTitleStyle: {
+            fontWeight: 'bold',
+          },
+        }}
+      >
+        <Stack.Screen
+          name="Home"
+          component={HomeScreen}
+          options={{ title: 'Rive Examples' }}
+        />
+        <Stack.Screen
+          name="RiveFileLoading"
+          component={RiveFileLoadingExample}
+          options={{ title: 'Rive File Loading' }}
+        />
+        <Stack.Screen
+          name="RiveDataBinding"
+          component={DataBindingExample}
+          options={{ title: 'Rive Data Binding' }}
+        />
+        <Stack.Screen
+          name="Template"
+          component={TemplatePage}
+          options={{ title: 'Template' }}
+        />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -102,19 +113,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     textAlign: 'center',
-  },
-  pageContainer: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-  backButton: {
-    padding: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
-  },
-  backButtonText: {
-    color: '#007AFF',
-    fontSize: 16,
-    fontWeight: 'bold',
   },
 });
