@@ -76,8 +76,10 @@ The following runtime features are currently supported:
 
 | Feature                          | Status | Description |
 |----------------------------------|--------|-------------|
-| Playing state machines           | ✅     | Specify a state machine to play |
-| Playing animation timelines      | ❌     | Direct timeline playback not planned, use state machines |
+| Artboard selection               | ✅     | Sepecify artboard to render |
+| State machine selection          | ✅     | Specify a state machine to play |
+| Animation selection              | ❌     | Animation playback not planned, use state machines |
+| View autoPlay & play/pause       | ✅     | Control view playback |
 | Fit & Alignment                  | ⚠️     | Fit modes supported, alignment coming soon |
 | Layout & Responsiveness          | ⚠️     | Basic responsive layouts supported |
 | Data Binding                     | 🚧     | Control data binding through runtime code |
@@ -86,6 +88,7 @@ The following runtime features are currently supported:
 | Text Runs                        | 🚧     | Update (nested) text runs (legacy, see data binding) |
 | Rive Events                      | 🚧     | Listen to Rive events |
 | Rive Audio                       | ✅     | Full Rive audio playback supported |
+| `useRive()` hook                 | ✅     | Convenient hook to access the Rive View ref after load |
 | `useRiveFile()` hook             | 🚧     | Convenient hook to load a Rive file |
 | `RiveView` error handling        | 🚧     | Error handler for failed view operations |
 | `source` .riv file loading       | 🚧     | Conveniently load .riv files from JS source |
