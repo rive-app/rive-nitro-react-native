@@ -60,7 +60,9 @@ All Rive operations can be wrapped in try/catch blocks for error handling:
 
 ```js
 try {
-  const riveFile = await RiveFileFactory.fromURL('https://cdn.rive.app/animations/vehicles.riv');
+  const riveFile = await RiveFileFactory.fromURL(
+    'https://cdn.rive.app/animations/vehicles.riv'
+  );
   // Use the riveFile...
 } catch (error) {
   // Handle any errors that occur during Rive operations
@@ -74,28 +76,27 @@ The following runtime features are currently supported:
 
 ✅ Supported | ⚠️ Partial | 🚧 In Development | ❌ Not Planned
 
-| Feature                          | Status | Description |
-|----------------------------------|--------|-------------|
-| Artboard selection               | ✅     | Sepecify artboard to render |
-| State machine selection          | ✅     | Specify a state machine to play |
-| Animation selection              | ❌     | Animation playback not planned, use state machines |
-| View autoPlay & play/pause       | ✅     | Control view playback |
-| Fit & Alignment                  | ⚠️     | Fit modes supported, alignment coming soon |
-| Layout & Responsiveness          | ⚠️     | Basic responsive layouts supported |
-| Data Binding                     | 🚧     | Control data binding through runtime code |
-| Asset management                 | 🚧     | Out-of-band assets not yet supported |
-| State machine inputs             | 🚧     | Get/Set (nested) state machine inputs (legacy, see data binding) |
-| Text Runs                        | 🚧     | Update (nested) text runs (legacy, see data binding) |
-| Rive Events                      | 🚧     | Listen to Rive events |
-| Rive Audio                       | ✅     | Full Rive audio playback supported |
-| `useRive()` hook                 | ✅     | Convenient hook to access the Rive View ref after load |
-| `useRiveFile()` hook             | 🚧     | Convenient hook to load a Rive file |
-| `RiveView` error handling        | 🚧     | Error handler for failed view operations |
-| `source` .riv file loading       | 🚧     | Conveniently load .riv files from JS source |
-| Renderer options                 | ❌     | Single renderer option available (Rive) |
+| Feature                    | Status | Description                                                      |
+| -------------------------- | ------ | ---------------------------------------------------------------- |
+| Artboard selection         | ✅     | Sepecify artboard to render                                      |
+| State machine selection    | ✅     | Specify a state machine to play                                  |
+| Animation selection        | ❌     | Animation playback not planned, use state machines               |
+| View autoPlay & play/pause | ✅     | Control view playback                                            |
+| Fit & Alignment            | ✅     | Fit modes supported, alignment coming soon                       |
+| Layout & Responsiveness    | ⚠️     | Basic responsive layouts supported                               |
+| Data Binding               | ⚠️     | Control data binding through runtime code                        |
+| Asset management           | 🚧     | Out-of-band assets not yet supported                             |
+| State machine inputs       | 🚧     | Get/Set (nested) state machine inputs (legacy, see data binding) |
+| Text Runs                  | 🚧     | Update (nested) text runs (legacy, see data binding)             |
+| Rive Events                | 🚧     | Listen to Rive events                                            |
+| Rive Audio                 | ✅     | Full Rive audio playback supported                               |
+| `useRive()` hook           | ✅     | Convenient hook to access the Rive View ref after load           |
+| `useRiveFile()` hook       | 🚧     | Convenient hook to load a Rive file                              |
+| `RiveView` error handling  | 🚧     | Error handler for failed view operations                         |
+| `source` .riv file loading | ✅     | Conveniently load .riv files from JS source                      |
+| Renderer options           | ❌     | Single renderer option available (Rive)                          |
 
 > **Note**: Several features in the table above (state machine inputs, text runs, and events) represent legacy approaches to runtime control. We recommend using data binding instead, as it provides a more maintainable way to control your Rive graphics (both at edit time and runtime).
-
 
 ## Contributing
 
