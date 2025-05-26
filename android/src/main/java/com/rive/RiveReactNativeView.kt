@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.widget.FrameLayout
 import com.facebook.react.uimanager.ThemedReactContext
 import app.rive.runtime.kotlin.RiveAnimationView
+import app.rive.runtime.kotlin.core.Alignment
 import app.rive.runtime.kotlin.core.File
 import app.rive.runtime.kotlin.core.Fit
 import app.rive.runtime.kotlin.core.ViewModelInstance
@@ -13,8 +14,9 @@ data class ViewConfiguration(
   val stateMachineName: String?,
   val autoBind: Boolean,
   val autoPlay: Boolean,
-  val fit: Fit,
-  val riveFile: File
+  val riveFile: File,
+  val alignment: Alignment,
+  val fit: Fit
 )
 
 @SuppressLint("ViewConstructor")
@@ -53,6 +55,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
         fit = config.fit
       )
     } else {
+      riveAnimationView?.alignment = config.alignment
       riveAnimationView?.fit = config.fit
     }
 

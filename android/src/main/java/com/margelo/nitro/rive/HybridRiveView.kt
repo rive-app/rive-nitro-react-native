@@ -6,11 +6,13 @@ import com.facebook.react.uimanager.ThemedReactContext
 import com.rive.RiveReactNativeView
 import com.rive.ViewConfiguration
 import app.rive.runtime.kotlin.core.Fit as RiveFit
+import app.rive.runtime.kotlin.core.Alignment as RiveAlignment
 
 object DefaultConfiguration {
   const val AUTOBIND = false
   const val AUTOPLAY = true
-  val fit = RiveFit.CONTAIN
+  val FIT = RiveFit.CONTAIN
+  val ALIGNMENT = RiveAlignment.CENTER
 }
 
 @Keep
@@ -36,6 +38,7 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
     set(value) { changed(field, value) { field = it } }
   override var file: HybridRiveFileSpec = HybridRiveFile()
     set(value) { changed(field, value) { field = it } }
+  override var alignment: Alignment? = null
   override var fit: Fit? = null
   //endregion
 
@@ -58,8 +61,9 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
       stateMachineName = stateMachineName,
       autoPlay = autoPlay ?: DefaultConfiguration.AUTOPLAY,
       autoBind = autoBind ?: DefaultConfiguration.AUTOBIND,
-      fit = convertFit(fit) ?: DefaultConfiguration.fit,
       riveFile = riveFile,
+      alignment = convertAlignment(alignment) ?: DefaultConfiguration.ALIGNMENT,
+      fit = convertFit(fit) ?: DefaultConfiguration.FIT,
     )
     view.configure(config, needsReload)
     needsReload = false
@@ -76,6 +80,22 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
       context.runOnUiQueueThread { action() }
     } catch (e: Exception) {
       throw Error(e.message) // TODO: Correctly handling errors (https://nitro.margelo.com/docs/errors)
+    }
+  }
+
+  private fun convertAlignment(alignment: Alignment?): RiveAlignment? {
+    if (alignment == null) return null
+
+    return when (alignment) {
+      Alignment.TOPLEFT -> RiveAlignment.TOP_LEFT
+      Alignment.TOPCENTER -> RiveAlignment.TOP_CENTER
+      Alignment.TOPRIGHT -> RiveAlignment.TOP_RIGHT
+      Alignment.CENTERLEFT -> RiveAlignment.CENTER_LEFT
+      Alignment.CENTER -> RiveAlignment.CENTER
+      Alignment.CENTERRIGHT -> RiveAlignment.CENTER_RIGHT
+      Alignment.BOTTOMLEFT -> RiveAlignment.BOTTOM_LEFT
+      Alignment.BOTTOMCENTER -> RiveAlignment.BOTTOM_CENTER
+      Alignment.BOTTOMRIGHT -> RiveAlignment.BOTTOM_RIGHT
     }
   }
 

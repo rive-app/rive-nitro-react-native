@@ -30,6 +30,7 @@ export function multiply(a: number, b: number): number {
  * @property {string} [stateMachineName] - Name of the state machine to play
  * @property {boolean} [autoBind=true] - Whether to automatically bind the state machine and artboard
  * @property {boolean} [autoPlay=true] - Whether to automatically start playing the state machine
+ * @property {Alignment} [alignment] - How the Rive graphic should be aligned within its container
  * @property {Fit} [fit] - How the Rive graphic should fit within its container
  * @property {Object} [style] - React Native style object for container customization
  *
@@ -55,7 +56,7 @@ export type {
   ViewModelTriggerProperty,
 } from './specs/ViewModel.nitro';
 export { Fit } from './core/Fit';
-export { Alignment } from './core/Alignment';
+export { type Alignment } from './core/Alignment';
 export { RiveFileFactory } from './core/RiveFile';
 export { RiveColor } from './core/RiveColor';
 export { ArtboardByIndex, ArtboardByName } from './specs/ArtboardBy';

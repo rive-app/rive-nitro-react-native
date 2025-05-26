@@ -6,8 +6,9 @@ struct ViewConfiguration {
   let stateMachineName: String?
   let autoBind: Bool
   let autoPlay: Bool
-  let fit: RiveRuntime.RiveFit
   let riveFile: RiveFile
+  let alignment: RiveRuntime.RiveAlignment
+  let fit: RiveRuntime.RiveFit
 }
 
 class RiveReactNativeView: UIView {
@@ -48,6 +49,7 @@ class RiveReactNativeView: UIView {
       }
     }
     
+    baseViewModel?.alignment = config.alignment
     baseViewModel?.fit = config.fit
     baseViewModel?.autoPlay = config.autoPlay
   }

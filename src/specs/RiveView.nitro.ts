@@ -6,6 +6,7 @@ import type {
 import type { RiveFile } from './RiveFile.nitro';
 import { Fit } from '../core/Fit';
 import type { ViewModelInstance } from './ViewModel.nitro';
+import type { Alignment } from '../core/Alignment';
 
 /**
  * Props interface for the RiveView component.
@@ -20,9 +21,10 @@ export interface RiveViewProps extends HybridViewProps {
   autoBind?: boolean;
   /** Whether to automatically start playing the state machine */
   autoPlay?: boolean;
-  // alignment?: Alignment; // TODO: Not exposing, causing issues with Swift code gen
   /** The Rive file to be displayed */
   file: RiveFile;
+  /** How the Rive graphic should be aligned within its container */
+  alignment?: Alignment;
   /** How the Rive graphic should fit within its container */
   fit?: Fit;
 }

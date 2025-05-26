@@ -5,6 +5,7 @@ import RiveRuntime
 private struct DefaultConfiguration {
   static let autoBind = false
   static let autoPlay = true
+  static let alignment = RiveAlignment.center
   static let fit = RiveFit.contain
 }
 
@@ -17,6 +18,7 @@ class HybridRiveView : HybridRiveViewSpec {
   var file: (any HybridRiveFileSpec) = HybridRiveFile() {
     didSet { needsReload = true }
   }
+  var alignment: Alignment?
   var fit: Fit?
   
   // MARK: View Methods
@@ -40,8 +42,9 @@ class HybridRiveView : HybridRiveViewSpec {
       stateMachineName: stateMachineName,
       autoBind: autoBind ?? DefaultConfiguration.autoBind,
       autoPlay: autoPlay ?? DefaultConfiguration.autoPlay,
-      fit: convertFit(fit) ?? DefaultConfiguration.fit,
-      riveFile: file
+      riveFile: file,
+      alignment: convertAlignment(alignment) ?? DefaultConfiguration.alignment,
+      fit: convertFit(fit) ?? DefaultConfiguration.fit
     )
     
     riveView?.configure(config, reload: needsReload)
@@ -52,6 +55,22 @@ class HybridRiveView : HybridRiveViewSpec {
   private var needsReload = false
   
   // MARK: Helpers
+  private func convertAlignment(_ alignment: Alignment?) -> RiveAlignment? {
+    guard let alignment = alignment else { return nil }
+    
+    switch alignment {
+    case .topleft: return .topLeft
+    case .topcenter: return .topCenter
+    case .topright: return .topRight
+    case .centerleft: return .centerLeft
+    case .center: return .center
+    case .centerright: return .centerRight
+    case .bottomleft: return .bottomLeft
+    case .bottomcenter: return .bottomCenter
+    case .bottomright: return .bottomRight
+    }
+  }
+  
   private func convertFit(_ fit: Fit?) -> RiveFit? {
     guard let fit = fit else { return nil }
     
