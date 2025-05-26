@@ -29,6 +29,30 @@
       "swift": "HybridViewModelInstance",
       "kotlin": "HybridViewModelInstance"
     },
+    "ViewModelNumberProperty": {
+      "swift": "HybridViewModelNumberProperty",
+      "kotlin": "HybridViewModelNumberProperty"
+    },
+    "ViewModelStringProperty": {
+      "swift": "HybridViewModelStringProperty",
+      "kotlin": "HybridViewModelStringProperty"
+    },
+    "ViewModelBooleanProperty": {
+      "swift": "HybridViewModelBooleanProperty",
+      "kotlin": "HybridViewModelBooleanProperty"
+    },
+    "ViewModelColorProperty": {
+      "swift": "HybridViewModelColorProperty",
+      "kotlin": "HybridViewModelColorProperty"
+    },
+    "ViewModelEnumProperty": {
+      "swift": "HybridViewModelEnumProperty",
+      "kotlin": "HybridViewModelEnumProperty"
+    },
+    "ViewModelTriggerProperty": {
+      "swift": "HybridViewModelTriggerProperty",
+      "kotlin": "HybridViewModelTriggerProperty"
+    },
     "RiveView": {
       "swift": "HybridRiveView",
       "kotlin": "HybridRiveView"

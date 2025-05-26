@@ -1,68 +1,131 @@
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Fit,
   RiveView,
   RiveFileFactory,
   useRive,
+  useRiveNumber,
   type RiveFile,
   type ViewModelInstance,
+  useRiveString,
+  useRiveColor,
+  useRiveTrigger,
 } from 'react-native-rive';
 
 export default function DataBindingExample() {
   const { riveViewRef, setHybridRef } = useRive();
-  const riveFileRef = useRef<RiveFile | null>(null);
+  const [riveFile, setRiveFile] = useState<RiveFile | null>(null);
   const [viewModelInstance, setViewModelInstance] =
     useState<ViewModelInstance | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Load Rive file immediately
   useEffect(() => {
-    let isMounted = true;
-
-    const setUpRiveView = async () => {
+    const initializeRiveFileAndData = async () => {
       try {
         const file = await RiveFileFactory.fromSource(
           require('../../assets/rive/rewards_source.riv')
         );
-        if (isMounted) {
-          riveFileRef.current = file;
-          const viewModel = file.defaultArtboardViewModel();
-          setViewModelInstance(viewModel?.createDefaultInstance() ?? null);
-          setIsLoading(false);
-          setError(null);
-        }
+        setRiveFile(file);
+        const viewModel = file.defaultArtboardViewModel();
+        setViewModelInstance(viewModel?.createDefaultInstance() ?? null);
+        setIsLoading(false);
+        setError(null);
       } catch (err) {
-        if (isMounted) {
-          setError(
-            err instanceof Error ? err.message : 'Failed to load Rive file'
-          );
-          setIsLoading(false);
-        }
+        setError(
+          err instanceof Error ? err.message : 'Failed to load Rive file'
+        );
+        setIsLoading(false);
       }
     };
 
-    setUpRiveView();
-
-    return () => {
-      isMounted = false;
-      if (riveFileRef.current) {
-        riveFileRef.current.release();
-        riveFileRef.current = null;
-        setViewModelInstance(null);
-      }
-    };
+    initializeRiveFileAndData();
   }, []);
 
+  // Release the Rive file when the component unmounts
   useEffect(() => {
-    if (viewModelInstance) {
+    return () => {
+      if (riveFile) {
+        riveFile.release(); // IMPORTANT: This ensures that the native resources are deleted
+      }
+    };
+  }, [riveFile]);
+
+  // Bind the view model instance to the RiveView
+  useEffect(() => {
+    if (viewModelInstance && riveViewRef) {
+      console.log('Binding the instance');
       riveViewRef?.bindViewModelInstance(viewModelInstance);
     }
   }, [viewModelInstance, riveViewRef]);
 
+  // Databinding: Number
+  const { value: coinValue, error: coinValueError } = useRiveNumber(
+    'Coin/Item_Value',
+    viewModelInstance
+  );
+  useEffect(() => {
+    console.log('coinValue', coinValue);
+  }, [coinValue]);
+
+  if (coinValueError) {
+    console.error('coinValueError', coinValueError);
+  }
+
+  // Databinding: String
+  const { value: buttonText, setValue: setButtonText } = useRiveString(
+    'Button/State_1',
+    viewModelInstance
+  );
+  useEffect(() => {
+    if (buttonText) {
+      console.log('buttonText', buttonText);
+    }
+  }, [buttonText]);
+
+  // Databinding: Color
+  const {
+    value: barColor,
+    setValue: setBarColor,
+    error: barColorError,
+  } = useRiveColor('Energy_Bar/Bar_Color', viewModelInstance);
+  if (barColorError) {
+    console.error('barColorError', barColorError);
+  }
+
+  useEffect(() => {
+    if (barColor) {
+      console.log('barColor', barColor);
+    }
+  }, [barColor]);
+
+  // Databinding: Trigger
+  const { error: triggerError } = useRiveTrigger(
+    'Button/Pressed',
+    viewModelInstance,
+    {
+      onTrigger: () => {
+        console.log('Button pressed');
+      },
+    }
+  );
+  if (triggerError) {
+    console.error('triggerError', triggerError);
+  }
+
+  // Set the initial values of the properties
+  useEffect(() => {
+    if (viewModelInstance) {
+      setButtonText("Let's go!");
+      setBarColor('#0000FF');
+      // setBarColor({ r: 0, g: 255, b: 0, a: 255 });
+    }
+  }, [setBarColor, setButtonText, viewModelInstance]);
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Rive Data Binding Example</Text>
       <View style={styles.riveContainer}>
         {error ? (
           <Text style={styles.errorText}>{error}</Text>
@@ -74,7 +137,7 @@ export default function DataBindingExample() {
             autoBind={false}
             autoPlay={true}
             fit={Fit.Contain}
-            file={riveFileRef.current!}
+            file={riveFile!}
             hybridRef={setHybridRef}
           />
         )}

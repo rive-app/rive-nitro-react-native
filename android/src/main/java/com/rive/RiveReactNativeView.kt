@@ -28,7 +28,10 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
 
   //region Public Methods (API)
   fun bindViewModelInstance(vmi: ViewModelInstance) {
-    riveAnimationView?.controller?.stateMachines?.first()?.viewModelInstance = vmi
+    val stateMachines = riveAnimationView?.controller?.stateMachines
+    if (!stateMachines.isNullOrEmpty()) {
+      stateMachines.first().viewModelInstance = vmi
+    }
   }
 
   fun play() {

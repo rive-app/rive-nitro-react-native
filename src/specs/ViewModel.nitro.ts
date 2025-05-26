@@ -31,4 +31,86 @@ export interface ViewModelInstance
   extends HybridObject<{ ios: 'swift'; android: 'kotlin' }> {
   /** The name of the view model instance */
   readonly name: string;
+
+  /** Get a number property from the view model instance at the given path */
+  numberProperty(path: string): ViewModelNumberProperty | null;
+
+  /** Get a string property from the view model instance at the given path */
+  stringProperty(path: string): ViewModelStringProperty | null;
+
+  /** Get a boolean property from the view model instance at the given path */
+  booleanProperty(path: string): ViewModelBooleanProperty | null;
+
+  /** Get a color property from the view model instance at the given path */
+  colorProperty(path: string): ViewModelColorProperty | null;
+
+  /** Get an enum property from the view model instance at the given path */
+  enumProperty(path: string): ViewModelEnumProperty | null;
+
+  /** Get a trigger property from the view model instance at the given path */
+  triggerProperty(path: string): ViewModelTriggerProperty | null;
+}
+
+export interface ViewModelProperty
+  extends HybridObject<{ ios: 'swift'; android: 'kotlin' }> {
+  dispose(): void;
+}
+
+export interface ObservableProperty {
+  /** Remove all listeners from the view model number property */
+  removeListeners(): void;
+}
+
+export interface ViewModelNumberProperty
+  extends ViewModelProperty,
+    ObservableProperty {
+  /** The value of the view model number property */
+  value: number;
+  /** Add a listener to the view model number property */
+  addListener(onChanged: (value: number) => void): void;
+}
+
+export interface ViewModelStringProperty
+  extends ViewModelProperty,
+    ObservableProperty {
+  /** The value of the view model string property */
+  value: string;
+  /** Add a listener to the view model string property */
+  addListener(onChanged: (value: string) => void): void;
+}
+
+export interface ViewModelBooleanProperty
+  extends ViewModelProperty,
+    ObservableProperty {
+  /** The value of the view model boolean property */
+  value: boolean;
+  /** Add a listener to the view model boolean property */
+  addListener(onChanged: (value: boolean) => void): void;
+}
+
+export interface ViewModelColorProperty
+  extends ViewModelProperty,
+    ObservableProperty {
+  /** The value of the view model color property */
+  value: number;
+  /** Add a listener to the view model color property */
+  addListener(onChanged: (value: number) => void): void;
+}
+
+export interface ViewModelEnumProperty
+  extends ViewModelProperty,
+    ObservableProperty {
+  /** The value of the view model enum property */
+  value: string;
+  /** Add a listener to the view model enum property */
+  addListener(onChanged: (value: string) => void): void;
+}
+
+export interface ViewModelTriggerProperty
+  extends ViewModelProperty,
+    ObservableProperty {
+  /** Add a listener to the view model trigger property */
+  addListener(onChanged: () => void): void;
+  /** Trigger the view model trigger property */
+  trigger(): void;
 }
