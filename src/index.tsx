@@ -59,6 +59,7 @@ export { Fit } from './core/Fit';
 export { type Alignment } from './core/Alignment';
 export { RiveFileFactory } from './core/RiveFile';
 export { RiveColor } from './core/RiveColor';
+export { type RiveEvent, RiveEventType } from './core/Events';
 export { ArtboardByIndex, ArtboardByName } from './specs/ArtboardBy';
 export { useRive } from './hooks/useRive';
 export { useRiveNumber } from './hooks/useRiveNumber';

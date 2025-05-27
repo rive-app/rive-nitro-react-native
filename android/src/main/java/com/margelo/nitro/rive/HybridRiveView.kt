@@ -29,26 +29,42 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
   }
 
   override var artboardName: String? = null
-    set(value) { changed(field, value) { field = it } }
+    set(value) {
+      changed(field, value) { field = it }
+    }
   override var stateMachineName: String? = null
-    set(value) { changed(field, value) { field = it } }
+    set(value) {
+      changed(field, value) { field = it }
+    }
   override var autoPlay: Boolean? = null
-    set(value) { changed(field, value) { field = it } }
+    set(value) {
+      changed(field, value) { field = it }
+    }
   override var autoBind: Boolean? = null
-    set(value) { changed(field, value) { field = it } }
+    set(value) {
+      changed(field, value) { field = it }
+    }
   override var file: HybridRiveFileSpec = HybridRiveFile()
-    set(value) { changed(field, value) { field = it } }
+    set(value) {
+      changed(field, value) { field = it }
+    }
   override var alignment: Alignment? = null
   override var fit: Fit? = null
   //endregion
 
   //region View Methods
-  override fun bindViewModelInstance(viewModelInstance: HybridViewModelInstanceSpec) = executeOnUiThread {
-    val hybridVmi = viewModelInstance as? HybridViewModelInstance ?: return@executeOnUiThread;
-    view.bindViewModelInstance(hybridVmi.viewModelInstance)
-  }
+  override fun bindViewModelInstance(viewModelInstance: HybridViewModelInstanceSpec) =
+    executeOnUiThread {
+      val hybridVmi = viewModelInstance as? HybridViewModelInstance ?: return@executeOnUiThread;
+      view.bindViewModelInstance(hybridVmi.viewModelInstance)
+    }
+
   override fun play() = executeOnUiThread { view.play() }
   override fun pause() = executeOnUiThread { view.pause() }
+  override fun onEventListener(onEvent: (event: RiveEvent) -> Unit) =
+    executeOnUiThread { view.addEventListener(onEvent) }
+
+  override fun removeEventListeners() = executeOnUiThread { view.removeEventListeners() }
   //endregion
 
   //region Update

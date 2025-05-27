@@ -28,6 +28,11 @@ class HybridRiveView : HybridRiveViewSpec {
   }
   func play() throws { riveView?.play() }
   func pause() throws { riveView?.pause() }
+  func onEventListener(onEvent: @escaping (RiveEvent) -> Void) throws {
+    riveView?.addEventListener(onEvent)
+  }
+  
+  func removeEventListeners() throws { riveView?.removeEventListeners() }
   
   // MARK: Views
   var view: UIView = RiveReactNativeView()

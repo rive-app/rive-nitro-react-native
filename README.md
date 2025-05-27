@@ -88,7 +88,7 @@ The following runtime features are currently supported:
 | Asset management           | 🚧     | Out-of-band assets not yet supported                             |
 | State machine inputs       | 🚧     | Get/Set (nested) state machine inputs (legacy, see data binding) |
 | Text Runs                  | 🚧     | Update (nested) text runs (legacy, see data binding)             |
-| Rive Events                | 🚧     | Listen to Rive events                                            |
+| Rive Events                | ✅     | Listen to Rive events                                            |
 | Rive Audio                 | ✅     | Full Rive audio playback supported                               |
 | `useRive()` hook           | ✅     | Convenient hook to access the Rive View ref after load           |
 | `useRiveFile()` hook       | 🚧     | Convenient hook to load a Rive file                              |

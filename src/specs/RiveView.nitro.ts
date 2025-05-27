@@ -7,6 +7,7 @@ import type { RiveFile } from './RiveFile.nitro';
 import { Fit } from '../core/Fit';
 import type { ViewModelInstance } from './ViewModel.nitro';
 import type { Alignment } from '../core/Alignment';
+import type { RiveEvent } from '../core/Events';
 
 /**
  * Props interface for the RiveView component.
@@ -40,6 +41,10 @@ export interface RiveViewMethods extends HybridViewMethods {
   play(): void;
   /** Pauses the the Rive graphic */
   pause(): void;
+  /** Adds an event listener to the Rive view */
+  onEventListener(onEvent: (event: RiveEvent) => void): void;
+  /** Removes all event listeners from the Rive view */
+  removeEventListeners(): void;
 }
 
 /**

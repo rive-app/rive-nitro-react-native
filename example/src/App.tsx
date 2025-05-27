@@ -10,11 +10,13 @@ import { createStackNavigator } from '@react-navigation/stack';
 import RiveFileLoadingExample from './pages/RiveFileLoadingExample';
 import DataBindingExample from './pages/RiveDataBindingExample';
 import TemplatePage from './pages/TemplatePage';
+import EventsExample from './pages/RiveEventsExample';
 
 type RootStackParamList = {
   Home: undefined;
   RiveFileLoading: undefined;
   RiveDataBinding: undefined;
+  RiveEvents: undefined;
   Template: undefined;
 };
 
@@ -36,6 +38,12 @@ function HomeScreen({ navigation }: { navigation: any }) {
           onPress={() => navigation.navigate('RiveDataBinding')}
         >
           <Text style={styles.buttonText}>Rive Data Binding Example</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => navigation.navigate('RiveEvents')}
+        >
+          <Text style={styles.buttonText}>Rive Events Example</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.button}
@@ -76,6 +84,11 @@ export default function App() {
           name="RiveDataBinding"
           component={DataBindingExample}
           options={{ title: 'Rive Data Binding' }}
+        />
+        <Stack.Screen
+          name="RiveEvents"
+          component={EventsExample}
+          options={{ title: 'Rive Events' }}
         />
         <Stack.Screen
           name="Template"
