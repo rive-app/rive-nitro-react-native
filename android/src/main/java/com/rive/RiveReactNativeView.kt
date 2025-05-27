@@ -29,8 +29,7 @@ data class ViewConfiguration(
 @SuppressLint("ViewConstructor")
 class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
   private var riveAnimationView: RiveAnimationView? = null
-  private val eventListeners: MutableList<RiveFileController.RiveEventListener> = mutableListOf()
-  private val eventLock = Any()
+  private var eventListeners: MutableList<RiveFileController.RiveEventListener> = mutableListOf()
 
   init {
     riveAnimationView = RiveAnimationView(context)
@@ -64,19 +63,15 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
         onEvent(rnEvent)
       }
     }
-    synchronized(eventLock) {
-      riveAnimationView?.addEventListener(eventListener)
-      eventListeners.add(eventListener)
-    }
+    riveAnimationView?.addEventListener(eventListener)
+    eventListeners.add(eventListener)
   }
 
   fun removeEventListeners() {
-    synchronized(eventLock) {
-      for (eventListener in eventListeners) {
-        riveAnimationView?.removeEventListener(eventListener)
-      }
-      eventListeners.clear()
+    for (eventListener in eventListeners) {
+      riveAnimationView?.removeEventListener(eventListener)
     }
+    eventListeners.clear()
   }
 
   fun configure(config: ViewConfiguration, reload: Boolean = false) {
