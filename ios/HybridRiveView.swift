@@ -1,6 +1,7 @@
 import Foundation
 import UIKit
 import RiveRuntime
+import NitroModules
 
 private struct DefaultConfiguration {
   static let autoBind = false
@@ -21,22 +22,54 @@ class HybridRiveView : HybridRiveViewSpec {
   var alignment: Alignment?
   var fit: Fit?
   
-  // MARK: View Methods
-  func bindViewModelInstance(viewModelInstance: (any HybridViewModelInstanceSpec)) throws {
-    guard let viewModelInstance = (viewModelInstance as? HybridViewModelInstance)?.viewModelInstance else { return }
-    riveView?.bindViewModelInstance(viewModelInstance: viewModelInstance)
-  }
-  func play() throws { riveView?.play() }
-  func pause() throws { riveView?.pause() }
-  func onEventListener(onEvent: @escaping (RiveEvent) -> Void) throws {
-    riveView?.addEventListener(onEvent)
+  func awaitViewReady() throws -> Promise<Bool> {
+    return Promise.async { [self] in
+      return try await getRiveView().awaitViewReady()
+    }
   }
   
-  func removeEventListeners() throws { riveView?.removeEventListeners() }
+  func bindViewModelInstance(viewModelInstance: (any HybridViewModelInstanceSpec)) throws {
+    guard let viewModelInstance = (viewModelInstance as? HybridViewModelInstance)?.viewModelInstance else { return }
+    try getRiveView().bindViewModelInstance(viewModelInstance: viewModelInstance)
+  }
+  
+  func play() throws { try getRiveView().play() }
+  
+  func pause() throws { try getRiveView().pause() }
+  
+  func onEventListener(onEvent: @escaping (RiveEvent) -> Void) throws {
+    try getRiveView().addEventListener(onEvent)
+  }
+  
+  func removeEventListeners() throws { try getRiveView().removeEventListeners() }
+  
+  func setNumberInputValue(name: String, value: Double, path: String?) throws {
+    try getRiveView().setNumberInputValue(name: name, value: Float(value), path: path)
+  }
+  
+  func getNumberInputValue(name: String, path: String?) throws -> Double {
+    return try Double(getRiveView().getNumberInputValue(name: name, path: path))
+  }
+  
+  func setBooleanInputValue(name: String, value: Bool, path: String?) throws {
+    try getRiveView().setBooleanInputValue(name: name, value: value, path: path)
+  }
+  
+  func getBooleanInputValue(name: String, path: String?) throws -> Bool {
+    return try getRiveView().getBooleanInputValue(name: name, path: path)  }
+  
+  func triggerInput(name: String, path: String?) throws {
+    try getRiveView().triggerInput(name: name, path: path)
+  }
   
   // MARK: Views
   var view: UIView = RiveReactNativeView()
-  var riveView: RiveReactNativeView? { view as? RiveReactNativeView }
+  func getRiveView() throws -> RiveReactNativeView {
+    guard let riveView = view as? RiveReactNativeView else {
+      throw RuntimeError.error(withMessage: "RiveReactNativeView is null or not configured")
+    }
+    return riveView
+  }
   
   // MARK: Update
   func afterUpdate() {
@@ -52,7 +85,7 @@ class HybridRiveView : HybridRiveViewSpec {
       fit: convertFit(fit) ?? DefaultConfiguration.fit
     )
     
-    riveView?.configure(config, reload: needsReload)
+    try? getRiveView().configure(config, reload: needsReload)
     needsReload = false
   }
   

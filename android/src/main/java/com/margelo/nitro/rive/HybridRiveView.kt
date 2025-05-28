@@ -3,10 +3,13 @@ package com.margelo.nitro.rive
 import androidx.annotation.Keep
 import com.facebook.proguard.annotations.DoNotStrip
 import com.facebook.react.uimanager.ThemedReactContext
+import com.margelo.nitro.core.Promise
 import com.rive.RiveReactNativeView
 import com.rive.ViewConfiguration
 import app.rive.runtime.kotlin.core.Fit as RiveFit
 import app.rive.runtime.kotlin.core.Alignment as RiveAlignment
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 object DefaultConfiguration {
   const val AUTOBIND = false
@@ -18,16 +21,12 @@ object DefaultConfiguration {
 @Keep
 @DoNotStrip
 class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
+  //region State
   override val view: RiveReactNativeView = RiveReactNativeView(context)
+  private var needsReload = false
+  //endregion
 
   //region View Props
-  private fun <T> changed(current: T, new: T, setter: (T) -> Unit) {
-    if (current != new) {
-      setter(new)
-      needsReload = true
-    }
-  }
-
   override var artboardName: String? = null
     set(value) {
       changed(field, value) { field = it }
@@ -53,6 +52,14 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
   //endregion
 
   //region View Methods
+  override fun awaitViewReady(): Promise<Boolean> {
+    return Promise.async {
+      withContext(Dispatchers.Main) {
+        view.awaitViewReady()
+      }
+    }
+  }
+
   override fun bindViewModelInstance(viewModelInstance: HybridViewModelInstanceSpec) =
     executeOnUiThread {
       val hybridVmi = viewModelInstance as? HybridViewModelInstance ?: return@executeOnUiThread;
@@ -60,16 +67,30 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
     }
 
   override fun play() = executeOnUiThread { view.play() }
+
   override fun pause() = executeOnUiThread { view.pause() }
+
   override fun onEventListener(onEvent: (event: RiveEvent) -> Unit) =
     executeOnUiThread { view.addEventListener(onEvent) }
 
   override fun removeEventListeners() = executeOnUiThread { view.removeEventListeners() }
+
+  override fun setNumberInputValue(name: String, value: Double, path: String?) =
+    view.setNumberInputValue(name, value, path)
+
+  override fun getNumberInputValue(name: String, path: String?): Double = view.getNumberInputValue(name, path)
+
+  override fun setBooleanInputValue(name: String, value: Boolean, path: String?) =
+    view.setBooleanInputValue(name, value, path)
+
+  override fun getBooleanInputValue(name: String, path: String?): Boolean =
+    view.getBooleanInputValue(name, path)
+
+  override fun triggerInput(name: String, path: String?) = view.triggerInput(name, path)
   //endregion
 
   //region Update
   override fun afterUpdate() {
-    super.afterUpdate()
     val riveFile = (file as? HybridRiveFile)?.riveFile ?: return
 
     val config = ViewConfiguration(
@@ -83,19 +104,27 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
     )
     view.configure(config, needsReload)
     needsReload = false
+    super.afterUpdate()
   }
   //endregion
 
-  //region Internal State
-  private var needsReload = false
-  //endregion
-
   //region Helpers
+  private fun <T> changed(current: T, new: T, setter: (T) -> Unit) {
+    if (current != new) {
+      setter(new)
+      needsReload = true
+    }
+  }
+
   private fun executeOnUiThread(action: () -> Unit) {
-    try {
-      context.runOnUiQueueThread { action() }
-    } catch (e: Exception) {
-      throw Error(e.message) // TODO: Correctly handling errors (https://nitro.margelo.com/docs/errors)
+    context.currentActivity?.runOnUiThread() {
+      try {
+        action()
+      } catch (e: Exception) {
+        throw Error(e.message) // TODO: Correctly handling errors (https://nitro.margelo.com/docs/errors)
+      } catch (e: Error) {
+        throw Error(e.message)
+      }
     }
   }
 

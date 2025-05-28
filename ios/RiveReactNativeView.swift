@@ -17,11 +17,43 @@ class RiveReactNativeView: UIView, RiveStateMachineDelegate {
   private var riveView: RiveView?
   private var baseViewModel: RiveViewModel?
   private var eventListeners: [(RiveEvent) -> Void] = []
+  private var viewReadyContinuation: CheckedContinuation<Void, Never>?
+  private var isViewReady = false
   
   // MARK: Public Config Properties
   var autoPlay: Bool = true
   
   // MARK: - Public Methods
+  
+  func awaitViewReady()async -> Bool {
+    if !isViewReady {
+      await withCheckedContinuation { continuation in
+        viewReadyContinuation = continuation
+      }
+      return true
+    }
+    return true
+  }
+  
+  func configure(_ config: ViewConfiguration, reload: Bool = false) {
+    if reload {
+      cleanup()
+      let model = RiveModel(riveFile: config.riveFile)
+      baseViewModel = RiveViewModel(model, autoPlay: config.autoPlay)
+      createViewFromViewModel()
+    }
+    
+    baseViewModel?.alignment = config.alignment
+    baseViewModel?.fit = config.fit
+    baseViewModel?.autoPlay = config.autoPlay
+    
+    if !isViewReady {
+      isViewReady = true
+      viewReadyContinuation?.resume()
+      viewReadyContinuation = nil
+    }
+  }
+  
   func bindViewModelInstance(viewModelInstance: RiveDataBindingViewModel.Instance) {
     baseViewModel?.riveModel?.stateMachine?.bind(viewModelInstance: viewModelInstance)
   }
@@ -42,17 +74,34 @@ class RiveReactNativeView: UIView, RiveStateMachineDelegate {
     eventListeners.removeAll()
   }
   
-  func configure(_ config: ViewConfiguration, reload: Bool = false) {
-    if reload {
-      cleanup()
-      let model = RiveModel(riveFile: config.riveFile)
-      baseViewModel = RiveViewModel(model, autoPlay: config.autoPlay)
-      createViewFromViewModel()
+  func setNumberInputValue(name: String, value: Float, path: String?) throws {
+    try handleInput(name: name, path: path, type: .number) { (input: RiveRuntime.RiveSMINumber) in
+      input.setValue(value)
     }
-    
-    baseViewModel?.alignment = config.alignment
-    baseViewModel?.fit = config.fit
-    baseViewModel?.autoPlay = config.autoPlay
+  }
+  
+  func getNumberInputValue(name: String, path: String?) throws -> Float {
+    try handleInput(name: name, path: path, type: .number) { (input: RiveRuntime.RiveSMINumber) in
+      input.value()
+    }
+  }
+  
+  func setBooleanInputValue(name: String, value: Bool, path: String?) throws {
+    try handleInput(name: name, path: path, type: .boolean) { (input: RiveRuntime.RiveSMIBool) in
+      input.setValue(value)
+    }
+  }
+  
+  func getBooleanInputValue(name: String, path: String?) throws -> Bool {
+    try handleInput(name: name, path: path, type: .boolean) { (input: RiveRuntime.RiveSMIBool) in
+      input.value()
+    }
+  }
+  
+  func triggerInput(name: String, path: String?) throws {
+    try handleInput(name: name, path: path, type: .trigger) { (input: RiveRuntime.RiveSMITrigger) in
+      input.fire()
+    }
   }
   
   // MARK: - Internal
@@ -114,5 +163,40 @@ class RiveReactNativeView: UIView, RiveStateMachineDelegate {
     }
     
     return newMap
+  }
+  
+  private enum InputType {
+    case number
+    case boolean
+    case trigger
+  }
+  
+  private func handleInput<P: RiveRuntime.RiveSMIInput, T>(name: String, path: String?, type: InputType, onSuccess: (P) throws -> T) throws -> T {
+    let input: P?
+    if let path = path {
+      switch type {
+      case .number:
+        input = baseViewModel?.riveModel?.artboard?.getNumber(name, path: path) as? P
+      case .boolean:
+        input = baseViewModel?.riveModel?.artboard?.getBool(name, path: path) as? P
+      case .trigger:
+        input = baseViewModel?.riveModel?.artboard?.getTrigger(name, path: path) as? P
+      }
+    } else {
+      switch type {
+      case .number:
+        input = baseViewModel?.numberInput(named: name) as? P
+      case .boolean:
+        input = baseViewModel?.boolInput(named: name) as? P
+      case .trigger:
+        input = baseViewModel?.riveModel?.stateMachine?.getTrigger(name) as? P
+      }
+    }
+    
+    guard let input = input else {
+      throw RuntimeError.error(withMessage: "Could not find input `\(name)`\(path.map { " at path `\($0)`" } ?? "")")
+    }
+    
+    return try onSuccess(input)
   }
 }
