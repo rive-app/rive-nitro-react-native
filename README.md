@@ -2,6 +2,15 @@
 
 Rive React Native 2.0
 
+## Requirements
+
+- React Native 0.79 or later
+- Xcode 16.0 or later
+
+## Known Issues
+
+- Error message on Android will not have descriptive messages, this is a [known issue](https://github.com/mrousavy/nitro/issues/382) in React Native and is fixed in RN 0.80
+
 ## Installation
 
 ```sh
