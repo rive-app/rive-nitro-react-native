@@ -62,6 +62,14 @@ class HybridRiveView : HybridRiveViewSpec {
     try getRiveView().triggerInput(name: name, path: path)
   }
   
+  func setTextRunValue(name: String, value: String, path: String?) throws {
+    try getRiveView().setTextRunValue(name: name, value: value, path: path)
+  }
+  
+  func getTextRunValue(name: String, path: String?) throws -> String {
+    return try getRiveView().getTextRunValue(name: name, path: path)
+  }
+  
   // MARK: Views
   var view: UIView = RiveReactNativeView()
   func getRiveView() throws -> RiveReactNativeView {

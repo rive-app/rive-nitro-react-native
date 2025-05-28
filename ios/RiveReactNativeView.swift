@@ -104,6 +104,31 @@ class RiveReactNativeView: UIView, RiveStateMachineDelegate {
     }
   }
   
+  func setTextRunValue(name: String, value: String, path: String?) throws {
+    let textRun = try textRunOptionPath(name: name, path: path)
+    textRun.setText(value)
+  }
+  
+  func getTextRunValue(name: String, path: String?) throws -> String {
+    let textRun = try textRunOptionPath(name: name, path: path)
+    return textRun.text()
+  }
+  
+  private func textRunOptionPath(name: String, path: String?) throws -> RiveRuntime.RiveTextValueRun {
+    let textRun: RiveRuntime.RiveTextValueRun?
+    if let path = path {
+      textRun = baseViewModel?.riveModel?.artboard?.textRun(name, path: path)
+    } else {
+      textRun = baseViewModel?.riveModel?.artboard?.textRun(name)
+    }
+    
+    guard let textRun = textRun else {
+      throw RuntimeError.error(withMessage: "Could not find text run `\(name)`\(path.map { " at path `\($0)`" } ?? "")")
+    }
+    
+    return textRun
+  }
+  
   // MARK: - Internal
   deinit {
     cleanup()

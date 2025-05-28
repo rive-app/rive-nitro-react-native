@@ -78,7 +78,8 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
   override fun setNumberInputValue(name: String, value: Double, path: String?) =
     view.setNumberInputValue(name, value, path)
 
-  override fun getNumberInputValue(name: String, path: String?): Double = view.getNumberInputValue(name, path)
+  override fun getNumberInputValue(name: String, path: String?): Double =
+    view.getNumberInputValue(name, path)
 
   override fun setBooleanInputValue(name: String, value: Boolean, path: String?) =
     view.setBooleanInputValue(name, value, path)
@@ -87,6 +88,12 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
     view.getBooleanInputValue(name, path)
 
   override fun triggerInput(name: String, path: String?) = view.triggerInput(name, path)
+
+  override fun setTextRunValue(name: String, value: String, path: String?) =
+    view.setTextRunValue(name, value, path)
+
+  override fun getTextRunValue(name: String, path: String?): String =
+    view.getTextRunValue(name, path)
   //endregion
 
   //region Update

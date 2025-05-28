@@ -87,6 +87,16 @@ export interface RiveViewMethods extends HybridViewMethods {
    * @param path - The optional path to the state machine input on a nested artboard
    */
   triggerInput(name: string, path?: string): void;
+  /**
+   * Sets the text run value on the Rive view
+   * @param text - The text to set the text run value to
+   */
+  setTextRunValue(name: string, value: string, path?: string): void;
+  /**
+   * Gets the text run value from the Rive view
+   * @returns The text run value
+   */
+  getTextRunValue(name: string, path?: string): string;
 }
 
 /**

@@ -10,6 +10,7 @@ import app.rive.runtime.kotlin.core.File
 import app.rive.runtime.kotlin.core.Fit
 import app.rive.runtime.kotlin.core.RiveEvent
 import app.rive.runtime.kotlin.core.RiveOpenURLEvent
+import app.rive.runtime.kotlin.core.RiveTextValueRun
 import app.rive.runtime.kotlin.core.SMIBoolean
 import app.rive.runtime.kotlin.core.SMIInput
 import app.rive.runtime.kotlin.core.SMINumber
@@ -173,9 +174,36 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
       }
     )
   }
+
+  fun setTextRunValue(name: String, value: String, path: String?) {
+    try {
+      if (path == null) {
+        riveAnimationView?.setTextRunValue(name, value)
+      } else {
+        riveAnimationView?.setTextRunValue(name, value, path)
+      }
+    } catch (e: Exception) {
+      throw Error(e.message)
+    }
+  }
+
+  fun getTextRunValue(name: String, path: String?): String {
+    val value = if (path == null) {
+      riveAnimationView?.getTextRunValue(name)
+    } else {
+      riveAnimationView?.getTextRunValue(name, path)
+    }
+
+    if (value == null) {
+      throw Error("Could not find text run value (name: $name, path: $path)")
+    }
+
+    return value
+  }
   //endregion
 
   //region Internal
+
   private fun convertEventProperties(properties: Map<String, Any>?): AnyMap? {
     if (properties == null) return null
 

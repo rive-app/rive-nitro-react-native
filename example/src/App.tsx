@@ -12,6 +12,7 @@ import DataBindingExample from './pages/RiveDataBindingExample';
 import TemplatePage from './pages/TemplatePage';
 import EventsExample from './pages/RiveEventsExample';
 import StateMachineInputsExample from './pages/RiveStateMachineInputsExample';
+import TextRunExample from './pages/RiveTextRunExample';
 
 type RootStackParamList = {
   Home: undefined;
@@ -19,6 +20,7 @@ type RootStackParamList = {
   RiveDataBinding: undefined;
   RiveEvents: undefined;
   RiveStateMachineInputs: undefined;
+  RiveTextRun: undefined;
   Template: undefined;
 };
 
@@ -54,6 +56,12 @@ function HomeScreen({ navigation }: { navigation: any }) {
           <Text style={styles.buttonText}>
             Rive State Machine Inputs Example
           </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => navigation.navigate('RiveTextRun')}
+        >
+          <Text style={styles.buttonText}>Rive Text Run Example</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.button}
@@ -104,6 +112,11 @@ export default function App() {
           name="RiveStateMachineInputs"
           component={StateMachineInputsExample}
           options={{ title: 'Rive State Machine Inputs' }}
+        />
+        <Stack.Screen
+          name="RiveTextRun"
+          component={TextRunExample}
+          options={{ title: 'Rive Text Runs' }}
         />
         <Stack.Screen
           name="Template"
