@@ -10,7 +10,6 @@ import app.rive.runtime.kotlin.core.File
 import app.rive.runtime.kotlin.core.Fit
 import app.rive.runtime.kotlin.core.RiveEvent
 import app.rive.runtime.kotlin.core.RiveOpenURLEvent
-import app.rive.runtime.kotlin.core.RiveTextValueRun
 import app.rive.runtime.kotlin.core.SMIBoolean
 import app.rive.runtime.kotlin.core.SMIInput
 import app.rive.runtime.kotlin.core.SMINumber
@@ -27,7 +26,8 @@ data class ViewConfiguration(
   val autoPlay: Boolean,
   val riveFile: File,
   val alignment: Alignment,
-  val fit: Fit
+  val fit: Fit,
+  val layoutScaleFactor: Float?
 )
 
 @SuppressLint("ViewConstructor")
@@ -62,6 +62,8 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
     } else {
       riveAnimationView?.alignment = config.alignment
       riveAnimationView?.fit = config.fit
+      // TODO: this seems to require a reload for the view to take the new value (bug on Android)
+      riveAnimationView?.layoutScaleFactor = config.layoutScaleFactor
     }
     viewReadyDeferred.complete(true)
   }
@@ -243,7 +245,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
     }
   }
 
-
+  // TODO: this is throwing when autoplay is false
   // TODO: This is a temporary solution to get the state machine name as Android supports
   // playing multiple state machines, but in React Native we only allow playing one.
   /**

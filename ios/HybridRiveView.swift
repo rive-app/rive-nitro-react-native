@@ -8,6 +8,7 @@ private struct DefaultConfiguration {
   static let autoPlay = true
   static let alignment = RiveAlignment.center
   static let fit = RiveFit.contain
+  static let layoutScaleFactor = RiveRuntime.RiveViewModel.layoutScaleFactorAutomatic
 }
 
 class HybridRiveView : HybridRiveViewSpec {
@@ -21,6 +22,7 @@ class HybridRiveView : HybridRiveViewSpec {
   }
   var alignment: Alignment?
   var fit: Fit?
+  var layoutScaleFactor: Double?
   
   func awaitViewReady() throws -> Promise<Bool> {
     return Promise.async { [self] in
@@ -90,7 +92,8 @@ class HybridRiveView : HybridRiveViewSpec {
       autoPlay: autoPlay ?? DefaultConfiguration.autoPlay,
       riveFile: file,
       alignment: convertAlignment(alignment) ?? DefaultConfiguration.alignment,
-      fit: convertFit(fit) ?? DefaultConfiguration.fit
+      fit: convertFit(fit) ?? DefaultConfiguration.fit,
+      layoutScaleFactor: layoutScaleFactor ?? DefaultConfiguration.layoutScaleFactor
     )
     
     try? getRiveView().configure(config, reload: needsReload)

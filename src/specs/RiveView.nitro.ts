@@ -28,6 +28,8 @@ export interface RiveViewProps extends HybridViewProps {
   alignment?: Alignment;
   /** How the Rive graphic should fit within its container */
   fit?: Fit;
+  /** The scale factor to apply to the Rive graphic when using Fit.Layout */
+  layoutScaleFactor?: number;
 }
 
 /**

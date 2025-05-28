@@ -136,7 +136,8 @@ export default function DataBindingExample() {
             style={styles.rive}
             autoBind={false}
             autoPlay={true}
-            fit={Fit.Contain}
+            fit={Fit.Layout}
+            layoutScaleFactor={1}
             file={riveFile!}
             hybridRef={setHybridRef}
           />
@@ -150,30 +151,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    padding: 20,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginTop: 20,
-    marginBottom: 10,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#666',
-    textAlign: 'center',
-    marginBottom: 20,
   },
   riveContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
     backgroundColor: '#f5f5f5',
-    borderRadius: 10,
-    overflow: 'hidden',
   },
   rive: {
+    flex: 1,
     width: '100%',
     height: '100%',
   },

@@ -10,6 +10,7 @@ struct ViewConfiguration {
   let riveFile: RiveFile
   let alignment: RiveRuntime.RiveAlignment
   let fit: RiveRuntime.RiveFit
+  let layoutScaleFactor: Double
 }
 
 class RiveReactNativeView: UIView, RiveStateMachineDelegate {
@@ -46,6 +47,7 @@ class RiveReactNativeView: UIView, RiveStateMachineDelegate {
     baseViewModel?.alignment = config.alignment
     baseViewModel?.fit = config.fit
     baseViewModel?.autoPlay = config.autoPlay
+    baseViewModel?.layoutScaleFactor = config.layoutScaleFactor
     
     if !isViewReady {
       isViewReady = true

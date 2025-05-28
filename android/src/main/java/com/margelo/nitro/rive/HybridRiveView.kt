@@ -16,6 +16,7 @@ object DefaultConfiguration {
   const val AUTOPLAY = true
   val FIT = RiveFit.CONTAIN
   val ALIGNMENT = RiveAlignment.CENTER
+  val LAYOUTSCALEFACTOR = null
 }
 
 @Keep
@@ -49,6 +50,7 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
     }
   override var alignment: Alignment? = null
   override var fit: Fit? = null
+  override var layoutScaleFactor: Double? = null
   //endregion
 
   //region View Methods
@@ -108,6 +110,7 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
       riveFile = riveFile,
       alignment = convertAlignment(alignment) ?: DefaultConfiguration.ALIGNMENT,
       fit = convertFit(fit) ?: DefaultConfiguration.FIT,
+      layoutScaleFactor = layoutScaleFactor?.toFloat() ?: DefaultConfiguration.LAYOUTSCALEFACTOR,
     )
     view.configure(config, needsReload)
     needsReload = false
