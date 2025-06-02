@@ -68,3 +68,5 @@ export { useRiveBoolean } from './hooks/useRiveBoolean';
 export { useRiveEnum } from './hooks/useRiveEnum';
 export { useRiveColor } from './hooks/useRiveColor';
 export { useRiveTrigger } from './hooks/useRiveTrigger';
+export { useRiveFile } from './hooks/useRiveFile';
+export { type RiveFileInput } from './hooks/useRiveFile';

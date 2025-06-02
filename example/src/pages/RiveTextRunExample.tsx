@@ -1,48 +1,12 @@
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
-import { useState, useEffect } from 'react';
-import {
-  Fit,
-  RiveView,
-  RiveFileFactory,
-  useRive,
-  type RiveFile,
-} from 'react-native-rive';
+import { useEffect } from 'react';
+import { Fit, RiveView, useRive, useRiveFile } from 'react-native-rive';
 
 export default function TextRunExample() {
   const { riveViewRef, setHybridRef } = useRive();
-  const [riveFile, setRiveFile] = useState<RiveFile | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    let currentFile: RiveFile | null = null;
-
-    const loadRiveFile = async () => {
-      try {
-        const file = await RiveFileFactory.fromSource(
-          require('../../assets/rive/hello_world_text.riv')
-        );
-        currentFile = file;
-        setRiveFile(file);
-        setIsLoading(false);
-        setError(null);
-      } catch (err) {
-        setError(
-          err instanceof Error ? err.message : 'Failed to load Rive file'
-        );
-        setIsLoading(false);
-      }
-    };
-
-    loadRiveFile();
-
-    // Cleanup function to release the Rive file when component unmounts
-    return () => {
-      if (currentFile) {
-        currentFile.release();
-      }
-    };
-  }, []);
+  const { riveFile, isLoading, error } = useRiveFile(
+    require('../../assets/rive/hello_world_text.riv')
+  );
 
   useEffect(() => {
     if (riveViewRef) {

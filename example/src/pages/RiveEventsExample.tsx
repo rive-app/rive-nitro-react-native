@@ -3,49 +3,18 @@ import { useState, useEffect } from 'react';
 import {
   Fit,
   RiveView,
-  RiveFileFactory,
   useRive,
-  type RiveFile,
-  RiveEventType,
+  useRiveFile,
   type RiveEvent,
+  RiveEventType,
 } from 'react-native-rive';
 
 export default function EventsExample() {
   const { riveViewRef, setHybridRef } = useRive();
-  const [riveFile, setRiveFile] = useState<RiveFile | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { riveFile, isLoading, error } = useRiveFile(
+    require('../../assets/rive/rating.riv')
+  );
   const [lastEvent, setLastEvent] = useState<RiveEvent | null>(null);
-
-  useEffect(() => {
-    let currentFile: RiveFile | null = null;
-
-    const loadRiveFile = async () => {
-      try {
-        const file = await RiveFileFactory.fromSource(
-          require('../../assets/rive/rating.riv')
-        );
-        currentFile = file;
-        setRiveFile(file);
-        setIsLoading(false);
-        setError(null);
-      } catch (err) {
-        setError(
-          err instanceof Error ? err.message : 'Failed to load Rive file'
-        );
-        setIsLoading(false);
-      }
-    };
-
-    loadRiveFile();
-
-    // Cleanup function to release the Rive file when component unmounts
-    return () => {
-      if (currentFile) {
-        currentFile.release();
-      }
-    };
-  }, []);
 
   const handleRiveEvent = (event: any) => {
     console.log('Rive Event:', event);

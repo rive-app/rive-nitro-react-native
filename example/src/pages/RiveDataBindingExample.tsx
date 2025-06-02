@@ -3,61 +3,66 @@ import { useState, useEffect } from 'react';
 import {
   Fit,
   RiveView,
-  RiveFileFactory,
   useRive,
   useRiveNumber,
-  type RiveFile,
   type ViewModelInstance,
   useRiveString,
   useRiveColor,
   useRiveTrigger,
+  useRiveFile,
 } from 'react-native-rive';
 
 export default function DataBindingExample() {
   const { riveViewRef, setHybridRef } = useRive();
-  const [riveFile, setRiveFile] = useState<RiveFile | null>(null);
   const [viewModelInstance, setViewModelInstance] =
     useState<ViewModelInstance | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [viewModelError, setViewModelError] = useState<string | null>(null);
 
-  // Load Rive file immediately
+  const { riveFile, isLoading, error } = useRiveFile(
+    require('../../assets/rive/rewards_source.riv')
+  );
+
+  // Create view model instance when Rive file is loaded
   useEffect(() => {
-    const initializeRiveFileAndData = async () => {
+    if (riveFile) {
       try {
-        const file = await RiveFileFactory.fromSource(
-          require('../../assets/rive/rewards_source.riv')
-        );
-        setRiveFile(file);
-        const viewModel = file.defaultArtboardViewModel();
-        setViewModelInstance(viewModel?.createDefaultInstance() ?? null);
-        setIsLoading(false);
-        setError(null);
+        const viewModel = riveFile.defaultArtboardViewModel();
+        if (!viewModel) {
+          throw new Error('No default artboard view model found');
+        }
+        const instance = viewModel.createDefaultInstance();
+        if (!instance) {
+          throw new Error('Failed to create view model instance');
+        }
+        setViewModelInstance(instance);
+        setViewModelError(null);
       } catch (err) {
-        setError(
-          err instanceof Error ? err.message : 'Failed to load Rive file'
+        setViewModelError(
+          err instanceof Error
+            ? err.message
+            : 'Failed to create view model instance'
         );
-        setIsLoading(false);
+        setViewModelInstance(null);
       }
-    };
+    }
+  }, [riveFile]);
 
-    initializeRiveFileAndData();
-  }, []);
-
-  // Release the Rive file when the component unmounts
+  // Cleanup view model instance when component unmounts or the view model instance changes
   useEffect(() => {
     return () => {
-      if (riveFile) {
-        riveFile.release(); // IMPORTANT: This ensures that the native resources are deleted
-      }
+      viewModelInstance?.dispose();
     };
-  }, [riveFile]);
+  }, [viewModelInstance]);
 
   // Bind the view model instance to the RiveView
   useEffect(() => {
     if (viewModelInstance && riveViewRef) {
-      console.log('Binding the instance');
-      riveViewRef?.bindViewModelInstance(viewModelInstance);
+      try {
+        console.log('Binding the instance');
+        riveViewRef.bindViewModelInstance(viewModelInstance);
+      } catch (err) {
+        console.error('Failed to bind view model instance:', err);
+      }
     }
   }, [viewModelInstance, riveViewRef]);
 
@@ -67,7 +72,9 @@ export default function DataBindingExample() {
     viewModelInstance
   );
   useEffect(() => {
-    console.log('coinValue', coinValue);
+    if (coinValue !== undefined) {
+      console.log('coinValue', coinValue);
+    }
   }, [coinValue]);
 
   if (coinValueError) {
@@ -118,17 +125,20 @@ export default function DataBindingExample() {
   // Set the initial values of the properties
   useEffect(() => {
     if (viewModelInstance) {
-      setButtonText("Let's go!");
-      setBarColor('#0000FF');
-      // setBarColor({ r: 0, g: 255, b: 0, a: 255 });
+      try {
+        setButtonText("Let's go!");
+        setBarColor('#0000FF');
+      } catch (err) {
+        console.error('Failed to set initial values:', err);
+      }
     }
   }, [setBarColor, setButtonText, viewModelInstance]);
 
   return (
     <View style={styles.container}>
       <View style={styles.riveContainer}>
-        {error ? (
-          <Text style={styles.errorText}>{error}</Text>
+        {error || viewModelError ? (
+          <Text style={styles.errorText}>{error || viewModelError}</Text>
         ) : isLoading ? (
           <ActivityIndicator size="large" color="#0000ff" />
         ) : (

@@ -8,14 +8,21 @@ import {
 import {
   Fit,
   RiveView,
-  type RiveFile,
-  RiveFileFactory,
   useRive,
+  useRiveFile,
+  type RiveFileInput,
 } from 'react-native-rive';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { downloadFileAsArrayBuffer } from '../helpers/fileHelpers';
 
-type LoadingMethod = 'URL' | 'Resource' | 'ArrayBuffer' | 'Source';
+const LOADING_METHODS = {
+  SOURCE: 'Source',
+  URL: 'URL',
+  RESOURCE: 'Resource',
+  ARRAY_BUFFER: 'ArrayBuffer',
+} as const;
+
+type LoadingMethod = (typeof LOADING_METHODS)[keyof typeof LOADING_METHODS];
 
 interface CustomRiveViewProps {
   loadingMethod: LoadingMethod;
@@ -24,72 +31,53 @@ interface CustomRiveViewProps {
 
 const networkGraphicURL = 'https://cdn.rive.app/animations/vehicles.riv';
 
+const getInputForMethod = async (
+  method: LoadingMethod
+): Promise<RiveFileInput | undefined> => {
+  switch (method) {
+    case LOADING_METHODS.URL:
+      return networkGraphicURL;
+    case LOADING_METHODS.RESOURCE:
+      return 'rewards';
+    case LOADING_METHODS.ARRAY_BUFFER:
+      const arrayBuffer = await downloadFileAsArrayBuffer(networkGraphicURL);
+      return arrayBuffer || undefined;
+    case LOADING_METHODS.SOURCE:
+      return require('../../assets/rive/rating.riv');
+    default:
+      return undefined;
+  }
+};
+
 const CustomRiveView = ({ loadingMethod, title }: CustomRiveViewProps) => {
   const { setHybridRef } = useRive();
-  const [riveFile, setRiveFile] = useState<RiveFile | null>(null);
-  const riveFileRef = useRef<RiveFile | null>(null);
+  const [input, setInput] = useState<RiveFileInput | undefined>(undefined);
 
   useEffect(() => {
-    let isMounted = true;
+    const loadInput = async () => {
+      setInput(undefined);
 
-    const loadRiveFile = async () => {
       try {
-        // Release the current file before loading a new one
-        if (riveFileRef.current) {
-          riveFileRef.current.release();
-          riveFileRef.current = null;
-        }
-
-        let file: RiveFile | null = null;
-
-        switch (loadingMethod) {
-          case 'URL':
-            file = await RiveFileFactory.fromURL(networkGraphicURL);
-            break;
-          case 'Resource':
-            file = await RiveFileFactory.fromResource('rewards');
-            break;
-          case 'ArrayBuffer':
-            const arrayBuffer =
-              await downloadFileAsArrayBuffer(networkGraphicURL);
-            if (arrayBuffer) {
-              file = await RiveFileFactory.fromBytes(arrayBuffer);
-            }
-            break;
-          case 'Source':
-            file = await RiveFileFactory.fromSource(
-              require('../../assets/rive/rating.riv')
-            );
-            break;
-        }
-
-        if (file && isMounted) {
-          riveFileRef.current = file;
-          setRiveFile(file);
-        }
-      } catch (error) {
-        console.error(`Error loading Rive file from ${loadingMethod}:`, error);
+        const inputForMethod = await getInputForMethod(loadingMethod);
+        if (inputForMethod) setInput(inputForMethod);
+      } catch (err) {
+        console.error('Error loading input:', err);
       }
     };
 
-    setRiveFile(null);
-    loadRiveFile();
-
-    return () => {
-      isMounted = false;
-      if (riveFileRef.current) {
-        riveFileRef.current.release();
-        riveFileRef.current = null;
-      }
-    };
+    loadInput();
   }, [loadingMethod]);
+
+  const { riveFile, isLoading, error } = useRiveFile(input);
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{title}</Text>
-      {!riveFile ? (
+      {!input || isLoading ? (
         <ActivityIndicator style={styles.rive} size="large" color="#0000ff" />
-      ) : (
+      ) : error ? (
+        <Text style={styles.errorText}>{error}</Text>
+      ) : riveFile ? (
         <RiveView
           style={styles.rive}
           autoBind={false}
@@ -98,83 +86,56 @@ const CustomRiveView = ({ loadingMethod, title }: CustomRiveViewProps) => {
           file={riveFile}
           hybridRef={setHybridRef}
         />
-      )}
+      ) : null}
     </View>
   );
 };
 
+const TabButton = ({
+  method,
+  activeTab,
+  onPress,
+}: {
+  method: LoadingMethod;
+  activeTab: LoadingMethod;
+  onPress: () => void;
+}) => (
+  <TouchableOpacity
+    style={[styles.tab, activeTab === method && styles.activeTab]}
+    onPress={onPress}
+  >
+    <Text
+      style={[styles.tabText, activeTab === method && styles.activeTabText]}
+    >
+      {method}
+    </Text>
+  </TouchableOpacity>
+);
+
 export default function RiveFileLoadingExample() {
-  const [activeTab, setActiveTab] = useState<LoadingMethod>('Source');
+  const [activeTab, setActiveTab] = useState<LoadingMethod>(
+    LOADING_METHODS.SOURCE
+  );
 
-  const renderContent = () => {
-    const titles = {
-      Source: 'Loading from Source',
-      URL: 'Loading from URL',
-      Resource: 'Loading from Resource',
-      ArrayBuffer: 'Loading from ArrayBuffer',
-    };
-
-    return (
-      <CustomRiveView loadingMethod={activeTab} title={titles[activeTab]} />
-    );
+  const titles = {
+    [LOADING_METHODS.SOURCE]: 'Loading from Source',
+    [LOADING_METHODS.URL]: 'Loading from URL',
+    [LOADING_METHODS.RESOURCE]: 'Loading from Resource',
+    [LOADING_METHODS.ARRAY_BUFFER]: 'Loading from ArrayBuffer',
   };
 
   return (
     <View style={styles.container}>
-      {renderContent()}
+      <CustomRiveView loadingMethod={activeTab} title={titles[activeTab]} />
       <View style={styles.tabBar}>
-        <TouchableOpacity
-          style={[styles.tab, activeTab === 'Source' && styles.activeTab]}
-          onPress={() => setActiveTab('Source')}
-        >
-          <Text
-            style={[
-              styles.tabText,
-              activeTab === 'Source' && styles.activeTabText,
-            ]}
-          >
-            Source
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.tab, activeTab === 'URL' && styles.activeTab]}
-          onPress={() => setActiveTab('URL')}
-        >
-          <Text
-            style={[
-              styles.tabText,
-              activeTab === 'URL' && styles.activeTabText,
-            ]}
-          >
-            URL
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.tab, activeTab === 'Resource' && styles.activeTab]}
-          onPress={() => setActiveTab('Resource')}
-        >
-          <Text
-            style={[
-              styles.tabText,
-              activeTab === 'Resource' && styles.activeTabText,
-            ]}
-          >
-            Resource
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.tab, activeTab === 'ArrayBuffer' && styles.activeTab]}
-          onPress={() => setActiveTab('ArrayBuffer')}
-        >
-          <Text
-            style={[
-              styles.tabText,
-              activeTab === 'ArrayBuffer' && styles.activeTabText,
-            ]}
-          >
-            ArrayBuffer
-          </Text>
-        </TouchableOpacity>
+        {Object.values(LOADING_METHODS).map((method) => (
+          <TabButton
+            key={method}
+            method={method}
+            activeTab={activeTab}
+            onPress={() => setActiveTab(method)}
+          />
+        ))}
       </View>
     </View>
   );
@@ -218,5 +179,10 @@ const styles = StyleSheet.create({
   activeTabText: {
     color: '#007AFF',
     fontWeight: 'bold',
+  },
+  errorText: {
+    color: 'red',
+    textAlign: 'center',
+    padding: 20,
   },
 });
