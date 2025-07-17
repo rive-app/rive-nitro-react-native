@@ -10,23 +10,9 @@ class HybridRiveFileFactory: HybridRiveFileFactorySpec {
         guard let url = URL(string: url) else {
           throw RuntimeError.error(withMessage: "Invalid URL: \(url)")
         }
-        
-        let riveFile = try await withCheckedThrowingContinuation { continuation in
-          DispatchQueue.global(qos: .userInitiated).async {
-            do {
-              let riveData = try Data(contentsOf: url)
-              let riveFile = try RiveFile(data: riveData, loadCdn: true)
-              DispatchQueue.main.async {
-                continuation.resume(returning: riveFile)
-              }
-            } catch {
-              DispatchQueue.main.async {
-                continuation.resume(throwing: error)
-              }
-            }
-          }
-        }
-        
+
+        let (riveData, _) = try await URLSession.shared.get(url)
+        let riveFile = try RiveFile(data: riveData, loadCdn: true)        
         let hybridRiveFile = HybridRiveFile()
         hybridRiveFile.riveFile = riveFile
         return hybridRiveFile
