@@ -12,7 +12,7 @@ class HybridViewModel(private val viewModel: ViewModel) : HybridViewModelSpec() 
     get() = viewModel.propertyCount.toDouble()
   override val instanceCount: Double
     get() = viewModel.instanceCount.toDouble()
-  override val name: String
+  override val modelName: String
     get() = viewModel.name
 
   override fun createInstanceByIndex(index: Double): HybridViewModelInstanceSpec? {

@@ -15,7 +15,7 @@
     "react": "19.0.0",
     "react-native": "0.79.2",
     "react-native-gesture-handler": "^2.25.0",
-    "react-native-nitro-modules": "^0.25.2",
+    "react-native-nitro-modules": "^0.31.3",
     "react-native-safe-area-context": "^5.4.0"
   },
   "devDependencies": {
