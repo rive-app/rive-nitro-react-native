@@ -23,8 +23,13 @@ jobs:
       - name: Lint files
         run: yarn lint
 
-      - name: Codegen
-        run: yarn nitrogen
+      - name: Validate Nitrogen Generated Code
+        run: |
+          yarn nitrogen
+          if ! git diff --exit-code nitrogen/generated/; then
+            echo "Error: nitrogen/generated/ is out of date. Please run 'yarn nitrogen' and commit the changes."
+            exit 1
+          fi
 
       - name: Typecheck files
         run: yarn typecheck
@@ -50,8 +55,13 @@ jobs:
       - name: Setup
         uses: ./.github/actions/setup
 
-      - name: Build package
-        run: yarn nitrogen
+      - name: Validate Nitrogen Generated Code
+        run: |
+          yarn nitrogen
+          if ! git diff --exit-code nitrogen/generated/; then
+            echo "Error: nitrogen/generated/ is out of date. Please run 'yarn nitrogen' and commit the changes."
+            exit 1
+          fi
 
       - name: Build package
         run: yarn prepare
@@ -105,10 +115,6 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('example/android/gradle/wrapper/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-
-      - name: Generate nitrogen code
-        if: env.turbo_cache_hit != 1
-        run: yarn nitrogen
 
       - name: Build example for Android
         env:
@@ -164,7 +170,6 @@ jobs:
       - name: Install cocoapods
         if: env.turbo_cache_hit != 1 && steps.cocoapods-cache.outputs.cache-hit != 'true'
         run: |
-          yarn nitrogen
           cd example
           bundle install
           bundle exec pod install --project-directory=ios

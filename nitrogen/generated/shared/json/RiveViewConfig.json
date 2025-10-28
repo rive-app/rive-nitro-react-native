@@ -1,0 +1,17 @@
+{
+  "uiViewClassName": "RiveView",
+  "supportsRawText": false,
+  "bubblingEventTypes": {},
+  "directEventTypes": {},
+  "validAttributes": {
+    "artboardName": true,
+    "stateMachineName": true,
+    "autoBind": true,
+    "autoPlay": true,
+    "file": true,
+    "alignment": true,
+    "fit": true,
+    "layoutScaleFactor": true,
+    "hybridRef": true
+  }
+}
