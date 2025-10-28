@@ -18,7 +18,7 @@ Pod::Spec.new do |s|
   load 'nitrogen/generated/ios/Rive+autolinking.rb'
   add_nitrogen_files(s)
 
-  s.dependency "RiveRuntime", "6.8.1"
+  s.dependency "RiveRuntime", "6.12.0"
 
  install_modules_dependencies(s)
 end
