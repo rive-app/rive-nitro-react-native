@@ -1,10 +1,13 @@
-import { useCallback } from 'react';
 import {
   type ViewModelBooleanProperty,
   type ViewModelInstance,
 } from '../specs/ViewModel.nitro';
 import type { UseRivePropertyResult } from '../types';
 import { useRiveProperty } from './useRiveProperty';
+
+const BOOLEAN_PROPERTY_OPTIONS = {
+  getProperty: (vmi: ViewModelInstance, p: string) => vmi.booleanProperty(p),
+};
 
 /**
  * Hook for interacting with boolean ViewModel instance properties.
@@ -20,8 +23,6 @@ export function useRiveBoolean(
   const [value, setValue, error] = useRiveProperty<
     ViewModelBooleanProperty,
     boolean
-  >(viewModelInstance, path, {
-    getProperty: useCallback((vmi, p) => vmi.booleanProperty(p), []),
-  });
+  >(viewModelInstance, path, BOOLEAN_PROPERTY_OPTIONS);
   return { value, setValue, error };
 }

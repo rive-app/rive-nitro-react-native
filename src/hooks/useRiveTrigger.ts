@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import {
   type ViewModelInstance,
   type ViewModelTriggerProperty,
@@ -8,6 +8,9 @@ import type {
   UseViewModelInstanceTriggerParameters,
 } from '../types';
 import { useRiveProperty } from './useRiveProperty';
+
+const getTriggerProperty = (vmi: ViewModelInstance, p: string) =>
+  vmi.triggerProperty(p);
 
 /**
  * Hook for interacting with trigger ViewModel instance properties.
@@ -22,13 +25,19 @@ export function useRiveTrigger(
   params?: UseViewModelInstanceTriggerParameters
 ): UseRiveTriggerResult {
   const { onTrigger } = params ?? {};
+
+  const triggerOptions = useMemo(
+    () => ({
+      getProperty: getTriggerProperty,
+      onPropertyEventOverride: onTrigger,
+    }),
+    [onTrigger]
+  );
+
   const [_, __, error, property] = useRiveProperty<
     ViewModelTriggerProperty,
     undefined
-  >(viewModelInstance, path, {
-    getProperty: useCallback((vmi, p) => vmi.triggerProperty(p), []),
-    onPropertyEventOverride: onTrigger,
-  });
+  >(viewModelInstance, path, triggerOptions);
 
   const trigger = useCallback(() => {
     if (property) {

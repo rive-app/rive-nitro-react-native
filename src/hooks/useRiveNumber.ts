@@ -1,10 +1,13 @@
-import { useCallback } from 'react';
 import {
   type ViewModelInstance,
   type ViewModelNumberProperty,
 } from '../specs/ViewModel.nitro';
 import type { UseRivePropertyResult } from '../types';
 import { useRiveProperty } from './useRiveProperty';
+
+const NUMBER_PROPERTY_OPTIONS = {
+  getProperty: (vmi: ViewModelInstance, p: string) => vmi.numberProperty(p),
+};
 
 /**
  * Hook for interacting with number ViewModel instance properties.
@@ -20,8 +23,6 @@ export function useRiveNumber(
   const [value, setValue, error] = useRiveProperty<
     ViewModelNumberProperty,
     number
-  >(viewModelInstance, path, {
-    getProperty: useCallback((vmi, p) => vmi.numberProperty(p), []),
-  });
+  >(viewModelInstance, path, NUMBER_PROPERTY_OPTIONS);
   return { value, setValue, error };
 }
