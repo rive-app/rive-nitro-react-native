@@ -2051,7 +2051,7 @@ SPEC CHECKSUMS:
   glog: 5683914934d5b6e4240e497e0f4a3b42d1854183
   hermes-engine: 314be5250afa5692b57b4dd1705959e1973a8ebe
   NitroModules: 4e92fa5218beff179daf51714fd117e829027dd3
-  RCT-Folly: e78785aa9ba2ed998ea4151e314036f6c49e6d82
+  RCT-Folly: 36fe2295e44b10d831836cc0d1daec5f8abcf809
   RCTDeprecation: 83ffb90c23ee5cea353bd32008a7bca100908f8c
   RCTRequired: eb7c0aba998009f47a540bec9e9d69a54f68136e
   RCTTypeSafety: 659ae318c09de0477fd27bbc9e140071c7ea5c93
@@ -2112,13 +2112,13 @@ SPEC CHECKSUMS:
   React-timing: a90f4654cbda9c628614f9bee68967f1768bd6a5
   React-utils: a612d50555b6f0f90c74b7d79954019ad47f5de6
   ReactAppDependencyProvider: 04d5eb15eb46be6720e17a4a7fa92940a776e584
-  ReactCodegen: c63eda03ba1d94353fb97b031fc84f75a0d125ba
+  ReactCodegen: f37719863f9355a030dff77c98f59b7206333add
   ReactCommon: 76d2dc87136d0a667678668b86f0fca0c16fdeb0
   Rive: 273bc013df446eeaf8e9049a72033095ec339dde
   RiveRuntime: 1e72d73bea430242387177b9d0aa95126406b462
   RNGestureHandler: ebef699ea17e7c0006c1074e1e423ead60ce0121
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
-  Yoga: c758bfb934100bb4bf9cbaccb52557cee35e8bdf
+  Yoga: 9f110fc4b7aa538663cba3c14cbb1c335f43c13f
 
 PODFILE CHECKSUM: 6974e58448067deb1048e3b4490e929f624eea3c
 
