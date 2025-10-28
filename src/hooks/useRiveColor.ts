@@ -7,6 +7,10 @@ import { type UseRivePropertyResult } from '../types';
 import { useRiveProperty } from './useRiveProperty';
 import { RiveColor } from '../core/RiveColor';
 
+const COLOR_PROPERTY_OPTIONS = {
+  getProperty: (vmi: ViewModelInstance, p: string) => vmi.colorProperty(p),
+};
+
 /**
  * Hook for interacting with color ViewModel instance properties.
  *
@@ -23,9 +27,7 @@ export function useRiveColor(
   const [rawValue, setRawValue, error] = useRiveProperty<
     ViewModelColorProperty,
     number
-  >(viewModelInstance, path, {
-    getProperty: useCallback((vmi, p) => vmi.colorProperty(p), []),
-  });
+  >(viewModelInstance, path, COLOR_PROPERTY_OPTIONS);
 
   const value =
     rawValue !== undefined ? RiveColor.fromInt(rawValue) : undefined;

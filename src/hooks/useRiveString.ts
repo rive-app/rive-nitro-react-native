@@ -1,10 +1,13 @@
-import { useCallback } from 'react';
 import {
   type ViewModelInstance,
   type ViewModelStringProperty,
 } from '../specs/ViewModel.nitro';
 import type { UseRivePropertyResult } from '../types';
 import { useRiveProperty } from './useRiveProperty';
+
+const STRING_PROPERTY_OPTIONS = {
+  getProperty: (vmi: ViewModelInstance, p: string) => vmi.stringProperty(p),
+};
 
 /**
  * Hook for interacting with string ViewModel instance properties.
@@ -20,8 +23,6 @@ export function useRiveString(
   const [value, setValue, error] = useRiveProperty<
     ViewModelStringProperty,
     string
-  >(viewModelInstance, path, {
-    getProperty: useCallback((vmi, p) => vmi.stringProperty(p), []),
-  });
+  >(viewModelInstance, path, STRING_PROPERTY_OPTIONS);
   return { value, setValue, error };
 }

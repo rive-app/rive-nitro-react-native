@@ -23,6 +23,9 @@ jobs:
       - name: Lint files
         run: yarn lint
 
+      - name: Codegen
+        run: yarn nitrogen
+
       - name: Typecheck files
         run: yarn typecheck
 
@@ -46,6 +49,9 @@ jobs:
 
       - name: Setup
         uses: ./.github/actions/setup
+
+      - name: Build package
+        run: yarn nitrogen
 
       - name: Build package
         run: yarn prepare
@@ -100,6 +106,10 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
+      - name: Generate nitrogen code
+        if: env.turbo_cache_hit != 1
+        run: yarn nitrogen
+
       - name: Build example for Android
         env:
           JAVA_OPTS: "-XX:MaxHeapSize=6g"
@@ -109,7 +119,7 @@ jobs:
   build-ios:
     runs-on: macos-latest
     env:
-      XCODE_VERSION: 16.2
+      XCODE_VERSION: 16.4
       TURBO_CACHE_DIR: .turbo/ios
     steps:
       - name: Checkout
@@ -154,6 +164,7 @@ jobs:
       - name: Install cocoapods
         if: env.turbo_cache_hit != 1 && steps.cocoapods-cache.outputs.cache-hit != 'true'
         run: |
+          yarn nitrogen
           cd example
           bundle install
           bundle exec pod install --project-directory=ios
