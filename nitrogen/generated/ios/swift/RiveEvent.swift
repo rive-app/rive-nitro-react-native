@@ -18,16 +18,31 @@ public extension RiveEvent {
   /**
    * Create a new instance of `RiveEvent`.
    */
-  init(name: String, type: RiveEventType, delay: Double?, properties: AnyMap?, url: String?, target: String?) {
+  init(name: String, type: RiveEventType, delay: Double?, properties: Dictionary<String, EventPropertiesOutput>?, url: String?, target: String?) {
     self.init(std.string(name), type, { () -> bridge.std__optional_double_ in
       if let __unwrappedValue = delay {
         return bridge.create_std__optional_double_(__unwrappedValue)
       } else {
         return .init()
       }
-    }(), { () -> bridge.std__optional_std__shared_ptr_AnyMap__ in
+    }(), { () -> bridge.std__optional_std__unordered_map_std__string__std__variant_bool__std__string__double___ in
       if let __unwrappedValue = properties {
-        return bridge.create_std__optional_std__shared_ptr_AnyMap__(__unwrappedValue.cppPart)
+        return bridge.create_std__optional_std__unordered_map_std__string__std__variant_bool__std__string__double___({ () -> bridge.std__unordered_map_std__string__std__variant_bool__std__string__double__ in
+          var __map = bridge.create_std__unordered_map_std__string__std__variant_bool__std__string__double__(__unwrappedValue.count)
+          for (__k, __v) in __unwrappedValue {
+            bridge.emplace_std__unordered_map_std__string__std__variant_bool__std__string__double__(&__map, std.string(__k), { () -> bridge.std__variant_bool__std__string__double_ in
+              switch __v {
+                case .first(let __value):
+                  return bridge.create_std__variant_bool__std__string__double_(__value)
+                case .second(let __value):
+                  return bridge.create_std__variant_bool__std__string__double_(std.string(__value))
+                case .third(let __value):
+                  return bridge.create_std__variant_bool__std__string__double_(__value)
+              }
+            }().variant)
+          }
+          return __map
+        }())
       } else {
         return .init()
       }
@@ -85,13 +100,36 @@ public extension RiveEvent {
     }
   }
   
-  var properties: AnyMap? {
+  var properties: Dictionary<String, EventPropertiesOutput>? {
     @inline(__always)
     get {
-      return { () -> AnyMap? in
-        if bridge.has_value_std__optional_std__shared_ptr_AnyMap__(self.__properties) {
-          let __unwrapped = bridge.get_std__optional_std__shared_ptr_AnyMap__(self.__properties)
-          return AnyMap(withCppPart: __unwrapped)
+      return { () -> Dictionary<String, EventPropertiesOutput>? in
+        if bridge.has_value_std__optional_std__unordered_map_std__string__std__variant_bool__std__string__double___(self.__properties) {
+          let __unwrapped = bridge.get_std__optional_std__unordered_map_std__string__std__variant_bool__std__string__double___(self.__properties)
+          return { () -> Dictionary<String, EventPropertiesOutput> in
+            var __dictionary = Dictionary<String, EventPropertiesOutput>(minimumCapacity: __unwrapped.size())
+            let __keys = bridge.get_std__unordered_map_std__string__std__variant_bool__std__string__double___keys(__unwrapped)
+            for __key in __keys {
+              let __value = bridge.get_std__unordered_map_std__string__std__variant_bool__std__string__double___value(__unwrapped, __key)
+              __dictionary[String(__key)] = { () -> EventPropertiesOutput in
+                let __variant = bridge.std__variant_bool__std__string__double_(__value)
+                switch __variant.index() {
+                  case 0:
+                    let __actual = __variant.get_0()
+                    return .first(__actual)
+                  case 1:
+                    let __actual = __variant.get_1()
+                    return .second(String(__actual))
+                  case 2:
+                    let __actual = __variant.get_2()
+                    return .third(__actual)
+                  default:
+                    fatalError("Variant can never have index \(__variant.index())!")
+                }
+              }()
+            }
+            return __dictionary
+          }()
         } else {
           return nil
         }
@@ -99,9 +137,24 @@ public extension RiveEvent {
     }
     @inline(__always)
     set {
-      self.__properties = { () -> bridge.std__optional_std__shared_ptr_AnyMap__ in
+      self.__properties = { () -> bridge.std__optional_std__unordered_map_std__string__std__variant_bool__std__string__double___ in
         if let __unwrappedValue = newValue {
-          return bridge.create_std__optional_std__shared_ptr_AnyMap__(__unwrappedValue.cppPart)
+          return bridge.create_std__optional_std__unordered_map_std__string__std__variant_bool__std__string__double___({ () -> bridge.std__unordered_map_std__string__std__variant_bool__std__string__double__ in
+            var __map = bridge.create_std__unordered_map_std__string__std__variant_bool__std__string__double__(__unwrappedValue.count)
+            for (__k, __v) in __unwrappedValue {
+              bridge.emplace_std__unordered_map_std__string__std__variant_bool__std__string__double__(&__map, std.string(__k), { () -> bridge.std__variant_bool__std__string__double_ in
+                switch __v {
+                  case .first(let __value):
+                    return bridge.create_std__variant_bool__std__string__double_(__value)
+                  case .second(let __value):
+                    return bridge.create_std__variant_bool__std__string__double_(std.string(__value))
+                  case .third(let __value):
+                    return bridge.create_std__variant_bool__std__string__double_(__value)
+                }
+              }().variant)
+            }
+            return __map
+          }())
         } else {
           return .init()
         }

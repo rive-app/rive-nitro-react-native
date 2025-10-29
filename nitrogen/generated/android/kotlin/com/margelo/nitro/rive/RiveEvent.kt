@@ -9,7 +9,7 @@ package com.margelo.nitro.rive
 
 import androidx.annotation.Keep
 import com.facebook.proguard.annotations.DoNotStrip
-import com.margelo.nitro.core.AnyMap
+
 
 /**
  * Represents the JavaScript object/struct "RiveEvent".
@@ -28,7 +28,7 @@ data class RiveEvent(
   val delay: Double?,
   @DoNotStrip
   @Keep
-  val properties: AnyMap?,
+  val properties: Map<String, EventPropertiesOutput>?,
   @DoNotStrip
   @Keep
   val url: String?,
@@ -46,7 +46,7 @@ data class RiveEvent(
     @Keep
     @Suppress("unused")
     @JvmStatic
-    private fun fromCpp(name: String, type: RiveEventType, delay: Double?, properties: AnyMap?, url: String?, target: String?): RiveEvent {
+    private fun fromCpp(name: String, type: RiveEventType, delay: Double?, properties: Map<String, EventPropertiesOutput>?, url: String?, target: String?): RiveEvent {
       return RiveEvent(name, type, delay, properties, url, target)
     }
   }

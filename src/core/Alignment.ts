@@ -1,62 +1,46 @@
-// export enum Alignment {
-//   /**
-//    * Aligns content to the top-left corner of the container
-//    */
-//   TopLeft,
+export enum Alignment {
+  /**
+   * Aligns content to the top-left corner of the container
+   */
+  TopLeft = 'topLeft',
 
-//   /**
-//    * Centers content horizontally at the top of the container
-//    */
-//   TopCenter,
+  /**
+   * Centers content horizontally at the top of the container
+   */
+  TopCenter = 'topCenter',
 
-//   /**
-//    * Aligns content to the top-right corner of the container
-//    */
-//   TopRight,
+  /**
+   * Aligns content to the top-right corner of the container
+   */
+  TopRight = 'topRight',
 
-//   /**
-//    * Centers content vertically on the left side of the container
-//    */
-//   CenterLeft,
+  /**
+   * Centers content vertically on the left side of the container
+   */
+  CenterLeft = 'centerLeft',
 
-//   /**
-//    * Centers content both horizontally and vertically in the container
-//    */
-//   Center,
+  /**
+   * Centers content both horizontally and vertically in the container
+   */
+  Center = 'center',
 
-//   /**
-//    * Centers content vertically on the right side of the container
-//    */
-//   CenterRight,
+  /**
+   * Centers content vertically on the right side of the container
+   */
+  CenterRight = 'centerRight',
 
-//   /**
-//    * Aligns content to the bottom-left corner of the container
-//    */
-//   BottomLeft,
+  /**
+   * Aligns content to the bottom-left corner of the container
+   */
+  BottomLeft = 'bottomLeft',
 
-//   /**
-//    * Centers content horizontally at the bottom of the container
-//    */
-//   BottomCenter,
+  /**
+   * Centers content horizontally at the bottom of the container
+   */
+  BottomCenter = 'bottomCenter',
 
-//   /**
-//    * Aligns content to the bottom-right corner of the container
-//    */
-//   BottomRight,
-// }
-
-/**
- * The alignment of the Rive graphic within its container.
- */
-export type Alignment =
-  | 'topLeft'
-  | 'topCenter'
-  | 'topRight'
-  | 'centerLeft'
-  | 'center'
-  | 'centerRight'
-  | 'bottomLeft'
-  | 'bottomCenter'
-  | 'bottomRight';
-
-// TODO: iOS Code generation is giving issues for an enum alignment
+  /**
+   * Aligns content to the bottom-right corner of the container
+   */
+  BottomRight = 'bottomRight',
+}

@@ -10,12 +10,13 @@
 #include <fbjni/fbjni.h>
 #include "RiveEvent.hpp"
 
+#include "JEventPropertiesOutput.hpp"
 #include "JRiveEventType.hpp"
 #include "RiveEventType.hpp"
-#include <NitroModules/AnyMap.hpp>
-#include <NitroModules/JAnyMap.hpp>
 #include <optional>
 #include <string>
+#include <unordered_map>
+#include <variant>
 
 namespace margelo::nitro::rive {
 
@@ -42,8 +43,8 @@ namespace margelo::nitro::rive {
       jni::local_ref<JRiveEventType> type = this->getFieldValue(fieldType);
       static const auto fieldDelay = clazz->getField<jni::JDouble>("delay");
       jni::local_ref<jni::JDouble> delay = this->getFieldValue(fieldDelay);
-      static const auto fieldProperties = clazz->getField<JAnyMap::javaobject>("properties");
-      jni::local_ref<JAnyMap::javaobject> properties = this->getFieldValue(fieldProperties);
+      static const auto fieldProperties = clazz->getField<jni::JMap<jni::JString, JEventPropertiesOutput>>("properties");
+      jni::local_ref<jni::JMap<jni::JString, JEventPropertiesOutput>> properties = this->getFieldValue(fieldProperties);
       static const auto fieldUrl = clazz->getField<jni::JString>("url");
       jni::local_ref<jni::JString> url = this->getFieldValue(fieldUrl);
       static const auto fieldTarget = clazz->getField<jni::JString>("target");
@@ -52,7 +53,14 @@ namespace margelo::nitro::rive {
         name->toStdString(),
         type->toCpp(),
         delay != nullptr ? std::make_optional(delay->value()) : std::nullopt,
-        properties != nullptr ? std::make_optional(properties->cthis()->getMap()) : std::nullopt,
+        properties != nullptr ? std::make_optional([&]() {
+          std::unordered_map<std::string, std::variant<bool, std::string, double>> __map;
+          __map.reserve(properties->size());
+          for (const auto& __entry : *properties) {
+            __map.emplace(__entry.first->toStdString(), __entry.second->toCpp());
+          }
+          return __map;
+        }()) : std::nullopt,
         url != nullptr ? std::make_optional(url->toStdString()) : std::nullopt,
         target != nullptr ? std::make_optional(target->toStdString()) : std::nullopt
       );
@@ -64,7 +72,7 @@ namespace margelo::nitro::rive {
      */
     [[maybe_unused]]
     static jni::local_ref<JRiveEvent::javaobject> fromCpp(const RiveEvent& value) {
-      using JSignature = JRiveEvent(jni::alias_ref<jni::JString>, jni::alias_ref<JRiveEventType>, jni::alias_ref<jni::JDouble>, jni::alias_ref<JAnyMap::javaobject>, jni::alias_ref<jni::JString>, jni::alias_ref<jni::JString>);
+      using JSignature = JRiveEvent(jni::alias_ref<jni::JString>, jni::alias_ref<JRiveEventType>, jni::alias_ref<jni::JDouble>, jni::alias_ref<jni::JMap<jni::JString, JEventPropertiesOutput>>, jni::alias_ref<jni::JString>, jni::alias_ref<jni::JString>);
       static const auto clazz = javaClassStatic();
       static const auto create = clazz->getStaticMethod<JSignature>("fromCpp");
       return create(
@@ -72,7 +80,13 @@ namespace margelo::nitro::rive {
         jni::make_jstring(value.name),
         JRiveEventType::fromCpp(value.type),
         value.delay.has_value() ? jni::JDouble::valueOf(value.delay.value()) : nullptr,
-        value.properties.has_value() ? JAnyMap::create(value.properties.value()) : nullptr,
+        value.properties.has_value() ? [&]() -> jni::local_ref<jni::JMap<jni::JString, JEventPropertiesOutput>> {
+          auto __map = jni::JHashMap<jni::JString, JEventPropertiesOutput>::create(value.properties.value().size());
+          for (const auto& __entry : value.properties.value()) {
+            __map->put(jni::make_jstring(__entry.first), JEventPropertiesOutput::fromCpp(__entry.second));
+          }
+          return __map;
+        }() : nullptr,
         value.url.has_value() ? jni::make_jstring(value.url.value()) : nullptr,
         value.target.has_value() ? jni::make_jstring(value.target.value()) : nullptr
       );

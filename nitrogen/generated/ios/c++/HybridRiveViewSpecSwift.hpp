@@ -36,7 +36,8 @@ namespace margelo::nitro::rive { enum class RiveEventType; }
 #include "RiveEvent.hpp"
 #include <functional>
 #include "RiveEventType.hpp"
-#include <NitroModules/AnyMap.hpp>
+#include <variant>
+#include <unordered_map>
 
 #include "Rive-Swift-Cxx-Umbrella.hpp"
 

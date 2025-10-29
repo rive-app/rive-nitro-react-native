@@ -52,6 +52,7 @@ target_sources(
   ../nitrogen/generated/android/c++/JHybridRiveFileSpec.cpp
   ../nitrogen/generated/android/c++/JHybridRiveFileFactorySpec.cpp
   ../nitrogen/generated/android/c++/JHybridRiveViewSpec.cpp
+  ../nitrogen/generated/android/c++/JEventPropertiesOutput.cpp
   ../nitrogen/generated/android/c++/views/JHybridRiveViewStateUpdater.cpp
   ../nitrogen/generated/android/c++/JHybridViewModelSpec.cpp
   ../nitrogen/generated/android/c++/JHybridViewModelInstanceSpec.cpp

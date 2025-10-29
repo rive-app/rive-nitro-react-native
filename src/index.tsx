@@ -56,7 +56,7 @@ export type {
   ViewModelTriggerProperty,
 } from './specs/ViewModel.nitro';
 export { Fit } from './core/Fit';
-export { type Alignment } from './core/Alignment';
+export { Alignment } from './core/Alignment';
 export { RiveFileFactory } from './core/RiveFile';
 export { RiveColor } from './core/RiveColor';
 export { type RiveEvent, RiveEventType } from './core/Events';

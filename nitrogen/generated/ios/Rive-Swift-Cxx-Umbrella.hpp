@@ -67,7 +67,6 @@ namespace margelo::nitro::rive { struct RiveEvent; }
 #include "HybridViewModelTriggerPropertySpec.hpp"
 #include "RiveEvent.hpp"
 #include "RiveEventType.hpp"
-#include <NitroModules/AnyMap.hpp>
 #include <NitroModules/ArrayBuffer.hpp>
 #include <NitroModules/Promise.hpp>
 #include <NitroModules/Result.hpp>
@@ -76,6 +75,8 @@ namespace margelo::nitro::rive { struct RiveEvent; }
 #include <memory>
 #include <optional>
 #include <string>
+#include <unordered_map>
+#include <variant>
 
 // C++ helpers for Swift
 #include "Rive-Swift-Cxx-Bridge.hpp"

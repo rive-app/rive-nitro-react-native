@@ -1,5 +1,3 @@
-import type { AnyMap } from 'react-native-nitro-modules';
-
 // export interface RiveEvent {
 //   name: string;
 //   type: number;
@@ -29,14 +27,13 @@ export enum RiveEventType {
   OpenUrl,
 }
 
-// export type EventPropertiesOutput = number | boolean | string;
+export type EventPropertiesOutput = number | boolean | string;
 
 export interface RiveEvent {
   name: string;
   type: RiveEventType;
   delay?: number;
-  // properties?: Record<string, EventPropertiesOutput>; // TODO: This is failing on Nitro android
-  properties?: AnyMap;
+  properties?: Record<string, EventPropertiesOutput>; // TODO: This is failing on Nitro android
   url?: string;
   target?: string;
 }
