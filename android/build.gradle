@@ -125,7 +125,7 @@ def kotlin_version = getExtOrDefault("kotlinVersion")
 dependencies {
   implementation "com.facebook.react:react-android"
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-  implementation 'app.rive:rive-android:10.1.4'
+  implementation 'app.rive:rive-android:10.5.0'
   implementation "androidx.startup:startup-runtime:1.2.0"
   implementation project(":react-native-nitro-modules")
 }

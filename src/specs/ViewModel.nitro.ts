@@ -11,7 +11,7 @@ export interface ViewModel
   /** The number of view model instances in the view model */
   readonly instanceCount: number;
   /** The name of the view model */
-  readonly name: string;
+  readonly modelName: string;
   /** Create a new instance of the view model by index */
   createInstanceByIndex(index: number): ViewModelInstance | null;
   /** Create a new instance of the view model by name */
@@ -30,8 +30,7 @@ export interface ViewModel
 export interface ViewModelInstance
   extends HybridObject<{ ios: 'swift'; android: 'kotlin' }> {
   /** The name of the view model instance */
-  readonly name: string;
-
+  readonly instanceName: string;
   /** Get a number property from the view model instance at the given path */
   numberProperty(path: string): ViewModelNumberProperty | null;
 
@@ -52,9 +51,7 @@ export interface ViewModelInstance
 }
 
 export interface ViewModelProperty
-  extends HybridObject<{ ios: 'swift'; android: 'kotlin' }> {
-  dispose(): void;
-}
+  extends HybridObject<{ ios: 'swift'; android: 'kotlin' }> {}
 
 export interface ObservableProperty {
   /** Remove all listeners from the view model number property */
