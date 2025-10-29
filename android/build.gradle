@@ -122,10 +122,33 @@ repositories {
 
 def kotlin_version = getExtOrDefault("kotlinVersion")
 
+def getRiveAndroidVersion() {
+  if (rootProject.ext.has('RiveRuntimeAndroidVersion')) {
+    return rootProject.ext.get('RiveRuntimeAndroidVersion')
+  }
+
+  if (project.hasProperty('Rive_RiveRuntimeAndroidVersion')) {
+    return project.property('Rive_RiveRuntimeAndroidVersion')
+  }
+
+  def packageJson = file("${projectDir}/../package.json")
+  if (packageJson.exists()) {
+    def json = new groovy.json.JsonSlurper().parseText(packageJson.text)
+    if (json.runtimeVersions?.android) {
+      return json.runtimeVersions.android
+    }
+  }
+
+  throw new GradleException("Failed to determine Rive Android SDK version. Please ensure package.json contains 'runtimeVersions.android'")
+}
+
+def riveAndroidVersion = getRiveAndroidVersion()
+println "react-native-rive: Rive Android SDK ${riveAndroidVersion}"
+
 dependencies {
   implementation "com.facebook.react:react-android"
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-  implementation 'app.rive:rive-android:10.5.0'
+  implementation "app.rive:rive-android:${riveAndroidVersion}"
   implementation "androidx.startup:startup-runtime:1.2.0"
   implementation project(":react-native-nitro-modules")
 }

@@ -2,6 +2,34 @@ require "json"
 
 package = JSON.parse(File.read(File.join(__dir__, "package.json")))
 
+rive_ios_version = nil
+
+if ENV['RIVE_RUNTIME_IOS_VERSION']
+  rive_ios_version = ENV['RIVE_RUNTIME_IOS_VERSION']
+end
+
+if !rive_ios_version && defined?($RiveRuntimeIOSVersion)
+  rive_ios_version = $RiveRuntimeIOSVersion
+end
+
+if !rive_ios_version && defined?(Pod::Config) && Pod::Config.respond_to?(:instance)
+  podfile_properties_path = File.join(Pod::Config.instance.installation_root, 'Podfile.properties.json')
+  if File.exist?(podfile_properties_path)
+    podfile_properties = JSON.parse(File.read(podfile_properties_path)) rescue {}
+    rive_ios_version = podfile_properties['RiveRuntimeIOSVersion'] if podfile_properties['RiveRuntimeIOSVersion']
+  end
+end
+
+if !rive_ios_version && package['runtimeVersions'] && package['runtimeVersions']['ios']
+  rive_ios_version = package['runtimeVersions']['ios']
+end
+
+if !rive_ios_version
+  raise "Internal Error: Failed to determine Rive iOS SDK version. Please ensure package.json contains 'runtimeVersions.ios'"
+end
+
+Pod::UI.puts "react-native-rive: Rive iOS SDK #{rive_ios_version}"
+
 Pod::Spec.new do |s|
   s.name         = "Rive"
   s.version      = package["version"]
@@ -18,7 +46,7 @@ Pod::Spec.new do |s|
   load 'nitrogen/generated/ios/Rive+autolinking.rb'
   add_nitrogen_files(s)
 
-  s.dependency "RiveRuntime", "6.12.0"
+  s.dependency "RiveRuntime", rive_ios_version
 
  install_modules_dependencies(s)
 end
