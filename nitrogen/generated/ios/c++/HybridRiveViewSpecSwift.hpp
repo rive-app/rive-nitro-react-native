@@ -20,8 +20,8 @@ namespace margelo::nitro::rive { enum class Alignment; }
 namespace margelo::nitro::rive { enum class Fit; }
 // Forward declaration of `HybridViewModelInstanceSpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridViewModelInstanceSpec; }
-// Forward declaration of `RiveEvent` to properly resolve imports.
-namespace margelo::nitro::rive { struct RiveEvent; }
+// Forward declaration of `UnifiedRiveEvent` to properly resolve imports.
+namespace margelo::nitro::rive { struct UnifiedRiveEvent; }
 // Forward declaration of `RiveEventType` to properly resolve imports.
 namespace margelo::nitro::rive { enum class RiveEventType; }
 
@@ -33,7 +33,7 @@ namespace margelo::nitro::rive { enum class RiveEventType; }
 #include "Fit.hpp"
 #include <NitroModules/Promise.hpp>
 #include "HybridViewModelInstanceSpec.hpp"
-#include "RiveEvent.hpp"
+#include "UnifiedRiveEvent.hpp"
 #include <functional>
 #include "RiveEventType.hpp"
 #include <variant>
@@ -164,7 +164,7 @@ namespace margelo::nitro::rive {
         std::rethrow_exception(__result.error());
       }
     }
-    inline void onEventListener(const std::function<void(const RiveEvent& /* event */)>& onEvent) override {
+    inline void onEventListener(const std::function<void(const UnifiedRiveEvent& /* event */)>& onEvent) override {
       auto __result = _swiftPart.onEventListener(onEvent);
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());

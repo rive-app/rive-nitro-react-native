@@ -338,11 +338,11 @@ open class HybridRiveViewSpec_cxx {
   }
   
   @inline(__always)
-  public final func onEventListener(onEvent: bridge.Func_void_RiveEvent) -> bridge.Result_void_ {
+  public final func onEventListener(onEvent: bridge.Func_void_UnifiedRiveEvent) -> bridge.Result_void_ {
     do {
-      try self.__implementation.onEventListener(onEvent: { () -> (RiveEvent) -> Void in
-        let __wrappedFunction = bridge.wrap_Func_void_RiveEvent(onEvent)
-        return { (__event: RiveEvent) -> Void in
+      try self.__implementation.onEventListener(onEvent: { () -> (UnifiedRiveEvent) -> Void in
+        let __wrappedFunction = bridge.wrap_Func_void_UnifiedRiveEvent(onEvent)
+        return { (__event: UnifiedRiveEvent) -> Void in
           __wrappedFunction.call(__event)
         }
       }())

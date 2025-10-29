@@ -17,7 +17,7 @@ class RiveReactNativeView: UIView, RiveStateMachineDelegate {
   // MARK: Internal Properties
   private var riveView: RiveView?
   private var baseViewModel: RiveViewModel?
-  private var eventListeners: [(RiveEvent) -> Void] = []
+  private var eventListeners: [(UnifiedRiveEvent) -> Void] = []
   private var viewReadyContinuation: CheckedContinuation<Void, Never>?
   private var isViewReady = false
   
@@ -68,7 +68,7 @@ class RiveReactNativeView: UIView, RiveStateMachineDelegate {
     baseViewModel?.pause()
   }
   
-  func addEventListener(_ onEvent: @escaping (RiveEvent) -> Void) {
+  func addEventListener(_ onEvent: @escaping (UnifiedRiveEvent) -> Void) {
     eventListeners.append(onEvent)
   }
   
@@ -160,7 +160,7 @@ class RiveReactNativeView: UIView, RiveStateMachineDelegate {
   }
   
   @objc func onRiveEventReceived(onRiveEvent riveEvent: RiveRuntime.RiveEvent) {
-    let eventType = RiveEvent(
+    let eventType = UnifiedRiveEvent(
       name: riveEvent.name(),
       type: riveEvent is RiveRuntime.RiveOpenUrlEvent ? RiveEventType.openurl : RiveEventType.general,
       delay: Double(riveEvent.delay()),

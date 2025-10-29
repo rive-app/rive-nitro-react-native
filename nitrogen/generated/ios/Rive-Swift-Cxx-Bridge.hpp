@@ -44,8 +44,8 @@ namespace margelo::nitro::rive { class HybridViewModelStringPropertySpec; }
 namespace margelo::nitro::rive { class HybridViewModelTriggerPropertySpec; }
 // Forward declaration of `RiveEventType` to properly resolve imports.
 namespace margelo::nitro::rive { enum class RiveEventType; }
-// Forward declaration of `RiveEvent` to properly resolve imports.
-namespace margelo::nitro::rive { struct RiveEvent; }
+// Forward declaration of `UnifiedRiveEvent` to properly resolve imports.
+namespace margelo::nitro::rive { struct UnifiedRiveEvent; }
 
 // Forward declarations of Swift defined types
 // Forward declaration of `HybridRiveFileFactorySpec_cxx` to properly resolve imports.
@@ -93,8 +93,8 @@ namespace Rive { class HybridViewModelTriggerPropertySpec_cxx; }
 #include "HybridViewModelSpec.hpp"
 #include "HybridViewModelStringPropertySpec.hpp"
 #include "HybridViewModelTriggerPropertySpec.hpp"
-#include "RiveEvent.hpp"
 #include "RiveEventType.hpp"
+#include "UnifiedRiveEvent.hpp"
 #include <NitroModules/Promise.hpp>
 #include <NitroModules/PromiseHolder.hpp>
 #include <NitroModules/Result.hpp>
@@ -478,26 +478,26 @@ namespace margelo::nitro::rive::bridge::swift {
     return *optional;
   }
   
-  // pragma MARK: std::function<void(const RiveEvent& /* event */)>
+  // pragma MARK: std::function<void(const UnifiedRiveEvent& /* event */)>
   /**
-   * Specialized version of `std::function<void(const RiveEvent&)>`.
+   * Specialized version of `std::function<void(const UnifiedRiveEvent&)>`.
    */
-  using Func_void_RiveEvent = std::function<void(const RiveEvent& /* event */)>;
+  using Func_void_UnifiedRiveEvent = std::function<void(const UnifiedRiveEvent& /* event */)>;
   /**
-   * Wrapper class for a `std::function<void(const RiveEvent& / * event * /)>`, this can be used from Swift.
+   * Wrapper class for a `std::function<void(const UnifiedRiveEvent& / * event * /)>`, this can be used from Swift.
    */
-  class Func_void_RiveEvent_Wrapper final {
+  class Func_void_UnifiedRiveEvent_Wrapper final {
   public:
-    explicit Func_void_RiveEvent_Wrapper(std::function<void(const RiveEvent& /* event */)>&& func): _function(std::make_unique<std::function<void(const RiveEvent& /* event */)>>(std::move(func))) {}
-    inline void call(RiveEvent event) const noexcept {
+    explicit Func_void_UnifiedRiveEvent_Wrapper(std::function<void(const UnifiedRiveEvent& /* event */)>&& func): _function(std::make_unique<std::function<void(const UnifiedRiveEvent& /* event */)>>(std::move(func))) {}
+    inline void call(UnifiedRiveEvent event) const noexcept {
       _function->operator()(event);
     }
   private:
-    std::unique_ptr<std::function<void(const RiveEvent& /* event */)>> _function;
+    std::unique_ptr<std::function<void(const UnifiedRiveEvent& /* event */)>> _function;
   } SWIFT_NONCOPYABLE;
-  Func_void_RiveEvent create_Func_void_RiveEvent(void* NON_NULL swiftClosureWrapper) noexcept;
-  inline Func_void_RiveEvent_Wrapper wrap_Func_void_RiveEvent(Func_void_RiveEvent value) noexcept {
-    return Func_void_RiveEvent_Wrapper(std::move(value));
+  Func_void_UnifiedRiveEvent create_Func_void_UnifiedRiveEvent(void* NON_NULL swiftClosureWrapper) noexcept;
+  inline Func_void_UnifiedRiveEvent_Wrapper wrap_Func_void_UnifiedRiveEvent(Func_void_UnifiedRiveEvent value) noexcept {
+    return Func_void_UnifiedRiveEvent_Wrapper(std::move(value));
   }
   
   // pragma MARK: std::shared_ptr<HybridRiveViewSpec>

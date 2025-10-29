@@ -129,10 +129,10 @@ namespace margelo::nitro::rive::bridge::swift {
     return swiftPart.toUnsafe();
   }
   
-  // pragma MARK: std::function<void(const RiveEvent& /* event */)>
-  Func_void_RiveEvent create_Func_void_RiveEvent(void* NON_NULL swiftClosureWrapper) noexcept {
-    auto swiftClosure = Rive::Func_void_RiveEvent::fromUnsafe(swiftClosureWrapper);
-    return [swiftClosure = std::move(swiftClosure)](const RiveEvent& event) mutable -> void {
+  // pragma MARK: std::function<void(const UnifiedRiveEvent& /* event */)>
+  Func_void_UnifiedRiveEvent create_Func_void_UnifiedRiveEvent(void* NON_NULL swiftClosureWrapper) noexcept {
+    auto swiftClosure = Rive::Func_void_UnifiedRiveEvent::fromUnsafe(swiftClosureWrapper);
+    return [swiftClosure = std::move(swiftClosure)](const UnifiedRiveEvent& event) mutable -> void {
       swiftClosure.call(event);
     };
   }

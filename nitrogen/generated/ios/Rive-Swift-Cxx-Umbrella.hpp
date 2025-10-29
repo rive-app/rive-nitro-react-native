@@ -44,8 +44,8 @@ namespace margelo::nitro::rive { class HybridViewModelStringPropertySpec; }
 namespace margelo::nitro::rive { class HybridViewModelTriggerPropertySpec; }
 // Forward declaration of `RiveEventType` to properly resolve imports.
 namespace margelo::nitro::rive { enum class RiveEventType; }
-// Forward declaration of `RiveEvent` to properly resolve imports.
-namespace margelo::nitro::rive { struct RiveEvent; }
+// Forward declaration of `UnifiedRiveEvent` to properly resolve imports.
+namespace margelo::nitro::rive { struct UnifiedRiveEvent; }
 
 // Include C++ defined types
 #include "Alignment.hpp"
@@ -65,8 +65,8 @@ namespace margelo::nitro::rive { struct RiveEvent; }
 #include "HybridViewModelSpec.hpp"
 #include "HybridViewModelStringPropertySpec.hpp"
 #include "HybridViewModelTriggerPropertySpec.hpp"
-#include "RiveEvent.hpp"
 #include "RiveEventType.hpp"
+#include "UnifiedRiveEvent.hpp"
 #include <NitroModules/ArrayBuffer.hpp>
 #include <NitroModules/Promise.hpp>
 #include <NitroModules/Result.hpp>

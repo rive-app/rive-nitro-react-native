@@ -39,7 +39,7 @@ class HybridRiveView : HybridRiveViewSpec {
   
   func pause() throws { try getRiveView().pause() }
   
-  func onEventListener(onEvent: @escaping (RiveEvent) -> Void) throws {
+  func onEventListener(onEvent: @escaping (UnifiedRiveEvent) -> Void) throws {
     try getRiveView().addEventListener(onEvent)
   }
   

@@ -108,11 +108,11 @@ abstract class HybridRiveViewSpec: HybridView() {
   @Keep
   abstract fun pause(): Unit
   
-  abstract fun onEventListener(onEvent: (event: RiveEvent) -> Unit): Unit
+  abstract fun onEventListener(onEvent: (event: UnifiedRiveEvent) -> Unit): Unit
   
   @DoNotStrip
   @Keep
-  private fun onEventListener_cxx(onEvent: Func_void_RiveEvent): Unit {
+  private fun onEventListener_cxx(onEvent: Func_void_UnifiedRiveEvent): Unit {
     val __result = onEventListener(onEvent)
     return __result
   }

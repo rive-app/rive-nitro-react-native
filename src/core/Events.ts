@@ -1,27 +1,3 @@
-// export interface RiveEvent {
-//   name: string;
-//   type: number;
-//   delay?: number;
-//   //   properties?: RiveEventProperties;
-// }
-
-// export interface RiveEvent {
-//   name: string;
-//   type: number;
-//   delay?: number;
-// }
-
-// export interface RiveGeneralEvent extends RiveEvent {}
-
-// export interface RiveOpenUrlEvent extends RiveEvent {
-//   url?: string;
-//   target?: string;
-// }
-
-// export type RiveEventType = RiveGeneralEvent | RiveOpenUrlEvent;
-
-// TODO: Nitro is failing with more complex inherrited types, so we're using AnyMap for now
-
 export enum RiveEventType {
   General,
   OpenUrl,
@@ -29,11 +5,27 @@ export enum RiveEventType {
 
 export type EventPropertiesOutput = number | boolean | string;
 
-export interface RiveEvent {
+export interface UnifiedRiveEvent {
   name: string;
   type: RiveEventType;
   delay?: number;
-  properties?: Record<string, EventPropertiesOutput>; // TODO: This is failing on Nitro android
+  properties?: Record<string, EventPropertiesOutput>;
   url?: string;
   target?: string;
 }
+
+export type RiveEvent = {
+  name: string;
+  delay?: number;
+  properties?: Record<string, EventPropertiesOutput>;
+  type: RiveEventType;
+} & (
+  | {
+      type: RiveEventType.General;
+    }
+  | {
+      type: RiveEventType.OpenUrl;
+      url?: string;
+      target?: string;
+    }
+);

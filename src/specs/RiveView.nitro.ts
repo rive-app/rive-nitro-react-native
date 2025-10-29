@@ -7,7 +7,7 @@ import type { RiveFile } from './RiveFile.nitro';
 import { Fit } from '../core/Fit';
 import type { ViewModelInstance } from './ViewModel.nitro';
 import type { Alignment } from '../core/Alignment';
-import type { RiveEvent } from '../core/Events';
+import type { UnifiedRiveEvent, RiveEvent } from '../core/Events';
 
 /**
  * Props interface for the RiveView component.
@@ -16,7 +16,7 @@ import type { RiveEvent } from '../core/Events';
 export interface RiveViewProps extends HybridViewProps {
   /** Name of the artboard to display from the Rive file */
   artboardName?: string;
-  /** Name of the state machine to play */
+  /** Name of the state mgachine to play */
   stateMachineName?: string;
   /** Whether to automatically bind the state machine and artboard */
   autoBind?: boolean;
@@ -52,7 +52,7 @@ export interface RiveViewMethods extends HybridViewMethods {
    * Adds an event listener to the Rive view
    * @param onEvent - The function to call when an event is triggered
    */
-  onEventListener(onEvent: (event: RiveEvent) => void): void;
+  onEventListener(onEvent: (event: UnifiedRiveEvent) => void): void;
   /** Removes all event listeners from the Rive view */
   removeEventListeners(): void;
   /**
@@ -100,6 +100,10 @@ export interface RiveViewMethods extends HybridViewMethods {
    */
   getTextRunValue(name: string, path?: string): string;
 }
+
+export type RiveViewTSMethods = Exclude<RiveViewMethods, 'onEventListener'> & {
+  onEventListener(onEvent: (event: RiveEvent) => void): void;
+};
 
 /**
  * Type definition for the RiveView component.

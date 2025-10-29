@@ -73,7 +73,7 @@ namespace margelo::nitro::rive {
     void bindViewModelInstance(const std::shared_ptr<HybridViewModelInstanceSpec>& viewModelInstance) override;
     void play() override;
     void pause() override;
-    void onEventListener(const std::function<void(const RiveEvent& /* event */)>& onEvent) override;
+    void onEventListener(const std::function<void(const UnifiedRiveEvent& /* event */)>& onEvent) override;
     void removeEventListeners() override;
     void setNumberInputValue(const std::string& name, double value, const std::optional<std::string>& path) override;
     double getNumberInputValue(const std::string& name, const std::optional<std::string>& path) override;

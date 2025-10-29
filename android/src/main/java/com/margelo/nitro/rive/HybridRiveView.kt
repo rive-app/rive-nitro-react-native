@@ -72,7 +72,7 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
 
   override fun pause() = executeOnUiThread { view.pause() }
 
-  override fun onEventListener(onEvent: (event: RiveEvent) -> Unit) =
+  override fun onEventListener(onEvent: (event: UnifiedRiveEvent) -> Unit) =
     executeOnUiThread { view.addEventListener(onEvent) }
 
   override fun removeEventListeners() = executeOnUiThread { view.removeEventListeners() }
