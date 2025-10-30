@@ -63,6 +63,63 @@ const riveRef = useRef<HybridView<RiveViewProps, RiveViewMethods>>(null);
 />
 ```
 
+## Native SDK Version Customization
+
+> **⚠️ Advanced Usage:** Customizing native SDK versions is intended for advanced users only. Using non-default versions may cause build-time errors, or compatibility issues. Always review and update custom versions when upgrading react-native-rive.
+
+By default, react-native-rive uses specific versions of the Rive native SDKs defined in the library's `package.json` (`runtimeVersions.ios` and `runtimeVersions.android`). You can customize these versions if needed.
+
+### Vanilla React Native
+
+Add the appropriate properties to your configuration files:
+
+**iOS** - Add to `ios/Podfile.properties.json`:
+
+```json
+{
+  "RiveRuntimeIOSVersion": "6.13.0"
+}
+```
+
+**Android** - Add to `android/gradle.properties`:
+
+```properties
+Rive_RiveRuntimeAndroidVersion=10.6.0
+```
+
+### Expo
+
+Use an inline config plugin in your `app.config.ts`:
+
+```typescript
+import { withPodfileProperties, withGradleProperties } from '@expo/config-plugins';
+
+export default {
+  expo: {
+    // ... other config
+    plugins: [
+      (config) => {
+        config = withPodfileProperties(config, (config) => {
+          config.modResults['RiveRuntimeIOSVersion'] = '6.13.0';
+          return config;
+        });
+
+        config = withGradleProperties(config, (config) => {
+          config.modResults.push({
+            type: 'property',
+            key: 'Rive_RiveRuntimeAndroidVersion',
+            value: '10.6.0',
+          });
+          return config;
+        });
+
+        return config;
+      },
+    ],
+  },
+};
+```
+
 ## Error Handling
 
 All Rive operations can be wrapped in try/catch blocks for error handling:
