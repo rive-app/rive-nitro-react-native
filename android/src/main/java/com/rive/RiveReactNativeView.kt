@@ -15,8 +15,10 @@ import app.rive.runtime.kotlin.core.SMIInput
 import app.rive.runtime.kotlin.core.SMINumber
 import app.rive.runtime.kotlin.core.ViewModelInstance
 import com.margelo.nitro.core.AnyMap
+import com.margelo.nitro.rive.EventPropertiesOutput
+import com.margelo.nitro.rive.EventPropertiesOutputExtensions as EPO
 import com.margelo.nitro.rive.RiveEventType
-import com.margelo.nitro.rive.RiveEvent as RNEvent
+import com.margelo.nitro.rive.UnifiedRiveEvent as RNEvent
 import kotlinx.coroutines.CompletableDeferred
 
 data class ViewConfiguration(
@@ -206,16 +208,16 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
 
   //region Internal
 
-  private fun convertEventProperties(properties: Map<String, Any>?): AnyMap? {
+  private fun convertEventProperties(properties: Map<String, Any>?): Map<String, EventPropertiesOutput>? {
     if (properties == null) return null
 
-    val newMap = AnyMap()
+    val newMap = HashMap<String, EventPropertiesOutput>()
 
     properties.forEach { (key, value) ->
       when (value) {
-        is String -> newMap.setString(key, value)
-        is Number -> newMap.setDouble(key, value.toDouble())
-        is Boolean -> newMap.setBoolean(key, value)
+        is String -> newMap.set(key, EPO.string(value))
+        is Number -> newMap.set(key, EPO.number(value.toDouble()))
+        is Boolean -> newMap.set(key, EPO.boolean(value))
       }
     }
 

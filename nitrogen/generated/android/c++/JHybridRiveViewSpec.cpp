@@ -15,8 +15,8 @@ namespace margelo::nitro::rive { enum class Alignment; }
 namespace margelo::nitro::rive { enum class Fit; }
 // Forward declaration of `HybridViewModelInstanceSpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridViewModelInstanceSpec; }
-// Forward declaration of `RiveEvent` to properly resolve imports.
-namespace margelo::nitro::rive { struct RiveEvent; }
+// Forward declaration of `UnifiedRiveEvent` to properly resolve imports.
+namespace margelo::nitro::rive { struct UnifiedRiveEvent; }
 // Forward declaration of `RiveEventType` to properly resolve imports.
 namespace margelo::nitro::rive { enum class RiveEventType; }
 
@@ -33,14 +33,15 @@ namespace margelo::nitro::rive { enum class RiveEventType; }
 #include <NitroModules/JPromise.hpp>
 #include "HybridViewModelInstanceSpec.hpp"
 #include "JHybridViewModelInstanceSpec.hpp"
-#include "RiveEvent.hpp"
+#include "UnifiedRiveEvent.hpp"
 #include <functional>
-#include "JFunc_void_RiveEvent.hpp"
-#include "JRiveEvent.hpp"
+#include "JFunc_void_UnifiedRiveEvent.hpp"
+#include "JUnifiedRiveEvent.hpp"
 #include "RiveEventType.hpp"
 #include "JRiveEventType.hpp"
-#include <NitroModules/AnyMap.hpp>
-#include <NitroModules/JAnyMap.hpp>
+#include <variant>
+#include <unordered_map>
+#include "JEventPropertiesOutput.hpp"
 
 namespace margelo::nitro::rive {
 
@@ -173,9 +174,9 @@ namespace margelo::nitro::rive {
     static const auto method = javaClassStatic()->getMethod<void()>("pause");
     method(_javaPart);
   }
-  void JHybridRiveViewSpec::onEventListener(const std::function<void(const RiveEvent& /* event */)>& onEvent) {
-    static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<JFunc_void_RiveEvent::javaobject> /* onEvent */)>("onEventListener_cxx");
-    method(_javaPart, JFunc_void_RiveEvent_cxx::fromCpp(onEvent));
+  void JHybridRiveViewSpec::onEventListener(const std::function<void(const UnifiedRiveEvent& /* event */)>& onEvent) {
+    static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<JFunc_void_UnifiedRiveEvent::javaobject> /* onEvent */)>("onEventListener_cxx");
+    method(_javaPart, JFunc_void_UnifiedRiveEvent_cxx::fromCpp(onEvent));
   }
   void JHybridRiveViewSpec::removeEventListeners() {
     static const auto method = javaClassStatic()->getMethod<void()>("removeEventListeners");

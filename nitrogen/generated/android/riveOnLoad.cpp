@@ -19,7 +19,7 @@
 #include "JHybridRiveFileSpec.hpp"
 #include "JHybridRiveFileFactorySpec.hpp"
 #include "JHybridRiveViewSpec.hpp"
-#include "JFunc_void_RiveEvent.hpp"
+#include "JFunc_void_UnifiedRiveEvent.hpp"
 #include "views/JHybridRiveViewStateUpdater.hpp"
 #include "JHybridViewModelSpec.hpp"
 #include "JHybridViewModelInstanceSpec.hpp"
@@ -49,7 +49,7 @@ int initialize(JavaVM* vm) {
     margelo::nitro::rive::JHybridRiveFileSpec::registerNatives();
     margelo::nitro::rive::JHybridRiveFileFactorySpec::registerNatives();
     margelo::nitro::rive::JHybridRiveViewSpec::registerNatives();
-    margelo::nitro::rive::JFunc_void_RiveEvent_cxx::registerNatives();
+    margelo::nitro::rive::JFunc_void_UnifiedRiveEvent_cxx::registerNatives();
     margelo::nitro::rive::views::JHybridRiveViewStateUpdater::registerNatives();
     margelo::nitro::rive::JHybridViewModelSpec::registerNatives();
     margelo::nitro::rive::JHybridViewModelInstanceSpec::registerNatives();

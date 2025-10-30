@@ -26,7 +26,7 @@ public protocol HybridRiveViewSpec_protocol: HybridObject, HybridView {
   func bindViewModelInstance(viewModelInstance: (any HybridViewModelInstanceSpec)) throws -> Void
   func play() throws -> Void
   func pause() throws -> Void
-  func onEventListener(onEvent: @escaping (_ event: RiveEvent) -> Void) throws -> Void
+  func onEventListener(onEvent: @escaping (_ event: UnifiedRiveEvent) -> Void) throws -> Void
   func removeEventListeners() throws -> Void
   func setNumberInputValue(name: String, value: Double, path: String?) throws -> Void
   func getNumberInputValue(name: String, path: String?) throws -> Double

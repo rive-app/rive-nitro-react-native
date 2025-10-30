@@ -63,8 +63,12 @@ export default function EventsExample() {
               ? 'General Event'
               : 'Open URL Event'}
           </Text>
-          {lastEvent.url && <Text>URL: {lastEvent.url}</Text>}
-          {lastEvent.target && <Text>Target: {lastEvent.target}</Text>}
+          {lastEvent.type === RiveEventType.OpenUrl && lastEvent.url && (
+            <Text>URL: {lastEvent.url}</Text>
+          )}
+          {lastEvent.type === RiveEventType.OpenUrl && lastEvent.target && (
+            <Text>Target: {lastEvent.target}</Text>
+          )}
           {lastEvent.properties &&
             Object.keys(lastEvent.properties).length > 0 && (
               <>

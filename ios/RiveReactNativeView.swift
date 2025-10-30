@@ -17,7 +17,7 @@ class RiveReactNativeView: UIView, RiveStateMachineDelegate {
   // MARK: Internal Properties
   private var riveView: RiveView?
   private var baseViewModel: RiveViewModel?
-  private var eventListeners: [(RiveEvent) -> Void] = []
+  private var eventListeners: [(UnifiedRiveEvent) -> Void] = []
   private var viewReadyContinuation: CheckedContinuation<Void, Never>?
   private var isViewReady = false
   
@@ -68,7 +68,7 @@ class RiveReactNativeView: UIView, RiveStateMachineDelegate {
     baseViewModel?.pause()
   }
   
-  func addEventListener(_ onEvent: @escaping (RiveEvent) -> Void) {
+  func addEventListener(_ onEvent: @escaping (UnifiedRiveEvent) -> Void) {
     eventListeners.append(onEvent)
   }
   
@@ -160,7 +160,7 @@ class RiveReactNativeView: UIView, RiveStateMachineDelegate {
   }
   
   @objc func onRiveEventReceived(onRiveEvent riveEvent: RiveRuntime.RiveEvent) {
-    let eventType = RiveEvent(
+    let eventType = UnifiedRiveEvent(
       name: riveEvent.name(),
       type: riveEvent is RiveRuntime.RiveOpenUrlEvent ? RiveEventType.openurl : RiveEventType.general,
       delay: Double(riveEvent.delay()),
@@ -174,18 +174,18 @@ class RiveReactNativeView: UIView, RiveStateMachineDelegate {
     }
   }
   
-  private func convertEventProperties(_ properties: Dictionary<String, Any>?) -> AnyMapHolder?{
+  private func convertEventProperties(_ properties: Dictionary<String, Any>?) -> Dictionary<String, EventPropertiesOutput>?{
     guard let properties = properties else { return nil }
     
-    let newMap = AnyMapHolder()
+    var newMap: Dictionary<String, EventPropertiesOutput> = [:]
     
     for (key, value) in properties {
       if let string = value as? String {
-        newMap.setString(key: key, value: string)
+        newMap[key] = .string(string)
       } else if let number = value as? NSNumber {
-        newMap.setDouble(key: key, value: number.doubleValue)
+        newMap[key] = .number(number.doubleValue)
       } else if let boolean = value as? Bool {
-        newMap.setBoolean(key: key, value: boolean)
+        newMap[key] = .boolean(boolean)
       }
     }
     

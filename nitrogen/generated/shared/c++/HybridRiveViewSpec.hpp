@@ -21,8 +21,8 @@ namespace margelo::nitro::rive { enum class Alignment; }
 namespace margelo::nitro::rive { enum class Fit; }
 // Forward declaration of `HybridViewModelInstanceSpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridViewModelInstanceSpec; }
-// Forward declaration of `RiveEvent` to properly resolve imports.
-namespace margelo::nitro::rive { struct RiveEvent; }
+// Forward declaration of `UnifiedRiveEvent` to properly resolve imports.
+namespace margelo::nitro::rive { struct UnifiedRiveEvent; }
 
 #include <string>
 #include <optional>
@@ -32,7 +32,7 @@ namespace margelo::nitro::rive { struct RiveEvent; }
 #include "Fit.hpp"
 #include <NitroModules/Promise.hpp>
 #include "HybridViewModelInstanceSpec.hpp"
-#include "RiveEvent.hpp"
+#include "UnifiedRiveEvent.hpp"
 #include <functional>
 
 namespace margelo::nitro::rive {
@@ -85,7 +85,7 @@ namespace margelo::nitro::rive {
       virtual void bindViewModelInstance(const std::shared_ptr<HybridViewModelInstanceSpec>& viewModelInstance) = 0;
       virtual void play() = 0;
       virtual void pause() = 0;
-      virtual void onEventListener(const std::function<void(const RiveEvent& /* event */)>& onEvent) = 0;
+      virtual void onEventListener(const std::function<void(const UnifiedRiveEvent& /* event */)>& onEvent) = 0;
       virtual void removeEventListeners() = 0;
       virtual void setNumberInputValue(const std::string& name, double value, const std::optional<std::string>& path) = 0;
       virtual double getNumberInputValue(const std::string& name, const std::optional<std::string>& path) = 0;
