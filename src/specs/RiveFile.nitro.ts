@@ -22,6 +22,7 @@ export interface RiveFile
 export interface RiveFileFactory
   extends HybridObject<{ ios: 'swift'; android: 'kotlin' }> {
   fromURL(url: string, loadCdn: boolean): Promise<RiveFile>;
+  fromFileURL(fileURL: string, loadCdn: boolean): Promise<RiveFile>;
   fromResource(resource: string, loadCdn: boolean): Promise<RiveFile>;
   fromBytes(bytes: ArrayBuffer, loadCdn: boolean): Promise<RiveFile>;
 }

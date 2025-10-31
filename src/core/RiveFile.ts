@@ -30,6 +30,19 @@ export namespace RiveFileFactory {
   }
 
   /**
+   * Creates a RiveFile instance from a local file path URL.
+   * @param pathURL - The local file path of the Rive animation file
+   * @param loadCdn - Whether to load from CDN (default: true)
+   * @returns Promise that resolves to a RiveFile instance
+   */
+  export async function fromFileURL(
+    fileURL: string,
+    loadCdn: boolean = true
+  ): Promise<RiveFile> {
+    return RiveFileInternal.fromFileURL(fileURL, loadCdn);
+  }
+
+  /**
    * Creates a RiveFile instance from a local resource.
    * @param resource - The name of the local resource
    * @param loadCdn - Whether to load from CDN (default: true)
@@ -100,11 +113,7 @@ export namespace RiveFileFactory {
 
       // handle iOS bundled asset
       if (assetURI.match(/file:\/\//)) {
-        const match = assetURI.match(/file:\/\/(.*\/)+(.*)\.riv/);
-        if (!match) {
-          throw new Error(`Invalid iOS asset path format: ${assetURI}`);
-        }
-        return RiveFileFactory.fromResource(match[2], loadCdn);
+        return RiveFileFactory.fromFileURL(assetURI, loadCdn);
       }
 
       // handle Android bundled asset or resource name uri

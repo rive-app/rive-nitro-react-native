@@ -38,6 +38,45 @@ class HybridRiveFileFactory: HybridRiveFileFactorySpec {
     }
   }
   
+  func fromFileURL(fileURL: String, loadCdn: Bool) throws -> Promise<(any HybridRiveFileSpec)> {
+    guard let url = URL(string:fileURL) else {
+      throw RuntimeError.error(withMessage: "fromFileURL: Invalid URL: \(fileURL)")
+    }
+    
+    guard url.isFileURL else {
+      throw RuntimeError.error(withMessage: "fromFileURL: URL must be a file URL: \(fileURL)")
+    }
+    
+    return Promise.async {
+      do {
+        let riveFile = try await withCheckedThrowingContinuation { continuation in
+          DispatchQueue.global(qos: .userInitiated).async {
+            do {
+              let data = try Data(contentsOf: url)
+              
+              let riveFile = try RiveFile(data: data, loadCdn: loadCdn)
+              DispatchQueue.main.async {
+                continuation.resume(returning: riveFile)
+              }
+            } catch {
+              DispatchQueue.main.async {
+                continuation.resume(throwing: error)
+              }
+            }
+          }
+        }
+        
+        let hybridRiveFile = HybridRiveFile()
+        hybridRiveFile.riveFile = riveFile
+        return hybridRiveFile
+      } catch let error as NSError {
+        throw RuntimeError.error(withMessage: "Failed to load Rive file: \(error.localizedDescription)")
+      } catch {
+        throw RuntimeError.error(withMessage: "Unknown error occurred while loading Rive file")
+      }
+    }
+  }
+  
   func fromResource(resource: String, loadCdn: Bool) throws -> Promise<(any HybridRiveFileSpec)> {
     guard let _ = Bundle.main.path(forResource: resource, ofType: "riv") else {
       throw RuntimeError.error(withMessage: "Could not find Rive file: \(resource).riv")

@@ -53,6 +53,10 @@ abstract class HybridRiveFileFactorySpec: HybridObject() {
   
   @DoNotStrip
   @Keep
+  abstract fun fromFileURL(fileURL: String, loadCdn: Boolean): Promise<HybridRiveFileSpec>
+  
+  @DoNotStrip
+  @Keep
   abstract fun fromResource(resource: String, loadCdn: Boolean): Promise<HybridRiveFileSpec>
   
   @DoNotStrip

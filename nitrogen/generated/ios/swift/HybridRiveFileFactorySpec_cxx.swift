@@ -141,6 +141,28 @@ open class HybridRiveFileFactorySpec_cxx {
   }
   
   @inline(__always)
+  public final func fromFileURL(fileURL: std.string, loadCdn: Bool) -> bridge.Result_std__shared_ptr_Promise_std__shared_ptr_HybridRiveFileSpec____ {
+    do {
+      let __result = try self.__implementation.fromFileURL(fileURL: String(fileURL), loadCdn: loadCdn)
+      let __resultCpp = { () -> bridge.std__shared_ptr_Promise_std__shared_ptr_HybridRiveFileSpec___ in
+        let __promise = bridge.create_std__shared_ptr_Promise_std__shared_ptr_HybridRiveFileSpec___()
+        let __promiseHolder = bridge.wrap_std__shared_ptr_Promise_std__shared_ptr_HybridRiveFileSpec___(__promise)
+        __result
+          .then({ __result in __promiseHolder.resolve({ () -> bridge.std__shared_ptr_HybridRiveFileSpec_ in
+              let __cxxWrapped = __result.getCxxWrapper()
+              return __cxxWrapped.getCxxPart()
+            }()) })
+          .catch({ __error in __promiseHolder.reject(__error.toCpp()) })
+        return __promise
+      }()
+      return bridge.create_Result_std__shared_ptr_Promise_std__shared_ptr_HybridRiveFileSpec____(__resultCpp)
+    } catch (let __error) {
+      let __exceptionPtr = __error.toCpp()
+      return bridge.create_Result_std__shared_ptr_Promise_std__shared_ptr_HybridRiveFileSpec____(__exceptionPtr)
+    }
+  }
+  
+  @inline(__always)
   public final func fromResource(resource: std.string, loadCdn: Bool) -> bridge.Result_std__shared_ptr_Promise_std__shared_ptr_HybridRiveFileSpec____ {
     do {
       let __result = try self.__implementation.fromResource(resource: String(resource), loadCdn: loadCdn)
