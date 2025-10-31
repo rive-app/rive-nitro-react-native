@@ -1,159 +1,115 @@
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
-import { useState, useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import {
   Fit,
   RiveView,
   useRive,
   useRiveNumber,
   type ViewModelInstance,
+  type RiveFile,
   useRiveString,
   useRiveColor,
   useRiveTrigger,
   useRiveFile,
 } from 'react-native-rive';
 
-export default function DataBindingExample() {
-  const { riveViewRef, setHybridRef } = useRive();
-  const [viewModelInstance, setViewModelInstance] =
-    useState<ViewModelInstance | null>(null);
-  const [viewModelError, setViewModelError] = useState<string | null>(null);
-
+export default function WithRiveFile() {
   const { riveFile, isLoading, error } = useRiveFile(
     require('../../assets/rive/rewards_source.riv')
   );
 
-  // Create view model instance when Rive file is loaded
-  useEffect(() => {
-    if (riveFile) {
-      try {
-        const viewModel = riveFile.defaultArtboardViewModel();
-        if (!viewModel) {
-          throw new Error('No default artboard view model found');
-        }
-        const instance = viewModel.createDefaultInstance();
-        if (!instance) {
-          throw new Error('Failed to create view model instance');
-        }
-        setViewModelInstance(instance);
-        setViewModelError(null);
-      } catch (err) {
-        setViewModelError(
-          err instanceof Error
-            ? err.message
-            : 'Failed to create view model instance'
-        );
-        setViewModelInstance(null);
-      }
-    }
-  }, [riveFile]);
-
-  // Cleanup view model instance when component unmounts or the view model instance changes
-  useEffect(() => {
-    return () => {
-      viewModelInstance?.dispose();
-    };
-  }, [viewModelInstance]);
-
-  // Bind the view model instance to the RiveView
-  useEffect(() => {
-    if (viewModelInstance && riveViewRef) {
-      try {
-        console.log('Binding the instance');
-        riveViewRef.bindViewModelInstance(viewModelInstance);
-      } catch (err) {
-        console.error('Failed to bind view model instance:', err);
-      }
-    }
-  }, [viewModelInstance, riveViewRef]);
-
-  // Databinding: Number
-  const { value: coinValue, error: coinValueError } = useRiveNumber(
-    'Coin/Item_Value',
-    viewModelInstance
+  return (
+    <View style={styles.container}>
+      <View style={styles.riveContainer}>
+        {isLoading ? (
+          <ActivityIndicator size="large" color="#0000ff" />
+        ) : riveFile ? (
+          <WithViewModelSetup file={riveFile} />
+        ) : (
+          <Text style={styles.errorText}>{error || 'Unexpected error'}</Text>
+        )}
+      </View>
+    </View>
   );
+}
+
+function WithViewModelSetup({ file }: { file: RiveFile }) {
+  const viewModel = useMemo(() => file.defaultArtboardViewModel(), [file]);
+  const instance = useMemo(
+    () => viewModel?.createDefaultInstance(),
+    [viewModel]
+  );
+
+  if (!instance || !viewModel) {
+    return (
+      <Text style={styles.errorText}>
+        {!viewModel
+          ? 'No view model found'
+          : 'Failed to create view model instance'}
+      </Text>
+    );
+  }
+
+  return <DataBindingExample instance={instance} file={file} />;
+}
+
+function DataBindingExample({
+  instance,
+  file,
+}: {
+  instance: ViewModelInstance;
+  file: RiveFile;
+}) {
+  const { riveViewRef, setHybridRef } = useRive();
+
   useEffect(() => {
-    if (coinValue !== undefined) {
-      console.log('coinValue', coinValue);
+    if (riveViewRef) {
+      riveViewRef.bindViewModelInstance(instance);
     }
-  }, [coinValue]);
+  }, [riveViewRef, instance]);
+
+  const { error: coinValueError } = useRiveNumber('Coin/Item_Value', instance);
 
   if (coinValueError) {
     console.error('coinValueError', coinValueError);
   }
 
-  // Databinding: String
-  const { value: buttonText, setValue: setButtonText } = useRiveString(
-    'Button/State_1',
-    viewModelInstance
-  );
-  useEffect(() => {
-    if (buttonText) {
-      console.log('buttonText', buttonText);
-    }
-  }, [buttonText]);
+  const { setValue: setButtonText } = useRiveString('Button/State_1', instance);
 
-  // Databinding: Color
-  const {
-    value: barColor,
-    setValue: setBarColor,
-    error: barColorError,
-  } = useRiveColor('Energy_Bar/Bar_Color', viewModelInstance);
+  const { setValue: setBarColor, error: barColorError } = useRiveColor(
+    'Energy_Bar/Bar_Color',
+    instance
+  );
+
   if (barColorError) {
     console.error('barColorError', barColorError);
   }
 
-  useEffect(() => {
-    if (barColor) {
-      console.log('barColor', barColor);
-    }
-  }, [barColor]);
+  const { error: triggerError } = useRiveTrigger('Button/Pressed', instance, {
+    onTrigger: () => {
+      console.log('Button pressed');
+    },
+  });
 
-  // Databinding: Trigger
-  const { error: triggerError } = useRiveTrigger(
-    'Button/Pressed',
-    viewModelInstance,
-    {
-      onTrigger: () => {
-        console.log('Button pressed');
-      },
-    }
-  );
   if (triggerError) {
     console.error('triggerError', triggerError);
   }
 
-  // Set the initial values of the properties
   useEffect(() => {
-    if (viewModelInstance) {
-      try {
-        setButtonText("Let's go!");
-        setBarColor('#0000FF');
-      } catch (err) {
-        console.error('Failed to set initial values:', err);
-      }
-    }
-  }, [setBarColor, setButtonText, viewModelInstance]);
+    setButtonText("Let's go!");
+    setBarColor('#0000FF');
+  }, [setBarColor, setButtonText]);
 
   return (
-    <View style={styles.container}>
-      <View style={styles.riveContainer}>
-        {error || viewModelError ? (
-          <Text style={styles.errorText}>{error || viewModelError}</Text>
-        ) : isLoading ? (
-          <ActivityIndicator size="large" color="#0000ff" />
-        ) : (
-          <RiveView
-            style={styles.rive}
-            autoBind={false}
-            autoPlay={true}
-            fit={Fit.Layout}
-            layoutScaleFactor={1}
-            file={riveFile!}
-            hybridRef={setHybridRef}
-          />
-        )}
-      </View>
-    </View>
+    <RiveView
+      style={styles.rive}
+      autoBind={false}
+      autoPlay={true}
+      fit={Fit.Layout}
+      layoutScaleFactor={1}
+      file={file}
+      hybridRef={setHybridRef}
+    />
   );
 }
 
