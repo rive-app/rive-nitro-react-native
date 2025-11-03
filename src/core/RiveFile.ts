@@ -31,7 +31,7 @@ export namespace RiveFileFactory {
 
   /**
    * Creates a RiveFile instance from a local file path URL.
-   * @param pathURL - The local file path of the Rive animation file
+   * @param pathURL - The local file path of the Rive graphic file
    * @param loadCdn - Whether to load from CDN (default: true)
    * @returns Promise that resolves to a RiveFile instance
    */
