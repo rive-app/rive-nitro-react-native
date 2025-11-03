@@ -76,6 +76,14 @@ namespace margelo::nitro::rive {
       auto __value = std::move(__result.value());
       return __value;
     }
+    inline std::shared_ptr<Promise<std::shared_ptr<HybridRiveFileSpec>>> fromFileURL(const std::string& fileURL, bool loadCdn) override {
+      auto __result = _swiftPart.fromFileURL(fileURL, std::forward<decltype(loadCdn)>(loadCdn));
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
     inline std::shared_ptr<Promise<std::shared_ptr<HybridRiveFileSpec>>> fromResource(const std::string& resource, bool loadCdn) override {
       auto __result = _swiftPart.fromResource(resource, std::forward<decltype(loadCdn)>(loadCdn));
       if (__result.hasError()) [[unlikely]] {

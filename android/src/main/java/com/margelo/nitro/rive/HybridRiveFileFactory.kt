@@ -9,6 +9,8 @@ import com.margelo.nitro.core.Promise
 import com.margelo.nitro.NitroModules
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.io.File as JavaFile
+import java.net.URI
 import java.net.URL
 
 @Keep
@@ -29,6 +31,31 @@ class HybridRiveFileFactory : HybridRiveFileFactorySpec() {
         hybridRiveFile
       } catch (e: Exception) {
         throw Error("Failed to download Rive file: ${e.message}")
+      }
+    }
+  }
+
+  override fun fromFileURL(fileURL: String, loadCdn: Boolean): Promise<HybridRiveFileSpec> {
+    if (!fileURL.startsWith("file://")) {
+      throw Error("fromFileURL: URL must be a file URL: $fileURL")
+    }
+
+    return Promise.async {
+      try {
+        val uri = URI(fileURL)
+        val path = uri.path ?: throw Error("fromFileURL: Invalid URL: $fileURL")
+
+        val riveFile = withContext(Dispatchers.IO) {
+          val file = JavaFile(path)
+          val riveData = file.readBytes()
+          File(riveData)
+        }
+
+        val hybridRiveFile = HybridRiveFile()
+        hybridRiveFile.riveFile = riveFile
+        hybridRiveFile
+      } catch (e: Exception) {
+        throw Error("Failed to load Rive file: ${e.message}")
       }
     }
   }
