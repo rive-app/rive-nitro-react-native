@@ -42,6 +42,10 @@ namespace margelo::nitro::rive { class HybridViewModelSpec; }
 namespace margelo::nitro::rive { class HybridViewModelStringPropertySpec; }
 // Forward declaration of `HybridViewModelTriggerPropertySpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridViewModelTriggerPropertySpec; }
+// Forward declaration of `ReferencedAssetsType` to properly resolve imports.
+namespace margelo::nitro::rive { struct ReferencedAssetsType; }
+// Forward declaration of `ResolvedReferencedAsset` to properly resolve imports.
+namespace margelo::nitro::rive { struct ResolvedReferencedAsset; }
 // Forward declaration of `RiveEventType` to properly resolve imports.
 namespace margelo::nitro::rive { enum class RiveEventType; }
 // Forward declaration of `UnifiedRiveEvent` to properly resolve imports.
@@ -93,6 +97,8 @@ namespace Rive { class HybridViewModelTriggerPropertySpec_cxx; }
 #include "HybridViewModelSpec.hpp"
 #include "HybridViewModelStringPropertySpec.hpp"
 #include "HybridViewModelTriggerPropertySpec.hpp"
+#include "ReferencedAssetsType.hpp"
+#include "ResolvedReferencedAsset.hpp"
 #include "RiveEventType.hpp"
 #include "UnifiedRiveEvent.hpp"
 #include <NitroModules/Promise.hpp>
@@ -205,6 +211,46 @@ namespace margelo::nitro::rive::bridge::swift {
     return *optional;
   }
   
+  // pragma MARK: std::unordered_map<std::string, ResolvedReferencedAsset>
+  /**
+   * Specialized version of `std::unordered_map<std::string, ResolvedReferencedAsset>`.
+   */
+  using std__unordered_map_std__string__ResolvedReferencedAsset_ = std::unordered_map<std::string, ResolvedReferencedAsset>;
+  inline std::unordered_map<std::string, ResolvedReferencedAsset> create_std__unordered_map_std__string__ResolvedReferencedAsset_(size_t size) noexcept {
+    std::unordered_map<std::string, ResolvedReferencedAsset> map;
+    map.reserve(size);
+    return map;
+  }
+  inline std::vector<std::string> get_std__unordered_map_std__string__ResolvedReferencedAsset__keys(const std__unordered_map_std__string__ResolvedReferencedAsset_& map) noexcept {
+    std::vector<std::string> keys;
+    keys.reserve(map.size());
+    for (const auto& entry : map) {
+      keys.push_back(entry.first);
+    }
+    return keys;
+  }
+  inline ResolvedReferencedAsset get_std__unordered_map_std__string__ResolvedReferencedAsset__value(const std__unordered_map_std__string__ResolvedReferencedAsset_& map, const std::string& key) noexcept {
+    return map.find(key)->second;
+  }
+  inline void emplace_std__unordered_map_std__string__ResolvedReferencedAsset_(std__unordered_map_std__string__ResolvedReferencedAsset_& map, const std::string& key, const ResolvedReferencedAsset& value) noexcept {
+    map.emplace(key, value);
+  }
+  
+  // pragma MARK: std::optional<std::unordered_map<std::string, ResolvedReferencedAsset>>
+  /**
+   * Specialized version of `std::optional<std::unordered_map<std::string, ResolvedReferencedAsset>>`.
+   */
+  using std__optional_std__unordered_map_std__string__ResolvedReferencedAsset__ = std::optional<std::unordered_map<std::string, ResolvedReferencedAsset>>;
+  inline std::optional<std::unordered_map<std::string, ResolvedReferencedAsset>> create_std__optional_std__unordered_map_std__string__ResolvedReferencedAsset__(const std::unordered_map<std::string, ResolvedReferencedAsset>& value) noexcept {
+    return std::optional<std::unordered_map<std::string, ResolvedReferencedAsset>>(value);
+  }
+  inline bool has_value_std__optional_std__unordered_map_std__string__ResolvedReferencedAsset__(const std::optional<std::unordered_map<std::string, ResolvedReferencedAsset>>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline std::unordered_map<std::string, ResolvedReferencedAsset> get_std__optional_std__unordered_map_std__string__ResolvedReferencedAsset__(const std::optional<std::unordered_map<std::string, ResolvedReferencedAsset>>& optional) noexcept {
+    return *optional;
+  }
+  
   // pragma MARK: std::shared_ptr<HybridRiveFileSpec>
   /**
    * Specialized version of `std::shared_ptr<HybridRiveFileSpec>`.
@@ -289,6 +335,21 @@ namespace margelo::nitro::rive::bridge::swift {
   Func_void_std__exception_ptr create_Func_void_std__exception_ptr(void* NON_NULL swiftClosureWrapper) noexcept;
   inline Func_void_std__exception_ptr_Wrapper wrap_Func_void_std__exception_ptr(Func_void_std__exception_ptr value) noexcept {
     return Func_void_std__exception_ptr_Wrapper(std::move(value));
+  }
+  
+  // pragma MARK: std::optional<ReferencedAssetsType>
+  /**
+   * Specialized version of `std::optional<ReferencedAssetsType>`.
+   */
+  using std__optional_ReferencedAssetsType_ = std::optional<ReferencedAssetsType>;
+  inline std::optional<ReferencedAssetsType> create_std__optional_ReferencedAssetsType_(const ReferencedAssetsType& value) noexcept {
+    return std::optional<ReferencedAssetsType>(value);
+  }
+  inline bool has_value_std__optional_ReferencedAssetsType_(const std::optional<ReferencedAssetsType>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline ReferencedAssetsType get_std__optional_ReferencedAssetsType_(const std::optional<ReferencedAssetsType>& optional) noexcept {
+    return *optional;
   }
   
   // pragma MARK: std::shared_ptr<HybridRiveFileFactorySpec>

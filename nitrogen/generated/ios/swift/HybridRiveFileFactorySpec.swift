@@ -15,10 +15,10 @@ public protocol HybridRiveFileFactorySpec_protocol: HybridObject {
   
 
   // Methods
-  func fromURL(url: String, loadCdn: Bool) throws -> Promise<(any HybridRiveFileSpec)>
-  func fromFileURL(fileURL: String, loadCdn: Bool) throws -> Promise<(any HybridRiveFileSpec)>
-  func fromResource(resource: String, loadCdn: Bool) throws -> Promise<(any HybridRiveFileSpec)>
-  func fromBytes(bytes: ArrayBuffer, loadCdn: Bool) throws -> Promise<(any HybridRiveFileSpec)>
+  func fromURL(url: String, loadCdn: Bool, referencedAssets: ReferencedAssetsType?) throws -> Promise<(any HybridRiveFileSpec)>
+  func fromFileURL(fileURL: String, loadCdn: Bool, referencedAssets: ReferencedAssetsType?) throws -> Promise<(any HybridRiveFileSpec)>
+  func fromResource(resource: String, loadCdn: Bool, referencedAssets: ReferencedAssetsType?) throws -> Promise<(any HybridRiveFileSpec)>
+  func fromBytes(bytes: ArrayBuffer, loadCdn: Bool, referencedAssets: ReferencedAssetsType?) throws -> Promise<(any HybridRiveFileSpec)>
 }
 
 public extension HybridRiveFileFactorySpec_protocol {

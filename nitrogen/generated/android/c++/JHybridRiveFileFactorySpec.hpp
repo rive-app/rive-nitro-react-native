@@ -54,10 +54,10 @@ namespace margelo::nitro::rive {
 
   public:
     // Methods
-    std::shared_ptr<Promise<std::shared_ptr<HybridRiveFileSpec>>> fromURL(const std::string& url, bool loadCdn) override;
-    std::shared_ptr<Promise<std::shared_ptr<HybridRiveFileSpec>>> fromFileURL(const std::string& fileURL, bool loadCdn) override;
-    std::shared_ptr<Promise<std::shared_ptr<HybridRiveFileSpec>>> fromResource(const std::string& resource, bool loadCdn) override;
-    std::shared_ptr<Promise<std::shared_ptr<HybridRiveFileSpec>>> fromBytes(const std::shared_ptr<ArrayBuffer>& bytes, bool loadCdn) override;
+    std::shared_ptr<Promise<std::shared_ptr<HybridRiveFileSpec>>> fromURL(const std::string& url, bool loadCdn, const std::optional<ReferencedAssetsType>& referencedAssets) override;
+    std::shared_ptr<Promise<std::shared_ptr<HybridRiveFileSpec>>> fromFileURL(const std::string& fileURL, bool loadCdn, const std::optional<ReferencedAssetsType>& referencedAssets) override;
+    std::shared_ptr<Promise<std::shared_ptr<HybridRiveFileSpec>>> fromResource(const std::string& resource, bool loadCdn, const std::optional<ReferencedAssetsType>& referencedAssets) override;
+    std::shared_ptr<Promise<std::shared_ptr<HybridRiveFileSpec>>> fromBytes(const std::shared_ptr<ArrayBuffer>& bytes, bool loadCdn, const std::optional<ReferencedAssetsType>& referencedAssets) override;
 
   private:
     friend HybridBase;

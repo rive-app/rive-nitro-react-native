@@ -58,6 +58,7 @@ namespace margelo::nitro::rive {
     std::optional<std::shared_ptr<HybridViewModelSpec>> viewModelByName(const std::string& name) override;
     std::optional<std::shared_ptr<HybridViewModelSpec>> defaultArtboardViewModel(const std::optional<ArtboardBy>& artboardBy) override;
     void release() override;
+    void updateReferencedAssets(const ReferencedAssetsType& referencedAssets) override;
 
   private:
     friend HybridBase;
