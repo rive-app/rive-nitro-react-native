@@ -8,6 +8,7 @@ import com.facebook.proguard.annotations.DoNotStrip
 @DoNotStrip
 class HybridRiveFile : HybridRiveFileSpec() {
   var riveFile: File? = null
+  var referencedAssetCache: ReferencedAssetCache? = null
 
   override val viewModelCount: Double?
     get() = riveFile?.viewModelCount?.toDouble()
@@ -37,8 +38,14 @@ class HybridRiveFile : HybridRiveFileSpec() {
     }
   }
 
+  override fun updateReferencedAssets(referencedAssets: ReferencedAssetsType) {
+    // TODO: Implement dynamic asset updates
+  }
+
   override fun release() {
     riveFile?.release()
     riveFile = null
+    referencedAssetCache?.clear()
+    referencedAssetCache = null
   }
 }

@@ -3,6 +3,7 @@ package com.margelo.nitro.rive
 import android.annotation.SuppressLint
 import androidx.annotation.Keep
 import app.rive.runtime.kotlin.core.File
+import app.rive.runtime.kotlin.core.Rive
 import com.facebook.proguard.annotations.DoNotStrip
 import com.margelo.nitro.core.ArrayBuffer
 import com.margelo.nitro.core.Promise
@@ -13,21 +14,45 @@ import java.io.File as JavaFile
 import java.net.URI
 import java.net.URL
 
+data class FileAndCache(
+  val file: File,
+  val cache: ReferencedAssetCache
+)
+
 @Keep
 @DoNotStrip
 class HybridRiveFileFactory : HybridRiveFileFactorySpec() {
-  override fun fromURL(url: String, loadCdn: Boolean): Promise<HybridRiveFileSpec> {
+  private val assetLoader = ReferencedAssetLoader()
+
+  private fun buildRiveFile(
+    data: ByteArray,
+    referencedAssets: ReferencedAssetsType?
+  ): FileAndCache {
+    val cache = mutableMapOf<String, app.rive.runtime.kotlin.core.FileAsset>()
+    val customLoader = assetLoader.createCustomLoader(referencedAssets, cache)
+
+    // TODO: The File object in Android does not have the concept of loading CDN assets
+    val riveFile = if (customLoader != null) {
+      File(data, Rive.defaultRendererType, customLoader)
+    } else {
+      File(data)
+    }
+
+    return FileAndCache(riveFile, cache)
+  }
+
+  override fun fromURL(url: String, loadCdn: Boolean, referencedAssets: ReferencedAssetsType?): Promise<HybridRiveFileSpec> {
     return Promise.async {
       try {
-        val riveFile = withContext(Dispatchers.IO) {
+        val fileAndCache = withContext(Dispatchers.IO) {
           val urlObj = URL(url)
           val riveData = urlObj.readBytes()
-          // TODO: The File object in Android does not have the concept of loading CDN assets
-          File(riveData)
+          buildRiveFile(riveData, referencedAssets)
         }
 
         val hybridRiveFile = HybridRiveFile()
-        hybridRiveFile.riveFile = riveFile
+        hybridRiveFile.riveFile = fileAndCache.file
+        hybridRiveFile.referencedAssetCache = fileAndCache.cache
         hybridRiveFile
       } catch (e: Exception) {
         throw Error("Failed to download Rive file: ${e.message}")
@@ -35,7 +60,7 @@ class HybridRiveFileFactory : HybridRiveFileFactorySpec() {
     }
   }
 
-  override fun fromFileURL(fileURL: String, loadCdn: Boolean): Promise<HybridRiveFileSpec> {
+  override fun fromFileURL(fileURL: String, loadCdn: Boolean, referencedAssets: ReferencedAssetsType?): Promise<HybridRiveFileSpec> {
     if (!fileURL.startsWith("file://")) {
       throw Error("fromFileURL: URL must be a file URL: $fileURL")
     }
@@ -45,14 +70,15 @@ class HybridRiveFileFactory : HybridRiveFileFactorySpec() {
         val uri = URI(fileURL)
         val path = uri.path ?: throw Error("fromFileURL: Invalid URL: $fileURL")
 
-        val riveFile = withContext(Dispatchers.IO) {
+        val fileAndCache = withContext(Dispatchers.IO) {
           val file = JavaFile(path)
           val riveData = file.readBytes()
-          File(riveData)
+          buildRiveFile(riveData, referencedAssets)
         }
 
         val hybridRiveFile = HybridRiveFile()
-        hybridRiveFile.riveFile = riveFile
+        hybridRiveFile.riveFile = fileAndCache.file
+        hybridRiveFile.referencedAssetCache = fileAndCache.cache
         hybridRiveFile
       } catch (e: Exception) {
         throw Error("Failed to load Rive file: ${e.message}")
@@ -61,23 +87,24 @@ class HybridRiveFileFactory : HybridRiveFileFactorySpec() {
   }
 
   @SuppressLint("DiscouragedApi")
-  override fun fromResource(resource: String, loadCdn: Boolean): Promise<HybridRiveFileSpec> {
+  override fun fromResource(resource: String, loadCdn: Boolean, referencedAssets: ReferencedAssetsType?): Promise<HybridRiveFileSpec> {
     return Promise.async {
       try {
         val context = NitroModules.applicationContext
           ?: throw Error("Could not load Rive file ($resource) from resource. No application context.")
-        val riveFile = withContext(Dispatchers.IO) {
+        val fileAndCache = withContext(Dispatchers.IO) {
           val resourceId = context.resources.getIdentifier(resource, "raw", context.packageName)
           if (resourceId == 0) {
             throw Error("Could not find Rive file: $resource.riv")
           }
           val inputStream = context.resources.openRawResource(resourceId)
           val riveData = inputStream.readBytes()
-          File(riveData)
+          buildRiveFile(riveData, referencedAssets)
         }
 
         val hybridRiveFile = HybridRiveFile()
-        hybridRiveFile.riveFile = riveFile
+        hybridRiveFile.riveFile = fileAndCache.file
+        hybridRiveFile.referencedAssetCache = fileAndCache.cache
         hybridRiveFile
       } catch (e: Exception) {
         throw Error("Failed to load Rive file: ${e.message}")
@@ -85,15 +112,16 @@ class HybridRiveFileFactory : HybridRiveFileFactorySpec() {
     }
   }
 
-  override fun fromBytes(bytes: ArrayBuffer, loadCdn: Boolean): Promise<HybridRiveFileSpec> {
-    val buffer = bytes.getBuffer(false) // Use false to avoid creating a read-only buffer
+  override fun fromBytes(bytes: ArrayBuffer, loadCdn: Boolean, referencedAssets: ReferencedAssetsType?): Promise<HybridRiveFileSpec> {
+    val buffer = bytes.getBuffer(false)
     return Promise.async {
       try {
         val byteArray = ByteArray(buffer.remaining())
         buffer.get(byteArray)
-        val riveFile = File(byteArray)
+        val fileAndCache = buildRiveFile(byteArray, referencedAssets)
         val hybridRiveFile = HybridRiveFile()
-        hybridRiveFile.riveFile = riveFile
+        hybridRiveFile.riveFile = fileAndCache.file
+        hybridRiveFile.referencedAssetCache = fileAndCache.cache
         hybridRiveFile
       } catch (e: Exception) {
         throw Error("Failed to load Rive file from bytes: ${e.message}")
