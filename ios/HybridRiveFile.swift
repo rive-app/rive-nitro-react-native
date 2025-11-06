@@ -5,7 +5,8 @@ typealias ReferencedAssetCache = [String: RiveFileAsset]
 class HybridRiveFile: HybridRiveFileSpec {
   var riveFile: RiveFile?
   var referencedAssetCache: ReferencedAssetCache?
-  
+  var assetLoader: ReferencedAssetLoader?
+
   public func setRiveFile(_ riveFile: RiveFile) {
     self.riveFile = riveFile
   }
@@ -49,7 +50,19 @@ class HybridRiveFile: HybridRiveFileSpec {
   }
   
   func updateReferencedAssets(referencedAssets: ReferencedAssetsType) {
-    
+    guard let assetsData = referencedAssets.data,
+          let cache = referencedAssetCache,
+          let loader = assetLoader,
+          let riveFile = riveFile else {
+      return
+    }
+
+    let factory = RiveFactory()
+
+    for (key, assetData) in assetsData {
+      guard let asset = cache[key] else { continue }
+      loader.loadAsset(source: assetData, asset: asset, factory: factory)
+    }
   }
   
   func release() throws {

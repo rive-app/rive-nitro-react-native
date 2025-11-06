@@ -2,17 +2,18 @@ import NitroModules
 import RiveRuntime
 
 final class HybridRiveFileFactory: HybridRiveFileFactorySpec {
-  private let assetLoader = ReferencedAssetLoader()
-
-  private func buildRiveFile(data: Data, loadCdn: Bool,referencedAssets: ReferencedAssetsType?) throws -> FileAndCache  {
+  private func buildRiveFile(data: Data, loadCdn: Bool, referencedAssets: ReferencedAssetsType?) throws -> (file: RiveFile, cache: ReferencedAssetCache, loader: ReferencedAssetLoader?)  {
     var referencedAssetCache = Ref(ReferencedAssetCache())
-    let riveFile =
-    if let customLoader = assetLoader.createCustomLoader(referencedAssets: referencedAssets, cache: referencedAssetCache) {
-          try RiveFile(data: data, loadCdn: loadCdn, customAssetLoader: customLoader)
-        } else {
-          try RiveFile(data: data, loadCdn: loadCdn)
-        }
-    return FileAndCache(file: riveFile, cache: referencedAssetCache.value)
+    let assetLoader = ReferencedAssetLoader()
+    let customLoader = assetLoader.createCustomLoader(referencedAssets: referencedAssets, cache: referencedAssetCache)
+
+    let riveFile = if let customLoader = customLoader {
+      try RiveFile(data: data, loadCdn: loadCdn, customAssetLoader: customLoader)
+    } else {
+      try RiveFile(data: data, loadCdn: loadCdn)
+    }
+
+    return (file: riveFile, cache: referencedAssetCache.value, loader: customLoader != nil ? assetLoader : nil)
   }
 
   // MARK: Public Methods
@@ -71,6 +72,7 @@ final class HybridRiveFileFactory: HybridRiveFileFactorySpec {
         let hybridRiveFile = HybridRiveFile()
         hybridRiveFile.riveFile = riveFile.file
         hybridRiveFile.referencedAssetCache = riveFile.cache
+        hybridRiveFile.assetLoader = riveFile.loader
         return hybridRiveFile
       } catch let error as NSError {
         throw RuntimeError.error(withMessage: "Failed to load Rive file: \(error.localizedDescription)")

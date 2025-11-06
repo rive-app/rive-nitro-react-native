@@ -16,20 +16,20 @@ import java.net.URL
 
 data class FileAndCache(
   val file: File,
-  val cache: ReferencedAssetCache
+  val cache: ReferencedAssetCache,
+  val loader: ReferencedAssetLoader?
 )
 
 @Keep
 @DoNotStrip
 class HybridRiveFileFactory : HybridRiveFileFactorySpec() {
-  private val assetLoader = ReferencedAssetLoader()
-
   private fun buildRiveFile(
     data: ByteArray,
     referencedAssets: ReferencedAssetsType?
   ): FileAndCache {
     val cache = mutableMapOf<String, app.rive.runtime.kotlin.core.FileAsset>()
-    val customLoader = assetLoader.createCustomLoader(referencedAssets, cache)
+    val loader = ReferencedAssetLoader()
+    val customLoader = loader.createCustomLoader(referencedAssets, cache)
 
     // TODO: The File object in Android does not have the concept of loading CDN assets
     val riveFile = if (customLoader != null) {
@@ -38,7 +38,7 @@ class HybridRiveFileFactory : HybridRiveFileFactorySpec() {
       File(data)
     }
 
-    return FileAndCache(riveFile, cache)
+    return FileAndCache(riveFile, cache, if (customLoader != null) loader else null)
   }
 
   override fun fromURL(url: String, loadCdn: Boolean, referencedAssets: ReferencedAssetsType?): Promise<HybridRiveFileSpec> {
@@ -53,6 +53,7 @@ class HybridRiveFileFactory : HybridRiveFileFactorySpec() {
         val hybridRiveFile = HybridRiveFile()
         hybridRiveFile.riveFile = fileAndCache.file
         hybridRiveFile.referencedAssetCache = fileAndCache.cache
+        hybridRiveFile.assetLoader = fileAndCache.loader
         hybridRiveFile
       } catch (e: Exception) {
         throw Error("Failed to download Rive file: ${e.message}")
@@ -79,6 +80,7 @@ class HybridRiveFileFactory : HybridRiveFileFactorySpec() {
         val hybridRiveFile = HybridRiveFile()
         hybridRiveFile.riveFile = fileAndCache.file
         hybridRiveFile.referencedAssetCache = fileAndCache.cache
+        hybridRiveFile.assetLoader = fileAndCache.loader
         hybridRiveFile
       } catch (e: Exception) {
         throw Error("Failed to load Rive file: ${e.message}")
@@ -105,6 +107,7 @@ class HybridRiveFileFactory : HybridRiveFileFactorySpec() {
         val hybridRiveFile = HybridRiveFile()
         hybridRiveFile.riveFile = fileAndCache.file
         hybridRiveFile.referencedAssetCache = fileAndCache.cache
+        hybridRiveFile.assetLoader = fileAndCache.loader
         hybridRiveFile
       } catch (e: Exception) {
         throw Error("Failed to load Rive file: ${e.message}")
@@ -122,6 +125,7 @@ class HybridRiveFileFactory : HybridRiveFileFactorySpec() {
         val hybridRiveFile = HybridRiveFile()
         hybridRiveFile.riveFile = fileAndCache.file
         hybridRiveFile.referencedAssetCache = fileAndCache.cache
+        hybridRiveFile.assetLoader = fileAndCache.loader
         hybridRiveFile
       } catch (e: Exception) {
         throw Error("Failed to load Rive file from bytes: ${e.message}")

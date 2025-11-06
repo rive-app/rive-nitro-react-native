@@ -183,6 +183,10 @@ class ReferencedAssetLoader {
     }
   }
 
+  fun updateAsset(assetData: ResolvedReferencedAsset, asset: FileAsset, context: Context) {
+    loadAsset(assetData, asset, context)
+  }
+
   fun createCustomLoader(
     referencedAssets: ReferencedAssetsType?,
     cache: ReferencedAssetCache

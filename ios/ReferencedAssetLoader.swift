@@ -172,7 +172,7 @@ final class ReferencedAssetLoader {
     }
   }
 
-  private func loadAsset(
+  private func loadAssetInternal(
     source: ResolvedReferencedAsset, asset: RiveFileAsset, factory: RiveFactory
   ) {
     let sourceAssetId = source.sourceAssetId
@@ -186,6 +186,12 @@ final class ReferencedAssetLoader {
     } else if let sourceAsset = sourceAsset {
       handleSourceAsset(sourceAsset, path: source.path, asset: asset, factory: factory)
     }
+  }
+
+  func loadAsset(
+    source: ResolvedReferencedAsset, asset: RiveFileAsset, factory: RiveFactory
+  ) {
+    loadAssetInternal(source: source, asset: asset, factory: factory)
   }
 
   func createCustomLoader(referencedAssets: ReferencedAssetsType?, cache: Ref<ReferencedAssetCache>)
@@ -204,7 +210,7 @@ final class ReferencedAssetLoader {
 
       cache.value[asset.uniqueName()] = asset
 
-      self.loadAsset(source: assetData, asset: asset, factory: factory)
+      self.loadAssetInternal(source: assetData, asset: asset, factory: factory)
 
       return false
     }

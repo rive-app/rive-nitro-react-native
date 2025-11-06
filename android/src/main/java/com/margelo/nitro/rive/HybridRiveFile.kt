@@ -3,12 +3,14 @@ package com.margelo.nitro.rive
 import androidx.annotation.Keep
 import app.rive.runtime.kotlin.core.File
 import com.facebook.proguard.annotations.DoNotStrip
+import com.margelo.nitro.NitroModules
 
 @Keep
 @DoNotStrip
 class HybridRiveFile : HybridRiveFileSpec() {
   var riveFile: File? = null
   var referencedAssetCache: ReferencedAssetCache? = null
+  var assetLoader: ReferencedAssetLoader? = null
 
   override val viewModelCount: Double?
     get() = riveFile?.viewModelCount?.toDouble()
@@ -39,10 +41,20 @@ class HybridRiveFile : HybridRiveFileSpec() {
   }
 
   override fun updateReferencedAssets(referencedAssets: ReferencedAssetsType) {
-    // TODO: Implement dynamic asset updates
+    val assetsData = referencedAssets.data ?: return
+    val cache = referencedAssetCache ?: return
+    val loader = assetLoader ?: return
+    val context = NitroModules.applicationContext ?: return
+
+    for ((key, assetData) in assetsData) {
+      val asset = cache[key] ?: continue
+      loader.updateAsset(assetData, asset, context)
+    }
   }
 
   override fun release() {
+    assetLoader?.dispose()
+    assetLoader = null
     riveFile?.release()
     riveFile = null
     referencedAssetCache?.clear()
