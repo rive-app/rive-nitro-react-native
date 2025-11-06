@@ -73,7 +73,7 @@ type RiveFileHookResult =
   | { riveFile: null; isLoading: false; error: string };
 
 export function useRiveFile(
-  input: RiveFileInput,
+  input: RiveFileInput | undefined,
   options: UseRiveFileOptions = {}
 ): RiveFileHookResult {
   const [result, setResult] = useState<RiveFileHookResult>({
@@ -95,6 +95,14 @@ export function useRiveFile(
       try {
         const currentInput = input;
 
+        if (currentInput == null) {
+          setResult({
+            riveFile: null,
+            isLoading: false,
+            error: 'No Rive file input provided.',
+          });
+          return;
+        }
         if (typeof currentInput === 'string') {
           if (
             currentInput.startsWith('http://') ||
