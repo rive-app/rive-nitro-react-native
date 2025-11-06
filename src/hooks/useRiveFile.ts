@@ -3,7 +3,7 @@ import { Image } from 'react-native';
 import { RiveFileFactory, type RiveFile } from 'react-native-rive';
 import type { ResolvedReferencedAsset } from '../specs/RiveFile.nitro';
 
-type RiveFileInput = number | { uri: string } | string | ArrayBuffer;
+export type RiveFileInput = number | { uri: string } | string | ArrayBuffer;
 
 type ReferencedAsset = { source: number | { uri: string } };
 
