@@ -1,7 +1,10 @@
 import RiveRuntime
 
+typealias ReferencedAssetCache = [String: RiveFileAsset]
+
 class HybridRiveFile: HybridRiveFileSpec {
   var riveFile: RiveFile?
+  var referencedAssetCache: ReferencedAssetCache?
   
   public func setRiveFile(_ riveFile: RiveFile) {
     self.riveFile = riveFile
@@ -43,6 +46,10 @@ class HybridRiveFile: HybridRiveFileSpec {
     guard let artboard = artboard,
           let vm = riveFile?.defaultViewModel(for: artboard) else { return nil }
     return HybridViewModel(viewModel: vm)
+  }
+  
+  func updateReferencedAssets(referencedAssets: ReferencedAssetsType) {
+    
   }
   
   func release() throws {

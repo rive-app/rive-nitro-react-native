@@ -67,7 +67,7 @@ class RiveReactNativeView: UIView, RiveStateMachineDelegate {
   func pause() {
     baseViewModel?.pause()
   }
-  
+
   func addEventListener(_ onEvent: @escaping (UnifiedRiveEvent) -> Void) {
     eventListeners.append(onEvent)
   }
