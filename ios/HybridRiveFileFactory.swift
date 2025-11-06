@@ -1,7 +1,20 @@
 import NitroModules
 import RiveRuntime
 
-class HybridRiveFileFactory: HybridRiveFileFactorySpec {
+final class HybridRiveFileFactory: HybridRiveFileFactorySpec {
+  private let assetLoader = ReferencedAssetLoader()
+
+  private func buildRiveFile(data: Data, loadCdn: Bool,referencedAssets: ReferencedAssetsType?) throws -> FileAndCache  {
+    var referencedAssetCache = Ref(ReferencedAssetCache())
+    let riveFile =
+    if let customLoader = assetLoader.createCustomLoader(referencedAssets: referencedAssets, cache: referencedAssetCache) {
+          try RiveFile(data: data, loadCdn: loadCdn, customAssetLoader: customLoader)
+        } else {
+          try RiveFile(data: data, loadCdn: loadCdn)
+        }
+    return FileAndCache(file: riveFile, cache: referencedAssetCache.value)
+  }
+
   // MARK: Public Methods
   func fromURL(url: String, loadCdn: Bool) throws -> Promise<(any HybridRiveFileSpec)> {
     // TODO: should we make use of the underlying Rive iOS URL asset loading instead
@@ -55,7 +68,36 @@ class HybridRiveFileFactory: HybridRiveFileFactorySpec {
             do {
               let data = try Data(contentsOf: url)
 
-              let riveFile = try RiveFile(data: data, loadCdn: loadCdn)
+        let hybridRiveFile = HybridRiveFile()
+        hybridRiveFile.riveFile = riveFile.file
+        hybridRiveFile.referencedAssetCache = riveFile.cache
+        return hybridRiveFile
+      } catch let error as NSError {
+        throw RuntimeError.error(withMessage: "Failed to load Rive file: \(error.localizedDescription)")
+      } catch {
+        throw RuntimeError.error(withMessage: "Unknown error occurred while loading Rive file")
+      }
+    }
+  }
+
+  func fromResource(resource: String, loadCdn: Bool, referencedAssets: ReferencedAssetsType?) throws -> Promise<(any HybridRiveFileSpec)> {
+    guard let _ = Bundle.main.path(forResource: resource, ofType: "riv") else {
+      throw RuntimeError.error(withMessage: "Could not find Rive file: \(resource).riv")
+    }
+
+    return Promise.async {
+      do {
+
+        let riveFile = try await withCheckedThrowingContinuation { continuation in
+          DispatchQueue.global(qos: .userInitiated).async {
+            do {
+              var referencedAssetCache = Ref(ReferencedAssetCache())
+              let riveFile =
+              if let customLoader = self.assetLoader.createCustomLoader(referencedAssets: referencedAssets, cache: referencedAssetCache) {
+                  try RiveFile(resource: resource, loadCdn: loadCdn, customAssetLoader: customLoader)
+                } else {
+                  try RiveFile(resource: resource, loadCdn: loadCdn)
+                }
               DispatchQueue.main.async {
                 continuation.resume(returning: riveFile)
               }
@@ -122,7 +164,14 @@ class HybridRiveFileFactory: HybridRiveFileFactorySpec {
         let riveFile = try await withCheckedThrowingContinuation { continuation in
           DispatchQueue.global(qos: .userInitiated).async {
             do {
-              let riveFile = try RiveFile(data: data, loadCdn: loadCdn)
+              var referencedAssetCache = Ref(ReferencedAssetCache())
+              let riveFile =
+              if let customLoader = self.assetLoader.createCustomLoader(referencedAssets: referencedAssets, cache: referencedAssetCache) {
+                  try RiveFile(data: data, loadCdn: loadCdn, customAssetLoader: customLoader)
+                } else {
+                  try RiveFile(data: data, loadCdn: loadCdn)
+                }
+
               DispatchQueue.main.async {
                 continuation.resume(returning: riveFile)
               }

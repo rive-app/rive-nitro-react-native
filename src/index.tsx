@@ -46,7 +46,7 @@ export function multiply(a: number, b: number): number {
  * - play(): Starts playing the animation
  * - pause(): Pauses the animation
  */
-export const RiveView = getHostComponent<RiveViewProps, RiveViewMethods>(
+export const NitroRiveView = getHostComponent<RiveViewProps, RiveViewMethods>(
   'RiveView',
   () => RiveViewConfig
 ) as ReactNativeView<RiveViewProps, RiveViewTSMethods>;
@@ -78,3 +78,8 @@ export { useRiveColor } from './hooks/useRiveColor';
 export { useRiveTrigger } from './hooks/useRiveTrigger';
 export { useRiveFile } from './hooks/useRiveFile';
 export { type RiveFileInput } from './hooks/useRiveFile';
+export { RiveConfigurator } from './core/RiveConfigurator';
+export { type RiveConfiguratorConfig } from './core/RiveConfigurator';
+export { type ArtboardSpec } from './specs/ArtboardSpec';
+export { type StateMachineSpec } from './specs/StateMachineSpec';
+export { RiveView } from './core/RiveView';

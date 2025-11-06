@@ -43,6 +43,7 @@ Pod::Spec.new do |s|
 
   s.source_files = "ios/**/*.{h,m,mm,swift}"
 
+  s.public_header_files = ['ios/RCTSwiftLog.h']
   load 'nitrogen/generated/ios/Rive+autolinking.rb'
   add_nitrogen_files(s)
 
