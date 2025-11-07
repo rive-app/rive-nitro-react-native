@@ -153,13 +153,15 @@ export function useRiveFile(
     };
   }, [input]);
 
-  if (initialReferencedAssets.current !== referencedAssets) {
-    // TODO: if riveFile not yet loaded?!
-    const { riveFile } = result;
-    if (riveFile && referencedAssets) {
-      riveFile.updateReferencedAssets(referencedAssets);
+  const { riveFile } = result;
+  useEffect(() => {
+    if (initialReferencedAssets.current !== referencedAssets) {
+      if (riveFile && referencedAssets) {
+        riveFile.updateReferencedAssets({ data: referencedAssets });
+        initialReferencedAssets.current = referencedAssets;
+      }
     }
-  }
+  }, [referencedAssets, riveFile]);
 
   if (initialInput.current !== input) {
     console.warn(
