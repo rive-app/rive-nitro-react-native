@@ -6,9 +6,27 @@ class HybridRiveFile: HybridRiveFileSpec {
   var riveFile: RiveFile?
   var referencedAssetCache: ReferencedAssetCache?
   var assetLoader: ReferencedAssetLoader?
+  private var weakViews: [Weak<RiveReactNativeView>] = []
 
   public func setRiveFile(_ riveFile: RiveFile) {
     self.riveFile = riveFile
+  }
+
+  func registerView(_ view: RiveReactNativeView) {
+    weakViews.append(Weak(value: view))
+  }
+
+  func unregisterView(_ view: RiveReactNativeView) {
+    weakViews.removeAll { $0.value === view }
+  }
+
+  private func refreshAfterAssetChange() {
+    weakViews = weakViews.filter { $0.value != nil }
+
+    for weakView in weakViews {
+      guard let view = weakView.value else { continue }
+      view.refreshAfterAssetChange()
+    }
   }
   
   var viewModelCount: Double? {
@@ -53,15 +71,19 @@ class HybridRiveFile: HybridRiveFileSpec {
     guard let assetsData = referencedAssets.data,
           let cache = referencedAssetCache,
           let loader = assetLoader,
-          let riveFile = riveFile else {
+          let _ = riveFile else {
       return
     }
 
-    let factory = RiveFactory()
-
+    var hasChanged = false
     for (key, assetData) in assetsData {
       guard let asset = cache[key] else { continue }
-      loader.loadAsset(source: assetData, asset: asset, factory: factory)
+      loader.loadAsset(source: assetData, asset: asset)
+      hasChanged = true
+    }
+
+    if hasChanged {
+      refreshAfterAssetChange()
     }
   }
   
