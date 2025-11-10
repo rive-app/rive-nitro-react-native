@@ -8,6 +8,8 @@ import android.util.Log
 import app.rive.runtime.kotlin.core.*
 import com.margelo.nitro.NitroModules
 import kotlinx.coroutines.*
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.Deferred
 import java.io.File as JavaFile
 import java.io.IOException
 import java.net.URI
@@ -61,9 +63,10 @@ class ReferencedAssetLoader {
     }
   }
 
-  private fun downloadUrlAsset(url: String, listener: (ByteArray) -> Unit) {
+  private fun downloadUrlAsset(url: String, listener: (ByteArray?) -> Unit) {
     if (!isValidUrl(url)) {
       logError("Invalid URL: $url")
+      listener(null)
       return
     }
 
@@ -86,6 +89,9 @@ class ReferencedAssetLoader {
           }
           else -> {
             logError("Unsupported URL scheme: ${uri.scheme}")
+            withContext(Dispatchers.Main) {
+              listener(null)
+            }
             return@launch
           }
         }
@@ -95,6 +101,9 @@ class ReferencedAssetLoader {
         }
       } catch (e: Exception) {
         logError("Unable to download asset from URL: $url - ${e.message}")
+        withContext(Dispatchers.Main) {
+          listener(null)
+        }
       }
     }
   }
@@ -102,7 +111,7 @@ class ReferencedAssetLoader {
   private fun loadResourceAsset(
     sourceAssetId: String,
     context: Context,
-    listener: (ByteArray) -> Unit
+    listener: (ByteArray?) -> Unit
   ) {
     scope.launch {
       try {
@@ -124,13 +133,25 @@ class ReferencedAssetLoader {
           }
         } else {
           logError("Resource not found: $sourceAssetId")
+          withContext(Dispatchers.Main) {
+            listener(null)
+          }
         }
       } catch (e: IOException) {
         logError("IO Exception while reading resource: $sourceAssetId - ${e.message}")
+        withContext(Dispatchers.Main) {
+          listener(null)
+        }
       } catch (e: Resources.NotFoundException) {
         logError("Resource not found: $sourceAssetId - ${e.message}")
+        withContext(Dispatchers.Main) {
+          listener(null)
+        }
       } catch (e: Exception) {
         logError("Unexpected error while processing resource: $sourceAssetId - ${e.message}")
+        withContext(Dispatchers.Main) {
+          listener(null)
+        }
       }
     }
   }
@@ -139,20 +160,21 @@ class ReferencedAssetLoader {
     sourceAsset: String,
     path: String?,
     context: Context,
-    listener: (ByteArray) -> Unit
+    listener: (ByteArray?) -> Unit
   ) {
     scope.launch {
       try {
         val fullPath = if (path == null) sourceAsset else constructFilePath(sourceAsset, path)
         val bytes = readAssetBytes(context, fullPath)
 
-        if (bytes != null) {
-          withContext(Dispatchers.Main) {
-            listener(bytes)
-          }
+        withContext(Dispatchers.Main) {
+          listener(bytes)
         }
       } catch (e: Exception) {
         logError("Error loading bundled asset: $sourceAsset - ${e.message}")
+        withContext(Dispatchers.Main) {
+          listener(null)
+        }
       }
     }
   }
@@ -165,9 +187,13 @@ class ReferencedAssetLoader {
     }
   }
 
-  private fun loadAsset(assetData: ResolvedReferencedAsset, asset: FileAsset, context: Context) {
-    val listener: (ByteArray) -> Unit = { bytes ->
-      processAssetBytes(bytes, asset)
+  private fun loadAsset(assetData: ResolvedReferencedAsset, asset: FileAsset, context: Context): Deferred<Unit> {
+    val deferred = CompletableDeferred<Unit>()
+    val listener: (ByteArray?) -> Unit = { bytes ->
+      if (bytes != null) {
+        processAssetBytes(bytes, asset)
+      }
+      deferred.complete(Unit)
     }
 
     when {
@@ -180,11 +206,16 @@ class ReferencedAssetLoader {
       assetData.sourceAsset != null -> {
         loadBundledAsset(assetData.sourceAsset, assetData.path, context, listener)
       }
+      else -> {
+        deferred.complete(Unit)
+      }
     }
+
+    return deferred
   }
 
-  fun updateAsset(assetData: ResolvedReferencedAsset, asset: FileAsset, context: Context) {
-    loadAsset(assetData, asset, context)
+  fun updateAsset(assetData: ResolvedReferencedAsset, asset: FileAsset, context: Context): Deferred<Unit> {
+    return loadAsset(assetData, asset, context)
   }
 
   fun createCustomLoader(
