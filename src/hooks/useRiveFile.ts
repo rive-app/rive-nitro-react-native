@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { Image } from 'react-native';
-import { RiveFileFactory, type RiveFile } from 'react-native-rive';
+import { RiveFileFactory, type RiveFile } from '../index';
 import type { ResolvedReferencedAsset } from '../specs/RiveFile.nitro';
 
 export type RiveFileInput = number | { uri: string } | string | ArrayBuffer;

@@ -50,6 +50,7 @@ export const RiveView = getHostComponent<RiveViewProps, RiveViewMethods>(
   'RiveView',
   () => RiveViewConfig
 ) as ReactNativeView<RiveViewProps, RiveViewTSMethods>;
+export { RiveView as NitroRiveView };
 
 export type { RiveViewProps, RiveViewMethods };
 export type { RiveFile } from './specs/RiveFile.nitro';

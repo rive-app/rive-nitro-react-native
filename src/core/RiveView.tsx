@@ -1,11 +1,10 @@
-import type { HybridViewProps } from 'react-native-nitro-modules';
 import type { RiveFile } from '../specs/RiveFile.nitro';
 import '../specs/RiveView.nitro';
 import type { Alignment } from './Alignment';
 import type { Fit } from './Fit';
 import { NitroRiveView } from 'react-native-rive';
 import type { ReferencedAssets } from '../hooks/useRiveFile';
-import type { RiveFileInput } from '../../lib/typescript/src';
+import type { RiveFileInput } from '../hooks/useRiveFile';
 import { useRiveFile } from '../hooks/useRiveFile';
 import { ActivityIndicator, Text } from 'react-native';
 import type { ComponentProps } from 'react';
