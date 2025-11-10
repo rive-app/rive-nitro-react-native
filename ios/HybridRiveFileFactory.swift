@@ -4,9 +4,10 @@ import RiveRuntime
 final class HybridRiveFileFactory: HybridRiveFileFactorySpec {
   let assetLoader = ReferencedAssetLoader()
 
-  private func buildRiveFile(data: Data, loadCdn: Bool, referencedAssets: ReferencedAssetsType?) throws -> (file: RiveFile, cache: ReferencedAssetCache, loader: ReferencedAssetLoader?)  {
+  private func buildRiveFile(data: Data, loadCdn: Bool, referencedAssets: ReferencedAssetsType?) throws -> (file: RiveFile, cache: ReferencedAssetCache, factory: RiveFactory?, loader: ReferencedAssetLoader?)  {
     var referencedAssetCache = SendableRef(ReferencedAssetCache())
-    let customLoader = assetLoader.createCustomLoader(referencedAssets: referencedAssets, cache: referencedAssetCache)
+    var factoryCache: SendableRef<RiveFactory?> = .init(nil)
+    let customLoader = assetLoader.createCustomLoader(referencedAssets: referencedAssets, cache: referencedAssetCache, factory: factoryCache)
 
     let riveFile = if let customLoader = customLoader {
       try RiveFile(data: data, loadCdn: loadCdn, customAssetLoader: customLoader)
@@ -14,7 +15,7 @@ final class HybridRiveFileFactory: HybridRiveFileFactorySpec {
       try RiveFile(data: data, loadCdn: loadCdn)
     }
 
-    return (file: riveFile, cache: referencedAssetCache.value, loader: customLoader != nil ? assetLoader : nil)
+    return (file: riveFile, cache: referencedAssetCache.value, factory: factoryCache.value, loader: customLoader != nil ? assetLoader : nil)
   }
 
   // MARK: Public Methods
@@ -44,6 +45,9 @@ final class HybridRiveFileFactory: HybridRiveFileFactorySpec {
         let hybridRiveFile = HybridRiveFile()
         hybridRiveFile.riveFile = result.file
         hybridRiveFile.referencedAssetCache = result.cache
+        if let factory = result.factory {
+          hybridRiveFile.cachedFactory = factory
+        }
         hybridRiveFile.assetLoader = result.loader
         return hybridRiveFile
       } catch let error as NSError {
@@ -105,11 +109,12 @@ final class HybridRiveFileFactory: HybridRiveFileFactorySpec {
       do {
         let assetLoader = self.assetLoader
         let referencedAssetCache = SendableRef(ReferencedAssetCache())
+        let factoryCache = SendableRef<RiveFactory?>(nil)
         let riveFile = try await withCheckedThrowingContinuation { continuation in
           DispatchQueue.global(qos: .userInitiated).async {
             do {
               let riveFile =
-                if let customLoader = assetLoader.createCustomLoader(referencedAssets: referencedAssets, cache: referencedAssetCache) {
+              if let customLoader = assetLoader.createCustomLoader(referencedAssets: referencedAssets, cache: referencedAssetCache, factory: factoryCache) {
                   try RiveFile(resource: resource, loadCdn: loadCdn, customAssetLoader: customLoader)
                 } else {
                   try RiveFile(resource: resource, loadCdn: loadCdn)

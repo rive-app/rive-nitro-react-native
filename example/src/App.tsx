@@ -13,6 +13,7 @@ import TemplatePage from './pages/TemplatePage';
 import EventsExample from './pages/RiveEventsExample';
 import StateMachineInputsExample from './pages/RiveStateMachineInputsExample';
 import TextRunExample from './pages/RiveTextRunExample';
+import OutOfBandAssets from './pages/OutOfBandAssets';
 
 type RootStackParamList = {
   Home: undefined;
@@ -22,6 +23,7 @@ type RootStackParamList = {
   RiveStateMachineInputs: undefined;
   RiveTextRun: undefined;
   Template: undefined;
+  OutOfBandAssets: undefined;
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -62,6 +64,12 @@ function HomeScreen({ navigation }: { navigation: any }) {
           onPress={() => navigation.navigate('RiveTextRun')}
         >
           <Text style={styles.buttonText}>Rive Text Run Example</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => navigation.navigate('OutOfBandAssets')}
+        >
+          <Text style={styles.buttonText}>Out of band assets</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.button}
@@ -117,6 +125,11 @@ export default function App() {
           name="RiveTextRun"
           component={TextRunExample}
           options={{ title: 'Rive Text Runs' }}
+        />
+        <Stack.Screen
+          name="OutOfBandAssets"
+          component={OutOfBandAssets}
+          options={{ title: 'Out of Band Asset' }}
         />
         <Stack.Screen
           name="Template"

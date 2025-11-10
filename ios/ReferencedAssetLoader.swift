@@ -1,13 +1,6 @@
 import NitroModules
 import RiveRuntime
 
-final class Ref<T> {
-  var value: T
-  init(_ value: T) {
-    self.value = value
-  }
-}
-
 struct FileAndCache {
   var file: RiveFile
   var cache: [String: RiveFileAsset]
@@ -194,7 +187,7 @@ final class ReferencedAssetLoader {
     loadAssetInternal(source: source, asset: asset, factory: factory)
   }
 
-  func createCustomLoader(referencedAssets: ReferencedAssetsType?, cache: Ref<ReferencedAssetCache>)
+  func createCustomLoader(referencedAssets: ReferencedAssetsType?, cache: SendableRef<ReferencedAssetCache>, factory factoryOut: SendableRef<RiveFactory?>)
     -> LoadAsset?
   {
     guard let referencedAssets = referencedAssets, let referencedAssets = referencedAssets.data
@@ -209,6 +202,7 @@ final class ReferencedAssetLoader {
       let usedKey = assetByUniqueName != nil ? asset.uniqueName() : asset.name()
 
       cache.value[asset.uniqueName()] = asset
+      factoryOut.value = factory
 
       self.loadAssetInternal(source: assetData, asset: asset, factory: factory)
 

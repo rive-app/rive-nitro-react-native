@@ -6,6 +6,7 @@ class HybridRiveFile: HybridRiveFileSpec {
   var riveFile: RiveFile?
   var referencedAssetCache: ReferencedAssetCache?
   var assetLoader: ReferencedAssetLoader?
+  var cachedFactory: RiveFactory?
   private var weakViews: [Weak<RiveReactNativeView>] = []
 
   public func setRiveFile(_ riveFile: RiveFile) {
@@ -13,7 +14,7 @@ class HybridRiveFile: HybridRiveFileSpec {
   }
 
   func registerView(_ view: RiveReactNativeView) {
-    weakViews.append(Weak(value: view))
+    weakViews.append(Weak(view))
   }
 
   func unregisterView(_ view: RiveReactNativeView) {
@@ -78,7 +79,11 @@ class HybridRiveFile: HybridRiveFileSpec {
     var hasChanged = false
     for (key, assetData) in assetsData {
       guard let asset = cache[key] else { continue }
-      loader.loadAsset(source: assetData, asset: asset)
+      if let riveFactory = cachedFactory {
+        loader.loadAsset(source: assetData, asset: asset, factory: riveFactory)
+      } else {
+        RCTLogError("[RiveFile] no factory available for update")
+      }
       hasChanged = true
     }
 
