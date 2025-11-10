@@ -61,7 +61,6 @@ export default function StateMachine() {
     <SafeAreaView style={styles.safeAreaViewContainer}>
       <RiveView
         file={riveFile}
-        autoplay={true}
         fit={Fit.Contain}
         style={styles.animation}
         stateMachineName="State Machine 1"
@@ -80,12 +79,13 @@ export default function StateMachine() {
         // Using just the asset name allows you to avoid knowing the unique identifier and gives you more control over naming.
 
         artboardName="Artboard"
-        resourceName={'out_of_band'}
+      />
+      {/*
         onError={(riveError: RNRiveError) => {
           console.log(riveError);
         }}
-      />
-      {/* <Text>
+      */
+      /* <Text>
         Load in an external asset from a URL, or bundled asset on the native
         platform, or as a source loaded directly from JavaScript.
       </Text> */}
