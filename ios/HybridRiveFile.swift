@@ -76,11 +76,16 @@ class HybridRiveFile: HybridRiveFileSpec {
       return
     }
 
+    let dispatchGroup = DispatchGroup()
     var hasChanged = false
+
     for (key, assetData) in assetsData {
       guard let asset = cache[key] else { continue }
       if let riveFactory = cachedFactory {
-        loader.loadAsset(source: assetData, asset: asset, factory: riveFactory)
+        dispatchGroup.enter()
+        loader.loadAsset(source: assetData, asset: asset, factory: riveFactory) {
+          dispatchGroup.leave()
+        }
       } else {
         RCTLogError("[RiveFile] no factory available for update")
       }
@@ -88,7 +93,9 @@ class HybridRiveFile: HybridRiveFileSpec {
     }
 
     if hasChanged {
-      refreshAfterAssetChange()
+      dispatchGroup.notify(queue: .main) { [weak self] in
+        self?.refreshAfterAssetChange()
+      }
     }
   }
   

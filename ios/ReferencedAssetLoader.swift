@@ -41,9 +41,10 @@ final class ReferencedAssetLoader {
     handleRiveError(error: createIncorrectRiveURL(url))
   }
 
-  private func downloadUrlAsset(url: String, listener: @escaping (Data) -> Void) {
+  private func downloadUrlAsset(url: String, listener: @escaping (Data) -> Void, onError: @escaping () -> Void) {
     guard isValidUrl(url) else {
       handleInvalidUrlError(url: url)
+      onError()
       return
     }
     if let fileUrl = URL(string: url), fileUrl.scheme == "file" {
@@ -52,6 +53,7 @@ final class ReferencedAssetLoader {
         listener(data)
       } catch {
         handleInvalidUrlError(url: url)
+        onError()
       }
       return
     }
@@ -59,6 +61,7 @@ final class ReferencedAssetLoader {
     let queue = URLSession.shared
     guard let requestUrl = URL(string: url) else {
       handleInvalidUrlError(url: url)
+      onError()
       return
     }
 
@@ -66,16 +69,20 @@ final class ReferencedAssetLoader {
     let task = queue.dataTask(with: request) { [weak self] data, response, error in
       if error != nil {
         self?.handleInvalidUrlError(url: url)
+        onError()
       } else if let data = data {
         listener(data)
+      } else {
+        onError()
       }
     }
 
     task.resume()
   }
 
-  private func processAssetBytes(_ data: Data, asset: RiveFileAsset, factory: RiveFactory) {
+  private func processAssetBytes(_ data: Data, asset: RiveFileAsset, factory: RiveFactory, completion: @escaping () -> Void) {
     if data.isEmpty == true {
+      completion()
       return
     }
     DispatchQueue.global(qos: .background).async {
@@ -84,39 +91,50 @@ final class ReferencedAssetLoader {
         let decodedImage = factory.decodeImage(data)
         DispatchQueue.main.async {
           imageAsset.renderImage(decodedImage)
+          completion()
         }
       case let fontAsset as RiveFontAsset:
         let decodedFont = factory.decodeFont(data)
         DispatchQueue.main.async {
           fontAsset.font(decodedFont)
+          completion()
         }
       case let audioAsset as RiveAudioAsset:
-        guard let decodedAudio = factory.decodeAudio(data) else { return }
+        guard let decodedAudio = factory.decodeAudio(data) else {
+          DispatchQueue.main.async {
+            completion()
+          }
+          return
+        }
         DispatchQueue.main.async {
           audioAsset.audio(decodedAudio)
+          completion()
         }
       default:
-        break
+        DispatchQueue.main.async {
+          completion()
+        }
       }
     }
   }
 
   private func handleSourceAssetId(
-    _ sourceAssetId: String, asset: RiveFileAsset, factory: RiveFactory
+    _ sourceAssetId: String, asset: RiveFileAsset, factory: RiveFactory, completion: @escaping () -> Void
   ) {
     guard URL(string: sourceAssetId) != nil else {
+      completion()
       return
     }
 
-    downloadUrlAsset(url: sourceAssetId) { [weak self] data in
-      self?.processAssetBytes(data, asset: asset, factory: factory)
-    }
+    downloadUrlAsset(url: sourceAssetId, listener: { [weak self] data in
+      self?.processAssetBytes(data, asset: asset, factory: factory, completion: completion)
+    }, onError: completion)
   }
 
-  private func handleSourceUrl(_ sourceUrl: String, asset: RiveFileAsset, factory: RiveFactory) {
-    downloadUrlAsset(url: sourceUrl) { [weak self] data in
-      self?.processAssetBytes(data, asset: asset, factory: factory)
-    }
+  private func handleSourceUrl(_ sourceUrl: String, asset: RiveFileAsset, factory: RiveFactory, completion: @escaping () -> Void) {
+    downloadUrlAsset(url: sourceUrl, listener: { [weak self] data in
+      self?.processAssetBytes(data, asset: asset, factory: factory, completion: completion)
+    }, onError: completion)
   }
 
   private func splitFileNameAndExtension(fileName: String) -> (name: String?, ext: String?)? {
@@ -128,18 +146,20 @@ final class ReferencedAssetLoader {
   }
 
   private func loadResourceAsset(
-    sourceAsset: String, path: String?, listener: @escaping (Data) -> Void
+    sourceAsset: String, path: String?, listener: @escaping (Data) -> Void, onError: @escaping () -> Void
   ) {
     guard let splitSourceAssetName = splitFileNameAndExtension(fileName: sourceAsset),
       let name = splitSourceAssetName.name,
       let ext = splitSourceAssetName.ext
     else {
       handleRiveError(error: createAssetFileError(sourceAsset))
+      onError()
       return
     }
 
     guard let folderUrl = Bundle.main.url(forResource: name, withExtension: ext) else {
       handleRiveError(error: createAssetFileError(sourceAsset))
+      onError()
       return
     }
 
@@ -152,39 +172,42 @@ final class ReferencedAssetLoader {
       } catch {
         DispatchQueue.main.async {
           self?.handleRiveError(error: createAssetFileError(sourceAsset))
+          onError()
         }
       }
     }
   }
 
   private func handleSourceAsset(
-    _ sourceAsset: String, path: String?, asset: RiveFileAsset, factory: RiveFactory
+    _ sourceAsset: String, path: String?, asset: RiveFileAsset, factory: RiveFactory, completion: @escaping () -> Void
   ) {
-    loadResourceAsset(sourceAsset: sourceAsset, path: path) { [weak self] data in
-      self?.processAssetBytes(data, asset: asset, factory: factory)
-    }
+    loadResourceAsset(sourceAsset: sourceAsset, path: path, listener: { [weak self] data in
+      self?.processAssetBytes(data, asset: asset, factory: factory, completion: completion)
+    }, onError: completion)
   }
 
   private func loadAssetInternal(
-    source: ResolvedReferencedAsset, asset: RiveFileAsset, factory: RiveFactory
+    source: ResolvedReferencedAsset, asset: RiveFileAsset, factory: RiveFactory, completion: @escaping () -> Void
   ) {
     let sourceAssetId = source.sourceAssetId
     let sourceUrl = source.sourceUrl
     let sourceAsset = source.sourceAsset
 
     if let sourceAssetId = sourceAssetId {
-      handleSourceAssetId(sourceAssetId, asset: asset, factory: factory)
+      handleSourceAssetId(sourceAssetId, asset: asset, factory: factory, completion: completion)
     } else if let sourceUrl = sourceUrl {
-      handleSourceUrl(sourceUrl, asset: asset, factory: factory)
+      handleSourceUrl(sourceUrl, asset: asset, factory: factory, completion: completion)
     } else if let sourceAsset = sourceAsset {
-      handleSourceAsset(sourceAsset, path: source.path, asset: asset, factory: factory)
+      handleSourceAsset(sourceAsset, path: source.path, asset: asset, factory: factory, completion: completion)
+    } else {
+      completion()
     }
   }
 
   func loadAsset(
-    source: ResolvedReferencedAsset, asset: RiveFileAsset, factory: RiveFactory
+    source: ResolvedReferencedAsset, asset: RiveFileAsset, factory: RiveFactory, completion: @escaping () -> Void
   ) {
-    loadAssetInternal(source: source, asset: asset, factory: factory)
+    loadAssetInternal(source: source, asset: asset, factory: factory, completion: completion)
   }
 
   func createCustomLoader(referencedAssets: ReferencedAssetsType?, cache: SendableRef<ReferencedAssetCache>, factory factoryOut: SendableRef<RiveFactory?>)
@@ -204,7 +227,7 @@ final class ReferencedAssetLoader {
       cache.value[asset.uniqueName()] = asset
       factoryOut.value = factory
 
-      self.loadAssetInternal(source: assetData, asset: asset, factory: factory)
+      self.loadAssetInternal(source: assetData, asset: asset, factory: factory, completion: {})
 
       return false
     }
