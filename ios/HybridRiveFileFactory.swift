@@ -1,36 +1,96 @@
 import NitroModules
 import RiveRuntime
 
-final class HybridRiveFileFactory: HybridRiveFileFactorySpec {
+final class HybridRiveFileFactory: HybridRiveFileFactorySpec, @unchecked Sendable {
   let assetLoader = ReferencedAssetLoader()
 
-  private func buildRiveFile(data: Data, loadCdn: Bool, referencedAssets: ReferencedAssetsType?) throws -> (file: RiveFile, cache: ReferencedAssetCache, factory: RiveFactory?, loader: ReferencedAssetLoader?)  {
-    var referencedAssetCache = SendableRef(ReferencedAssetCache())
-    var factoryCache: SendableRef<RiveFactory?> = .init(nil)
-    let customLoader = assetLoader.createCustomLoader(referencedAssets: referencedAssets, cache: referencedAssetCache, factory: factoryCache)
+  private final func buildRiveFile(
+    fileWithCustomAssetLoader: (@escaping LoadAsset) throws -> RiveFile,
+    file: () throws -> RiveFile,
+    referencedAssets: ReferencedAssetsType?
+  ) throws -> (
+    file: RiveFile, cache: ReferencedAssetCache, factory: RiveFactory?,
+    loader: ReferencedAssetLoader?
+  ) {
+    let referencedAssetCache = SendableRef(ReferencedAssetCache())
+    let factoryCache: SendableRef<RiveFactory?> = .init(nil)
+    let customLoader = assetLoader.createCustomLoader(
+      referencedAssets: referencedAssets, cache: referencedAssetCache, factory: factoryCache)
 
-    let riveFile = if let customLoader = customLoader {
-      try RiveFile(data: data, loadCdn: loadCdn, customAssetLoader: customLoader)
-    } else {
-      try RiveFile(data: data, loadCdn: loadCdn)
-    }
+    let riveFile =
+      if let customLoader = customLoader {
+        try fileWithCustomAssetLoader(customLoader)
+      } else {
+        try file()
+      }
 
-    return (file: riveFile, cache: referencedAssetCache.value, factory: factoryCache.value, loader: customLoader != nil ? assetLoader : nil)
+    return (
+      file: riveFile, cache: referencedAssetCache.value, factory: factoryCache.value,
+      loader: customLoader != nil ? assetLoader : nil
+    )
   }
 
-  // MARK: Public Methods
-  func fromURL(url: String, loadCdn: Bool, referencedAssets: ReferencedAssetsType?) throws -> Promise<(any HybridRiveFileSpec)> {
+  private func buildRiveFile(data: Data, loadCdn: Bool, referencedAssets: ReferencedAssetsType?)
+    throws -> (
+      file: RiveFile, cache: ReferencedAssetCache, factory: RiveFactory?,
+      loader: ReferencedAssetLoader?
+    )
+  {
+    return try buildRiveFile(
+      fileWithCustomAssetLoader: { (loader) in
+        try RiveFile(data: data, loadCdn: loadCdn, customAssetLoader: loader)
+      },
+      file: { try RiveFile(data: data, loadCdn: loadCdn) },
+      referencedAssets: referencedAssets)
+  }
+
+  /// Asynchronously creates a `HybridRiveFileSpec` by performing the following steps:
+  /// 1. Executes `check()` to validate or fetch initial data.
+  /// 2. Processes the result with `prepare()`.
+  /// 3. If a custom asset loader is available, loads the file using `fileWithCustomAssetLoader(prepared, assetLoader)`.
+  ///    Otherwise, loads the file using `file(prepared)`.
+  /// 4. Handles referenced assets and caches as needed.
+  /// - Parameters:
+  ///   - check: Closure to validate or fetch initial data.
+  ///   - prepare: Closure to process the checked result.
+  ///   - fileWithCustomAssetLoader: Closure to load the file with a custom asset loader.
+  ///   - file: Closure to load the file without a custom asset loader.
+  ///   - referencedAssets: Optional referenced assets.
+  /// - Returns: A promise resolving to a `HybridRiveFileSpec`.
+  /// - Throws: Runtime errors if any step fails.
+  func genericFrom<CheckResult, Prepared>(
+    check: @escaping () throws -> CheckResult,
+    prepare: @escaping (CheckResult) throws -> Prepared,
+    fileWithCustomAssetLoader: @escaping (Prepared, @escaping LoadAsset) throws -> RiveFile,
+    file: @escaping (Prepared) throws -> RiveFile,
+    referencedAssets: ReferencedAssetsType?
+  ) throws -> Promise<(any HybridRiveFileSpec)> {
     return Promise.async {
       do {
-        guard let url = URL(string: url) else {
-          throw RuntimeError.error(withMessage: "Invalid URL: \(url)")
-        }
+        let checked = try check()
 
         let result = try await withCheckedThrowingContinuation { continuation in
           DispatchQueue.global(qos: .userInitiated).async {
             do {
-              let riveData = try Data(contentsOf: url)
-              let result = try self.buildRiveFile(data: riveData, loadCdn: loadCdn, referencedAssets: referencedAssets)
+              let prepared = try prepare(checked)
+
+              let referencedAssetCache = SendableRef(ReferencedAssetCache())
+              let factoryCache: SendableRef<RiveFactory?> = .init(nil)
+              let customLoader = self.assetLoader.createCustomLoader(
+                referencedAssets: referencedAssets, cache: referencedAssetCache,
+                factory: factoryCache)
+
+              let riveFile =
+                if let customLoader = customLoader {
+                  try fileWithCustomAssetLoader(prepared, customLoader)
+                } else {
+                  try file(prepared)
+                }
+
+              let result = (
+                file: riveFile, cache: referencedAssetCache.value, factory: factoryCache.value,
+                loader: customLoader != nil ? self.assetLoader : nil
+              )
               DispatchQueue.main.async {
                 continuation.resume(returning: result)
               }
@@ -59,160 +119,84 @@ final class HybridRiveFileFactory: HybridRiveFileFactorySpec {
     }
   }
 
-  func fromFileURL(fileURL: String, loadCdn: Bool, referencedAssets: ReferencedAssetsType?) throws -> Promise<(any HybridRiveFileSpec)> {
-    guard let url = URL(string: fileURL) else {
-      throw RuntimeError.error(withMessage: "fromFileURL: Invalid URL: \(fileURL)")
-    }
-
-    guard url.isFileURL else {
-      throw RuntimeError.error(withMessage: "fromFileURL: URL must be a file URL: \(fileURL)")
-    }
-
-    return Promise.async {
-      do {
-        let result = try await withCheckedThrowingContinuation { continuation in
-          DispatchQueue.global(qos: .userInitiated).async {
-            do {
-              let data = try Data(contentsOf: url)
-              let result = try self.buildRiveFile(data: data, loadCdn: loadCdn, referencedAssets: referencedAssets)
-              DispatchQueue.main.async {
-                continuation.resume(returning: result)
-              }
-            } catch {
-              DispatchQueue.main.async {
-                continuation.resume(throwing: error)
-              }
-            }
-          }
+  // MARK: Public Methods
+  func fromURL(url: String, loadCdn: Bool, referencedAssets: ReferencedAssetsType?) throws
+    -> Promise<(any HybridRiveFileSpec)>
+  {
+    return try genericFrom(
+      check: {
+        guard let url = URL(string: url) else {
+          throw RuntimeError.error(withMessage: "Invalid URL: \(url)")
         }
-
-        let hybridRiveFile = HybridRiveFile()
-        hybridRiveFile.riveFile = result.file
-        hybridRiveFile.referencedAssetCache = result.cache
-        hybridRiveFile.assetLoader = result.loader
-        return hybridRiveFile
-      } catch let error as NSError {
-        throw RuntimeError.error(
-          withMessage: "Failed to load Rive file: \(error.localizedDescription)")
-      } catch {
-        throw RuntimeError.error(withMessage: "Unknown error occurred while loading Rive file")
-      }
-    }
+        return url
+      },
+      prepare: { url in try Data(contentsOf: url) },
+      fileWithCustomAssetLoader: { (data, loader) in
+        try RiveFile(data: data, loadCdn: loadCdn, customAssetLoader: loader)
+      },
+      file: { (data) in try RiveFile(data: data, loadCdn: loadCdn) },
+      referencedAssets: referencedAssets
+    )
   }
 
-  func fromResource(resource: String, loadCdn: Bool, referencedAssets: ReferencedAssetsType?) throws -> Promise<(any HybridRiveFileSpec)> {
-    guard let _ = Bundle.main.path(forResource: resource, ofType: "riv") else {
-      throw RuntimeError.error(withMessage: "Could not find Rive file: \(resource).riv")
-    }
-
-    return Promise.async {
-      do {
-        let assetLoader = self.assetLoader
-        let referencedAssetCache = SendableRef(ReferencedAssetCache())
-        let factoryCache = SendableRef<RiveFactory?>(nil)
-        let riveFile = try await withCheckedThrowingContinuation { continuation in
-          DispatchQueue.global(qos: .userInitiated).async {
-            do {
-              let riveFile =
-              if let customLoader = assetLoader.createCustomLoader(referencedAssets: referencedAssets, cache: referencedAssetCache, factory: factoryCache) {
-                  try RiveFile(resource: resource, loadCdn: loadCdn, customAssetLoader: customLoader)
-                } else {
-                  try RiveFile(resource: resource, loadCdn: loadCdn)
-                }
-              DispatchQueue.main.async {
-                continuation.resume(returning: riveFile)
-              }
-            } catch {
-              DispatchQueue.main.async {
-                continuation.resume(throwing: error)
-              }
-            }
-          }
+  func fromFileURL(fileURL: String, loadCdn: Bool, referencedAssets: ReferencedAssetsType?) throws
+    -> Promise<(any HybridRiveFileSpec)>
+  {
+    return try genericFrom(
+      check: {
+        guard let url = URL(string: fileURL) else {
+          throw RuntimeError.error(withMessage: "Invalid URL: \(fileURL)")
         }
-
-        let hybridRiveFile = HybridRiveFile()
-        hybridRiveFile.riveFile = riveFile
-        if referencedAssets != nil {
-          hybridRiveFile.referencedAssetCache = referencedAssetCache.value
-          hybridRiveFile.assetLoader = assetLoader
+        guard url.isFileURL else {
+          throw RuntimeError.error(withMessage: "fromFileURL: URL must be a file URL: \(fileURL)")
         }
-        return hybridRiveFile
-      } catch let error as NSError {
-        throw RuntimeError.error(
-          withMessage: "Failed to load Rive file: \(error.localizedDescription)")
-      } catch {
-        throw RuntimeError.error(withMessage: "Unknown error occurred while loading Rive file")
-      }
-    }
+        return url
+      },
+      prepare: { url in try Data(contentsOf: url) },
+      fileWithCustomAssetLoader: { (data, loader) in
+        try RiveFile(data: data, loadCdn: loadCdn, customAssetLoader: loader)
+      },
+      file: { (data) in try RiveFile(data: data, loadCdn: loadCdn) },
+      referencedAssets: referencedAssets
+    )
+  }
+
+  func fromResource(resource: String, loadCdn: Bool, referencedAssets: ReferencedAssetsType?) throws
+    -> Promise<(any HybridRiveFileSpec)>
+  {
+    return try genericFrom(
+      check: {
+        guard Bundle.main.path(forResource: resource, ofType: "riv") != nil else {
+          throw RuntimeError.error(withMessage: "Could not find Rive file: \(resource).riv")
+        }
+        return resource
+      },
+      prepare: { $0 },
+      fileWithCustomAssetLoader: { (resource, loader) in
+        try RiveFile(resource: resource, loadCdn: loadCdn, customAssetLoader: loader)
+      },
+      file: { (resource) in try RiveFile(resource: resource, loadCdn: loadCdn) },
+      referencedAssets: referencedAssets
+    )
   }
 
   func fromResource(resource: String, loadCdn: Bool) throws -> Promise<(any HybridRiveFileSpec)> {
-    guard Bundle.main.path(forResource: resource, ofType: "riv") != nil else {
-      throw RuntimeError.error(withMessage: "Could not find Rive file: \(resource).riv")
-    }
-
-    return Promise.async {
-      do {
-        let riveFile = try await withCheckedThrowingContinuation { continuation in
-          DispatchQueue.global(qos: .userInitiated).async {
-            do {
-              let riveFile = try RiveFile(resource: resource, loadCdn: loadCdn)
-              DispatchQueue.main.async {
-                continuation.resume(returning: riveFile)
-              }
-            } catch {
-              DispatchQueue.main.async {
-                continuation.resume(throwing: error)
-              }
-            }
-          }
-        }
-
-        let hybridRiveFile = HybridRiveFile()
-        hybridRiveFile.riveFile = riveFile
-        return hybridRiveFile
-      } catch let error as NSError {
-        throw RuntimeError.error(
-          withMessage: "Failed to load Rive file: \(error.localizedDescription)")
-      } catch {
-        throw RuntimeError.error(withMessage: "Unknown error occurred while loading Rive file")
-      }
-    }
+    return try fromResource(resource: resource, loadCdn: loadCdn, referencedAssets: nil)
   }
 
-  func fromBytes(bytes: ArrayBufferHolder, loadCdn: Bool, referencedAssets: ReferencedAssetsType?) throws -> Promise<
-    (any HybridRiveFileSpec)
-  > {
-    let data = bytes.toData(copyIfNeeded: false)
-    return Promise.async {
-      do {
-        let result = try await withCheckedThrowingContinuation { continuation in
-          DispatchQueue.global(qos: .userInitiated).async {
-            do {
-              let result = try self.buildRiveFile(data: data, loadCdn: loadCdn, referencedAssets: referencedAssets)
-              DispatchQueue.main.async {
-                continuation.resume(returning: result)
-              }
-            } catch {
-              DispatchQueue.main.async {
-                continuation.resume(throwing: error)
-              }
-            }
-          }
-        }
-
-        let hybridRiveFile = HybridRiveFile()
-        hybridRiveFile.riveFile = result.file
-        hybridRiveFile.referencedAssetCache = result.cache
-        hybridRiveFile.assetLoader = result.loader
-        return hybridRiveFile
-      } catch let error as NSError {
-        throw RuntimeError.error(
-          withMessage: "Failed to load Rive file from bytes: \(error.localizedDescription)")
-      } catch {
-        throw RuntimeError.error(
-          withMessage: "Unknown error occurred while loading Rive file from bytes")
-      }
-    }
+  func fromBytes(bytes: ArrayBufferHolder, loadCdn: Bool, referencedAssets: ReferencedAssetsType?)
+    throws -> Promise<
+      (any HybridRiveFileSpec)
+    >
+  {
+    return try genericFrom(
+      check: { bytes.toData(copyIfNeeded: false) },
+      prepare: { $0 },
+      fileWithCustomAssetLoader: { (data, loader) in
+        try RiveFile(data: data, loadCdn: loadCdn, customAssetLoader: loader)
+      },
+      file: { (data) in try RiveFile(data: data, loadCdn: loadCdn) },
+      referencedAssets: referencedAssets
+    )
   }
 }
