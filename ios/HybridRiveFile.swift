@@ -2,7 +2,7 @@ import RiveRuntime
 
 typealias ReferencedAssetCache = [String: RiveFileAsset]
 
-class HybridRiveFile: HybridRiveFileSpec {
+class HybridRiveFile: HybridRiveFileSpec, RiveViewSource  {
   var riveFile: RiveFile?
   var referencedAssetCache: ReferencedAssetCache?
   var assetLoader: ReferencedAssetLoader?

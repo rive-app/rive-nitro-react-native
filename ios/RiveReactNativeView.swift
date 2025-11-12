@@ -2,13 +2,18 @@ import UIKit
 import RiveRuntime
 import NitroModules
 
+protocol RiveViewSource: AnyObject {
+  func registerView(_ view: RiveReactNativeView)
+  func unregisterView(_ view: RiveReactNativeView)
+}
+
 struct ViewConfiguration {
   let artboardName: String?
   let stateMachineName: String?
   let autoBind: Bool
   let autoPlay: Bool
   let riveFile: RiveFile
-  let hybridRiveFile: HybridRiveFile?
+  let viewSource: RiveViewSource?
   let alignment: RiveRuntime.RiveAlignment
   let fit: RiveRuntime.RiveFit
   let layoutScaleFactor: Double
@@ -21,7 +26,7 @@ class RiveReactNativeView: UIView, RiveStateMachineDelegate {
   private var eventListeners: [(UnifiedRiveEvent) -> Void] = []
   private var viewReadyContinuation: CheckedContinuation<Void, Never>?
   private var isViewReady = false
-  private weak var riveFile: HybridRiveFile?
+  private weak var viewSource: RiveViewSource?
 
   // MARK: Public Config Properties
   var autoPlay: Bool = true
@@ -45,9 +50,9 @@ class RiveReactNativeView: UIView, RiveStateMachineDelegate {
       baseViewModel = RiveViewModel(model, autoPlay: config.autoPlay)
       createViewFromViewModel()
 
-      if let hybridRiveFile = config.hybridRiveFile {
-        self.riveFile = hybridRiveFile
-        hybridRiveFile.registerView(self)
+      if let viewSource = config.viewSource {
+        self.viewSource = viewSource
+        viewSource.registerView(self)
       }
     }
 
@@ -170,9 +175,9 @@ class RiveReactNativeView: UIView, RiveStateMachineDelegate {
     riveView?.stateMachineDelegate = nil
     riveView = nil
     baseViewModel = nil
-    if let riveFile = riveFile {
-      riveFile.unregisterView(self)
-      self.riveFile = nil
+    if let viewSource = viewSource {
+      viewSource.unregisterView(self)
+      self.viewSource = nil
     }
   }
   

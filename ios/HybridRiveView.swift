@@ -92,7 +92,7 @@ class HybridRiveView : HybridRiveViewSpec {
       autoBind: autoBind ?? DefaultConfiguration.autoBind,
       autoPlay: autoPlay ?? DefaultConfiguration.autoPlay,
       riveFile: file,
-      hybridRiveFile: hybridFile,
+      viewSource: hybridFile,
       alignment: convertAlignment(alignment) ?? DefaultConfiguration.alignment,
       fit: convertFit(fit) ?? DefaultConfiguration.fit,
       layoutScaleFactor: layoutScaleFactor ?? DefaultConfiguration.layoutScaleFactor
