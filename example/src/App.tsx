@@ -14,6 +14,7 @@ import EventsExample from './pages/RiveEventsExample';
 import StateMachineInputsExample from './pages/RiveStateMachineInputsExample';
 import TextRunExample from './pages/RiveTextRunExample';
 import OutOfBandAssets from './pages/OutOfBandAssets';
+import RiveSuspenseExample from './pages/RiveSuspenseExample';
 
 const Examples = [
   {
@@ -45,6 +46,11 @@ const Examples = [
     title: 'Out of band assets',
     screenId: 'OutOfBandAssets',
     component: OutOfBandAssets,
+  },
+  {
+    title: 'Rive Suspense Example',
+    screenId: 'RiveSuspense',
+    component: RiveSuspenseExample,
   },
   { title: 'Template Page', screenId: 'Template', component: TemplatePage },
 ] as const;
