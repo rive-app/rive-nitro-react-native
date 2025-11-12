@@ -4,46 +4,6 @@ import RiveRuntime
 final class HybridRiveFileFactory: HybridRiveFileFactorySpec, @unchecked Sendable {
   let assetLoader = ReferencedAssetLoader()
 
-  private final func buildRiveFile(
-    fileWithCustomAssetLoader: (@escaping LoadAsset) throws -> RiveFile,
-    file: () throws -> RiveFile,
-    referencedAssets: ReferencedAssetsType?
-  ) throws -> (
-    file: RiveFile, cache: ReferencedAssetCache, factory: RiveFactory?,
-    loader: ReferencedAssetLoader?
-  ) {
-    let referencedAssetCache = SendableRef(ReferencedAssetCache())
-    let factoryCache: SendableRef<RiveFactory?> = .init(nil)
-    let customLoader = assetLoader.createCustomLoader(
-      referencedAssets: referencedAssets, cache: referencedAssetCache, factory: factoryCache)
-
-    let riveFile =
-      if let customLoader = customLoader {
-        try fileWithCustomAssetLoader(customLoader)
-      } else {
-        try file()
-      }
-
-    return (
-      file: riveFile, cache: referencedAssetCache.value, factory: factoryCache.value,
-      loader: customLoader != nil ? assetLoader : nil
-    )
-  }
-
-  private func buildRiveFile(data: Data, loadCdn: Bool, referencedAssets: ReferencedAssetsType?)
-    throws -> (
-      file: RiveFile, cache: ReferencedAssetCache, factory: RiveFactory?,
-      loader: ReferencedAssetLoader?
-    )
-  {
-    return try buildRiveFile(
-      fileWithCustomAssetLoader: { (loader) in
-        try RiveFile(data: data, loadCdn: loadCdn, customAssetLoader: loader)
-      },
-      file: { try RiveFile(data: data, loadCdn: loadCdn) },
-      referencedAssets: referencedAssets)
-  }
-
   /// Asynchronously creates a `HybridRiveFileSpec` by performing the following steps:
   /// 1. Executes `check()` to validate or fetch initial data.
   /// 2. Processes the result with `prepare()`.
