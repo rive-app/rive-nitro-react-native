@@ -1,50 +1,146 @@
-import { useState, useEffect } from 'react';
-import { RiveFileFactory, type RiveFile } from 'react-native-rive';
+import { useState, useEffect, useMemo, useRef } from 'react';
+import { Image } from 'react-native';
+import { RiveFileFactory, type RiveFile } from '../index';
+import type { ResolvedReferencedAsset } from '../specs/RiveFile.nitro';
 
 export type RiveFileInput = number | { uri: string } | string | ArrayBuffer;
 
-export function useRiveFile(input?: RiveFileInput) {
-  const [riveFile, setRiveFile] = useState<RiveFile | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+type ReferencedAsset = { source: number | { uri: string } };
 
-  useEffect(() => {
-    if (!input) {
-      setRiveFile(null);
-      setIsLoading(false);
-      return;
+export interface ReferencedAssets {
+  [assetName: string]: ReferencedAsset;
+}
+
+export type ResolvedReferencedAssets = {
+  [assetName: string]: ResolvedReferencedAsset;
+};
+
+export type UseRiveFileOptions = {
+  referencedAssets?: ReferencedAssets;
+};
+
+function parsePossibleSources(
+  source: ReferencedAsset['source']
+): ResolvedReferencedAsset {
+  if (typeof source === 'number') {
+    const resolvedAsset = Image.resolveAssetSource(source);
+    if (resolvedAsset && resolvedAsset.uri) {
+      return { sourceAssetId: resolvedAsset.uri };
+    } else {
+      throw new Error('Invalid asset source provided.');
+    }
+  }
+
+  const uri = (source as any).uri;
+  if (typeof source === 'object' && uri) {
+    return { sourceUrl: uri };
+  }
+
+  const asset = (source as any).fileName;
+  const path = (source as any).path;
+
+  if (typeof source === 'object' && asset) {
+    const result: ResolvedReferencedAsset = { sourceAsset: asset };
+
+    if (path) {
+      result.path = path;
     }
 
+    return result;
+  }
+
+  throw new Error('Invalid source provided.');
+}
+
+function transformFilesHandledMapping(
+  mapping?: ReferencedAssets
+): ResolvedReferencedAssets | undefined {
+  const transformedMapping: ResolvedReferencedAssets = {};
+  if (mapping === undefined) {
+    return undefined;
+  }
+
+  Object.entries(mapping).forEach(([key, option]) => {
+    transformedMapping[key] = parsePossibleSources(option.source);
+  });
+
+  return transformedMapping;
+}
+
+type RiveFileHookResult =
+  | { riveFile: RiveFile; isLoading: false; error: null }
+  | { riveFile: null; isLoading: true; error: null }
+  | { riveFile: null; isLoading: false; error: string };
+
+export function useRiveFile(
+  input: RiveFileInput | undefined,
+  options: UseRiveFileOptions = {}
+): RiveFileHookResult {
+  const [result, setResult] = useState<RiveFileHookResult>({
+    riveFile: null,
+    isLoading: true,
+    error: null,
+  });
+  const referencedAssets = useMemo(
+    () => transformFilesHandledMapping(options.referencedAssets),
+    [options.referencedAssets]
+  );
+  const initialReferencedAssets = useRef(referencedAssets);
+  const initialInput = useRef(input);
+
+  useEffect(() => {
     let currentFile: RiveFile | null = null;
 
     const loadRiveFile = async () => {
       try {
         const currentInput = input;
 
+        if (currentInput == null) {
+          setResult({
+            riveFile: null,
+            isLoading: false,
+            error: 'No Rive file input provided.',
+          });
+          return;
+        }
         if (typeof currentInput === 'string') {
           if (
             currentInput.startsWith('http://') ||
             currentInput.startsWith('https://')
           ) {
-            currentFile = await RiveFileFactory.fromURL(currentInput);
+            currentFile = await RiveFileFactory.fromURL(
+              currentInput,
+              initialReferencedAssets.current
+            );
           } else {
-            currentFile = await RiveFileFactory.fromResource(currentInput);
+            currentFile = await RiveFileFactory.fromResource(
+              currentInput,
+              initialReferencedAssets.current
+            );
           }
         } else if (typeof currentInput === 'number' || 'uri' in currentInput) {
-          currentFile = await RiveFileFactory.fromSource(currentInput);
+          currentFile = await RiveFileFactory.fromSource(
+            currentInput,
+            initialReferencedAssets.current
+          );
         } else if (currentInput instanceof ArrayBuffer) {
-          currentFile = await RiveFileFactory.fromBytes(currentInput);
+          currentFile = await RiveFileFactory.fromBytes(
+            currentInput,
+            initialReferencedAssets.current
+          );
         }
 
-        setRiveFile(currentFile);
-        setIsLoading(false);
-        setError(null);
+        setResult({ riveFile: currentFile!, isLoading: false, error: null });
       } catch (err) {
         console.error(err);
-        setError(
-          err instanceof Error ? err.message : 'Failed to load Rive file'
-        );
-        setIsLoading(false);
+        setResult({
+          riveFile: null,
+          isLoading: false,
+          error:
+            err instanceof Error
+              ? err.message || 'Unknown error'
+              : 'Failed to load Rive file',
+        });
       }
     };
 
@@ -57,5 +153,25 @@ export function useRiveFile(input?: RiveFileInput) {
     };
   }, [input]);
 
-  return { riveFile, isLoading, error };
+  const { riveFile } = result;
+  useEffect(() => {
+    if (initialReferencedAssets.current !== referencedAssets) {
+      if (riveFile && referencedAssets) {
+        riveFile.updateReferencedAssets({ data: referencedAssets });
+        initialReferencedAssets.current = referencedAssets;
+      }
+    }
+  }, [referencedAssets, riveFile]);
+
+  if (initialInput.current !== input) {
+    console.warn(
+      'useRiveFile: Changing input after initial render is not supported.'
+    );
+  }
+
+  return {
+    riveFile: result.riveFile,
+    isLoading: result.isLoading,
+    error: result.error,
+  } as RiveFileHookResult;
 }

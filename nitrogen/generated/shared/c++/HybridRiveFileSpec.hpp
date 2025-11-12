@@ -17,12 +17,15 @@
 namespace margelo::nitro::rive { class HybridViewModelSpec; }
 // Forward declaration of `ArtboardBy` to properly resolve imports.
 namespace margelo::nitro::rive { struct ArtboardBy; }
+// Forward declaration of `ReferencedAssetsType` to properly resolve imports.
+namespace margelo::nitro::rive { struct ReferencedAssetsType; }
 
 #include <optional>
 #include <memory>
 #include "HybridViewModelSpec.hpp"
 #include <string>
 #include "ArtboardBy.hpp"
+#include "ReferencedAssetsType.hpp"
 
 namespace margelo::nitro::rive {
 
@@ -59,6 +62,7 @@ namespace margelo::nitro::rive {
       virtual std::optional<std::shared_ptr<HybridViewModelSpec>> viewModelByName(const std::string& name) = 0;
       virtual std::optional<std::shared_ptr<HybridViewModelSpec>> defaultArtboardViewModel(const std::optional<ArtboardBy>& artboardBy) = 0;
       virtual void release() = 0;
+      virtual void updateReferencedAssets(const ReferencedAssetsType& referencedAssets) = 0;
 
     protected:
       // Hybrid Setup

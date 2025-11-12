@@ -49,19 +49,19 @@ abstract class HybridRiveFileFactorySpec: HybridObject() {
   // Methods
   @DoNotStrip
   @Keep
-  abstract fun fromURL(url: String, loadCdn: Boolean): Promise<HybridRiveFileSpec>
+  abstract fun fromURL(url: String, loadCdn: Boolean, referencedAssets: ReferencedAssetsType?): Promise<HybridRiveFileSpec>
   
   @DoNotStrip
   @Keep
-  abstract fun fromFileURL(fileURL: String, loadCdn: Boolean): Promise<HybridRiveFileSpec>
+  abstract fun fromFileURL(fileURL: String, loadCdn: Boolean, referencedAssets: ReferencedAssetsType?): Promise<HybridRiveFileSpec>
   
   @DoNotStrip
   @Keep
-  abstract fun fromResource(resource: String, loadCdn: Boolean): Promise<HybridRiveFileSpec>
+  abstract fun fromResource(resource: String, loadCdn: Boolean, referencedAssets: ReferencedAssetsType?): Promise<HybridRiveFileSpec>
   
   @DoNotStrip
   @Keep
-  abstract fun fromBytes(bytes: ArrayBuffer, loadCdn: Boolean): Promise<HybridRiveFileSpec>
+  abstract fun fromBytes(bytes: ArrayBuffer, loadCdn: Boolean, referencedAssets: ReferencedAssetsType?): Promise<HybridRiveFileSpec>
 
   private external fun initHybrid(): HybridData
 

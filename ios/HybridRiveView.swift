@@ -83,19 +83,21 @@ class HybridRiveView : HybridRiveViewSpec {
   
   // MARK: Update
   func afterUpdate() {
-    guard let file = (file as? HybridRiveFile)?.riveFile else { return }
-    
+    guard let hybridFile = file as? HybridRiveFile,
+          let file = hybridFile.riveFile else { return }
+
     let config = ViewConfiguration(
       artboardName: artboardName,
       stateMachineName: stateMachineName,
       autoBind: autoBind ?? DefaultConfiguration.autoBind,
       autoPlay: autoPlay ?? DefaultConfiguration.autoPlay,
       riveFile: file,
+      viewSource: hybridFile,
       alignment: convertAlignment(alignment) ?? DefaultConfiguration.alignment,
       fit: convertFit(fit) ?? DefaultConfiguration.fit,
       layoutScaleFactor: layoutScaleFactor ?? DefaultConfiguration.layoutScaleFactor
     )
-    
+
     try? getRiveView().configure(config, reload: needsReload)
     needsReload = false
   }

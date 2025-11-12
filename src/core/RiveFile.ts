@@ -7,6 +7,7 @@ import type {
 // This import path isn't handled by @types/react-native
 // @ts-ignore
 import resolveAssetSource from 'react-native/Libraries/Image/resolveAssetSource';
+import type { ResolvedReferencedAssets } from '../hooks/useRiveFile';
 
 const RiveFileInternal =
   NitroModules.createHybridObject<RiveFileFactoryInternal>('RiveFileFactory');
@@ -24,22 +25,32 @@ export namespace RiveFileFactory {
    */
   export async function fromURL(
     url: string,
+    referencedAssets: ResolvedReferencedAssets | undefined,
     loadCdn: boolean = true
   ): Promise<RiveFile> {
-    return RiveFileInternal.fromURL(url, loadCdn);
+    return RiveFileInternal.fromURL(
+      url,
+      loadCdn,
+      referencedAssets ? { data: referencedAssets } : undefined
+    );
   }
 
   /**
    * Creates a RiveFile instance from a local file path URL.
-   * @param pathURL - The local file path of the Rive graphic file
+   * @param pathURL - The local file path of the Rive animation file
    * @param loadCdn - Whether to load from CDN (default: true)
    * @returns Promise that resolves to a RiveFile instance
    */
   export async function fromFileURL(
     fileURL: string,
+    referencedAssets: ResolvedReferencedAssets | undefined = undefined,
     loadCdn: boolean = true
   ): Promise<RiveFile> {
-    return RiveFileInternal.fromFileURL(fileURL, loadCdn);
+    return RiveFileInternal.fromFileURL(
+      fileURL,
+      loadCdn,
+      referencedAssets ? { data: referencedAssets } : undefined
+    );
   }
 
   /**
@@ -50,9 +61,14 @@ export namespace RiveFileFactory {
    */
   export async function fromResource(
     resource: string,
+    referencedAssets: ResolvedReferencedAssets | undefined,
     loadCdn: boolean = true
   ): Promise<RiveFile> {
-    return RiveFileInternal.fromResource(resource, loadCdn);
+    return RiveFileInternal.fromResource(
+      resource,
+      loadCdn,
+      referencedAssets ? { data: referencedAssets } : undefined
+    );
   }
 
   /**
@@ -63,9 +79,14 @@ export namespace RiveFileFactory {
    */
   export async function fromBytes(
     bytes: ArrayBuffer,
+    referencedAssets: ResolvedReferencedAssets | undefined,
     loadCdn: boolean = true
   ): Promise<RiveFile> {
-    return RiveFileInternal.fromBytes(bytes, loadCdn);
+    return RiveFileInternal.fromBytes(
+      bytes,
+      loadCdn,
+      referencedAssets ? { data: referencedAssets } : undefined
+    );
   }
 
   /**
@@ -92,6 +113,7 @@ export namespace RiveFileFactory {
    */
   export async function fromSource(
     source: number | { uri: string },
+    referencedAssets: ResolvedReferencedAssets | undefined,
     loadCdn: boolean = true
   ): Promise<RiveFile> {
     const assetID = typeof source === 'number' ? source : null;
@@ -108,16 +130,16 @@ export namespace RiveFileFactory {
     try {
       // handle http address and dev server
       if (assetURI.match(/https?:\/\//)) {
-        return RiveFileFactory.fromURL(assetURI, loadCdn);
+        return RiveFileFactory.fromURL(assetURI, referencedAssets, loadCdn);
       }
 
       // handle iOS bundled asset
       if (assetURI.match(/file:\/\//)) {
-        return RiveFileFactory.fromFileURL(assetURI, loadCdn);
+        return RiveFileFactory.fromFileURL(assetURI, referencedAssets, loadCdn);
       }
 
       // handle Android bundled asset or resource name uri
-      return RiveFileFactory.fromResource(assetURI, loadCdn);
+      return RiveFileFactory.fromResource(assetURI, referencedAssets, loadCdn);
     } catch (error: unknown) {
       const errorMessage =
         error instanceof Error ? error.message : String(error);

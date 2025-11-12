@@ -15,11 +15,15 @@
 
 // Forward declaration of `HybridRiveFileSpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridRiveFileSpec; }
+// Forward declaration of `ReferencedAssetsType` to properly resolve imports.
+namespace margelo::nitro::rive { struct ReferencedAssetsType; }
 
 #include <memory>
 #include "HybridRiveFileSpec.hpp"
 #include <NitroModules/Promise.hpp>
 #include <string>
+#include "ReferencedAssetsType.hpp"
+#include <optional>
 #include <NitroModules/ArrayBuffer.hpp>
 
 namespace margelo::nitro::rive {
@@ -53,10 +57,10 @@ namespace margelo::nitro::rive {
 
     public:
       // Methods
-      virtual std::shared_ptr<Promise<std::shared_ptr<HybridRiveFileSpec>>> fromURL(const std::string& url, bool loadCdn) = 0;
-      virtual std::shared_ptr<Promise<std::shared_ptr<HybridRiveFileSpec>>> fromFileURL(const std::string& fileURL, bool loadCdn) = 0;
-      virtual std::shared_ptr<Promise<std::shared_ptr<HybridRiveFileSpec>>> fromResource(const std::string& resource, bool loadCdn) = 0;
-      virtual std::shared_ptr<Promise<std::shared_ptr<HybridRiveFileSpec>>> fromBytes(const std::shared_ptr<ArrayBuffer>& bytes, bool loadCdn) = 0;
+      virtual std::shared_ptr<Promise<std::shared_ptr<HybridRiveFileSpec>>> fromURL(const std::string& url, bool loadCdn, const std::optional<ReferencedAssetsType>& referencedAssets) = 0;
+      virtual std::shared_ptr<Promise<std::shared_ptr<HybridRiveFileSpec>>> fromFileURL(const std::string& fileURL, bool loadCdn, const std::optional<ReferencedAssetsType>& referencedAssets) = 0;
+      virtual std::shared_ptr<Promise<std::shared_ptr<HybridRiveFileSpec>>> fromResource(const std::string& resource, bool loadCdn, const std::optional<ReferencedAssetsType>& referencedAssets) = 0;
+      virtual std::shared_ptr<Promise<std::shared_ptr<HybridRiveFileSpec>>> fromBytes(const std::shared_ptr<ArrayBuffer>& bytes, bool loadCdn, const std::optional<ReferencedAssetsType>& referencedAssets) = 0;
 
     protected:
       // Hybrid Setup

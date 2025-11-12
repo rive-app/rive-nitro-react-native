@@ -75,6 +75,8 @@
     "@react-native/babel-preset": "0.79.2",
     "@react-native/eslint-config": "^0.78.0",
     "@release-it/conventional-changelog": "^9.0.2",
+    "@testing-library/react-hooks": "^8.0.1",
+    "@testing-library/react-native": "^13.3.3",
     "@types/jest": "^29.5.5",
     "@types/react": "^19.0.0",
     "commitlint": "^19.6.1",
@@ -89,6 +91,7 @@
     "react-native": "0.79.2",
     "react-native-builder-bob": "^0.40.10",
     "react-native-nitro-modules": "^0.31.3",
+    "react-test-renderer": "19.0.0",
     "release-it": "^17.10.0",
     "turbo": "^1.10.7",
     "typescript": "^5.2.2"
@@ -104,10 +107,18 @@
   "packageManager": "yarn@3.6.1",
   "jest": {
     "preset": "react-native",
+    "setupFilesAfterEnv": ["<rootDir>/jest-setup.js"],
+    "testMatch": [
+      "<rootDir>/src/**/__tests__/**/*.{js,jsx,ts,tsx}",
+      "<rootDir>/src/**/*.{spec,test}.{js,jsx,ts,tsx}"
+    ],
     "modulePathIgnorePatterns": [
       "<rootDir>/example/node_modules",
       "<rootDir>/lib/"
-    ]
+    ],
+    "moduleNameMapper": {
+      "^../nitrogen/generated/shared/json/RiveViewConfig\\.json$": "<rootDir>/jest-setup.js"
+    }
   },
   "commitlint": {
     "extends": [

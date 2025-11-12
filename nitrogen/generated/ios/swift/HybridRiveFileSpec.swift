@@ -18,6 +18,7 @@ public protocol HybridRiveFileSpec_protocol: HybridObject {
   func viewModelByName(name: String) throws -> (any HybridViewModelSpec)?
   func defaultArtboardViewModel(artboardBy: ArtboardBy?) throws -> (any HybridViewModelSpec)?
   func release() throws -> Void
+  func updateReferencedAssets(referencedAssets: ReferencedAssetsType) throws -> Void
 }
 
 public extension HybridRiveFileSpec_protocol {

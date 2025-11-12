@@ -1,10 +1,33 @@
 import RiveRuntime
 
-class HybridRiveFile: HybridRiveFileSpec {
+typealias ReferencedAssetCache = [String: RiveFileAsset]
+
+class HybridRiveFile: HybridRiveFileSpec, RiveViewSource  {
   var riveFile: RiveFile?
-  
+  var referencedAssetCache: ReferencedAssetCache?
+  var assetLoader: ReferencedAssetLoader?
+  var cachedFactory: RiveFactory?
+  private var weakViews: [Weak<RiveReactNativeView>] = []
+
   public func setRiveFile(_ riveFile: RiveFile) {
     self.riveFile = riveFile
+  }
+
+  func registerView(_ view: RiveReactNativeView) {
+    weakViews.append(Weak(view))
+  }
+
+  func unregisterView(_ view: RiveReactNativeView) {
+    weakViews.removeAll { $0.value === view }
+  }
+
+  private func refreshAfterAssetChange() {
+    weakViews = weakViews.filter { $0.value != nil }
+
+    for weakView in weakViews {
+      guard let view = weakView.value else { continue }
+      view.refreshAfterAssetChange()
+    }
   }
   
   var viewModelCount: Double? {
@@ -43,6 +66,37 @@ class HybridRiveFile: HybridRiveFileSpec {
     guard let artboard = artboard,
           let vm = riveFile?.defaultViewModel(for: artboard) else { return nil }
     return HybridViewModel(viewModel: vm)
+  }
+  
+  func updateReferencedAssets(referencedAssets: ReferencedAssetsType) {
+    guard let assetsData = referencedAssets.data,
+          let cache = referencedAssetCache,
+          let loader = assetLoader,
+          let _ = riveFile else {
+      return
+    }
+
+    let dispatchGroup = DispatchGroup()
+    var hasChanged = false
+
+    for (key, assetData) in assetsData {
+      guard let asset = cache[key] else { continue }
+      if let riveFactory = cachedFactory {
+        dispatchGroup.enter()
+        loader.loadAsset(source: assetData, asset: asset, factory: riveFactory) {
+          dispatchGroup.leave()
+        }
+      } else {
+        RCTLogError("[RiveFile] no factory available for update")
+      }
+      hasChanged = true
+    }
+
+    if hasChanged {
+      dispatchGroup.notify(queue: .main) { [weak self] in
+        self?.refreshAfterAssetChange()
+      }
+    }
   }
   
   func release() throws {

@@ -14,6 +14,10 @@ namespace Rive { class HybridRiveFileFactorySpec_cxx; }
 
 // Forward declaration of `HybridRiveFileSpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridRiveFileSpec; }
+// Forward declaration of `ReferencedAssetsType` to properly resolve imports.
+namespace margelo::nitro::rive { struct ReferencedAssetsType; }
+// Forward declaration of `ResolvedReferencedAsset` to properly resolve imports.
+namespace margelo::nitro::rive { struct ResolvedReferencedAsset; }
 // Forward declaration of `ArrayBufferHolder` to properly resolve imports.
 namespace NitroModules { class ArrayBufferHolder; }
 
@@ -21,6 +25,10 @@ namespace NitroModules { class ArrayBufferHolder; }
 #include "HybridRiveFileSpec.hpp"
 #include <NitroModules/Promise.hpp>
 #include <string>
+#include "ReferencedAssetsType.hpp"
+#include <optional>
+#include "ResolvedReferencedAsset.hpp"
+#include <unordered_map>
 #include <NitroModules/ArrayBuffer.hpp>
 #include <NitroModules/ArrayBufferHolder.hpp>
 
@@ -68,32 +76,32 @@ namespace margelo::nitro::rive {
 
   public:
     // Methods
-    inline std::shared_ptr<Promise<std::shared_ptr<HybridRiveFileSpec>>> fromURL(const std::string& url, bool loadCdn) override {
-      auto __result = _swiftPart.fromURL(url, std::forward<decltype(loadCdn)>(loadCdn));
+    inline std::shared_ptr<Promise<std::shared_ptr<HybridRiveFileSpec>>> fromURL(const std::string& url, bool loadCdn, const std::optional<ReferencedAssetsType>& referencedAssets) override {
+      auto __result = _swiftPart.fromURL(url, std::forward<decltype(loadCdn)>(loadCdn), referencedAssets);
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }
       auto __value = std::move(__result.value());
       return __value;
     }
-    inline std::shared_ptr<Promise<std::shared_ptr<HybridRiveFileSpec>>> fromFileURL(const std::string& fileURL, bool loadCdn) override {
-      auto __result = _swiftPart.fromFileURL(fileURL, std::forward<decltype(loadCdn)>(loadCdn));
+    inline std::shared_ptr<Promise<std::shared_ptr<HybridRiveFileSpec>>> fromFileURL(const std::string& fileURL, bool loadCdn, const std::optional<ReferencedAssetsType>& referencedAssets) override {
+      auto __result = _swiftPart.fromFileURL(fileURL, std::forward<decltype(loadCdn)>(loadCdn), referencedAssets);
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }
       auto __value = std::move(__result.value());
       return __value;
     }
-    inline std::shared_ptr<Promise<std::shared_ptr<HybridRiveFileSpec>>> fromResource(const std::string& resource, bool loadCdn) override {
-      auto __result = _swiftPart.fromResource(resource, std::forward<decltype(loadCdn)>(loadCdn));
+    inline std::shared_ptr<Promise<std::shared_ptr<HybridRiveFileSpec>>> fromResource(const std::string& resource, bool loadCdn, const std::optional<ReferencedAssetsType>& referencedAssets) override {
+      auto __result = _swiftPart.fromResource(resource, std::forward<decltype(loadCdn)>(loadCdn), referencedAssets);
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }
       auto __value = std::move(__result.value());
       return __value;
     }
-    inline std::shared_ptr<Promise<std::shared_ptr<HybridRiveFileSpec>>> fromBytes(const std::shared_ptr<ArrayBuffer>& bytes, bool loadCdn) override {
-      auto __result = _swiftPart.fromBytes(ArrayBufferHolder(bytes), std::forward<decltype(loadCdn)>(loadCdn));
+    inline std::shared_ptr<Promise<std::shared_ptr<HybridRiveFileSpec>>> fromBytes(const std::shared_ptr<ArrayBuffer>& bytes, bool loadCdn, const std::optional<ReferencedAssetsType>& referencedAssets) override {
+      auto __result = _swiftPart.fromBytes(ArrayBufferHolder(bytes), std::forward<decltype(loadCdn)>(loadCdn), referencedAssets);
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }

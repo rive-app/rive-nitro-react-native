@@ -3,11 +3,23 @@ package com.margelo.nitro.rive
 import androidx.annotation.Keep
 import app.rive.runtime.kotlin.core.File
 import com.facebook.proguard.annotations.DoNotStrip
+import com.margelo.nitro.NitroModules
+import java.lang.ref.WeakReference
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 
 @Keep
 @DoNotStrip
 class HybridRiveFile : HybridRiveFileSpec() {
   var riveFile: File? = null
+  var referencedAssetCache: ReferencedAssetCache? = null
+  var assetLoader: ReferencedAssetLoader? = null
+  private val weakViews = mutableListOf<WeakReference<HybridRiveView>>()
+  private val scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 
   override val viewModelCount: Double?
     get() = riveFile?.viewModelCount?.toDouble()
@@ -37,8 +49,50 @@ class HybridRiveFile : HybridRiveFileSpec() {
     }
   }
 
+  fun registerView(view: HybridRiveView) {
+    weakViews.add(WeakReference(view))
+  }
+
+  fun unregisterView(view: HybridRiveView) {
+    weakViews.removeAll { it.get() == view }
+  }
+
+  private fun refreshAfterAssetChange() {
+    weakViews.removeAll { it.get() == null }
+
+    for (weakView in weakViews) {
+      weakView.get()?.refreshAfterAssetChange()
+    }
+  }
+
+  override fun updateReferencedAssets(referencedAssets: ReferencedAssetsType) {
+    val assetsData = referencedAssets.data ?: return
+    val cache = referencedAssetCache ?: return
+    val loader = assetLoader ?: return
+    val context = NitroModules.applicationContext ?: return
+
+    val loadJobs = mutableListOf<kotlinx.coroutines.Deferred<Unit>>()
+
+    for ((key, assetData) in assetsData) {
+      val asset = cache[key] ?: continue
+      loadJobs.add(loader.updateAsset(assetData, asset, context))
+    }
+
+    if (loadJobs.isNotEmpty()) {
+      scope.launch {
+        loadJobs.awaitAll()
+        refreshAfterAssetChange()
+      }
+    }
+  }
+
   override fun release() {
+    scope.cancel()
+    assetLoader?.dispose()
+    assetLoader = null
     riveFile?.release()
     riveFile = null
+    referencedAssetCache?.clear()
+    referencedAssetCache = null
   }
 }

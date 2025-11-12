@@ -9,6 +9,10 @@
 
 // Forward declaration of `HybridRiveFileSpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridRiveFileSpec; }
+// Forward declaration of `ReferencedAssetsType` to properly resolve imports.
+namespace margelo::nitro::rive { struct ReferencedAssetsType; }
+// Forward declaration of `ResolvedReferencedAsset` to properly resolve imports.
+namespace margelo::nitro::rive { struct ResolvedReferencedAsset; }
 
 #include <memory>
 #include "HybridRiveFileSpec.hpp"
@@ -16,6 +20,12 @@ namespace margelo::nitro::rive { class HybridRiveFileSpec; }
 #include <NitroModules/JPromise.hpp>
 #include "JHybridRiveFileSpec.hpp"
 #include <string>
+#include "ReferencedAssetsType.hpp"
+#include <optional>
+#include "JReferencedAssetsType.hpp"
+#include "ResolvedReferencedAsset.hpp"
+#include <unordered_map>
+#include "JResolvedReferencedAsset.hpp"
 #include <NitroModules/ArrayBuffer.hpp>
 #include <NitroModules/JArrayBuffer.hpp>
 #include <NitroModules/JUnit.hpp>
@@ -52,9 +62,9 @@ namespace margelo::nitro::rive {
   
 
   // Methods
-  std::shared_ptr<Promise<std::shared_ptr<HybridRiveFileSpec>>> JHybridRiveFileFactorySpec::fromURL(const std::string& url, bool loadCdn) {
-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<jni::JString> /* url */, jboolean /* loadCdn */)>("fromURL");
-    auto __result = method(_javaPart, jni::make_jstring(url), loadCdn);
+  std::shared_ptr<Promise<std::shared_ptr<HybridRiveFileSpec>>> JHybridRiveFileFactorySpec::fromURL(const std::string& url, bool loadCdn, const std::optional<ReferencedAssetsType>& referencedAssets) {
+    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<jni::JString> /* url */, jboolean /* loadCdn */, jni::alias_ref<JReferencedAssetsType> /* referencedAssets */)>("fromURL");
+    auto __result = method(_javaPart, jni::make_jstring(url), loadCdn, referencedAssets.has_value() ? JReferencedAssetsType::fromCpp(referencedAssets.value()) : nullptr);
     return [&]() {
       auto __promise = Promise<std::shared_ptr<HybridRiveFileSpec>>::create();
       __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& __boxedResult) {
@@ -68,9 +78,9 @@ namespace margelo::nitro::rive {
       return __promise;
     }();
   }
-  std::shared_ptr<Promise<std::shared_ptr<HybridRiveFileSpec>>> JHybridRiveFileFactorySpec::fromFileURL(const std::string& fileURL, bool loadCdn) {
-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<jni::JString> /* fileURL */, jboolean /* loadCdn */)>("fromFileURL");
-    auto __result = method(_javaPart, jni::make_jstring(fileURL), loadCdn);
+  std::shared_ptr<Promise<std::shared_ptr<HybridRiveFileSpec>>> JHybridRiveFileFactorySpec::fromFileURL(const std::string& fileURL, bool loadCdn, const std::optional<ReferencedAssetsType>& referencedAssets) {
+    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<jni::JString> /* fileURL */, jboolean /* loadCdn */, jni::alias_ref<JReferencedAssetsType> /* referencedAssets */)>("fromFileURL");
+    auto __result = method(_javaPart, jni::make_jstring(fileURL), loadCdn, referencedAssets.has_value() ? JReferencedAssetsType::fromCpp(referencedAssets.value()) : nullptr);
     return [&]() {
       auto __promise = Promise<std::shared_ptr<HybridRiveFileSpec>>::create();
       __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& __boxedResult) {
@@ -84,9 +94,9 @@ namespace margelo::nitro::rive {
       return __promise;
     }();
   }
-  std::shared_ptr<Promise<std::shared_ptr<HybridRiveFileSpec>>> JHybridRiveFileFactorySpec::fromResource(const std::string& resource, bool loadCdn) {
-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<jni::JString> /* resource */, jboolean /* loadCdn */)>("fromResource");
-    auto __result = method(_javaPart, jni::make_jstring(resource), loadCdn);
+  std::shared_ptr<Promise<std::shared_ptr<HybridRiveFileSpec>>> JHybridRiveFileFactorySpec::fromResource(const std::string& resource, bool loadCdn, const std::optional<ReferencedAssetsType>& referencedAssets) {
+    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<jni::JString> /* resource */, jboolean /* loadCdn */, jni::alias_ref<JReferencedAssetsType> /* referencedAssets */)>("fromResource");
+    auto __result = method(_javaPart, jni::make_jstring(resource), loadCdn, referencedAssets.has_value() ? JReferencedAssetsType::fromCpp(referencedAssets.value()) : nullptr);
     return [&]() {
       auto __promise = Promise<std::shared_ptr<HybridRiveFileSpec>>::create();
       __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& __boxedResult) {
@@ -100,9 +110,9 @@ namespace margelo::nitro::rive {
       return __promise;
     }();
   }
-  std::shared_ptr<Promise<std::shared_ptr<HybridRiveFileSpec>>> JHybridRiveFileFactorySpec::fromBytes(const std::shared_ptr<ArrayBuffer>& bytes, bool loadCdn) {
-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<JArrayBuffer::javaobject> /* bytes */, jboolean /* loadCdn */)>("fromBytes");
-    auto __result = method(_javaPart, JArrayBuffer::wrap(bytes), loadCdn);
+  std::shared_ptr<Promise<std::shared_ptr<HybridRiveFileSpec>>> JHybridRiveFileFactorySpec::fromBytes(const std::shared_ptr<ArrayBuffer>& bytes, bool loadCdn, const std::optional<ReferencedAssetsType>& referencedAssets) {
+    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<JArrayBuffer::javaobject> /* bytes */, jboolean /* loadCdn */, jni::alias_ref<JReferencedAssetsType> /* referencedAssets */)>("fromBytes");
+    auto __result = method(_javaPart, JArrayBuffer::wrap(bytes), loadCdn, referencedAssets.has_value() ? JReferencedAssetsType::fromCpp(referencedAssets.value()) : nullptr);
     return [&]() {
       auto __promise = Promise<std::shared_ptr<HybridRiveFileSpec>>::create();
       __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& __boxedResult) {

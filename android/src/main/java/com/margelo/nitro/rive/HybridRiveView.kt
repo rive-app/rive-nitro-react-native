@@ -25,6 +25,7 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
   //region State
   override val view: RiveReactNativeView = RiveReactNativeView(context)
   private var needsReload = false
+  private var registeredFile: HybridRiveFile? = null
   //endregion
 
   //region View Props
@@ -46,6 +47,10 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
     }
   override var file: HybridRiveFileSpec = HybridRiveFile()
     set(value) {
+      if (field != value) {
+        registeredFile?.unregisterView(this)
+        registeredFile = null
+      }
       changed(field, value) { field = it }
     }
   override var alignment: Alignment? = null
@@ -99,8 +104,13 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
   //endregion
 
   //region Update
+  fun refreshAfterAssetChange() {
+    afterUpdate()
+  }
+
   override fun afterUpdate() {
-    val riveFile = (file as? HybridRiveFile)?.riveFile ?: return
+    val hybridFile = file as? HybridRiveFile
+    val riveFile = hybridFile?.riveFile ?: return
 
     val config = ViewConfiguration(
       artboardName = artboardName,
@@ -113,6 +123,12 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
       layoutScaleFactor = layoutScaleFactor?.toFloat() ?: DefaultConfiguration.LAYOUTSCALEFACTOR,
     )
     view.configure(config, needsReload)
+
+    if (needsReload && hybridFile != null) {
+      hybridFile.registerView(this)
+      registeredFile = hybridFile
+    }
+
     needsReload = false
     super.afterUpdate()
   }

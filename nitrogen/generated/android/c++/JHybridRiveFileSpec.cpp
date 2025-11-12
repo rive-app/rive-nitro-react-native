@@ -13,6 +13,10 @@ namespace margelo::nitro::rive { class HybridViewModelSpec; }
 namespace margelo::nitro::rive { struct ArtboardBy; }
 // Forward declaration of `ArtboardByTypes` to properly resolve imports.
 namespace margelo::nitro::rive { enum class ArtboardByTypes; }
+// Forward declaration of `ReferencedAssetsType` to properly resolve imports.
+namespace margelo::nitro::rive { struct ReferencedAssetsType; }
+// Forward declaration of `ResolvedReferencedAsset` to properly resolve imports.
+namespace margelo::nitro::rive { struct ResolvedReferencedAsset; }
 
 #include <optional>
 #include <memory>
@@ -23,6 +27,11 @@ namespace margelo::nitro::rive { enum class ArtboardByTypes; }
 #include "JArtboardBy.hpp"
 #include "ArtboardByTypes.hpp"
 #include "JArtboardByTypes.hpp"
+#include "ReferencedAssetsType.hpp"
+#include "JReferencedAssetsType.hpp"
+#include "ResolvedReferencedAsset.hpp"
+#include <unordered_map>
+#include "JResolvedReferencedAsset.hpp"
 
 namespace margelo::nitro::rive {
 
@@ -78,6 +87,10 @@ namespace margelo::nitro::rive {
   void JHybridRiveFileSpec::release() {
     static const auto method = javaClassStatic()->getMethod<void()>("release");
     method(_javaPart);
+  }
+  void JHybridRiveFileSpec::updateReferencedAssets(const ReferencedAssetsType& referencedAssets) {
+    static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<JReferencedAssetsType> /* referencedAssets */)>("updateReferencedAssets");
+    method(_javaPart, JReferencedAssetsType::fromCpp(referencedAssets));
   }
 
 } // namespace margelo::nitro::rive

@@ -18,6 +18,10 @@ namespace margelo::nitro::rive { class HybridViewModelSpec; }
 namespace margelo::nitro::rive { struct ArtboardBy; }
 // Forward declaration of `ArtboardByTypes` to properly resolve imports.
 namespace margelo::nitro::rive { enum class ArtboardByTypes; }
+// Forward declaration of `ReferencedAssetsType` to properly resolve imports.
+namespace margelo::nitro::rive { struct ReferencedAssetsType; }
+// Forward declaration of `ResolvedReferencedAsset` to properly resolve imports.
+namespace margelo::nitro::rive { struct ResolvedReferencedAsset; }
 
 #include <optional>
 #include <memory>
@@ -25,6 +29,9 @@ namespace margelo::nitro::rive { enum class ArtboardByTypes; }
 #include <string>
 #include "ArtboardBy.hpp"
 #include "ArtboardByTypes.hpp"
+#include "ReferencedAssetsType.hpp"
+#include "ResolvedReferencedAsset.hpp"
+#include <unordered_map>
 
 #include "Rive-Swift-Cxx-Umbrella.hpp"
 
@@ -99,6 +106,12 @@ namespace margelo::nitro::rive {
     }
     inline void release() override {
       auto __result = _swiftPart.release();
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+    }
+    inline void updateReferencedAssets(const ReferencedAssetsType& referencedAssets) override {
+      auto __result = _swiftPart.updateReferencedAssets(std::forward<decltype(referencedAssets)>(referencedAssets));
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }

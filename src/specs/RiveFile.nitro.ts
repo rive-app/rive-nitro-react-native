@@ -2,6 +2,17 @@ import type { HybridObject } from 'react-native-nitro-modules';
 import type { ViewModel } from './ViewModel.nitro';
 import type { ArtboardBy } from './ArtboardBy';
 
+export type ResolvedReferencedAsset = {
+  sourceUrl?: string;
+  sourceAsset?: string;
+  sourceAssetId?: string;
+  path?: string;
+};
+
+export type ReferencedAssetsType = {
+  data?: Record<string, ResolvedReferencedAsset>;
+};
+
 /**
  * A Rive file (.riv) as created in the Rive editor.
  */
@@ -16,13 +27,30 @@ export interface RiveFile
   /** Returns the default view model for the provided artboard */
   defaultArtboardViewModel(artboardBy?: ArtboardBy): ViewModel | null;
   /** Release the Rive file. Important to call when done with the file to free resources. */
-  release(): void; // TODO: Switch to `dispose`: https://github.com/mrousavy/nitro/issues/668
+  release(): void; // TODO: Switch to `dispose`: https://github.com/mrousavy/nio
+  updateReferencedAssets(referencedAssets: ReferencedAssetsType): void;
 }
 
 export interface RiveFileFactory
   extends HybridObject<{ ios: 'swift'; android: 'kotlin' }> {
-  fromURL(url: string, loadCdn: boolean): Promise<RiveFile>;
-  fromFileURL(fileURL: string, loadCdn: boolean): Promise<RiveFile>;
-  fromResource(resource: string, loadCdn: boolean): Promise<RiveFile>;
-  fromBytes(bytes: ArrayBuffer, loadCdn: boolean): Promise<RiveFile>;
+  fromURL(
+    url: string,
+    loadCdn: boolean,
+    referencedAssets?: ReferencedAssetsType
+  ): Promise<RiveFile>;
+  fromFileURL(
+    fileURL: string,
+    loadCdn: boolean,
+    referencedAssets?: ReferencedAssetsType
+  ): Promise<RiveFile>;
+  fromResource(
+    resource: string,
+    loadCdn: boolean,
+    referencedAssets?: ReferencedAssetsType
+  ): Promise<RiveFile>;
+  fromBytes(
+    bytes: ArrayBuffer,
+    loadCdn: boolean,
+    referencedAssets?: ReferencedAssetsType
+  ): Promise<RiveFile>;
 }
