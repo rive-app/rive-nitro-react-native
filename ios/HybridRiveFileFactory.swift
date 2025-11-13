@@ -149,8 +149,9 @@ final class HybridRiveFileFactory: HybridRiveFileFactorySpec, @unchecked Sendabl
       (any HybridRiveFileSpec)
     >
   {
+    let data = bytes.toData(copyIfNeeded: false)
     return try genericFrom(
-      check: { bytes.toData(copyIfNeeded: false) },
+      check: { data },
       prepare: { $0 },
       fileWithCustomAssetLoader: { (data, loader) in
         try RiveFile(data: data, loadCdn: loadCdn, customAssetLoader: loader)
