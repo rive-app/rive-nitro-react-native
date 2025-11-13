@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { useEffect } from 'react';
 import { Fit, RiveView, useRive, useRiveFile } from 'react-native-rive';
+import { type Metadata } from './metadata';
 
 export default function StateMachineInputsExample() {
   const { riveViewRef, setHybridRef } = useRive();
@@ -82,3 +83,9 @@ const styles = StyleSheet.create({
     padding: 20,
   },
 });
+
+StateMachineInputsExample.metadata = {
+  name: 'State Machine Inputs',
+  description:
+    'Shows how to get and set state machine input values programmatically',
+} satisfies Metadata;

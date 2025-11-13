@@ -14,6 +14,7 @@ import {
 } from 'react-native-rive';
 import { useState, useEffect } from 'react';
 import { downloadFileAsArrayBuffer } from '../helpers/fileHelpers';
+import { type Metadata } from './metadata';
 
 const LOADING_METHODS = {
   SOURCE: 'Source',
@@ -140,6 +141,12 @@ export default function RiveFileLoadingExample() {
     </View>
   );
 }
+
+RiveFileLoadingExample.metadata = {
+  name: 'File Loading',
+  description:
+    'Demonstrates different methods to load Rive files: from source, URL, resource, and ArrayBuffer',
+} satisfies Metadata;
 
 const styles = StyleSheet.create({
   container: {

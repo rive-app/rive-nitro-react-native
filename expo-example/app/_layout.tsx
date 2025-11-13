@@ -17,16 +17,8 @@ export default function RootLayout() {
       <Stack>
         <Stack.Screen name="index" options={{ headerShown: false }} />
         <Stack.Screen
-          name="simple-rive"
+          name="[pageId]"
           options={{
-            title: 'Simple Rive Animation',
-            headerShown: true,
-          }}
-        />
-        <Stack.Screen
-          name="data-binding"
-          options={{
-            title: 'Data Binding',
             headerShown: true,
           }}
         />

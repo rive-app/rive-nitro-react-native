@@ -13,6 +13,7 @@ import {
   RiveView,
 } from 'react-native-rive';
 import { Picker } from '@react-native-picker/picker';
+import { type Metadata } from './metadata';
 
 export default function StateMachine() {
   const [uri, setUri] = React.useState('https://picsum.photos/id/372/500/500');
@@ -142,3 +143,9 @@ const styles = StyleSheet.create({
     alignSelf: 'stretch',
   },
 });
+
+StateMachine.metadata = {
+  name: 'Out-of-Band Assets',
+  description:
+    'Shows how to load referenced assets like fonts and images that are not embedded in the Rive file',
+} satisfies Metadata;

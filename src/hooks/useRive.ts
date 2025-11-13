@@ -8,7 +8,7 @@ export function useRive() {
     RiveViewProps,
     RiveViewMethods
   > | null>(null);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const setRef = useCallback(
     (node: HybridView<RiveViewProps, RiveViewMethods> | null) => {
