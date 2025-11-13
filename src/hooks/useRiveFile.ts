@@ -1,19 +1,18 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { Image } from 'react-native';
-import { RiveFileFactory, type RiveFile } from '../index';
-import type { ResolvedReferencedAsset } from '../specs/RiveFile.nitro';
+import { RiveFileFactory } from '../core/RiveFile';
+import type {
+  RiveFile,
+  ResolvedReferencedAsset,
+} from '../specs/RiveFile.nitro';
+import type {
+  ReferencedAsset,
+  ReferencedAssets,
+  ResolvedReferencedAssets,
+} from '../core/ReferencedAssets';
 
+export type { ReferencedAssets, ResolvedReferencedAssets };
 export type RiveFileInput = number | { uri: string } | string | ArrayBuffer;
-
-type ReferencedAsset = { source: number | { uri: string } };
-
-export interface ReferencedAssets {
-  [assetName: string]: ReferencedAsset;
-}
-
-export type ResolvedReferencedAssets = {
-  [assetName: string]: ResolvedReferencedAsset;
-};
 
 export type UseRiveFileOptions = {
   referencedAssets?: ReferencedAssets;
