@@ -8,7 +8,7 @@ import {
   type RiveEvent,
   RiveEventType,
 } from 'react-native-rive';
-import { type Metadata } from './metadata';
+import { type Metadata } from '../helpers/metadata';
 
 export default function EventsExample() {
   const { riveViewRef, setHybridRef } = useRive();

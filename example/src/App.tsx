@@ -7,52 +7,12 @@ import {
 } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import RiveFileLoadingExample from './pages/RiveFileLoadingExample';
-import DataBindingExample from './pages/RiveDataBindingExample';
-import TemplatePage from './pages/TemplatePage';
-import EventsExample from './pages/RiveEventsExample';
-import StateMachineInputsExample from './pages/RiveStateMachineInputsExample';
-import TextRunExample from './pages/RiveTextRunExample';
-import OutOfBandAssets from './pages/OutOfBandAssets';
-
-const Examples = [
-  {
-    title: 'Rive File Loading Examples',
-    screenId: 'RiveFileLoading',
-    component: RiveFileLoadingExample,
-  },
-  {
-    title: 'Rive Data Binding Example',
-    screenId: 'RiveDataBinding',
-    component: DataBindingExample,
-  },
-  {
-    title: 'Rive Events Example',
-    screenId: 'RiveEvents',
-    component: EventsExample,
-  },
-  {
-    title: 'Rive State Machine Inputs Example',
-    screenId: 'RiveStateMachineInputs',
-    component: StateMachineInputsExample,
-  },
-  {
-    title: 'Rive Text Run Example',
-    screenId: 'RiveTextRun',
-    component: TextRunExample,
-  },
-  {
-    title: 'Out of band assets',
-    screenId: 'OutOfBandAssets',
-    component: OutOfBandAssets,
-  },
-  { title: 'Template Page', screenId: 'Template', component: TemplatePage },
-] as const;
+import { PagesList } from './PagesList';
 
 type RootStackParamList = {
   Home: undefined;
 } & {
-  [K in (typeof Examples)[number]['screenId']]: undefined;
+  [K in (typeof PagesList)[number]['id']]: undefined;
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -62,13 +22,13 @@ function HomeScreen({ navigation }: { navigation: any }) {
     <ScrollView style={styles.container}>
       <Text style={styles.header}>Rive React Native Examples</Text>
       <View style={styles.buttonContainer}>
-        {Examples.map(({ title, screenId }) => (
+        {PagesList.map(({ id, name }) => (
           <TouchableOpacity
-            key={screenId}
+            key={id}
             style={styles.button}
-            onPress={() => navigation.navigate(screenId)}
+            onPress={() => navigation.navigate(id)}
           >
-            <Text style={styles.buttonText}>{title}</Text>
+            <Text style={styles.buttonText}>{name}</Text>
           </TouchableOpacity>
         ))}
       </View>
@@ -95,12 +55,12 @@ export default function App() {
           component={HomeScreen}
           options={{ title: 'Rive Examples' }}
         />
-        {Examples.map(({ screenId, component, title }) => (
+        {PagesList.map(({ id, component, name }) => (
           <Stack.Screen
-            key={screenId}
-            name={screenId}
+            key={id}
+            name={id}
             component={component}
-            options={{ title }}
+            options={{ title: name }}
           />
         ))}
       </Stack.Navigator>

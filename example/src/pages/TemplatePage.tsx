@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet } from 'react-native';
-import { type Metadata } from './metadata';
+import { type Metadata } from '../helpers/metadata';
 
 export default function TemplatePage() {
   return (

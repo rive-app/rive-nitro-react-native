@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { useEffect } from 'react';
 import { Fit, RiveView, useRive, useRiveFile } from 'react-native-rive';
-import { type Metadata } from './metadata';
+import { type Metadata } from '../helpers/metadata';
 
 export default function TextRunExample() {
   const { riveViewRef, setHybridRef } = useRive();

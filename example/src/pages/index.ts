@@ -1,23 +1,7 @@
-import type { Metadata } from './metadata';
-import * as Pages from './pages';
-
-type PageIds = keyof typeof Pages;
-type PageType = React.ComponentType & { metadata?: Metadata };
-
-const PageEntries = Object.entries(Pages) as [PageIds, PageType][];
-
-export type PageItem = {
-  id: PageIds;
-  name: string;
-  description: string;
-  component: React.ComponentType;
-};
-
-const PagesList: PageItem[] = PageEntries.map(([key, Component]) => ({
-  id: key,
-  name: Component.metadata?.name ?? key,
-  description: Component.metadata?.description ?? '',
-  component: Component,
-}));
-
-export { PagesList };
+export { default as RiveFileLoadingExample } from './RiveFileLoadingExample';
+export { default as DataBindingExample } from './RiveDataBindingExample';
+export { default as TemplatePage } from './TemplatePage';
+export { default as EventsExample } from './RiveEventsExample';
+export { default as StateMachineInputsExample } from './RiveStateMachineInputsExample';
+export { default as TextRunExample } from './RiveTextRunExample';
+export { default as OutOfBandAssets } from './OutOfBandAssets';

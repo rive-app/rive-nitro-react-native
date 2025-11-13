@@ -1,5 +1,5 @@
 import { useLocalSearchParams, Stack } from 'expo-router';
-import { PagesList, type PageItem } from '@example/pages';
+import { PagesList, type PageItem } from '@example/PagesList';
 import { View, Text, StyleSheet } from 'react-native';
 
 export default function PageRoute() {

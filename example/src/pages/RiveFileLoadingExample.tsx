@@ -14,7 +14,7 @@ import {
 } from 'react-native-rive';
 import { useState, useEffect } from 'react';
 import { downloadFileAsArrayBuffer } from '../helpers/fileHelpers';
-import { type Metadata } from './metadata';
+import { type Metadata } from '../helpers/metadata';
 
 const LOADING_METHODS = {
   SOURCE: 'Source',

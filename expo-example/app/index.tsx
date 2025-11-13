@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { IconSymbol } from '@/components/ui/icon-symbol';
-import { PagesList, type PageItem } from '@example/pages';
+import { PagesList, type PageItem } from '@example/PagesList';
 
 export default function HomeScreen() {
   const router = useRouter();

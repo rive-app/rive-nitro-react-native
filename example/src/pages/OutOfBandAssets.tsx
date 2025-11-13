@@ -13,7 +13,7 @@ import {
   RiveView,
 } from 'react-native-rive';
 import { Picker } from '@react-native-picker/picker';
-import { type Metadata } from './metadata';
+import { type Metadata } from '../helpers/metadata';
 
 export default function StateMachine() {
   const [uri, setUri] = React.useState('https://picsum.photos/id/372/500/500');
