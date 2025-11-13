@@ -8,6 +8,7 @@ import {
   type RiveEvent,
   RiveEventType,
 } from 'react-native-rive';
+import { type Metadata } from '../helpers/metadata';
 
 export default function EventsExample() {
   const { riveViewRef, setHybridRef } = useRive();
@@ -140,3 +141,8 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
 });
+
+EventsExample.metadata = {
+  name: 'Events',
+  description: 'Demonstrates how to listen to and handle Rive events',
+} satisfies Metadata;

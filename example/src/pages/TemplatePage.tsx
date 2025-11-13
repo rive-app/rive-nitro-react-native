@@ -1,4 +1,5 @@
 import { View, Text, StyleSheet } from 'react-native';
+import { type Metadata } from '../helpers/metadata';
 
 export default function TemplatePage() {
   return (
@@ -8,6 +9,11 @@ export default function TemplatePage() {
     </View>
   );
 }
+
+TemplatePage.metadata = {
+  name: 'Template',
+  description: 'A template page for creating new Rive examples',
+} satisfies Metadata;
 
 const styles = StyleSheet.create({
   container: {

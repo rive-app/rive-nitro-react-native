@@ -12,6 +12,7 @@ import {
   useRiveTrigger,
   useRiveFile,
 } from 'react-native-rive';
+import { type Metadata } from '../helpers/metadata';
 
 export default function WithRiveFile() {
   const { riveFile, isLoading, error } = useRiveFile(
@@ -112,6 +113,12 @@ function DataBindingExample({
     />
   );
 }
+
+WithRiveFile.metadata = {
+  name: 'Data Binding',
+  description:
+    'Shows data binding with view models, including number, string, color properties and triggers',
+} satisfies Metadata;
 
 const styles = StyleSheet.create({
   container: {

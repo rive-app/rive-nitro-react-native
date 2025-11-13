@@ -79,10 +79,13 @@
     "@testing-library/react-native": "^13.3.3",
     "@types/jest": "^29.5.5",
     "@types/react": "^19.0.0",
+    "@typescript-eslint/eslint-plugin": "^8.46.4",
+    "@typescript-eslint/parser": "^8.46.4",
     "commitlint": "^19.6.1",
     "del-cli": "^5.1.0",
     "eslint": "^9.22.0",
     "eslint-config-prettier": "^10.1.1",
+    "eslint-plugin-jest": "^29.1.0",
     "eslint-plugin-prettier": "^5.2.3",
     "jest": "^29.7.0",
     "nitrogen": "^0.31.3",
@@ -102,12 +105,15 @@
     "react-native-nitro-modules": "^0.25.2"
   },
   "workspaces": [
-    "example"
+    "example",
+    "expo-example"
   ],
   "packageManager": "yarn@3.6.1",
   "jest": {
     "preset": "react-native",
-    "setupFilesAfterEnv": ["<rootDir>/jest-setup.js"],
+    "setupFilesAfterEnv": [
+      "<rootDir>/jest-setup.js"
+    ],
     "testMatch": [
       "<rootDir>/src/**/__tests__/**/*.{js,jsx,ts,tsx}",
       "<rootDir>/src/**/*.{spec,test}.{js,jsx,ts,tsx}"

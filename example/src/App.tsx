@@ -7,23 +7,12 @@ import {
 } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import RiveFileLoadingExample from './pages/RiveFileLoadingExample';
-import DataBindingExample from './pages/RiveDataBindingExample';
-import TemplatePage from './pages/TemplatePage';
-import EventsExample from './pages/RiveEventsExample';
-import StateMachineInputsExample from './pages/RiveStateMachineInputsExample';
-import TextRunExample from './pages/RiveTextRunExample';
-import OutOfBandAssets from './pages/OutOfBandAssets';
+import { PagesList } from './PagesList';
 
 type RootStackParamList = {
   Home: undefined;
-  RiveFileLoading: undefined;
-  RiveDataBinding: undefined;
-  RiveEvents: undefined;
-  RiveStateMachineInputs: undefined;
-  RiveTextRun: undefined;
-  Template: undefined;
-  OutOfBandAssets: undefined;
+} & {
+  [K in (typeof PagesList)[number]['id']]: undefined;
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -33,50 +22,15 @@ function HomeScreen({ navigation }: { navigation: any }) {
     <ScrollView style={styles.container}>
       <Text style={styles.header}>Rive React Native Examples</Text>
       <View style={styles.buttonContainer}>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => navigation.navigate('RiveFileLoading')}
-        >
-          <Text style={styles.buttonText}>Rive File Loading Examples</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => navigation.navigate('RiveDataBinding')}
-        >
-          <Text style={styles.buttonText}>Rive Data Binding Example</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => navigation.navigate('RiveEvents')}
-        >
-          <Text style={styles.buttonText}>Rive Events Example</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => navigation.navigate('RiveStateMachineInputs')}
-        >
-          <Text style={styles.buttonText}>
-            Rive State Machine Inputs Example
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => navigation.navigate('RiveTextRun')}
-        >
-          <Text style={styles.buttonText}>Rive Text Run Example</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => navigation.navigate('OutOfBandAssets')}
-        >
-          <Text style={styles.buttonText}>Out of band assets</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => navigation.navigate('Template')}
-        >
-          <Text style={styles.buttonText}>Template Page</Text>
-        </TouchableOpacity>
+        {PagesList.map(({ id, name }) => (
+          <TouchableOpacity
+            key={id}
+            style={styles.button}
+            onPress={() => navigation.navigate(id)}
+          >
+            <Text style={styles.buttonText}>{name}</Text>
+          </TouchableOpacity>
+        ))}
       </View>
     </ScrollView>
   );
@@ -101,41 +55,14 @@ export default function App() {
           component={HomeScreen}
           options={{ title: 'Rive Examples' }}
         />
-        <Stack.Screen
-          name="RiveFileLoading"
-          component={RiveFileLoadingExample}
-          options={{ title: 'Rive File Loading' }}
-        />
-        <Stack.Screen
-          name="RiveDataBinding"
-          component={DataBindingExample}
-          options={{ title: 'Rive Data Binding' }}
-        />
-        <Stack.Screen
-          name="RiveEvents"
-          component={EventsExample}
-          options={{ title: 'Rive Events' }}
-        />
-        <Stack.Screen
-          name="RiveStateMachineInputs"
-          component={StateMachineInputsExample}
-          options={{ title: 'Rive State Machine Inputs' }}
-        />
-        <Stack.Screen
-          name="RiveTextRun"
-          component={TextRunExample}
-          options={{ title: 'Rive Text Runs' }}
-        />
-        <Stack.Screen
-          name="OutOfBandAssets"
-          component={OutOfBandAssets}
-          options={{ title: 'Out of Band Asset' }}
-        />
-        <Stack.Screen
-          name="Template"
-          component={TemplatePage}
-          options={{ title: 'Template' }}
-        />
+        {PagesList.map(({ id, component, name }) => (
+          <Stack.Screen
+            key={id}
+            name={id}
+            component={component}
+            options={{ title: name }}
+          />
+        ))}
       </Stack.Navigator>
     </NavigationContainer>
   );

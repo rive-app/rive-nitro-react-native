@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { useEffect } from 'react';
 import { Fit, RiveView, useRive, useRiveFile } from 'react-native-rive';
+import { type Metadata } from '../helpers/metadata';
 
 export default function TextRunExample() {
   const { riveViewRef, setHybridRef } = useRive();
@@ -79,3 +80,9 @@ const styles = StyleSheet.create({
     padding: 20,
   },
 });
+
+TextRunExample.metadata = {
+  name: 'Text Run',
+  description:
+    'Demonstrates getting and setting text run values in Rive animations',
+} satisfies Metadata;

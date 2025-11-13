@@ -20,6 +20,7 @@ export default defineConfig([
     plugins: { prettier },
     rules: {
       'react/react-in-jsx-scope': 'off',
+      '@typescript-eslint/no-unused-vars': 'off',
       'prettier/prettier': [
         'error',
         {
