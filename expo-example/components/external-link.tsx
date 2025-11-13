@@ -1,4 +1,4 @@
-import { Href, Link } from 'expo-router';
+import { type Href, Link } from 'expo-router';
 import {
   openBrowserAsync,
   WebBrowserPresentationStyle,

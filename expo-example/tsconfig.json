@@ -4,7 +4,8 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./*"],
-      "@example/*": ["../example/src/*"]
+      "@example/*": ["../example/src/*"],
+      "react-native-rive": ["../src/index"]
     }
   },
   "include": [
@@ -12,5 +13,6 @@
     "**/*.tsx",
     ".expo/types/**/*.ts",
     "expo-env.d.ts"
-  ]
+  ],
+  "exclude": []
 }

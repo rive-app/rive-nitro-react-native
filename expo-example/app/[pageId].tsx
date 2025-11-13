@@ -1,11 +1,11 @@
 import { useLocalSearchParams, Stack } from 'expo-router';
-import { PagesList } from '@example/pages';
+import { PagesList, type PageItem } from '@example/pages';
 import { View, Text, StyleSheet } from 'react-native';
 
 export default function PageRoute() {
   const { pageId } = useLocalSearchParams<{ pageId: string }>();
 
-  const page = PagesList.find((p) => p.id === pageId);
+  const page = PagesList.find((p: PageItem) => p.id === pageId);
 
   if (!page) {
     return (

@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { IconSymbol } from '@/components/ui/icon-symbol';
-import { PagesList } from '@example/pages';
+import { PagesList, type PageItem } from '@example/pages';
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -46,7 +46,7 @@ export default function HomeScreen() {
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
       >
-        {PagesList.map((page) => (
+        {PagesList.map((page: PageItem) => (
           <TouchableOpacity
             key={page.id}
             style={styles.exampleCard}
