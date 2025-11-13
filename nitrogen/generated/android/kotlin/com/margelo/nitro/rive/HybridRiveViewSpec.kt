@@ -108,6 +108,10 @@ abstract class HybridRiveViewSpec: HybridView() {
   
   @DoNotStrip
   @Keep
+  abstract fun getBoundViewModelInstance(): HybridViewModelInstanceSpec?
+  
+  @DoNotStrip
+  @Keep
   abstract fun play(): Unit
   
   @DoNotStrip

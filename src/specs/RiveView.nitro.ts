@@ -46,6 +46,11 @@ export interface RiveViewMethods extends HybridViewMethods {
   awaitViewReady(): Promise<boolean>;
   /** Binds the view model instance to the Rive view */
   bindViewModelInstance(viewModelInstance: ViewModelInstance): void;
+  /**
+   * Gets the currently bound view model instance from the Rive view
+   * @returns The bound ViewModelInstance, or null if none is bound
+   */
+  getBoundViewModelInstance(): ViewModelInstance | null;
   /** Starts playing the Rive graphic */
   play(): void;
   /** Pauses the the Rive graphic */

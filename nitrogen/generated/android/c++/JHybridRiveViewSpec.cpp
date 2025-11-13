@@ -175,6 +175,11 @@ namespace margelo::nitro::rive {
     static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<JHybridViewModelInstanceSpec::javaobject> /* viewModelInstance */)>("bindViewModelInstance");
     method(_javaPart, std::dynamic_pointer_cast<JHybridViewModelInstanceSpec>(viewModelInstance)->getJavaPart());
   }
+  std::optional<std::shared_ptr<HybridViewModelInstanceSpec>> JHybridRiveViewSpec::getBoundViewModelInstance() {
+    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JHybridViewModelInstanceSpec::javaobject>()>("getBoundViewModelInstance");
+    auto __result = method(_javaPart);
+    return __result != nullptr ? std::make_optional(__result->cthis()->shared_cast<JHybridViewModelInstanceSpec>()) : std::nullopt;
+  }
   void JHybridRiveViewSpec::play() {
     static const auto method = javaClassStatic()->getMethod<void()>("play");
     method(_javaPart);

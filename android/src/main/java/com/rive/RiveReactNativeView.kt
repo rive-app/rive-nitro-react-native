@@ -86,6 +86,15 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
     }
   }
 
+  fun getBoundViewModelInstance(): ViewModelInstance? {
+    val stateMachines = riveAnimationView?.controller?.stateMachines
+    return if (!stateMachines.isNullOrEmpty()) {
+      stateMachines.first().viewModelInstance
+    } else {
+      null
+    }
+  }
+
   fun play() = riveAnimationView?.play()
 
   fun pause() = riveAnimationView?.pause();

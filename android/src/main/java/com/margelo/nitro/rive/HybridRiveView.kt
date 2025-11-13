@@ -74,6 +74,11 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
       view.bindViewModelInstance(hybridVmi.viewModelInstance)
     }
 
+  override fun getBoundViewModelInstance(): HybridViewModelInstanceSpec? {
+    val viewModelInstance = view.getBoundViewModelInstance() ?: return null
+    return HybridViewModelInstance(viewModelInstance)
+  }
+
   override fun play() = executeOnUiThread { view.play() }
 
   override fun pause() = executeOnUiThread { view.pause() }

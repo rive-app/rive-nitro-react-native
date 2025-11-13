@@ -36,7 +36,12 @@ class HybridRiveView : HybridRiveViewSpec {
     guard let viewModelInstance = (viewModelInstance as? HybridViewModelInstance)?.viewModelInstance else { return }
     try getRiveView().bindViewModelInstance(viewModelInstance: viewModelInstance)
   }
-  
+
+  func getBoundViewModelInstance() throws -> (any HybridViewModelInstanceSpec)? {
+    guard let viewModelInstance = try getRiveView().getBoundViewModelInstance() else { return nil }
+    return HybridViewModelInstance(viewModelInstance: viewModelInstance)
+  }
+
   func play() throws { try getRiveView().play() }
   
   func pause() throws { try getRiveView().pause() }

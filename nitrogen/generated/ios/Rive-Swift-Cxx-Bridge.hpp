@@ -597,6 +597,15 @@ namespace margelo::nitro::rive::bridge::swift {
     return Result<std::shared_ptr<Promise<bool>>>::withError(error);
   }
   
+  // pragma MARK: Result<std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>>
+  using Result_std__optional_std__shared_ptr_HybridViewModelInstanceSpec___ = Result<std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>>;
+  inline Result_std__optional_std__shared_ptr_HybridViewModelInstanceSpec___ create_Result_std__optional_std__shared_ptr_HybridViewModelInstanceSpec___(const std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>& value) noexcept {
+    return Result<std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>>::withValue(value);
+  }
+  inline Result_std__optional_std__shared_ptr_HybridViewModelInstanceSpec___ create_Result_std__optional_std__shared_ptr_HybridViewModelInstanceSpec___(const std::exception_ptr& error) noexcept {
+    return Result<std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>>::withError(error);
+  }
+  
   // pragma MARK: Result<bool>
   using Result_bool_ = Result<bool>;
   inline Result_bool_ create_Result_bool_(bool value) noexcept {
@@ -613,15 +622,6 @@ namespace margelo::nitro::rive::bridge::swift {
   }
   inline Result_std__string_ create_Result_std__string_(const std::exception_ptr& error) noexcept {
     return Result<std::string>::withError(error);
-  }
-  
-  // pragma MARK: Result<std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>>
-  using Result_std__optional_std__shared_ptr_HybridViewModelInstanceSpec___ = Result<std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>>;
-  inline Result_std__optional_std__shared_ptr_HybridViewModelInstanceSpec___ create_Result_std__optional_std__shared_ptr_HybridViewModelInstanceSpec___(const std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>& value) noexcept {
-    return Result<std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>>::withValue(value);
-  }
-  inline Result_std__optional_std__shared_ptr_HybridViewModelInstanceSpec___ create_Result_std__optional_std__shared_ptr_HybridViewModelInstanceSpec___(const std::exception_ptr& error) noexcept {
-    return Result<std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>>::withError(error);
   }
   
   // pragma MARK: std::shared_ptr<HybridViewModelPropertySpec>

@@ -73,6 +73,7 @@ namespace margelo::nitro::rive {
     // Methods
     std::shared_ptr<Promise<bool>> awaitViewReady() override;
     void bindViewModelInstance(const std::shared_ptr<HybridViewModelInstanceSpec>& viewModelInstance) override;
+    std::optional<std::shared_ptr<HybridViewModelInstanceSpec>> getBoundViewModelInstance() override;
     void play() override;
     void pause() override;
     void onEventListener(const std::function<void(const UnifiedRiveEvent& /* event */)>& onEvent) override;

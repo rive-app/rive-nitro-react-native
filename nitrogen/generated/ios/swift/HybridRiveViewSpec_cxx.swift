@@ -347,6 +347,27 @@ open class HybridRiveViewSpec_cxx {
   }
   
   @inline(__always)
+  public final func getBoundViewModelInstance() -> bridge.Result_std__optional_std__shared_ptr_HybridViewModelInstanceSpec___ {
+    do {
+      let __result = try self.__implementation.getBoundViewModelInstance()
+      let __resultCpp = { () -> bridge.std__optional_std__shared_ptr_HybridViewModelInstanceSpec__ in
+        if let __unwrappedValue = __result {
+          return bridge.create_std__optional_std__shared_ptr_HybridViewModelInstanceSpec__({ () -> bridge.std__shared_ptr_HybridViewModelInstanceSpec_ in
+            let __cxxWrapped = __unwrappedValue.getCxxWrapper()
+            return __cxxWrapped.getCxxPart()
+          }())
+        } else {
+          return .init()
+        }
+      }()
+      return bridge.create_Result_std__optional_std__shared_ptr_HybridViewModelInstanceSpec___(__resultCpp)
+    } catch (let __error) {
+      let __exceptionPtr = __error.toCpp()
+      return bridge.create_Result_std__optional_std__shared_ptr_HybridViewModelInstanceSpec___(__exceptionPtr)
+    }
+  }
+  
+  @inline(__always)
   public final func play() -> bridge.Result_void_ {
     do {
       try self.__implementation.play()

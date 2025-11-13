@@ -34,6 +34,7 @@ namespace margelo::nitro::rive {
       prototype.registerHybridSetter("bind", &HybridRiveViewSpec::setBind);
       prototype.registerHybridMethod("awaitViewReady", &HybridRiveViewSpec::awaitViewReady);
       prototype.registerHybridMethod("bindViewModelInstance", &HybridRiveViewSpec::bindViewModelInstance);
+      prototype.registerHybridMethod("getBoundViewModelInstance", &HybridRiveViewSpec::getBoundViewModelInstance);
       prototype.registerHybridMethod("play", &HybridRiveViewSpec::play);
       prototype.registerHybridMethod("pause", &HybridRiveViewSpec::pause);
       prototype.registerHybridMethod("onEventListener", &HybridRiveViewSpec::onEventListener);

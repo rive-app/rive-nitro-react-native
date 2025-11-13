@@ -76,7 +76,11 @@ class RiveReactNativeView: UIView, RiveStateMachineDelegate {
   func bindViewModelInstance(viewModelInstance: RiveDataBindingViewModel.Instance) {
     baseViewModel?.riveModel?.stateMachine?.bind(viewModelInstance: viewModelInstance)
   }
-  
+
+  func getBoundViewModelInstance() -> RiveDataBindingViewModel.Instance? {
+    return baseViewModel?.riveModel?.stateMachine?.viewModelInstance
+  }
+
   func play() {
     baseViewModel?.play()
   }
