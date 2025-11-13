@@ -105,8 +105,4 @@ export type RiveViewTSMethods = Exclude<RiveViewMethods, 'onEventListener'> & {
   onEventListener(onEvent: (event: RiveEvent) => void): void;
 };
 
-/**
- * Type definition for the RiveView component.
- * Combines RiveViewProps and RiveViewMethods with the HybridView type.
- */
 export type RiveView = HybridView<RiveViewProps, RiveViewMethods>;
