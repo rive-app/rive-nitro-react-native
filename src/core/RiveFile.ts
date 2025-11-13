@@ -7,7 +7,7 @@ import type {
 // This import path isn't handled by @types/react-native
 // @ts-ignore
 import resolveAssetSource from 'react-native/Libraries/Image/resolveAssetSource';
-import type { ResolvedReferencedAssets } from '../hooks/useRiveFile';
+import type { ResolvedReferencedAssets } from './ReferencedAssets';
 
 const RiveFileInternal =
   NitroModules.createHybridObject<RiveFileFactoryInternal>('RiveFileFactory');
