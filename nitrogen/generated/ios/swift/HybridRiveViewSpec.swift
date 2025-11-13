@@ -20,6 +20,7 @@ public protocol HybridRiveViewSpec_protocol: HybridObject, HybridView {
   var alignment: Alignment? { get set }
   var fit: Fit? { get set }
   var layoutScaleFactor: Double? { get set }
+  var bind: (any HybridViewModelInstanceSpec)? { get set }
 
   // Methods
   func awaitViewReady() throws -> Promise<Bool>

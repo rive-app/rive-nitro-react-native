@@ -17,6 +17,7 @@ struct ViewConfiguration {
   let alignment: RiveRuntime.RiveAlignment
   let fit: RiveRuntime.RiveFit
   let layoutScaleFactor: Double
+  let bind: RiveDataBindingViewModel.Instance?
 }
 
 class RiveReactNativeView: UIView, RiveStateMachineDelegate {
@@ -65,6 +66,10 @@ class RiveReactNativeView: UIView, RiveStateMachineDelegate {
       isViewReady = true
       viewReadyContinuation?.resume()
       viewReadyContinuation = nil
+    }
+    
+    if let bind = config.bind {
+      baseViewModel?.riveModel?.stateMachine?.bind(viewModelInstance: bind)
     }
   }
   

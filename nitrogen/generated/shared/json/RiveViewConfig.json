@@ -12,6 +12,7 @@
     "alignment": true,
     "fit": true,
     "layoutScaleFactor": true,
+    "bind": true,
     "hybridRef": true
   }
 }

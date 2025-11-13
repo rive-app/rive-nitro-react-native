@@ -30,8 +30,8 @@ namespace margelo::nitro::rive { struct UnifiedRiveEvent; }
 #include "HybridRiveFileSpec.hpp"
 #include "Alignment.hpp"
 #include "Fit.hpp"
-#include <NitroModules/Promise.hpp>
 #include "HybridViewModelInstanceSpec.hpp"
+#include <NitroModules/Promise.hpp>
 #include "UnifiedRiveEvent.hpp"
 #include <functional>
 
@@ -78,6 +78,8 @@ namespace margelo::nitro::rive {
       virtual void setFit(std::optional<Fit> fit) = 0;
       virtual std::optional<double> getLayoutScaleFactor() = 0;
       virtual void setLayoutScaleFactor(std::optional<double> layoutScaleFactor) = 0;
+      virtual std::optional<std::shared_ptr<HybridViewModelInstanceSpec>> getBind() = 0;
+      virtual void setBind(const std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>& bind) = 0;
 
     public:
       // Methods

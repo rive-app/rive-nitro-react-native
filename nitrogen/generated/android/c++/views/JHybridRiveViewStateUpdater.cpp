@@ -68,6 +68,10 @@ void JHybridRiveViewStateUpdater::updateViewProps(jni::alias_ref<jni::JClass> /*
     view->setLayoutScaleFactor(props.layoutScaleFactor.value);
     // TODO: Set isDirty = false
   }
+  if (props.bind.isDirty) {
+    view->setBind(props.bind.value);
+    // TODO: Set isDirty = false
+  }
 
   // Update hybridRef if it changed
   if (props.hybridRef.isDirty) {

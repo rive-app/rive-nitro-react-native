@@ -31,8 +31,8 @@ namespace margelo::nitro::rive { enum class RiveEventType; }
 #include "HybridRiveFileSpec.hpp"
 #include "Alignment.hpp"
 #include "Fit.hpp"
-#include <NitroModules/Promise.hpp>
 #include "HybridViewModelInstanceSpec.hpp"
+#include <NitroModules/Promise.hpp>
 #include "UnifiedRiveEvent.hpp"
 #include <functional>
 #include "RiveEventType.hpp"
@@ -134,6 +134,13 @@ namespace margelo::nitro::rive {
     }
     inline void setLayoutScaleFactor(std::optional<double> layoutScaleFactor) noexcept override {
       _swiftPart.setLayoutScaleFactor(layoutScaleFactor);
+    }
+    inline std::optional<std::shared_ptr<HybridViewModelInstanceSpec>> getBind() noexcept override {
+      auto __result = _swiftPart.getBind();
+      return __result;
+    }
+    inline void setBind(const std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>& bind) noexcept override {
+      _swiftPart.setBind(bind);
     }
 
   public:

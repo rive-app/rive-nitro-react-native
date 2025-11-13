@@ -22,6 +22,7 @@
 #include "HybridRiveFileSpec.hpp"
 #include "Alignment.hpp"
 #include "Fit.hpp"
+#include "HybridViewModelInstanceSpec.hpp"
 #include "HybridRiveViewSpec.hpp"
 #include <functional>
 
@@ -54,6 +55,7 @@ namespace margelo::nitro::rive::views {
     CachedProp<std::optional<Alignment>> alignment;
     CachedProp<std::optional<Fit>> fit;
     CachedProp<std::optional<double>> layoutScaleFactor;
+    CachedProp<std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>> bind;
     CachedProp<std::optional<std::function<void(const std::shared_ptr<HybridRiveViewSpec>& /* ref */)>>> hybridRef;
 
   private:

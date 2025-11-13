@@ -66,6 +66,8 @@ namespace margelo::nitro::rive {
     void setFit(std::optional<Fit> fit) override;
     std::optional<double> getLayoutScaleFactor() override;
     void setLayoutScaleFactor(std::optional<double> layoutScaleFactor) override;
+    std::optional<std::shared_ptr<HybridViewModelInstanceSpec>> getBind() override;
+    void setBind(const std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>& bind) override;
 
   public:
     // Methods

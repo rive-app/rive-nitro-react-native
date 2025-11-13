@@ -105,6 +105,16 @@ namespace margelo::nitro::rive::views {
         throw std::runtime_error(std::string("RiveView.layoutScaleFactor: ") + exc.what());
       }
     }()),
+    bind([&]() -> CachedProp<std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>> {
+      try {
+        const react::RawValue* rawValue = rawProps.at("bind", nullptr, nullptr);
+        if (rawValue == nullptr) return sourceProps.bind;
+        const auto& [runtime, value] = (std::pair<jsi::Runtime*, jsi::Value>)*rawValue;
+        return CachedProp<std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>>::fromRawValue(*runtime, value, sourceProps.bind);
+      } catch (const std::exception& exc) {
+        throw std::runtime_error(std::string("RiveView.bind: ") + exc.what());
+      }
+    }()),
     hybridRef([&]() -> CachedProp<std::optional<std::function<void(const std::shared_ptr<HybridRiveViewSpec>& /* ref */)>>> {
       try {
         const react::RawValue* rawValue = rawProps.at("hybridRef", nullptr, nullptr);
@@ -126,6 +136,7 @@ namespace margelo::nitro::rive::views {
     alignment(other.alignment),
     fit(other.fit),
     layoutScaleFactor(other.layoutScaleFactor),
+    bind(other.bind),
     hybridRef(other.hybridRef) { }
 
   bool HybridRiveViewProps::filterObjectKeys(const std::string& propName) {
@@ -138,6 +149,7 @@ namespace margelo::nitro::rive::views {
       case hashString("alignment"): return true;
       case hashString("fit"): return true;
       case hashString("layoutScaleFactor"): return true;
+      case hashString("bind"): return true;
       case hashString("hybridRef"): return true;
       default: return false;
     }

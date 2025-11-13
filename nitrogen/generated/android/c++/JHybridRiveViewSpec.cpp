@@ -29,10 +29,10 @@ namespace margelo::nitro::rive { enum class RiveEventType; }
 #include "JAlignment.hpp"
 #include "Fit.hpp"
 #include "JFit.hpp"
-#include <NitroModules/Promise.hpp>
-#include <NitroModules/JPromise.hpp>
 #include "HybridViewModelInstanceSpec.hpp"
 #include "JHybridViewModelInstanceSpec.hpp"
+#include <NitroModules/Promise.hpp>
+#include <NitroModules/JPromise.hpp>
 #include "UnifiedRiveEvent.hpp"
 #include <functional>
 #include "JFunc_void_UnifiedRiveEvent.hpp"
@@ -143,6 +143,15 @@ namespace margelo::nitro::rive {
   void JHybridRiveViewSpec::setLayoutScaleFactor(std::optional<double> layoutScaleFactor) {
     static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<jni::JDouble> /* layoutScaleFactor */)>("setLayoutScaleFactor");
     method(_javaPart, layoutScaleFactor.has_value() ? jni::JDouble::valueOf(layoutScaleFactor.value()) : nullptr);
+  }
+  std::optional<std::shared_ptr<HybridViewModelInstanceSpec>> JHybridRiveViewSpec::getBind() {
+    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JHybridViewModelInstanceSpec::javaobject>()>("getBind");
+    auto __result = method(_javaPart);
+    return __result != nullptr ? std::make_optional(__result->cthis()->shared_cast<JHybridViewModelInstanceSpec>()) : std::nullopt;
+  }
+  void JHybridRiveViewSpec::setBind(const std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>& bind) {
+    static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<JHybridViewModelInstanceSpec::javaobject> /* bind */)>("setBind");
+    method(_javaPart, bind.has_value() ? std::dynamic_pointer_cast<JHybridViewModelInstanceSpec>(bind.value())->getJavaPart() : nullptr);
   }
 
   // Methods

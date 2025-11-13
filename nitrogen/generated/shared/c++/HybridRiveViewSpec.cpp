@@ -30,6 +30,8 @@ namespace margelo::nitro::rive {
       prototype.registerHybridSetter("fit", &HybridRiveViewSpec::setFit);
       prototype.registerHybridGetter("layoutScaleFactor", &HybridRiveViewSpec::getLayoutScaleFactor);
       prototype.registerHybridSetter("layoutScaleFactor", &HybridRiveViewSpec::setLayoutScaleFactor);
+      prototype.registerHybridGetter("bind", &HybridRiveViewSpec::getBind);
+      prototype.registerHybridSetter("bind", &HybridRiveViewSpec::setBind);
       prototype.registerHybridMethod("awaitViewReady", &HybridRiveViewSpec::awaitViewReady);
       prototype.registerHybridMethod("bindViewModelInstance", &HybridRiveViewSpec::bindViewModelInstance);
       prototype.registerHybridMethod("play", &HybridRiveViewSpec::play);

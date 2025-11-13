@@ -279,6 +279,37 @@ open class HybridRiveViewSpec_cxx {
       self.__implementation.layoutScaleFactor = newValue.value
     }
   }
+  
+  public final var bind: bridge.std__optional_std__shared_ptr_HybridViewModelInstanceSpec__ {
+    @inline(__always)
+    get {
+      return { () -> bridge.std__optional_std__shared_ptr_HybridViewModelInstanceSpec__ in
+        if let __unwrappedValue = self.__implementation.bind {
+          return bridge.create_std__optional_std__shared_ptr_HybridViewModelInstanceSpec__({ () -> bridge.std__shared_ptr_HybridViewModelInstanceSpec_ in
+            let __cxxWrapped = __unwrappedValue.getCxxWrapper()
+            return __cxxWrapped.getCxxPart()
+          }())
+        } else {
+          return .init()
+        }
+      }()
+    }
+    @inline(__always)
+    set {
+      self.__implementation.bind = { () -> (any HybridViewModelInstanceSpec)? in
+        if bridge.has_value_std__optional_std__shared_ptr_HybridViewModelInstanceSpec__(newValue) {
+          let __unwrapped = bridge.get_std__optional_std__shared_ptr_HybridViewModelInstanceSpec__(newValue)
+          return { () -> HybridViewModelInstanceSpec in
+            let __unsafePointer = bridge.get_std__shared_ptr_HybridViewModelInstanceSpec_(__unwrapped)
+            let __instance = HybridViewModelInstanceSpec_cxx.fromUnsafe(__unsafePointer)
+            return __instance.getHybridViewModelInstanceSpec()
+          }()
+        } else {
+          return nil
+        }
+      }()
+    }
+  }
 
   // Methods
   @inline(__always)

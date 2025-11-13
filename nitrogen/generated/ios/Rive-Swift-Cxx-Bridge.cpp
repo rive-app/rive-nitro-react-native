@@ -105,14 +105,6 @@ namespace margelo::nitro::rive::bridge::swift {
     return swiftPart.toUnsafe();
   }
   
-  // pragma MARK: std::function<void(bool /* result */)>
-  Func_void_bool create_Func_void_bool(void* NON_NULL swiftClosureWrapper) noexcept {
-    auto swiftClosure = Rive::Func_void_bool::fromUnsafe(swiftClosureWrapper);
-    return [swiftClosure = std::move(swiftClosure)](bool result) mutable -> void {
-      swiftClosure.call(result);
-    };
-  }
-  
   // pragma MARK: std::shared_ptr<HybridViewModelInstanceSpec>
   std::shared_ptr<HybridViewModelInstanceSpec> create_std__shared_ptr_HybridViewModelInstanceSpec_(void* NON_NULL swiftUnsafePointer) noexcept {
     Rive::HybridViewModelInstanceSpec_cxx swiftPart = Rive::HybridViewModelInstanceSpec_cxx::fromUnsafe(swiftUnsafePointer);
@@ -127,6 +119,14 @@ namespace margelo::nitro::rive::bridge::swift {
     #endif
     Rive::HybridViewModelInstanceSpec_cxx& swiftPart = swiftWrapper->getSwiftPart();
     return swiftPart.toUnsafe();
+  }
+  
+  // pragma MARK: std::function<void(bool /* result */)>
+  Func_void_bool create_Func_void_bool(void* NON_NULL swiftClosureWrapper) noexcept {
+    auto swiftClosure = Rive::Func_void_bool::fromUnsafe(swiftClosureWrapper);
+    return [swiftClosure = std::move(swiftClosure)](bool result) mutable -> void {
+      swiftClosure.call(result);
+    };
   }
   
   // pragma MARK: std::function<void(const UnifiedRiveEvent& /* event */)>

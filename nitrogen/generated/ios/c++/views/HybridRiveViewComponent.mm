@@ -111,6 +111,11 @@ using namespace margelo::nitro::rive::views;
     swiftPart.setLayoutScaleFactor(newViewProps.layoutScaleFactor.value);
     newViewProps.layoutScaleFactor.isDirty = false;
   }
+  // bind: optional
+  if (newViewProps.bind.isDirty) {
+    swiftPart.setBind(newViewProps.bind.value);
+    newViewProps.bind.isDirty = false;
+  }
 
   swiftPart.afterUpdate();
 

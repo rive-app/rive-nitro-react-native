@@ -12,6 +12,8 @@ private struct DefaultConfiguration {
 }
 
 class HybridRiveView : HybridRiveViewSpec {
+  var bind: (any HybridViewModelInstanceSpec)?
+  
   // MARK: View Props
   var artboardName: String? { didSet { needsReload = true } }
   var stateMachineName: String? { didSet { needsReload = true } }
@@ -86,6 +88,7 @@ class HybridRiveView : HybridRiveViewSpec {
     guard let hybridFile = file as? HybridRiveFile,
           let file = hybridFile.riveFile else { return }
 
+    let viewModelInstance = (bind as? HybridViewModelInstance)?.viewModelInstance
     let config = ViewConfiguration(
       artboardName: artboardName,
       stateMachineName: stateMachineName,
@@ -95,7 +98,8 @@ class HybridRiveView : HybridRiveViewSpec {
       viewSource: hybridFile,
       alignment: convertAlignment(alignment) ?? DefaultConfiguration.alignment,
       fit: convertFit(fit) ?? DefaultConfiguration.fit,
-      layoutScaleFactor: layoutScaleFactor ?? DefaultConfiguration.layoutScaleFactor
+      layoutScaleFactor: layoutScaleFactor ?? DefaultConfiguration.layoutScaleFactor,
+      bind: viewModelInstance
     )
 
     try? getRiveView().configure(config, reload: needsReload)

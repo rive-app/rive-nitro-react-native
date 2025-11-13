@@ -418,6 +418,33 @@ namespace margelo::nitro::rive::bridge::swift {
     return *optional;
   }
   
+  // pragma MARK: std::shared_ptr<HybridViewModelInstanceSpec>
+  /**
+   * Specialized version of `std::shared_ptr<HybridViewModelInstanceSpec>`.
+   */
+  using std__shared_ptr_HybridViewModelInstanceSpec_ = std::shared_ptr<HybridViewModelInstanceSpec>;
+  std::shared_ptr<HybridViewModelInstanceSpec> create_std__shared_ptr_HybridViewModelInstanceSpec_(void* NON_NULL swiftUnsafePointer) noexcept;
+  void* NON_NULL get_std__shared_ptr_HybridViewModelInstanceSpec_(std__shared_ptr_HybridViewModelInstanceSpec_ cppType);
+  
+  // pragma MARK: std::weak_ptr<HybridViewModelInstanceSpec>
+  using std__weak_ptr_HybridViewModelInstanceSpec_ = std::weak_ptr<HybridViewModelInstanceSpec>;
+  inline std__weak_ptr_HybridViewModelInstanceSpec_ weakify_std__shared_ptr_HybridViewModelInstanceSpec_(const std::shared_ptr<HybridViewModelInstanceSpec>& strong) noexcept { return strong; }
+  
+  // pragma MARK: std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>
+  /**
+   * Specialized version of `std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>`.
+   */
+  using std__optional_std__shared_ptr_HybridViewModelInstanceSpec__ = std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>;
+  inline std::optional<std::shared_ptr<HybridViewModelInstanceSpec>> create_std__optional_std__shared_ptr_HybridViewModelInstanceSpec__(const std::shared_ptr<HybridViewModelInstanceSpec>& value) noexcept {
+    return std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>(value);
+  }
+  inline bool has_value_std__optional_std__shared_ptr_HybridViewModelInstanceSpec__(const std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline std::shared_ptr<HybridViewModelInstanceSpec> get_std__optional_std__shared_ptr_HybridViewModelInstanceSpec__(const std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>& optional) noexcept {
+    return *optional;
+  }
+  
   // pragma MARK: std::shared_ptr<Promise<bool>>
   /**
    * Specialized version of `std::shared_ptr<Promise<bool>>`.
@@ -451,18 +478,6 @@ namespace margelo::nitro::rive::bridge::swift {
   inline Func_void_bool_Wrapper wrap_Func_void_bool(Func_void_bool value) noexcept {
     return Func_void_bool_Wrapper(std::move(value));
   }
-  
-  // pragma MARK: std::shared_ptr<HybridViewModelInstanceSpec>
-  /**
-   * Specialized version of `std::shared_ptr<HybridViewModelInstanceSpec>`.
-   */
-  using std__shared_ptr_HybridViewModelInstanceSpec_ = std::shared_ptr<HybridViewModelInstanceSpec>;
-  std::shared_ptr<HybridViewModelInstanceSpec> create_std__shared_ptr_HybridViewModelInstanceSpec_(void* NON_NULL swiftUnsafePointer) noexcept;
-  void* NON_NULL get_std__shared_ptr_HybridViewModelInstanceSpec_(std__shared_ptr_HybridViewModelInstanceSpec_ cppType);
-  
-  // pragma MARK: std::weak_ptr<HybridViewModelInstanceSpec>
-  using std__weak_ptr_HybridViewModelInstanceSpec_ = std::weak_ptr<HybridViewModelInstanceSpec>;
-  inline std__weak_ptr_HybridViewModelInstanceSpec_ weakify_std__shared_ptr_HybridViewModelInstanceSpec_(const std::shared_ptr<HybridViewModelInstanceSpec>& strong) noexcept { return strong; }
   
   // pragma MARK: std::variant<bool, std::string, double>
   /**
@@ -598,21 +613,6 @@ namespace margelo::nitro::rive::bridge::swift {
   }
   inline Result_std__string_ create_Result_std__string_(const std::exception_ptr& error) noexcept {
     return Result<std::string>::withError(error);
-  }
-  
-  // pragma MARK: std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>
-  /**
-   * Specialized version of `std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>`.
-   */
-  using std__optional_std__shared_ptr_HybridViewModelInstanceSpec__ = std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>;
-  inline std::optional<std::shared_ptr<HybridViewModelInstanceSpec>> create_std__optional_std__shared_ptr_HybridViewModelInstanceSpec__(const std::shared_ptr<HybridViewModelInstanceSpec>& value) noexcept {
-    return std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>(value);
-  }
-  inline bool has_value_std__optional_std__shared_ptr_HybridViewModelInstanceSpec__(const std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>& optional) noexcept {
-    return optional.has_value();
-  }
-  inline std::shared_ptr<HybridViewModelInstanceSpec> get_std__optional_std__shared_ptr_HybridViewModelInstanceSpec__(const std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>& optional) noexcept {
-    return *optional;
   }
   
   // pragma MARK: Result<std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>>

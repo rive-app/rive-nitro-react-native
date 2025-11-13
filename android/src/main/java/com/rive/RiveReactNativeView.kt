@@ -29,7 +29,8 @@ data class ViewConfiguration(
   val riveFile: File,
   val alignment: Alignment,
   val fit: Fit,
-  val layoutScaleFactor: Float?
+  val layoutScaleFactor: Float?,
+  val bind: ViewModelInstance?
 )
 
 @SuppressLint("ViewConstructor")
@@ -67,6 +68,14 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
       // TODO: this seems to require a reload for the view to take the new value (bug on Android)
       riveAnimationView?.layoutScaleFactor = config.layoutScaleFactor
     }
+
+    config.bind?.let { vmi ->
+      val stateMachines = riveAnimationView?.controller?.stateMachines
+      if (!stateMachines.isNullOrEmpty()) {
+        stateMachines.first().viewModelInstance = vmi
+      }
+    }
+
     viewReadyDeferred.complete(true)
   }
 

@@ -56,6 +56,7 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
   override var alignment: Alignment? = null
   override var fit: Fit? = null
   override var layoutScaleFactor: Double? = null
+  override var bind: HybridViewModelInstanceSpec? = null
   //endregion
 
   //region View Methods
@@ -112,6 +113,7 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
     val hybridFile = file as? HybridRiveFile
     val riveFile = hybridFile?.riveFile ?: return
 
+    val viewModelInstance = (bind as? HybridViewModelInstance)?.viewModelInstance
     val config = ViewConfiguration(
       artboardName = artboardName,
       stateMachineName = stateMachineName,
@@ -121,6 +123,7 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
       alignment = convertAlignment(alignment) ?: DefaultConfiguration.ALIGNMENT,
       fit = convertFit(fit) ?: DefaultConfiguration.FIT,
       layoutScaleFactor = layoutScaleFactor?.toFloat() ?: DefaultConfiguration.LAYOUTSCALEFACTOR,
+      bind = viewModelInstance,
     )
     view.configure(config, needsReload)
 

@@ -90,6 +90,12 @@ abstract class HybridRiveViewSpec: HybridView() {
   @set:DoNotStrip
   @set:Keep
   abstract var layoutScaleFactor: Double?
+  
+  @get:DoNotStrip
+  @get:Keep
+  @set:DoNotStrip
+  @set:Keep
+  abstract var bind: HybridViewModelInstanceSpec?
 
   // Methods
   @DoNotStrip
