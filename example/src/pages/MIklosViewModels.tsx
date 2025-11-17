@@ -1,4 +1,3 @@
-/* eslint-disable react-native/no-inline-styles */
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useState } from 'react';
 import type { Metadata } from '../helpers/metadata';
@@ -16,7 +15,7 @@ export default function DataBindingMode() {
   const { riveFile } = useRiveFile(
     require('../../assets/rive/miklos_viewmodels.riv')
   );
-  const [bindMode, setBindMode] = useState<BindModeOption>('blue');
+  const [bindMode, setBindMode] = useState<BindModeOption>('none');
 
   const dataBindValue = getDataBindValue(bindMode);
 
@@ -62,7 +61,8 @@ export default function DataBindingMode() {
 
 DataBindingMode.metadata = {
   name: 'Miklos View Models',
-  description: 'Interactive data binding mode selector (none, auto, red, green, blue)',
+  description:
+    'Interactive data binding mode selector (none, auto, red, green, blue)',
 } satisfies Metadata;
 
 const styles = StyleSheet.create({

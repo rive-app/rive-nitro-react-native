@@ -19,7 +19,6 @@ export class DataBindByName implements DataBindByNameInterface {
   }
 }
 
-
 import RiveViewConfig from '../nitrogen/generated/shared/json/RiveViewConfig.json';
 
 const RiveHybridObject = NitroModules.createHybridObject<Rive>('Rive');

@@ -114,11 +114,13 @@ class RiveReactNativeView: UIView, RiveStateMachineDelegate {
     switch bindData {
     case .none:
       baseViewModel?.riveModel?.disableAutoBind()
+      baseViewModel?.play()
 
     case .auto:
       baseViewModel?.riveModel?.enableAutoBind { [weak self] instance in
         // Auto-bind callback
       }
+      baseViewModel?.play()
 
     case .byName(let name):
       guard let artboard = artboard,
