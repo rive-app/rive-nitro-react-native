@@ -144,14 +144,14 @@ namespace margelo::nitro::rive {
     static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<jni::JDouble> /* layoutScaleFactor */)>("setLayoutScaleFactor");
     method(_javaPart, layoutScaleFactor.has_value() ? jni::JDouble::valueOf(layoutScaleFactor.value()) : nullptr);
   }
-  std::variant<std::shared_ptr<HybridViewModelInstanceSpec>, DataBindMode, DataBindByName> JHybridRiveViewSpec::getDataBind() {
+  std::optional<std::variant<std::shared_ptr<HybridViewModelInstanceSpec>, DataBindMode, DataBindByName>> JHybridRiveViewSpec::getDataBind() {
     static const auto method = javaClassStatic()->getMethod<jni::local_ref<JVariant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName>()>("getDataBind");
     auto __result = method(_javaPart);
-    return __result->toCpp();
+    return __result != nullptr ? std::make_optional(__result->toCpp()) : std::nullopt;
   }
-  void JHybridRiveViewSpec::setDataBind(const std::variant<std::shared_ptr<HybridViewModelInstanceSpec>, DataBindMode, DataBindByName>& dataBind) {
+  void JHybridRiveViewSpec::setDataBind(const std::optional<std::variant<std::shared_ptr<HybridViewModelInstanceSpec>, DataBindMode, DataBindByName>>& dataBind) {
     static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<JVariant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName> /* dataBind */)>("setDataBind");
-    method(_javaPart, JVariant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName::fromCpp(dataBind));
+    method(_javaPart, dataBind.has_value() ? JVariant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName::fromCpp(dataBind.value()) : nullptr);
   }
 
   // Methods

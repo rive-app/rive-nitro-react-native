@@ -36,8 +36,8 @@ export interface RiveViewProps extends HybridViewProps {
   fit?: Fit;
   /** The scale factor to apply to the Rive graphic when using Fit.Layout */
   layoutScaleFactor?: number;
-  /** The view model instance to bind, to the state machine */
-  dataBind: ViewModelInstance | DataBindMode | DataBindByName;
+  /** The view model instance to bind, to the state machine. Defaults to DataBindMode.Auto */
+  dataBind?: ViewModelInstance | DataBindMode | DataBindByName;
 }
 
 /**

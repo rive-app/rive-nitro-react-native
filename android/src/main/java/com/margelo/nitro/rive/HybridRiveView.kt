@@ -12,7 +12,9 @@ import app.rive.runtime.kotlin.core.Alignment as RiveAlignment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-fun Variant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName.toBindData(): BindData {
+fun Variant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName?.toBindData(): BindData {
+  if (this == null) return BindData.Auto
+
   return when (this) {
     is Variant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName.First -> {
       val instance = (this.asFirstOrNull() as? HybridViewModelInstance)?.viewModelInstance
@@ -74,8 +76,7 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
   override var alignment: Alignment? = null
   override var fit: Fit? = null
   override var layoutScaleFactor: Double? = null
-  override var dataBind: Variant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName =
-    Variant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName.Second(DataBindMode.NONE)
+  override var dataBind: Variant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName? = null
     set(value) {
       if (field != value) {
         field = value

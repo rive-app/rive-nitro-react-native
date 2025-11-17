@@ -471,6 +471,21 @@ namespace margelo::nitro::rive::bridge::swift {
     return std__variant_std__shared_ptr_HybridViewModelInstanceSpec___DataBindMode__DataBindByName_(value);
   }
   
+  // pragma MARK: std::optional<std::variant<std::shared_ptr<HybridViewModelInstanceSpec>, DataBindMode, DataBindByName>>
+  /**
+   * Specialized version of `std::optional<std::variant<std::shared_ptr<HybridViewModelInstanceSpec>, DataBindMode, DataBindByName>>`.
+   */
+  using std__optional_std__variant_std__shared_ptr_HybridViewModelInstanceSpec___DataBindMode__DataBindByName__ = std::optional<std::variant<std::shared_ptr<HybridViewModelInstanceSpec>, DataBindMode, DataBindByName>>;
+  inline std::optional<std::variant<std::shared_ptr<HybridViewModelInstanceSpec>, DataBindMode, DataBindByName>> create_std__optional_std__variant_std__shared_ptr_HybridViewModelInstanceSpec___DataBindMode__DataBindByName__(const std::variant<std::shared_ptr<HybridViewModelInstanceSpec>, DataBindMode, DataBindByName>& value) noexcept {
+    return std::optional<std::variant<std::shared_ptr<HybridViewModelInstanceSpec>, DataBindMode, DataBindByName>>(value);
+  }
+  inline bool has_value_std__optional_std__variant_std__shared_ptr_HybridViewModelInstanceSpec___DataBindMode__DataBindByName__(const std::optional<std::variant<std::shared_ptr<HybridViewModelInstanceSpec>, DataBindMode, DataBindByName>>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline std::variant<std::shared_ptr<HybridViewModelInstanceSpec>, DataBindMode, DataBindByName> get_std__optional_std__variant_std__shared_ptr_HybridViewModelInstanceSpec___DataBindMode__DataBindByName__(const std::optional<std::variant<std::shared_ptr<HybridViewModelInstanceSpec>, DataBindMode, DataBindByName>>& optional) noexcept {
+    return *optional;
+  }
+  
   // pragma MARK: std::shared_ptr<Promise<bool>>
   /**
    * Specialized version of `std::shared_ptr<Promise<bool>>`.

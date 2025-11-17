@@ -134,11 +134,11 @@ namespace margelo::nitro::rive {
     inline void setLayoutScaleFactor(std::optional<double> layoutScaleFactor) noexcept override {
       _swiftPart.setLayoutScaleFactor(layoutScaleFactor);
     }
-    inline std::variant<std::shared_ptr<HybridViewModelInstanceSpec>, DataBindMode, DataBindByName> getDataBind() noexcept override {
+    inline std::optional<std::variant<std::shared_ptr<HybridViewModelInstanceSpec>, DataBindMode, DataBindByName>> getDataBind() noexcept override {
       auto __result = _swiftPart.getDataBind();
       return __result;
     }
-    inline void setDataBind(const std::variant<std::shared_ptr<HybridViewModelInstanceSpec>, DataBindMode, DataBindByName>& dataBind) noexcept override {
+    inline void setDataBind(const std::optional<std::variant<std::shared_ptr<HybridViewModelInstanceSpec>, DataBindMode, DataBindByName>>& dataBind) noexcept override {
       _swiftPart.setDataBind(dataBind);
     }
 

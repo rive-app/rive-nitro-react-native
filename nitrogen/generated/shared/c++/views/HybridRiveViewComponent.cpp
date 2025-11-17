@@ -95,12 +95,12 @@ namespace margelo::nitro::rive::views {
         throw std::runtime_error(std::string("RiveView.layoutScaleFactor: ") + exc.what());
       }
     }()),
-    dataBind([&]() -> CachedProp<std::variant<std::shared_ptr<HybridViewModelInstanceSpec>, DataBindMode, DataBindByName>> {
+    dataBind([&]() -> CachedProp<std::optional<std::variant<std::shared_ptr<HybridViewModelInstanceSpec>, DataBindMode, DataBindByName>>> {
       try {
         const react::RawValue* rawValue = rawProps.at("dataBind", nullptr, nullptr);
         if (rawValue == nullptr) return sourceProps.dataBind;
         const auto& [runtime, value] = (std::pair<jsi::Runtime*, jsi::Value>)*rawValue;
-        return CachedProp<std::variant<std::shared_ptr<HybridViewModelInstanceSpec>, DataBindMode, DataBindByName>>::fromRawValue(*runtime, value, sourceProps.dataBind);
+        return CachedProp<std::optional<std::variant<std::shared_ptr<HybridViewModelInstanceSpec>, DataBindMode, DataBindByName>>>::fromRawValue(*runtime, value, sourceProps.dataBind);
       } catch (const std::exception& exc) {
         throw std::runtime_error(std::string("RiveView.dataBind: ") + exc.what());
       }

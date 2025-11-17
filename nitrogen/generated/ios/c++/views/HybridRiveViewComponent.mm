@@ -106,7 +106,7 @@ using namespace margelo::nitro::rive::views;
     swiftPart.setLayoutScaleFactor(newViewProps.layoutScaleFactor.value);
     newViewProps.layoutScaleFactor.isDirty = false;
   }
-  // dataBind: variant
+  // dataBind: optional
   if (newViewProps.dataBind.isDirty) {
     swiftPart.setDataBind(newViewProps.dataBind.value);
     newViewProps.dataBind.isDirty = false;

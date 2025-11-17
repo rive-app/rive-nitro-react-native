@@ -57,7 +57,7 @@ namespace margelo::nitro::rive::views {
     CachedProp<std::optional<Alignment>> alignment;
     CachedProp<std::optional<Fit>> fit;
     CachedProp<std::optional<double>> layoutScaleFactor;
-    CachedProp<std::variant<std::shared_ptr<HybridViewModelInstanceSpec>, DataBindMode, DataBindByName>> dataBind;
+    CachedProp<std::optional<std::variant<std::shared_ptr<HybridViewModelInstanceSpec>, DataBindMode, DataBindByName>>> dataBind;
     CachedProp<std::optional<std::function<void(const std::shared_ptr<HybridRiveViewSpec>& /* ref */)>>> hybridRef;
 
   private:

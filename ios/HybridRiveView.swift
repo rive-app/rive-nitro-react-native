@@ -1,7 +1,7 @@
 import Foundation
-import UIKit
-import RiveRuntime
 import NitroModules
+import RiveRuntime
+import UIKit
 
 private struct DefaultConfiguration {
   static let autoPlay = true
@@ -10,14 +10,19 @@ private struct DefaultConfiguration {
   static let layoutScaleFactor = RiveRuntime.RiveViewModel.layoutScaleFactorAutomatic
 }
 
-extension Variant__any_HybridViewModelInstanceSpec__DataBindMode_DataBindByName {
+extension Optional
+where Wrapped == Variant__any_HybridViewModelInstanceSpec__DataBindMode_DataBindByName {
   func toDataBingMode() throws -> BindData {
-    switch self {
+    guard let value = self else {
+      return .auto
+    }
+
+    switch value {
     case .first(let viewModelInstance):
       if let instance = (viewModelInstance as? HybridViewModelInstance)?.viewModelInstance {
         return .instance(instance)
       } else {
-        throw RuntimeError.error(withMessage: "foo")
+        throw RuntimeError.error(withMessage: "Invalid ViewModelInstance")
       }
     case .second(let mode):
       switch mode {
@@ -32,9 +37,9 @@ extension Variant__any_HybridViewModelInstanceSpec__DataBindMode_DataBindByName 
   }
 }
 
-class HybridRiveView : HybridRiveViewSpec {
+class HybridRiveView: HybridRiveViewSpec {
   var firstUpdate = true
-  var dataBind: Variant__any_HybridViewModelInstanceSpec__DataBindMode_DataBindByName = .second(.none) {
+  var dataBind: Variant__any_HybridViewModelInstanceSpec__DataBindMode_DataBindByName? = nil {
     didSet {
       applyDataBinding()
     }
@@ -50,15 +55,16 @@ class HybridRiveView : HybridRiveViewSpec {
   var alignment: Alignment?
   var fit: Fit?
   var layoutScaleFactor: Double?
-  
+
   func awaitViewReady() throws -> Promise<Bool> {
     return Promise.async { [self] in
       return try await getRiveView().awaitViewReady()
     }
   }
-  
+
   func bindViewModelInstance(viewModelInstance: (any HybridViewModelInstanceSpec)) throws {
-    guard let viewModelInstance = (viewModelInstance as? HybridViewModelInstance)?.viewModelInstance else { return }
+    guard let viewModelInstance = (viewModelInstance as? HybridViewModelInstance)?.viewModelInstance
+    else { return }
     try getRiveView().bindViewModelInstance(viewModelInstance: viewModelInstance)
   }
 
@@ -68,42 +74,43 @@ class HybridRiveView : HybridRiveViewSpec {
   }
 
   func play() throws { try getRiveView().play() }
-  
+
   func pause() throws { try getRiveView().pause() }
-  
+
   func onEventListener(onEvent: @escaping (UnifiedRiveEvent) -> Void) throws {
     try getRiveView().addEventListener(onEvent)
   }
-  
+
   func removeEventListeners() throws { try getRiveView().removeEventListeners() }
-  
+
   func setNumberInputValue(name: String, value: Double, path: String?) throws {
     try getRiveView().setNumberInputValue(name: name, value: Float(value), path: path)
   }
-  
+
   func getNumberInputValue(name: String, path: String?) throws -> Double {
     return try Double(getRiveView().getNumberInputValue(name: name, path: path))
   }
-  
+
   func setBooleanInputValue(name: String, value: Bool, path: String?) throws {
     try getRiveView().setBooleanInputValue(name: name, value: value, path: path)
   }
-  
+
   func getBooleanInputValue(name: String, path: String?) throws -> Bool {
-    return try getRiveView().getBooleanInputValue(name: name, path: path)  }
-  
+    return try getRiveView().getBooleanInputValue(name: name, path: path)
+  }
+
   func triggerInput(name: String, path: String?) throws {
     try getRiveView().triggerInput(name: name, path: path)
   }
-  
+
   func setTextRunValue(name: String, value: String, path: String?) throws {
     try getRiveView().setTextRunValue(name: name, value: value, path: path)
   }
-  
+
   func getTextRunValue(name: String, path: String?) throws -> String {
     return try getRiveView().getTextRunValue(name: name, path: path)
   }
-  
+
   // MARK: Views
   var view: UIView = RiveReactNativeView()
   func getRiveView() throws -> RiveReactNativeView {
@@ -127,8 +134,9 @@ class HybridRiveView : HybridRiveViewSpec {
     firstUpdate = false
     logged(tag: "HybridRiveView", note: "afterUpdate") {
       guard let hybridFile = file as? HybridRiveFile,
-            let file = hybridFile.riveFile else { return }
-      
+        let file = hybridFile.riveFile
+      else { return }
+
       let config = ViewConfiguration(
         artboardName: artboardName,
         stateMachineName: stateMachineName,
@@ -140,19 +148,19 @@ class HybridRiveView : HybridRiveViewSpec {
         layoutScaleFactor: layoutScaleFactor ?? DefaultConfiguration.layoutScaleFactor,
         bindData: try dataBind.toDataBingMode()
       )
-      
+
       try getRiveView().configure(config, reload: needsReload)
       needsReload = false
     }
   }
-  
+
   // MARK: Internal State
   private var needsReload = false
-  
+
   // MARK: Helpers
   private func convertAlignment(_ alignment: Alignment?) -> RiveAlignment? {
     guard let alignment = alignment else { return nil }
-    
+
     switch alignment {
     case .topleft: return .topLeft
     case .topcenter: return .topCenter
@@ -165,10 +173,10 @@ class HybridRiveView : HybridRiveViewSpec {
     case .bottomright: return .bottomRight
     }
   }
-  
+
   private func convertFit(_ fit: Fit?) -> RiveFit? {
     guard let fit = fit else { return nil }
-    
+
     switch fit {
     case .fill: return .fill
     case .contain: return .contain

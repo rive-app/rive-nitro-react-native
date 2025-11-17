@@ -83,8 +83,8 @@ namespace margelo::nitro::rive {
       virtual void setFit(std::optional<Fit> fit) = 0;
       virtual std::optional<double> getLayoutScaleFactor() = 0;
       virtual void setLayoutScaleFactor(std::optional<double> layoutScaleFactor) = 0;
-      virtual std::variant<std::shared_ptr<HybridViewModelInstanceSpec>, DataBindMode, DataBindByName> getDataBind() = 0;
-      virtual void setDataBind(const std::variant<std::shared_ptr<HybridViewModelInstanceSpec>, DataBindMode, DataBindByName>& dataBind) = 0;
+      virtual std::optional<std::variant<std::shared_ptr<HybridViewModelInstanceSpec>, DataBindMode, DataBindByName>> getDataBind() = 0;
+      virtual void setDataBind(const std::optional<std::variant<std::shared_ptr<HybridViewModelInstanceSpec>, DataBindMode, DataBindByName>>& dataBind) = 0;
 
     public:
       // Methods

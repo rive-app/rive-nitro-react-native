@@ -89,7 +89,7 @@ abstract class HybridRiveViewSpec: HybridView() {
   @get:Keep
   @set:DoNotStrip
   @set:Keep
-  abstract var dataBind: Variant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName
+  abstract var dataBind: Variant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName?
 
   // Methods
   @DoNotStrip
