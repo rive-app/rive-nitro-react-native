@@ -47,6 +47,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
   private var eventListeners: MutableList<RiveFileController.RiveEventListener> = mutableListOf()
   private val viewReadyDeferred = CompletableDeferred<Boolean>()
   private var _activeStateMachineName: String? = null
+  private var isFirstConfigure = true
 
   init {
     riveAnimationView = RiveAnimationView(context)
@@ -59,6 +60,8 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
   }
 
   fun configure(config: ViewConfiguration, reload: Boolean = false) {
+    val wasFirstConfigure = isFirstConfigure
+
     if (reload) {
       riveAnimationView?.setRiveFile(
         config.riveFile,
@@ -70,6 +73,15 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
         fit = config.fit
       )
       _activeStateMachineName = getSafeStateMachineName()
+
+      // Play state machine after reload (but not on first configure)
+      if (!wasFirstConfigure) {
+        _activeStateMachineName?.let { smName ->
+          riveAnimationView?.play(smName, isStateMachine = true)
+        }
+      }
+
+      isFirstConfigure = false
     } else {
       riveAnimationView?.alignment = config.alignment
       riveAnimationView?.fit = config.fit

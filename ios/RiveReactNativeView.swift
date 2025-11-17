@@ -32,6 +32,7 @@ class RiveReactNativeView: UIView, RiveStateMachineDelegate {
   private var baseViewModel: RiveViewModel?
   private var eventListeners: [(UnifiedRiveEvent) -> Void] = []
   private var viewReadyContinuation: CheckedContinuation<Void, Never>?
+  private var isFirstConfigure = true
   private var isViewReady = false
   private weak var viewSource: RiveViewSource?
 
