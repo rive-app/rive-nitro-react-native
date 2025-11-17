@@ -57,7 +57,6 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
       if (field != value) {
         field = value
         needsReload = true
-        afterUpdate()
       }
     }
   //endregion
