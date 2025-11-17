@@ -53,6 +53,12 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
   override var layoutScaleFactor: Double? = null
   override var dataBind: Variant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName =
     Variant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName.Second(DataBindMode.NONE)
+    set(value) {
+      if (field != value) {
+        field = value
+        configureDataBinding()
+      }
+    }
   //endregion
 
   //region View Methods
@@ -103,6 +109,47 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
 
   override fun getTextRunValue(name: String, path: String?): String =
     view.getTextRunValue(name, path)
+  //endregion
+
+  //region Data Binding
+  private fun configureDataBinding() {
+    executeOnUiThread {
+      val stateMachines = view.riveAnimationView?.controller?.stateMachines
+      if (stateMachines.isNullOrEmpty()) return@executeOnUiThread
+
+      when (dataBind) {
+        is Variant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName.First -> {
+          val instance = (dataBind.asFirstOrNull() as? HybridViewModelInstance)?.viewModelInstance
+          instance?.let {
+            stateMachines.first().viewModelInstance = it
+          }
+        }
+        is Variant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName.Second -> {
+          when (dataBind.asSecondOrNull()) {
+            DataBindMode.AUTO -> {
+              // Auto-binding requires reload
+            }
+            DataBindMode.NONE -> {
+              // No binding
+            }
+            else -> {}
+          }
+        }
+        is Variant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName.Third -> {
+          val name = dataBind.asThirdOrNull()?.byName
+          name?.let {
+            val artboard = view.riveAnimationView?.controller?.activeArtboard
+            val file = view.riveAnimationView?.controller?.file
+            if (artboard != null && file != null) {
+              val viewModel = file.defaultViewModelForArtboard(artboard)
+              val instance = viewModel.createInstanceFromName(it)
+              stateMachines.first().viewModelInstance = instance
+            }
+          }
+        }
+      }
+    }
+  }
   //endregion
 
   //region Update

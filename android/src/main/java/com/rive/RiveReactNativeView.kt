@@ -43,7 +43,7 @@ data class ViewConfiguration(
 
 @SuppressLint("ViewConstructor")
 class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
-  private var riveAnimationView: RiveAnimationView? = null
+  internal var riveAnimationView: RiveAnimationView? = null
   private var eventListeners: MutableList<RiveFileController.RiveEventListener> = mutableListOf()
   private val viewReadyDeferred = CompletableDeferred<Boolean>()
   private var _activeStateMachineName: String? = null

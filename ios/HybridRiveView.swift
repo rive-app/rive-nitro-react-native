@@ -33,8 +33,12 @@ extension Variant__any_HybridViewModelInstanceSpec__DataBindMode_DataBindByName 
 }
 
 class HybridRiveView : HybridRiveViewSpec {
-  var dataBind: Variant__any_HybridViewModelInstanceSpec__DataBindMode_DataBindByName = .second(.none) { didSet{ needsReload = true }}
-  
+  var dataBind: Variant__any_HybridViewModelInstanceSpec__DataBindMode_DataBindByName = .second(.none) {
+    didSet {
+      applyDataBinding()
+    }
+  }
+
   // MARK: View Props
   var artboardName: String? { didSet { needsReload = true } }
   var stateMachineName: String? { didSet { needsReload = true } }
@@ -107,7 +111,16 @@ class HybridRiveView : HybridRiveViewSpec {
     }
     return riveView
   }
-  
+
+  // MARK: Data Binding
+  private func applyDataBinding() {
+    logged(tag: "HybridRiveView", note: "applyDataBinding") {
+      guard let riveView = view as? RiveReactNativeView else { return }
+      let bindData = try dataBind.toDataBingMode()
+      riveView.applyDataBinding(bindData)
+    }
+  }
+
   // MARK: Update
   func afterUpdate() {
     logged(tag: "HybridRiveView", note: "afterUpdate") {
