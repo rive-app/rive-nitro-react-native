@@ -64,10 +64,7 @@ export default function DataBindingMode() {
           ).map((mode) => (
             <TouchableOpacity
               key={mode}
-              style={[
-                styles.button,
-                bindMode === mode && styles.buttonActive,
-              ]}
+              style={[styles.button, bindMode === mode && styles.buttonActive]}
               onPress={() => setBindMode(mode)}
             >
               <Text
