@@ -33,6 +33,7 @@ extension Variant__any_HybridViewModelInstanceSpec__DataBindMode_DataBindByName 
 }
 
 class HybridRiveView : HybridRiveViewSpec {
+  var firstUpdate = true
   var dataBind: Variant__any_HybridViewModelInstanceSpec__DataBindMode_DataBindByName = .second(.none) {
     didSet {
       applyDataBinding()
@@ -117,12 +118,13 @@ class HybridRiveView : HybridRiveViewSpec {
     logged(tag: "HybridRiveView", note: "applyDataBinding") {
       guard let riveView = view as? RiveReactNativeView else { return }
       let bindData = try dataBind.toDataBingMode()
-      riveView.applyDataBinding(bindData)
+      riveView.applyDataBinding(bindData, refresh: !firstUpdate)
     }
   }
 
   // MARK: Update
   func afterUpdate() {
+    firstUpdate = false
     logged(tag: "HybridRiveView", note: "afterUpdate") {
       guard let hybridFile = file as? HybridRiveFile,
             let file = hybridFile.riveFile else { return }

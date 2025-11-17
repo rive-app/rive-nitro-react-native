@@ -1,6 +1,12 @@
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { useEffect } from 'react';
-import { Fit, RiveView, useRive, useRiveFile } from 'react-native-rive';
+import {
+  Fit,
+  RiveView,
+  useRive,
+  useRiveFile,
+  DataBindMode,
+} from 'react-native-rive';
 import { type Metadata } from '../helpers/metadata';
 
 export default function StateMachineInputsExample() {
@@ -47,7 +53,7 @@ export default function StateMachineInputsExample() {
         ) : riveFile ? (
           <RiveView
             style={styles.rive}
-            autoBind={false}
+            dataBind={DataBindMode.None}
             autoPlay={true}
             fit={Fit.Contain}
             file={riveFile}

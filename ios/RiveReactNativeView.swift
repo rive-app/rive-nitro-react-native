@@ -108,20 +108,19 @@ class RiveReactNativeView: UIView, RiveStateMachineDelegate {
     return baseViewModel?.riveModel?.stateMachine?.viewModelInstance
   }
 
-  func applyDataBinding(_ bindData: BindData) {
+  func applyDataBinding(_ bindData: BindData, refresh: Bool = false) {
     let stateMachine = baseViewModel?.riveModel?.stateMachine
     let artboard = baseViewModel?.riveModel?.artboard
 
     switch bindData {
     case .none:
       baseViewModel?.riveModel?.disableAutoBind()
-      baseViewModel?.play()
+      
 
     case .auto:
       baseViewModel?.riveModel?.enableAutoBind { [weak self] instance in
         // Auto-bind callback
       }
-      baseViewModel?.play()
 
     case .byName(let name):
       guard let artboard = artboard,
@@ -132,11 +131,12 @@ class RiveReactNativeView: UIView, RiveStateMachineDelegate {
       }
       stateMachine?.bind(viewModelInstance: instance)
       artboard.bind(viewModelInstance: instance)
-      baseViewModel?.play()
 
     case .instance(let instance):
       stateMachine?.bind(viewModelInstance: instance)
       artboard?.bind(viewModelInstance: instance)
+    }
+    if (refresh) {
       baseViewModel?.play()
     }
   }

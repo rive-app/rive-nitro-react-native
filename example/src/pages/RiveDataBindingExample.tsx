@@ -95,9 +95,8 @@ function DataBindingExample({
   return (
     <RiveView
       style={styles.rive}
-      autoBind={false}
       autoPlay={true}
-      bind={instance}
+      dataBind={instance}
       fit={Fit.Layout}
       layoutScaleFactor={1}
       file={file}

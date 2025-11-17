@@ -11,6 +11,7 @@ import {
   /*Rive, */ Fit,
   /*RNRiveError,*/ useRiveFile,
   RiveView,
+  DataBindMode,
 } from 'react-native-rive';
 import { Picker } from '@react-native-picker/picker';
 import { type Metadata } from '../helpers/metadata';
@@ -65,6 +66,7 @@ export default function StateMachine() {
         fit={Fit.Contain}
         style={styles.animation}
         stateMachineName="State Machine 1"
+        dataBind={DataBindMode.None}
         // The `referencedAssets` prop allows you to load external assets from various sources:
         // - A URI
         // - A bundled asset on the native platform (iOS and Android)

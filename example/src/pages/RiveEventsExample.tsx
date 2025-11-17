@@ -7,6 +7,7 @@ import {
   useRiveFile,
   type RiveEvent,
   RiveEventType,
+  DataBindMode,
 } from 'react-native-rive';
 import { type Metadata } from '../helpers/metadata';
 
@@ -46,7 +47,7 @@ export default function EventsExample() {
         ) : riveFile ? (
           <RiveView
             style={styles.rive}
-            autoBind={false}
+            dataBind={DataBindMode.None}
             autoPlay={true}
             fit={Fit.Contain}
             file={riveFile}

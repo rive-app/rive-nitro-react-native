@@ -11,6 +11,7 @@ import {
   useRive,
   useRiveFile,
   type RiveFileInput,
+  DataBindMode,
 } from 'react-native-rive';
 import { useState, useEffect } from 'react';
 import { downloadFileAsArrayBuffer } from '../helpers/fileHelpers';
@@ -81,7 +82,7 @@ const CustomRiveView = ({ loadingMethod, title }: CustomRiveViewProps) => {
       ) : riveFile ? (
         <RiveView
           style={styles.rive}
-          autoBind={false}
+          dataBind={DataBindMode.None}
           autoPlay={true}
           fit={Fit.Contain}
           file={riveFile}

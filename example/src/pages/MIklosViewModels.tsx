@@ -1,13 +1,28 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import type { Metadata } from '../helpers/metadata';
-import { DataBindMode, RiveView, useRiveFile } from 'react-native-rive';
+import {
+  DataBindMode,
+  RiveView,
+  useRiveFile,
+  type ViewModelInstance,
+} from 'react-native-rive';
 
-type BindModeOption = 'none' | 'auto' | 'red' | 'green' | 'blue';
+type BindModeOption =
+  | 'none'
+  | 'auto'
+  | 'red'
+  | 'green'
+  | 'blue'
+  | 'green-instance';
 
-function getDataBindValue(mode: BindModeOption) {
+function getDataBindValue(
+  mode: BindModeOption,
+  greenInstance: ViewModelInstance | null
+) {
   if (mode === 'none') return DataBindMode.None;
   if (mode === 'auto') return DataBindMode.Auto;
+  if (mode === 'green-instance' && greenInstance) return greenInstance;
   return { byName: mode };
 }
 
@@ -17,34 +32,54 @@ export default function DataBindingMode() {
   );
   const [bindMode, setBindMode] = useState<BindModeOption>('none');
 
-  const dataBindValue = getDataBindValue(bindMode);
+  // Create a ViewModelInstance for "green" to demonstrate instance binding
+  const greenInstance = useMemo(() => {
+    if (!riveFile) return null;
+    try {
+      const viewModel = riveFile.defaultArtboardViewModel();
+      if (!viewModel) return null;
+      return viewModel.createInstanceByName('green');
+    } catch (e) {
+      console.error('Failed to create green instance:', e);
+      return null;
+    }
+  }, [riveFile]);
+
+  const dataBindValue = getDataBindValue(bindMode, greenInstance);
 
   return (
     <View style={styles.container}>
       <View style={styles.controlsContainer}>
         <Text style={styles.label}>Binding Mode:</Text>
         <View style={styles.buttonRow}>
-          {(['none', 'auto', 'red', 'green', 'blue'] as BindModeOption[]).map(
-            (mode) => (
-              <TouchableOpacity
-                key={mode}
+          {(
+            [
+              'none',
+              'auto',
+              'red',
+              'green',
+              'blue',
+              'green-instance',
+            ] as BindModeOption[]
+          ).map((mode) => (
+            <TouchableOpacity
+              key={mode}
+              style={[
+                styles.button,
+                bindMode === mode && styles.buttonActive,
+              ]}
+              onPress={() => setBindMode(mode)}
+            >
+              <Text
                 style={[
-                  styles.button,
-                  bindMode === mode && styles.buttonActive,
+                  styles.buttonText,
+                  bindMode === mode && styles.buttonTextActive,
                 ]}
-                onPress={() => setBindMode(mode)}
               >
-                <Text
-                  style={[
-                    styles.buttonText,
-                    bindMode === mode && styles.buttonTextActive,
-                  ]}
-                >
-                  {mode}
-                </Text>
-              </TouchableOpacity>
-            )
-          )}
+                {mode === 'green-instance' ? 'green (instance)' : mode}
+              </Text>
+            </TouchableOpacity>
+          ))}
         </View>
       </View>
       {riveFile && (
@@ -62,7 +97,7 @@ export default function DataBindingMode() {
 DataBindingMode.metadata = {
   name: 'Miklos View Models',
   description:
-    'Interactive data binding mode selector (none, auto, red, green, blue)',
+    'Interactive data binding mode selector (none, auto, byName, and instance)',
 } satisfies Metadata;
 
 const styles = StyleSheet.create({

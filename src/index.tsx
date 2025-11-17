@@ -13,9 +13,9 @@ import {
 } from './specs/RiveView.nitro';
 
 export class DataBindByName implements DataBindByNameInterface {
-  name: string;
+  byName: string;
   constructor(name: string) {
-    this.name = name;
+    this.byName = name;
   }
 }
 
