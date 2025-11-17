@@ -45,7 +45,6 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
   private var eventListeners: MutableList<RiveFileController.RiveEventListener> = mutableListOf()
   private val viewReadyDeferred = CompletableDeferred<Boolean>()
   private var _activeStateMachineName: String? = null
-  private var isFirstConfigure = true
 
   init {
     riveAnimationView = RiveAnimationView(context)
@@ -58,8 +57,6 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
   }
 
   fun configure(config: ViewConfiguration, reload: Boolean = false) {
-    val wasFirstConfigure = isFirstConfigure
-
     if (reload) {
       riveAnimationView?.setRiveFile(
         config.riveFile,
@@ -71,15 +68,6 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
         fit = config.fit
       )
       _activeStateMachineName = getSafeStateMachineName()
-
-      // Play state machine after reload (but not on first configure)
-      if (!wasFirstConfigure) {
-        _activeStateMachineName?.let { smName ->
-          riveAnimationView?.play(smName, isStateMachine = true)
-        }
-      }
-
-      isFirstConfigure = false
     } else {
       riveAnimationView?.alignment = config.alignment
       riveAnimationView?.fit = config.fit
@@ -87,31 +75,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
       riveAnimationView?.layoutScaleFactor = config.layoutScaleFactor
     }
 
-    val stateMachines = riveAnimationView?.controller?.stateMachines
-    when (val bindData = config.bindData) {
-      is BindData.None -> {
-        // No binding
-      }
-      is BindData.Auto -> {
-        // Auto-binding handled by setRiveFile above
-      }
-      is BindData.Instance -> {
-        if (!stateMachines.isNullOrEmpty()) {
-          stateMachines.first().viewModelInstance = bindData.instance
-        }
-      }
-      is BindData.ByName -> {
-        val artboard = riveAnimationView?.controller?.activeArtboard
-        val file = riveAnimationView?.controller?.file
-        if (artboard != null && file != null) {
-          val viewModel = file.defaultViewModelForArtboard(artboard)
-          val instance = viewModel.createInstanceFromName(bindData.name)
-          if (!stateMachines.isNullOrEmpty()) {
-            stateMachines.first().viewModelInstance = instance
-          }
-        }
-      }
-    }
+    applyDataBinding(config.bindData, shouldRefresh = false)
 
     viewReadyDeferred.complete(true)
   }
@@ -129,6 +93,46 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
       stateMachines.first().viewModelInstance
     } else {
       null
+    }
+  }
+
+  fun applyDataBinding(bindData: BindData, shouldRefresh: Boolean = false) {
+    val stateMachines = riveAnimationView?.controller?.stateMachines
+    if (stateMachines.isNullOrEmpty()) return
+
+    val stateMachine = stateMachines.first()
+
+    when (bindData) {
+      is BindData.None -> {
+        stateMachine.viewModelInstance = null
+      }
+      is BindData.Auto -> {
+        val artboard = riveAnimationView?.controller?.activeArtboard
+        val file = riveAnimationView?.controller?.file
+        if (artboard != null && file != null) {
+          val viewModel = file.defaultViewModelForArtboard(artboard)
+          val instance = viewModel.createDefaultInstance()
+          stateMachine.viewModelInstance = instance
+        }
+      }
+      is BindData.Instance -> {
+        stateMachine.viewModelInstance = bindData.instance
+      }
+      is BindData.ByName -> {
+        val artboard = riveAnimationView?.controller?.activeArtboard
+        val file = riveAnimationView?.controller?.file
+        if (artboard != null && file != null) {
+          val viewModel = file.defaultViewModelForArtboard(artboard)
+          val instance = viewModel.createInstanceFromName(bindData.name)
+          stateMachine.viewModelInstance = instance
+        }
+      }
+    }
+
+    if (shouldRefresh) {
+      stateMachine.name.let { smName ->
+        riveAnimationView?.play(smName, isStateMachine = true)
+      }
     }
   }
 

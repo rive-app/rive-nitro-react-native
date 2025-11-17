@@ -74,30 +74,8 @@ class RiveReactNativeView: UIView, RiveStateMachineDelegate {
       viewReadyContinuation?.resume()
       viewReadyContinuation = nil
     }
-    
-    let stateMachine = baseViewModel?.riveModel?.stateMachine
-    let artboard = baseViewModel?.riveModel?.artboard
-    switch config.bindData {
-    case .none:
-      baseViewModel?.riveModel?.disableAutoBind()
 
-    case .auto:
-      baseViewModel?.riveModel?.enableAutoBind { [weak self] instance in
-        // Callback invoked when default instance is auto-bound
-      }
-
-    case .byName(let name):
-      guard let artboard = artboard,
-            let riveFile = baseViewModel?.riveModel?.riveFile,
-            let viewModel = riveFile.defaultViewModel(for: artboard),
-            let instance = viewModel.createInstance(fromName: name) else {
-        break
-      }
-      stateMachine?.bind(viewModelInstance: instance)
-
-    case .instance(let instance):
-      stateMachine?.bind(viewModelInstance: instance)
-    }
+    applyDataBinding(config.bindData, refresh: false)
   }
   
   func bindViewModelInstance(viewModelInstance: RiveDataBindingViewModel.Instance) {

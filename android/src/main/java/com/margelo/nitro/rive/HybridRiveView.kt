@@ -136,47 +136,7 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
 
   //region Data Binding
   private fun applyDataBinding() {
-    val stateMachines = view.riveAnimationView?.controller?.stateMachines
-    if (stateMachines.isNullOrEmpty()) return
-
-    val bindData = dataBind.toBindData()
-    val stateMachine = stateMachines.first()
-
-    when (bindData) {
-      is BindData.None -> {
-        // Unbind by setting to null
-        stateMachine.viewModelInstance = null
-      }
-      is BindData.Auto -> {
-        // Get the default view model and create default instance
-        val artboard = view.riveAnimationView?.controller?.activeArtboard
-        val file = view.riveAnimationView?.controller?.file
-        if (artboard != null && file != null) {
-          val viewModel = file.defaultViewModelForArtboard(artboard)
-          val instance =  viewModel.createDefaultInstance()
-          stateMachine.viewModelInstance = instance
-        }
-      }
-      is BindData.Instance -> {
-        stateMachine.viewModelInstance = bindData.instance
-      }
-      is BindData.ByName -> {
-        val artboard = view.riveAnimationView?.controller?.activeArtboard
-        val file = view.riveAnimationView?.controller?.file
-        if (artboard != null && file != null) {
-          val viewModel = file.defaultViewModelForArtboard(artboard)
-          val instance = viewModel.createInstanceFromName(bindData.name)
-          stateMachine.viewModelInstance = instance
-        }
-      }
-    }
-
-    // Only play on subsequent updates, not first
-    if (!firstUpdate) {
-      view.riveAnimationView?.controller?.stateMachines?.first()?.name?.let { smName ->
-        view.riveAnimationView?.play(smName, isStateMachine = true)
-      }
-    }
+    view.applyDataBinding(dataBind.toBindData(), shouldRefresh = !firstUpdate)
   }
   //endregion
 
