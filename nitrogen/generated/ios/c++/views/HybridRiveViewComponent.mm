@@ -81,11 +81,6 @@ using namespace margelo::nitro::rive::views;
     swiftPart.setStateMachineName(newViewProps.stateMachineName.value);
     newViewProps.stateMachineName.isDirty = false;
   }
-  // autoBind: optional
-  if (newViewProps.autoBind.isDirty) {
-    swiftPart.setAutoBind(newViewProps.autoBind.value);
-    newViewProps.autoBind.isDirty = false;
-  }
   // autoPlay: optional
   if (newViewProps.autoPlay.isDirty) {
     swiftPart.setAutoPlay(newViewProps.autoPlay.value);
@@ -111,10 +106,10 @@ using namespace margelo::nitro::rive::views;
     swiftPart.setLayoutScaleFactor(newViewProps.layoutScaleFactor.value);
     newViewProps.layoutScaleFactor.isDirty = false;
   }
-  // bind: optional
-  if (newViewProps.bind.isDirty) {
-    swiftPart.setBind(newViewProps.bind.value);
-    newViewProps.bind.isDirty = false;
+  // dataBind: variant
+  if (newViewProps.dataBind.isDirty) {
+    swiftPart.setDataBind(newViewProps.dataBind.value);
+    newViewProps.dataBind.isDirty = false;
   }
 
   swiftPart.afterUpdate();

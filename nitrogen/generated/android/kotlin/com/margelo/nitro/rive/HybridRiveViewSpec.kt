@@ -59,12 +59,6 @@ abstract class HybridRiveViewSpec: HybridView() {
   @get:Keep
   @set:DoNotStrip
   @set:Keep
-  abstract var autoBind: Boolean?
-  
-  @get:DoNotStrip
-  @get:Keep
-  @set:DoNotStrip
-  @set:Keep
   abstract var autoPlay: Boolean?
   
   @get:DoNotStrip
@@ -95,7 +89,7 @@ abstract class HybridRiveViewSpec: HybridView() {
   @get:Keep
   @set:DoNotStrip
   @set:Keep
-  abstract var bind: HybridViewModelInstanceSpec?
+  abstract var dataBind: Variant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName
 
   // Methods
   @DoNotStrip
@@ -108,7 +102,7 @@ abstract class HybridRiveViewSpec: HybridView() {
   
   @DoNotStrip
   @Keep
-  abstract fun getBoundViewModelInstance(): HybridViewModelInstanceSpec?
+  abstract fun getViewModelInstance(): HybridViewModelInstanceSpec?
   
   @DoNotStrip
   @Keep

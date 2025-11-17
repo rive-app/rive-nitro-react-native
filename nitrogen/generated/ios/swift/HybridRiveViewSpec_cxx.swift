@@ -163,30 +163,6 @@ open class HybridRiveViewSpec_cxx {
     }
   }
   
-  public final var autoBind: bridge.std__optional_bool_ {
-    @inline(__always)
-    get {
-      return { () -> bridge.std__optional_bool_ in
-        if let __unwrappedValue = self.__implementation.autoBind {
-          return bridge.create_std__optional_bool_(__unwrappedValue)
-        } else {
-          return .init()
-        }
-      }()
-    }
-    @inline(__always)
-    set {
-      self.__implementation.autoBind = { () -> Bool? in
-        if bridge.has_value_std__optional_bool_(newValue) {
-          let __unwrapped = bridge.get_std__optional_bool_(newValue)
-          return __unwrapped
-        } else {
-          return nil
-        }
-      }()
-    }
-  }
-  
   public final var autoPlay: bridge.std__optional_bool_ {
     @inline(__always)
     get {
@@ -280,32 +256,43 @@ open class HybridRiveViewSpec_cxx {
     }
   }
   
-  public final var bind: bridge.std__optional_std__shared_ptr_HybridViewModelInstanceSpec__ {
+  public final var dataBind: bridge.std__variant_std__shared_ptr_HybridViewModelInstanceSpec___DataBindMode__DataBindByName_ {
     @inline(__always)
     get {
-      return { () -> bridge.std__optional_std__shared_ptr_HybridViewModelInstanceSpec__ in
-        if let __unwrappedValue = self.__implementation.bind {
-          return bridge.create_std__optional_std__shared_ptr_HybridViewModelInstanceSpec__({ () -> bridge.std__shared_ptr_HybridViewModelInstanceSpec_ in
-            let __cxxWrapped = __unwrappedValue.getCxxWrapper()
-            return __cxxWrapped.getCxxPart()
-          }())
-        } else {
-          return .init()
+      return { () -> bridge.std__variant_std__shared_ptr_HybridViewModelInstanceSpec___DataBindMode__DataBindByName_ in
+        switch self.__implementation.dataBind {
+          case .first(let __value):
+            return bridge.create_std__variant_std__shared_ptr_HybridViewModelInstanceSpec___DataBindMode__DataBindByName_({ () -> bridge.std__shared_ptr_HybridViewModelInstanceSpec_ in
+              let __cxxWrapped = __value.getCxxWrapper()
+              return __cxxWrapped.getCxxPart()
+            }())
+          case .second(let __value):
+            return bridge.create_std__variant_std__shared_ptr_HybridViewModelInstanceSpec___DataBindMode__DataBindByName_(__value)
+          case .third(let __value):
+            return bridge.create_std__variant_std__shared_ptr_HybridViewModelInstanceSpec___DataBindMode__DataBindByName_(__value)
         }
       }()
     }
     @inline(__always)
     set {
-      self.__implementation.bind = { () -> (any HybridViewModelInstanceSpec)? in
-        if bridge.has_value_std__optional_std__shared_ptr_HybridViewModelInstanceSpec__(newValue) {
-          let __unwrapped = bridge.get_std__optional_std__shared_ptr_HybridViewModelInstanceSpec__(newValue)
-          return { () -> HybridViewModelInstanceSpec in
-            let __unsafePointer = bridge.get_std__shared_ptr_HybridViewModelInstanceSpec_(__unwrapped)
-            let __instance = HybridViewModelInstanceSpec_cxx.fromUnsafe(__unsafePointer)
-            return __instance.getHybridViewModelInstanceSpec()
-          }()
-        } else {
-          return nil
+      self.__implementation.dataBind = { () -> Variant__any_HybridViewModelInstanceSpec__DataBindMode_DataBindByName in
+        let __variant = newValue
+        switch __variant.index() {
+          case 0:
+            let __actual = __variant.get_0()
+            return .first({ () -> HybridViewModelInstanceSpec in
+              let __unsafePointer = bridge.get_std__shared_ptr_HybridViewModelInstanceSpec_(__actual)
+              let __instance = HybridViewModelInstanceSpec_cxx.fromUnsafe(__unsafePointer)
+              return __instance.getHybridViewModelInstanceSpec()
+            }())
+          case 1:
+            let __actual = __variant.get_1()
+            return .second(__actual)
+          case 2:
+            let __actual = __variant.get_2()
+            return .third(__actual)
+          default:
+            fatalError("Variant can never have index \(__variant.index())!")
         }
       }()
     }
@@ -347,9 +334,9 @@ open class HybridRiveViewSpec_cxx {
   }
   
   @inline(__always)
-  public final func getBoundViewModelInstance() -> bridge.Result_std__optional_std__shared_ptr_HybridViewModelInstanceSpec___ {
+  public final func getViewModelInstance() -> bridge.Result_std__optional_std__shared_ptr_HybridViewModelInstanceSpec___ {
     do {
-      let __result = try self.__implementation.getBoundViewModelInstance()
+      let __result = try self.__implementation.getViewModelInstance()
       let __resultCpp = { () -> bridge.std__optional_std__shared_ptr_HybridViewModelInstanceSpec__ in
         if let __unwrappedValue = __result {
           return bridge.create_std__optional_std__shared_ptr_HybridViewModelInstanceSpec__({ () -> bridge.std__shared_ptr_HybridViewModelInstanceSpec_ in

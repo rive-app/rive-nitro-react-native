@@ -7,17 +7,23 @@ protocol RiveViewSource: AnyObject {
   func unregisterView(_ view: RiveReactNativeView)
 }
 
+enum BindData {
+  case none
+  case auto
+  case instance(RiveDataBindingViewModel.Instance)
+  case byName(String)
+}
+
 struct ViewConfiguration {
   let artboardName: String?
   let stateMachineName: String?
-  let autoBind: Bool
   let autoPlay: Bool
   let riveFile: RiveFile
   let viewSource: RiveViewSource?
   let alignment: RiveRuntime.RiveAlignment
   let fit: RiveRuntime.RiveFit
   let layoutScaleFactor: Double
-  let bind: RiveDataBindingViewModel.Instance?
+  let bindData: BindData
 }
 
 class RiveReactNativeView: UIView, RiveStateMachineDelegate {
@@ -68,8 +74,28 @@ class RiveReactNativeView: UIView, RiveStateMachineDelegate {
       viewReadyContinuation = nil
     }
     
-    if let bind = config.bind {
-      baseViewModel?.riveModel?.stateMachine?.bind(viewModelInstance: bind)
+    let stateMachine = baseViewModel?.riveModel?.stateMachine
+    let artboard = baseViewModel?.riveModel?.artboard
+    switch config.bindData {
+    case .none:
+      baseViewModel?.riveModel?.disableAutoBind()
+
+    case .auto:
+      baseViewModel?.riveModel?.enableAutoBind { [weak self] instance in
+        // Callback invoked when default instance is auto-bound
+      }
+
+    case .byName(let name):
+      guard let artboard = artboard,
+            let riveFile = baseViewModel?.riveModel?.riveFile,
+            let viewModel = riveFile.defaultViewModel(for: artboard),
+            let instance = viewModel.createInstance(fromName: name) else {
+        break
+      }
+      stateMachine?.bind(viewModelInstance: instance)
+
+    case .instance(let instance):
+      stateMachine?.bind(viewModelInstance: instance)
     }
   }
   
@@ -77,7 +103,7 @@ class RiveReactNativeView: UIView, RiveStateMachineDelegate {
     baseViewModel?.riveModel?.stateMachine?.bind(viewModelInstance: viewModelInstance)
   }
 
-  func getBoundViewModelInstance() -> RiveDataBindingViewModel.Instance? {
+  func getViewModelInstance() -> RiveDataBindingViewModel.Instance? {
     return baseViewModel?.riveModel?.stateMachine?.viewModelInstance
   }
 

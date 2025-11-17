@@ -6,13 +6,12 @@
   "validAttributes": {
     "artboardName": true,
     "stateMachineName": true,
-    "autoBind": true,
     "autoPlay": true,
     "file": true,
     "alignment": true,
     "fit": true,
     "layoutScaleFactor": true,
-    "bind": true,
+    "dataBind": true,
     "hybridRef": true
   }
 }

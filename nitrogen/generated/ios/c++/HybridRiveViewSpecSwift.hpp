@@ -20,6 +20,10 @@ namespace margelo::nitro::rive { enum class Alignment; }
 namespace margelo::nitro::rive { enum class Fit; }
 // Forward declaration of `HybridViewModelInstanceSpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridViewModelInstanceSpec; }
+// Forward declaration of `DataBindMode` to properly resolve imports.
+namespace margelo::nitro::rive { enum class DataBindMode; }
+// Forward declaration of `DataBindByName` to properly resolve imports.
+namespace margelo::nitro::rive { struct DataBindByName; }
 // Forward declaration of `UnifiedRiveEvent` to properly resolve imports.
 namespace margelo::nitro::rive { struct UnifiedRiveEvent; }
 // Forward declaration of `RiveEventType` to properly resolve imports.
@@ -32,11 +36,13 @@ namespace margelo::nitro::rive { enum class RiveEventType; }
 #include "Alignment.hpp"
 #include "Fit.hpp"
 #include "HybridViewModelInstanceSpec.hpp"
+#include "DataBindMode.hpp"
+#include "DataBindByName.hpp"
+#include <variant>
 #include <NitroModules/Promise.hpp>
 #include "UnifiedRiveEvent.hpp"
 #include <functional>
 #include "RiveEventType.hpp"
-#include <variant>
 #include <unordered_map>
 
 #include "Rive-Swift-Cxx-Umbrella.hpp"
@@ -93,13 +99,6 @@ namespace margelo::nitro::rive {
     inline void setStateMachineName(const std::optional<std::string>& stateMachineName) noexcept override {
       _swiftPart.setStateMachineName(stateMachineName);
     }
-    inline std::optional<bool> getAutoBind() noexcept override {
-      auto __result = _swiftPart.getAutoBind();
-      return __result;
-    }
-    inline void setAutoBind(std::optional<bool> autoBind) noexcept override {
-      _swiftPart.setAutoBind(autoBind);
-    }
     inline std::optional<bool> getAutoPlay() noexcept override {
       auto __result = _swiftPart.getAutoPlay();
       return __result;
@@ -135,12 +134,12 @@ namespace margelo::nitro::rive {
     inline void setLayoutScaleFactor(std::optional<double> layoutScaleFactor) noexcept override {
       _swiftPart.setLayoutScaleFactor(layoutScaleFactor);
     }
-    inline std::optional<std::shared_ptr<HybridViewModelInstanceSpec>> getBind() noexcept override {
-      auto __result = _swiftPart.getBind();
+    inline std::variant<std::shared_ptr<HybridViewModelInstanceSpec>, DataBindMode, DataBindByName> getDataBind() noexcept override {
+      auto __result = _swiftPart.getDataBind();
       return __result;
     }
-    inline void setBind(const std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>& bind) noexcept override {
-      _swiftPart.setBind(bind);
+    inline void setDataBind(const std::variant<std::shared_ptr<HybridViewModelInstanceSpec>, DataBindMode, DataBindByName>& dataBind) noexcept override {
+      _swiftPart.setDataBind(dataBind);
     }
 
   public:
@@ -159,8 +158,8 @@ namespace margelo::nitro::rive {
         std::rethrow_exception(__result.error());
       }
     }
-    inline std::optional<std::shared_ptr<HybridViewModelInstanceSpec>> getBoundViewModelInstance() override {
-      auto __result = _swiftPart.getBoundViewModelInstance();
+    inline std::optional<std::shared_ptr<HybridViewModelInstanceSpec>> getViewModelInstance() override {
+      auto __result = _swiftPart.getViewModelInstance();
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }

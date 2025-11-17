@@ -23,6 +23,9 @@
 #include "Alignment.hpp"
 #include "Fit.hpp"
 #include "HybridViewModelInstanceSpec.hpp"
+#include "DataBindMode.hpp"
+#include "DataBindByName.hpp"
+#include <variant>
 #include "HybridRiveViewSpec.hpp"
 #include <functional>
 
@@ -49,13 +52,12 @@ namespace margelo::nitro::rive::views {
   public:
     CachedProp<std::optional<std::string>> artboardName;
     CachedProp<std::optional<std::string>> stateMachineName;
-    CachedProp<std::optional<bool>> autoBind;
     CachedProp<std::optional<bool>> autoPlay;
     CachedProp<std::shared_ptr<HybridRiveFileSpec>> file;
     CachedProp<std::optional<Alignment>> alignment;
     CachedProp<std::optional<Fit>> fit;
     CachedProp<std::optional<double>> layoutScaleFactor;
-    CachedProp<std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>> bind;
+    CachedProp<std::variant<std::shared_ptr<HybridViewModelInstanceSpec>, DataBindMode, DataBindByName>> dataBind;
     CachedProp<std::optional<std::function<void(const std::shared_ptr<HybridRiveViewSpec>& /* ref */)>>> hybridRef;
 
   private:

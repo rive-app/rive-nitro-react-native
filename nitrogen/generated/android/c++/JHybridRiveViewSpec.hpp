@@ -54,8 +54,6 @@ namespace margelo::nitro::rive {
     void setArtboardName(const std::optional<std::string>& artboardName) override;
     std::optional<std::string> getStateMachineName() override;
     void setStateMachineName(const std::optional<std::string>& stateMachineName) override;
-    std::optional<bool> getAutoBind() override;
-    void setAutoBind(std::optional<bool> autoBind) override;
     std::optional<bool> getAutoPlay() override;
     void setAutoPlay(std::optional<bool> autoPlay) override;
     std::shared_ptr<HybridRiveFileSpec> getFile() override;
@@ -66,14 +64,14 @@ namespace margelo::nitro::rive {
     void setFit(std::optional<Fit> fit) override;
     std::optional<double> getLayoutScaleFactor() override;
     void setLayoutScaleFactor(std::optional<double> layoutScaleFactor) override;
-    std::optional<std::shared_ptr<HybridViewModelInstanceSpec>> getBind() override;
-    void setBind(const std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>& bind) override;
+    std::variant<std::shared_ptr<HybridViewModelInstanceSpec>, DataBindMode, DataBindByName> getDataBind() override;
+    void setDataBind(const std::variant<std::shared_ptr<HybridViewModelInstanceSpec>, DataBindMode, DataBindByName>& dataBind) override;
 
   public:
     // Methods
     std::shared_ptr<Promise<bool>> awaitViewReady() override;
     void bindViewModelInstance(const std::shared_ptr<HybridViewModelInstanceSpec>& viewModelInstance) override;
-    std::optional<std::shared_ptr<HybridViewModelInstanceSpec>> getBoundViewModelInstance() override;
+    std::optional<std::shared_ptr<HybridViewModelInstanceSpec>> getViewModelInstance() override;
     void play() override;
     void pause() override;
     void onEventListener(const std::function<void(const UnifiedRiveEvent& /* event */)>& onEvent) override;

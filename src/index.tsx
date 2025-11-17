@@ -4,11 +4,22 @@ import {
   type ReactNativeView,
 } from 'react-native-nitro-modules';
 import type { Rive } from './specs/Rive.nitro';
-import type {
-  RiveViewMethods,
-  RiveViewTSMethods,
-  RiveViewProps,
+import {
+  type RiveViewMethods,
+  type RiveViewTSMethods,
+  type RiveViewProps,
+  DataBindMode,
+  type DataBindByName as DataBindByNameInterface,
 } from './specs/RiveView.nitro';
+
+export class DataBindByName implements DataBindByNameInterface {
+  name: string;
+  constructor(name: string) {
+    this.name = name;
+  }
+}
+
+
 import RiveViewConfig from '../nitrogen/generated/shared/json/RiveViewConfig.json';
 
 const RiveHybridObject = NitroModules.createHybridObject<Rive>('Rive');
@@ -78,3 +89,4 @@ export { useRiveColor } from './hooks/useRiveColor';
 export { useRiveTrigger } from './hooks/useRiveTrigger';
 export { useRiveFile } from './hooks/useRiveFile';
 export { type RiveFileInput } from './hooks/useRiveFile';
+export { DataBindMode };

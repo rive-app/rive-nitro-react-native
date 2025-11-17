@@ -12,7 +12,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 object DefaultConfiguration {
-  const val AUTOBIND = false
   const val AUTOPLAY = true
   val FIT = RiveFit.CONTAIN
   val ALIGNMENT = RiveAlignment.CENTER
@@ -41,10 +40,6 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
     set(value) {
       changed(field, value) { field = it }
     }
-  override var autoBind: Boolean? = null
-    set(value) {
-      changed(field, value) { field = it }
-    }
   override var file: HybridRiveFileSpec = HybridRiveFile()
     set(value) {
       if (field != value) {
@@ -56,7 +51,8 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
   override var alignment: Alignment? = null
   override var fit: Fit? = null
   override var layoutScaleFactor: Double? = null
-  override var bind: HybridViewModelInstanceSpec? = null
+  override var dataBind: Variant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName =
+    Variant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName.Second(DataBindMode.NONE)
   //endregion
 
   //region View Methods
@@ -74,8 +70,8 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
       view.bindViewModelInstance(hybridVmi.viewModelInstance)
     }
 
-  override fun getBoundViewModelInstance(): HybridViewModelInstanceSpec? {
-    val viewModelInstance = view.getBoundViewModelInstance() ?: return null
+  override fun getViewModelInstance(): HybridViewModelInstanceSpec? {
+    val viewModelInstance = view.getViewModelInstance() ?: return null
     return HybridViewModelInstance(viewModelInstance)
   }
 
@@ -118,17 +114,35 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
     val hybridFile = file as? HybridRiveFile
     val riveFile = hybridFile?.riveFile ?: return
 
-    val viewModelInstance = (bind as? HybridViewModelInstance)?.viewModelInstance
+    val (bindMode, bindInstance, bindInstanceName) = when (dataBind) {
+      is Variant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName.First -> {
+        val instance = (dataBind.asFirstOrNull() as? HybridViewModelInstance)?.viewModelInstance
+        Triple(com.rive.BindData.INSTANCE, instance, null)
+      }
+      is Variant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName.Second -> {
+        when (dataBind.asSecondOrNull()) {
+          DataBindMode.AUTO -> Triple(com.rive.BindData.AUTO, null, null)
+          DataBindMode.NONE -> Triple(com.rive.BindData.NONE, null, null)
+          else -> Triple(com.rive.BindData.NONE, null, null)
+        }
+      }
+      is Variant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName.Third -> {
+        val name = dataBind.asThirdOrNull()?.byName
+        Triple(com.rive.BindData.BY_NAME, null, name)
+      }
+    }
+
     val config = ViewConfiguration(
       artboardName = artboardName,
       stateMachineName = stateMachineName,
       autoPlay = autoPlay ?: DefaultConfiguration.AUTOPLAY,
-      autoBind = autoBind ?: DefaultConfiguration.AUTOBIND,
       riveFile = riveFile,
       alignment = convertAlignment(alignment) ?: DefaultConfiguration.ALIGNMENT,
       fit = convertFit(fit) ?: DefaultConfiguration.FIT,
       layoutScaleFactor = layoutScaleFactor?.toFloat() ?: DefaultConfiguration.LAYOUTSCALEFACTOR,
-      bind = viewModelInstance,
+      bindMode = bindMode,
+      bindInstance = bindInstance,
+      bindInstanceName = bindInstanceName
     )
     view.configure(config, needsReload)
 

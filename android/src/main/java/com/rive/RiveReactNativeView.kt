@@ -21,16 +21,24 @@ import com.margelo.nitro.rive.RiveEventType
 import com.margelo.nitro.rive.UnifiedRiveEvent as RNEvent
 import kotlinx.coroutines.CompletableDeferred
 
+enum class BindData {
+  NONE,
+  AUTO,
+  INSTANCE,
+  BY_NAME
+}
+
 data class ViewConfiguration(
   val artboardName: String?,
   val stateMachineName: String?,
-  val autoBind: Boolean,
   val autoPlay: Boolean,
   val riveFile: File,
   val alignment: Alignment,
   val fit: Fit,
   val layoutScaleFactor: Float?,
-  val bind: ViewModelInstance?
+  val bindMode: BindData,
+  val bindInstance: ViewModelInstance? = null,
+  val bindInstanceName: String? = null
 )
 
 @SuppressLint("ViewConstructor")
@@ -57,7 +65,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
         artboardName = config.artboardName,
         stateMachineName = config.stateMachineName,
         autoplay = config.autoPlay,
-        autoBind = config.autoBind,
+        autoBind = config.bindMode == BindData.AUTO,
         alignment = config.alignment,
         fit = config.fit
       )
@@ -69,10 +77,33 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
       riveAnimationView?.layoutScaleFactor = config.layoutScaleFactor
     }
 
-    config.bind?.let { vmi ->
-      val stateMachines = riveAnimationView?.controller?.stateMachines
-      if (!stateMachines.isNullOrEmpty()) {
-        stateMachines.first().viewModelInstance = vmi
+    val stateMachines = riveAnimationView?.controller?.stateMachines
+    when (config.bindMode) {
+      BindData.NONE -> {
+        // No binding
+      }
+      BindData.AUTO -> {
+        // Auto-binding handled by setRiveFile above
+      }
+      BindData.INSTANCE -> {
+        config.bindInstance?.let { vmi ->
+          if (!stateMachines.isNullOrEmpty()) {
+            stateMachines.first().viewModelInstance = vmi
+          }
+        }
+      }
+      BindData.BY_NAME -> {
+        config.bindInstanceName?.let { name ->
+          val artboard = riveAnimationView?.controller?.activeArtboard
+          val file = riveAnimationView?.controller?.file
+          if (artboard != null && file != null) {
+            val viewModel = file.defaultViewModelForArtboard(artboard)
+            val instance = viewModel.createInstanceFromName(name) // TODO handle error
+            if (!stateMachines.isNullOrEmpty()) {
+              stateMachines.first().viewModelInstance = instance
+            }
+          }
+        }
       }
     }
 
@@ -86,7 +117,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
     }
   }
 
-  fun getBoundViewModelInstance(): ViewModelInstance? {
+  fun getViewModelInstance(): ViewModelInstance? {
     val stateMachines = riveAnimationView?.controller?.stateMachines
     return if (!stateMachines.isNullOrEmpty()) {
       stateMachines.first().viewModelInstance

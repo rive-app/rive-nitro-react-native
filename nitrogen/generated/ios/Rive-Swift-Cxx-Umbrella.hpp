@@ -14,6 +14,10 @@ namespace margelo::nitro::rive { enum class Alignment; }
 namespace margelo::nitro::rive { enum class ArtboardByTypes; }
 // Forward declaration of `ArtboardBy` to properly resolve imports.
 namespace margelo::nitro::rive { struct ArtboardBy; }
+// Forward declaration of `DataBindByName` to properly resolve imports.
+namespace margelo::nitro::rive { struct DataBindByName; }
+// Forward declaration of `DataBindMode` to properly resolve imports.
+namespace margelo::nitro::rive { enum class DataBindMode; }
 // Forward declaration of `Fit` to properly resolve imports.
 namespace margelo::nitro::rive { enum class Fit; }
 // Forward declaration of `HybridRiveFileFactorySpec` to properly resolve imports.
@@ -55,6 +59,8 @@ namespace margelo::nitro::rive { struct UnifiedRiveEvent; }
 #include "Alignment.hpp"
 #include "ArtboardBy.hpp"
 #include "ArtboardByTypes.hpp"
+#include "DataBindByName.hpp"
+#include "DataBindMode.hpp"
 #include "Fit.hpp"
 #include "HybridRiveFileFactorySpec.hpp"
 #include "HybridRiveFileSpec.hpp"

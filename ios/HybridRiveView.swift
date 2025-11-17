@@ -4,20 +4,40 @@ import RiveRuntime
 import NitroModules
 
 private struct DefaultConfiguration {
-  static let autoBind = false
   static let autoPlay = true
   static let alignment = RiveAlignment.center
   static let fit = RiveFit.contain
   static let layoutScaleFactor = RiveRuntime.RiveViewModel.layoutScaleFactorAutomatic
 }
 
+extension Variant__any_HybridViewModelInstanceSpec__DataBindMode_DataBindByName {
+  func toDataBingMode() throws -> BindData {
+    switch self {
+    case .first(let viewModelInstance):
+      if let instance = (viewModelInstance as? HybridViewModelInstance)?.viewModelInstance {
+        return .instance(instance)
+      } else {
+        throw RuntimeError.error(withMessage: "foo")
+      }
+    case .second(let mode):
+      switch mode {
+      case .auto:
+        return .auto
+      case .none:
+        return .none
+      }
+    case .third(let dataBindByName):
+      return .byName(dataBindByName.byName)
+    }
+  }
+}
+
 class HybridRiveView : HybridRiveViewSpec {
-  var bind: (any HybridViewModelInstanceSpec)?
+  var dataBind: Variant__any_HybridViewModelInstanceSpec__DataBindMode_DataBindByName = .second(.none) { didSet{ needsReload = true }}
   
   // MARK: View Props
   var artboardName: String? { didSet { needsReload = true } }
   var stateMachineName: String? { didSet { needsReload = true } }
-  var autoBind: Bool? { didSet { needsReload = true } }
   var autoPlay: Bool? { didSet { needsReload = true } }
   var file: (any HybridRiveFileSpec) = HybridRiveFile() {
     didSet { needsReload = true }
@@ -37,8 +57,8 @@ class HybridRiveView : HybridRiveViewSpec {
     try getRiveView().bindViewModelInstance(viewModelInstance: viewModelInstance)
   }
 
-  func getBoundViewModelInstance() throws -> (any HybridViewModelInstanceSpec)? {
-    guard let viewModelInstance = try getRiveView().getBoundViewModelInstance() else { return nil }
+  func getViewModelInstance() throws -> (any HybridViewModelInstanceSpec)? {
+    guard let viewModelInstance = try getRiveView().getViewModelInstance() else { return nil }
     return HybridViewModelInstance(viewModelInstance: viewModelInstance)
   }
 
@@ -90,25 +110,25 @@ class HybridRiveView : HybridRiveViewSpec {
   
   // MARK: Update
   func afterUpdate() {
-    guard let hybridFile = file as? HybridRiveFile,
-          let file = hybridFile.riveFile else { return }
-
-    let viewModelInstance = (bind as? HybridViewModelInstance)?.viewModelInstance
-    let config = ViewConfiguration(
-      artboardName: artboardName,
-      stateMachineName: stateMachineName,
-      autoBind: autoBind ?? DefaultConfiguration.autoBind,
-      autoPlay: autoPlay ?? DefaultConfiguration.autoPlay,
-      riveFile: file,
-      viewSource: hybridFile,
-      alignment: convertAlignment(alignment) ?? DefaultConfiguration.alignment,
-      fit: convertFit(fit) ?? DefaultConfiguration.fit,
-      layoutScaleFactor: layoutScaleFactor ?? DefaultConfiguration.layoutScaleFactor,
-      bind: viewModelInstance
-    )
-
-    try? getRiveView().configure(config, reload: needsReload)
-    needsReload = false
+    logged(tag: "HybridRiveView", note: "afterUpdate") {
+      guard let hybridFile = file as? HybridRiveFile,
+            let file = hybridFile.riveFile else { return }
+      
+      let config = ViewConfiguration(
+        artboardName: artboardName,
+        stateMachineName: stateMachineName,
+        autoPlay: autoPlay ?? DefaultConfiguration.autoPlay,
+        riveFile: file,
+        viewSource: hybridFile,
+        alignment: convertAlignment(alignment) ?? DefaultConfiguration.alignment,
+        fit: convertFit(fit) ?? DefaultConfiguration.fit,
+        layoutScaleFactor: layoutScaleFactor ?? DefaultConfiguration.layoutScaleFactor,
+        bindData: try dataBind.toDataBingMode()
+      )
+      
+      try getRiveView().configure(config, reload: needsReload)
+      needsReload = false
+    }
   }
   
   // MARK: Internal State

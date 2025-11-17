@@ -44,10 +44,6 @@ void JHybridRiveViewStateUpdater::updateViewProps(jni::alias_ref<jni::JClass> /*
     view->setStateMachineName(props.stateMachineName.value);
     // TODO: Set isDirty = false
   }
-  if (props.autoBind.isDirty) {
-    view->setAutoBind(props.autoBind.value);
-    // TODO: Set isDirty = false
-  }
   if (props.autoPlay.isDirty) {
     view->setAutoPlay(props.autoPlay.value);
     // TODO: Set isDirty = false
@@ -68,8 +64,8 @@ void JHybridRiveViewStateUpdater::updateViewProps(jni::alias_ref<jni::JClass> /*
     view->setLayoutScaleFactor(props.layoutScaleFactor.value);
     // TODO: Set isDirty = false
   }
-  if (props.bind.isDirty) {
-    view->setBind(props.bind.value);
+  if (props.dataBind.isDirty) {
+    view->setDataBind(props.dataBind.value);
     // TODO: Set isDirty = false
   }
 
