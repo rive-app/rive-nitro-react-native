@@ -115,22 +115,27 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
   private fun configureDataBinding() {
     executeOnUiThread {
       val stateMachines = view.riveAnimationView?.controller?.stateMachines
+      val artboard = view.riveAnimationView?.controller?.activeArtboard
       if (stateMachines.isNullOrEmpty()) return@executeOnUiThread
 
       when (dataBind) {
         is Variant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName.First -> {
           val instance = (dataBind.asFirstOrNull() as? HybridViewModelInstance)?.viewModelInstance
           instance?.let {
+            artboard?.viewModelInstance = it
             stateMachines.first().viewModelInstance = it
+            view.play()
           }
         }
         is Variant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName.Second -> {
           when (dataBind.asSecondOrNull()) {
             DataBindMode.AUTO -> {
               // Auto-binding requires reload
+              view.play()
             }
             DataBindMode.NONE -> {
               // No binding
+              view.play()
             }
             else -> {}
           }
@@ -138,12 +143,13 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
         is Variant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName.Third -> {
           val name = dataBind.asThirdOrNull()?.byName
           name?.let {
-            val artboard = view.riveAnimationView?.controller?.activeArtboard
             val file = view.riveAnimationView?.controller?.file
             if (artboard != null && file != null) {
               val viewModel = file.defaultViewModelForArtboard(artboard)
               val instance = viewModel.createInstanceFromName(it)
+              artboard.viewModelInstance = instance
               stateMachines.first().viewModelInstance = instance
+              view.play()
             }
           }
         }
