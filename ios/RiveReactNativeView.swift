@@ -129,10 +129,12 @@ class RiveReactNativeView: UIView, RiveStateMachineDelegate {
       }
       stateMachine?.bind(viewModelInstance: instance)
       artboard.bind(viewModelInstance: instance)
+      baseViewModel?.play()
 
     case .instance(let instance):
       stateMachine?.bind(viewModelInstance: instance)
       artboard?.bind(viewModelInstance: instance)
+      baseViewModel?.play()
     }
   }
 
