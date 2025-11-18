@@ -18,8 +18,6 @@ namespace margelo::nitro::rive {
       prototype.registerHybridSetter("artboardName", &HybridRiveViewSpec::setArtboardName);
       prototype.registerHybridGetter("stateMachineName", &HybridRiveViewSpec::getStateMachineName);
       prototype.registerHybridSetter("stateMachineName", &HybridRiveViewSpec::setStateMachineName);
-      prototype.registerHybridGetter("autoBind", &HybridRiveViewSpec::getAutoBind);
-      prototype.registerHybridSetter("autoBind", &HybridRiveViewSpec::setAutoBind);
       prototype.registerHybridGetter("autoPlay", &HybridRiveViewSpec::getAutoPlay);
       prototype.registerHybridSetter("autoPlay", &HybridRiveViewSpec::setAutoPlay);
       prototype.registerHybridGetter("file", &HybridRiveViewSpec::getFile);
@@ -30,8 +28,11 @@ namespace margelo::nitro::rive {
       prototype.registerHybridSetter("fit", &HybridRiveViewSpec::setFit);
       prototype.registerHybridGetter("layoutScaleFactor", &HybridRiveViewSpec::getLayoutScaleFactor);
       prototype.registerHybridSetter("layoutScaleFactor", &HybridRiveViewSpec::setLayoutScaleFactor);
+      prototype.registerHybridGetter("dataBind", &HybridRiveViewSpec::getDataBind);
+      prototype.registerHybridSetter("dataBind", &HybridRiveViewSpec::setDataBind);
       prototype.registerHybridMethod("awaitViewReady", &HybridRiveViewSpec::awaitViewReady);
       prototype.registerHybridMethod("bindViewModelInstance", &HybridRiveViewSpec::bindViewModelInstance);
+      prototype.registerHybridMethod("getViewModelInstance", &HybridRiveViewSpec::getViewModelInstance);
       prototype.registerHybridMethod("play", &HybridRiveViewSpec::play);
       prototype.registerHybridMethod("pause", &HybridRiveViewSpec::pause);
       prototype.registerHybridMethod("onEventListener", &HybridRiveViewSpec::onEventListener);

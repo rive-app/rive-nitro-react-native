@@ -21,6 +21,10 @@ namespace margelo::nitro::rive { enum class Alignment; }
 namespace margelo::nitro::rive { enum class Fit; }
 // Forward declaration of `HybridViewModelInstanceSpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridViewModelInstanceSpec; }
+// Forward declaration of `DataBindMode` to properly resolve imports.
+namespace margelo::nitro::rive { enum class DataBindMode; }
+// Forward declaration of `DataBindByName` to properly resolve imports.
+namespace margelo::nitro::rive { struct DataBindByName; }
 // Forward declaration of `UnifiedRiveEvent` to properly resolve imports.
 namespace margelo::nitro::rive { struct UnifiedRiveEvent; }
 
@@ -30,8 +34,11 @@ namespace margelo::nitro::rive { struct UnifiedRiveEvent; }
 #include "HybridRiveFileSpec.hpp"
 #include "Alignment.hpp"
 #include "Fit.hpp"
-#include <NitroModules/Promise.hpp>
 #include "HybridViewModelInstanceSpec.hpp"
+#include "DataBindMode.hpp"
+#include "DataBindByName.hpp"
+#include <variant>
+#include <NitroModules/Promise.hpp>
 #include "UnifiedRiveEvent.hpp"
 #include <functional>
 
@@ -66,8 +73,6 @@ namespace margelo::nitro::rive {
       virtual void setArtboardName(const std::optional<std::string>& artboardName) = 0;
       virtual std::optional<std::string> getStateMachineName() = 0;
       virtual void setStateMachineName(const std::optional<std::string>& stateMachineName) = 0;
-      virtual std::optional<bool> getAutoBind() = 0;
-      virtual void setAutoBind(std::optional<bool> autoBind) = 0;
       virtual std::optional<bool> getAutoPlay() = 0;
       virtual void setAutoPlay(std::optional<bool> autoPlay) = 0;
       virtual std::shared_ptr<HybridRiveFileSpec> getFile() = 0;
@@ -78,11 +83,14 @@ namespace margelo::nitro::rive {
       virtual void setFit(std::optional<Fit> fit) = 0;
       virtual std::optional<double> getLayoutScaleFactor() = 0;
       virtual void setLayoutScaleFactor(std::optional<double> layoutScaleFactor) = 0;
+      virtual std::optional<std::variant<std::shared_ptr<HybridViewModelInstanceSpec>, DataBindMode, DataBindByName>> getDataBind() = 0;
+      virtual void setDataBind(const std::optional<std::variant<std::shared_ptr<HybridViewModelInstanceSpec>, DataBindMode, DataBindByName>>& dataBind) = 0;
 
     public:
       // Methods
       virtual std::shared_ptr<Promise<bool>> awaitViewReady() = 0;
       virtual void bindViewModelInstance(const std::shared_ptr<HybridViewModelInstanceSpec>& viewModelInstance) = 0;
+      virtual std::optional<std::shared_ptr<HybridViewModelInstanceSpec>> getViewModelInstance() = 0;
       virtual void play() = 0;
       virtual void pause() = 0;
       virtual void onEventListener(const std::function<void(const UnifiedRiveEvent& /* event */)>& onEvent) = 0;

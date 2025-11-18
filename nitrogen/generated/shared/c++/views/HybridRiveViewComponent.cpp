@@ -45,16 +45,6 @@ namespace margelo::nitro::rive::views {
         throw std::runtime_error(std::string("RiveView.stateMachineName: ") + exc.what());
       }
     }()),
-    autoBind([&]() -> CachedProp<std::optional<bool>> {
-      try {
-        const react::RawValue* rawValue = rawProps.at("autoBind", nullptr, nullptr);
-        if (rawValue == nullptr) return sourceProps.autoBind;
-        const auto& [runtime, value] = (std::pair<jsi::Runtime*, jsi::Value>)*rawValue;
-        return CachedProp<std::optional<bool>>::fromRawValue(*runtime, value, sourceProps.autoBind);
-      } catch (const std::exception& exc) {
-        throw std::runtime_error(std::string("RiveView.autoBind: ") + exc.what());
-      }
-    }()),
     autoPlay([&]() -> CachedProp<std::optional<bool>> {
       try {
         const react::RawValue* rawValue = rawProps.at("autoPlay", nullptr, nullptr);
@@ -105,6 +95,16 @@ namespace margelo::nitro::rive::views {
         throw std::runtime_error(std::string("RiveView.layoutScaleFactor: ") + exc.what());
       }
     }()),
+    dataBind([&]() -> CachedProp<std::optional<std::variant<std::shared_ptr<HybridViewModelInstanceSpec>, DataBindMode, DataBindByName>>> {
+      try {
+        const react::RawValue* rawValue = rawProps.at("dataBind", nullptr, nullptr);
+        if (rawValue == nullptr) return sourceProps.dataBind;
+        const auto& [runtime, value] = (std::pair<jsi::Runtime*, jsi::Value>)*rawValue;
+        return CachedProp<std::optional<std::variant<std::shared_ptr<HybridViewModelInstanceSpec>, DataBindMode, DataBindByName>>>::fromRawValue(*runtime, value, sourceProps.dataBind);
+      } catch (const std::exception& exc) {
+        throw std::runtime_error(std::string("RiveView.dataBind: ") + exc.what());
+      }
+    }()),
     hybridRef([&]() -> CachedProp<std::optional<std::function<void(const std::shared_ptr<HybridRiveViewSpec>& /* ref */)>>> {
       try {
         const react::RawValue* rawValue = rawProps.at("hybridRef", nullptr, nullptr);
@@ -120,24 +120,24 @@ namespace margelo::nitro::rive::views {
     react::ViewProps(),
     artboardName(other.artboardName),
     stateMachineName(other.stateMachineName),
-    autoBind(other.autoBind),
     autoPlay(other.autoPlay),
     file(other.file),
     alignment(other.alignment),
     fit(other.fit),
     layoutScaleFactor(other.layoutScaleFactor),
+    dataBind(other.dataBind),
     hybridRef(other.hybridRef) { }
 
   bool HybridRiveViewProps::filterObjectKeys(const std::string& propName) {
     switch (hashString(propName)) {
       case hashString("artboardName"): return true;
       case hashString("stateMachineName"): return true;
-      case hashString("autoBind"): return true;
       case hashString("autoPlay"): return true;
       case hashString("file"): return true;
       case hashString("alignment"): return true;
       case hashString("fit"): return true;
       case hashString("layoutScaleFactor"): return true;
+      case hashString("dataBind"): return true;
       case hashString("hybridRef"): return true;
       default: return false;
     }

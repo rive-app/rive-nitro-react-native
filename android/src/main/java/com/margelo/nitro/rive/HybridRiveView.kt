@@ -1,9 +1,11 @@
 package com.margelo.nitro.rive
 
+import android.util.Log
 import androidx.annotation.Keep
 import com.facebook.proguard.annotations.DoNotStrip
 import com.facebook.react.uimanager.ThemedReactContext
 import com.margelo.nitro.core.Promise
+import com.rive.BindData
 import com.rive.RiveReactNativeView
 import com.rive.ViewConfiguration
 import app.rive.runtime.kotlin.core.Fit as RiveFit
@@ -11,8 +13,30 @@ import app.rive.runtime.kotlin.core.Alignment as RiveAlignment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
+fun Variant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName?.toBindData(): BindData {
+  if (this == null) return BindData.Auto
+
+  return when (this) {
+    is Variant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName.First -> {
+      val instance = (this.asFirstOrNull() as? HybridViewModelInstance)?.viewModelInstance
+        ?: throw Error("Invalid ViewModelInstance")
+      BindData.Instance(instance)
+    }
+    is Variant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName.Second -> {
+      when (this.asSecondOrNull()) {
+        DataBindMode.AUTO -> BindData.Auto
+        DataBindMode.NONE -> BindData.None
+        else -> BindData.None
+      }
+    }
+    is Variant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName.Third -> {
+      val name = this.asThirdOrNull()?.byName ?: throw Error("Missing byName value")
+      BindData.ByName(name)
+    }
+  }
+}
+
 object DefaultConfiguration {
-  const val AUTOBIND = false
   const val AUTOPLAY = true
   val FIT = RiveFit.CONTAIN
   val ALIGNMENT = RiveAlignment.CENTER
@@ -25,6 +49,8 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
   //region State
   override val view: RiveReactNativeView = RiveReactNativeView(context)
   private var needsReload = false
+  private var dataBindingChanged = false
+  private var initialUpdate = true
   private var registeredFile: HybridRiveFile? = null
   //endregion
 
@@ -41,10 +67,6 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
     set(value) {
       changed(field, value) { field = it }
     }
-  override var autoBind: Boolean? = null
-    set(value) {
-      changed(field, value) { field = it }
-    }
   override var file: HybridRiveFileSpec = HybridRiveFile()
     set(value) {
       if (field != value) {
@@ -56,6 +78,13 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
   override var alignment: Alignment? = null
   override var fit: Fit? = null
   override var layoutScaleFactor: Double? = null
+  override var dataBind: Variant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName? = null
+    set(value) {
+      if (field != value) {
+        field = value
+        dataBindingChanged = true
+      }
+    }
   //endregion
 
   //region View Methods
@@ -72,6 +101,11 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
       val hybridVmi = viewModelInstance as? HybridViewModelInstance ?: return@executeOnUiThread;
       view.bindViewModelInstance(hybridVmi.viewModelInstance)
     }
+
+  override fun getViewModelInstance(): HybridViewModelInstanceSpec? {
+    val viewModelInstance = view.getViewModelInstance() ?: return null
+    return HybridViewModelInstance(viewModelInstance)
+  }
 
   override fun play() = executeOnUiThread { view.play() }
 
@@ -109,28 +143,32 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
   }
 
   override fun afterUpdate() {
-    val hybridFile = file as? HybridRiveFile
-    val riveFile = hybridFile?.riveFile ?: return
+    logged(TAG, "afterUpdate") {
+      val hybridFile = file as? HybridRiveFile
+      val riveFile = hybridFile?.riveFile ?: return@logged
 
-    val config = ViewConfiguration(
-      artboardName = artboardName,
-      stateMachineName = stateMachineName,
-      autoPlay = autoPlay ?: DefaultConfiguration.AUTOPLAY,
-      autoBind = autoBind ?: DefaultConfiguration.AUTOBIND,
-      riveFile = riveFile,
-      alignment = convertAlignment(alignment) ?: DefaultConfiguration.ALIGNMENT,
-      fit = convertFit(fit) ?: DefaultConfiguration.FIT,
-      layoutScaleFactor = layoutScaleFactor?.toFloat() ?: DefaultConfiguration.LAYOUTSCALEFACTOR,
-    )
-    view.configure(config, needsReload)
+      val config = ViewConfiguration(
+        artboardName = artboardName,
+        stateMachineName = stateMachineName,
+        autoPlay = autoPlay ?: DefaultConfiguration.AUTOPLAY,
+        riveFile = riveFile,
+        alignment = convertAlignment(alignment) ?: DefaultConfiguration.ALIGNMENT,
+        fit = convertFit(fit) ?: DefaultConfiguration.FIT,
+        layoutScaleFactor = layoutScaleFactor?.toFloat() ?: DefaultConfiguration.LAYOUTSCALEFACTOR,
+        bindData = dataBind.toBindData()
+      )
+      view.configure(config, dataBindingChanged=dataBindingChanged, needsReload, initialUpdate= initialUpdate)
 
-    if (needsReload && hybridFile != null) {
-      hybridFile.registerView(this)
-      registeredFile = hybridFile
+      if (needsReload && hybridFile != null) {
+        hybridFile.registerView(this)
+        registeredFile = hybridFile
+      }
+
+      needsReload = false
+      dataBindingChanged = false
+      initialUpdate = false
+      super.afterUpdate()
     }
-
-    needsReload = false
-    super.afterUpdate()
   }
   //endregion
 
@@ -182,6 +220,15 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
       Fit.NONE -> RiveFit.NONE
       Fit.SCALEDOWN -> RiveFit.SCALE_DOWN
       Fit.LAYOUT -> RiveFit.LAYOUT
+    }
+  }
+
+  fun logged(tag: String, note: String? = null, fn: () -> Unit) {
+    try {
+      fn()
+    } catch (e: Exception) {
+      // TODO add onError callback
+      Log.e("[RIVE]", "$tag ${note ?: ""} $e")
     }
   }
   //endregion

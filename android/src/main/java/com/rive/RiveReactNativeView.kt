@@ -14,6 +14,7 @@ import app.rive.runtime.kotlin.core.SMIBoolean
 import app.rive.runtime.kotlin.core.SMIInput
 import app.rive.runtime.kotlin.core.SMINumber
 import app.rive.runtime.kotlin.core.ViewModelInstance
+import app.rive.runtime.kotlin.core.errors.ViewModelException
 import com.margelo.nitro.core.AnyMap
 import com.margelo.nitro.rive.EventPropertiesOutput
 import com.margelo.nitro.rive.EventPropertiesOutputExtensions as EPO
@@ -21,20 +22,27 @@ import com.margelo.nitro.rive.RiveEventType
 import com.margelo.nitro.rive.UnifiedRiveEvent as RNEvent
 import kotlinx.coroutines.CompletableDeferred
 
+sealed class BindData {
+  data object None : BindData()
+  data object Auto : BindData()
+  data class Instance(val instance: ViewModelInstance) : BindData()
+  data class ByName(val name: String) : BindData()
+}
+
 data class ViewConfiguration(
   val artboardName: String?,
   val stateMachineName: String?,
-  val autoBind: Boolean,
   val autoPlay: Boolean,
   val riveFile: File,
   val alignment: Alignment,
   val fit: Fit,
-  val layoutScaleFactor: Float?
+  val layoutScaleFactor: Float?,
+  val bindData: BindData
 )
 
 @SuppressLint("ViewConstructor")
 class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
-  private var riveAnimationView: RiveAnimationView? = null
+  internal var riveAnimationView: RiveAnimationView? = null
   private var eventListeners: MutableList<RiveFileController.RiveEventListener> = mutableListOf()
   private val viewReadyDeferred = CompletableDeferred<Boolean>()
   private var _activeStateMachineName: String? = null
@@ -49,14 +57,14 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
     return viewReadyDeferred.await()
   }
 
-  fun configure(config: ViewConfiguration, reload: Boolean = false) {
+  fun configure(config: ViewConfiguration, dataBindingChanged: Boolean, reload: Boolean = false, initialUpdate: Boolean = false) {
     if (reload) {
       riveAnimationView?.setRiveFile(
         config.riveFile,
         artboardName = config.artboardName,
         stateMachineName = config.stateMachineName,
         autoplay = config.autoPlay,
-        autoBind = config.autoBind,
+        autoBind = config.bindData is BindData.Auto,
         alignment = config.alignment,
         fit = config.fit
       )
@@ -67,6 +75,11 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
       // TODO: this seems to require a reload for the view to take the new value (bug on Android)
       riveAnimationView?.layoutScaleFactor = config.layoutScaleFactor
     }
+
+    if (dataBindingChanged || initialUpdate) {
+      applyDataBinding(config.bindData)
+    }
+
     viewReadyDeferred.complete(true)
   }
 
@@ -74,6 +87,58 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
     val stateMachines = riveAnimationView?.controller?.stateMachines
     if (!stateMachines.isNullOrEmpty()) {
       stateMachines.first().viewModelInstance = vmi
+    }
+  }
+
+  fun getViewModelInstance(): ViewModelInstance? {
+    val stateMachines = riveAnimationView?.controller?.stateMachines
+    return if (!stateMachines.isNullOrEmpty()) {
+      stateMachines.first().viewModelInstance
+    } else {
+      null
+    }
+  }
+
+  fun applyDataBinding(bindData: BindData) {
+    val stateMachines = riveAnimationView?.controller?.stateMachines
+    if (stateMachines.isNullOrEmpty()) return
+
+    val stateMachine = stateMachines.first()
+
+    when (bindData) {
+      is BindData.None -> {
+        stateMachine.viewModelInstance = null
+      }
+      is BindData.Auto -> {
+        val artboard = riveAnimationView?.controller?.activeArtboard
+        val file = riveAnimationView?.controller?.file
+        if (artboard != null && file != null) {
+          try {
+            file.defaultViewModelForArtboard(artboard)
+          } catch (e: ViewModelException) {
+            null
+          }?.let {
+            val instance = it.createDefaultInstance()
+            stateMachine.viewModelInstance = instance
+          }
+        }
+      }
+      is BindData.Instance -> {
+        stateMachine.viewModelInstance = bindData.instance
+      }
+      is BindData.ByName -> {
+        val artboard = riveAnimationView?.controller?.activeArtboard
+        val file = riveAnimationView?.controller?.file
+        if (artboard != null && file != null) {
+          val viewModel = file.defaultViewModelForArtboard(artboard)
+          val instance = viewModel.createInstanceFromName(bindData.name)
+          stateMachine.viewModelInstance = instance
+        }
+      }
+    }
+
+    stateMachine.name.let { smName ->
+      riveAnimationView?.play(smName, isStateMachine = true)
     }
   }
 

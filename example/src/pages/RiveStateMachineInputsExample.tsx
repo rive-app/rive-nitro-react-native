@@ -47,7 +47,6 @@ export default function StateMachineInputsExample() {
         ) : riveFile ? (
           <RiveView
             style={styles.rive}
-            autoBind={false}
             autoPlay={true}
             fit={Fit.Contain}
             file={riveFile}

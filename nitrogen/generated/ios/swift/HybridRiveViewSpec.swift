@@ -14,16 +14,17 @@ public protocol HybridRiveViewSpec_protocol: HybridObject, HybridView {
   // Properties
   var artboardName: String? { get set }
   var stateMachineName: String? { get set }
-  var autoBind: Bool? { get set }
   var autoPlay: Bool? { get set }
   var file: (any HybridRiveFileSpec) { get set }
   var alignment: Alignment? { get set }
   var fit: Fit? { get set }
   var layoutScaleFactor: Double? { get set }
+  var dataBind: Variant__any_HybridViewModelInstanceSpec__DataBindMode_DataBindByName? { get set }
 
   // Methods
   func awaitViewReady() throws -> Promise<Bool>
   func bindViewModelInstance(viewModelInstance: (any HybridViewModelInstanceSpec)) throws -> Void
+  func getViewModelInstance() throws -> (any HybridViewModelInstanceSpec)?
   func play() throws -> Void
   func pause() throws -> Void
   func onEventListener(onEvent: @escaping (_ event: UnifiedRiveEvent) -> Void) throws -> Void

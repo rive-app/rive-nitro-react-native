@@ -3,7 +3,6 @@ import { useEffect, useMemo } from 'react';
 import {
   Fit,
   RiveView,
-  useRive,
   useRiveNumber,
   type ViewModelInstance,
   type RiveFile,
@@ -61,14 +60,6 @@ function DataBindingExample({
   instance: ViewModelInstance;
   file: RiveFile;
 }) {
-  const { riveViewRef, setHybridRef } = useRive();
-
-  useEffect(() => {
-    if (riveViewRef) {
-      riveViewRef.bindViewModelInstance(instance);
-    }
-  }, [riveViewRef, instance]);
-
   const { error: coinValueError } = useRiveNumber('Coin/Item_Value', instance);
 
   if (coinValueError) {
@@ -104,12 +95,11 @@ function DataBindingExample({
   return (
     <RiveView
       style={styles.rive}
-      autoBind={false}
       autoPlay={true}
+      dataBind={instance}
       fit={Fit.Layout}
       layoutScaleFactor={1}
       file={file}
-      hybridRef={setHybridRef}
     />
   );
 }

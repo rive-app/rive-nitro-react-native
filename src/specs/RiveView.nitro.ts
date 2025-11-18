@@ -9,6 +9,14 @@ import type { ViewModelInstance } from './ViewModel.nitro';
 import type { Alignment } from '../core/Alignment';
 import type { UnifiedRiveEvent, RiveEvent } from '../core/Events';
 
+export enum DataBindMode {
+  Auto,
+  None,
+}
+export interface DataBindByName {
+  byName: string;
+}
+
 /**
  * Props interface for the RiveView component.
  * Extends HybridViewProps to include Rive-specific properties.
@@ -18,8 +26,6 @@ export interface RiveViewProps extends HybridViewProps {
   artboardName?: string;
   /** Name of the state mgachine to play */
   stateMachineName?: string;
-  /** Whether to automatically bind the state machine and artboard */
-  autoBind?: boolean;
   /** Whether to automatically start playing the state machine */
   autoPlay?: boolean;
   /** The Rive file to be displayed */
@@ -30,6 +36,8 @@ export interface RiveViewProps extends HybridViewProps {
   fit?: Fit;
   /** The scale factor to apply to the Rive graphic when using Fit.Layout */
   layoutScaleFactor?: number;
+  /** The view model instance to bind, to the state machine. Defaults to DataBindMode.Auto */
+  dataBind?: ViewModelInstance | DataBindMode | DataBindByName;
 }
 
 /**
@@ -44,6 +52,11 @@ export interface RiveViewMethods extends HybridViewMethods {
   awaitViewReady(): Promise<boolean>;
   /** Binds the view model instance to the Rive view */
   bindViewModelInstance(viewModelInstance: ViewModelInstance): void;
+  /**
+   * Gets the currently bound view model instance from the Rive view
+   * @returns The bound ViewModelInstance, or null if none is bound
+   */
+  getViewModelInstance(): ViewModelInstance | null;
   /** Starts playing the Rive graphic */
   play(): void;
   /** Pauses the the Rive graphic */

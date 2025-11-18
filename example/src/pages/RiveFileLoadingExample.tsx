@@ -81,7 +81,6 @@ const CustomRiveView = ({ loadingMethod, title }: CustomRiveViewProps) => {
       ) : riveFile ? (
         <RiveView
           style={styles.rive}
-          autoBind={false}
           autoPlay={true}
           fit={Fit.Contain}
           file={riveFile}
