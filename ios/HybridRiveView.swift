@@ -46,6 +46,7 @@ class HybridRiveView: HybridRiveViewSpec {
       dataBindingChanged = true
     }
   }
+
   var artboardName: String? { didSet { needsReload = true } }
   var stateMachineName: String? { didSet { needsReload = true } }
   var autoPlay: Bool? { didSet { needsReload = true } }
@@ -139,15 +140,20 @@ class HybridRiveView: HybridRiveViewSpec {
         bindData: try dataBind.toDataBingMode()
       )
 
-      try getRiveView().configure(config, dataBindingChanged: dataBindingChanged, reload: needsReload)
+      let riveView = try getRiveView()
+      riveView.configure(
+        config, dataBindingChanged: dataBindingChanged, reload: needsReload,
+        initialUpdate: initialUpdate)
       needsReload = false
       dataBindingChanged = false
+      initialUpdate = false
     }
   }
 
   // MARK: Internal State
   private var needsReload = false
   private var dataBindingChanged = false
+  private var initialUpdate = true
 
   // MARK: Helpers
   private func convertAlignment(_ alignment: Alignment?) -> RiveAlignment? {

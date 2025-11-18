@@ -50,7 +50,7 @@ class RiveReactNativeView: UIView, RiveStateMachineDelegate {
     return true
   }
 
-  func configure(_ config: ViewConfiguration, dataBindingChanged: Bool = false, reload: Bool = false) {
+  func configure(_ config: ViewConfiguration, dataBindingChanged: Bool = false, reload: Bool = false, initialUpdate: Bool = false) {
     if reload {
       cleanup()
       let model = RiveModel(riveFile: config.riveFile)
@@ -74,7 +74,7 @@ class RiveReactNativeView: UIView, RiveStateMachineDelegate {
       viewReadyContinuation = nil
     }
 
-    if dataBindingChanged {
+    if dataBindingChanged || initialUpdate {
       applyDataBinding(config.bindData)
     }
   }
