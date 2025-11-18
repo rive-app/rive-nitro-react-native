@@ -49,7 +49,7 @@ class HybridRiveView: HybridRiveViewSpec {
 
   var values: [String: Variant_Bool_String_Double]? = nil {
     didSet {
-      applyValues()
+      valuesChanged = true
     }
   }
 
@@ -131,7 +131,7 @@ class HybridRiveView: HybridRiveViewSpec {
   private func applyValues() {
     logged(tag: "HybridRiveView", note: "applyValues") {
       guard let values = values,
-        let viewModelInstance = try? getViewModelInstance(),
+        let viewModelInstance = try getViewModelInstance(),
         let instance = (viewModelInstance as? HybridViewModelInstance)?.viewModelInstance
       else { return }
 
@@ -179,8 +179,12 @@ class HybridRiveView: HybridRiveViewSpec {
       riveView.configure(
         config, dataBindingChanged: dataBindingChanged, reload: needsReload,
         initialUpdate: initialUpdate)
+      if valuesChanged {
+        applyValues()
+      }
       needsReload = false
       dataBindingChanged = false
+      valuesChanged = false
       initialUpdate = false
     }
   }
@@ -188,6 +192,7 @@ class HybridRiveView: HybridRiveViewSpec {
   // MARK: Internal State
   private var needsReload = false
   private var dataBindingChanged = false
+  private var valuesChanged = false
   private var initialUpdate = true
 
   // MARK: Helpers
