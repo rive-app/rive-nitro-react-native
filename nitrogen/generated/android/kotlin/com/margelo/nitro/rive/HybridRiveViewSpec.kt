@@ -90,6 +90,12 @@ abstract class HybridRiveViewSpec: HybridView() {
   @set:DoNotStrip
   @set:Keep
   abstract var dataBind: Variant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName?
+  
+  @get:DoNotStrip
+  @get:Keep
+  @set:DoNotStrip
+  @set:Keep
+  abstract var values: Map<String, Variant_Boolean_String_Double>?
 
   // Methods
   @DoNotStrip

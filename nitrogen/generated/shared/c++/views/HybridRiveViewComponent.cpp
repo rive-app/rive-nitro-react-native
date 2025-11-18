@@ -105,6 +105,16 @@ namespace margelo::nitro::rive::views {
         throw std::runtime_error(std::string("RiveView.dataBind: ") + exc.what());
       }
     }()),
+    values([&]() -> CachedProp<std::optional<std::unordered_map<std::string, std::variant<bool, std::string, double>>>> {
+      try {
+        const react::RawValue* rawValue = rawProps.at("values", nullptr, nullptr);
+        if (rawValue == nullptr) return sourceProps.values;
+        const auto& [runtime, value] = (std::pair<jsi::Runtime*, jsi::Value>)*rawValue;
+        return CachedProp<std::optional<std::unordered_map<std::string, std::variant<bool, std::string, double>>>>::fromRawValue(*runtime, value, sourceProps.values);
+      } catch (const std::exception& exc) {
+        throw std::runtime_error(std::string("RiveView.values: ") + exc.what());
+      }
+    }()),
     hybridRef([&]() -> CachedProp<std::optional<std::function<void(const std::shared_ptr<HybridRiveViewSpec>& /* ref */)>>> {
       try {
         const react::RawValue* rawValue = rawProps.at("hybridRef", nullptr, nullptr);
@@ -126,6 +136,7 @@ namespace margelo::nitro::rive::views {
     fit(other.fit),
     layoutScaleFactor(other.layoutScaleFactor),
     dataBind(other.dataBind),
+    values(other.values),
     hybridRef(other.hybridRef) { }
 
   bool HybridRiveViewProps::filterObjectKeys(const std::string& propName) {
@@ -138,6 +149,7 @@ namespace margelo::nitro::rive::views {
       case hashString("fit"): return true;
       case hashString("layoutScaleFactor"): return true;
       case hashString("dataBind"): return true;
+      case hashString("values"): return true;
       case hashString("hybridRef"): return true;
       default: return false;
     }

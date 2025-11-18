@@ -47,6 +47,12 @@ class HybridRiveView: HybridRiveViewSpec {
     }
   }
 
+  var values: [String: Variant_Bool_String_Double]? = nil {
+    didSet {
+      valuesChanged = true
+    }
+  }
+
   var artboardName: String? { didSet { needsReload = true } }
   var stateMachineName: String? { didSet { needsReload = true } }
   var autoPlay: Bool? { didSet { needsReload = true } }
@@ -121,6 +127,35 @@ class HybridRiveView: HybridRiveViewSpec {
     return riveView
   }
 
+  // MARK: Data Binding
+  private func applyValues() {
+    logged(tag: "HybridRiveView", note: "applyValues") {
+      guard let values = values,
+        let viewModelInstance = try getViewModelInstance(),
+        let instance = (viewModelInstance as? HybridViewModelInstance)?.viewModelInstance
+      else { return }
+
+      for (path, value) in values {
+        setPropertyValue(for: instance, path: path, value: value)
+      }
+    }
+  }
+
+  private func setPropertyValue(
+    for instance: RiveDataBindingViewModel.Instance,
+    path: String,
+    value: Variant_Bool_String_Double
+  ) {
+    switch value {
+    case .first(let boolValue):
+      instance.booleanProperty(fromPath: path)?.value = boolValue
+    case .second(let stringValue):
+      instance.stringProperty(fromPath: path)?.value = stringValue
+    case .third(let numberValue):
+      instance.numberProperty(fromPath: path)?.value = Float(numberValue)
+    }
+  }
+
   // MARK: Update
   func afterUpdate() {
     logged(tag: "HybridRiveView", note: "afterUpdate") {
@@ -144,8 +179,12 @@ class HybridRiveView: HybridRiveViewSpec {
       riveView.configure(
         config, dataBindingChanged: dataBindingChanged, reload: needsReload,
         initialUpdate: initialUpdate)
+      if valuesChanged {
+        applyValues()
+      }
       needsReload = false
       dataBindingChanged = false
+      valuesChanged = false
       initialUpdate = false
     }
   }
@@ -153,6 +192,7 @@ class HybridRiveView: HybridRiveViewSpec {
   // MARK: Internal State
   private var needsReload = false
   private var dataBindingChanged = false
+  private var valuesChanged = false
   private var initialUpdate = true
 
   // MARK: Helpers

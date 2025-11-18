@@ -20,6 +20,7 @@ public protocol HybridRiveViewSpec_protocol: HybridObject, HybridView {
   var fit: Fit? { get set }
   var layoutScaleFactor: Double? { get set }
   var dataBind: Variant__any_HybridViewModelInstanceSpec__DataBindMode_DataBindByName? { get set }
+  var values: Dictionary<String, Variant_Bool_String_Double>? { get set }
 
   // Methods
   func awaitViewReady() throws -> Promise<Bool>

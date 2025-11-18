@@ -41,6 +41,8 @@ namespace margelo::nitro::rive { enum class RiveEventType; }
 #include "JHybridViewModelInstanceSpec.hpp"
 #include "JDataBindMode.hpp"
 #include "JDataBindByName.hpp"
+#include <unordered_map>
+#include "JVariant_Boolean_String_Double.hpp"
 #include <NitroModules/Promise.hpp>
 #include <NitroModules/JPromise.hpp>
 #include "UnifiedRiveEvent.hpp"
@@ -49,7 +51,6 @@ namespace margelo::nitro::rive { enum class RiveEventType; }
 #include "JUnifiedRiveEvent.hpp"
 #include "RiveEventType.hpp"
 #include "JRiveEventType.hpp"
-#include <unordered_map>
 #include "JEventPropertiesOutput.hpp"
 
 namespace margelo::nitro::rive {
@@ -152,6 +153,28 @@ namespace margelo::nitro::rive {
   void JHybridRiveViewSpec::setDataBind(const std::optional<std::variant<std::shared_ptr<HybridViewModelInstanceSpec>, DataBindMode, DataBindByName>>& dataBind) {
     static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<JVariant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName> /* dataBind */)>("setDataBind");
     method(_javaPart, dataBind.has_value() ? JVariant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName::fromCpp(dataBind.value()) : nullptr);
+  }
+  std::optional<std::unordered_map<std::string, std::variant<bool, std::string, double>>> JHybridRiveViewSpec::getValues() {
+    static const auto method = javaClassStatic()->getMethod<jni::local_ref<jni::JMap<jni::JString, JVariant_Boolean_String_Double>>()>("getValues");
+    auto __result = method(_javaPart);
+    return __result != nullptr ? std::make_optional([&]() {
+      std::unordered_map<std::string, std::variant<bool, std::string, double>> __map;
+      __map.reserve(__result->size());
+      for (const auto& __entry : *__result) {
+        __map.emplace(__entry.first->toStdString(), __entry.second->toCpp());
+      }
+      return __map;
+    }()) : std::nullopt;
+  }
+  void JHybridRiveViewSpec::setValues(const std::optional<std::unordered_map<std::string, std::variant<bool, std::string, double>>>& values) {
+    static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<jni::JMap<jni::JString, JVariant_Boolean_String_Double>> /* values */)>("setValues");
+    method(_javaPart, values.has_value() ? [&]() -> jni::local_ref<jni::JMap<jni::JString, JVariant_Boolean_String_Double>> {
+      auto __map = jni::JHashMap<jni::JString, JVariant_Boolean_String_Double>::create(values.value().size());
+      for (const auto& __entry : values.value()) {
+        __map->put(jni::make_jstring(__entry.first), JVariant_Boolean_String_Double::fromCpp(__entry.second));
+      }
+      return __map;
+    }() : nullptr);
   }
 
   // Methods

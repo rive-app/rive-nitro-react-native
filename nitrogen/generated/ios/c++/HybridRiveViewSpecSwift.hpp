@@ -39,11 +39,11 @@ namespace margelo::nitro::rive { enum class RiveEventType; }
 #include "DataBindMode.hpp"
 #include "DataBindByName.hpp"
 #include <variant>
+#include <unordered_map>
 #include <NitroModules/Promise.hpp>
 #include "UnifiedRiveEvent.hpp"
 #include <functional>
 #include "RiveEventType.hpp"
-#include <unordered_map>
 
 #include "Rive-Swift-Cxx-Umbrella.hpp"
 
@@ -140,6 +140,13 @@ namespace margelo::nitro::rive {
     }
     inline void setDataBind(const std::optional<std::variant<std::shared_ptr<HybridViewModelInstanceSpec>, DataBindMode, DataBindByName>>& dataBind) noexcept override {
       _swiftPart.setDataBind(dataBind);
+    }
+    inline std::optional<std::unordered_map<std::string, std::variant<bool, std::string, double>>> getValues() noexcept override {
+      auto __result = _swiftPart.getValues();
+      return __result;
+    }
+    inline void setValues(const std::optional<std::unordered_map<std::string, std::variant<bool, std::string, double>>>& values) noexcept override {
+      _swiftPart.setValues(values);
     }
 
   public:

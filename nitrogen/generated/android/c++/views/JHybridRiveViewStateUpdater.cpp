@@ -68,6 +68,10 @@ void JHybridRiveViewStateUpdater::updateViewProps(jni::alias_ref<jni::JClass> /*
     view->setDataBind(props.dataBind.value);
     // TODO: Set isDirty = false
   }
+  if (props.values.isDirty) {
+    view->setValues(props.values.value);
+    // TODO: Set isDirty = false
+  }
 
   // Update hybridRef if it changed
   if (props.hybridRef.isDirty) {

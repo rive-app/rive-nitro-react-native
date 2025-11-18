@@ -85,6 +85,13 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
         dataBindingChanged = true
       }
     }
+  override var values: Map<String, Variant_Boolean_String_Double>? = null
+    set(value) {
+      if (field != value) {
+        field = value
+        applyValues()
+      }
+    }
   //endregion
 
   //region View Methods
@@ -135,6 +142,27 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
 
   override fun getTextRunValue(name: String, path: String?): String =
     view.getTextRunValue(name, path)
+  //endregion
+
+  //region Data Binding
+  private fun applyValues() {
+    val valueMap = values ?: return
+    val viewModelInstance = view.getViewModelInstance() ?: return
+
+    for ((path, value) in valueMap) {
+      when (value) {
+        is Variant_Boolean_String_Double.First -> {
+          viewModelInstance.booleanProperty(path)?.value = value.asFirstOrNull() ?: false
+        }
+        is Variant_Boolean_String_Double.Second -> {
+          viewModelInstance.stringProperty(path)?.value = value.asSecondOrNull() ?: ""
+        }
+        is Variant_Boolean_String_Double.Third -> {
+          viewModelInstance.numberProperty(path)?.value = (value.asThirdOrNull() ?: 0.0).toFloat()
+        }
+      }
+    }
+  }
   //endregion
 
   //region Update

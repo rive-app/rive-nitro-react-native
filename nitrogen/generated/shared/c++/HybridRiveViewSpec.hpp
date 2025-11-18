@@ -38,6 +38,7 @@ namespace margelo::nitro::rive { struct UnifiedRiveEvent; }
 #include "DataBindMode.hpp"
 #include "DataBindByName.hpp"
 #include <variant>
+#include <unordered_map>
 #include <NitroModules/Promise.hpp>
 #include "UnifiedRiveEvent.hpp"
 #include <functional>
@@ -85,6 +86,8 @@ namespace margelo::nitro::rive {
       virtual void setLayoutScaleFactor(std::optional<double> layoutScaleFactor) = 0;
       virtual std::optional<std::variant<std::shared_ptr<HybridViewModelInstanceSpec>, DataBindMode, DataBindByName>> getDataBind() = 0;
       virtual void setDataBind(const std::optional<std::variant<std::shared_ptr<HybridViewModelInstanceSpec>, DataBindMode, DataBindByName>>& dataBind) = 0;
+      virtual std::optional<std::unordered_map<std::string, std::variant<bool, std::string, double>>> getValues() = 0;
+      virtual void setValues(const std::optional<std::unordered_map<std::string, std::variant<bool, std::string, double>>>& values) = 0;
 
     public:
       // Methods
