@@ -50,6 +50,7 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
   override val view: RiveReactNativeView = RiveReactNativeView(context)
   private var needsReload = false
   private var dataBindingChanged = false
+  private var initialUpdate = true
   private var registeredFile: HybridRiveFile? = null
   //endregion
 
@@ -156,7 +157,7 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
         layoutScaleFactor = layoutScaleFactor?.toFloat() ?: DefaultConfiguration.LAYOUTSCALEFACTOR,
         bindData = dataBind.toBindData()
       )
-      view.configure(config, dataBindingChanged=dataBindingChanged, needsReload)
+      view.configure(config, dataBindingChanged=dataBindingChanged, needsReload, initialUpdate= initialUpdate)
 
       if (needsReload && hybridFile != null) {
         hybridFile.registerView(this)
@@ -165,6 +166,7 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
 
       needsReload = false
       dataBindingChanged = false
+      initialUpdate = false
       super.afterUpdate()
     }
   }

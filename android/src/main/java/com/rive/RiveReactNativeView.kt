@@ -57,7 +57,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
     return viewReadyDeferred.await()
   }
 
-  fun configure(config: ViewConfiguration, dataBindingChanged: Boolean, reload: Boolean = false) {
+  fun configure(config: ViewConfiguration, dataBindingChanged: Boolean, reload: Boolean = false, initialUpdate: Boolean = false) {
     if (reload) {
       riveAnimationView?.setRiveFile(
         config.riveFile,
@@ -76,7 +76,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
       riveAnimationView?.layoutScaleFactor = config.layoutScaleFactor
     }
 
-    if (dataBindingChanged) {
+    if (dataBindingChanged || initialUpdate) {
       applyDataBinding(config.bindData)
     }
 
