@@ -47,7 +47,6 @@ export default function EventsExample() {
         ) : riveFile ? (
           <RiveView
             style={styles.rive}
-            dataBind={DataBindMode.None}
             autoPlay={true}
             fit={Fit.Contain}
             file={riveFile}

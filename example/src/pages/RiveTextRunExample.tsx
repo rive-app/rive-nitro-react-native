@@ -37,7 +37,6 @@ export default function TextRunExample() {
         ) : riveFile ? (
           <RiveView
             style={styles.rive}
-            dataBind={DataBindMode.None}
             autoPlay={true}
             fit={Fit.Contain}
             file={riveFile}

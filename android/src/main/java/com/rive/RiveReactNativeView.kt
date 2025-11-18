@@ -14,6 +14,7 @@ import app.rive.runtime.kotlin.core.SMIBoolean
 import app.rive.runtime.kotlin.core.SMIInput
 import app.rive.runtime.kotlin.core.SMINumber
 import app.rive.runtime.kotlin.core.ViewModelInstance
+import app.rive.runtime.kotlin.core.errors.ViewModelException
 import com.margelo.nitro.core.AnyMap
 import com.margelo.nitro.rive.EventPropertiesOutput
 import com.margelo.nitro.rive.EventPropertiesOutputExtensions as EPO
@@ -110,9 +111,14 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
         val artboard = riveAnimationView?.controller?.activeArtboard
         val file = riveAnimationView?.controller?.file
         if (artboard != null && file != null) {
-          val viewModel = file.defaultViewModelForArtboard(artboard)
-          val instance = viewModel.createDefaultInstance()
-          stateMachine.viewModelInstance = instance
+          try {
+            file.defaultViewModelForArtboard(artboard)
+          } catch (e: ViewModelException) {
+            null
+          }?.let {
+            val instance = it.createDefaultInstance()
+            stateMachine.viewModelInstance = instance
+          }
         }
       }
       is BindData.Instance -> {
