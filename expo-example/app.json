@@ -10,7 +10,7 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.mfazekas.expo-example"
+      "bundleIdentifier": "com.rive.expo-example"
     },
     "android": {
       "adaptiveIcon": {
