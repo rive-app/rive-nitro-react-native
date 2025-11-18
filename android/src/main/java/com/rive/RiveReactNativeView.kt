@@ -57,7 +57,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
     return viewReadyDeferred.await()
   }
 
-  fun configure(config: ViewConfiguration, reload: Boolean = false) {
+  fun configure(config: ViewConfiguration, dataBindingChanged: Boolean, reload: Boolean = false) {
     if (reload) {
       riveAnimationView?.setRiveFile(
         config.riveFile,
@@ -76,7 +76,9 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
       riveAnimationView?.layoutScaleFactor = config.layoutScaleFactor
     }
 
-    applyDataBinding(config.bindData, shouldRefresh = false)
+    if (dataBindingChanged) {
+      applyDataBinding(config.bindData)
+    }
 
     viewReadyDeferred.complete(true)
   }
@@ -97,7 +99,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
     }
   }
 
-  fun applyDataBinding(bindData: BindData, shouldRefresh: Boolean = false) {
+  fun applyDataBinding(bindData: BindData) {
     val stateMachines = riveAnimationView?.controller?.stateMachines
     if (stateMachines.isNullOrEmpty()) return
 
@@ -135,10 +137,8 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
       }
     }
 
-    if (shouldRefresh) {
-      stateMachine.name.let { smName ->
-        riveAnimationView?.play(smName, isStateMachine = true)
-      }
+    stateMachine.name.let { smName ->
+      riveAnimationView?.play(smName, isStateMachine = true)
     }
   }
 

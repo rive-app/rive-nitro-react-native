@@ -49,7 +49,7 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
   //region State
   override val view: RiveReactNativeView = RiveReactNativeView(context)
   private var needsReload = false
-  private var firstUpdate = true
+  private var dataBindingChanged = false
   private var registeredFile: HybridRiveFile? = null
   //endregion
 
@@ -81,7 +81,7 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
     set(value) {
       if (field != value) {
         field = value
-        applyDataBinding()
+        dataBindingChanged = true
       }
     }
   //endregion
@@ -136,12 +136,6 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
     view.getTextRunValue(name, path)
   //endregion
 
-  //region Data Binding
-  private fun applyDataBinding() {
-    view.applyDataBinding(dataBind.toBindData(), shouldRefresh = !firstUpdate)
-  }
-  //endregion
-
   //region Update
   fun refreshAfterAssetChange() {
     afterUpdate()
@@ -149,7 +143,6 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
 
   override fun afterUpdate() {
     logged(TAG, "afterUpdate") {
-      firstUpdate = false
       val hybridFile = file as? HybridRiveFile
       val riveFile = hybridFile?.riveFile ?: return@logged
 
@@ -163,7 +156,7 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
         layoutScaleFactor = layoutScaleFactor?.toFloat() ?: DefaultConfiguration.LAYOUTSCALEFACTOR,
         bindData = dataBind.toBindData()
       )
-      view.configure(config, needsReload)
+      view.configure(config, dataBindingChanged=dataBindingChanged, needsReload)
 
       if (needsReload && hybridFile != null) {
         hybridFile.registerView(this)
@@ -171,6 +164,7 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
       }
 
       needsReload = false
+      dataBindingChanged = false
       super.afterUpdate()
     }
   }

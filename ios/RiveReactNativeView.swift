@@ -32,7 +32,6 @@ class RiveReactNativeView: UIView, RiveStateMachineDelegate {
   private var baseViewModel: RiveViewModel?
   private var eventListeners: [(UnifiedRiveEvent) -> Void] = []
   private var viewReadyContinuation: CheckedContinuation<Void, Never>?
-  private var isFirstConfigure = true
   private var isViewReady = false
   private weak var viewSource: RiveViewSource?
 
@@ -51,7 +50,7 @@ class RiveReactNativeView: UIView, RiveStateMachineDelegate {
     return true
   }
 
-  func configure(_ config: ViewConfiguration, reload: Bool = false) {
+  func configure(_ config: ViewConfiguration, dataBindingChanged: Bool = false, reload: Bool = false) {
     if reload {
       cleanup()
       let model = RiveModel(riveFile: config.riveFile)
@@ -75,7 +74,9 @@ class RiveReactNativeView: UIView, RiveStateMachineDelegate {
       viewReadyContinuation = nil
     }
 
-    applyDataBinding(config.bindData, refresh: false)
+    if dataBindingChanged {
+      applyDataBinding(config.bindData)
+    }
   }
 
   func bindViewModelInstance(viewModelInstance: RiveDataBindingViewModel.Instance) {
@@ -86,7 +87,7 @@ class RiveReactNativeView: UIView, RiveStateMachineDelegate {
     return baseViewModel?.riveModel?.stateMachine?.viewModelInstance
   }
 
-  func applyDataBinding(_ bindData: BindData, refresh: Bool = false) {
+  func applyDataBinding(_ bindData: BindData) {
     let stateMachine = baseViewModel?.riveModel?.stateMachine
     let artboard = baseViewModel?.riveModel?.artboard
 
@@ -115,9 +116,7 @@ class RiveReactNativeView: UIView, RiveStateMachineDelegate {
       stateMachine?.bind(viewModelInstance: instance)
       artboard?.bind(viewModelInstance: instance)
     }
-    if refresh {
-      baseViewModel?.play()
-    }
+    baseViewModel?.play()
   }
 
   func play() {

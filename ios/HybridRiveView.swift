@@ -43,7 +43,7 @@ class HybridRiveView: HybridRiveViewSpec {
   // MARK: View Props
   var dataBind: HybridDataBindMode? = nil {
     didSet {
-      applyDataBinding()
+      dataBindingChanged = true
     }
   }
   var artboardName: String? { didSet { needsReload = true } }
@@ -120,18 +120,8 @@ class HybridRiveView: HybridRiveViewSpec {
     return riveView
   }
 
-  // MARK: Data Binding
-  private func applyDataBinding() {
-    logged(tag: "HybridRiveView", note: "applyDataBinding") {
-      guard let riveView = view as? RiveReactNativeView else { return }
-      let bindData = try dataBind.toDataBingMode()
-      riveView.applyDataBinding(bindData, refresh: !firstUpdate)
-    }
-  }
-
   // MARK: Update
   func afterUpdate() {
-    firstUpdate = false
     logged(tag: "HybridRiveView", note: "afterUpdate") {
       guard let hybridFile = file as? HybridRiveFile,
         let file = hybridFile.riveFile
@@ -149,14 +139,15 @@ class HybridRiveView: HybridRiveViewSpec {
         bindData: try dataBind.toDataBingMode()
       )
 
-      try getRiveView().configure(config, reload: needsReload)
+      try getRiveView().configure(config, dataBindingChanged: dataBindingChanged, reload: needsReload)
       needsReload = false
+      dataBindingChanged = false
     }
   }
 
   // MARK: Internal State
-  private var firstUpdate = true
   private var needsReload = false
+  private var dataBindingChanged = false
 
   // MARK: Helpers
   private func convertAlignment(_ alignment: Alignment?) -> RiveAlignment? {
