@@ -1,16 +1,5 @@
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
-import { useEffect, useMemo } from 'react';
-import {
-  Fit,
-  RiveView,
-  useRiveNumber,
-  type ViewModelInstance,
-  type RiveFile,
-  useRiveString,
-  useRiveColor,
-  useRiveTrigger,
-  useRiveFile,
-} from 'react-native-rive';
+import { Fit, RiveView, useRiveFile } from 'react-native-rive';
 import { type Metadata } from '../helpers/metadata';
 
 export default function WithRiveFile() {
@@ -24,7 +13,16 @@ export default function WithRiveFile() {
         {isLoading ? (
           <ActivityIndicator size="large" color="#0000ff" />
         ) : riveFile ? (
-          <WithViewModelSetup file={riveFile} />
+          <RiveView
+            style={styles.rive}
+            autoPlay={true}
+            fit={Fit.Layout}
+            layoutScaleFactor={1}
+            file={riveFile}
+            values={{
+              'Button/State_1': "Let's go!",
+            }}
+          />
         ) : (
           <Text style={styles.errorText}>{error || 'Unexpected error'}</Text>
         )}
@@ -33,81 +31,10 @@ export default function WithRiveFile() {
   );
 }
 
-function WithViewModelSetup({ file }: { file: RiveFile }) {
-  const viewModel = useMemo(() => file.defaultArtboardViewModel(), [file]);
-  const instance = useMemo(
-    () => viewModel?.createDefaultInstance(),
-    [viewModel]
-  );
-
-  if (!instance || !viewModel) {
-    return (
-      <Text style={styles.errorText}>
-        {!viewModel
-          ? 'No view model found'
-          : 'Failed to create view model instance'}
-      </Text>
-    );
-  }
-
-  return <DataBindingExample instance={instance} file={file} />;
-}
-
-function DataBindingExample({
-  instance,
-  file,
-}: {
-  instance: ViewModelInstance;
-  file: RiveFile;
-}) {
-  const { error: coinValueError } = useRiveNumber('Coin/Item_Value', instance);
-
-  if (coinValueError) {
-    console.error('coinValueError', coinValueError);
-  }
-
-  const { setValue: setButtonText } = useRiveString('Button/State_1', instance);
-
-  const { setValue: setBarColor, error: barColorError } = useRiveColor(
-    'Energy_Bar/Bar_Color',
-    instance
-  );
-
-  if (barColorError) {
-    console.error('barColorError', barColorError);
-  }
-
-  const { error: triggerError } = useRiveTrigger('Button/Pressed', instance, {
-    onTrigger: () => {
-      console.log('Button pressed');
-    },
-  });
-
-  if (triggerError) {
-    console.error('triggerError', triggerError);
-  }
-
-  useEffect(() => {
-    setButtonText("Let's go!");
-    setBarColor('#0000FF');
-  }, [setBarColor, setButtonText]);
-
-  return (
-    <RiveView
-      style={styles.rive}
-      autoPlay={true}
-      dataBind={instance}
-      fit={Fit.Layout}
-      layoutScaleFactor={1}
-      file={file}
-    />
-  );
-}
-
 WithRiveFile.metadata = {
   name: 'Data Binding',
   description:
-    'Shows data binding with view models, including number, string, color properties and triggers',
+    'Shows declarative data binding using the values prop (simplified API)',
 } satisfies Metadata;
 
 const styles = StyleSheet.create({
@@ -130,3 +57,26 @@ const styles = StyleSheet.create({
     padding: 20,
   },
 });
+
+/*
+ * OLD IMPLEMENTATION (for reference):
+ * Before the 'values' prop, this required 3 components and multiple hooks:
+ *
+ * function WithViewModelSetup({ file }: { file: RiveFile }) {
+ *   const viewModel = useMemo(() => file.defaultArtboardViewModel(), [file]);
+ *   const instance = useMemo(() => viewModel?.createDefaultInstance(), [viewModel]);
+ *   return <DataBindingExample instance={instance} file={file} />;
+ * }
+ *
+ * function DataBindingExample({ instance, file }) {
+ *   const { setValue: setButtonText } = useRiveString('Button/State_1', instance);
+ *   const { setValue: setBarColor } = useRiveColor('Energy_Bar/Bar_Color', instance);
+ *
+ *   useEffect(() => {
+ *     setButtonText("Let's go!");
+ *     setBarColor('#0000FF');
+ *   }, [setBarColor, setButtonText]);
+ *
+ *   return <RiveView file={file} dataBind={instance} />;
+ * }
+ */

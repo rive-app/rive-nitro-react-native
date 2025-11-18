@@ -38,6 +38,13 @@ export interface RiveViewProps extends HybridViewProps {
   layoutScaleFactor?: number;
   /** The view model instance to bind, to the state machine. Defaults to DataBindMode.Auto */
   dataBind?: ViewModelInstance | DataBindMode | DataBindByName;
+  /**
+   * Declarative data binding values. Allows setting ViewModel property values directly.
+   * Only supports number, string, and boolean property types.
+   * Auto-detects property types based on ViewModel instance properties.
+   * @example values={{ "Score": 100, "PlayerName": "Alice", "IsActive": true }}
+   */
+  values?: Record<string, number | string | boolean>;
 }
 
 /**

@@ -486,55 +486,6 @@ namespace margelo::nitro::rive::bridge::swift {
     return *optional;
   }
   
-  // pragma MARK: std::shared_ptr<Promise<bool>>
-  /**
-   * Specialized version of `std::shared_ptr<Promise<bool>>`.
-   */
-  using std__shared_ptr_Promise_bool__ = std::shared_ptr<Promise<bool>>;
-  inline std::shared_ptr<Promise<bool>> create_std__shared_ptr_Promise_bool__() noexcept {
-    return Promise<bool>::create();
-  }
-  inline PromiseHolder<bool> wrap_std__shared_ptr_Promise_bool__(std::shared_ptr<Promise<bool>> promise) noexcept {
-    return PromiseHolder<bool>(std::move(promise));
-  }
-  
-  // pragma MARK: std::function<void(bool /* result */)>
-  /**
-   * Specialized version of `std::function<void(bool)>`.
-   */
-  using Func_void_bool = std::function<void(bool /* result */)>;
-  /**
-   * Wrapper class for a `std::function<void(bool / * result * /)>`, this can be used from Swift.
-   */
-  class Func_void_bool_Wrapper final {
-  public:
-    explicit Func_void_bool_Wrapper(std::function<void(bool /* result */)>&& func): _function(std::make_unique<std::function<void(bool /* result */)>>(std::move(func))) {}
-    inline void call(bool result) const noexcept {
-      _function->operator()(result);
-    }
-  private:
-    std::unique_ptr<std::function<void(bool /* result */)>> _function;
-  } SWIFT_NONCOPYABLE;
-  Func_void_bool create_Func_void_bool(void* NON_NULL swiftClosureWrapper) noexcept;
-  inline Func_void_bool_Wrapper wrap_Func_void_bool(Func_void_bool value) noexcept {
-    return Func_void_bool_Wrapper(std::move(value));
-  }
-  
-  // pragma MARK: std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>
-  /**
-   * Specialized version of `std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>`.
-   */
-  using std__optional_std__shared_ptr_HybridViewModelInstanceSpec__ = std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>;
-  inline std::optional<std::shared_ptr<HybridViewModelInstanceSpec>> create_std__optional_std__shared_ptr_HybridViewModelInstanceSpec__(const std::shared_ptr<HybridViewModelInstanceSpec>& value) noexcept {
-    return std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>(value);
-  }
-  inline bool has_value_std__optional_std__shared_ptr_HybridViewModelInstanceSpec__(const std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>& optional) noexcept {
-    return optional.has_value();
-  }
-  inline std::shared_ptr<HybridViewModelInstanceSpec> get_std__optional_std__shared_ptr_HybridViewModelInstanceSpec__(const std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>& optional) noexcept {
-    return *optional;
-  }
-  
   // pragma MARK: std::variant<bool, std::string, double>
   /**
    * Wrapper struct for `std::variant<bool, std::string, double>`.
@@ -607,6 +558,55 @@ namespace margelo::nitro::rive::bridge::swift {
     return optional.has_value();
   }
   inline std::unordered_map<std::string, std::variant<bool, std::string, double>> get_std__optional_std__unordered_map_std__string__std__variant_bool__std__string__double___(const std::optional<std::unordered_map<std::string, std::variant<bool, std::string, double>>>& optional) noexcept {
+    return *optional;
+  }
+  
+  // pragma MARK: std::shared_ptr<Promise<bool>>
+  /**
+   * Specialized version of `std::shared_ptr<Promise<bool>>`.
+   */
+  using std__shared_ptr_Promise_bool__ = std::shared_ptr<Promise<bool>>;
+  inline std::shared_ptr<Promise<bool>> create_std__shared_ptr_Promise_bool__() noexcept {
+    return Promise<bool>::create();
+  }
+  inline PromiseHolder<bool> wrap_std__shared_ptr_Promise_bool__(std::shared_ptr<Promise<bool>> promise) noexcept {
+    return PromiseHolder<bool>(std::move(promise));
+  }
+  
+  // pragma MARK: std::function<void(bool /* result */)>
+  /**
+   * Specialized version of `std::function<void(bool)>`.
+   */
+  using Func_void_bool = std::function<void(bool /* result */)>;
+  /**
+   * Wrapper class for a `std::function<void(bool / * result * /)>`, this can be used from Swift.
+   */
+  class Func_void_bool_Wrapper final {
+  public:
+    explicit Func_void_bool_Wrapper(std::function<void(bool /* result */)>&& func): _function(std::make_unique<std::function<void(bool /* result */)>>(std::move(func))) {}
+    inline void call(bool result) const noexcept {
+      _function->operator()(result);
+    }
+  private:
+    std::unique_ptr<std::function<void(bool /* result */)>> _function;
+  } SWIFT_NONCOPYABLE;
+  Func_void_bool create_Func_void_bool(void* NON_NULL swiftClosureWrapper) noexcept;
+  inline Func_void_bool_Wrapper wrap_Func_void_bool(Func_void_bool value) noexcept {
+    return Func_void_bool_Wrapper(std::move(value));
+  }
+  
+  // pragma MARK: std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>
+  /**
+   * Specialized version of `std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>`.
+   */
+  using std__optional_std__shared_ptr_HybridViewModelInstanceSpec__ = std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>;
+  inline std::optional<std::shared_ptr<HybridViewModelInstanceSpec>> create_std__optional_std__shared_ptr_HybridViewModelInstanceSpec__(const std::shared_ptr<HybridViewModelInstanceSpec>& value) noexcept {
+    return std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>(value);
+  }
+  inline bool has_value_std__optional_std__shared_ptr_HybridViewModelInstanceSpec__(const std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline std::shared_ptr<HybridViewModelInstanceSpec> get_std__optional_std__shared_ptr_HybridViewModelInstanceSpec__(const std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>& optional) noexcept {
     return *optional;
   }
   
