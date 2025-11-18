@@ -74,7 +74,7 @@ function getDataBindValue(
 
 export default function ManyViewModels() {
   const { riveFile } = useRiveFile(
-    require('../../assets/rive/miklos_viewmodels.riv')
+    require('../../assets/rive/many_viewmodels.riv')
   );
   const [bindMode, setBindMode] = useState<BindModeOption>('none');
 
