@@ -56,6 +56,7 @@ class HybridRiveView: HybridRiveViewSpec {
   var alignment: Alignment?
   var fit: Fit?
   var layoutScaleFactor: Double?
+  var onError: (RiveError) -> Void = { _ in }
 
   func awaitViewReady() throws -> Promise<Bool> {
     return Promise.async { [self] in
@@ -141,7 +142,7 @@ class HybridRiveView: HybridRiveViewSpec {
       )
 
       let riveView = try getRiveView()
-      riveView.configure(
+      try riveView.configure(
         config, dataBindingChanged: dataBindingChanged, reload: needsReload,
         initialUpdate: initialUpdate)
       needsReload = false
@@ -184,6 +185,45 @@ class HybridRiveView: HybridRiveViewSpec {
     case .none: return .noFit
     case .scaledown: return .scaleDown
     case .layout: return .layout
+    }
+  }
+}
+
+extension HybridRiveView {
+  func logged(tag: String, note: String? = nil, _ fn: () throws -> Void) {
+    do {
+      return try fn()
+    } catch (let e) {
+      let errorType = detectErrorType(e)
+      let errorMessage = "[RIVE] \(tag) \(note ?? "") \(e)"
+
+      let riveError = RiveError(
+        message: errorMessage,
+        type: errorType,
+      )
+      onError(riveError)
+    }
+  }
+
+  private func detectErrorType(_ error: Error) -> RiveErrorType {
+    let errorDescription = String(describing: error).lowercased()
+
+    if errorDescription.contains("artboard") {
+      return .incorrectartboardname
+    } else if errorDescription.contains("state machine") {
+      return .incorrectstatemachinename
+    } else if errorDescription.contains("animation") {
+      return .incorrectanimationname
+    } else if errorDescription.contains("data binding") || errorDescription.contains("databinding") {
+      return .databindingerror
+    } else if errorDescription.contains("text run") {
+      return .textrunnotfounderror
+    } else if errorDescription.contains("file") || errorDescription.contains("not found") {
+      return .filenotfound
+    } else if errorDescription.contains("malformed") || errorDescription.contains("corrupt") {
+      return .malformedfile
+    } else {
+      return .unknown
     }
   }
 }

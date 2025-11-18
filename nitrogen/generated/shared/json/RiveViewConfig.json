@@ -12,6 +12,7 @@
     "fit": true,
     "layoutScaleFactor": true,
     "dataBind": true,
+    "onError": true,
     "hybridRef": true
   }
 }

@@ -66,6 +66,8 @@ namespace margelo::nitro::rive {
     void setLayoutScaleFactor(std::optional<double> layoutScaleFactor) override;
     std::optional<std::variant<std::shared_ptr<HybridViewModelInstanceSpec>, DataBindMode, DataBindByName>> getDataBind() override;
     void setDataBind(const std::optional<std::variant<std::shared_ptr<HybridViewModelInstanceSpec>, DataBindMode, DataBindByName>>& dataBind) override;
+    std::function<void(const RiveError& /* error */)> getOnError() override;
+    void setOnError(const std::function<void(const RiveError& /* error */)>& onError) override;
 
   public:
     // Methods

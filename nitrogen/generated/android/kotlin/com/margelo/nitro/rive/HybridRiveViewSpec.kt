@@ -90,6 +90,20 @@ abstract class HybridRiveViewSpec: HybridView() {
   @set:DoNotStrip
   @set:Keep
   abstract var dataBind: Variant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName?
+  
+  abstract var onError: (error: RiveError) -> Unit
+  
+  private var onError_cxx: Func_void_RiveError
+    @Keep
+    @DoNotStrip
+    get() {
+      return Func_void_RiveError_java(onError)
+    }
+    @Keep
+    @DoNotStrip
+    set(value) {
+      onError = value
+    }
 
   // Methods
   @DoNotStrip

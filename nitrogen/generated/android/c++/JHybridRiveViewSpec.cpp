@@ -19,6 +19,10 @@ namespace margelo::nitro::rive { class HybridViewModelInstanceSpec; }
 namespace margelo::nitro::rive { enum class DataBindMode; }
 // Forward declaration of `DataBindByName` to properly resolve imports.
 namespace margelo::nitro::rive { struct DataBindByName; }
+// Forward declaration of `RiveError` to properly resolve imports.
+namespace margelo::nitro::rive { struct RiveError; }
+// Forward declaration of `RiveErrorType` to properly resolve imports.
+namespace margelo::nitro::rive { enum class RiveErrorType; }
 // Forward declaration of `UnifiedRiveEvent` to properly resolve imports.
 namespace margelo::nitro::rive { struct UnifiedRiveEvent; }
 // Forward declaration of `RiveEventType` to properly resolve imports.
@@ -41,10 +45,15 @@ namespace margelo::nitro::rive { enum class RiveEventType; }
 #include "JHybridViewModelInstanceSpec.hpp"
 #include "JDataBindMode.hpp"
 #include "JDataBindByName.hpp"
+#include "RiveError.hpp"
+#include <functional>
+#include "JFunc_void_RiveError.hpp"
+#include "JRiveError.hpp"
+#include "RiveErrorType.hpp"
+#include "JRiveErrorType.hpp"
 #include <NitroModules/Promise.hpp>
 #include <NitroModules/JPromise.hpp>
 #include "UnifiedRiveEvent.hpp"
-#include <functional>
 #include "JFunc_void_UnifiedRiveEvent.hpp"
 #include "JUnifiedRiveEvent.hpp"
 #include "RiveEventType.hpp"
@@ -152,6 +161,25 @@ namespace margelo::nitro::rive {
   void JHybridRiveViewSpec::setDataBind(const std::optional<std::variant<std::shared_ptr<HybridViewModelInstanceSpec>, DataBindMode, DataBindByName>>& dataBind) {
     static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<JVariant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName> /* dataBind */)>("setDataBind");
     method(_javaPart, dataBind.has_value() ? JVariant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName::fromCpp(dataBind.value()) : nullptr);
+  }
+  std::function<void(const RiveError& /* error */)> JHybridRiveViewSpec::getOnError() {
+    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JFunc_void_RiveError::javaobject>()>("getOnError_cxx");
+    auto __result = method(_javaPart);
+    return [&]() -> std::function<void(const RiveError& /* error */)> {
+      if (__result->isInstanceOf(JFunc_void_RiveError_cxx::javaClassStatic())) [[likely]] {
+        auto downcast = jni::static_ref_cast<JFunc_void_RiveError_cxx::javaobject>(__result);
+        return downcast->cthis()->getFunction();
+      } else {
+        auto __resultRef = jni::make_global(__result);
+        return [__resultRef](RiveError error) -> void {
+          return __resultRef->invoke(error);
+        };
+      }
+    }();
+  }
+  void JHybridRiveViewSpec::setOnError(const std::function<void(const RiveError& /* error */)>& onError) {
+    static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<JFunc_void_RiveError::javaobject> /* onError */)>("setOnError_cxx");
+    method(_javaPart, JFunc_void_RiveError_cxx::fromCpp(onError));
   }
 
   // Methods

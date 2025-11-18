@@ -26,8 +26,9 @@
 #include "DataBindMode.hpp"
 #include "DataBindByName.hpp"
 #include <variant>
-#include "HybridRiveViewSpec.hpp"
+#include "RiveError.hpp"
 #include <functional>
+#include "HybridRiveViewSpec.hpp"
 
 namespace margelo::nitro::rive::views {
 
@@ -58,6 +59,7 @@ namespace margelo::nitro::rive::views {
     CachedProp<std::optional<Fit>> fit;
     CachedProp<std::optional<double>> layoutScaleFactor;
     CachedProp<std::optional<std::variant<std::shared_ptr<HybridViewModelInstanceSpec>, DataBindMode, DataBindByName>>> dataBind;
+    CachedProp<std::function<void(const RiveError& /* error */)>> onError;
     CachedProp<std::optional<std::function<void(const std::shared_ptr<HybridRiveViewSpec>& /* ref */)>>> hybridRef;
 
   private:

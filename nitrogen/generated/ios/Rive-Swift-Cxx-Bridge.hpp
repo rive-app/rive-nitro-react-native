@@ -50,6 +50,10 @@ namespace margelo::nitro::rive { class HybridViewModelTriggerPropertySpec; }
 namespace margelo::nitro::rive { struct ReferencedAssetsType; }
 // Forward declaration of `ResolvedReferencedAsset` to properly resolve imports.
 namespace margelo::nitro::rive { struct ResolvedReferencedAsset; }
+// Forward declaration of `RiveErrorType` to properly resolve imports.
+namespace margelo::nitro::rive { enum class RiveErrorType; }
+// Forward declaration of `RiveError` to properly resolve imports.
+namespace margelo::nitro::rive { struct RiveError; }
 // Forward declaration of `RiveEventType` to properly resolve imports.
 namespace margelo::nitro::rive { enum class RiveEventType; }
 // Forward declaration of `UnifiedRiveEvent` to properly resolve imports.
@@ -105,6 +109,8 @@ namespace Rive { class HybridViewModelTriggerPropertySpec_cxx; }
 #include "HybridViewModelTriggerPropertySpec.hpp"
 #include "ReferencedAssetsType.hpp"
 #include "ResolvedReferencedAsset.hpp"
+#include "RiveError.hpp"
+#include "RiveErrorType.hpp"
 #include "RiveEventType.hpp"
 #include "UnifiedRiveEvent.hpp"
 #include <NitroModules/Promise.hpp>
@@ -484,6 +490,28 @@ namespace margelo::nitro::rive::bridge::swift {
   }
   inline std::variant<std::shared_ptr<HybridViewModelInstanceSpec>, DataBindMode, DataBindByName> get_std__optional_std__variant_std__shared_ptr_HybridViewModelInstanceSpec___DataBindMode__DataBindByName__(const std::optional<std::variant<std::shared_ptr<HybridViewModelInstanceSpec>, DataBindMode, DataBindByName>>& optional) noexcept {
     return *optional;
+  }
+  
+  // pragma MARK: std::function<void(const RiveError& /* error */)>
+  /**
+   * Specialized version of `std::function<void(const RiveError&)>`.
+   */
+  using Func_void_RiveError = std::function<void(const RiveError& /* error */)>;
+  /**
+   * Wrapper class for a `std::function<void(const RiveError& / * error * /)>`, this can be used from Swift.
+   */
+  class Func_void_RiveError_Wrapper final {
+  public:
+    explicit Func_void_RiveError_Wrapper(std::function<void(const RiveError& /* error */)>&& func): _function(std::make_unique<std::function<void(const RiveError& /* error */)>>(std::move(func))) {}
+    inline void call(RiveError error) const noexcept {
+      _function->operator()(error);
+    }
+  private:
+    std::unique_ptr<std::function<void(const RiveError& /* error */)>> _function;
+  } SWIFT_NONCOPYABLE;
+  Func_void_RiveError create_Func_void_RiveError(void* NON_NULL swiftClosureWrapper) noexcept;
+  inline Func_void_RiveError_Wrapper wrap_Func_void_RiveError(Func_void_RiveError value) noexcept {
+    return Func_void_RiveError_Wrapper(std::move(value));
   }
   
   // pragma MARK: std::shared_ptr<Promise<bool>>

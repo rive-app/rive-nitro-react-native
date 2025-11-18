@@ -85,6 +85,7 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
         dataBindingChanged = true
       }
     }
+  override var onError: (error: RiveError) -> Unit = {}
   //endregion
 
   //region View Methods
@@ -223,12 +224,32 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
     }
   }
 
+  private fun detectErrorType(exception: Exception): RiveErrorType {
+    val errorMessage = exception.message?.lowercase() ?: ""
+
+    return when {
+      errorMessage.contains("artboard") -> RiveErrorType.INCORRECTARTBOARDNAME
+      errorMessage.contains("state machine") -> RiveErrorType.INCORRECTSTATEMACHINENAME
+      errorMessage.contains("animation") -> RiveErrorType.INCORRECTANIMATIONNAME
+      errorMessage.contains("data binding") || errorMessage.contains("databinding") -> RiveErrorType.DATABINDINGERROR
+      errorMessage.contains("text run") -> RiveErrorType.TEXTRUNNOTFOUNDERROR
+      errorMessage.contains("file") || errorMessage.contains("not found") -> RiveErrorType.FILENOTFOUND
+      errorMessage.contains("malformed") || errorMessage.contains("corrupt") -> RiveErrorType.MALFORMEDFILE
+      else -> RiveErrorType.UNKNOWN
+    }
+  }
+
   fun logged(tag: String, note: String? = null, fn: () -> Unit) {
     try {
       fn()
     } catch (e: Exception) {
-      // TODO add onError callback
-      Log.e("[RIVE]", "$tag ${note ?: ""} $e")
+      val errorMessage = "[RIVE] $tag ${note ?: ""} $e"
+      val errorType = detectErrorType(e)
+      val riveError = RiveError(
+        type = errorType,
+        message = errorMessage
+      )
+      onError(riveError)
     }
   }
   //endregion
