@@ -7,7 +7,6 @@ import {
   useRiveFile,
   type RiveEvent,
   RiveEventType,
-  DataBindMode,
 } from 'react-native-rive';
 import { type Metadata } from '../helpers/metadata';
 

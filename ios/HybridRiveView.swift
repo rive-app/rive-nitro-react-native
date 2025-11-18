@@ -10,8 +10,10 @@ private struct DefaultConfiguration {
   static let layoutScaleFactor = RiveRuntime.RiveViewModel.layoutScaleFactorAutomatic
 }
 
+typealias HybridDataBindMode = Variant__any_HybridViewModelInstanceSpec__DataBindMode_DataBindByName
+
 extension Optional
-where Wrapped == Variant__any_HybridViewModelInstanceSpec__DataBindMode_DataBindByName {
+where Wrapped == HybridDataBindMode {
   func toDataBingMode() throws -> BindData {
     guard let value = self else {
       return .auto
@@ -38,14 +40,12 @@ where Wrapped == Variant__any_HybridViewModelInstanceSpec__DataBindMode_DataBind
 }
 
 class HybridRiveView: HybridRiveViewSpec {
-  var firstUpdate = true
-  var dataBind: Variant__any_HybridViewModelInstanceSpec__DataBindMode_DataBindByName? = nil {
+  // MARK: View Props
+  var dataBind: HybridDataBindMode? = nil {
     didSet {
       applyDataBinding()
     }
   }
-
-  // MARK: View Props
   var artboardName: String? { didSet { needsReload = true } }
   var stateMachineName: String? { didSet { needsReload = true } }
   var autoPlay: Bool? { didSet { needsReload = true } }
@@ -155,6 +155,7 @@ class HybridRiveView: HybridRiveViewSpec {
   }
 
   // MARK: Internal State
+  private var firstUpdate = true
   private var needsReload = false
 
   // MARK: Helpers

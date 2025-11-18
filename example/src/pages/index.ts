@@ -5,4 +5,4 @@ export { default as EventsExample } from './RiveEventsExample';
 export { default as StateMachineInputsExample } from './RiveStateMachineInputsExample';
 export { default as TextRunExample } from './RiveTextRunExample';
 export { default as OutOfBandAssets } from './OutOfBandAssets';
-export { default as MiklosViewModels } from './MIklosViewModels';
+export { default as ManyViewModels } from './ManyViewModels';

@@ -11,7 +11,6 @@ import {
   useRive,
   useRiveFile,
   type RiveFileInput,
-  DataBindMode,
 } from 'react-native-rive';
 import { useState, useEffect } from 'react';
 import { downloadFileAsArrayBuffer } from '../helpers/fileHelpers';

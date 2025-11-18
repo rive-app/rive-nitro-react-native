@@ -1,6 +1,6 @@
-import UIKit
-import RiveRuntime
 import NitroModules
+import RiveRuntime
+import UIKit
 
 protocol RiveViewSource: AnyObject {
   func registerView(_ view: RiveReactNativeView)
@@ -38,10 +38,10 @@ class RiveReactNativeView: UIView, RiveStateMachineDelegate {
 
   // MARK: Public Config Properties
   var autoPlay: Bool = true
-  
+
   // MARK: - Public Methods
-  
-  func awaitViewReady()async -> Bool {
+
+  func awaitViewReady() async -> Bool {
     if !isViewReady {
       await withCheckedContinuation { continuation in
         viewReadyContinuation = continuation
@@ -50,7 +50,7 @@ class RiveReactNativeView: UIView, RiveStateMachineDelegate {
     }
     return true
   }
-  
+
   func configure(_ config: ViewConfiguration, reload: Bool = false) {
     if reload {
       cleanup()
@@ -77,7 +77,7 @@ class RiveReactNativeView: UIView, RiveStateMachineDelegate {
 
     applyDataBinding(config.bindData, refresh: false)
   }
-  
+
   func bindViewModelInstance(viewModelInstance: RiveDataBindingViewModel.Instance) {
     baseViewModel?.riveModel?.stateMachine?.bind(viewModelInstance: viewModelInstance)
   }
@@ -93,28 +93,29 @@ class RiveReactNativeView: UIView, RiveStateMachineDelegate {
     switch bindData {
     case .none:
       baseViewModel?.riveModel?.disableAutoBind()
-      
 
     case .auto:
-      baseViewModel?.riveModel?.enableAutoBind { [weak self] instance in
+      baseViewModel?.riveModel?.enableAutoBind { instance in
         // Auto-bind callback
       }
 
     case .byName(let name):
       guard let artboard = artboard,
-            let riveFile = baseViewModel?.riveModel?.riveFile,
-            let viewModel = riveFile.defaultViewModel(for: artboard),
-            let instance = viewModel.createInstance(fromName: name) else {
+        let riveFile = baseViewModel?.riveModel?.riveFile,
+        let viewModel = riveFile.defaultViewModel(for: artboard),
+        let instance = viewModel.createInstance(fromName: name)
+      else {
         return
       }
       stateMachine?.bind(viewModelInstance: instance)
-      artboard.bind(viewModelInstance: instance)
+      // this should be added if we support only playing artboards on their own - https://github.com/rive-app/rive-nitro-react-native/pull/23#discussion_r2534698281
+      // artboard.bind(viewModelInstance: instance)
 
     case .instance(let instance):
       stateMachine?.bind(viewModelInstance: instance)
       artboard?.bind(viewModelInstance: instance)
     }
-    if (refresh) {
+    if refresh {
       baseViewModel?.play()
     }
   }
@@ -122,7 +123,7 @@ class RiveReactNativeView: UIView, RiveStateMachineDelegate {
   func play() {
     baseViewModel?.play()
   }
-  
+
   func pause() {
     baseViewModel?.pause()
   }
@@ -136,74 +137,76 @@ class RiveReactNativeView: UIView, RiveStateMachineDelegate {
   func addEventListener(_ onEvent: @escaping (UnifiedRiveEvent) -> Void) {
     eventListeners.append(onEvent)
   }
-  
+
   func removeEventListeners() {
     eventListeners.removeAll()
   }
-  
+
   func setNumberInputValue(name: String, value: Float, path: String?) throws {
     try handleInput(name: name, path: path, type: .number) { (input: RiveRuntime.RiveSMINumber) in
       input.setValue(value)
     }
   }
-  
+
   func getNumberInputValue(name: String, path: String?) throws -> Float {
     try handleInput(name: name, path: path, type: .number) { (input: RiveRuntime.RiveSMINumber) in
       input.value()
     }
   }
-  
+
   func setBooleanInputValue(name: String, value: Bool, path: String?) throws {
     try handleInput(name: name, path: path, type: .boolean) { (input: RiveRuntime.RiveSMIBool) in
       input.setValue(value)
     }
   }
-  
+
   func getBooleanInputValue(name: String, path: String?) throws -> Bool {
     try handleInput(name: name, path: path, type: .boolean) { (input: RiveRuntime.RiveSMIBool) in
       input.value()
     }
   }
-  
+
   func triggerInput(name: String, path: String?) throws {
     try handleInput(name: name, path: path, type: .trigger) { (input: RiveRuntime.RiveSMITrigger) in
       input.fire()
     }
   }
-  
+
   func setTextRunValue(name: String, value: String, path: String?) throws {
     let textRun = try textRunOptionPath(name: name, path: path)
     textRun.setText(value)
   }
-  
+
   func getTextRunValue(name: String, path: String?) throws -> String {
     let textRun = try textRunOptionPath(name: name, path: path)
     return textRun.text()
   }
-  
-  private func textRunOptionPath(name: String, path: String?) throws -> RiveRuntime.RiveTextValueRun {
+
+  private func textRunOptionPath(name: String, path: String?) throws -> RiveRuntime.RiveTextValueRun
+  {
     let textRun: RiveRuntime.RiveTextValueRun?
     if let path = path {
       textRun = baseViewModel?.riveModel?.artboard?.textRun(name, path: path)
     } else {
       textRun = baseViewModel?.riveModel?.artboard?.textRun(name)
     }
-    
+
     guard let textRun = textRun else {
-      throw RuntimeError.error(withMessage: "Could not find text run `\(name)`\(path.map { " at path `\($0)`" } ?? "")")
+      throw RuntimeError.error(
+        withMessage: "Could not find text run `\(name)`\(path.map { " at path `\($0)`" } ?? "")")
     }
-    
+
     return textRun
   }
-  
+
   // MARK: - Internal
   deinit {
     cleanup()
   }
-  
+
   private func createViewFromViewModel() {
     riveView = baseViewModel?.createRiveView()
-    
+
     if let riveView = riveView {
       riveView.translatesAutoresizingMaskIntoConstraints = false
       addSubview(riveView)
@@ -212,11 +215,11 @@ class RiveReactNativeView: UIView, RiveStateMachineDelegate {
         riveView.leadingAnchor.constraint(equalTo: leadingAnchor),
         riveView.trailingAnchor.constraint(equalTo: trailingAnchor),
         riveView.topAnchor.constraint(equalTo: topAnchor),
-        riveView.bottomAnchor.constraint(equalTo: bottomAnchor)
+        riveView.bottomAnchor.constraint(equalTo: bottomAnchor),
       ])
     }
   }
-  
+
   private func cleanup() {
     riveView?.removeFromSuperview()
     riveView?.stateMachineDelegate = nil
@@ -227,27 +230,30 @@ class RiveReactNativeView: UIView, RiveStateMachineDelegate {
       self.viewSource = nil
     }
   }
-  
+
   @objc func onRiveEventReceived(onRiveEvent riveEvent: RiveRuntime.RiveEvent) {
     let eventType = UnifiedRiveEvent(
       name: riveEvent.name(),
-      type: riveEvent is RiveRuntime.RiveOpenUrlEvent ? RiveEventType.openurl : RiveEventType.general,
+      type: riveEvent is RiveRuntime.RiveOpenUrlEvent
+        ? RiveEventType.openurl : RiveEventType.general,
       delay: Double(riveEvent.delay()),
       properties: convertEventProperties(riveEvent.properties()),
       url: (riveEvent as? RiveRuntime.RiveOpenUrlEvent)?.url(),
       target: (riveEvent as? RiveRuntime.RiveOpenUrlEvent)?.target()
     )
-    
+
     for listener in eventListeners {
       listener(eventType)
     }
   }
-  
-  private func convertEventProperties(_ properties: Dictionary<String, Any>?) -> Dictionary<String, EventPropertiesOutput>?{
+
+  private func convertEventProperties(_ properties: [String: Any]?) -> [String:
+    EventPropertiesOutput]?
+  {
     guard let properties = properties else { return nil }
-    
-    var newMap: Dictionary<String, EventPropertiesOutput> = [:]
-    
+
+    var newMap: [String: EventPropertiesOutput] = [:]
+
     for (key, value) in properties {
       if let string = value as? String {
         newMap[key] = .string(string)
@@ -257,17 +263,19 @@ class RiveReactNativeView: UIView, RiveStateMachineDelegate {
         newMap[key] = .boolean(boolean)
       }
     }
-    
+
     return newMap
   }
-  
+
   private enum InputType {
     case number
     case boolean
     case trigger
   }
-  
-  private func handleInput<P: RiveRuntime.RiveSMIInput, T>(name: String, path: String?, type: InputType, onSuccess: (P) throws -> T) throws -> T {
+
+  private func handleInput<P: RiveRuntime.RiveSMIInput, T>(
+    name: String, path: String?, type: InputType, onSuccess: (P) throws -> T
+  ) throws -> T {
     let input: P?
     if let path = path {
       switch type {
@@ -288,11 +296,12 @@ class RiveReactNativeView: UIView, RiveStateMachineDelegate {
         input = baseViewModel?.riveModel?.stateMachine?.getTrigger(name) as? P
       }
     }
-    
+
     guard let input = input else {
-      throw RuntimeError.error(withMessage: "Could not find input `\(name)`\(path.map { " at path `\($0)`" } ?? "")")
+      throw RuntimeError.error(
+        withMessage: "Could not find input `\(name)`\(path.map { " at path `\($0)`" } ?? "")")
     }
-    
+
     return try onSuccess(input)
   }
 }

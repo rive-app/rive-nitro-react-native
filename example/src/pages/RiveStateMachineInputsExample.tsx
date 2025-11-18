@@ -1,12 +1,6 @@
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { useEffect } from 'react';
-import {
-  Fit,
-  RiveView,
-  useRive,
-  useRiveFile,
-  DataBindMode,
-} from 'react-native-rive';
+import { Fit, RiveView, useRive, useRiveFile } from 'react-native-rive';
 import { type Metadata } from '../helpers/metadata';
 
 export default function StateMachineInputsExample() {

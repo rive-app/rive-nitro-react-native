@@ -11,7 +11,6 @@ import {
   /*Rive, */ Fit,
   /*RNRiveError,*/ useRiveFile,
   RiveView,
-  DataBindMode,
 } from 'react-native-rive';
 import { Picker } from '@react-native-picker/picker';
 import { type Metadata } from '../helpers/metadata';
