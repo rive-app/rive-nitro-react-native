@@ -1,5 +1,6 @@
 package com.margelo.nitro.rive
 
+import android.util.Log
 import androidx.annotation.Keep
 import com.facebook.proguard.annotations.DoNotStrip
 import com.facebook.react.uimanager.ThemedReactContext
@@ -147,29 +148,31 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
   }
 
   override fun afterUpdate() {
-    firstUpdate = false
-    val hybridFile = file as? HybridRiveFile
-    val riveFile = hybridFile?.riveFile ?: return
+    logged(TAG, "afterUpdate") {
+      firstUpdate = false
+      val hybridFile = file as? HybridRiveFile
+      val riveFile = hybridFile?.riveFile ?: return@logged
 
-    val config = ViewConfiguration(
-      artboardName = artboardName,
-      stateMachineName = stateMachineName,
-      autoPlay = autoPlay ?: DefaultConfiguration.AUTOPLAY,
-      riveFile = riveFile,
-      alignment = convertAlignment(alignment) ?: DefaultConfiguration.ALIGNMENT,
-      fit = convertFit(fit) ?: DefaultConfiguration.FIT,
-      layoutScaleFactor = layoutScaleFactor?.toFloat() ?: DefaultConfiguration.LAYOUTSCALEFACTOR,
-      bindData = dataBind.toBindData()
-    )
-    view.configure(config, needsReload)
+      val config = ViewConfiguration(
+        artboardName = artboardName,
+        stateMachineName = stateMachineName,
+        autoPlay = autoPlay ?: DefaultConfiguration.AUTOPLAY,
+        riveFile = riveFile,
+        alignment = convertAlignment(alignment) ?: DefaultConfiguration.ALIGNMENT,
+        fit = convertFit(fit) ?: DefaultConfiguration.FIT,
+        layoutScaleFactor = layoutScaleFactor?.toFloat() ?: DefaultConfiguration.LAYOUTSCALEFACTOR,
+        bindData = dataBind.toBindData()
+      )
+      view.configure(config, needsReload)
 
-    if (needsReload && hybridFile != null) {
-      hybridFile.registerView(this)
-      registeredFile = hybridFile
+      if (needsReload && hybridFile != null) {
+        hybridFile.registerView(this)
+        registeredFile = hybridFile
+      }
+
+      needsReload = false
+      super.afterUpdate()
     }
-
-    needsReload = false
-    super.afterUpdate()
   }
   //endregion
 
@@ -221,6 +224,15 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
       Fit.NONE -> RiveFit.NONE
       Fit.SCALEDOWN -> RiveFit.SCALE_DOWN
       Fit.LAYOUT -> RiveFit.LAYOUT
+    }
+  }
+
+  fun logged(tag: String, note: String? = null, fn: () -> Unit) {
+    try {
+      fn()
+    } catch (e: Exception) {
+      // TODO add onError callback
+      Log.e("[RIVE]", "$tag ${note ?: ""} $e")
     }
   }
   //endregion
