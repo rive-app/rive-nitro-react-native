@@ -63,7 +63,7 @@ export default function StateMachine() {
       <RiveView
         file={riveFile}
         fit={Fit.Contain}
-        style={styles.animation}
+        style={styles.rive}
         stateMachineName="State Machine 1"
         // The `referencedAssets` prop allows you to load external assets from various sources:
         // - A URI
@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'flex-start',
   },
-  animation: {
+  rive: {
     width: '100%',
     height: 400,
   },

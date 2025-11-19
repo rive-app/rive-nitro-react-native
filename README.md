@@ -2,6 +2,10 @@
 
 Rive React Native 2.0
 
+## Development Preview
+
+> **⚠️ Development Preview**: This package is currently in development preview. While it's functional and actively maintained, the API may change in future releases. We recommend testing thoroughly before using in production applications. We're actively gathering feedback to improve the library. Please share your thoughts and report any issues you encounter.
+
 ## Requirements
 
 - **React Native**: 0.78 or later (0.79+ recommended for better Android error messages)
@@ -79,7 +83,10 @@ Rive_RiveRuntimeAndroidVersion=10.6.0
 Use an inline config plugin in your `app.config.ts`:
 
 ```typescript
-import { withPodfileProperties, withGradleProperties } from '@expo/config-plugins';
+import {
+  withPodfileProperties,
+  withGradleProperties,
+} from '@expo/config-plugins';
 
 export default {
   expo: {
@@ -125,31 +132,50 @@ try {
 
 ## Feature Support
 
-The following runtime features are currently supported:
+This section provides a comprehensive overview of feature availability in `react-native-rive`, comparing it with the [previous Rive React Native runtime](https://github.com/rive-app/rive-react-native) and outlining the development roadmap.
 
-✅ Supported | ⚠️ Partial | 🚧 In Development | ❌ Not Planned
+### Runtime Feature Comparison
 
-| Feature                    | Status | Description                                                      |
-| -------------------------- | ------ | ---------------------------------------------------------------- |
-| Artboard selection         | ✅     | Sepecify artboard to render                                      |
-| State machine selection    | ✅     | Specify a state machine to play                                  |
-| Animation selection        | ❌     | Animation playback not planned, use state machines               |
-| View autoPlay & play/pause | ✅     | Control view playback                                            |
-| Fit & Alignment            | ✅     | Fit modes supported, alignment coming soon                       |
-| Layout & Responsiveness    | ✅     | Basic responsive layouts supported                               |
-| Data Binding               | ⚠️     | Control data binding through runtime code                        |
-| Asset management           | 🚧     | Out-of-band assets not yet supported                             |
-| State machine inputs       | ✅     | Get/Set (nested) state machine inputs (legacy, see data binding) |
-| Text Runs                  | ✅     | Update (nested) text runs (legacy, see data binding)             |
-| Rive Events                | ✅     | Listen to Rive events                                            |
-| Rive Audio                 | ✅     | Full Rive audio playback supported                               |
-| `useRive()` hook           | ✅     | Convenient hook to access the Rive View ref after load           |
-| `useRiveFile()` hook       | ✅     | Convenient hook to load a Rive file                              |
-| `RiveView` error handling  | ✅     | Error handler for failed view operations                         |
-| `source` .riv file loading | ✅     | Conveniently load .riv files from JS source                      |
-| Renderer options           | ❌     | Single renderer option available (Rive)                          |
+**Status Legend:** ✅ Supported | ⚠️ Partial | 🚧 In Development | ❌ Not Planned
+
+The following table compares feature availability with the [previous Rive React Native runtime](https://github.com/rive-app/rive-react-native).
+
+| Feature                           | Status | Description                                                      |
+| --------------------------------- | ------ | ---------------------------------------------------------------- |
+| Artboard selection                | ✅     | Specify artboard to render                                       |
+| State machine selection           | ✅     | Specify a state machine to play                                  |
+| View autoPlay & play/pause        | ✅     | Control view playback                                            |
+| Fit & Alignment                   | ✅     | Fit modes supported, alignment coming soon                       |
+| Layout & Responsiveness           | ✅     | Basic responsive layouts supported                               |
+| Data Binding                      | ✅     | Control data binding through runtime code                        |
+| Asset management                  | ✅     | Load assets out of band (referenced)                             |
+| State machine inputs (Deprecated) | ✅     | Get/Set (nested) state machine inputs (legacy, see data binding) |
+| Text Runs (Deprecated)            | ✅     | Update (nested) text runs (legacy, see data binding)             |
+| Rive Events (Deprecated)          | ✅     | Listen to Rive events                                            |
+| Rive Audio                        | ✅     | Rive audio playback supported                                    |
+| `useRive()` hook                  | ✅     | Convenient hook to access the Rive View ref after load           |
+| `useRiveFile()` hook              | ✅     | Convenient hook to load a Rive file                              |
+| `RiveView` error handling         | ✅     | Error handler for failed view operations                         |
+| `source` .riv file loading        | ✅     | Conveniently load .riv files from JS source                      |
+| Animation selection               | ❌     | Animation playback not planned, use state machines               |
+| Renderer options                  | ❌     | Single renderer option available (Rive)                          |
 
 > **Note**: Several features in the table above (state machine inputs, text runs, and events) represent legacy approaches to runtime control. We recommend using data binding instead, as it provides a more maintainable way to control your Rive graphics (both at edit time and runtime).
+
+### Roadmap
+
+**Status Legend:** ✅ Completed | 🚧 Planned |
+
+This section tracks new features and improvements planned for this runtime that were not available in the [previous Rive React Native runtime](https://github.com/rive-app/rive-react-native).
+
+| Feature                                                                                               | Status |
+| ----------------------------------------------------------------------------------------------------- | ------ |
+| [Reusable .riv File resources (preloading)](https://github.com/rive-app/rive-react-native/issues/260) | ✅     |
+| [Data Binding - Images](https://github.com/rive-app/rive-nitro-react-native/issues/9)                 | 🚧     |
+| [Data Binding - Artboards](https://github.com/rive-app/rive-nitro-react-native/issues/10)             | 🚧     |
+| [Data Binding - Lists](https://github.com/rive-app/rive-nitro-react-native/issues/11)                 | 🚧     |
+| [Data Binding - Value props](https://github.com/rive-app/rive-nitro-react-native/pull/24)             | 🚧     |
+| [Suspense](https://github.com/rive-app/rive-nitro-react-native/pull/19)                               | 🚧     |
 
 ## Contributing
 

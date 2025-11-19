@@ -3,6 +3,13 @@ import { useEffect } from 'react';
 import { Fit, RiveView, useRive, useRiveFile } from 'react-native-rive';
 import { type Metadata } from '../helpers/metadata';
 
+/**
+ * @deprecated Setting state machine inputs at runtime is deprecated. Use data binding instead.
+ *
+ * See https://rive.app/docs/runtimes/data-binding
+ *
+ * Demonstrates getting and setting state machine inputs programmatically
+ */
 export default function StateMachineInputsExample() {
   const { riveViewRef, setHybridRef } = useRive();
   const { riveFile, isLoading, error } = useRiveFile(
