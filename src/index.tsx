@@ -1,10 +1,4 @@
-import {
-  getHostComponent,
-  NitroModules,
-  type ReactNativeView,
-  type HybridView,
-} from 'react-native-nitro-modules';
-import type { Rive } from './specs/Rive.nitro';
+import { type HybridView } from 'react-native-nitro-modules';
 import {
   type RiveViewMethods,
   type RiveViewTSMethods,
@@ -20,15 +14,7 @@ export class DataBindByName implements DataBindByNameInterface {
   }
 }
 
-import RiveViewConfig from '../nitrogen/generated/shared/json/RiveViewConfig.json';
-
-export const NitroRiveView = getHostComponent<
-  NativeRiveViewProps,
-  RiveViewMethods
->('RiveView', () => RiveViewConfig) as ReactNativeView<
-  NativeRiveViewProps,
-  RiveViewTSMethods
->;
+export { NitroRiveView } from './core/NitroRiveViewComponent';
 
 export { RiveView, type RiveViewProps } from './core/RiveView';
 export type { RiveViewMethods };

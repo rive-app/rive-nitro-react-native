@@ -26,8 +26,9 @@ struct ViewConfiguration {
   let bindData: BindData
 }
 
-enum NativeRiveError: Error {
+enum NitroRiveError: Error {
   case instanceNotFound(message: String)
+  case fileNotFound(message: String)
 }
 
 class RiveReactNativeView: UIView, RiveStateMachineDelegate {
@@ -110,7 +111,7 @@ class RiveReactNativeView: UIView, RiveStateMachineDelegate {
         let viewModel = riveFile.defaultViewModel(for: artboard),
         let instance = viewModel.createInstance(fromName: name)
       else {
-        throw NativeRiveError.instanceNotFound(message: "\(name) instance not found")
+        throw NitroRiveError.instanceNotFound(message: "\(name) instance not found")
       }
       stateMachine?.bind(viewModelInstance: instance)
       // this should be added if we support only playing artboards on their own - https://github.com/rive-app/rive-nitro-react-native/pull/23#discussion_r2534698281

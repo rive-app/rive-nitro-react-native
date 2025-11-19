@@ -194,8 +194,9 @@ extension HybridRiveView {
     do {
       return try fn()
     } catch (let e) {
-      let errorType = detectErrorType(e)
-      let errorMessage = "[RIVE] \(tag) \(note ?? "") \(e)"
+      let (errorType, errorDescription) = detectErrorType(e)
+      let noteString = note.map { " \($0)" } ?? ""
+      let errorMessage = "[RIVE] \(tag)\(noteString) \(errorDescription)"
 
       let riveError = RiveError(
         message: errorMessage,
@@ -205,35 +206,33 @@ extension HybridRiveView {
     }
   }
 
-  private func detectErrorType(_ error: Error) -> RiveErrorType {
-    if case NativeRiveError.instanceNotFound = error {
-      return .databindingerror
+  private func detectErrorType(_ error: Error) -> (RiveErrorType, String) {
+    switch error {
+    case NitroRiveError.instanceNotFound(let message):
+      return (.databindingerror, message)
+    case NitroRiveError.fileNotFound(let message):
+      return (.filenotfound, message)
+    default:
+      break
     }
 
     let nsError = error as NSError
-    guard let errorName = nsError.userInfo["name"] as? String else {
-      return .unknown
-    }
+    let message = nsError.localizedDescription
 
-    switch errorName {
-    case "NoArtboardFound":
-      return .incorrectartboardname
-    case "NoStateMachineFound":
-      return .incorrectstatemachinename
-    case "NoAnimationFound":
-      return .incorrectanimationname
-    case "Malformed":
-      return .malformedfile
-    case "FileNotFound":
-      return .filenotfound
-    case "NoStateMachineInputFound":
-      return .incorrectanimationname
-    case "TextRunNotFoundError":
-      return .textrunnotfounderror
-    case "DataBindingError":
-      return .databindingerror
+    // RiveErrorCode from RiveRuntime
+    switch nsError.code {
+    case RiveErrorCode.noArtboardFound.rawValue:
+      return (.incorrectartboardname, message)
+    case RiveErrorCode.noStateMachineFound.rawValue:
+      return (.incorrectstatemachinename, message)
+    case RiveErrorCode.noAnimationFound.rawValue:
+      return (.incorrectanimationname, message)
+    case RiveErrorCode.malformedFile.rawValue:
+      return (.malformedfile, message)
+    case RiveErrorCode.noStateMachineInputFound.rawValue:
+      return (.incorrectanimationname, message)
     default:
-      return .unknown
+      return (.unknown, message)
     }
   }
 }

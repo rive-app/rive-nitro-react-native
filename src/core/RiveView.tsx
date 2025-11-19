@@ -1,5 +1,5 @@
 import type { ComponentProps } from 'react';
-import { NitroRiveView } from '../index';
+import { NitroRiveView } from './NitroRiveViewComponent';
 import { RiveErrorType, type RiveError } from './Errors';
 
 export interface RiveViewProps
