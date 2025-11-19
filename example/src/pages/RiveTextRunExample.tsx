@@ -3,6 +3,13 @@ import { useEffect } from 'react';
 import { Fit, RiveView, useRive, useRiveFile } from 'react-native-rive';
 import { type Metadata } from '../helpers/metadata';
 
+/**
+ * @deprecated Setting text run values is deprecated. Use data binding instead.
+ *
+ * See https://rive.app/docs/runtimes/data-binding
+ *
+ * Demonstrates getting and setting text run values in Rive graphics
+ */
 export default function TextRunExample() {
   const { riveViewRef, setHybridRef } = useRive();
   const { riveFile, isLoading, error } = useRiveFile(
