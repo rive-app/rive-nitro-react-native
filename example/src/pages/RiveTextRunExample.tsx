@@ -83,5 +83,5 @@ const styles = StyleSheet.create({
 TextRunExample.metadata = {
   name: 'Text Run',
   description:
-    'Demonstrates getting and setting text run values in Rive animations',
+    'Demonstrates getting and setting text run values in Rive graphics',
 } satisfies Metadata;

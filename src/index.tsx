@@ -28,7 +28,7 @@ export function multiply(a: number, b: number): number {
 }
 
 /**
- * RiveView is a React Native component that renders Rive animations.
+ * RiveView is a React Native component that renders Rive graphics.
  * It provides a seamless way to display and control Rive graphics in your app.
  *
  * @example
@@ -53,8 +53,8 @@ export function multiply(a: number, b: number): number {
  * @property {Object} [style] - React Native style object for container customization
  *
  * The component also exposes methods for controlling playback:
- * - play(): Starts playing the animation
- * - pause(): Pauses the animation
+ * - play(): Starts playing the Rive graphic
+ * - pause(): Pauses the Rive graphic
  */
 export const RiveView = getHostComponent<RiveViewProps, RiveViewMethods>(
   'RiveView',

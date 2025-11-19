@@ -14,12 +14,12 @@ const RiveFileInternal =
 
 /**
  * Factory namespace for creating RiveFile instances from different sources.
- * Provides static methods to load Rive animations from URLs, resources, or raw bytes.
+ * Provides static methods to load Rive files from URLs, resources, or raw bytes.
  */
 export namespace RiveFileFactory {
   /**
    * Creates a RiveFile instance from a URL.
-   * @param url - The URL of the Rive animation file
+   * @param url - The URL of the Rive (.riv) file
    * @param loadCdn - Whether to load from CDN (default: true)
    * @returns Promise that resolves to a RiveFile instance
    */
@@ -37,7 +37,7 @@ export namespace RiveFileFactory {
 
   /**
    * Creates a RiveFile instance from a local file path URL.
-   * @param pathURL - The local file path of the Rive animation file
+   * @param pathURL - The local file path of the Rive (.riv) file
    * @param loadCdn - Whether to load from CDN (default: true)
    * @returns Promise that resolves to a RiveFile instance
    */
@@ -73,7 +73,7 @@ export namespace RiveFileFactory {
 
   /**
    * Creates a RiveFile instance from raw bytes.
-   * @param bytes - The raw bytes of the Rive animation file
+   * @param bytes - The raw bytes of the Rive (.riv) file
    * @param loadCdn - Whether to load from CDN (default: true)
    * @returns Promise that resolves to a RiveFile instance
    */
@@ -97,13 +97,13 @@ export namespace RiveFileFactory {
    * @throws Error if the source is invalid or cannot be resolved
    * @example
    * // Using a resource ID
-   * const riveFile1 = await RiveFileFactory.fromSource(require('./animation.riv'));
+   * const riveFile1 = await RiveFileFactory.fromSource(require('./your_file.riv'));
    *
    * // Using a URI object
-   * const riveFile2 = await RiveFileFactory.fromSource({ uri: 'https://example.com/animation.riv' });
+   * const riveFile2 = await RiveFileFactory.fromSource({ uri: 'https://example.com/your_file.riv' });
    *
    * // Using a local file URI
-   * const riveFile3 = await RiveFileFactory.fromSource({ uri: 'file:///path/to/animation.riv' });
+   * const riveFile3 = await RiveFileFactory.fromSource({ uri: 'file:///path/to/your_file.riv' });
    *
    * @note To use .riv files with require(), you need to add 'riv' to the asset extensions in your metro.config.js:
    * ```js
