@@ -10,7 +10,7 @@
 #include "HybridViewModelEnumPropertySpec.hpp"
 
 // Forward declaration of `HybridViewModelEnumPropertySpec_cxx` to properly resolve imports.
-namespace Rive { class HybridViewModelEnumPropertySpec_cxx; }
+namespace react_native_rive { class HybridViewModelEnumPropertySpec_cxx; }
 
 // Forward declaration of `HybridViewModelPropertySpecSwift` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridViewModelPropertySpecSwift; }
@@ -19,7 +19,7 @@ namespace margelo::nitro::rive { class HybridViewModelPropertySpecSwift; }
 #include <functional>
 #include "HybridViewModelPropertySpecSwift.hpp"
 
-#include "Rive-Swift-Cxx-Umbrella.hpp"
+#include "react_native_rive-Swift-Cxx-Umbrella.hpp"
 
 namespace margelo::nitro::rive {
 
@@ -36,14 +36,14 @@ namespace margelo::nitro::rive {
   class HybridViewModelEnumPropertySpecSwift: public virtual HybridViewModelEnumPropertySpec, public virtual HybridViewModelPropertySpecSwift {
   public:
     // Constructor from a Swift instance
-    explicit HybridViewModelEnumPropertySpecSwift(const Rive::HybridViewModelEnumPropertySpec_cxx& swiftPart):
+    explicit HybridViewModelEnumPropertySpecSwift(const react_native_rive::HybridViewModelEnumPropertySpec_cxx& swiftPart):
       HybridObject(HybridViewModelEnumPropertySpec::TAG),
       HybridViewModelPropertySpecSwift(swiftPart),
       _swiftPart(swiftPart) { }
 
   public:
     // Get the Swift part
-    inline Rive::HybridViewModelEnumPropertySpec_cxx& getSwiftPart() noexcept {
+    inline react_native_rive::HybridViewModelEnumPropertySpec_cxx& getSwiftPart() noexcept {
       return _swiftPart;
     }
 
@@ -84,7 +84,7 @@ namespace margelo::nitro::rive {
     }
 
   private:
-    Rive::HybridViewModelEnumPropertySpec_cxx _swiftPart;
+    react_native_rive::HybridViewModelEnumPropertySpec_cxx _swiftPart;
   };
 
 } // namespace margelo::nitro::rive

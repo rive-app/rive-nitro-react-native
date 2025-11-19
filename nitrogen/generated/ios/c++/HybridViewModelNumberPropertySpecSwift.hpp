@@ -10,7 +10,7 @@
 #include "HybridViewModelNumberPropertySpec.hpp"
 
 // Forward declaration of `HybridViewModelNumberPropertySpec_cxx` to properly resolve imports.
-namespace Rive { class HybridViewModelNumberPropertySpec_cxx; }
+namespace react_native_rive { class HybridViewModelNumberPropertySpec_cxx; }
 
 // Forward declaration of `HybridViewModelPropertySpecSwift` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridViewModelPropertySpecSwift; }
@@ -18,7 +18,7 @@ namespace margelo::nitro::rive { class HybridViewModelPropertySpecSwift; }
 #include <functional>
 #include "HybridViewModelPropertySpecSwift.hpp"
 
-#include "Rive-Swift-Cxx-Umbrella.hpp"
+#include "react_native_rive-Swift-Cxx-Umbrella.hpp"
 
 namespace margelo::nitro::rive {
 
@@ -35,14 +35,14 @@ namespace margelo::nitro::rive {
   class HybridViewModelNumberPropertySpecSwift: public virtual HybridViewModelNumberPropertySpec, public virtual HybridViewModelPropertySpecSwift {
   public:
     // Constructor from a Swift instance
-    explicit HybridViewModelNumberPropertySpecSwift(const Rive::HybridViewModelNumberPropertySpec_cxx& swiftPart):
+    explicit HybridViewModelNumberPropertySpecSwift(const react_native_rive::HybridViewModelNumberPropertySpec_cxx& swiftPart):
       HybridObject(HybridViewModelNumberPropertySpec::TAG),
       HybridViewModelPropertySpecSwift(swiftPart),
       _swiftPart(swiftPart) { }
 
   public:
     // Get the Swift part
-    inline Rive::HybridViewModelNumberPropertySpec_cxx& getSwiftPart() noexcept {
+    inline react_native_rive::HybridViewModelNumberPropertySpec_cxx& getSwiftPart() noexcept {
       return _swiftPart;
     }
 
@@ -82,7 +82,7 @@ namespace margelo::nitro::rive {
     }
 
   private:
-    Rive::HybridViewModelNumberPropertySpec_cxx _swiftPart;
+    react_native_rive::HybridViewModelNumberPropertySpec_cxx _swiftPart;
   };
 
 } // namespace margelo::nitro::rive
