@@ -123,7 +123,7 @@ namespace margelo::nitro::rive::bridge::swift {
   
   // pragma MARK: std::function<void(const RiveError& /* error */)>
   Func_void_RiveError create_Func_void_RiveError(void* NON_NULL swiftClosureWrapper) noexcept {
-    auto swiftClosure = Rive::Func_void_RiveError::fromUnsafe(swiftClosureWrapper);
+    auto swiftClosure = react_native_rive::Func_void_RiveError::fromUnsafe(swiftClosureWrapper);
     return [swiftClosure = std::move(swiftClosure)](const RiveError& error) mutable -> void {
       swiftClosure.call(error);
     };
