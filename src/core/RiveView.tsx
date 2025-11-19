@@ -1,13 +1,14 @@
 import type { ComponentProps } from 'react';
-import { NitroRiveView } from 'react-native-rive';
-import type { RiveError } from './Errors';
+import { NitroRiveView } from '../index';
+import { RiveErrorType, type RiveError } from './Errors';
 
 export interface RiveViewProps
   extends Omit<ComponentProps<typeof NitroRiveView>, 'onError'> {
   onError?: (error: RiveError) => void;
 }
 
-const defaultOnError = (error: RiveError) => console.error(error.message);
+const defaultOnError = (error: RiveError) =>
+  console.error(`[${RiveErrorType[error.type]}] ${error.message}`);
 
 /**
  * RiveView is a React Native component that renders Rive graphics.
@@ -28,7 +29,7 @@ const defaultOnError = (error: RiveError) => console.error(error.message);
  * @property {RiveFile} file - The Rive file to be displayed
  * @property {string} [artboardName] - Name of the artboard to display from the Rive file
  * @property {string} [stateMachineName] - Name of the state machine to play
- * @property {ViewModelInstance | DataBindMode | DataBindByName} [dataBind] - Data binding configuration for the state machine
+ * @property {ViewModelInstance | DataBindMode | DataBindByName} [dataBind] - Data binding configuration for the state machine, defaults to DataBindMode.Auto
  * @property {boolean} [autoPlay=true] - Whether to automatically start playing the state machine
  * @property {Alignment} [alignment] - How the Rive graphic should be aligned within its container
  * @property {Fit} [fit] - How the Rive graphic should fit within its container
@@ -43,5 +44,5 @@ export function RiveView(props: RiveViewProps) {
   const { onError, ...rest } = props;
   const wrappedOnError = onError ?? defaultOnError;
 
-  return <NitroRiveView {...(rest as any)} onError={{ f: wrappedOnError }} />;
+  return <NitroRiveView {...rest} onError={{ f: wrappedOnError }} />;
 }

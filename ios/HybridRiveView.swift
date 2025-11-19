@@ -206,6 +206,10 @@ extension HybridRiveView {
   }
 
   private func detectErrorType(_ error: Error) -> RiveErrorType {
+    if case NativeRiveError.instanceNotFound = error {
+      return .databindingerror
+    }
+
     let nsError = error as NSError
     guard let errorName = nsError.userInfo["name"] as? String else {
       return .unknown

@@ -231,7 +231,7 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
       is StateMachineException -> RiveErrorType.INCORRECTSTATEMACHINENAME
       is AnimationException -> RiveErrorType.INCORRECTANIMATIONNAME
       is MalformedFileException -> RiveErrorType.MALFORMEDFILE
-      is StateMachineInputException -> RiveErrorType.INCORRECTANIMATIONNAME
+      is StateMachineInputException -> RiveErrorType.INCORRECTSTATEMACHINEINPUTNAME
       is TextValueRunException -> RiveErrorType.TEXTRUNNOTFOUNDERROR
       is ViewModelException -> RiveErrorType.DATABINDINGERROR
       else -> RiveErrorType.UNKNOWN

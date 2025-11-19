@@ -22,30 +22,17 @@ export class DataBindByName implements DataBindByNameInterface {
 
 import RiveViewConfig from '../nitrogen/generated/shared/json/RiveViewConfig.json';
 
-const RiveHybridObject = NitroModules.createHybridObject<Rive>('Rive');
-
-export function multiply(a: number, b: number): number {
-  return RiveHybridObject.multiply(a, b);
-}
-
-type NativeRiveViewPropsInternal = Omit<NativeRiveViewProps, 'onError'> & {
-  onError: { f: (message: string) => void };
-};
-
 export const NitroRiveView = getHostComponent<
-  NativeRiveViewPropsInternal,
+  NativeRiveViewProps,
   RiveViewMethods
 >('RiveView', () => RiveViewConfig) as ReactNativeView<
-  NativeRiveViewPropsInternal,
+  NativeRiveViewProps,
   RiveViewTSMethods
 >;
 
 export { RiveView, type RiveViewProps } from './core/RiveView';
 export type { RiveViewMethods };
-export type RiveViewRef = HybridView<
-  NativeRiveViewPropsInternal,
-  RiveViewTSMethods
->;
+export type RiveViewRef = HybridView<NativeRiveViewProps, RiveViewTSMethods>;
 export type { RiveFile } from './specs/RiveFile.nitro';
 export type {
   ViewModel,
