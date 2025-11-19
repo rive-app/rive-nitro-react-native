@@ -9,7 +9,8 @@ We want this community to be friendly and respectful to each other. Please follo
 This project is a monorepo managed using [Yarn workspaces](https://yarnpkg.com/features/workspaces). It contains the following packages:
 
 - The library package in the root directory.
-- An example app in the `example/` directory.
+- A vanilla React Native example app in the `example/` directory.
+- An Expo example app in the `expo-example/` directory.
 
 To get started with the project, run `yarn` in the root directory to install the required dependencies for each package:
 
@@ -21,26 +22,26 @@ yarn
 
 This project uses Nitro Modules. If you're not familiar with how Nitro works, make sure to check the [Nitro Modules Docs](https://nitro.margelo.com/).
 
-You need to run [Nitrogen](https://nitro.margelo.com/docs/nitrogen) to generate the boilerplate code required for this project. The example app will not build without this step.
+You need to run [Nitrogen](https://nitro.margelo.com/docs/nitrogen) to generate the boilerplate code required for this project.
 
-Run **Nitrogen** in following cases:
-
-- When you make changes to any `*.nitro.ts` files.
-- When running the project for the first time (since the generated files are not committed to the repository).
-
-To invoke **Nitrogen**, use the following command:
+Run **Nitrogen** when you make changes to any `*.nitro.ts` files:
 
 ```sh
 yarn nitrogen
 ```
 
-The [example app](/example/) demonstrates usage of the library. You need to run it to test any changes you make.
+This also runs automatically via the `prepare` script when you run `yarn`.
 
-It is configured to use the local version of the library, so any changes you make to the library's source code will be reflected in the example app. Changes to the library's JavaScript code will be reflected in the example app without a rebuild, but native code changes will require a rebuild of the example app.
+The example apps demonstrate usage of the library. You need to run one to test any changes you make.
 
-If you want to use Android Studio or XCode to edit the native code, you can open the `example/android` or `example/ios` directories respectively in those editors. To edit the Objective-C or Swift files, open `example/ios/RiveExample.xcworkspace` in XCode and find the source files at `Pods > Development Pods > react-native-rive`.
+Both are configured to use the local version of the library, so any changes you make to the library's source code will be reflected in the example apps. Changes to the library's JavaScript code will be reflected without a rebuild, but native code changes will require a rebuild.
 
-To edit the Java or Kotlin files, open `example/android` in Android studio and find the source files at `react-native-rive` under `Android`.
+To edit native code in Xcode or Android Studio, you can use:
+
+```sh
+yarn dev:ios      # Opens iOS project in Xcode
+yarn dev:android  # Opens Android project in Android Studio
+```
 
 You can use various commands from the root directory to work with the project.
 
@@ -61,14 +62,6 @@ To run the example app on iOS:
 ```sh
 yarn example ios
 ```
-
-To confirm that the app is running with the new architecture, you can check the Metro logs for a message like this:
-
-```sh
-Running "RiveExample" with {"fabric":true,"initialProps":{"concurrentRoot":true},"rootTag":1}
-```
-
-Note the `"fabric":true` and `"concurrentRoot":true` properties.
 
 Make sure your code passes TypeScript and ESLint. Run the following to verify:
 
@@ -133,8 +126,6 @@ The `package.json` file contains various scripts for common tasks:
 - `yarn example ios`: run the example app on iOS.
 
 ### Sending a pull request
-
-> **Working on your first pull request?** You can learn how from this _free_ series: [How to Contribute to an Open Source Project on GitHub](https://app.egghead.io/playlists/how-to-contribute-to-an-open-source-project-on-github).
 
 When you're sending a pull request:
 

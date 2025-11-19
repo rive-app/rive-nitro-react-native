@@ -4,63 +4,50 @@ Rive React Native 2.0
 
 ## Requirements
 
-- React Native 0.79 or later
-- Xcode 16.0 or later
+- **React Native**: 0.78 or later (0.79+ recommended for better Android error messages)
+- **Expo SDK**: 53 or later (for Expo users)
+- **iOS**: 15.1 or later
+- **Android**: SDK 24 (Android 7.0) or later
+- **Xcode**: 16.4 or later
+- **JDK**: 17 or later
+- **Nitro Modules**: 0.25.2 or later
 
 ## Known Issues
 
-- Error message on Android will not have descriptive messages, this is a [known issue](https://github.com/mrousavy/nitro/issues/382) in React Native and is fixed in RN 0.80
+- Error messages on Android in React Native 0.78-0.79 may not be descriptive, this is a [known issue](https://github.com/mrousavy/nitro/issues/382) in React Native and is fixed in RN 0.80
 
 ## Installation
 
 ```sh
 npm install react-native-rive react-native-nitro-modules
+```
 
 > `react-native-nitro-modules` is required as this library relies on [Nitro Modules](https://nitro.margelo.com/).
-```
 
 ## Usage
 
 ```js
-import {
-  Fit,
-  RiveView,
-  type RiveFile,
-  type RiveViewMethods,
-  type RiveViewProps,
-  RiveFileFactory,
-} from 'react-native-rive';
-import type { HybridView } from 'react-native-nitro-modules';
-import { useRef } from 'react';
+import { Fit, RiveView, useRiveFile } from 'react-native-rive';
 
-// Load Rive files using different methods:
-// 1. From URL
-const riveFile: RiveFile = await RiveFileFactory.fromURL('https://cdn.rive.app/animations/vehicles.riv');
+function App() {
+  const { riveFile } = useRiveFile({
+    url: 'https://cdn.rive.app/animations/vehicles.riv',
+  });
 
-// 2. From Resource (local file)
-const riveFile: RiveFile = await RiveFileFactory.fromResource('rewards');
+  if (!riveFile) {
+    return null;
+  }
 
-// 3. From ArrayBuffer
-const arrayBuffer: ArrayBuffer = await downloadFileAsArrayBuffer(url);
-const riveFile: RiveFile = await RiveFileFactory.fromBytes(arrayBuffer);
-
-// Create a ref for the RiveView
-const riveRef = useRef<HybridView<RiveViewProps, RiveViewMethods>>(null);
-
-// Create a RiveView component
-<RiveView
-  autoBind={false}
-  autoPlay={true}
-  fit={Fit.Layout}
-  file={riveFile}
-  hybridRef={{
-    f: (ref) => {
-      if (ref) {
-        riveRef.current = ref;
-      }
-    },
-  }}
-/>
+  return (
+    <RiveView
+      autoPlay={true}
+      fit={Fit.Contain}
+      file={riveFile}
+      onError={(error) => console.error('Rive error:', error.message)}
+      style={{ width: '100%', height: 400 }}
+    />
+  );
+}
 ```
 
 ## Native SDK Version Customization
@@ -158,7 +145,7 @@ The following runtime features are currently supported:
 | Rive Audio                 | ✅     | Full Rive audio playback supported                               |
 | `useRive()` hook           | ✅     | Convenient hook to access the Rive View ref after load           |
 | `useRiveFile()` hook       | ✅     | Convenient hook to load a Rive file                              |
-| `RiveView` error handling  | 🚧     | Error handler for failed view operations                         |
+| `RiveView` error handling  | ✅     | Error handler for failed view operations                         |
 | `source` .riv file loading | ✅     | Conveniently load .riv files from JS source                      |
 | Renderer options           | ❌     | Single renderer option available (Rive)                          |
 

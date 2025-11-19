@@ -31,7 +31,7 @@ end
 Pod::UI.puts "react-native-rive: Rive iOS SDK #{rive_ios_version}"
 
 Pod::Spec.new do |s|
-  s.name         = "Rive"
+  s.name         = "react-native-rive"
   s.version      = package["version"]
   s.summary      = package["description"]
   s.homepage     = package["homepage"]
