@@ -209,7 +209,7 @@ extension HybridRiveView {
   private func detectErrorType(_ error: Error) -> (RiveErrorType, String) {
     switch error {
     case NitroRiveError.instanceNotFound(let message):
-      return (.databindingerror, message)
+      return (.viewmodelinstancenotfound, message)
     case NitroRiveError.fileNotFound(let message):
       return (.filenotfound, message)
     default:
@@ -226,7 +226,7 @@ extension HybridRiveView {
     case RiveErrorCode.noStateMachineFound.rawValue:
       return (.incorrectstatemachinename, message)
     case RiveErrorCode.noAnimationFound.rawValue:
-      return (.incorrectanimationname, message)
+      return (.unknown, message)
     case RiveErrorCode.malformedFile.rawValue:
       return (.malformedfile, message)
     case RiveErrorCode.noStateMachineInputFound.rawValue:

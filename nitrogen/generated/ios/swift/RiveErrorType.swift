@@ -27,12 +27,8 @@ public extension RiveErrorType {
         self = .incorrectartboardname
       case "IncorrectStateMachineName":
         self = .incorrectstatemachinename
-      case "IncorrectAnimationName":
-        self = .incorrectanimationname
-      case "DataBindingError":
-        self = .databindingerror
-      case "TextRunNotFoundError":
-        self = .textrunnotfounderror
+      case "ViewModelInstanceNotFound":
+        self = .viewmodelinstancenotfound
       case "IncorrectStateMachineInputName":
         self = .incorrectstatemachineinputname
       default:
@@ -55,12 +51,8 @@ public extension RiveErrorType {
         return "IncorrectArtboardName"
       case .incorrectstatemachinename:
         return "IncorrectStateMachineName"
-      case .incorrectanimationname:
-        return "IncorrectAnimationName"
-      case .databindingerror:
-        return "DataBindingError"
-      case .textrunnotfounderror:
-        return "TextRunNotFoundError"
+      case .viewmodelinstancenotfound:
+        return "ViewModelInstanceNotFound"
       case .incorrectstatemachineinputname:
         return "IncorrectStateMachineInputName"
     }

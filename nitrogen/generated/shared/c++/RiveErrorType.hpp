@@ -29,9 +29,7 @@ namespace margelo::nitro::rive {
     MALFORMEDFILE      SWIFT_NAME(malformedfile) = 2,
     INCORRECTARTBOARDNAME      SWIFT_NAME(incorrectartboardname) = 3,
     INCORRECTSTATEMACHINENAME      SWIFT_NAME(incorrectstatemachinename) = 4,
-    INCORRECTANIMATIONNAME      SWIFT_NAME(incorrectanimationname) = 5,
-    DATABINDINGERROR      SWIFT_NAME(databindingerror) = 6,
-    TEXTRUNNOTFOUNDERROR      SWIFT_NAME(textrunnotfounderror) = 7,
+    VIEWMODELINSTANCENOTFOUND      SWIFT_NAME(viewmodelinstancenotfound) = 6,
     INCORRECTSTATEMACHINEINPUTNAME      SWIFT_NAME(incorrectstatemachineinputname) = 8,
   } CLOSED_ENUM;
 
@@ -61,8 +59,16 @@ namespace margelo::nitro {
         // Enums are all integers, so the input floating point number is obviously invalid.
         return false;
       }
-      // Check if we are within the bounds of the enum.
-      return integer >= 0 && integer <= 8;
+      switch (integer) {
+        case 0 /* UNKNOWN */: return true;
+        case 1 /* FILENOTFOUND */: return true;
+        case 2 /* MALFORMEDFILE */: return true;
+        case 3 /* INCORRECTARTBOARDNAME */: return true;
+        case 4 /* INCORRECTSTATEMACHINENAME */: return true;
+        case 6 /* VIEWMODELINSTANCENOTFOUND */: return true;
+        case 8 /* INCORRECTSTATEMACHINEINPUTNAME */: return true;
+        default: return false;
+      }
     }
   };
 

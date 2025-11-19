@@ -225,25 +225,28 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
     }
   }
 
-  private fun detectErrorType(exception: Exception): RiveErrorType {
-    return when (exception) {
+  private fun detectErrorType(exception: Exception): Pair<RiveErrorType, String> {
+    val message = exception.message ?: exception.toString()
+    val type = when (exception) {
       is ArtboardException -> RiveErrorType.INCORRECTARTBOARDNAME
       is StateMachineException -> RiveErrorType.INCORRECTSTATEMACHINENAME
-      is AnimationException -> RiveErrorType.INCORRECTANIMATIONNAME
+      is AnimationException -> RiveErrorType.UNKNOWN
       is MalformedFileException -> RiveErrorType.MALFORMEDFILE
       is StateMachineInputException -> RiveErrorType.INCORRECTSTATEMACHINEINPUTNAME
-      is TextValueRunException -> RiveErrorType.TEXTRUNNOTFOUNDERROR
-      is ViewModelException -> RiveErrorType.DATABINDINGERROR
+      is TextValueRunException -> RiveErrorType.UNKNOWN
+      is ViewModelException -> RiveErrorType.VIEWMODELINSTANCENOTFOUND
       else -> RiveErrorType.UNKNOWN
     }
+    return Pair(type, message)
   }
 
   fun logged(tag: String, note: String? = null, fn: () -> Unit) {
     try {
       fn()
     } catch (e: Exception) {
-      val errorMessage = "[RIVE] $tag ${note ?: ""} $e"
-      val errorType = detectErrorType(e)
+      val (errorType, errorDescription) = detectErrorType(e)
+      val noteString = note?.let { " $it" } ?: ""
+      val errorMessage = "[RIVE] $tag$noteString $errorDescription"
       val riveError = RiveError(
         type = errorType,
         message = errorMessage

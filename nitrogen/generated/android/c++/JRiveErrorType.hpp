@@ -46,9 +46,7 @@ namespace margelo::nitro::rive {
       static const auto fieldMALFORMEDFILE = clazz->getStaticField<JRiveErrorType>("MALFORMEDFILE");
       static const auto fieldINCORRECTARTBOARDNAME = clazz->getStaticField<JRiveErrorType>("INCORRECTARTBOARDNAME");
       static const auto fieldINCORRECTSTATEMACHINENAME = clazz->getStaticField<JRiveErrorType>("INCORRECTSTATEMACHINENAME");
-      static const auto fieldINCORRECTANIMATIONNAME = clazz->getStaticField<JRiveErrorType>("INCORRECTANIMATIONNAME");
-      static const auto fieldDATABINDINGERROR = clazz->getStaticField<JRiveErrorType>("DATABINDINGERROR");
-      static const auto fieldTEXTRUNNOTFOUNDERROR = clazz->getStaticField<JRiveErrorType>("TEXTRUNNOTFOUNDERROR");
+      static const auto fieldVIEWMODELINSTANCENOTFOUND = clazz->getStaticField<JRiveErrorType>("VIEWMODELINSTANCENOTFOUND");
       static const auto fieldINCORRECTSTATEMACHINEINPUTNAME = clazz->getStaticField<JRiveErrorType>("INCORRECTSTATEMACHINEINPUTNAME");
       
       switch (value) {
@@ -62,12 +60,8 @@ namespace margelo::nitro::rive {
           return clazz->getStaticFieldValue(fieldINCORRECTARTBOARDNAME);
         case RiveErrorType::INCORRECTSTATEMACHINENAME:
           return clazz->getStaticFieldValue(fieldINCORRECTSTATEMACHINENAME);
-        case RiveErrorType::INCORRECTANIMATIONNAME:
-          return clazz->getStaticFieldValue(fieldINCORRECTANIMATIONNAME);
-        case RiveErrorType::DATABINDINGERROR:
-          return clazz->getStaticFieldValue(fieldDATABINDINGERROR);
-        case RiveErrorType::TEXTRUNNOTFOUNDERROR:
-          return clazz->getStaticFieldValue(fieldTEXTRUNNOTFOUNDERROR);
+        case RiveErrorType::VIEWMODELINSTANCENOTFOUND:
+          return clazz->getStaticFieldValue(fieldVIEWMODELINSTANCENOTFOUND);
         case RiveErrorType::INCORRECTSTATEMACHINEINPUTNAME:
           return clazz->getStaticFieldValue(fieldINCORRECTSTATEMACHINEINPUTNAME);
         default:
