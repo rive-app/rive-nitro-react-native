@@ -33,6 +33,8 @@ public extension RiveErrorType {
         self = .databindingerror
       case "TextRunNotFoundError":
         self = .textrunnotfounderror
+      case "IncorrectStateMachineInputName":
+        self = .incorrectstatemachineinputname
       default:
         return nil
     }
@@ -59,6 +61,8 @@ public extension RiveErrorType {
         return "DataBindingError"
       case .textrunnotfounderror:
         return "TextRunNotFoundError"
+      case .incorrectstatemachineinputname:
+        return "IncorrectStateMachineInputName"
     }
   }
 }

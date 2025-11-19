@@ -49,6 +49,7 @@ namespace margelo::nitro::rive {
       static const auto fieldINCORRECTANIMATIONNAME = clazz->getStaticField<JRiveErrorType>("INCORRECTANIMATIONNAME");
       static const auto fieldDATABINDINGERROR = clazz->getStaticField<JRiveErrorType>("DATABINDINGERROR");
       static const auto fieldTEXTRUNNOTFOUNDERROR = clazz->getStaticField<JRiveErrorType>("TEXTRUNNOTFOUNDERROR");
+      static const auto fieldINCORRECTSTATEMACHINEINPUTNAME = clazz->getStaticField<JRiveErrorType>("INCORRECTSTATEMACHINEINPUTNAME");
       
       switch (value) {
         case RiveErrorType::UNKNOWN:
@@ -67,6 +68,8 @@ namespace margelo::nitro::rive {
           return clazz->getStaticFieldValue(fieldDATABINDINGERROR);
         case RiveErrorType::TEXTRUNNOTFOUNDERROR:
           return clazz->getStaticFieldValue(fieldTEXTRUNNOTFOUNDERROR);
+        case RiveErrorType::INCORRECTSTATEMACHINEINPUTNAME:
+          return clazz->getStaticFieldValue(fieldINCORRECTSTATEMACHINEINPUTNAME);
         default:
           std::string stringValue = std::to_string(static_cast<int>(value));
           throw std::invalid_argument("Invalid enum value (" + stringValue + "!");

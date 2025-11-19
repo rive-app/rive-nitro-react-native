@@ -32,6 +32,7 @@ namespace margelo::nitro::rive {
     INCORRECTANIMATIONNAME      SWIFT_NAME(incorrectanimationname) = 5,
     DATABINDINGERROR      SWIFT_NAME(databindingerror) = 6,
     TEXTRUNNOTFOUNDERROR      SWIFT_NAME(textrunnotfounderror) = 7,
+    INCORRECTSTATEMACHINEINPUTNAME      SWIFT_NAME(incorrectstatemachineinputname) = 8,
   } CLOSED_ENUM;
 
 } // namespace margelo::nitro::rive
@@ -61,7 +62,7 @@ namespace margelo::nitro {
         return false;
       }
       // Check if we are within the bounds of the enum.
-      return integer >= 0 && integer <= 7;
+      return integer >= 0 && integer <= 8;
     }
   };
 

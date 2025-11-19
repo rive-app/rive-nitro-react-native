@@ -230,7 +230,7 @@ extension HybridRiveView {
     case RiveErrorCode.malformedFile.rawValue:
       return (.malformedfile, message)
     case RiveErrorCode.noStateMachineInputFound.rawValue:
-      return (.incorrectanimationname, message)
+      return (.incorrectstatemachineinputname, message)
     default:
       return (.unknown, message)
     }
