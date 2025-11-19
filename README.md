@@ -41,7 +41,7 @@ function App() {
   return (
     <RiveView
       autoPlay={true}
-      fit={Fit.Layout}
+      fit={Fit.Contain}
       file={riveFile}
       onError={(error) => console.error('Rive error:', error.message)}
       style={{ width: '100%', height: 400 }}
