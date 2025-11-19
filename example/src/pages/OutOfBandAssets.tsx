@@ -1,7 +1,6 @@
 import * as React from 'react';
 import {
   ActivityIndicator,
-  SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
@@ -52,14 +51,14 @@ export default function StateMachine() {
     return <ActivityIndicator />;
   } else if (error != null) {
     return (
-      <SafeAreaView style={styles.safeAreaViewContainer}>
+      <View style={styles.safeAreaViewContainer}>
         <Text>Error loading Rive file</Text>
-      </SafeAreaView>
+      </View>
     );
   }
 
   return (
-    <SafeAreaView style={styles.safeAreaViewContainer}>
+    <View style={styles.safeAreaViewContainer}>
       <RiveView
         file={riveFile}
         fit={Fit.Contain}
@@ -109,7 +108,7 @@ export default function StateMachine() {
           </View>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 

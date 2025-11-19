@@ -15,7 +15,7 @@ import { type Metadata } from '../helpers/metadata';
 
 export default function WithRiveFile() {
   const { riveFile, isLoading, error } = useRiveFile(
-    require('../../assets/rive/rewards_source.riv')
+    require('../../assets/rive/rewards.riv')
   );
 
   return (

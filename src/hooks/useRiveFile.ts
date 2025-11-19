@@ -162,12 +162,6 @@ export function useRiveFile(
     }
   }, [referencedAssets, riveFile]);
 
-  if (initialInput.current !== input) {
-    console.warn(
-      'useRiveFile: Changing input after initial render is not supported.'
-    );
-  }
-
   return {
     riveFile: result.riveFile,
     isLoading: result.isLoading,
