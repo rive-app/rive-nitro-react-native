@@ -10,6 +10,7 @@ import com.rive.RiveReactNativeView
 import com.rive.ViewConfiguration
 import app.rive.runtime.kotlin.core.Fit as RiveFit
 import app.rive.runtime.kotlin.core.Alignment as RiveAlignment
+import app.rive.runtime.kotlin.core.errors.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -225,16 +226,14 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
   }
 
   private fun detectErrorType(exception: Exception): RiveErrorType {
-    val errorMessage = exception.message?.lowercase() ?: ""
-
-    return when {
-      errorMessage.contains("artboard") -> RiveErrorType.INCORRECTARTBOARDNAME
-      errorMessage.contains("state machine") -> RiveErrorType.INCORRECTSTATEMACHINENAME
-      errorMessage.contains("animation") -> RiveErrorType.INCORRECTANIMATIONNAME
-      errorMessage.contains("data binding") || errorMessage.contains("databinding") -> RiveErrorType.DATABINDINGERROR
-      errorMessage.contains("text run") -> RiveErrorType.TEXTRUNNOTFOUNDERROR
-      errorMessage.contains("file") || errorMessage.contains("not found") -> RiveErrorType.FILENOTFOUND
-      errorMessage.contains("malformed") || errorMessage.contains("corrupt") -> RiveErrorType.MALFORMEDFILE
+    return when (exception) {
+      is ArtboardException -> RiveErrorType.INCORRECTARTBOARDNAME
+      is StateMachineException -> RiveErrorType.INCORRECTSTATEMACHINENAME
+      is AnimationException -> RiveErrorType.INCORRECTANIMATIONNAME
+      is MalformedFileException -> RiveErrorType.MALFORMEDFILE
+      is StateMachineInputException -> RiveErrorType.INCORRECTANIMATIONNAME
+      is TextValueRunException -> RiveErrorType.TEXTRUNNOTFOUNDERROR
+      is ViewModelException -> RiveErrorType.DATABINDINGERROR
       else -> RiveErrorType.UNKNOWN
     }
   }

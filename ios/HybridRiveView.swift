@@ -199,30 +199,36 @@ extension HybridRiveView {
 
       let riveError = RiveError(
         message: errorMessage,
-        type: errorType,
+        type: errorType
       )
       onError(riveError)
     }
   }
 
   private func detectErrorType(_ error: Error) -> RiveErrorType {
-    let errorDescription = String(describing: error).lowercased()
+    let nsError = error as NSError
+    guard let errorName = nsError.userInfo["name"] as? String else {
+      return .unknown
+    }
 
-    if errorDescription.contains("artboard") {
+    switch errorName {
+    case "NoArtboardFound":
       return .incorrectartboardname
-    } else if errorDescription.contains("state machine") {
+    case "NoStateMachineFound":
       return .incorrectstatemachinename
-    } else if errorDescription.contains("animation") {
+    case "NoAnimationFound":
       return .incorrectanimationname
-    } else if errorDescription.contains("data binding") || errorDescription.contains("databinding") {
-      return .databindingerror
-    } else if errorDescription.contains("text run") {
-      return .textrunnotfounderror
-    } else if errorDescription.contains("file") || errorDescription.contains("not found") {
-      return .filenotfound
-    } else if errorDescription.contains("malformed") || errorDescription.contains("corrupt") {
+    case "Malformed":
       return .malformedfile
-    } else {
+    case "FileNotFound":
+      return .filenotfound
+    case "NoStateMachineInputFound":
+      return .incorrectanimationname
+    case "TextRunNotFoundError":
+      return .textrunnotfounderror
+    case "DataBindingError":
+      return .databindingerror
+    default:
       return .unknown
     }
   }
