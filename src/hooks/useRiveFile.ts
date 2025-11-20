@@ -85,7 +85,6 @@ export function useRiveFile(
     [options.referencedAssets]
   );
   const initialReferencedAssets = useRef(referencedAssets);
-  const initialInput = useRef(input);
 
   useEffect(() => {
     let currentFile: RiveFile | null = null;
@@ -161,12 +160,6 @@ export function useRiveFile(
       }
     }
   }, [referencedAssets, riveFile]);
-
-  if (initialInput.current !== input) {
-    console.warn(
-      'useRiveFile: Changing input after initial render is not supported.'
-    );
-  }
 
   return {
     riveFile: result.riveFile,
