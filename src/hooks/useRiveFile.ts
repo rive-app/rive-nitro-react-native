@@ -85,7 +85,6 @@ export function useRiveFile(
     [options.referencedAssets]
   );
   const initialReferencedAssets = useRef(referencedAssets);
-  const initialInput = useRef(input);
 
   useEffect(() => {
     let currentFile: RiveFile | null = null;
