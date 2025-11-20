@@ -56,7 +56,7 @@ You can also privately share the `.riv`/`.rev` file with us at hello@rive.app.
 - OS: [e.g. Android SDK API Level 30, iOS 14.5]
 - React Native Version: [Check your package.json or run `npx react-native info` e.g.: `0.79.2`]
 - Expo Version (if applicable): [Check your package.json or run `npx expo-env-info | grep 'expo:'` e.g.: `~54.0.0`]
-- rive-nitro-react-native Version: [Check your package.json e.g.: `7.0.0`]
+- rive-nitro-react-native Version: [Check your package.json e.g.: `0.1.0`]
 
 #### Additional context
 <!-- Add any other context about the problem here. -->
