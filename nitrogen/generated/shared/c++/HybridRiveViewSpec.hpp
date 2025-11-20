@@ -25,6 +25,8 @@ namespace margelo::nitro::rive { class HybridViewModelInstanceSpec; }
 namespace margelo::nitro::rive { enum class DataBindMode; }
 // Forward declaration of `DataBindByName` to properly resolve imports.
 namespace margelo::nitro::rive { struct DataBindByName; }
+// Forward declaration of `RiveError` to properly resolve imports.
+namespace margelo::nitro::rive { struct RiveError; }
 // Forward declaration of `UnifiedRiveEvent` to properly resolve imports.
 namespace margelo::nitro::rive { struct UnifiedRiveEvent; }
 
@@ -38,9 +40,10 @@ namespace margelo::nitro::rive { struct UnifiedRiveEvent; }
 #include "DataBindMode.hpp"
 #include "DataBindByName.hpp"
 #include <variant>
+#include "RiveError.hpp"
+#include <functional>
 #include <NitroModules/Promise.hpp>
 #include "UnifiedRiveEvent.hpp"
-#include <functional>
 
 namespace margelo::nitro::rive {
 
@@ -85,6 +88,8 @@ namespace margelo::nitro::rive {
       virtual void setLayoutScaleFactor(std::optional<double> layoutScaleFactor) = 0;
       virtual std::optional<std::variant<std::shared_ptr<HybridViewModelInstanceSpec>, DataBindMode, DataBindByName>> getDataBind() = 0;
       virtual void setDataBind(const std::optional<std::variant<std::shared_ptr<HybridViewModelInstanceSpec>, DataBindMode, DataBindByName>>& dataBind) = 0;
+      virtual std::function<void(const RiveError& /* error */)> getOnError() = 0;
+      virtual void setOnError(const std::function<void(const RiveError& /* error */)>& onError) = 0;
 
     public:
       // Methods

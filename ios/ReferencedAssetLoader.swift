@@ -23,18 +23,14 @@ func createIncorrectRiveURL(_ url: String) -> NSError {
     ])
 }
 
-func createAssetFileError(_ assetName: String) -> NSError {
-  return NSError(
-    domain: RiveErrorDomain, code: 801,
-    userInfo: [
-      NSLocalizedDescriptionKey: "Could not load Rive asset: \(assetName)", "name": "FileNotFound",
-    ])
+func createAssetFileError(_ assetName: String) -> NitroRiveError {
+  return NitroRiveError.fileNotFound(message: "Could not load Rive asset: \(assetName)")
 }
 
 final class ReferencedAssetLoader {
-  private func handleRiveError(error: NSError) {
+  private func handleRiveError(error: Error) {
     // TODO allow user to specify onError callback
-    RCTLogError(error.localizedDescription)
+    RCTLogError("\(error)")
   }
 
   private func handleInvalidUrlError(url: String) {

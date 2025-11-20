@@ -310,6 +310,25 @@ open class HybridRiveViewSpec_cxx {
       }()
     }
   }
+  
+  public final var onError: bridge.Func_void_RiveError {
+    @inline(__always)
+    get {
+      return { () -> bridge.Func_void_RiveError in
+        let __closureWrapper = Func_void_RiveError(self.__implementation.onError)
+        return bridge.create_Func_void_RiveError(__closureWrapper.toUnsafe())
+      }()
+    }
+    @inline(__always)
+    set {
+      self.__implementation.onError = { () -> (RiveError) -> Void in
+        let __wrappedFunction = bridge.wrap_Func_void_RiveError(newValue)
+        return { (__error: RiveError) -> Void in
+          __wrappedFunction.call(__error)
+        }
+      }()
+    }
+  }
 
   // Methods
   @inline(__always)

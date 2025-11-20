@@ -111,6 +111,11 @@ using namespace margelo::nitro::rive::views;
     swiftPart.setDataBind(newViewProps.dataBind.value);
     newViewProps.dataBind.isDirty = false;
   }
+  // onError: function
+  if (newViewProps.onError.isDirty) {
+    swiftPart.setOnError(newViewProps.onError.value);
+    newViewProps.onError.isDirty = false;
+  }
 
   swiftPart.afterUpdate();
 

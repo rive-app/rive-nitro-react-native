@@ -4,9 +4,7 @@ import type {
   RiveFileFactory as RiveFileFactoryInternal,
 } from '../specs/RiveFile.nitro';
 
-// This import path isn't handled by @types/react-native
-// @ts-ignore
-import resolveAssetSource from 'react-native/Libraries/Image/resolveAssetSource';
+import { Image } from 'react-native';
 import type { ResolvedReferencedAssets } from './ReferencedAssets';
 
 const RiveFileInternal =
@@ -119,7 +117,9 @@ export namespace RiveFileFactory {
     const assetID = typeof source === 'number' ? source : null;
     const sourceURI = typeof source === 'object' ? source.uri : null;
 
-    const assetURI = assetID ? resolveAssetSource(assetID)?.uri : sourceURI;
+    const assetURI = assetID
+      ? Image.resolveAssetSource(assetID)?.uri
+      : sourceURI;
 
     if (!assetURI) {
       throw new Error(

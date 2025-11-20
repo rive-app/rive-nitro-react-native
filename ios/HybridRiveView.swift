@@ -56,6 +56,7 @@ class HybridRiveView: HybridRiveViewSpec {
   var alignment: Alignment?
   var fit: Fit?
   var layoutScaleFactor: Double?
+  var onError: (RiveError) -> Void = { _ in }
 
   func awaitViewReady() throws -> Promise<Bool> {
     return Promise.async { [self] in
@@ -141,7 +142,7 @@ class HybridRiveView: HybridRiveViewSpec {
       )
 
       let riveView = try getRiveView()
-      riveView.configure(
+      try riveView.configure(
         config, dataBindingChanged: dataBindingChanged, reload: needsReload,
         initialUpdate: initialUpdate)
       needsReload = false
@@ -184,6 +185,54 @@ class HybridRiveView: HybridRiveViewSpec {
     case .none: return .noFit
     case .scaledown: return .scaleDown
     case .layout: return .layout
+    }
+  }
+}
+
+extension HybridRiveView {
+  func logged(tag: String, note: String? = nil, _ fn: () throws -> Void) {
+    do {
+      return try fn()
+    } catch (let e) {
+      let (errorType, errorDescription) = detectErrorType(e)
+      let noteString = note.map { " \($0)" } ?? ""
+      let errorMessage = "[RIVE] \(tag)\(noteString) \(errorDescription)"
+
+      let riveError = RiveError(
+        message: errorMessage,
+        type: errorType
+      )
+      onError(riveError)
+    }
+  }
+
+  private func detectErrorType(_ error: Error) -> (RiveErrorType, String) {
+    switch error {
+    case NitroRiveError.instanceNotFound(let message):
+      return (.viewmodelinstancenotfound, message)
+    case NitroRiveError.fileNotFound(let message):
+      return (.filenotfound, message)
+    default:
+      break
+    }
+
+    let nsError = error as NSError
+    let message = nsError.localizedDescription
+
+    // RiveErrorCode from RiveRuntime
+    switch nsError.code {
+    case RiveErrorCode.noArtboardFound.rawValue:
+      return (.incorrectartboardname, message)
+    case RiveErrorCode.noStateMachineFound.rawValue:
+      return (.incorrectstatemachinename, message)
+    case RiveErrorCode.noAnimationFound.rawValue:
+      return (.unknown, message)
+    case RiveErrorCode.malformedFile.rawValue:
+      return (.malformedfile, message)
+    case RiveErrorCode.noStateMachineInputFound.rawValue:
+      return (.incorrectstatemachineinputname, message)
+    default:
+      return (.unknown, message)
     }
   }
 }

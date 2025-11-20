@@ -8,6 +8,7 @@ import { Fit } from '../core/Fit';
 import type { ViewModelInstance } from './ViewModel.nitro';
 import type { Alignment } from '../core/Alignment';
 import type { UnifiedRiveEvent, RiveEvent } from '../core/Events';
+import type { RiveError } from '../core/Errors';
 
 export enum DataBindMode {
   Auto,
@@ -38,6 +39,8 @@ export interface RiveViewProps extends HybridViewProps {
   layoutScaleFactor?: number;
   /** The view model instance to bind, to the state machine. Defaults to DataBindMode.Auto */
   dataBind?: ViewModelInstance | DataBindMode | DataBindByName;
+  /** Callback function that is called when an error occurs */
+  onError: (error: RiveError) => void;
 }
 
 /**

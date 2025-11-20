@@ -24,6 +24,10 @@ namespace margelo::nitro::rive { class HybridViewModelInstanceSpec; }
 namespace margelo::nitro::rive { enum class DataBindMode; }
 // Forward declaration of `DataBindByName` to properly resolve imports.
 namespace margelo::nitro::rive { struct DataBindByName; }
+// Forward declaration of `RiveError` to properly resolve imports.
+namespace margelo::nitro::rive { struct RiveError; }
+// Forward declaration of `RiveErrorType` to properly resolve imports.
+namespace margelo::nitro::rive { enum class RiveErrorType; }
 // Forward declaration of `UnifiedRiveEvent` to properly resolve imports.
 namespace margelo::nitro::rive { struct UnifiedRiveEvent; }
 // Forward declaration of `RiveEventType` to properly resolve imports.
@@ -39,9 +43,11 @@ namespace margelo::nitro::rive { enum class RiveEventType; }
 #include "DataBindMode.hpp"
 #include "DataBindByName.hpp"
 #include <variant>
+#include "RiveError.hpp"
+#include <functional>
+#include "RiveErrorType.hpp"
 #include <NitroModules/Promise.hpp>
 #include "UnifiedRiveEvent.hpp"
-#include <functional>
 #include "RiveEventType.hpp"
 #include <unordered_map>
 
@@ -140,6 +146,13 @@ namespace margelo::nitro::rive {
     }
     inline void setDataBind(const std::optional<std::variant<std::shared_ptr<HybridViewModelInstanceSpec>, DataBindMode, DataBindByName>>& dataBind) noexcept override {
       _swiftPart.setDataBind(dataBind);
+    }
+    inline std::function<void(const RiveError& /* error */)> getOnError() noexcept override {
+      auto __result = _swiftPart.getOnError();
+      return __result;
+    }
+    inline void setOnError(const std::function<void(const RiveError& /* error */)>& onError) noexcept override {
+      _swiftPart.setOnError(onError);
     }
 
   public:

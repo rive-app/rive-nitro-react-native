@@ -50,6 +50,10 @@ namespace margelo::nitro::rive { class HybridViewModelTriggerPropertySpec; }
 namespace margelo::nitro::rive { struct ReferencedAssetsType; }
 // Forward declaration of `ResolvedReferencedAsset` to properly resolve imports.
 namespace margelo::nitro::rive { struct ResolvedReferencedAsset; }
+// Forward declaration of `RiveErrorType` to properly resolve imports.
+namespace margelo::nitro::rive { enum class RiveErrorType; }
+// Forward declaration of `RiveError` to properly resolve imports.
+namespace margelo::nitro::rive { struct RiveError; }
 // Forward declaration of `RiveEventType` to properly resolve imports.
 namespace margelo::nitro::rive { enum class RiveEventType; }
 // Forward declaration of `UnifiedRiveEvent` to properly resolve imports.
@@ -77,6 +81,8 @@ namespace margelo::nitro::rive { struct UnifiedRiveEvent; }
 #include "HybridViewModelTriggerPropertySpec.hpp"
 #include "ReferencedAssetsType.hpp"
 #include "ResolvedReferencedAsset.hpp"
+#include "RiveError.hpp"
+#include "RiveErrorType.hpp"
 #include "RiveEventType.hpp"
 #include "UnifiedRiveEvent.hpp"
 #include <NitroModules/ArrayBuffer.hpp>
