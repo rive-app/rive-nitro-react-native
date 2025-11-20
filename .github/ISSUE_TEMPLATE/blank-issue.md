@@ -1,5 +1,5 @@
 ---
-name: I have a problem with rive-react-native
+name: I have a problem with rive-nitro-react-native
 about: Tell us what's wrong
 title: ''
 labels: ''
