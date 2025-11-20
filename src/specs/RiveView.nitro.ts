@@ -59,7 +59,7 @@ export interface RiveViewMethods extends HybridViewMethods {
    * Gets the currently bound view model instance from the Rive view
    * @returns The bound ViewModelInstance, or null if none is bound
    */
-  getViewModelInstance(): ViewModelInstance | null;
+  getViewModelInstance(): ViewModelInstance | undefined;
   /** Starts playing the Rive graphic */
   play(): void;
   /** Pauses the the Rive graphic */

@@ -24,7 +24,7 @@ export function useRiveProperty<P extends ViewModelProperty, T>(
   path: string,
   options: {
     /** Function to get the property from a ViewModelInstance */
-    getProperty: (vm: ViewModelInstance, path: string) => P | null;
+    getProperty: (vm: ViewModelInstance, path: string) => P | undefined;
     /** Optional override callback for property events (mainly used by triggers) */
     onPropertyEventOverride?: (...args: any[]) => void;
   }

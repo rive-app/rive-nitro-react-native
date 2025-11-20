@@ -22,6 +22,7 @@
 #include "HybridViewModelStringPropertySpecSwift.hpp"
 #include "HybridViewModelTriggerPropertySpecSwift.hpp"
 #include "RNRive-Swift-Cxx-Umbrella.hpp"
+#include <NitroModules/NitroDefines.hpp>
 
 namespace margelo::nitro::rive::bridge::swift {
 

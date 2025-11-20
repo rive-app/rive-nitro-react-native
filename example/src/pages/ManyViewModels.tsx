@@ -64,7 +64,7 @@ function BindModeSelector({
 
 function getDataBindValue(
   mode: BindModeOption,
-  greenInstance: ViewModelInstance | null
+  greenInstance: ViewModelInstance | undefined
 ) {
   if (mode === 'none') return DataBindMode.None;
   if (mode === 'auto') return DataBindMode.Auto;
@@ -80,14 +80,14 @@ export default function ManyViewModels() {
 
   // Create a ViewModelInstance for "green" to demonstrate instance binding
   const greenInstance = useMemo(() => {
-    if (!riveFile) return null;
+    if (!riveFile) return undefined;
     try {
       const viewModel = riveFile.defaultArtboardViewModel();
-      if (!viewModel) return null;
+      if (!viewModel) return undefined;
       return viewModel.createInstanceByName('green');
     } catch (e) {
       console.error('Failed to create green instance:', e);
-      return null;
+      return undefined;
     }
   }, [riveFile]);
 

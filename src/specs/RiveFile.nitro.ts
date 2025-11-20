@@ -21,11 +21,11 @@ export interface RiveFile
   /** The number of view models in the Rive file */
   readonly viewModelCount?: number;
   /** Get a view model by index */
-  viewModelByIndex(index: number): ViewModel | null;
+  viewModelByIndex(index: number): ViewModel | undefined;
   /** Get a view model by name */
-  viewModelByName(name: string): ViewModel | null;
+  viewModelByName(name: string): ViewModel | undefined;
   /** Returns the default view model for the provided artboard */
-  defaultArtboardViewModel(artboardBy?: ArtboardBy): ViewModel | null;
+  defaultArtboardViewModel(artboardBy?: ArtboardBy): ViewModel | undefined;
   /** Release the Rive file. Important to call when done with the file to free resources. */
   release(): void; // TODO: Switch to `dispose`: https://github.com/mrousavy/nio
   updateReferencedAssets(referencedAssets: ReferencedAssetsType): void;
