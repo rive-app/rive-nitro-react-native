@@ -5,6 +5,8 @@
       "env": ["ORG_GRADLE_PROJECT_newArchEnabled"],
       "inputs": [
         "package.json",
+        "nitro.json",
+        "nitrogen/generated/android/**",
         "android",
         "!android/build",
         "src/*.ts",
@@ -21,6 +23,8 @@
       "env": ["RCT_NEW_ARCH_ENABLED"],
       "inputs": [
         "package.json",
+        "nitro.json",
+        "nitrogen/generated/ios/**",
         "*.podspec",
         "ios",
         "src/*.ts",
