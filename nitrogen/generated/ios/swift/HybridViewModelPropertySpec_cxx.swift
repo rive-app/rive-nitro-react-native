@@ -20,7 +20,7 @@ import NitroModules
 open class HybridViewModelPropertySpec_cxx {
   /**
    * The Swift <> C++ bridge's namespace (`margelo::nitro::rive::bridge::swift`)
-   * from `react_native_rive-Swift-Cxx-Bridge.hpp`.
+   * from `RNRive-Swift-Cxx-Bridge.hpp`.
    * This contains specialized C++ templates, and C++ helper functions that can be accessed from Swift.
    */
   public typealias bridge = margelo.nitro.rive.bridge.swift

@@ -8204,7 +8204,6 @@ __metadata:
     react-native-gesture-handler: ~2.28.0
     react-native-nitro-modules: ^0.31.3
     react-native-reanimated: ~4.1.1
-    react-native-rive: "*"
     react-native-safe-area-context: ~5.6.0
     react-native-screens: ~4.16.0
     react-native-web: ~0.21.0
@@ -13901,7 +13900,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"react-native-rive@*, react-native-rive@workspace:.":
+"react-native-rive@workspace:.":
   version: 0.0.0-use.local
   resolution: "react-native-rive@workspace:."
   dependencies:

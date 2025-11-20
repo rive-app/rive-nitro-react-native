@@ -2,7 +2,7 @@
   "$schema": "https://nitro.margelo.com/nitro.schema.json",
   "cxxNamespace": ["rive"],
   "ios": {
-    "iosModuleName": "react_native_rive"
+    "iosModuleName": "RNRive"
   },
   "android": {
     "androidNamespace": ["rive"],
