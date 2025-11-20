@@ -46,6 +46,10 @@ object DefaultConfiguration {
 @Keep
 @DoNotStrip
 class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
+  companion object {
+    private const val TAG = "HybridRiveView"
+  }
+
   //region State
   override val view: RiveReactNativeView = RiveReactNativeView(context)
   private var needsReload = false
