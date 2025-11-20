@@ -10,7 +10,7 @@
 #include "HybridRiveViewSpec.hpp"
 
 // Forward declaration of `HybridRiveViewSpec_cxx` to properly resolve imports.
-namespace react_native_rive { class HybridRiveViewSpec_cxx; }
+namespace RNRive { class HybridRiveViewSpec_cxx; }
 
 // Forward declaration of `HybridRiveFileSpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridRiveFileSpec; }
@@ -51,7 +51,7 @@ namespace margelo::nitro::rive { enum class RiveEventType; }
 #include "RiveEventType.hpp"
 #include <unordered_map>
 
-#include "react_native_rive-Swift-Cxx-Umbrella.hpp"
+#include "RNRive-Swift-Cxx-Umbrella.hpp"
 
 namespace margelo::nitro::rive {
 
@@ -68,13 +68,13 @@ namespace margelo::nitro::rive {
   class HybridRiveViewSpecSwift: public virtual HybridRiveViewSpec {
   public:
     // Constructor from a Swift instance
-    explicit HybridRiveViewSpecSwift(const react_native_rive::HybridRiveViewSpec_cxx& swiftPart):
+    explicit HybridRiveViewSpecSwift(const RNRive::HybridRiveViewSpec_cxx& swiftPart):
       HybridObject(HybridRiveViewSpec::TAG),
       _swiftPart(swiftPart) { }
 
   public:
     // Get the Swift part
-    inline react_native_rive::HybridRiveViewSpec_cxx& getSwiftPart() noexcept {
+    inline RNRive::HybridRiveViewSpec_cxx& getSwiftPart() noexcept {
       return _swiftPart;
     }
 
@@ -253,7 +253,7 @@ namespace margelo::nitro::rive {
     }
 
   private:
-    react_native_rive::HybridRiveViewSpec_cxx _swiftPart;
+    RNRive::HybridRiveViewSpec_cxx _swiftPart;
   };
 
 } // namespace margelo::nitro::rive

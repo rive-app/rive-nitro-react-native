@@ -31,7 +31,7 @@ end
 Pod::UI.puts "react-native-rive: Rive iOS SDK #{rive_ios_version}"
 
 Pod::Spec.new do |s|
-  s.name         = "react_native_rive"
+  s.name         = "RNRive"
   s.version      = package["version"]
   s.summary      = package["description"]
   s.homepage     = package["homepage"]
@@ -44,7 +44,7 @@ Pod::Spec.new do |s|
   s.source_files = "ios/**/*.{h,m,mm,swift}"
 
   s.public_header_files = ['ios/RCTSwiftLog.h']
-  load 'nitrogen/generated/ios/react_native_rive+autolinking.rb'
+  load 'nitrogen/generated/ios/RNRive+autolinking.rb'
   add_nitrogen_files(s)
 
   s.dependency "RiveRuntime", rive_ios_version

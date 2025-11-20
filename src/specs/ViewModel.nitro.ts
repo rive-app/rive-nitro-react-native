@@ -13,13 +13,13 @@ export interface ViewModel
   /** The name of the view model */
   readonly modelName: string;
   /** Create a new instance of the view model by index */
-  createInstanceByIndex(index: number): ViewModelInstance | null;
+  createInstanceByIndex(index: number): ViewModelInstance | undefined;
   /** Create a new instance of the view model by name */
-  createInstanceByName(name: string): ViewModelInstance | null;
+  createInstanceByName(name: string): ViewModelInstance | undefined;
   /** Create the default instance of the view model */
-  createDefaultInstance(): ViewModelInstance | null;
+  createDefaultInstance(): ViewModelInstance | undefined;
   /** Create an empty/new view model instance */
-  createInstance(): ViewModelInstance | null;
+  createInstance(): ViewModelInstance | undefined;
 }
 
 /**
@@ -32,22 +32,22 @@ export interface ViewModelInstance
   /** The name of the view model instance */
   readonly instanceName: string;
   /** Get a number property from the view model instance at the given path */
-  numberProperty(path: string): ViewModelNumberProperty | null;
+  numberProperty(path: string): ViewModelNumberProperty | undefined;
 
   /** Get a string property from the view model instance at the given path */
-  stringProperty(path: string): ViewModelStringProperty | null;
+  stringProperty(path: string): ViewModelStringProperty | undefined;
 
   /** Get a boolean property from the view model instance at the given path */
-  booleanProperty(path: string): ViewModelBooleanProperty | null;
+  booleanProperty(path: string): ViewModelBooleanProperty | undefined;
 
   /** Get a color property from the view model instance at the given path */
-  colorProperty(path: string): ViewModelColorProperty | null;
+  colorProperty(path: string): ViewModelColorProperty | undefined;
 
   /** Get an enum property from the view model instance at the given path */
-  enumProperty(path: string): ViewModelEnumProperty | null;
+  enumProperty(path: string): ViewModelEnumProperty | undefined;
 
   /** Get a trigger property from the view model instance at the given path */
-  triggerProperty(path: string): ViewModelTriggerProperty | null;
+  triggerProperty(path: string): ViewModelTriggerProperty | undefined;
 }
 
 export interface ViewModelProperty

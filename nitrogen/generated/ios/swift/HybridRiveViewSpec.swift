@@ -7,7 +7,6 @@
 
 import Foundation
 import NitroModules
-import NitroModules
 
 /// See ``HybridRiveViewSpec``
 public protocol HybridRiveViewSpec_protocol: HybridObject, HybridView {

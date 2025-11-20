@@ -23,7 +23,7 @@ Rive React Native 2.0
 ## Installation
 
 ```sh
-npm install react-native-rive react-native-nitro-modules
+npm install rive-app/rive-nitro-react-native react-native-nitro-modules
 ```
 
 > `react-native-nitro-modules` is required as this library relies on [Nitro Modules](https://nitro.margelo.com/).

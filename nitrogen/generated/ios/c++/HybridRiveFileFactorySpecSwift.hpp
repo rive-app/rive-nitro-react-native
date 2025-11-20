@@ -10,7 +10,7 @@
 #include "HybridRiveFileFactorySpec.hpp"
 
 // Forward declaration of `HybridRiveFileFactorySpec_cxx` to properly resolve imports.
-namespace react_native_rive { class HybridRiveFileFactorySpec_cxx; }
+namespace RNRive { class HybridRiveFileFactorySpec_cxx; }
 
 // Forward declaration of `HybridRiveFileSpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridRiveFileSpec; }
@@ -32,7 +32,7 @@ namespace NitroModules { class ArrayBufferHolder; }
 #include <NitroModules/ArrayBuffer.hpp>
 #include <NitroModules/ArrayBufferHolder.hpp>
 
-#include "react_native_rive-Swift-Cxx-Umbrella.hpp"
+#include "RNRive-Swift-Cxx-Umbrella.hpp"
 
 namespace margelo::nitro::rive {
 
@@ -49,13 +49,13 @@ namespace margelo::nitro::rive {
   class HybridRiveFileFactorySpecSwift: public virtual HybridRiveFileFactorySpec {
   public:
     // Constructor from a Swift instance
-    explicit HybridRiveFileFactorySpecSwift(const react_native_rive::HybridRiveFileFactorySpec_cxx& swiftPart):
+    explicit HybridRiveFileFactorySpecSwift(const RNRive::HybridRiveFileFactorySpec_cxx& swiftPart):
       HybridObject(HybridRiveFileFactorySpec::TAG),
       _swiftPart(swiftPart) { }
 
   public:
     // Get the Swift part
-    inline react_native_rive::HybridRiveFileFactorySpec_cxx& getSwiftPart() noexcept {
+    inline RNRive::HybridRiveFileFactorySpec_cxx& getSwiftPart() noexcept {
       return _swiftPart;
     }
 
@@ -110,7 +110,7 @@ namespace margelo::nitro::rive {
     }
 
   private:
-    react_native_rive::HybridRiveFileFactorySpec_cxx _swiftPart;
+    RNRive::HybridRiveFileFactorySpec_cxx _swiftPart;
   };
 
 } // namespace margelo::nitro::rive

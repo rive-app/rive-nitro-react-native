@@ -15,7 +15,7 @@
 #import <UIKit/UIKit.h>
 
 #import "HybridRiveViewSpecSwift.hpp"
-#import "react_native_rive-Swift-Cxx-Umbrella.hpp"
+#import "RNRive-Swift-Cxx-Umbrella.hpp"
 
 using namespace facebook;
 using namespace margelo::nitro::rive;
@@ -42,7 +42,7 @@ using namespace margelo::nitro::rive::views;
 
 - (instancetype) init {
   if (self = [super init]) {
-    std::shared_ptr<HybridRiveViewSpec> hybridView = react_native_rive::react_native_riveAutolinking::createRiveView();
+    std::shared_ptr<HybridRiveViewSpec> hybridView = RNRive::RNRiveAutolinking::createRiveView();
     _hybridView = std::dynamic_pointer_cast<HybridRiveViewSpecSwift>(hybridView);
     [self updateView];
   }
@@ -51,7 +51,7 @@ using namespace margelo::nitro::rive::views;
 
 - (void) updateView {
   // 1. Get Swift part
-  react_native_rive::HybridRiveViewSpec_cxx& swiftPart = _hybridView->getSwiftPart();
+  RNRive::HybridRiveViewSpec_cxx& swiftPart = _hybridView->getSwiftPart();
 
   // 2. Get UIView*
   void* viewUnsafe = swiftPart.getView();
@@ -66,7 +66,7 @@ using namespace margelo::nitro::rive::views;
   // 1. Downcast props
   const auto& newViewPropsConst = *std::static_pointer_cast<HybridRiveViewProps const>(props);
   auto& newViewProps = const_cast<HybridRiveViewProps&>(newViewPropsConst);
-  react_native_rive::HybridRiveViewSpec_cxx& swiftPart = _hybridView->getSwiftPart();
+  RNRive::HybridRiveViewSpec_cxx& swiftPart = _hybridView->getSwiftPart();
 
   // 2. Update each prop individually
   swiftPart.beforeUpdate();
