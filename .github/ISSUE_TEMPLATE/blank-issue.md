@@ -10,7 +10,7 @@ assignees: ''
 <!-- Thanks for using Rive!
 
 If something isn't working like you expected, please:
-- Make sure you've updated rive-react-native to the latest version:
+- Make sure you've updated rive-nitro-react-native to the latest version:
             https://www.npmjs.com/package/rive-react-native
 - Check out our help center
             https://help.rive.app/
