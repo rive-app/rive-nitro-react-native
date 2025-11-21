@@ -6,3 +6,4 @@ export { default as StateMachineInputsExample } from './RiveStateMachineInputsEx
 export { default as TextRunExample } from './RiveTextRunExample';
 export { default as OutOfBandAssets } from './OutOfBandAssets';
 export { default as ManyViewModels } from './ManyViewModels';
+export { default as ResponsiveLayouts } from './ResponsiveLayouts';
