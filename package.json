@@ -42,7 +42,8 @@
     "nitrogen": "nitrogen",
     "release": "release-it",
     "dev:ios": "cd example && xed ios",
-    "dev:android": "cd example && open -a \"/Applications/Android Studio.app\" ./android"
+    "dev:android": "cd example && open -a \"/Applications/Android Studio.app\" ./android",
+    "copy:nitrogen-config": "mkdir -p lib/nitrogen/generated/shared/json && cp nitrogen/generated/shared/json/RiveViewConfig.json lib/nitrogen/generated/shared/json/"
   },
   "keywords": [
     "react-native",
@@ -161,12 +162,6 @@
     "output": "lib",
     "targets": [
       [
-        "custom",
-        {
-          "script": "nitrogen"
-        }
-      ],
-      [
         "module",
         {
           "esm": true
@@ -176,6 +171,13 @@
         "typescript",
         {
           "project": "tsconfig.build.json"
+        }
+      ],
+      [
+        "custom",
+        {
+          "script": "copy:nitrogen-config",
+          "clean": "lib/nitrogen"
         }
       ]
     ]
