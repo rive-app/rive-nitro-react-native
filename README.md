@@ -116,7 +116,7 @@ export default {
 
 ## Error Handling
 
-All Rive operations can be wrapped in try/catch blocks for error handling:
+All Rive operations can be wrapped in try/catch blocks for error handling, for example, loading a file:
 
 ```js
 try {
@@ -125,10 +125,71 @@ try {
   );
   // Use the riveFile...
 } catch (error) {
-  // Handle any errors that occur during Rive operations
+  // Handle any errors that occur during Rive file loading
   console.error('Error loading Rive file:', error);
 }
 ```
+
+### View-Based Errors
+
+The `RiveView` component provides an `onError` callback prop to handle errors that occur during view configuration or runtime operations:
+
+```js
+<RiveView
+  file={riveFile}
+  onError={(error) => {
+    // error.type contains the error type enum value
+    // error.message contains a descriptive error message
+    console.error(`Rive Error [${error.type}]: ${error.message}`);
+  }}
+/>
+```
+
+#### Error Types
+
+The following error types can occur during view operations:
+
+| Error Type                                     | Value | Description                                           |
+| ---------------------------------------------- | ----- | ----------------------------------------------------- |
+| `RiveErrorType.Unknown`                        | 0     | An unknown error occurred                             |
+| `RiveErrorType.FileNotFound`                   | 1     | The specified Rive file could not be found            |
+| `RiveErrorType.MalformedFile`                  | 2     | The Rive file is malformed or corrupted               |
+| `RiveErrorType.IncorrectArtboardName`          | 3     | The specified artboard name does not exist            |
+| `RiveErrorType.IncorrectStateMachineName`      | 4     | The specified state machine name does not exist       |
+| `RiveErrorType.ViewModelInstanceNotFound`      | 6     | The specified view model instance was not found       |
+| `RiveErrorType.IncorrectStateMachineInputName` | 8     | The specified state machine input name does not exist |
+
+You can use these error types to provide specific error handling:
+
+```js
+import { RiveView, RiveErrorType } from 'react-native-rive';
+
+<RiveView
+  file={riveFile}
+  artboardName="MainArtboard"
+  onError={(error) => {
+    switch (error.type) {
+      case RiveErrorType.IncorrectArtboardName:
+        console.error('Artboard not found:', error.message);
+        // Handle missing artboard (e.g., use default artboard)
+        break;
+      case RiveErrorType.IncorrectStateMachineName:
+        console.error('State machine not found:', error.message);
+        // Handle missing state machine
+        break;
+      case RiveErrorType.MalformedFile:
+        console.error('Corrupted file:', error.message);
+        // Handle corrupted file (e.g., show error UI)
+        break;
+      default:
+        console.error('Rive error:', error.message);
+    }
+  }}
+  style={{ width: '100%', height: 400 }}
+/>;
+```
+
+> **Note**: If no `onError` handler is provided, errors will be logged to the console by default.
 
 ## Feature Support
 
