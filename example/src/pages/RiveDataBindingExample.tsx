@@ -10,7 +10,7 @@ import {
   useRiveColor,
   useRiveTrigger,
   useRiveFile,
-} from 'react-native-rive';
+} from '@rive-app/react-native';
 import { type Metadata } from '../helpers/metadata';
 
 export default function WithRiveFile() {

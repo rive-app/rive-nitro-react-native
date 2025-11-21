@@ -1,5 +1,5 @@
 import { useRef, useCallback, useState } from 'react';
-import type { RiveViewRef } from 'react-native-rive';
+import type { RiveViewRef } from '@rive-app/react-native';
 
 export function useRive() {
   const riveRef = useRef<RiveViewRef>(null);

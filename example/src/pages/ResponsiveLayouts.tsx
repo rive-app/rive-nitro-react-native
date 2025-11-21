@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
-import { Fit, RiveView, useRiveFile } from 'react-native-rive';
+import { Fit, RiveView, useRiveFile } from '@rive-app/react-native';
 import { type Metadata } from '../helpers/metadata';
 
 /**

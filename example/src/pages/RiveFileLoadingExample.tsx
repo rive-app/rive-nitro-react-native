@@ -11,7 +11,7 @@ import {
   useRive,
   useRiveFile,
   type RiveFileInput,
-} from 'react-native-rive';
+} from '@rive-app/react-native';
 import { useState, useEffect } from 'react';
 import { downloadFileAsArrayBuffer } from '../helpers/fileHelpers';
 import { type Metadata } from '../helpers/metadata';

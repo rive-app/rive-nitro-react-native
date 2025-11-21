@@ -10,7 +10,7 @@ import {
   /*Rive, */ Fit,
   /*RNRiveError,*/ useRiveFile,
   RiveView,
-} from 'react-native-rive';
+} from '@rive-app/react-native';
 import { Picker } from '@react-native-picker/picker';
 import { type Metadata } from '../helpers/metadata';
 
