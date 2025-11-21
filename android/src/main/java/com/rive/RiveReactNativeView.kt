@@ -64,7 +64,6 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
         artboardName = config.artboardName,
         stateMachineName = config.stateMachineName,
         autoplay = config.autoPlay,
-        autoBind = config.bindData is BindData.Auto,
         alignment = config.alignment,
         fit = config.fit
       )
