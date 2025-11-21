@@ -14,7 +14,7 @@ import {
 import { Picker } from '@react-native-picker/picker';
 import { type Metadata } from '../helpers/metadata';
 
-export default function StateMachine() {
+export default function OutOfBandAssetsExample() {
   const [uri, setUri] = React.useState('https://picsum.photos/id/372/500/500');
   const { riveFile, isLoading, error } = useRiveFile(
     require('../../assets/rive/out_of_band.riv'),
@@ -143,7 +143,7 @@ const styles = StyleSheet.create({
   },
 });
 
-StateMachine.metadata = {
+OutOfBandAssetsExample.metadata = {
   name: 'Out-of-Band Assets',
   description:
     'Shows how to load referenced assets like fonts and images that are not embedded in the Rive file',
