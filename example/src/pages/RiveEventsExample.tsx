@@ -7,7 +7,7 @@ import {
   useRiveFile,
   type RiveEvent,
   RiveEventType,
-} from 'react-native-rive';
+} from '@rive-app/react-native';
 import { type Metadata } from '../helpers/metadata';
 
 /**

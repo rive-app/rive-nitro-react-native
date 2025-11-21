@@ -6,7 +6,7 @@ import {
   RiveView,
   useRiveFile,
   type ViewModelInstance,
-} from 'react-native-rive';
+} from '@rive-app/react-native';
 
 type BindModeOption =
   | 'none'

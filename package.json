@@ -1,5 +1,5 @@
 {
-  "name": "react-native-rive",
+  "name": "@rive-app/react-native",
   "version": "0.1.0",
   "description": "Rive React Native",
   "main": "./lib/module/index.js",

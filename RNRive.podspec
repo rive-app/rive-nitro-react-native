@@ -28,7 +28,7 @@ if !rive_ios_version
   raise "Internal Error: Failed to determine Rive iOS SDK version. Please ensure package.json contains 'runtimeVersions.ios'"
 end
 
-Pod::UI.puts "react-native-rive: Rive iOS SDK #{rive_ios_version}"
+Pod::UI.puts "@rive-app/react-native: Rive iOS SDK #{rive_ios_version}"
 
 Pod::Spec.new do |s|
   s.name         = "RNRive"

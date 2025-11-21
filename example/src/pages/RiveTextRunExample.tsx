@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { useEffect } from 'react';
-import { Fit, RiveView, useRive, useRiveFile } from 'react-native-rive';
+import { Fit, RiveView, useRive, useRiveFile } from '@rive-app/react-native';
 import { type Metadata } from '../helpers/metadata';
 
 /**

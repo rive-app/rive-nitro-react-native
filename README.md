@@ -1,4 +1,4 @@
-# react-native-rive
+# @rive-app/react-native
 
 Rive React Native 2.0
 
@@ -31,7 +31,7 @@ npm install rive-app/rive-nitro-react-native react-native-nitro-modules
 ## Usage
 
 ```js
-import { Fit, RiveView, useRiveFile } from 'react-native-rive';
+import { Fit, RiveView, useRiveFile } from '@rive-app/react-native';
 
 function App() {
   const { riveFile } = useRiveFile({
@@ -56,9 +56,9 @@ function App() {
 
 ## Native SDK Version Customization
 
-> **⚠️ Advanced Usage:** Customizing native SDK versions is intended for advanced users only. Using non-default versions may cause build-time errors, or compatibility issues. Always review and update custom versions when upgrading react-native-rive.
+> **⚠️ Advanced Usage:** Customizing native SDK versions is intended for advanced users only. Using non-default versions may cause build-time errors, or compatibility issues. Always review and update custom versions when upgrading @rive-app/react-native.
 
-By default, react-native-rive uses specific versions of the Rive native SDKs defined in the library's `package.json` (`runtimeVersions.ios` and `runtimeVersions.android`). You can customize these versions if needed.
+By default, @rive-app/react-native uses specific versions of the Rive native SDKs defined in the library's `package.json` (`runtimeVersions.ios` and `runtimeVersions.android`). You can customize these versions if needed.
 
 ### Vanilla React Native
 
@@ -162,7 +162,7 @@ The following error types can occur during view operations:
 You can use these error types to provide specific error handling:
 
 ```js
-import { RiveView, RiveErrorType } from 'react-native-rive';
+import { RiveView, RiveErrorType } from '@rive-app/react-native';
 
 <RiveView
   file={riveFile}
@@ -193,7 +193,7 @@ import { RiveView, RiveErrorType } from 'react-native-rive';
 
 ## Feature Support
 
-This section provides a comprehensive overview of feature availability in `react-native-rive`, comparing it with the [previous Rive React Native runtime](https://github.com/rive-app/rive-react-native) and outlining the development roadmap.
+This section provides a comprehensive overview of feature availability in `@rive-app/react-native`, comparing it with the [previous Rive React Native runtime](https://github.com/rive-app/rive-react-native) and outlining the development roadmap.
 
 ### Runtime Feature Comparison
 

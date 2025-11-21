@@ -5,7 +5,7 @@
     "paths": {
       "@/*": ["./*"],
       "@example/*": ["../example/src/*"],
-      "react-native-rive": ["../src/index"]
+      "@rive-app/react-native": ["../src/index"]
     }
   },
   "include": [
