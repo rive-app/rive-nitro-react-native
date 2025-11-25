@@ -119,6 +119,7 @@ export default function ManyViewModels() {
         'https://picsum.photos/id/372/500/500'
       );
       imgProp.set(riveImage);
+      riveViewRef.current.play();
 
       imgProp.addListener(() => {
         console.log('Image property changed!');
