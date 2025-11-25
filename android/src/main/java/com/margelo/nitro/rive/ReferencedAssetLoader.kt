@@ -14,14 +14,100 @@ import java.io.File as JavaFile
 import java.io.IOException
 import java.net.URI
 import java.net.URL
+import java.security.MessageDigest
+import java.util.concurrent.locks.ReentrantReadWriteLock
+import kotlin.concurrent.read
+import kotlin.concurrent.write
 
 typealias ReferencedAssetCache = MutableMap<String, FileAsset>
 
 class ReferencedAssetLoader {
   private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+  private var isDisposed = false
+  private val cacheLock = ReentrantReadWriteLock()
 
   private fun logError(message: String) {
     Log.e("ReferencedAssetLoader", message)
+  }
+
+  private fun logDebug(message: String) {
+    Log.d("ReferencedAssetLoader", message)
+  }
+
+  /**
+   * Get the cache directory for storing CDN assets
+   */
+  private fun getCacheDir(context: Context): JavaFile {
+    val cacheDir = context.cacheDir
+    val riveCacheDir = JavaFile(cacheDir, "rive_assets")
+    if (!riveCacheDir.exists()) {
+      riveCacheDir.mkdirs()
+    }
+    return riveCacheDir
+  }
+
+  /**
+   * Generate a cache key from a URL or UUID
+   */
+  private fun generateCacheKey(urlOrUuid: String): String {
+    return try {
+      val md = MessageDigest.getInstance("MD5")
+      val hashBytes = md.digest(urlOrUuid.toByteArray())
+      hashBytes.joinToString("") { "%02x".format(it) }
+    } catch (e: Exception) {
+      // Fallback to hash code if MD5 is not available
+      urlOrUuid.hashCode().toString().replace("-", "")
+    }
+  }
+
+  /**
+   * Get cached file path for a URL/UUID
+   */
+  private fun getCachedFilePath(context: Context, urlOrUuid: String): JavaFile {
+    val cacheKey = generateCacheKey(urlOrUuid)
+    return JavaFile(getCacheDir(context), cacheKey)
+  }
+
+  /**
+   * Check if a cached file exists and is valid
+   */
+  private fun getCachedAsset(context: Context, urlOrUuid: String): ByteArray? {
+    return cacheLock.read {
+      val cacheFile = getCachedFilePath(context, urlOrUuid)
+      if (!cacheFile.exists()) {
+        logDebug("Cache miss for: $urlOrUuid")
+        return@read null
+      }
+
+      try {
+        val data = cacheFile.readBytes()
+        if (data.isNotEmpty()) {
+          logDebug("Cache hit for: $urlOrUuid")
+          return@read data
+        }
+      } catch (e: Exception) {
+        logDebug("Error reading cache for $urlOrUuid: ${e.message}")
+      }
+
+      null
+    }
+  }
+
+  /**
+   * Save asset data to cache
+   */
+  private fun saveToCache(context: Context, urlOrUuid: String, data: ByteArray) {
+    scope.launch(Dispatchers.IO) {
+      cacheLock.write {
+        val cacheFile = getCachedFilePath(context, urlOrUuid)
+        try {
+          cacheFile.writeBytes(data)
+          logDebug("Saved to cache: $urlOrUuid (${data.size} bytes)")
+        } catch (e: Exception) {
+          logDebug("Error saving cache for $urlOrUuid: ${e.message}")
+        }
+      }
+    }
   }
 
   private fun isValidUrl(url: String): Boolean {
@@ -63,7 +149,14 @@ class ReferencedAssetLoader {
     }
   }
 
-  private fun downloadUrlAsset(url: String, listener: (ByteArray?) -> Unit) {
+  private fun downloadUrlAsset(url: String, context: Context, listener: (ByteArray?) -> Unit) {
+    // Check if disposed before starting download
+    if (isDisposed) {
+      logDebug("Loader is disposed, skipping download: $url")
+      listener(null)
+      return
+    }
+
     if (!isValidUrl(url)) {
       logError("Invalid URL: $url")
       listener(null)
@@ -82,10 +175,51 @@ class ReferencedAssetLoader {
             if (!file.canRead()) {
               throw IOException("Permission denied: ${uri.path}")
             }
-            file.readBytes()
+            val fileBytes = file.readBytes()
+            // Check again before calling listener
+            if (isDisposed) {
+              logDebug("Loader disposed before calling listener for file: $url")
+              withContext(Dispatchers.Main) {
+                listener(null)
+              }
+              return@launch
+            }
+            fileBytes
           }
           "http", "https" -> {
-            URL(url).readBytes()
+            // Check cache first for HTTP/HTTPS URLs
+            val cachedData = getCachedAsset(context, url)
+            if (cachedData != null) {
+              // Check again before calling listener
+              if (isDisposed) {
+                logDebug("Loader disposed before calling listener for cached: $url")
+                withContext(Dispatchers.Main) {
+                  listener(null)
+                }
+                return@launch
+              }
+              withContext(Dispatchers.Main) {
+                listener(cachedData)
+              }
+              return@launch
+            }
+
+            // Download from network
+            val downloadedBytes = URL(url).readBytes()
+            
+            // Save to cache
+            saveToCache(context, url, downloadedBytes)
+            
+            // Final check before calling listener
+            if (isDisposed) {
+              logDebug("Loader disposed before calling listener: $url")
+              withContext(Dispatchers.Main) {
+                listener(null)
+              }
+              return@launch
+            }
+            
+            downloadedBytes
           }
           else -> {
             logError("Unsupported URL scheme: ${uri.scheme}")
@@ -118,7 +252,7 @@ class ReferencedAssetLoader {
         val scheme = runCatching { Uri.parse(sourceAssetId).scheme }.getOrNull()
 
         if (scheme != null) {
-          downloadUrlAsset(sourceAssetId, listener)
+          downloadUrlAsset(sourceAssetId, context, listener)
           return@launch
         }
 
@@ -180,6 +314,16 @@ class ReferencedAssetLoader {
   }
 
   private fun processAssetBytes(bytes: ByteArray, asset: FileAsset) {
+    // Check if disposed before processing
+    if (isDisposed) {
+      logDebug("Loader is disposed, skipping asset processing: ${asset.name}")
+      return
+    }
+
+    if (bytes.isEmpty()) {
+      return
+    }
+
     when (asset) {
       is ImageAsset -> asset.image = RiveRenderImage.make(bytes)
       is FontAsset -> asset.font = RiveFont.make(bytes)
@@ -188,9 +332,15 @@ class ReferencedAssetLoader {
   }
 
   private fun loadAsset(assetData: ResolvedReferencedAsset, asset: FileAsset, context: Context): Deferred<Unit> {
+    // Check if disposed before starting
+    if (isDisposed) {
+      logDebug("Loader is disposed, skipping asset load: ${asset.name}")
+      return CompletableDeferred<Unit>().apply { complete(Unit) }
+    }
+
     val deferred = CompletableDeferred<Unit>()
     val listener: (ByteArray?) -> Unit = { bytes ->
-      if (bytes != null) {
+      if (bytes != null && !isDisposed) {
         processAssetBytes(bytes, asset)
       }
       deferred.complete(Unit)
@@ -201,7 +351,7 @@ class ReferencedAssetLoader {
         loadResourceAsset(assetData.sourceAssetId, context, listener)
       }
       assetData.sourceUrl != null -> {
-        downloadUrlAsset(assetData.sourceUrl, listener)
+        downloadUrlAsset(assetData.sourceUrl, context, listener)
       }
       assetData.sourceAsset != null -> {
         loadBundledAsset(assetData.sourceAsset, assetData.path, context, listener)
@@ -227,8 +377,49 @@ class ReferencedAssetLoader {
 
     return object : FileAssetLoader() {
       override fun loadContents(asset: FileAsset, inBandBytes: ByteArray): Boolean {
+        // Check if disposed
+        if (isDisposed) {
+          logDebug("Loader is disposed, skipping loadContents for: ${asset.name}")
+          return false
+        }
+
+        // Check for CDN URL/UUID first (only if both are non-empty)
+        val cdnUrl = asset.cdnUrl
+
+        if (cdnUrl != null && cdnUrl.isNotEmpty()) {
+          logDebug("Loading CDN asset from URL: $cdnUrl")
+          
+          val cached = getCachedAsset(context, cdnUrl)
+          if (cached != null) {
+            // Use cached version
+            scope.launch(Dispatchers.IO) {
+              if (!isDisposed) {
+                processAssetBytes(cached, asset)
+              }
+            }
+            cache[asset.uniqueFilename.substringBeforeLast(".")] = asset
+            cache[asset.name] = asset
+            return true
+          } else {
+            // Download and cache
+            cache[asset.uniqueFilename.substringBeforeLast(".")] = asset
+            cache[asset.name] = asset
+            
+            val cdnAssetData = ResolvedReferencedAsset(
+              sourceUrl = cdnUrl,
+              sourceAssetId = null,
+              sourceAsset = null,
+              path = null
+            )
+            loadAsset(cdnAssetData, asset, context)
+            return true
+          }
+        }
+
         var key = asset.uniqueFilename.substringBeforeLast(".")
         var assetData = assetsData[key]
+        cache[key] = asset
+        cache[asset.name] = asset
 
         if (assetData == null) {
           key = asset.name
@@ -239,8 +430,6 @@ class ReferencedAssetLoader {
           return false
         }
 
-        cache[key] = asset
-
         loadAsset(assetData, asset, context)
 
         return true
@@ -249,6 +438,7 @@ class ReferencedAssetLoader {
   }
 
   fun dispose() {
+    isDisposed = true
     scope.cancel()
   }
 }
