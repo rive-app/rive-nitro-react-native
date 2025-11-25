@@ -24,6 +24,10 @@ namespace margelo::nitro::rive { enum class Fit; }
 namespace margelo::nitro::rive { class HybridRiveFileFactorySpec; }
 // Forward declaration of `HybridRiveFileSpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridRiveFileSpec; }
+// Forward declaration of `HybridRiveImageFactorySpec` to properly resolve imports.
+namespace margelo::nitro::rive { class HybridRiveImageFactorySpec; }
+// Forward declaration of `HybridRiveImageSpec` to properly resolve imports.
+namespace margelo::nitro::rive { class HybridRiveImageSpec; }
 // Forward declaration of `HybridRiveSpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridRiveSpec; }
 // Forward declaration of `HybridRiveViewSpec` to properly resolve imports.
@@ -64,6 +68,10 @@ namespace margelo::nitro::rive { struct UnifiedRiveEvent; }
 namespace RNRive { class HybridRiveFileFactorySpec_cxx; }
 // Forward declaration of `HybridRiveFileSpec_cxx` to properly resolve imports.
 namespace RNRive { class HybridRiveFileSpec_cxx; }
+// Forward declaration of `HybridRiveImageFactorySpec_cxx` to properly resolve imports.
+namespace RNRive { class HybridRiveImageFactorySpec_cxx; }
+// Forward declaration of `HybridRiveImageSpec_cxx` to properly resolve imports.
+namespace RNRive { class HybridRiveImageSpec_cxx; }
 // Forward declaration of `HybridRiveSpec_cxx` to properly resolve imports.
 namespace RNRive { class HybridRiveSpec_cxx; }
 // Forward declaration of `HybridRiveViewSpec_cxx` to properly resolve imports.
@@ -96,6 +104,8 @@ namespace RNRive { class HybridViewModelTriggerPropertySpec_cxx; }
 #include "Fit.hpp"
 #include "HybridRiveFileFactorySpec.hpp"
 #include "HybridRiveFileSpec.hpp"
+#include "HybridRiveImageFactorySpec.hpp"
+#include "HybridRiveImageSpec.hpp"
 #include "HybridRiveSpec.hpp"
 #include "HybridRiveViewSpec.hpp"
 #include "HybridViewModelBooleanPropertySpec.hpp"
@@ -220,6 +230,33 @@ namespace margelo::nitro::rive::bridge::swift {
     return optional.has_value();
   }
   inline ArtboardBy get_std__optional_ArtboardBy_(const std::optional<ArtboardBy>& optional) noexcept {
+    return *optional;
+  }
+  
+  // pragma MARK: std::shared_ptr<HybridRiveImageSpec>
+  /**
+   * Specialized version of `std::shared_ptr<HybridRiveImageSpec>`.
+   */
+  using std__shared_ptr_HybridRiveImageSpec_ = std::shared_ptr<HybridRiveImageSpec>;
+  std::shared_ptr<HybridRiveImageSpec> create_std__shared_ptr_HybridRiveImageSpec_(void* NON_NULL swiftUnsafePointer) noexcept;
+  void* NON_NULL get_std__shared_ptr_HybridRiveImageSpec_(std__shared_ptr_HybridRiveImageSpec_ cppType);
+  
+  // pragma MARK: std::weak_ptr<HybridRiveImageSpec>
+  using std__weak_ptr_HybridRiveImageSpec_ = std::weak_ptr<HybridRiveImageSpec>;
+  inline std__weak_ptr_HybridRiveImageSpec_ weakify_std__shared_ptr_HybridRiveImageSpec_(const std::shared_ptr<HybridRiveImageSpec>& strong) noexcept { return strong; }
+  
+  // pragma MARK: std::optional<std::shared_ptr<HybridRiveImageSpec>>
+  /**
+   * Specialized version of `std::optional<std::shared_ptr<HybridRiveImageSpec>>`.
+   */
+  using std__optional_std__shared_ptr_HybridRiveImageSpec__ = std::optional<std::shared_ptr<HybridRiveImageSpec>>;
+  inline std::optional<std::shared_ptr<HybridRiveImageSpec>> create_std__optional_std__shared_ptr_HybridRiveImageSpec__(const std::shared_ptr<HybridRiveImageSpec>& value) noexcept {
+    return std::optional<std::shared_ptr<HybridRiveImageSpec>>(value);
+  }
+  inline bool has_value_std__optional_std__shared_ptr_HybridRiveImageSpec__(const std::optional<std::shared_ptr<HybridRiveImageSpec>>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline std::shared_ptr<HybridRiveImageSpec> get_std__optional_std__shared_ptr_HybridRiveImageSpec__(const std::optional<std::shared_ptr<HybridRiveImageSpec>>& optional) noexcept {
     return *optional;
   }
   
@@ -383,6 +420,61 @@ namespace margelo::nitro::rive::bridge::swift {
   }
   inline Result_std__shared_ptr_Promise_std__shared_ptr_HybridRiveFileSpec____ create_Result_std__shared_ptr_Promise_std__shared_ptr_HybridRiveFileSpec____(const std::exception_ptr& error) noexcept {
     return Result<std::shared_ptr<Promise<std::shared_ptr<HybridRiveFileSpec>>>>::withError(error);
+  }
+  
+  // pragma MARK: std::shared_ptr<Promise<std::shared_ptr<HybridRiveImageSpec>>>
+  /**
+   * Specialized version of `std::shared_ptr<Promise<std::shared_ptr<HybridRiveImageSpec>>>`.
+   */
+  using std__shared_ptr_Promise_std__shared_ptr_HybridRiveImageSpec___ = std::shared_ptr<Promise<std::shared_ptr<HybridRiveImageSpec>>>;
+  inline std::shared_ptr<Promise<std::shared_ptr<HybridRiveImageSpec>>> create_std__shared_ptr_Promise_std__shared_ptr_HybridRiveImageSpec___() noexcept {
+    return Promise<std::shared_ptr<HybridRiveImageSpec>>::create();
+  }
+  inline PromiseHolder<std::shared_ptr<HybridRiveImageSpec>> wrap_std__shared_ptr_Promise_std__shared_ptr_HybridRiveImageSpec___(std::shared_ptr<Promise<std::shared_ptr<HybridRiveImageSpec>>> promise) noexcept {
+    return PromiseHolder<std::shared_ptr<HybridRiveImageSpec>>(std::move(promise));
+  }
+  
+  // pragma MARK: std::function<void(const std::shared_ptr<HybridRiveImageSpec>& /* result */)>
+  /**
+   * Specialized version of `std::function<void(const std::shared_ptr<HybridRiveImageSpec>&)>`.
+   */
+  using Func_void_std__shared_ptr_HybridRiveImageSpec_ = std::function<void(const std::shared_ptr<HybridRiveImageSpec>& /* result */)>;
+  /**
+   * Wrapper class for a `std::function<void(const std::shared_ptr<HybridRiveImageSpec>& / * result * /)>`, this can be used from Swift.
+   */
+  class Func_void_std__shared_ptr_HybridRiveImageSpec__Wrapper final {
+  public:
+    explicit Func_void_std__shared_ptr_HybridRiveImageSpec__Wrapper(std::function<void(const std::shared_ptr<HybridRiveImageSpec>& /* result */)>&& func): _function(std::make_unique<std::function<void(const std::shared_ptr<HybridRiveImageSpec>& /* result */)>>(std::move(func))) {}
+    inline void call(std::shared_ptr<HybridRiveImageSpec> result) const noexcept {
+      _function->operator()(result);
+    }
+  private:
+    std::unique_ptr<std::function<void(const std::shared_ptr<HybridRiveImageSpec>& /* result */)>> _function;
+  } SWIFT_NONCOPYABLE;
+  Func_void_std__shared_ptr_HybridRiveImageSpec_ create_Func_void_std__shared_ptr_HybridRiveImageSpec_(void* NON_NULL swiftClosureWrapper) noexcept;
+  inline Func_void_std__shared_ptr_HybridRiveImageSpec__Wrapper wrap_Func_void_std__shared_ptr_HybridRiveImageSpec_(Func_void_std__shared_ptr_HybridRiveImageSpec_ value) noexcept {
+    return Func_void_std__shared_ptr_HybridRiveImageSpec__Wrapper(std::move(value));
+  }
+  
+  // pragma MARK: std::shared_ptr<HybridRiveImageFactorySpec>
+  /**
+   * Specialized version of `std::shared_ptr<HybridRiveImageFactorySpec>`.
+   */
+  using std__shared_ptr_HybridRiveImageFactorySpec_ = std::shared_ptr<HybridRiveImageFactorySpec>;
+  std::shared_ptr<HybridRiveImageFactorySpec> create_std__shared_ptr_HybridRiveImageFactorySpec_(void* NON_NULL swiftUnsafePointer) noexcept;
+  void* NON_NULL get_std__shared_ptr_HybridRiveImageFactorySpec_(std__shared_ptr_HybridRiveImageFactorySpec_ cppType);
+  
+  // pragma MARK: std::weak_ptr<HybridRiveImageFactorySpec>
+  using std__weak_ptr_HybridRiveImageFactorySpec_ = std::weak_ptr<HybridRiveImageFactorySpec>;
+  inline std__weak_ptr_HybridRiveImageFactorySpec_ weakify_std__shared_ptr_HybridRiveImageFactorySpec_(const std::shared_ptr<HybridRiveImageFactorySpec>& strong) noexcept { return strong; }
+  
+  // pragma MARK: Result<std::shared_ptr<Promise<std::shared_ptr<HybridRiveImageSpec>>>>
+  using Result_std__shared_ptr_Promise_std__shared_ptr_HybridRiveImageSpec____ = Result<std::shared_ptr<Promise<std::shared_ptr<HybridRiveImageSpec>>>>;
+  inline Result_std__shared_ptr_Promise_std__shared_ptr_HybridRiveImageSpec____ create_Result_std__shared_ptr_Promise_std__shared_ptr_HybridRiveImageSpec____(const std::shared_ptr<Promise<std::shared_ptr<HybridRiveImageSpec>>>& value) noexcept {
+    return Result<std::shared_ptr<Promise<std::shared_ptr<HybridRiveImageSpec>>>>::withValue(value);
+  }
+  inline Result_std__shared_ptr_Promise_std__shared_ptr_HybridRiveImageSpec____ create_Result_std__shared_ptr_Promise_std__shared_ptr_HybridRiveImageSpec____(const std::exception_ptr& error) noexcept {
+    return Result<std::shared_ptr<Promise<std::shared_ptr<HybridRiveImageSpec>>>>::withError(error);
   }
   
   // pragma MARK: std::optional<bool>

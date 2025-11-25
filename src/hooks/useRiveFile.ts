@@ -5,6 +5,7 @@ import type {
   RiveFile,
   ResolvedReferencedAsset,
 } from '../specs/RiveFile.nitro';
+import type { RiveImage } from '../specs/RiveImage.nitro';
 import type {
   ReferencedAsset,
   ReferencedAssets,
@@ -18,9 +19,22 @@ export type UseRiveFileOptions = {
   referencedAssets?: ReferencedAssets;
 };
 
-function parsePossibleSources(
-  source: ReferencedAsset['source']
-): ResolvedReferencedAsset {
+function isRiveImage(value: ReferencedAsset): value is RiveImage {
+  return (
+    value !== null &&
+    typeof value === 'object' &&
+    '__type' in value &&
+    value.__type === 'HybridObject<RiveImage>'
+  );
+}
+
+function parsePossibleSources(asset: ReferencedAsset): ResolvedReferencedAsset {
+  if (isRiveImage(asset)) {
+    return { image: asset };
+  }
+
+  const source = asset.source;
+
   if (typeof source === 'number') {
     const resolvedAsset = Image.resolveAssetSource(source);
     if (resolvedAsset && resolvedAsset.uri) {
@@ -35,11 +49,11 @@ function parsePossibleSources(
     return { sourceUrl: uri };
   }
 
-  const asset = (source as any).fileName;
+  const fileName = (source as any).fileName;
   const path = (source as any).path;
 
-  if (typeof source === 'object' && asset) {
-    const result: ResolvedReferencedAsset = { sourceAsset: asset };
+  if (typeof source === 'object' && fileName) {
+    const result: ResolvedReferencedAsset = { sourceAsset: fileName };
 
     if (path) {
       result.path = path;
@@ -59,8 +73,8 @@ function transformFilesHandledMapping(
     return undefined;
   }
 
-  Object.entries(mapping).forEach(([key, option]) => {
-    transformedMapping[key] = parsePossibleSources(option.source);
+  Object.entries(mapping).forEach(([key, asset]) => {
+    transformedMapping[key] = parsePossibleSources(asset);
   });
 
   return transformedMapping;

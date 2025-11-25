@@ -198,10 +198,29 @@ final class ReferencedAssetLoader {
       }, onError: completion)
   }
 
+  private func handlePreloadedImage(
+    _ image: any HybridRiveImageSpec, asset: RiveFileAsset, completion: @escaping () -> Void
+  ) {
+    guard let imageAsset = asset as? RiveImageAsset,
+      let hybridImage = image as? HybridRiveImage
+    else {
+      completion()
+      return
+    }
+
+    imageAsset.renderImage(hybridImage.renderImage)
+    completion()
+  }
+
   private func loadAssetInternal(
     source: ResolvedReferencedAsset, asset: RiveFileAsset, factory: RiveFactory,
     completion: @escaping () -> Void
   ) {
+    if let preloadedImage = source.image {
+      handlePreloadedImage(preloadedImage, asset: asset, completion: completion)
+      return
+    }
+
     let sourceAssetId = source.sourceAssetId
     let sourceUrl = source.sourceUrl
     let sourceAsset = source.sourceAsset

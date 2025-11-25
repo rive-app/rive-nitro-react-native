@@ -5,5 +5,6 @@ export { default as EventsExample } from './RiveEventsExample';
 export { default as StateMachineInputsExample } from './RiveStateMachineInputsExample';
 export { default as TextRunExample } from './RiveTextRunExample';
 export { default as OutOfBandAssets } from './OutOfBandAssets';
+export { default as OutOfBandAssetsWithSuspense } from './OutOfBandAssetsWithSuspense';
 export { default as ManyViewModels } from './ManyViewModels';
 export { default as ResponsiveLayouts } from './ResponsiveLayouts';

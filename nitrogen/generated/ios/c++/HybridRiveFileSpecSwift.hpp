@@ -22,6 +22,8 @@ namespace margelo::nitro::rive { enum class ArtboardByTypes; }
 namespace margelo::nitro::rive { struct ReferencedAssetsType; }
 // Forward declaration of `ResolvedReferencedAsset` to properly resolve imports.
 namespace margelo::nitro::rive { struct ResolvedReferencedAsset; }
+// Forward declaration of `HybridRiveImageSpec` to properly resolve imports.
+namespace margelo::nitro::rive { class HybridRiveImageSpec; }
 
 #include <optional>
 #include <memory>
@@ -32,6 +34,7 @@ namespace margelo::nitro::rive { struct ResolvedReferencedAsset; }
 #include "ReferencedAssetsType.hpp"
 #include "ResolvedReferencedAsset.hpp"
 #include <unordered_map>
+#include "HybridRiveImageSpec.hpp"
 
 #include "RNRive-Swift-Cxx-Umbrella.hpp"
 

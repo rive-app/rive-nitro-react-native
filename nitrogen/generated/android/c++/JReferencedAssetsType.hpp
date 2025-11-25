@@ -10,8 +10,11 @@
 #include <fbjni/fbjni.h>
 #include "ReferencedAssetsType.hpp"
 
+#include "HybridRiveImageSpec.hpp"
+#include "JHybridRiveImageSpec.hpp"
 #include "JResolvedReferencedAsset.hpp"
 #include "ResolvedReferencedAsset.hpp"
+#include <memory>
 #include <optional>
 #include <string>
 #include <unordered_map>

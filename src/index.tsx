@@ -33,6 +33,8 @@ export type {
 export { Fit } from './core/Fit';
 export { Alignment } from './core/Alignment';
 export { RiveFileFactory } from './core/RiveFile';
+export { RiveImages } from './core/RiveImages';
+export type { RiveImage } from './specs/RiveImage.nitro';
 export { RiveColor } from './core/RiveColor';
 export { type RiveEvent, RiveEventType } from './core/Events';
 export { type RiveError, RiveErrorType } from './core/Errors';

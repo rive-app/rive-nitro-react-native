@@ -23,10 +23,13 @@
 #error NitroModules cannot be found! Are you sure you installed NitroModules properly?
 #endif
 
-
+// Forward declaration of `HybridRiveImageSpec` to properly resolve imports.
+namespace margelo::nitro::rive { class HybridRiveImageSpec; }
 
 #include <string>
 #include <optional>
+#include <memory>
+#include "HybridRiveImageSpec.hpp"
 
 namespace margelo::nitro::rive {
 
@@ -39,10 +42,11 @@ namespace margelo::nitro::rive {
     std::optional<std::string> sourceAsset     SWIFT_PRIVATE;
     std::optional<std::string> sourceAssetId     SWIFT_PRIVATE;
     std::optional<std::string> path     SWIFT_PRIVATE;
+    std::optional<std::shared_ptr<HybridRiveImageSpec>> image     SWIFT_PRIVATE;
 
   public:
     ResolvedReferencedAsset() = default;
-    explicit ResolvedReferencedAsset(std::optional<std::string> sourceUrl, std::optional<std::string> sourceAsset, std::optional<std::string> sourceAssetId, std::optional<std::string> path): sourceUrl(sourceUrl), sourceAsset(sourceAsset), sourceAssetId(sourceAssetId), path(path) {}
+    explicit ResolvedReferencedAsset(std::optional<std::string> sourceUrl, std::optional<std::string> sourceAsset, std::optional<std::string> sourceAssetId, std::optional<std::string> path, std::optional<std::shared_ptr<HybridRiveImageSpec>> image): sourceUrl(sourceUrl), sourceAsset(sourceAsset), sourceAssetId(sourceAssetId), path(path), image(image) {}
   };
 
 } // namespace margelo::nitro::rive
@@ -58,7 +62,8 @@ namespace margelo::nitro {
         JSIConverter<std::optional<std::string>>::fromJSI(runtime, obj.getProperty(runtime, "sourceUrl")),
         JSIConverter<std::optional<std::string>>::fromJSI(runtime, obj.getProperty(runtime, "sourceAsset")),
         JSIConverter<std::optional<std::string>>::fromJSI(runtime, obj.getProperty(runtime, "sourceAssetId")),
-        JSIConverter<std::optional<std::string>>::fromJSI(runtime, obj.getProperty(runtime, "path"))
+        JSIConverter<std::optional<std::string>>::fromJSI(runtime, obj.getProperty(runtime, "path")),
+        JSIConverter<std::optional<std::shared_ptr<margelo::nitro::rive::HybridRiveImageSpec>>>::fromJSI(runtime, obj.getProperty(runtime, "image"))
       );
     }
     static inline jsi::Value toJSI(jsi::Runtime& runtime, const margelo::nitro::rive::ResolvedReferencedAsset& arg) {
@@ -67,6 +72,7 @@ namespace margelo::nitro {
       obj.setProperty(runtime, "sourceAsset", JSIConverter<std::optional<std::string>>::toJSI(runtime, arg.sourceAsset));
       obj.setProperty(runtime, "sourceAssetId", JSIConverter<std::optional<std::string>>::toJSI(runtime, arg.sourceAssetId));
       obj.setProperty(runtime, "path", JSIConverter<std::optional<std::string>>::toJSI(runtime, arg.path));
+      obj.setProperty(runtime, "image", JSIConverter<std::optional<std::shared_ptr<margelo::nitro::rive::HybridRiveImageSpec>>>::toJSI(runtime, arg.image));
       return obj;
     }
     static inline bool canConvert(jsi::Runtime& runtime, const jsi::Value& value) {
@@ -81,6 +87,7 @@ namespace margelo::nitro {
       if (!JSIConverter<std::optional<std::string>>::canConvert(runtime, obj.getProperty(runtime, "sourceAsset"))) return false;
       if (!JSIConverter<std::optional<std::string>>::canConvert(runtime, obj.getProperty(runtime, "sourceAssetId"))) return false;
       if (!JSIConverter<std::optional<std::string>>::canConvert(runtime, obj.getProperty(runtime, "path"))) return false;
+      if (!JSIConverter<std::optional<std::shared_ptr<margelo::nitro::rive::HybridRiveImageSpec>>>::canConvert(runtime, obj.getProperty(runtime, "image"))) return false;
       return true;
     }
   };

@@ -1,12 +1,14 @@
 import type { HybridObject } from 'react-native-nitro-modules';
 import type { ViewModel } from './ViewModel.nitro';
 import type { ArtboardBy } from './ArtboardBy';
+import type { RiveImage } from './RiveImage.nitro';
 
 export type ResolvedReferencedAsset = {
   sourceUrl?: string;
   sourceAsset?: string;
   sourceAssetId?: string;
   path?: string;
+  image?: RiveImage;
 };
 
 export type ReferencedAssetsType = {
