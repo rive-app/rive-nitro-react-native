@@ -53,6 +53,10 @@
       "swift": "HybridViewModelTriggerProperty",
       "kotlin": "HybridViewModelTriggerProperty"
     },
+    "ViewModelImageProperty": {
+      "swift": "HybridViewModelImageProperty",
+      "kotlin": "HybridViewModelImageProperty"
+    },
     "RiveView": {
       "swift": "HybridRiveView",
       "kotlin": "HybridRiveView"

@@ -25,6 +25,8 @@ namespace margelo::nitro::rive { class HybridViewModelColorPropertySpec; }
 namespace margelo::nitro::rive { class HybridViewModelEnumPropertySpec; }
 // Forward declaration of `HybridViewModelTriggerPropertySpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridViewModelTriggerPropertySpec; }
+// Forward declaration of `HybridViewModelImagePropertySpec` to properly resolve imports.
+namespace margelo::nitro::rive { class HybridViewModelImagePropertySpec; }
 
 #include <string>
 #include <memory>
@@ -35,6 +37,7 @@ namespace margelo::nitro::rive { class HybridViewModelTriggerPropertySpec; }
 #include "HybridViewModelColorPropertySpec.hpp"
 #include "HybridViewModelEnumPropertySpec.hpp"
 #include "HybridViewModelTriggerPropertySpec.hpp"
+#include "HybridViewModelImagePropertySpec.hpp"
 
 namespace margelo::nitro::rive {
 
@@ -73,6 +76,7 @@ namespace margelo::nitro::rive {
       virtual std::optional<std::shared_ptr<HybridViewModelColorPropertySpec>> colorProperty(const std::string& path) = 0;
       virtual std::optional<std::shared_ptr<HybridViewModelEnumPropertySpec>> enumProperty(const std::string& path) = 0;
       virtual std::optional<std::shared_ptr<HybridViewModelTriggerPropertySpec>> triggerProperty(const std::string& path) = 0;
+      virtual std::optional<std::shared_ptr<HybridViewModelImagePropertySpec>> imageProperty(const std::string& path) = 0;
 
     protected:
       // Hybrid Setup

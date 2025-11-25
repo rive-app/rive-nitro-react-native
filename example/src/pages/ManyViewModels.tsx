@@ -1,11 +1,14 @@
-import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
-import { useState, useMemo } from 'react';
+import { StyleSheet, View, Text, TouchableOpacity, Button } from 'react-native';
+import { useState, useMemo, useRef } from 'react';
+import { hybridRef } from 'react-native-nitro-modules';
 import type { Metadata } from '../helpers/metadata';
 import {
   DataBindMode,
   RiveView,
   useRiveFile,
   type ViewModelInstance,
+  RiveImages,
+  type RiveViewRef,
 } from '@rive-app/react-native';
 
 type BindModeOption =
@@ -77,6 +80,9 @@ export default function ManyViewModels() {
     require('../../assets/rive/many_viewmodels.riv')
   );
   const [bindMode, setBindMode] = useState<BindModeOption>('none');
+  const [isLoadingImage, setIsLoadingImage] = useState(false);
+  const [imageError, setImageError] = useState<string | null>(null);
+  const riveViewRef = useRef<RiveViewRef>(undefined);
 
   // Create a ViewModelInstance for "green" to demonstrate instance binding
   const greenInstance = useMemo(() => {
@@ -91,13 +97,59 @@ export default function ManyViewModels() {
     }
   }, [riveFile]);
 
+  const handleLoadImage = async () => {
+    if (!riveViewRef.current) return;
+
+    setIsLoadingImage(true);
+    setImageError(null);
+    try {
+      const viewModelInstance = riveViewRef.current.getViewModelInstance();
+      if (!viewModelInstance) {
+        setImageError('No view model instance found in view');
+        return;
+      }
+
+      const imgProp = viewModelInstance.imageProperty('imageValue');
+      if (!imgProp) {
+        setImageError('Image property "imageValue" not found');
+        return;
+      }
+
+      const riveImage = await RiveImages.loadFromURLAsync(
+        'https://picsum.photos/id/372/500/500'
+      );
+      imgProp.set(riveImage);
+
+      imgProp.addListener(() => {
+        console.log('Image property changed!');
+      });
+
+      console.log('Image loaded and set successfully');
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : 'Unknown error';
+      setImageError(errorMsg);
+      console.error('Failed to load image:', errorMsg);
+    } finally {
+      setIsLoadingImage(false);
+    }
+  };
+
   const dataBindValue = getDataBindValue(bindMode, greenInstance);
 
   return (
     <View style={styles.container}>
       <BindModeSelector selectedMode={bindMode} onModeChange={setBindMode} />
+      <View style={styles.imageButtonContainer}>
+        <Button
+          title={isLoadingImage ? 'Loading Image...' : 'Load Test Image'}
+          onPress={handleLoadImage}
+          disabled={isLoadingImage || !riveFile}
+        />
+        {imageError && <Text style={styles.errorText}>{imageError}</Text>}
+      </View>
       {riveFile && (
         <RiveView
+          hybridRef={{ f: (ref) => (riveViewRef.current = ref) }}
           style={styles.rive}
           file={riveFile}
           dataBind={dataBindValue}
@@ -118,6 +170,17 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+  },
+  imageButtonContainer: {
+    padding: 16,
+    backgroundColor: '#fff',
+    borderBottomWidth: 1,
+    borderBottomColor: '#e0e0e0',
+  },
+  errorText: {
+    color: 'red',
+    marginTop: 8,
+    fontSize: 12,
   },
   rive: {
     flex: 1,
