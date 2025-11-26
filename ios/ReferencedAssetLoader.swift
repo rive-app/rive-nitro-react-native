@@ -227,7 +227,8 @@ final class ReferencedAssetLoader {
 
   func createCustomLoader(
     referencedAssets: ReferencedAssetsType?, cache: SendableRef<ReferencedAssetCache>,
-    factory factoryOut: SendableRef<RiveFactory?>
+    factory factoryOut: SendableRef<RiveFactory?>,
+    fileRef: SendableRef<RiveFile?>
   )
     -> LoadAsset?
   {
@@ -244,7 +245,9 @@ final class ReferencedAssetLoader {
       cache.value[asset.uniqueName()] = asset
       factoryOut.value = factory
 
-      self.loadAssetInternal(source: assetData, asset: asset, factory: factory, completion: {})
+      self.loadAssetInternal(source: assetData, asset: asset, factory: factory, completion: {
+        withExtendedLifetime(fileRef) {}
+      })
 
       return true
     }
