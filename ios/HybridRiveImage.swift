@@ -11,10 +11,6 @@ class HybridRiveImage: HybridRiveImageSpec {
     super.init()
   }
 
-  override init() {
-    fatalError("HybridRiveImage requires a RiveRenderImage. Use init(renderImage:dataSize:) instead.")
-  }
-
   var byteSize: Double {
     Double(dataSize)
   }

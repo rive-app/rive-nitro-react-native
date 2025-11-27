@@ -39,7 +39,7 @@ class HybridRiveImageFactory : HybridRiveImageFactorySpec() {
 
         HybridRiveImage(renderImage, dataSize)
       } catch (e: Exception) {
-        throw Exception("Failed to load image from URL: $url - ${e.message}")
+        throw Exception("Failed to load image from URL: $url - ${e.message}", e)
       }
     }
   }
