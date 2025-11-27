@@ -1,6 +1,5 @@
 package com.margelo.nitro.rive
 
-import android.util.Log
 import androidx.annotation.Keep
 import com.facebook.proguard.annotations.DoNotStrip
 import com.facebook.react.uimanager.ThemedReactContext
@@ -147,6 +146,7 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
   fun refreshAfterAssetChange() {
     afterUpdate()
   }
+
 
   override fun afterUpdate() {
     logged(TAG, "afterUpdate") {
