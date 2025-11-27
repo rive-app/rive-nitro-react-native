@@ -59,7 +59,7 @@ class RiveReactNativeView: UIView, RiveStateMachineDelegate {
     if reload {
       cleanup()
       let model = RiveModel(riveFile: config.riveFile)
-      baseViewModel = RiveViewModel(model, autoPlay: config.autoPlay)
+      baseViewModel = RiveViewModel(model, stateMachineName: config.stateMachineName, autoPlay: config.autoPlay, artboardName: config.artboardName)
       createViewFromViewModel()
 
       if let viewSource = config.viewSource {
