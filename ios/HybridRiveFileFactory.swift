@@ -36,9 +36,12 @@ final class HybridRiveFileFactory: HybridRiveFileFactorySpec, @unchecked Sendabl
 
               let referencedAssetCache = SendableRef(ReferencedAssetCache())
               let factoryCache: SendableRef<RiveFactory?> = .init(nil)
+              let fileRef: SendableRef<RiveFile?> = .init(nil)
               let customLoader = self.assetLoader.createCustomLoader(
                 referencedAssets: referencedAssets, cache: referencedAssetCache,
-                factory: factoryCache)
+                factory: factoryCache,
+                fileRef: fileRef
+              )
 
               let riveFile =
                 if let customLoader = customLoader {
@@ -46,6 +49,7 @@ final class HybridRiveFileFactory: HybridRiveFileFactorySpec, @unchecked Sendabl
                 } else {
                   try file(prepared)
                 }
+              fileRef.value = riveFile
 
               let result = (
                 file: riveFile, cache: referencedAssetCache.value, factory: factoryCache.value,
