@@ -2,9 +2,13 @@ package com.rive
 
 import android.annotation.SuppressLint
 import android.widget.FrameLayout
-import com.facebook.react.uimanager.ThemedReactContext
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import app.rive.runtime.kotlin.RiveAnimationView
+import app.rive.runtime.kotlin.RiveViewLifecycleObserver
 import app.rive.runtime.kotlin.controllers.RiveFileController
+import app.rive.runtime.kotlin.core.RefCount
+import com.facebook.react.uimanager.ThemedReactContext
 import app.rive.runtime.kotlin.core.Alignment
 import app.rive.runtime.kotlin.core.File
 import app.rive.runtime.kotlin.core.Fit
@@ -40,16 +44,56 @@ data class ViewConfiguration(
   val bindData: BindData
 )
 
+class ReactNativeRiveViewLifecycleObserver(dependencies: MutableList<RefCount>) :
+  RiveViewLifecycleObserver(dependencies) {
+  @SuppressLint("MissingSuperCall")
+  override fun onDestroy(owner: LifecycleOwner) {
+    owner.lifecycle.removeObserver(this)
+  }
+
+  fun dispose() {
+    dependencies.forEach { it.release() }
+    dependencies.clear()
+  }
+}
+
+@SuppressLint("ViewConstructor")
+class ReactNativeRiveAnimationView(context: ThemedReactContext) : RiveAnimationView(context) {
+  fun dispose() {
+    (lifecycleObserver as ReactNativeRiveViewLifecycleObserver).dispose()
+  }
+
+  @SuppressLint("VisibleForTests")
+  override fun createObserver(): LifecycleObserver {
+    return ReactNativeRiveViewLifecycleObserver(
+      listOfNotNull(controller, rendererAttributes.assetLoader).toMutableList()
+    )
+  }
+}
+
 @SuppressLint("ViewConstructor")
 class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
-  internal var riveAnimationView: RiveAnimationView? = null
+  internal var riveAnimationView: ReactNativeRiveAnimationView? = null
   private var eventListeners: MutableList<RiveFileController.RiveEventListener> = mutableListOf()
   private val viewReadyDeferred = CompletableDeferred<Boolean>()
   private var _activeStateMachineName: String? = null
+  private var willDispose = false
 
   init {
-    riveAnimationView = RiveAnimationView(context)
+    riveAnimationView = ReactNativeRiveAnimationView(context)
     addView(riveAnimationView)
+  }
+
+  fun dispose() {
+    willDispose = true
+  }
+
+  override fun onDetachedFromWindow() {
+    if (willDispose) {
+      riveAnimationView?.dispose()
+      removeEventListeners()
+    }
+    super.onDetachedFromWindow()
   }
 
   //region Public Methods (API)
