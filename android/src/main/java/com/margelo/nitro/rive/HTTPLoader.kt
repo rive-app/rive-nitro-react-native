@@ -3,6 +3,7 @@ package com.margelo.nitro.rive
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.net.HttpURLConnection
+import java.net.MalformedURLException
 import java.net.URL
 
 sealed class HTTPLoaderException(message: String) : Exception(message) {
@@ -13,7 +14,11 @@ sealed class HTTPLoaderException(message: String) : Exception(message) {
 
 object HTTPLoader {
   suspend fun downloadBytes(url: String): ByteArray = withContext(Dispatchers.IO) {
-    val urlObj = URL(url)
+    val urlObj = try {
+      URL(url)
+    } catch (e: MalformedURLException) {
+      throw HTTPLoaderException.InvalidURL(url)
+    }
     val connection = urlObj.openConnection() as HttpURLConnection
 
     try {
