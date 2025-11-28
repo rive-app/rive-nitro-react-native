@@ -67,7 +67,11 @@ const ImageURLSlow =
   `https://app.requestly.io/delay/${delay}/https://picsum.photos/id/374/500/500` as const;
 const ImageInvalidURL = 'not-a-valid-url' as const;
 
-type ImageURLS = typeof ImageURL1 | typeof ImageURL2 | typeof ImageURLSlow;
+type ImageURLS =
+  | typeof ImageURL1
+  | typeof ImageURL2
+  | typeof ImageURLSlow
+  | typeof ImageInvalidURL;
 
 const imagePromises = new Map<string, Promise<RiveImage>>();
 
