@@ -119,7 +119,8 @@ class RiveReactNativeView: UIView, RiveStateMachineDelegate {
 
     case .instance(let instance):
       stateMachine?.bind(viewModelInstance: instance)
-      artboard?.bind(viewModelInstance: instance)
+      // this should be added if we support only playing artboards on their own - https://github.com/rive-app/rive-nitro-react-native/pull/23#discussion_r2534698281
+      // artboard?.bind(viewModelInstance: instance)
     }
     baseViewModel?.play()
   }
