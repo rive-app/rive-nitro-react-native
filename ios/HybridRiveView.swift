@@ -37,13 +37,41 @@ where Wrapped == HybridDataBindMode {
       return .byName(dataBindByName.byName)
     }
   }
+  
+  /// Check if two HybridDataBindMode values are semantically equal
+  func isEqual(to other: HybridDataBindMode?) -> Bool {
+    guard let lhs = self, let rhs = other else {
+      return self == nil && other == nil
+    }
+    
+    switch (lhs, rhs) {
+    case (.first(let lhsInstance), .first(let rhsInstance)):
+      // Compare ViewModelInstance references
+      let lhsVMI = (lhsInstance as? HybridViewModelInstance)?.viewModelInstance
+      let rhsVMI = (rhsInstance as? HybridViewModelInstance)?.viewModelInstance
+      return lhsVMI === rhsVMI
+      
+    case (.second(let lhsMode), .second(let rhsMode)):
+      // Compare DataBindMode enums
+      return lhsMode == rhsMode
+      
+    case (.third(let lhsByName), .third(let rhsByName)):
+      // Compare byName strings
+      return lhsByName.byName == rhsByName.byName
+      
+    default:
+      return false
+    }
+  }
 }
 
 class HybridRiveView: HybridRiveViewSpec {
   // MARK: View Props
   var dataBind: HybridDataBindMode? = nil {
     didSet {
-      dataBindingChanged = true
+      if !dataBind.isEqual(to: oldValue) {
+        dataBindingChanged = true
+      }
     }
   }
 
