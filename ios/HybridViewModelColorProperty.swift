@@ -1,11 +1,11 @@
 import NitroModules
 import RiveRuntime
 
-class HybridViewModelColorProperty: HybridViewModelColorPropertySpec {
-  private var property: RiveDataBindingViewModel.Instance.ColorProperty!
-  private var listenerIds: [UUID] = []
+class HybridViewModelColorProperty: HybridViewModelColorPropertySpec, ViewModelPropertyProtocol {
+  private var property: ColorPropertyType!
+  lazy var helper = PropertyListenerHelper(property: property!)
   
-  init(property: RiveDataBindingViewModel.Instance.ColorProperty) {
+  init(property: ColorPropertyType) {
     self.property = property
     super.init()
   }
@@ -28,21 +28,11 @@ class HybridViewModelColorProperty: HybridViewModelColorPropertySpec {
   }
   
   func addListener(onChanged: @escaping (Double) -> Void) throws {
-    let id = property.addListener({ value in
-      onChanged(value.toHexDouble())
-    })
-    listenerIds.append(id)
-  }
-  
-  func removeListeners() throws {
-    for id in listenerIds {
-      property.removeListener(id)
+    helper.trackListener { property in
+      property.addListener { value in
+        onChanged(value.toHexDouble())
+      }
     }
-    listenerIds.removeAll()
-  }
-  
-  func dispose() throws {
-    try? removeListeners()
   }
 }
 

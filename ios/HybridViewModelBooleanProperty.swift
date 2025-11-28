@@ -1,11 +1,11 @@
 import NitroModules
 import RiveRuntime
 
-class HybridViewModelBooleanProperty: HybridViewModelBooleanPropertySpec {
-  private var property: RiveDataBindingViewModel.Instance.BooleanProperty!
-  private var listenerIds: [UUID] = []
+class HybridViewModelBooleanProperty: HybridViewModelBooleanPropertySpec, ViewModelPropertyProtocol {
+  private var property: BooleanPropertyType!
+  lazy var helper = PropertyListenerHelper(property: property!)
   
-  init(property: RiveDataBindingViewModel.Instance.BooleanProperty) {
+  init(property: BooleanPropertyType) {
     self.property = property
     super.init()
   }
@@ -28,20 +28,10 @@ class HybridViewModelBooleanProperty: HybridViewModelBooleanPropertySpec {
   }
   
   func addListener(onChanged: @escaping (Bool) -> Void) throws {
-    let id = property.addListener({ value in
-      onChanged(value)
-    })
-    listenerIds.append(id)
-  }
-  
-  func removeListeners() throws {
-    for id in listenerIds {
-      property.removeListener(id)
+    helper.trackListener { property in
+      property.addListener { value in
+        onChanged(value)
+      }
     }
-    listenerIds.removeAll()
-  }
-  
-  func dispose() throws {
-    try? removeListeners()
   }
 }
