@@ -19,7 +19,6 @@ import app.rive.runtime.kotlin.core.SMIInput
 import app.rive.runtime.kotlin.core.SMINumber
 import app.rive.runtime.kotlin.core.ViewModelInstance
 import app.rive.runtime.kotlin.core.errors.ViewModelException
-import com.margelo.nitro.core.AnyMap
 import com.margelo.nitro.rive.EventPropertiesOutput
 import com.margelo.nitro.rive.EventPropertiesOutputExtensions as EPO
 import com.margelo.nitro.rive.RiveEventType
@@ -332,7 +331,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
       }
     }
 
-    return newMap;
+    return newMap
   }
 
   /**

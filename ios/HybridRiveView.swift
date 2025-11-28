@@ -85,7 +85,7 @@ class HybridRiveView: HybridRiveViewSpec {
   }
 
   // MARK: View Props
-  var dataBind: HybridDataBindMode? = nil {
+  var dataBind: HybridDataBindMode? {
     didSet {
       if !dataBind.isEqual(to: oldValue) {
         dataBindingChanged = true
@@ -235,7 +235,7 @@ extension HybridRiveView {
   func logged(tag: String, note: String? = nil, _ fn: () throws -> Void) {
     do {
       return try fn()
-    } catch (let e) {
+    } catch let e {
       let (errorType, errorDescription) = detectErrorType(e)
       let noteString = note.map { " \($0)" } ?? ""
       let errorMessage = "[RIVE] \(tag)\(noteString) \(errorDescription)"

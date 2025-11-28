@@ -101,7 +101,7 @@ class RiveReactNativeView: UIView, RiveStateMachineDelegate {
       baseViewModel?.riveModel?.disableAutoBind()
 
     case .auto:
-      baseViewModel?.riveModel?.enableAutoBind { instance in
+      baseViewModel?.riveModel?.enableAutoBind { _ in
         // Auto-bind callback
       }
 
@@ -119,7 +119,8 @@ class RiveReactNativeView: UIView, RiveStateMachineDelegate {
 
     case .instance(let instance):
       stateMachine?.bind(viewModelInstance: instance)
-      artboard?.bind(viewModelInstance: instance)
+      // this should be added if we support only playing artboards on their own - https://github.com/rive-app/rive-nitro-react-native/pull/23#discussion_r2534698281
+      // artboard?.bind(viewModelInstance: instance)
     }
     play()
   }
@@ -188,8 +189,7 @@ class RiveReactNativeView: UIView, RiveStateMachineDelegate {
     return textRun.text()
   }
 
-  private func textRunOptionPath(name: String, path: String?) throws -> RiveRuntime.RiveTextValueRun
-  {
+  private func textRunOptionPath(name: String, path: String?) throws -> RiveRuntime.RiveTextValueRun {
     let textRun: RiveRuntime.RiveTextValueRun?
     if let path = path {
       textRun = baseViewModel?.riveModel?.artboard?.textRun(name, path: path)
@@ -221,7 +221,7 @@ class RiveReactNativeView: UIView, RiveStateMachineDelegate {
         riveView.leadingAnchor.constraint(equalTo: leadingAnchor),
         riveView.trailingAnchor.constraint(equalTo: trailingAnchor),
         riveView.topAnchor.constraint(equalTo: topAnchor),
-        riveView.bottomAnchor.constraint(equalTo: bottomAnchor),
+        riveView.bottomAnchor.constraint(equalTo: bottomAnchor)
       ])
     }
   }
@@ -254,8 +254,7 @@ class RiveReactNativeView: UIView, RiveStateMachineDelegate {
   }
 
   private func convertEventProperties(_ properties: [String: Any]?) -> [String:
-    EventPropertiesOutput]?
-  {
+    EventPropertiesOutput]? {
     guard let properties = properties else { return nil }
 
     var newMap: [String: EventPropertiesOutput] = [:]

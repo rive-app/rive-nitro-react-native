@@ -133,4 +133,3 @@ class HybridRiveFileFactory : HybridRiveFileFactorySpec() {
     }
   }
 }
-

@@ -19,7 +19,7 @@ func createIncorrectRiveURL(_ url: String) -> NSError {
     domain: RiveErrorDomain, code: 900,
     userInfo: [
       NSLocalizedDescriptionKey: "Unable to download Rive file from: \(url)",
-      "name": "IncorrectRiveFileURL",
+      "name": "IncorrectRiveFileURL"
     ])
 }
 
@@ -64,7 +64,7 @@ final class ReferencedAssetLoader {
     }
 
     let request = URLRequest(url: requestUrl)
-    let task = queue.dataTask(with: request) { [weak self] data, response, error in
+    let task = queue.dataTask(with: request) { [weak self] data, _, error in
       if error != nil {
         self?.handleInvalidUrlError(url: url)
         onError()
@@ -230,13 +230,12 @@ final class ReferencedAssetLoader {
     factory factoryOut: SendableRef<RiveFactory?>,
     fileRef: SendableRef<RiveFile?>
   )
-    -> LoadAsset?
-  {
+    -> LoadAsset? {
     guard let referencedAssets = referencedAssets, let referencedAssets = referencedAssets.data
     else {
       return nil
     }
-    return { (asset: RiveFileAsset, data: Data, factory: RiveFactory) -> Bool in
+    return { (asset: RiveFileAsset, _: Data, factory: RiveFactory) -> Bool in
       let assetByUniqueName = referencedAssets[asset.uniqueName()]
       guard let assetData = assetByUniqueName ?? referencedAssets[asset.name()] else {
         return false
