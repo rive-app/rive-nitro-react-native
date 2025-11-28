@@ -187,7 +187,10 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
 
   fun play() = riveAnimationView?.play()
 
-  fun pause() = riveAnimationView?.pause();
+  fun pause() = riveAnimationView?.pause()
+
+  fun reset() = riveAnimationView?.reset()
+
 
   fun addEventListener(onEvent: (event: RNEvent) -> Unit) {
     val eventListener = object : RiveFileController.RiveEventListener {

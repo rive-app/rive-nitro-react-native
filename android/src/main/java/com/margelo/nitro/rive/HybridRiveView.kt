@@ -112,9 +112,12 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
     return HybridViewModelInstance(viewModelInstance)
   }
 
-  override fun play() = executeOnUiThread { view.play() }
+  override fun play() = asyncExecuteOnUiThread { view.play() }
 
-  override fun pause() = executeOnUiThread { view.pause() }
+  override fun pause() = asyncExecuteOnUiThread { view.pause() }
+
+  override fun reset() = asyncExecuteOnUiThread { view.reset() }
+
 
   override fun onEventListener(onEvent: (event: UnifiedRiveEvent) -> Unit) =
     executeOnUiThread { view.addEventListener(onEvent) }
@@ -186,6 +189,20 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
     }
   }
 
+  private fun asyncExecuteOnUiThread(action: () -> Unit): Promise<Unit> {
+    return Promise.async {
+      context.currentActivity?.runOnUiThread() {
+        try {
+          action()
+        } catch (e: Exception) {
+          throw Error(e.message) // TODO: Correctly handling errors (https://nitro.margelo.com/docs/errors)
+        } catch (e: Error) {
+          throw Error(e.message)
+        }
+      }
+    }
+
+  }
   private fun executeOnUiThread(action: () -> Unit) {
     context.currentActivity?.runOnUiThread() {
       try {

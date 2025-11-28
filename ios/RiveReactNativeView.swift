@@ -121,20 +121,22 @@ class RiveReactNativeView: UIView, RiveStateMachineDelegate {
       stateMachine?.bind(viewModelInstance: instance)
       artboard?.bind(viewModelInstance: instance)
     }
-    baseViewModel?.play()
+    play()
   }
 
+  @MainActor
   func play() {
     baseViewModel?.play()
   }
 
+  @MainActor
   func pause() {
     baseViewModel?.pause()
   }
 
   func refreshAfterAssetChange() {
     if baseViewModel?.isPlaying == false {
-      baseViewModel?.play()
+      play()
     }
   }
 
