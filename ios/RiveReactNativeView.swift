@@ -101,7 +101,7 @@ class RiveReactNativeView: UIView, RiveStateMachineDelegate {
       baseViewModel?.riveModel?.disableAutoBind()
 
     case .auto:
-      baseViewModel?.riveModel?.enableAutoBind { instance in
+      baseViewModel?.riveModel?.enableAutoBind { _ in
         // Auto-bind callback
       }
 
@@ -187,8 +187,7 @@ class RiveReactNativeView: UIView, RiveStateMachineDelegate {
     return textRun.text()
   }
 
-  private func textRunOptionPath(name: String, path: String?) throws -> RiveRuntime.RiveTextValueRun
-  {
+  private func textRunOptionPath(name: String, path: String?) throws -> RiveRuntime.RiveTextValueRun {
     let textRun: RiveRuntime.RiveTextValueRun?
     if let path = path {
       textRun = baseViewModel?.riveModel?.artboard?.textRun(name, path: path)
@@ -220,7 +219,7 @@ class RiveReactNativeView: UIView, RiveStateMachineDelegate {
         riveView.leadingAnchor.constraint(equalTo: leadingAnchor),
         riveView.trailingAnchor.constraint(equalTo: trailingAnchor),
         riveView.topAnchor.constraint(equalTo: topAnchor),
-        riveView.bottomAnchor.constraint(equalTo: bottomAnchor),
+        riveView.bottomAnchor.constraint(equalTo: bottomAnchor)
       ])
     }
   }
@@ -253,8 +252,7 @@ class RiveReactNativeView: UIView, RiveStateMachineDelegate {
   }
 
   private func convertEventProperties(_ properties: [String: Any]?) -> [String:
-    EventPropertiesOutput]?
-  {
+    EventPropertiesOutput]? {
     guard let properties = properties else { return nil }
 
     var newMap: [String: EventPropertiesOutput] = [:]

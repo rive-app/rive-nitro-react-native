@@ -13,3 +13,22 @@ end_of_line = lf
 charset = utf-8
 trim_trailing_whitespace = true
 insert_final_newline = true
+
+[*.kt]
+indent_size = 2
+max_line_length = 140
+ktlint_standard_no-wildcard-imports = disabled
+ktlint_standard_filename = disabled
+ktlint_standard_package-name = disabled
+ktlint_standard_indent = disabled
+ktlint_standard_function-signature = disabled
+ktlint_standard_class-signature = disabled
+ktlint_standard_multiline-expression-wrapping = disabled
+ktlint_standard_function-expression-body = disabled
+ktlint_standard_trailing-comma-on-call-site = disabled
+ktlint_standard_trailing-comma-on-declaration-site = disabled
+ktlint_standard_blank-line-before-declaration = disabled
+ktlint_standard_import-ordering = disabled
+ktlint_standard_string-template-indent = disabled
+ktlint_standard_backing-property-naming = disabled
+ktlint_standard_no-consecutive-comments = disabled
