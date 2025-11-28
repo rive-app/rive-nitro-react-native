@@ -85,8 +85,7 @@ final class HybridRiveFileFactory: HybridRiveFileFactorySpec, @unchecked Sendabl
 
   // MARK: Public Methods
   func fromURL(url: String, loadCdn: Bool, referencedAssets: ReferencedAssetsType?) throws
-    -> Promise<(any HybridRiveFileSpec)>
-  {
+    -> Promise<(any HybridRiveFileSpec)> {
     return try genericFrom(
       check: {
         guard let url = URL(string: url) else {
@@ -104,8 +103,7 @@ final class HybridRiveFileFactory: HybridRiveFileFactorySpec, @unchecked Sendabl
   }
 
   func fromFileURL(fileURL: String, loadCdn: Bool, referencedAssets: ReferencedAssetsType?) throws
-    -> Promise<(any HybridRiveFileSpec)>
-  {
+    -> Promise<(any HybridRiveFileSpec)> {
     return try genericFrom(
       check: {
         guard let url = URL(string: fileURL) else {
@@ -126,8 +124,7 @@ final class HybridRiveFileFactory: HybridRiveFileFactorySpec, @unchecked Sendabl
   }
 
   func fromResource(resource: String, loadCdn: Bool, referencedAssets: ReferencedAssetsType?) throws
-    -> Promise<(any HybridRiveFileSpec)>
-  {
+    -> Promise<(any HybridRiveFileSpec)> {
     return try genericFrom(
       check: {
         guard Bundle.main.path(forResource: resource, ofType: "riv") != nil else {
@@ -151,8 +148,7 @@ final class HybridRiveFileFactory: HybridRiveFileFactorySpec, @unchecked Sendabl
   func fromBytes(bytes: ArrayBufferHolder, loadCdn: Bool, referencedAssets: ReferencedAssetsType?)
     throws -> Promise<
       (any HybridRiveFileSpec)
-    >
-  {
+    > {
     let data = bytes.toData(copyIfNeeded: false)
     return try genericFrom(
       check: { data },

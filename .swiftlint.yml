@@ -1,0 +1,22 @@
+included:
+  - ios
+
+excluded:
+  - Pods
+  - nitrogen/generated
+
+disabled_rules:
+  - line_length
+  - file_length
+  - type_body_length
+  - function_body_length
+  - cyclomatic_complexity
+  - identifier_name
+  - force_cast
+  - force_try
+  - nesting
+  - trailing_whitespace
+  - todo
+  - unused_optional_binding
+
+reporter: github-actions-logging

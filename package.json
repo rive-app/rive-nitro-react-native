@@ -43,7 +43,10 @@
     "release": "release-it",
     "dev:ios": "cd example && xed ios",
     "dev:android": "cd example && open -a \"/Applications/Android Studio.app\" ./android",
-    "copy:nitrogen-config": "mkdir -p lib/nitrogen/generated/shared/json && cp nitrogen/generated/shared/json/RiveViewConfig.json lib/nitrogen/generated/shared/json/"
+    "copy:nitrogen-config": "mkdir -p lib/nitrogen/generated/shared/json && cp nitrogen/generated/shared/json/RiveViewConfig.json lib/nitrogen/generated/shared/json/",
+    "lint:swift": "./scripts/lint-swift.sh",
+    "lint:kotlin": "./scripts/lint-kotlin.sh",
+    "lint:native": "yarn lint:swift && yarn lint:kotlin"
   },
   "keywords": [
     "react-native",

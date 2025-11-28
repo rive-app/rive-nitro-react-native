@@ -18,7 +18,7 @@ class HybridViewModel(private val viewModel: ViewModel) : HybridViewModelSpec() 
   override fun createInstanceByIndex(index: Double): HybridViewModelInstanceSpec? {
     try {
       val vmi = viewModel.createInstanceFromIndex(index.toInt())
-      return HybridViewModelInstance(vmi);
+      return HybridViewModelInstance(vmi)
     } catch (e: ViewModelException) {
       return null
     }
@@ -27,7 +27,7 @@ class HybridViewModel(private val viewModel: ViewModel) : HybridViewModelSpec() 
   override fun createInstanceByName(name: String): HybridViewModelInstanceSpec? {
     try {
       val vmi = viewModel.createInstanceFromName(name)
-      return HybridViewModelInstance(vmi);
+      return HybridViewModelInstance(vmi)
     } catch (e: ViewModelException) {
       return null
     }
@@ -36,7 +36,7 @@ class HybridViewModel(private val viewModel: ViewModel) : HybridViewModelSpec() 
   override fun createDefaultInstance(): HybridViewModelInstanceSpec? {
     try {
       val vmi = viewModel.createDefaultInstance()
-      return HybridViewModelInstance(vmi);
+      return HybridViewModelInstance(vmi)
     } catch (e: ViewModelException) {
       return null
     }
@@ -45,7 +45,7 @@ class HybridViewModel(private val viewModel: ViewModel) : HybridViewModelSpec() 
   override fun createInstance(): HybridViewModelInstanceSpec? {
     try {
       val vmi = viewModel.createBlankInstance()
-      return HybridViewModelInstance(vmi);
+      return HybridViewModelInstance(vmi)
     } catch (e: ViewModelException) {
       return null
     }
