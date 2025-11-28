@@ -19,7 +19,7 @@ func createIncorrectRiveURL(_ url: String) -> NSError {
     domain: RiveErrorDomain, code: 900,
     userInfo: [
       NSLocalizedDescriptionKey: "Unable to download Rive file from: \(url)",
-      "name": "IncorrectRiveFileURL"
+      "name": "IncorrectRiveFileURL",
     ])
 }
 
@@ -45,6 +45,7 @@ final class ReferencedAssetLoader {
       onError()
       return
     }
+
     if let fileUrl = URL(string: url), fileUrl.scheme == "file" {
       do {
         let data = try Data(contentsOf: fileUrl)
@@ -56,26 +57,19 @@ final class ReferencedAssetLoader {
       return
     }
 
-    let queue = URLSession.shared
-    guard let requestUrl = URL(string: url) else {
-      handleInvalidUrlError(url: url)
-      onError()
-      return
-    }
-
-    let request = URLRequest(url: requestUrl)
-    let task = queue.dataTask(with: request) { [weak self] data, _, error in
-      if error != nil {
-        self?.handleInvalidUrlError(url: url)
-        onError()
-      } else if let data = data {
-        listener(data)
-      } else {
-        onError()
+    Task {
+      do {
+        let data = try await HTTPLoader.shared.downloadData(from: url)
+        await MainActor.run {
+          listener(data)
+        }
+      } catch {
+        await MainActor.run {
+          self.handleInvalidUrlError(url: url)
+          onError()
+        }
       }
     }
-
-    task.resume()
   }
 
   private func processAssetBytes(
@@ -249,7 +243,8 @@ final class ReferencedAssetLoader {
     factory factoryOut: SendableRef<RiveFactory?>,
     fileRef: SendableRef<RiveFile?>
   )
-    -> LoadAsset? {
+    -> LoadAsset?
+  {
     guard let referencedAssets = referencedAssets, let referencedAssets = referencedAssets.data
     else {
       return nil
@@ -263,9 +258,11 @@ final class ReferencedAssetLoader {
       cache.value[asset.uniqueName()] = asset
       factoryOut.value = factory
 
-      self.loadAssetInternal(source: assetData, asset: asset, factory: factory, completion: {
-        withExtendedLifetime(fileRef) {}
-      })
+      self.loadAssetInternal(
+        source: assetData, asset: asset, factory: factory,
+        completion: {
+          withExtendedLifetime(fileRef) {}
+        })
 
       return true
     }

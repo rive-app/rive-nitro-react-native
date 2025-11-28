@@ -85,7 +85,7 @@ class ReferencedAssetLoader {
             file.readBytes()
           }
           "http", "https" -> {
-            URL(url).readBytes()
+            HTTPLoader.downloadBytes(url)
           }
           else -> {
             logError("Unsupported URL scheme: ${uri.scheme}")

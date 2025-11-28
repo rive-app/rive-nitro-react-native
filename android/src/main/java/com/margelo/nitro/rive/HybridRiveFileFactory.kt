@@ -12,7 +12,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File as JavaFile
 import java.net.URI
-import java.net.URL
 
 data class FileAndCache(
   val file: File,
@@ -44,11 +43,8 @@ class HybridRiveFileFactory : HybridRiveFileFactorySpec() {
   override fun fromURL(url: String, loadCdn: Boolean, referencedAssets: ReferencedAssetsType?): Promise<HybridRiveFileSpec> {
     return Promise.async {
       try {
-        val fileAndCache = withContext(Dispatchers.IO) {
-          val urlObj = URL(url)
-          val riveData = urlObj.readBytes()
-          buildRiveFile(riveData, referencedAssets)
-        }
+        val riveData = HTTPLoader.downloadBytes(url)
+        val fileAndCache = buildRiveFile(riveData, referencedAssets)
 
         val hybridRiveFile = HybridRiveFile()
         hybridRiveFile.riveFile = fileAndCache.file
@@ -56,7 +52,7 @@ class HybridRiveFileFactory : HybridRiveFileFactorySpec() {
         hybridRiveFile.assetLoader = fileAndCache.loader
         hybridRiveFile
       } catch (e: Exception) {
-        throw Error("Failed to download Rive file: ${e.message}")
+        throw Error("Failed to download Rive file: ${e.message}", e)
       }
     }
   }

@@ -20,7 +20,7 @@ final class HybridRiveFileFactory: HybridRiveFileFactorySpec, @unchecked Sendabl
   /// - Throws: Runtime errors if any step fails.
   func genericFrom<CheckResult, Prepared>(
     check: @escaping () throws -> CheckResult,
-    prepare: @escaping (CheckResult) throws -> Prepared,
+    prepare: @escaping (CheckResult) async throws -> Prepared,
     fileWithCustomAssetLoader: @escaping (Prepared, @escaping LoadAsset) throws -> RiveFile,
     file: @escaping (Prepared) throws -> RiveFile,
     referencedAssets: ReferencedAssetsType?
@@ -28,11 +28,11 @@ final class HybridRiveFileFactory: HybridRiveFileFactorySpec, @unchecked Sendabl
     return Promise.async {
       do {
         let checked = try check()
+        let prepared = try await prepare(checked)
 
         let result = try await withCheckedThrowingContinuation { continuation in
           DispatchQueue.global(qos: .userInitiated).async {
             do {
-              let prepared = try prepare(checked)
 
               let referencedAssetCache = SendableRef(ReferencedAssetCache())
               let factoryCache: SendableRef<RiveFactory?> = .init(nil)
@@ -93,7 +93,7 @@ final class HybridRiveFileFactory: HybridRiveFileFactorySpec, @unchecked Sendabl
         }
         return url
       },
-      prepare: { url in try Data(contentsOf: url) },
+      prepare: { url in try await HTTPLoader.shared.downloadData(from: url) },
       fileWithCustomAssetLoader: { (data, loader) in
         try RiveFile(data: data, loadCdn: loadCdn, customAssetLoader: loader)
       },
