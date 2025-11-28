@@ -22,7 +22,6 @@
 #include "HybridViewModelEnumPropertySpecSwift.hpp"
 #include "HybridViewModelTriggerPropertySpecSwift.hpp"
 #include "HybridRiveViewSpecSwift.hpp"
-#include "HybridRiveImageSpecSwift.hpp"
 #include "HybridRiveImageFactorySpecSwift.hpp"
 
 @interface RNRiveAutolinking : NSObject
@@ -115,13 +114,6 @@
     "RiveView",
     []() -> std::shared_ptr<HybridObject> {
       std::shared_ptr<HybridRiveViewSpec> hybridObject = RNRive::RNRiveAutolinking::createRiveView();
-      return hybridObject;
-    }
-  );
-  HybridObjectRegistry::registerHybridObjectConstructor(
-    "RiveImage",
-    []() -> std::shared_ptr<HybridObject> {
-      std::shared_ptr<HybridRiveImageSpec> hybridObject = RNRive::RNRiveAutolinking::createRiveImage();
       return hybridObject;
     }
   );

@@ -169,14 +169,6 @@ int initialize(JavaVM* vm) {
       }
     );
     HybridObjectRegistry::registerHybridObjectConstructor(
-      "RiveImage",
-      []() -> std::shared_ptr<HybridObject> {
-        static DefaultConstructableObject<JHybridRiveImageSpec::javaobject> object("com/margelo/nitro/rive/HybridRiveImage");
-        auto instance = object.create();
-        return instance->cthis()->shared();
-      }
-    );
-    HybridObjectRegistry::registerHybridObjectConstructor(
       "RiveImageFactory",
       []() -> std::shared_ptr<HybridObject> {
         static DefaultConstructableObject<JHybridRiveImageFactorySpec::javaobject> object("com/margelo/nitro/rive/HybridRiveImageFactory");

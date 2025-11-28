@@ -57,10 +57,6 @@
       "swift": "HybridRiveView",
       "kotlin": "HybridRiveView"
     },
-    "RiveImage": {
-      "swift": "HybridRiveImage",
-      "kotlin": "HybridRiveImage"
-    },
     "RiveImageFactory": {
       "swift": "HybridRiveImageFactory",
       "kotlin": "HybridRiveImageFactory"
