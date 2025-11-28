@@ -5,6 +5,7 @@ import {
   StyleSheet,
   Text,
   View,
+  Button,
 } from 'react-native';
 import {
   Fit,
@@ -16,12 +17,55 @@ import {
 import { Picker } from '@react-native-picker/picker';
 import { type Metadata } from '../helpers/metadata';
 
+class ErrorBoundary extends React.Component<
+  {
+    children: React.ReactNode;
+    fallback?: (error: Error, reset: () => void) => React.ReactNode;
+  },
+  { hasError: boolean; error: Error | null }
+> {
+  constructor(props: any) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    console.error('ErrorBoundary caught:', error, errorInfo);
+  }
+
+  reset = () => {
+    this.setState({ hasError: false, error: null });
+  };
+
+  render() {
+    if (this.state.hasError && this.state.error) {
+      if (this.props.fallback) {
+        return this.props.fallback(this.state.error, this.reset);
+      }
+      return (
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorText}>Something went wrong:</Text>
+          <Text style={styles.errorMessage}>{this.state.error.message}</Text>
+          <Button title="Try Again" onPress={this.reset} />
+        </View>
+      );
+    }
+
+    return this.props.children;
+  }
+}
+
 const delay = 1000;
 
 const ImageURL1 = `https://picsum.photos/id/372/500/500` as const;
 const ImageURL2 = `https://picsum.photos/id/373/500/500` as const;
 const ImageURLSlow =
   `https://app.requestly.io/delay/${delay}/https://picsum.photos/id/374/500/500` as const;
+const ImageInvalidURL = 'not-a-valid-url' as const;
 
 type ImageURLS = typeof ImageURL1 | typeof ImageURL2 | typeof ImageURLSlow;
 
@@ -73,21 +117,48 @@ function RiveContent({ imageUrl }: { imageUrl: ImageURLS }) {
   );
 }
 
+function ErrorFallback({ error, reset }: { error: Error; reset: () => void }) {
+  return (
+    <View style={styles.errorContainer}>
+      <Text style={styles.errorText}>Error loading image:</Text>
+      <Text style={styles.errorMessage}>{error.message}</Text>
+      <Button title="Try Again" onPress={reset} />
+    </View>
+  );
+}
+
 export default function OutOfBandAssetsWithSuspenseExample() {
   const [uri, setUri] = React.useState<ImageURLS>(ImageURL1);
+  const [errorBoundaryKey, setErrorBoundaryKey] = React.useState(0);
+
+  const handleReset = () => {
+    setErrorBoundaryKey((k) => k + 1);
+  };
+
+  const renderErrorFallback = (error: Error, reset: () => void) => (
+    <ErrorFallback
+      error={error}
+      reset={() => {
+        reset();
+        handleReset();
+      }}
+    />
+  );
 
   return (
     <View style={styles.safeAreaViewContainer}>
-      <React.Suspense
-        fallback={
-          <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" />
-            <Text style={styles.loadingText}>Loading image...</Text>
-          </View>
-        }
-      >
-        <RiveContent imageUrl={uri} />
-      </React.Suspense>
+      <ErrorBoundary key={errorBoundaryKey} fallback={renderErrorFallback}>
+        <React.Suspense
+          fallback={
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="large" />
+              <Text style={styles.loadingText}>Loading image...</Text>
+            </View>
+          }
+        >
+          <RiveContent imageUrl={uri} />
+        </React.Suspense>
+      </ErrorBoundary>
 
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.pickersWrapper}>
@@ -102,9 +173,11 @@ export default function OutOfBandAssetsWithSuspenseExample() {
               mode={'dropdown'}
               style={styles.picker}
             >
-              {[ImageURL1, ImageURL2, ImageURLSlow].map((key) => (
-                <Picker.Item key={key} value={key} label={key} />
-              ))}
+              {[ImageURL1, ImageURL2, ImageURLSlow, ImageInvalidURL].map(
+                (url) => (
+                  <Picker.Item key={url} value={url} label={url} />
+                )
+              )}
             </Picker>
           </View>
         </View>
@@ -158,6 +231,26 @@ const styles = StyleSheet.create({
     color: '#666',
     marginBottom: 8,
     paddingHorizontal: 16,
+  },
+  errorContainer: {
+    width: '100%',
+    height: 400,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 16,
+    backgroundColor: '#ffebee',
+  },
+  errorText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#c62828',
+    marginBottom: 8,
+  },
+  errorMessage: {
+    fontSize: 14,
+    color: '#d32f2f',
+    marginBottom: 16,
+    textAlign: 'center',
   },
 });
 
