@@ -58,6 +58,10 @@ function App() {
 
 > **⚠️ Advanced Usage:** Customizing native SDK versions is intended for advanced users only. Using non-default versions may cause build-time errors, or compatibility issues. Always review and update custom versions when upgrading @rive-app/react-native.
 
+<details>
+
+<summary>Custom Native SDK Version instructions - <b>only use if you need it!</b></summary>
+
 By default, @rive-app/react-native uses specific versions of the Rive native SDKs defined in the library's `package.json` (`runtimeVersions.ios` and `runtimeVersions.android`). You can customize these versions if needed.
 
 ### Vanilla React Native
@@ -113,6 +117,7 @@ export default {
   },
 };
 ```
+</details>
 
 ## Error Handling
 
