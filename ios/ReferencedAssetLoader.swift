@@ -29,7 +29,6 @@ func createAssetFileError(_ assetName: String) -> NitroRiveError {
 }
 
 final class ReferencedAssetLoader {
-  private var isDisposed = false
   private let cacheQueue = DispatchQueue(label: "com.rive.assetCache", attributes: .concurrent)
 
   private func handleRiveError(error: Error) {
@@ -126,12 +125,6 @@ final class ReferencedAssetLoader {
   private func downloadUrlAsset(
     url: String, listener: @escaping (Data) -> Void, onError: @escaping () -> Void
   ) {
-    // Check if disposed before starting download
-    guard !isDisposed else {
-      logDebug("Loader is disposed, skipping download: \(url)")
-      onError()
-      return
-    }
 
     guard isValidUrl(url) else {
       handleInvalidUrlError(url: url)
@@ -142,12 +135,6 @@ final class ReferencedAssetLoader {
     if let fileUrl = URL(string: url), fileUrl.scheme == "file" {
       do {
         let data = try Data(contentsOf: fileUrl)
-        // Check again before calling listener
-        guard !isDisposed else {
-          logDebug("Loader disposed before calling listener for file: \(url)")
-          onError()
-          return
-        }
         listener(data)
       } catch {
         handleInvalidUrlError(url: url)
@@ -158,12 +145,6 @@ final class ReferencedAssetLoader {
 
     // Check cache first for HTTP/HTTPS URLs
     if let cachedData = getCachedAsset(url) {
-      // Check again before calling listener
-      guard !isDisposed else {
-        logDebug("Loader disposed before calling listener for cached: \(url)")
-        onError()
-        return
-      }
       listener(cachedData)
       return
     }
@@ -184,26 +165,12 @@ final class ReferencedAssetLoader {
         return
       }
 
-      // Check if disposed
-      guard !self.isDisposed else {
-        self.logDebug("Loader disposed during download: \(url)")
-        onError()
-        return
-      }
-
       if let error = error {
         self.handleInvalidUrlError(url: url)
         onError()
       } else if let data = data {
         // Save to cache
         self.saveToCache(url, data: data)
-
-        // Final check before calling listener
-        guard !self.isDisposed else {
-          self.logDebug("Loader disposed before calling listener: \(url)")
-          onError()
-          return
-        }
 
         listener(data)
       } else {
@@ -217,12 +184,6 @@ final class ReferencedAssetLoader {
   private func processAssetBytes(
     _ data: Data, asset: RiveFileAsset, factory: RiveFactory, completion: @escaping () -> Void
   ) {
-    // Check if disposed before processing
-    guard !isDisposed else {
-      logDebug("Loader is disposed, skipping asset processing: \(asset.name())")
-      completion()
-      return
-    }
 
     if data.isEmpty == true {
       completion()
@@ -230,7 +191,7 @@ final class ReferencedAssetLoader {
     }
 
     DispatchQueue.global(qos: .background).async { [weak self] in
-      guard let self = self, !self.isDisposed else {
+      guard let self = self else {
         DispatchQueue.main.async {
           completion()
         }
@@ -241,22 +202,12 @@ final class ReferencedAssetLoader {
       case let imageAsset as RiveImageAsset:
         let decodedImage = factory.decodeImage(data)
         DispatchQueue.main.async { [weak self] in
-          // Final check before rendering on main thread
-          guard let self = self, !self.isDisposed else {
-            completion()
-            return
-          }
           imageAsset.renderImage(decodedImage)
           completion()
         }
       case let fontAsset as RiveFontAsset:
         let decodedFont = factory.decodeFont(data)
         DispatchQueue.main.async { [weak self] in
-          // Final check before rendering on main thread
-          guard let self = self, !self.isDisposed else {
-            completion()
-            return
-          }
           fontAsset.font(decodedFont)
           completion()
         }
@@ -268,11 +219,6 @@ final class ReferencedAssetLoader {
           return
         }
         DispatchQueue.main.async { [weak self] in
-          // Final check before rendering on main thread
-          guard let self = self, !self.isDisposed else {
-            completion()
-            return
-          }
           audioAsset.audio(decodedAudio)
           completion()
         }
@@ -304,20 +250,10 @@ final class ReferencedAssetLoader {
     _ sourceUrl: String, asset: RiveFileAsset, factory: RiveFactory,
     completion: @escaping () -> Void
   ) {
-    // Check if disposed before processing
-    guard !isDisposed else {
-      logDebug("Loader is disposed, skipping handleSourceUrl: \(sourceUrl)")
-      completion()
-      return
-    }
 
     downloadUrlAsset(
       url: sourceUrl,
       listener: { [weak self] data in
-        guard let self = self, !self.isDisposed else {
-          completion()
-          return
-        }
         self.processAssetBytes(data, asset: asset, factory: factory, completion: completion)
       }, onError: completion)
   }
@@ -379,12 +315,6 @@ final class ReferencedAssetLoader {
     source: ResolvedReferencedAsset, asset: RiveFileAsset, factory: RiveFactory,
     completion: @escaping () -> Void
   ) {
-    // Check if disposed before starting
-    guard !isDisposed else {
-      logDebug("Loader is disposed, skipping asset load: \(asset.name())")
-      completion()
-      return
-    }
 
     let sourceAssetId = source.sourceAssetId
     let sourceUrl = source.sourceUrl
@@ -421,11 +351,6 @@ final class ReferencedAssetLoader {
     }
 
     return { [weak self] (asset: RiveFileAsset, data: Data, factory: RiveFactory) -> Bool in
-      guard let self = self, !self.isDisposed else {
-        self?.logDebug("Loader is disposed, skipping loadContents for: \(asset.name())")
-        return false
-      }
-
       // Check for CDN URL/UUID first (only if both are non-empty)
       let cdnUuid = asset.cdnUuid()
       let cdnBaseUrl = asset.cdnBaseUrl()
@@ -437,9 +362,6 @@ final class ReferencedAssetLoader {
         if let cachedData = cached {
           // Use cached version
           DispatchQueue.global(qos: .background).async {
-            guard !self.isDisposed else {
-              return
-            }
             self.processAssetBytes(cachedData, asset: asset, factory: factory, completion: {})
           }
           cache.value[asset.uniqueName()] = asset
@@ -473,9 +395,5 @@ final class ReferencedAssetLoader {
 
       return true
     }
-  }
-
-  func dispose() {
-    isDisposed = true
   }
 }
