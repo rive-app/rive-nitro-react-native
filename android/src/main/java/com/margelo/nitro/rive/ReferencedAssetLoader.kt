@@ -23,7 +23,6 @@ typealias ReferencedAssetCache = MutableMap<String, FileAsset>
 
 class ReferencedAssetLoader {
   private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
-  private var isDisposed = false
   private val cacheLock = ReentrantReadWriteLock()
 
   private fun logError(message: String) {
@@ -150,13 +149,6 @@ class ReferencedAssetLoader {
   }
 
   private fun downloadUrlAsset(url: String, context: Context, listener: (ByteArray?) -> Unit) {
-    // Check if disposed before starting download
-    if (isDisposed) {
-      logDebug("Loader is disposed, skipping download: $url")
-      listener(null)
-      return
-    }
-
     if (!isValidUrl(url)) {
       logError("Invalid URL: $url")
       listener(null)
@@ -176,28 +168,12 @@ class ReferencedAssetLoader {
               throw IOException("Permission denied: ${uri.path}")
             }
             val fileBytes = file.readBytes()
-            // Check again before calling listener
-            if (isDisposed) {
-              logDebug("Loader disposed before calling listener for file: $url")
-              withContext(Dispatchers.Main) {
-                listener(null)
-              }
-              return@launch
-            }
             fileBytes
           }
           "http", "https" -> {
             // Check cache first for HTTP/HTTPS URLs
             val cachedData = getCachedAsset(context, url)
             if (cachedData != null) {
-              // Check again before calling listener
-              if (isDisposed) {
-                logDebug("Loader disposed before calling listener for cached: $url")
-                withContext(Dispatchers.Main) {
-                  listener(null)
-                }
-                return@launch
-              }
               withContext(Dispatchers.Main) {
                 listener(cachedData)
               }
@@ -206,19 +182,10 @@ class ReferencedAssetLoader {
 
             // Download from network
             val downloadedBytes = URL(url).readBytes()
-            
+
             // Save to cache
             saveToCache(context, url, downloadedBytes)
-            
-            // Final check before calling listener
-            if (isDisposed) {
-              logDebug("Loader disposed before calling listener: $url")
-              withContext(Dispatchers.Main) {
-                listener(null)
-              }
-              return@launch
-            }
-            
+
             downloadedBytes
           }
           else -> {
@@ -314,12 +281,6 @@ class ReferencedAssetLoader {
   }
 
   private fun processAssetBytes(bytes: ByteArray, asset: FileAsset) {
-    // Check if disposed before processing
-    if (isDisposed) {
-      logDebug("Loader is disposed, skipping asset processing: ${asset.name}")
-      return
-    }
-
     if (bytes.isEmpty()) {
       return
     }
@@ -332,15 +293,9 @@ class ReferencedAssetLoader {
   }
 
   private fun loadAsset(assetData: ResolvedReferencedAsset, asset: FileAsset, context: Context): Deferred<Unit> {
-    // Check if disposed before starting
-    if (isDisposed) {
-      logDebug("Loader is disposed, skipping asset load: ${asset.name}")
-      return CompletableDeferred<Unit>().apply { complete(Unit) }
-    }
-
     val deferred = CompletableDeferred<Unit>()
     val listener: (ByteArray?) -> Unit = { bytes ->
-      if (bytes != null && !isDisposed) {
+      if (bytes != null) {
         processAssetBytes(bytes, asset)
       }
       deferred.complete(Unit)
@@ -377,25 +332,17 @@ class ReferencedAssetLoader {
 
     return object : FileAssetLoader() {
       override fun loadContents(asset: FileAsset, inBandBytes: ByteArray): Boolean {
-        // Check if disposed
-        if (isDisposed) {
-          logDebug("Loader is disposed, skipping loadContents for: ${asset.name}")
-          return false
-        }
-
         // Check for CDN URL/UUID first (only if both are non-empty)
         val cdnUrl = asset.cdnUrl
 
         if (cdnUrl != null && cdnUrl.isNotEmpty()) {
           logDebug("Loading CDN asset from URL: $cdnUrl")
-          
+
           val cached = getCachedAsset(context, cdnUrl)
           if (cached != null) {
             // Use cached version
             scope.launch(Dispatchers.IO) {
-              if (!isDisposed) {
-                processAssetBytes(cached, asset)
-              }
+              processAssetBytes(cached, asset)
             }
             cache[asset.uniqueFilename.substringBeforeLast(".")] = asset
             cache[asset.name] = asset
@@ -404,7 +351,7 @@ class ReferencedAssetLoader {
             // Download and cache
             cache[asset.uniqueFilename.substringBeforeLast(".")] = asset
             cache[asset.name] = asset
-            
+
             val cdnAssetData = ResolvedReferencedAsset(
               sourceUrl = cdnUrl,
               sourceAssetId = null,
@@ -438,7 +385,6 @@ class ReferencedAssetLoader {
   }
 
   fun dispose() {
-    isDisposed = true
     scope.cancel()
   }
 }
