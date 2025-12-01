@@ -8,7 +8,6 @@ import com.margelo.nitro.core.Promise
 @Keep
 @DoNotStrip
 class HybridRiveImageFactory : HybridRiveImageFactorySpec() {
-
   override fun loadFromURLAsync(url: String): Promise<HybridRiveImageSpec> {
     return Promise.async {
       try {

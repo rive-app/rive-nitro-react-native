@@ -10,7 +10,6 @@ class HybridRiveImage(
   val renderImage: RiveRenderImage,
   private val dataSize: Int
 ) : HybridRiveImageSpec() {
-
   override val byteSize: Double
     get() = dataSize.toDouble()
 }
