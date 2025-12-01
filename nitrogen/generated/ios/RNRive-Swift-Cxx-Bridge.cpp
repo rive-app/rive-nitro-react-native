@@ -138,6 +138,14 @@ namespace margelo::nitro::rive::bridge::swift {
     };
   }
   
+  // pragma MARK: std::function<void()>
+  Func_void create_Func_void(void* NON_NULL swiftClosureWrapper) noexcept {
+    auto swiftClosure = RNRive::Func_void::fromUnsafe(swiftClosureWrapper);
+    return [swiftClosure = std::move(swiftClosure)]() mutable -> void {
+      swiftClosure.call();
+    };
+  }
+  
   // pragma MARK: std::function<void(const UnifiedRiveEvent& /* event */)>
   Func_void_UnifiedRiveEvent create_Func_void_UnifiedRiveEvent(void* NON_NULL swiftClosureWrapper) noexcept {
     auto swiftClosure = RNRive::Func_void_UnifiedRiveEvent::fromUnsafe(swiftClosureWrapper);
@@ -287,14 +295,6 @@ namespace margelo::nitro::rive::bridge::swift {
     auto swiftClosure = RNRive::Func_void_std__string::fromUnsafe(swiftClosureWrapper);
     return [swiftClosure = std::move(swiftClosure)](const std::string& value) mutable -> void {
       swiftClosure.call(value);
-    };
-  }
-  
-  // pragma MARK: std::function<void()>
-  Func_void create_Func_void(void* NON_NULL swiftClosureWrapper) noexcept {
-    auto swiftClosure = RNRive::Func_void::fromUnsafe(swiftClosureWrapper);
-    return [swiftClosure = std::move(swiftClosure)]() mutable -> void {
-      swiftClosure.call();
     };
   }
 
