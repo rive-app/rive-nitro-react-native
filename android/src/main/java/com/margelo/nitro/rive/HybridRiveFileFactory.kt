@@ -43,8 +43,10 @@ class HybridRiveFileFactory : HybridRiveFileFactorySpec() {
   override fun fromURL(url: String, loadCdn: Boolean, referencedAssets: ReferencedAssetsType?): Promise<HybridRiveFileSpec> {
     return Promise.async {
       try {
-        val riveData = HTTPLoader.downloadBytes(url)
-        val fileAndCache = buildRiveFile(riveData, referencedAssets)
+        val fileAndCache = withContext(Dispatchers.IO) {
+          val riveData = HTTPLoader.downloadBytes(url)
+          buildRiveFile(riveData, referencedAssets)
+        }
 
         val hybridRiveFile = HybridRiveFile()
         hybridRiveFile.riveFile = fileAndCache.file
