@@ -1,8 +1,8 @@
 import NitroModules
 import RiveRuntime
 
-class HybridViewModelEnumProperty: HybridViewModelEnumPropertySpec, ViewModelPropertyProtocol {
-  private var property: EnumPropertyType!
+class HybridViewModelEnumProperty: HybridViewModelEnumPropertySpec, ValuedPropertyProtocol {
+  var property: EnumPropertyType!
   lazy var helper = PropertyListenerHelper(property: property!)
   
   init(property: EnumPropertyType) {
@@ -24,14 +24,6 @@ class HybridViewModelEnumProperty: HybridViewModelEnumPropertySpec, ViewModelPro
     }
     set {
       property.value = newValue
-    }
-  }
-  
-  func addListener(onChanged: @escaping (String) -> Void) throws {
-    helper.trackListener { property in
-      property.addListener { value in
-        onChanged(value)
-      }
     }
   }
 }

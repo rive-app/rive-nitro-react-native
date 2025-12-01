@@ -1,8 +1,8 @@
 import NitroModules
 import RiveRuntime
 
-class HybridViewModelStringProperty: HybridViewModelStringPropertySpec, ViewModelPropertyProtocol {
-  private var property: StringPropertyType!
+class HybridViewModelStringProperty: HybridViewModelStringPropertySpec, ValuedPropertyProtocol {
+  var property: StringPropertyType!
   lazy var helper = PropertyListenerHelper(property: property!)
   
   init(property: StringPropertyType) {
@@ -26,13 +26,4 @@ class HybridViewModelStringProperty: HybridViewModelStringPropertySpec, ViewMode
       property.value = newValue
     }
   }
-  
-  func addListener(onChanged: @escaping (String) -> Void) throws {
-    helper.trackListener { property in
-      property.addListener { value in
-        onChanged(value)
-      }
-    }
-  }
-  
 }

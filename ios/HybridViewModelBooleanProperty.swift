@@ -1,8 +1,8 @@
 import NitroModules
 import RiveRuntime
 
-class HybridViewModelBooleanProperty: HybridViewModelBooleanPropertySpec, ViewModelPropertyProtocol {
-  private var property: BooleanPropertyType!
+class HybridViewModelBooleanProperty: HybridViewModelBooleanPropertySpec, ValuedPropertyProtocol {
+  var property: BooleanPropertyType!
   lazy var helper = PropertyListenerHelper(property: property!)
   
   init(property: BooleanPropertyType) {
@@ -24,14 +24,6 @@ class HybridViewModelBooleanProperty: HybridViewModelBooleanPropertySpec, ViewMo
     }
     set {
       property.value = newValue
-    }
-  }
-  
-  func addListener(onChanged: @escaping (Bool) -> Void) throws {
-    helper.trackListener { property in
-      property.addListener { value in
-        onChanged(value)
-      }
     }
   }
 }

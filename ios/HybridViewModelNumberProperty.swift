@@ -1,6 +1,6 @@
 import RiveRuntime
 
-class HybridViewModelNumberProperty: HybridViewModelNumberPropertySpec, ViewModelPropertyProtocol {
+class HybridViewModelNumberProperty: HybridViewModelNumberPropertySpec, ValuedPropertyProtocol {
   var property: NumberPropertyType!
   lazy var helper = PropertyListenerHelper(property: property!)
   
@@ -26,12 +26,10 @@ class HybridViewModelNumberProperty: HybridViewModelNumberPropertySpec, ViewMode
     }
   }
   
+  // Custom addListener needed because ListenerValueType (Float) != ValueType (Double)
   func addListener(onChanged: @escaping (Double) -> Void) throws {
-    helper.trackListener { property in
-      property.addListener { value in
-        onChanged(Double(value))
-      }
+    helper.addListener { (value: Float) in
+      onChanged(Double(value))
     }
   }
-  
 }

@@ -3,6 +3,9 @@ import RiveRuntime
 
 /// Protocol for Rive property types that support listener management
 protocol RivePropertyWithListeners: AnyObject {
+  associatedtype ListenerValueType
+  
+  func addListener(_ callback: @escaping (ListenerValueType) -> Void) -> UUID
   func removeListener(_ id: UUID)
 }
 
@@ -15,16 +18,24 @@ typealias TriggerPropertyType = RiveDataBindingViewModel.Instance.TriggerPropert
 typealias ImagePropertyType = RiveDataBindingViewModel.Instance.ImageProperty
 
 // Make all Rive property types conform to the protocol
-extension BooleanPropertyType: RivePropertyWithListeners {}
-extension NumberPropertyType: RivePropertyWithListeners {}
-extension StringPropertyType: RivePropertyWithListeners {}
-extension EnumPropertyType: RivePropertyWithListeners {}
-extension ColorPropertyType: RivePropertyWithListeners {}
-extension TriggerPropertyType: RivePropertyWithListeners {}
-extension ImagePropertyType: RivePropertyWithListeners {}
+extension BooleanPropertyType: RivePropertyWithListeners {
+  typealias ListenerValueType = Bool  // Native: Bool → Bool (no conversion)
+}
+extension NumberPropertyType: RivePropertyWithListeners {
+  typealias ListenerValueType = Float  // Native: Float → Double (needs conversion)
+}
+extension StringPropertyType: RivePropertyWithListeners {
+  typealias ListenerValueType = String  // Native: String → String (no conversion)
+}
+extension EnumPropertyType: RivePropertyWithListeners {
+  typealias ListenerValueType = String  // Native: String → String (no conversion)
+}
+extension ColorPropertyType: RivePropertyWithListeners {
+  typealias ListenerValueType = UIColor  // Native: UIColor → Double (needs conversion)
+}
+// Note: TriggerProperty doesn't fit the pattern - it has () -> Void listeners, not (Void) -> Void
 
 /// Helper class for managing ViewModel property listeners
-/// Similar to Android's BaseHybridViewModelPropertyImpl, provides reusable listener management
 class PropertyListenerHelper<PropertyType: RivePropertyWithListeners> {
   private var listenerIds: [UUID] = []
   weak var property: PropertyType?
@@ -33,11 +44,10 @@ class PropertyListenerHelper<PropertyType: RivePropertyWithListeners> {
     self.property = property
   }
   
-  /// Adds a listener and automatically tracks its ID for later cleanup
-  /// - Parameter addListener: Closure that adds the listener to the property and returns the listener ID
-  func trackListener(_ addListener: (PropertyType) -> UUID) {
+  /// Adds a listener to the property and automatically tracks its ID for cleanup
+  func addListener(_ callback: @escaping (PropertyType.ListenerValueType) -> Void) {
     guard let property = property else { return }
-    let id = addListener(property)
+    let id = property.addListener(callback)
     listenerIds.append(id)
   }
   
@@ -54,25 +64,36 @@ class PropertyListenerHelper<PropertyType: RivePropertyWithListeners> {
   }
 }
 
-/// Protocol that provides common functionality for all hybrid ViewModel property classes
-/// Reduces boilerplate by providing default implementations for listener management
-protocol ViewModelPropertyProtocol {
+/// Protocol for properties that have typed values (Bool, String, Double, etc.)
+/// Provides a default addListener implementation
+protocol ValuedPropertyProtocol<ValueType>{
   associatedtype PropertyType: RivePropertyWithListeners
+  associatedtype ValueType
   
+  var property: PropertyType! { get }
   var helper: PropertyListenerHelper<PropertyType> { get }
-  
+
+  func addListener(onChanged: @escaping (ValueType) -> Void) throws
   func removeListeners() throws
   func dispose() throws
 }
 
-/// Default implementations for common listener management methods
-extension ViewModelPropertyProtocol {
+
+/// Default implementations for lifecycle methods (always available)
+extension ValuedPropertyProtocol {
   func removeListeners() throws {
     try helper.removeListeners()
   }
   
   func dispose() throws {
     try helper.dispose()
+  }
+}
+
+/// Automatic addListener() ONLY when ListenerValueType == ValueType (no conversion needed)
+extension ValuedPropertyProtocol where PropertyType.ListenerValueType == ValueType {
+  func addListener(onChanged: @escaping (ValueType) -> Void) throws {
+    helper.addListener(onChanged)  // Types match, just forward directly!
   }
 }
 
