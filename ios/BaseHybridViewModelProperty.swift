@@ -66,18 +66,17 @@ class PropertyListenerHelper<PropertyType: RivePropertyWithListeners> {
 
 /// Protocol for properties that have typed values (Bool, String, Double, etc.)
 /// Provides a default addListener implementation
-protocol ValuedPropertyProtocol<ValueType>{
+protocol ValuedPropertyProtocol<ValueType> {
   associatedtype PropertyType: RivePropertyWithListeners
   associatedtype ValueType
   
   var property: PropertyType! { get }
   var helper: PropertyListenerHelper<PropertyType> { get }
-
+  
   func addListener(onChanged: @escaping (ValueType) -> Void) throws
   func removeListeners() throws
   func dispose() throws
 }
-
 
 /// Default implementations for lifecycle methods (always available)
 extension ValuedPropertyProtocol {
@@ -96,4 +95,3 @@ extension ValuedPropertyProtocol where PropertyType.ListenerValueType == ValueTy
     helper.addListener(onChanged)  // Types match, just forward directly!
   }
 }
-
