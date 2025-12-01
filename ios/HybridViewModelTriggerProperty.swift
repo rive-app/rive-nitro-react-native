@@ -2,10 +2,10 @@ import NitroModules
 import RiveRuntime
 
 class HybridViewModelTriggerProperty: HybridViewModelTriggerPropertySpec {
-  private var property: RiveDataBindingViewModel.Instance.TriggerProperty!
+  private var property: TriggerPropertyType!
   private var listenerIds: [UUID] = []
   
-  init(property: RiveDataBindingViewModel.Instance.TriggerProperty) {
+  init(property: TriggerPropertyType) {
     self.property = property
     super.init()
   }
@@ -23,7 +23,9 @@ class HybridViewModelTriggerProperty: HybridViewModelTriggerPropertySpec {
   }
   
   func addListener(onChanged: @escaping () -> Void) throws {
-    let id = property.addListener({ onChanged() })
+    let id = property.addListener {
+      onChanged()
+    }
     listenerIds.append(id)
   }
   

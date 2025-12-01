@@ -1,10 +1,10 @@
 import RiveRuntime
 
-class HybridViewModelNumberProperty: HybridViewModelNumberPropertySpec {
-  var property: RiveDataBindingViewModel.Instance.NumberProperty!
-  private var listenerIds: [UUID] = []
+class HybridViewModelNumberProperty: HybridViewModelNumberPropertySpec, ValuedPropertyProtocol {
+  var property: NumberPropertyType!
+  lazy var helper = PropertyListenerHelper(property: property!)
   
-  init(property: RiveDataBindingViewModel.Instance.NumberProperty) {
+  init(property: NumberPropertyType) {
     self.property = property
     super.init()
   }
@@ -26,23 +26,10 @@ class HybridViewModelNumberProperty: HybridViewModelNumberPropertySpec {
     }
   }
   
+  // Custom addListener needed because ListenerValueType (Float) != ValueType (Double)
   func addListener(onChanged: @escaping (Double) -> Void) throws {
-    let id = property.addListener({ value in
+    helper.addListener { (value: Float) in
       onChanged(Double(value))
-    })
-    
-    listenerIds.append(id)
-    
-  }
-  
-  func removeListeners() throws {
-    for id in listenerIds {
-      property.removeListener(id)
     }
-    listenerIds.removeAll()
-  }
-  
-  func dispose() throws {
-    try? removeListeners()
   }
 }
