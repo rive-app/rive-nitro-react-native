@@ -118,7 +118,6 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
 
   override fun reset() = asyncExecuteOnUiThread { view.reset() }
 
-
   override fun onEventListener(onEvent: (event: UnifiedRiveEvent) -> Unit) =
     executeOnUiThread { view.addEventListener(onEvent) }
 
@@ -200,8 +199,8 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
         }
       }
     }
-
   }
+
   private fun executeOnUiThread(action: () -> Unit) {
     context.currentActivity?.runOnUiThread {
       try {
