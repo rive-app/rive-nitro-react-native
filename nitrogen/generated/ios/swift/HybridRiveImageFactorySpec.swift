@@ -15,6 +15,8 @@ public protocol HybridRiveImageFactorySpec_protocol: HybridObject {
 
   // Methods
   func loadFromURLAsync(url: String) throws -> Promise<(any HybridRiveImageSpec)>
+  func loadFromResourceAsync(resource: String) throws -> Promise<(any HybridRiveImageSpec)>
+  func loadFromBytesAsync(bytes: ArrayBuffer) throws -> Promise<(any HybridRiveImageSpec)>
 }
 
 public extension HybridRiveImageFactorySpec_protocol {

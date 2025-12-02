@@ -55,6 +55,8 @@ namespace margelo::nitro::rive {
   public:
     // Methods
     std::shared_ptr<Promise<std::shared_ptr<HybridRiveImageSpec>>> loadFromURLAsync(const std::string& url) override;
+    std::shared_ptr<Promise<std::shared_ptr<HybridRiveImageSpec>>> loadFromResourceAsync(const std::string& resource) override;
+    std::shared_ptr<Promise<std::shared_ptr<HybridRiveImageSpec>>> loadFromBytesAsync(const std::shared_ptr<ArrayBuffer>& bytes) override;
 
   private:
     friend HybridBase;

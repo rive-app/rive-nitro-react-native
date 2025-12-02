@@ -93,7 +93,7 @@ final class HybridRiveFileFactory: HybridRiveFileFactorySpec, @unchecked Sendabl
         }
         return url
       },
-      prepare: { url in try await HTTPLoader.shared.downloadData(from: url) },
+      prepare: { url in try await HTTPDataLoader.shared.downloadData(from: url) },
       fileWithCustomAssetLoader: { (data, loader) in
         try RiveFile(data: data, loadCdn: loadCdn, customAssetLoader: loader)
       },
@@ -114,7 +114,7 @@ final class HybridRiveFileFactory: HybridRiveFileFactorySpec, @unchecked Sendabl
         }
         return url
       },
-      prepare: { url in try Data(contentsOf: url) },
+      prepare: { url in try FileDataLoader().loadData(from: url) },
       fileWithCustomAssetLoader: { (data, loader) in
         try RiveFile(data: data, loadCdn: loadCdn, customAssetLoader: loader)
       },

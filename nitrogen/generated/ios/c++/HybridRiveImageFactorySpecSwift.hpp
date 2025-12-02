@@ -14,11 +14,15 @@ namespace RNRive { class HybridRiveImageFactorySpec_cxx; }
 
 // Forward declaration of `HybridRiveImageSpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridRiveImageSpec; }
+// Forward declaration of `ArrayBufferHolder` to properly resolve imports.
+namespace NitroModules { class ArrayBufferHolder; }
 
 #include <memory>
 #include "HybridRiveImageSpec.hpp"
 #include <NitroModules/Promise.hpp>
 #include <string>
+#include <NitroModules/ArrayBuffer.hpp>
+#include <NitroModules/ArrayBufferHolder.hpp>
 
 #include "RNRive-Swift-Cxx-Umbrella.hpp"
 
@@ -66,6 +70,22 @@ namespace margelo::nitro::rive {
     // Methods
     inline std::shared_ptr<Promise<std::shared_ptr<HybridRiveImageSpec>>> loadFromURLAsync(const std::string& url) override {
       auto __result = _swiftPart.loadFromURLAsync(url);
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline std::shared_ptr<Promise<std::shared_ptr<HybridRiveImageSpec>>> loadFromResourceAsync(const std::string& resource) override {
+      auto __result = _swiftPart.loadFromResourceAsync(resource);
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline std::shared_ptr<Promise<std::shared_ptr<HybridRiveImageSpec>>> loadFromBytesAsync(const std::shared_ptr<ArrayBuffer>& bytes) override {
+      auto __result = _swiftPart.loadFromBytesAsync(ArrayBufferHolder(bytes));
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }
