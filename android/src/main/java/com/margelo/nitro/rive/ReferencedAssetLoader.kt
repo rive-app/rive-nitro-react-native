@@ -37,17 +37,22 @@ class ReferencedAssetLoader {
       return deferred
     }
 
-    val dataSource = DataSourceResolver.resolve(assetData)
+    val dataSource = try {
+      DataSourceResolver.resolve(assetData)
+    } catch (e: Exception) {
+      logError("Failed to resolve asset: ${e.message}")
+      deferred.complete(Unit)
+      return deferred
+    }
+
     if (dataSource == null) {
       deferred.complete(Unit)
       return deferred
     }
 
-    val loader = dataSource.createLoader()
-
     scope.launch {
       try {
-        val bytes = loader.load(dataSource)
+        val bytes = dataSource.createLoader().load(dataSource)
         withContext(Dispatchers.Main) {
           processAssetBytes(bytes, asset)
           deferred.complete(Unit)

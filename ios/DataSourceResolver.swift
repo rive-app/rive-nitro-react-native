@@ -1,13 +1,13 @@
 import Foundation
 
 struct DataSourceResolver {
-  static func resolve(from asset: ResolvedReferencedAsset) -> DataSource? {
+  static func resolve(from asset: ResolvedReferencedAsset) throws -> DataSource? {
     if let sourceUrl = asset.sourceUrl {
-      return resolveFromUrl(sourceUrl)
+      return try resolveFromUrl(sourceUrl)
     }
 
     if let sourceAssetId = asset.sourceAssetId {
-      return resolveFromAssetId(sourceAssetId)
+      return try resolveFromAssetId(sourceAssetId)
     }
 
     if let sourceAsset = asset.sourceAsset {
@@ -17,9 +17,9 @@ struct DataSourceResolver {
     return nil
   }
 
-  private static func resolveFromUrl(_ urlString: String) -> DataSource? {
+  private static func resolveFromUrl(_ urlString: String) throws -> DataSource {
     guard let url = URL(string: urlString) else {
-      return nil
+      throw DataLoaderError.invalidURL(urlString)
     }
 
     if url.isFileURL {
@@ -30,12 +30,12 @@ struct DataSourceResolver {
       return .http(url: url)
     }
 
-    return nil
+    throw DataLoaderError.invalidURL(urlString)
   }
 
-  private static func resolveFromAssetId(_ assetId: String) -> DataSource? {
+  private static func resolveFromAssetId(_ assetId: String) throws -> DataSource {
     guard let url = URL(string: assetId) else {
-      return nil
+      throw DataLoaderError.invalidURL(assetId)
     }
 
     if url.isFileURL {
@@ -46,13 +46,10 @@ struct DataSourceResolver {
       return .http(url: url)
     }
 
-    return nil
+    throw DataLoaderError.invalidURL(assetId)
   }
 
-  private static func resolveFromSourceAsset(_ sourceAsset: String) -> DataSource? {
-    let name = (sourceAsset as NSString).deletingPathExtension
-    let ext = (sourceAsset as NSString).pathExtension
-    let fileExtension = ext.isEmpty ? nil : ext
-    return .bundle(resource: name, extension: fileExtension)
+  private static func resolveFromSourceAsset(_ sourceAsset: String) -> DataSource {
+    return .bundle(nameWithExtension: sourceAsset)
   }
 }

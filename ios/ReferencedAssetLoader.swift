@@ -78,16 +78,22 @@ final class ReferencedAssetLoader {
       return
     }
 
-    guard let dataSource = DataSourceResolver.resolve(from: source) else {
+    let dataSource: DataSource
+    do {
+      guard let resolved = try DataSourceResolver.resolve(from: source) else {
+        completion()
+        return
+      }
+      dataSource = resolved
+    } catch {
+      handleRiveError(error: error)
       completion()
       return
     }
 
-    let loader = dataSource.createLoader()
-
     Task {
       do {
-        let data = try await loader.load(from: dataSource)
+        let data = try await dataSource.createLoader().load(from: dataSource)
         await MainActor.run {
           self.processAssetBytes(data, asset: asset, factory: factory, completion: completion)
         }
