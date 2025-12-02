@@ -6,6 +6,7 @@ import type { RiveImage } from './RiveImage.nitro';
 export type ResolvedReferencedAsset = {
   sourceUrl?: string;
   sourceAsset?: string;
+  /** URL on iOS, URL or resource name on Android (from Image.resolveAssetSource) */
   sourceAssetId?: string;
   path?: string;
   image?: RiveImage;
