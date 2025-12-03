@@ -13909,7 +13909,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-reanimated@npm:~4.1.1":
+"react-native-reanimated@npm:^4.1.5, react-native-reanimated@npm:~4.1.1":
   version: 4.1.5
   resolution: "react-native-reanimated@npm:4.1.5"
   dependencies:
@@ -13947,7 +13947,9 @@ __metadata:
     react-native-builder-bob: ^0.40.10
     react-native-gesture-handler: ^2.25.0
     react-native-nitro-modules: ^0.31.3
+    react-native-reanimated: ^4.1.5
     react-native-safe-area-context: ^5.4.0
+    react-native-worklets-core: ^1.6.2
   languageName: unknown
   linkType: soft
 
@@ -13991,6 +13993,18 @@ __metadata:
     react: ^18.0.0 || ^19.0.0
     react-dom: ^18.0.0 || ^19.0.0
   checksum: 3d8be3ee2bae2790949683d8002973882538a49d5182bdda2a38739d44f0a5918bf082427ad062c98b71d3585ab9664c406685ceafe2432bb99877188dc9782d
+  languageName: node
+  linkType: hard
+
+"react-native-worklets-core@npm:^1.6.2":
+  version: 1.6.2
+  resolution: "react-native-worklets-core@npm:1.6.2"
+  dependencies:
+    string-hash-64: ^1.0.3
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: 367981bfc8adf2f989ae73300849a5b8ef89bcea0174480e6ff1614df075f1eab28e30899daefa081a5c06588ca2df4d629c3de74e69f5830cbe54e004cf7235
   languageName: node
   linkType: hard
 
@@ -15306,6 +15320,13 @@ __metadata:
   version: 2.0.0
   resolution: "strict-uri-encode@npm:2.0.0"
   checksum: eaac4cf978b6fbd480f1092cab8b233c9b949bcabfc9b598dd79a758f7243c28765ef7639c876fa72940dac687181b35486ea01ff7df3e65ce3848c64822c581
+  languageName: node
+  linkType: hard
+
+"string-hash-64@npm:^1.0.3":
+  version: 1.0.3
+  resolution: "string-hash-64@npm:1.0.3"
+  checksum: 79de8431b4fa3e85a2429cd52a34f7948221ff167b7a094e05d6bcfd0173474b232e0c9845c96f74b0d7b6b0c8bbe2c3532a4cacb21635293ef0cf3cc8e77f06
   languageName: node
   linkType: hard
 
