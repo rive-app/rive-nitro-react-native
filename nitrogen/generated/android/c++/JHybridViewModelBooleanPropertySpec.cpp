@@ -11,6 +11,7 @@
 
 #include <functional>
 #include "JFunc_void_bool.hpp"
+#include <NitroModules/JNICallable.hpp>
 
 namespace margelo::nitro::rive {
 

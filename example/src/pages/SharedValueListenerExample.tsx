@@ -1,18 +1,18 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  Button,
-  ActivityIndicator,
-} from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { type Metadata } from '../helpers/metadata';
 import Animated, {
   useSharedValue,
   useAnimatedReaction,
   useAnimatedStyle,
   withSpring,
+  withTiming,
 } from 'react-native-reanimated';
-import { useEffect, useMemo } from 'react';
+import {
+  Gesture,
+  GestureDetector,
+  GestureHandlerRootView,
+} from 'react-native-gesture-handler';
+import { useMemo } from 'react';
 import { NitroModules } from 'react-native-nitro-modules';
 import {
   Fit,
@@ -68,7 +68,8 @@ function AnimatedRiveExample({
   instance: ViewModelInstance;
   file: RiveFile;
 }) {
-  const progress = useSharedValue(0);
+  const pressed = useSharedValue(false);
+  const offset = useSharedValue(0);
 
   const boxedProperty = useMemo(() => {
     const posYProperty = instance.numberProperty('posY');
@@ -78,8 +79,20 @@ function AnimatedRiveExample({
     return NitroModules.box(posYProperty);
   }, [instance]);
 
+  const pan = Gesture.Pan()
+    .onBegin(() => {
+      pressed.value = true;
+    })
+    .onChange((event) => {
+      offset.value = event.translationY * 3;
+    })
+    .onFinalize(() => {
+      offset.value = withSpring(0);
+      pressed.value = false;
+    });
+
   useAnimatedReaction(
-    () => progress.value,
+    () => offset.value,
     (value: number) => {
       'worklet';
       if (!boxedProperty) return;
@@ -90,34 +103,15 @@ function AnimatedRiveExample({
   );
 
   const circleStyle = useAnimatedStyle(() => ({
-    transform: [{ translateY: progress.value / 3 }],
+    transform: [{ translateY: offset.value / 3 }],
+    backgroundColor: pressed.value ? '#FFE04B' : 'blue',
+    scale: withTiming(pressed.value ? 1.2 : 1),
   }));
 
-  const animateTo800 = () => {
-    progress.value = 0;
-    progress.value = withSpring(800, {
-      damping: 8,
-      stiffness: 80,
-    });
-  };
-
-  const animateTo0 = () => {
-    progress.value = withSpring(0, {
-      damping: 8,
-      stiffness: 80,
-    });
-  };
-
-  useEffect(() => {
-    animateTo800();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   return (
-    <View style={styles.container}>
+    <GestureHandlerRootView style={styles.container}>
       <Text style={styles.subtitle}>
-        Circle posY is driven by Reanimated shared value (Red circle is rive,
-        Blue circle is React Native View)
+        Drag the blue circle to move both circles. Release to spring back.
       </Text>
 
       <View style={styles.riveContainer}>
@@ -129,14 +123,11 @@ function AnimatedRiveExample({
           layoutScaleFactor={1}
           file={file}
         />
-        <Animated.View style={[styles.blueCircle, circleStyle]} />
+        <GestureDetector gesture={pan}>
+          <Animated.View style={[styles.blueCircle, circleStyle]} />
+        </GestureDetector>
       </View>
-
-      <View style={styles.buttonContainer}>
-        <Button title="Bounce to 800" onPress={animateTo800} />
-        <Button title="Bounce to 0" onPress={animateTo0} />
-      </View>
-    </View>
+    </GestureHandlerRootView>
   );
 }
 
@@ -150,18 +141,11 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
   },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginTop: 20,
-    marginBottom: 10,
-  },
   subtitle: {
     fontSize: 16,
     color: '#666',
     textAlign: 'center',
-    marginBottom: 20,
+    marginVertical: 20,
     paddingHorizontal: 20,
   },
   riveContainer: {
@@ -176,12 +160,6 @@ const styles = StyleSheet.create({
   errorText: {
     color: 'red',
     textAlign: 'center',
-    padding: 20,
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    gap: 20,
     padding: 20,
   },
   blueCircle: {
