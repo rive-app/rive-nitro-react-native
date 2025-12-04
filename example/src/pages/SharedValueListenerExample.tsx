@@ -1,24 +1,30 @@
-import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Button,
+  ActivityIndicator,
+} from 'react-native';
 import { type Metadata } from '../helpers/metadata';
 import Animated, {
   useSharedValue,
   useAnimatedReaction,
   useAnimatedStyle,
   withSpring,
-  withTiming,
 } from 'react-native-reanimated';
 import {
   Gesture,
   GestureDetector,
   GestureHandlerRootView,
 } from 'react-native-gesture-handler';
-import { useMemo } from 'react';
-import { NitroModules } from 'react-native-nitro-modules';
+import { useCallback, useEffect, useMemo } from 'react';
+import { NitroModules, type BoxedHybridObject } from 'react-native-nitro-modules';
 import {
   Fit,
   RiveView,
   useRiveFile,
   type RiveFile,
+  type RiveViewRef,
   type ViewModelInstance,
   type ViewModelNumberProperty,
 } from '@rive-app/react-native';
@@ -68,8 +74,9 @@ function AnimatedRiveExample({
   instance: ViewModelInstance;
   file: RiveFile;
 }) {
-  const pressed = useSharedValue(false);
-  const offset = useSharedValue(0);
+  const progress = useSharedValue(0);
+  const startY = useSharedValue(0);
+  const viewRef = useSharedValue<BoxedHybridObject<RiveViewRef> | null>(null);
 
   const boxedProperty = useMemo(() => {
     const posYProperty = instance.numberProperty('posY');
@@ -79,39 +86,66 @@ function AnimatedRiveExample({
     return NitroModules.box(posYProperty);
   }, [instance]);
 
-  const pan = Gesture.Pan()
-    .onBegin(() => {
-      pressed.value = true;
-    })
-    .onChange((event) => {
-      offset.value = event.translationY * 3;
-    })
-    .onFinalize(() => {
-      offset.value = withSpring(0);
-      pressed.value = false;
-    });
-
   useAnimatedReaction(
-    () => offset.value,
+    () => progress.value,
     (value: number) => {
       'worklet';
       if (!boxedProperty) return;
-      const property = boxedProperty.unbox() as ViewModelNumberProperty;
+      const property = boxedProperty.unbox();
       property.value = value;
+
+      viewRef.value?.unbox()?._playIfNeeded();
     },
     [boxedProperty]
   );
 
+  const panGesture = Gesture.Pan()
+    .onStart(() => {
+      'worklet';
+      startY.value = progress.value;
+    })
+    .onUpdate((event) => {
+      'worklet';
+      progress.value = startY.value + event.translationY * 3;
+    })
+    .onEnd((event) => {
+      'worklet';
+      // Use velocity from gesture to set initial velocity of spring
+      progress.value = withSpring(progress.value > 400 ? 800 : 0, {
+        damping: 10,
+        stiffness: 100,
+        velocity: event.velocityY * 3,
+      });
+    });
+
   const circleStyle = useAnimatedStyle(() => ({
-    transform: [{ translateY: offset.value / 3 }],
-    backgroundColor: pressed.value ? '#FFE04B' : 'blue',
-    scale: withTiming(pressed.value ? 1.2 : 1),
+    transform: [{ translateY: progress.value / 3 }],
   }));
+
+  const animateTo800 = useCallback(() => {
+    progress.value = 0;
+    progress.value = withSpring(800, {
+      damping: 8,
+      stiffness: 80,
+    });
+  }, [progress]);
+
+  const animateTo0 = () => {
+    progress.value = withSpring(0, {
+      damping: 8,
+      stiffness: 80,
+    });
+  };
+
+  useEffect(() => {
+    animateTo800();
+  }, [animateTo800]);
 
   return (
     <GestureHandlerRootView style={styles.container}>
       <Text style={styles.subtitle}>
-        Drag the blue circle to move both circles. Release to spring back.
+        Drag the blue circle to control position. Release to spring with
+        velocity. (Red = Rive, Blue = React Native)
       </Text>
 
       <View style={styles.riveContainer}>
@@ -122,10 +156,20 @@ function AnimatedRiveExample({
           fit={Fit.Layout}
           layoutScaleFactor={1}
           file={file}
+          hybridRef={{
+            f: (ref) => {
+              viewRef.value = NitroModules.box(ref);
+            },
+          }}
         />
-        <GestureDetector gesture={pan}>
+        <GestureDetector gesture={panGesture}>
           <Animated.View style={[styles.blueCircle, circleStyle]} />
         </GestureDetector>
+      </View>
+
+      <View style={styles.buttonContainer}>
+        <Button title="Bounce to 800" onPress={animateTo800} />
+        <Button title="Bounce to 0" onPress={animateTo0} />
       </View>
     </GestureHandlerRootView>
   );
@@ -141,11 +185,18 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
   },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginTop: 20,
+    marginBottom: 10,
+  },
   subtitle: {
     fontSize: 16,
     color: '#666',
     textAlign: 'center',
-    marginVertical: 20,
+    marginBottom: 20,
     paddingHorizontal: 20,
   },
   riveContainer: {
@@ -160,6 +211,12 @@ const styles = StyleSheet.create({
   errorText: {
     color: 'red',
     textAlign: 'center',
+    padding: 20,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 20,
     padding: 20,
   },
   blueCircle: {
