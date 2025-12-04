@@ -12,7 +12,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File as JavaFile
 import java.net.URI
-import java.net.URL
 
 data class FileAndCache(
   val file: File,
@@ -45,8 +44,7 @@ class HybridRiveFileFactory : HybridRiveFileFactorySpec() {
     return Promise.async {
       try {
         val fileAndCache = withContext(Dispatchers.IO) {
-          val urlObj = URL(url)
-          val riveData = urlObj.readBytes()
+          val riveData = HTTPLoader.downloadBytes(url)
           buildRiveFile(riveData, referencedAssets)
         }
 
@@ -56,7 +54,7 @@ class HybridRiveFileFactory : HybridRiveFileFactorySpec() {
         hybridRiveFile.assetLoader = fileAndCache.loader
         hybridRiveFile
       } catch (e: Exception) {
-        throw Error("Failed to download Rive file: ${e.message}")
+        throw Error("Failed to download Rive file: ${e.message}", e)
       }
     }
   }

@@ -19,7 +19,7 @@ public extension ResolvedReferencedAsset {
   /**
    * Create a new instance of `ResolvedReferencedAsset`.
    */
-  init(sourceUrl: String?, sourceAsset: String?, sourceAssetId: String?, path: String?) {
+  init(sourceUrl: String?, sourceAsset: String?, sourceAssetId: String?, path: String?, image: (any HybridRiveImageSpec)?) {
     self.init({ () -> bridge.std__optional_std__string_ in
       if let __unwrappedValue = sourceUrl {
         return bridge.create_std__optional_std__string_(std.string(__unwrappedValue))
@@ -41,6 +41,15 @@ public extension ResolvedReferencedAsset {
     }(), { () -> bridge.std__optional_std__string_ in
       if let __unwrappedValue = path {
         return bridge.create_std__optional_std__string_(std.string(__unwrappedValue))
+      } else {
+        return .init()
+      }
+    }(), { () -> bridge.std__optional_std__shared_ptr_HybridRiveImageSpec__ in
+      if let __unwrappedValue = image {
+        return bridge.create_std__optional_std__shared_ptr_HybridRiveImageSpec__({ () -> bridge.std__shared_ptr_HybridRiveImageSpec_ in
+          let __cxxWrapped = __unwrappedValue.getCxxWrapper()
+          return __cxxWrapped.getCxxPart()
+        }())
       } else {
         return .init()
       }
@@ -136,6 +145,37 @@ public extension ResolvedReferencedAsset {
       self.__path = { () -> bridge.std__optional_std__string_ in
         if let __unwrappedValue = newValue {
           return bridge.create_std__optional_std__string_(std.string(__unwrappedValue))
+        } else {
+          return .init()
+        }
+      }()
+    }
+  }
+  
+  var image: (any HybridRiveImageSpec)? {
+    @inline(__always)
+    get {
+      return { () -> (any HybridRiveImageSpec)? in
+        if bridge.has_value_std__optional_std__shared_ptr_HybridRiveImageSpec__(self.__image) {
+          let __unwrapped = bridge.get_std__optional_std__shared_ptr_HybridRiveImageSpec__(self.__image)
+          return { () -> HybridRiveImageSpec in
+            let __unsafePointer = bridge.get_std__shared_ptr_HybridRiveImageSpec_(__unwrapped)
+            let __instance = HybridRiveImageSpec_cxx.fromUnsafe(__unsafePointer)
+            return __instance.getHybridRiveImageSpec()
+          }()
+        } else {
+          return nil
+        }
+      }()
+    }
+    @inline(__always)
+    set {
+      self.__image = { () -> bridge.std__optional_std__shared_ptr_HybridRiveImageSpec__ in
+        if let __unwrappedValue = newValue {
+          return bridge.create_std__optional_std__shared_ptr_HybridRiveImageSpec__({ () -> bridge.std__shared_ptr_HybridRiveImageSpec_ in
+            let __cxxWrapped = __unwrappedValue.getCxxWrapper()
+            return __cxxWrapped.getCxxPart()
+          }())
         } else {
           return .init()
         }

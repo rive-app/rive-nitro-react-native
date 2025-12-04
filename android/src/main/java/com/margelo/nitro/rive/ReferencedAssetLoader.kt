@@ -85,7 +85,7 @@ class ReferencedAssetLoader {
             file.readBytes()
           }
           "http", "https" -> {
-            URL(url).readBytes()
+            HTTPLoader.downloadBytes(url)
           }
           else -> {
             logError("Unsupported URL scheme: ${uri.scheme}")
@@ -181,14 +181,28 @@ class ReferencedAssetLoader {
 
   private fun processAssetBytes(bytes: ByteArray, asset: FileAsset) {
     when (asset) {
-      is ImageAsset -> asset.image = RiveRenderImage.make(bytes)
+      is ImageAsset -> asset.image = RiveRenderImage.fromEncoded(bytes)
       is FontAsset -> asset.font = RiveFont.make(bytes)
       is AudioAsset -> asset.audio = RiveAudio.make(bytes)
     }
   }
 
+  private fun handlePreloadedImage(image: HybridRiveImageSpec, asset: FileAsset) {
+    if (asset is ImageAsset && image is HybridRiveImage) {
+      asset.image = image.renderImage
+    }
+  }
+
   private fun loadAsset(assetData: ResolvedReferencedAsset, asset: FileAsset, context: Context): Deferred<Unit> {
     val deferred = CompletableDeferred<Unit>()
+
+    // Check for pre-loaded image first
+    if (assetData.image != null) {
+      handlePreloadedImage(assetData.image, asset)
+      deferred.complete(Unit)
+      return deferred
+    }
+
     val listener: (ByteArray?) -> Unit = { bytes ->
       if (bytes != null) {
         processAssetBytes(bytes, asset)

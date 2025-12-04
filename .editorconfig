@@ -32,3 +32,6 @@ ktlint_standard_import-ordering = disabled
 ktlint_standard_string-template-indent = disabled
 ktlint_standard_backing-property-naming = disabled
 ktlint_standard_no-consecutive-comments = disabled
+
+[nitrogen/generated/**/*.kt]
+ktlint = disabled

@@ -56,6 +56,10 @@
     "RiveView": {
       "swift": "HybridRiveView",
       "kotlin": "HybridRiveView"
+    },
+    "RiveImageFactory": {
+      "swift": "HybridRiveImageFactory",
+      "kotlin": "HybridRiveImageFactory"
     }
   },
   "ignorePaths": ["node_modules"]

@@ -18,5 +18,7 @@ disabled_rules:
   - trailing_whitespace
   - todo
   - unused_optional_binding
+  - opening_brace
+  - trailing_comma
 
 reporter: github-actions-logging
