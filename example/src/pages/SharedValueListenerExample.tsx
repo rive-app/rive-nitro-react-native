@@ -18,7 +18,10 @@ import {
   GestureHandlerRootView,
 } from 'react-native-gesture-handler';
 import { useCallback, useEffect, useMemo } from 'react';
-import { NitroModules, type BoxedHybridObject } from 'react-native-nitro-modules';
+import {
+  NitroModules,
+  type BoxedHybridObject,
+} from 'react-native-nitro-modules';
 import {
   Fit,
   RiveView,
@@ -26,7 +29,6 @@ import {
   type RiveFile,
   type RiveViewRef,
   type ViewModelInstance,
-  type ViewModelNumberProperty,
 } from '@rive-app/react-native';
 
 export default function SharedValueListenerExample() {
