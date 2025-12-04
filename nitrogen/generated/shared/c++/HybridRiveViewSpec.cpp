@@ -38,6 +38,7 @@ namespace margelo::nitro::rive {
       prototype.registerHybridMethod("play", &HybridRiveViewSpec::play);
       prototype.registerHybridMethod("pause", &HybridRiveViewSpec::pause);
       prototype.registerHybridMethod("reset", &HybridRiveViewSpec::reset);
+      prototype.registerHybridMethod("_playIfNeeded", &HybridRiveViewSpec::_playIfNeeded);
       prototype.registerHybridMethod("onEventListener", &HybridRiveViewSpec::onEventListener);
       prototype.registerHybridMethod("removeEventListeners", &HybridRiveViewSpec::removeEventListeners);
       prototype.registerHybridMethod("setNumberInputValue", &HybridRiveViewSpec::setNumberInputValue);

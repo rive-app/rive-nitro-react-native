@@ -48,7 +48,6 @@ namespace margelo::nitro::rive { enum class RiveEventType; }
 #include "RiveError.hpp"
 #include <functional>
 #include "JFunc_void_RiveError.hpp"
-#include <NitroModules/JNICallable.hpp>
 #include "JRiveError.hpp"
 #include "RiveErrorType.hpp"
 #include "JRiveErrorType.hpp"
@@ -172,7 +171,9 @@ namespace margelo::nitro::rive {
         return downcast->cthis()->getFunction();
       } else {
         auto __resultRef = jni::make_global(__result);
-        return JNICallable<JFunc_void_RiveError, void(RiveError)>(std::move(__resultRef));
+        return [__resultRef](RiveError error) -> void {
+          return __resultRef->invoke(error);
+        };
       }
     }();
   }
@@ -251,6 +252,10 @@ namespace margelo::nitro::rive {
       });
       return __promise;
     }();
+  }
+  void JHybridRiveViewSpec::_playIfNeeded() {
+    static const auto method = javaClassStatic()->getMethod<void()>("_playIfNeeded");
+    method(_javaPart);
   }
   void JHybridRiveViewSpec::onEventListener(const std::function<void(const UnifiedRiveEvent& /* event */)>& onEvent) {
     static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<JFunc_void_UnifiedRiveEvent::javaobject> /* onEvent */)>("onEventListener_cxx");

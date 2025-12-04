@@ -11,7 +11,6 @@
 #include <functional>
 
 #include <functional>
-#include <NitroModules/JNICallable.hpp>
 
 namespace margelo::nitro::rive {
 
@@ -38,7 +37,7 @@ namespace margelo::nitro::rive {
   /**
    * An implementation of Func_void_bool that is backed by a C++ implementation (using `std::function<...>`)
    */
-  class JFunc_void_bool_cxx final: public jni::HybridClass<JFunc_void_bool_cxx, JFunc_void_bool> {
+  struct JFunc_void_bool_cxx final: public jni::HybridClass<JFunc_void_bool_cxx, JFunc_void_bool> {
   public:
     static jni::local_ref<JFunc_void_bool::javaobject> fromCpp(const std::function<void(bool /* value */)>& func) {
       return JFunc_void_bool_cxx::newObjectCxxArgs(func);

@@ -443,6 +443,17 @@ open class HybridRiveViewSpec_cxx {
   }
   
   @inline(__always)
+  public final func _playIfNeeded() -> bridge.Result_void_ {
+    do {
+      try self.__implementation._playIfNeeded()
+      return bridge.create_Result_void_()
+    } catch (let __error) {
+      let __exceptionPtr = __error.toCpp()
+      return bridge.create_Result_void_(__exceptionPtr)
+    }
+  }
+  
+  @inline(__always)
   public final func onEventListener(onEvent: bridge.Func_void_UnifiedRiveEvent) -> bridge.Result_void_ {
     do {
       try self.__implementation.onEventListener(onEvent: { () -> (UnifiedRiveEvent) -> Void in

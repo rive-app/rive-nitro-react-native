@@ -130,6 +130,10 @@ abstract class HybridRiveViewSpec: HybridView() {
   @Keep
   abstract fun reset(): Promise<Unit>
   
+  @DoNotStrip
+  @Keep
+  abstract fun _playIfNeeded(): Unit
+  
   abstract fun onEventListener(onEvent: (event: UnifiedRiveEvent) -> Unit): Unit
   
   @DoNotStrip
