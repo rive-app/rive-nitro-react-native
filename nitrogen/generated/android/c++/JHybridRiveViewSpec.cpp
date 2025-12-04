@@ -48,6 +48,7 @@ namespace margelo::nitro::rive { enum class RiveEventType; }
 #include "RiveError.hpp"
 #include <functional>
 #include "JFunc_void_RiveError.hpp"
+#include <NitroModules/JNICallable.hpp>
 #include "JRiveError.hpp"
 #include "RiveErrorType.hpp"
 #include "JRiveErrorType.hpp"
@@ -171,9 +172,7 @@ namespace margelo::nitro::rive {
         return downcast->cthis()->getFunction();
       } else {
         auto __resultRef = jni::make_global(__result);
-        return [__resultRef](RiveError error) -> void {
-          return __resultRef->invoke(error);
-        };
+        return JNICallable<JFunc_void_RiveError, void(RiveError)>(std::move(__resultRef));
       }
     }();
   }
