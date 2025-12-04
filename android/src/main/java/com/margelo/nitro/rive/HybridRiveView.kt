@@ -118,7 +118,7 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
 
   override fun reset() = asyncExecuteOnUiThread { view.reset() }
 
-  override fun _playIfNeeded() = view._playIfNeeded()
+  override fun _playIfNeeded() = view.playIfNeeded()
 
   override fun onEventListener(onEvent: (event: UnifiedRiveEvent) -> Unit) =
     executeOnUiThread { view.addEventListener(onEvent) }

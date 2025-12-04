@@ -190,7 +190,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
 
   fun reset() = riveAnimationView?.reset()
 
-  fun _playIfNeeded() {
+  fun playIfNeeded() {
     if (riveAnimationView?.isPlaying == false) {
       riveAnimationView?.post {
         riveAnimationView?.play()
