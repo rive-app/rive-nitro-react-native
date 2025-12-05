@@ -42,9 +42,9 @@ extension ColorPropertyType: RivePropertyWithListeners {
 }
 extension TriggerPropertyType: RivePropertyWithListeners {
   func addListener(_ callback: @escaping ListenerType) -> UUID {
-    RiveDataBindingViewModel.Instance.TriggerProperty.addListener(self)(callback)
+    addListener { callback(()) }
   }
-  
+
   typealias ListenerValueType = Void
 }
 
@@ -52,7 +52,7 @@ extension ImagePropertyType: RivePropertyWithListeners {
   typealias ListenerValueType = Void
 
   func addListener(_ callback: @escaping ListenerType) -> UUID {
-    RiveDataBindingViewModel.Instance.ImageProperty.addListener(self)(callback)
+    addListener { callback(()) }
   }
 }
 
@@ -60,18 +60,18 @@ extension ImagePropertyType: RivePropertyWithListeners {
 class PropertyListenerHelper<PropertyType: RivePropertyWithListeners> {
   private var listenerIds: [UUID] = []
   weak var property: PropertyType?
-  
+
   init(property: PropertyType) {
     self.property = property
   }
-  
+
   /// Adds a listener to the property and automatically tracks its ID for cleanup
   func addListener(_ callback: @escaping (PropertyType.ListenerValueType) -> Void) {
     guard let property = property else { return }
     let id = property.addListener(callback)
     listenerIds.append(id)
   }
-  
+
   func removeListeners() throws {
     guard let property = property else { return }
     for id in listenerIds {
@@ -79,7 +79,7 @@ class PropertyListenerHelper<PropertyType: RivePropertyWithListeners> {
     }
     listenerIds.removeAll()
   }
-  
+
   func dispose() throws {
     try? removeListeners()
   }
@@ -90,10 +90,10 @@ class PropertyListenerHelper<PropertyType: RivePropertyWithListeners> {
 protocol ValuedPropertyProtocol<ValueType> {
   associatedtype PropertyType: RivePropertyWithListeners
   associatedtype ValueType
-  
+
   var property: PropertyType! { get }
   var helper: PropertyListenerHelper<PropertyType> { get }
-  
+
   func addListener(onChanged: @escaping (ValueType) -> Void) throws
   func removeListeners() throws
   func dispose() throws
@@ -104,7 +104,7 @@ extension ValuedPropertyProtocol {
   func removeListeners() throws {
     try helper.removeListeners()
   }
-  
+
   func dispose() throws {
     try helper.dispose()
   }
@@ -116,4 +116,3 @@ extension ValuedPropertyProtocol where PropertyType.ListenerValueType == ValueTy
     helper.addListener(onChanged)  // Types match, just forward directly!
   }
 }
-

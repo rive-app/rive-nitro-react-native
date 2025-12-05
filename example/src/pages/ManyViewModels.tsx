@@ -1,6 +1,5 @@
 import { StyleSheet, View, Text, TouchableOpacity, Button } from 'react-native';
-import { useState, useMemo, useRef } from 'react';
-import { hybridRef } from 'react-native-nitro-modules';
+import { useState, useMemo, useRef, useEffect } from 'react';
 import type { Metadata } from '../helpers/metadata';
 import {
   DataBindMode,
@@ -83,6 +82,7 @@ export default function ManyViewModels() {
   const [isLoadingImage, setIsLoadingImage] = useState(false);
   const [imageError, setImageError] = useState<string | null>(null);
   const riveViewRef = useRef<RiveViewRef>(undefined);
+  const isListening = useRef(false);
 
   // Create a ViewModelInstance for "green" to demonstrate instance binding
   const greenInstance = useMemo(() => {
@@ -103,16 +103,23 @@ export default function ManyViewModels() {
     setIsLoadingImage(true);
     setImageError(null);
     try {
-      const viewModelInstance = riveViewRef.current.getViewModelInstance();
-      if (!viewModelInstance) {
-        setImageError('No view model instance found in view');
-        return;
+      const vmi = riveViewRef.current.getViewModelInstance();
+      if (!vmi) {
+        console.log('No ViewModelInstance found on RiveViewRef');
+        setImageError('No ViewModelInstance found on RiveViewRef');
+        return null;
       }
-
-      const imgProp = viewModelInstance.imageProperty('imageValue');
+      const imgProp = vmi.imageProperty('imageValue');
       if (!imgProp) {
         setImageError('Image property "imageValue" not found');
-        return;
+        return null;
+      }
+
+      if (!isListening.current) {
+        imgProp.addListener(() => {
+          console.log('[IMAGE PROPERTY LISTENER]: Image property changed!');
+        });
+        isListening.current = true;
       }
 
       const riveImage = await RiveImages.loadFromURLAsync(
@@ -120,12 +127,6 @@ export default function ManyViewModels() {
       );
       imgProp.set(riveImage);
       riveViewRef.current.play();
-
-      imgProp.addListener(() => {
-        console.log('Image property changed!');
-      });
-
-      console.log('Image loaded and set successfully');
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : 'Unknown error';
       setImageError(errorMsg);
@@ -133,9 +134,13 @@ export default function ManyViewModels() {
     } finally {
       setIsLoadingImage(false);
     }
+    return true;
   };
 
   const dataBindValue = getDataBindValue(bindMode, greenInstance);
+  useEffect(() => {
+    isListening.current = false;
+  }, [dataBindValue]);
 
   return (
     <View style={styles.container}>
@@ -150,7 +155,11 @@ export default function ManyViewModels() {
       </View>
       {riveFile && (
         <RiveView
-          hybridRef={{ f: (ref) => (riveViewRef.current = ref) }}
+          hybridRef={{
+            f: (ref) => {
+              riveViewRef.current = ref;
+            },
+          }}
           style={styles.rive}
           file={riveFile}
           dataBind={dataBindValue}
