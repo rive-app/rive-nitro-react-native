@@ -4,8 +4,15 @@ import RiveRuntime
 /// Protocol for Rive property types that support listener management
 protocol RivePropertyWithListeners: AnyObject {
   associatedtype ListenerValueType
-  
-  func addListener(_ callback: @escaping (ListenerValueType) -> Void) -> UUID
+  typealias ListenerType = (ListenerValueType) -> Void
+
+  func addListener(_ callback: @escaping ListenerType) -> UUID
+  func removeListener(_ id: UUID)
+}
+
+/// Protocol for Rive property types with void listeners (Trigger, Image)
+protocol RivePropertyWithVoidListeners: AnyObject {
+  func addListener(_ callback: @escaping () -> Void) -> UUID
   func removeListener(_ id: UUID)
 }
 
@@ -33,24 +40,38 @@ extension EnumPropertyType: RivePropertyWithListeners {
 extension ColorPropertyType: RivePropertyWithListeners {
   typealias ListenerValueType = UIColor  // Native: UIColor → Double (needs conversion)
 }
-// Note: TriggerProperty doesn't fit the pattern - it has () -> Void listeners, not (Void) -> Void
+extension TriggerPropertyType: RivePropertyWithListeners {
+  func addListener(_ callback: @escaping ListenerType) -> UUID {
+    addListener { callback(()) }
+  }
+
+  typealias ListenerValueType = Void
+}
+
+extension ImagePropertyType: RivePropertyWithListeners {
+  typealias ListenerValueType = Void
+
+  func addListener(_ callback: @escaping ListenerType) -> UUID {
+    addListener { callback(()) }
+  }
+}
 
 /// Helper class for managing ViewModel property listeners
 class PropertyListenerHelper<PropertyType: RivePropertyWithListeners> {
   private var listenerIds: [UUID] = []
   weak var property: PropertyType?
-  
+
   init(property: PropertyType) {
     self.property = property
   }
-  
+
   /// Adds a listener to the property and automatically tracks its ID for cleanup
   func addListener(_ callback: @escaping (PropertyType.ListenerValueType) -> Void) {
     guard let property = property else { return }
     let id = property.addListener(callback)
     listenerIds.append(id)
   }
-  
+
   func removeListeners() throws {
     guard let property = property else { return }
     for id in listenerIds {
@@ -58,7 +79,7 @@ class PropertyListenerHelper<PropertyType: RivePropertyWithListeners> {
     }
     listenerIds.removeAll()
   }
-  
+
   func dispose() throws {
     try? removeListeners()
   }
@@ -69,10 +90,10 @@ class PropertyListenerHelper<PropertyType: RivePropertyWithListeners> {
 protocol ValuedPropertyProtocol<ValueType> {
   associatedtype PropertyType: RivePropertyWithListeners
   associatedtype ValueType
-  
+
   var property: PropertyType! { get }
   var helper: PropertyListenerHelper<PropertyType> { get }
-  
+
   func addListener(onChanged: @escaping (ValueType) -> Void) throws
   func removeListeners() throws
   func dispose() throws
@@ -83,7 +104,7 @@ extension ValuedPropertyProtocol {
   func removeListeners() throws {
     try helper.removeListeners()
   }
-  
+
   func dispose() throws {
     try helper.dispose()
   }

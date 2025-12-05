@@ -29,6 +29,7 @@ export type {
   ViewModelColorProperty,
   ViewModelEnumProperty,
   ViewModelTriggerProperty,
+  ViewModelImageProperty,
 } from './specs/ViewModel.nitro';
 export { Fit } from './core/Fit';
 export { Alignment } from './core/Alignment';

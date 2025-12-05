@@ -64,4 +64,13 @@ class HybridViewModelInstance(val viewModelInstance: ViewModelInstance) : Hybrid
       return null
     }
   }
+
+  override fun imageProperty(path: String): HybridViewModelImagePropertySpec? {
+    try {
+      val imageProperty = viewModelInstance.getImageProperty(path)
+      return HybridViewModelImageProperty(imageProperty)
+    } catch (e: ViewModelException) {
+      return null
+    }
+  }
 }

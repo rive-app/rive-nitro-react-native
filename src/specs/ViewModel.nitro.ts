@@ -1,4 +1,5 @@
 import type { HybridObject } from 'react-native-nitro-modules';
+import type { RiveImage } from './RiveImage.nitro';
 
 /**
  * A Rive View Model as created in the Rive editor.
@@ -48,6 +49,9 @@ export interface ViewModelInstance
 
   /** Get a trigger property from the view model instance at the given path */
   triggerProperty(path: string): ViewModelTriggerProperty | undefined;
+
+  /** Get an image property from the view model instance at the given path */
+  imageProperty(path: string): ViewModelImageProperty | undefined;
 }
 
 export interface ViewModelProperty
@@ -110,4 +114,13 @@ export interface ViewModelTriggerProperty
   addListener(onChanged: () => void): void;
   /** Trigger the view model trigger property */
   trigger(): void;
+}
+
+export interface ViewModelImageProperty
+  extends ViewModelProperty,
+    ObservableProperty {
+  /** Set the image property value */
+  set(image: RiveImage | undefined): void;
+  /** Add a listener to the view model image property */
+  addListener(onChanged: () => void): void;
 }

@@ -1,21 +1,18 @@
-import NitroModules
 import RiveRuntime
 
-class HybridViewModelTriggerProperty: HybridViewModelTriggerPropertySpec, ValuedPropertyProtocol {
-  internal var property: TriggerPropertyType!
-  lazy var helper = PropertyListenerHelper(property: property!)
-
-  private var listenerIds: [UUID] = []
-
+class HybridViewModelImageProperty: HybridViewModelImagePropertySpec, ValuedPropertyProtocol {
   func addListener(onChanged: @escaping () -> Void) throws {
     try addListener(onChanged: { _ in onChanged() })
   }
+  
+  var property: ImagePropertyType!
+  lazy var helper = PropertyListenerHelper(property: property!)
 
-  init(property: TriggerPropertyType) {
+  init(property: ImagePropertyType) {
     self.property = property
     super.init()
   }
-  
+
   /// ⚠️ DO NOT REMOVE
   /// Nitro requires a parameterless initializer for JS bridging.
   /// This is invoked automatically during hybrid module construction.
@@ -23,8 +20,12 @@ class HybridViewModelTriggerProperty: HybridViewModelTriggerPropertySpec, Valued
   override init() {
     super.init()
   }
-  
-  func trigger() {
-    property.trigger()
+
+  func set(image: HybridRiveImageSpec?) throws {
+    if let hybridImage = image as? HybridRiveImage {
+      property.setValue(hybridImage.renderImage)
+    } else {
+      property.setValue(nil)
+    }
   }
 }

@@ -38,6 +38,8 @@ namespace margelo::nitro::rive { class HybridViewModelBooleanPropertySpec; }
 namespace margelo::nitro::rive { class HybridViewModelColorPropertySpec; }
 // Forward declaration of `HybridViewModelEnumPropertySpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridViewModelEnumPropertySpec; }
+// Forward declaration of `HybridViewModelImagePropertySpec` to properly resolve imports.
+namespace margelo::nitro::rive { class HybridViewModelImagePropertySpec; }
 // Forward declaration of `HybridViewModelInstanceSpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridViewModelInstanceSpec; }
 // Forward declaration of `HybridViewModelNumberPropertySpec` to properly resolve imports.
@@ -79,6 +81,7 @@ namespace margelo::nitro::rive { struct UnifiedRiveEvent; }
 #include "HybridViewModelBooleanPropertySpec.hpp"
 #include "HybridViewModelColorPropertySpec.hpp"
 #include "HybridViewModelEnumPropertySpec.hpp"
+#include "HybridViewModelImagePropertySpec.hpp"
 #include "HybridViewModelInstanceSpec.hpp"
 #include "HybridViewModelNumberPropertySpec.hpp"
 #include "HybridViewModelPropertySpec.hpp"
@@ -130,6 +133,8 @@ namespace RNRive { class HybridViewModelBooleanPropertySpec_cxx; }
 namespace RNRive { class HybridViewModelColorPropertySpec_cxx; }
 // Forward declaration of `HybridViewModelEnumPropertySpec_cxx` to properly resolve imports.
 namespace RNRive { class HybridViewModelEnumPropertySpec_cxx; }
+// Forward declaration of `HybridViewModelImagePropertySpec_cxx` to properly resolve imports.
+namespace RNRive { class HybridViewModelImagePropertySpec_cxx; }
 // Forward declaration of `HybridViewModelInstanceSpec_cxx` to properly resolve imports.
 namespace RNRive { class HybridViewModelInstanceSpec_cxx; }
 // Forward declaration of `HybridViewModelNumberPropertySpec_cxx` to properly resolve imports.

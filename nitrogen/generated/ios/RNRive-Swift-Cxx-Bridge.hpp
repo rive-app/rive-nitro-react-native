@@ -38,6 +38,8 @@ namespace margelo::nitro::rive { class HybridViewModelBooleanPropertySpec; }
 namespace margelo::nitro::rive { class HybridViewModelColorPropertySpec; }
 // Forward declaration of `HybridViewModelEnumPropertySpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridViewModelEnumPropertySpec; }
+// Forward declaration of `HybridViewModelImagePropertySpec` to properly resolve imports.
+namespace margelo::nitro::rive { class HybridViewModelImagePropertySpec; }
 // Forward declaration of `HybridViewModelInstanceSpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridViewModelInstanceSpec; }
 // Forward declaration of `HybridViewModelNumberPropertySpec` to properly resolve imports.
@@ -82,6 +84,8 @@ namespace RNRive { class HybridViewModelBooleanPropertySpec_cxx; }
 namespace RNRive { class HybridViewModelColorPropertySpec_cxx; }
 // Forward declaration of `HybridViewModelEnumPropertySpec_cxx` to properly resolve imports.
 namespace RNRive { class HybridViewModelEnumPropertySpec_cxx; }
+// Forward declaration of `HybridViewModelImagePropertySpec_cxx` to properly resolve imports.
+namespace RNRive { class HybridViewModelImagePropertySpec_cxx; }
 // Forward declaration of `HybridViewModelInstanceSpec_cxx` to properly resolve imports.
 namespace RNRive { class HybridViewModelInstanceSpec_cxx; }
 // Forward declaration of `HybridViewModelNumberPropertySpec_cxx` to properly resolve imports.
@@ -111,6 +115,7 @@ namespace RNRive { class HybridViewModelTriggerPropertySpec_cxx; }
 #include "HybridViewModelBooleanPropertySpec.hpp"
 #include "HybridViewModelColorPropertySpec.hpp"
 #include "HybridViewModelEnumPropertySpec.hpp"
+#include "HybridViewModelImagePropertySpec.hpp"
 #include "HybridViewModelInstanceSpec.hpp"
 #include "HybridViewModelNumberPropertySpec.hpp"
 #include "HybridViewModelPropertySpec.hpp"
@@ -1035,6 +1040,36 @@ namespace margelo::nitro::rive::bridge::swift {
     return *optional;
   }
   
+  // pragma MARK: std::shared_ptr<HybridViewModelImagePropertySpec>
+  /**
+   * Specialized version of `std::shared_ptr<HybridViewModelImagePropertySpec>`.
+   */
+  using std__shared_ptr_HybridViewModelImagePropertySpec_ = std::shared_ptr<HybridViewModelImagePropertySpec>;
+  std::shared_ptr<HybridViewModelImagePropertySpec> create_std__shared_ptr_HybridViewModelImagePropertySpec_(void* NON_NULL swiftUnsafePointer) noexcept;
+  void* NON_NULL get_std__shared_ptr_HybridViewModelImagePropertySpec_(std__shared_ptr_HybridViewModelImagePropertySpec_ cppType);
+  
+  // pragma MARK: std::shared_ptr<HybridViewModelPropertySpec>
+  inline std::shared_ptr<HybridViewModelPropertySpec> upcast_ViewModelImageProperty_to_ViewModelProperty(std::shared_ptr<HybridViewModelImagePropertySpec> child) noexcept { return child; }
+  
+  // pragma MARK: std::weak_ptr<HybridViewModelImagePropertySpec>
+  using std__weak_ptr_HybridViewModelImagePropertySpec_ = std::weak_ptr<HybridViewModelImagePropertySpec>;
+  inline std__weak_ptr_HybridViewModelImagePropertySpec_ weakify_std__shared_ptr_HybridViewModelImagePropertySpec_(const std::shared_ptr<HybridViewModelImagePropertySpec>& strong) noexcept { return strong; }
+  
+  // pragma MARK: std::optional<std::shared_ptr<HybridViewModelImagePropertySpec>>
+  /**
+   * Specialized version of `std::optional<std::shared_ptr<HybridViewModelImagePropertySpec>>`.
+   */
+  using std__optional_std__shared_ptr_HybridViewModelImagePropertySpec__ = std::optional<std::shared_ptr<HybridViewModelImagePropertySpec>>;
+  inline std::optional<std::shared_ptr<HybridViewModelImagePropertySpec>> create_std__optional_std__shared_ptr_HybridViewModelImagePropertySpec__(const std::shared_ptr<HybridViewModelImagePropertySpec>& value) noexcept {
+    return std::optional<std::shared_ptr<HybridViewModelImagePropertySpec>>(value);
+  }
+  inline bool has_value_std__optional_std__shared_ptr_HybridViewModelImagePropertySpec__(const std::optional<std::shared_ptr<HybridViewModelImagePropertySpec>>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline std::shared_ptr<HybridViewModelImagePropertySpec> get_std__optional_std__shared_ptr_HybridViewModelImagePropertySpec__(const std::optional<std::shared_ptr<HybridViewModelImagePropertySpec>>& optional) noexcept {
+    return *optional;
+  }
+  
   // pragma MARK: Result<std::optional<std::shared_ptr<HybridViewModelNumberPropertySpec>>>
   using Result_std__optional_std__shared_ptr_HybridViewModelNumberPropertySpec___ = Result<std::optional<std::shared_ptr<HybridViewModelNumberPropertySpec>>>;
   inline Result_std__optional_std__shared_ptr_HybridViewModelNumberPropertySpec___ create_Result_std__optional_std__shared_ptr_HybridViewModelNumberPropertySpec___(const std::optional<std::shared_ptr<HybridViewModelNumberPropertySpec>>& value) noexcept {
@@ -1087,6 +1122,15 @@ namespace margelo::nitro::rive::bridge::swift {
   }
   inline Result_std__optional_std__shared_ptr_HybridViewModelTriggerPropertySpec___ create_Result_std__optional_std__shared_ptr_HybridViewModelTriggerPropertySpec___(const std::exception_ptr& error) noexcept {
     return Result<std::optional<std::shared_ptr<HybridViewModelTriggerPropertySpec>>>::withError(error);
+  }
+  
+  // pragma MARK: Result<std::optional<std::shared_ptr<HybridViewModelImagePropertySpec>>>
+  using Result_std__optional_std__shared_ptr_HybridViewModelImagePropertySpec___ = Result<std::optional<std::shared_ptr<HybridViewModelImagePropertySpec>>>;
+  inline Result_std__optional_std__shared_ptr_HybridViewModelImagePropertySpec___ create_Result_std__optional_std__shared_ptr_HybridViewModelImagePropertySpec___(const std::optional<std::shared_ptr<HybridViewModelImagePropertySpec>>& value) noexcept {
+    return Result<std::optional<std::shared_ptr<HybridViewModelImagePropertySpec>>>::withValue(value);
+  }
+  inline Result_std__optional_std__shared_ptr_HybridViewModelImagePropertySpec___ create_Result_std__optional_std__shared_ptr_HybridViewModelImagePropertySpec___(const std::exception_ptr& error) noexcept {
+    return Result<std::optional<std::shared_ptr<HybridViewModelImagePropertySpec>>>::withError(error);
   }
   
   // pragma MARK: std::function<void(double /* value */)>

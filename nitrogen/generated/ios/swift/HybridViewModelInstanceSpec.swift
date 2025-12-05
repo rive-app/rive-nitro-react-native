@@ -20,6 +20,7 @@ public protocol HybridViewModelInstanceSpec_protocol: HybridObject {
   func colorProperty(path: String) throws -> (any HybridViewModelColorPropertySpec)?
   func enumProperty(path: String) throws -> (any HybridViewModelEnumPropertySpec)?
   func triggerProperty(path: String) throws -> (any HybridViewModelTriggerPropertySpec)?
+  func imageProperty(path: String) throws -> (any HybridViewModelImagePropertySpec)?
 }
 
 public extension HybridViewModelInstanceSpec_protocol {
