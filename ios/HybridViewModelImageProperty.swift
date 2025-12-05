@@ -1,10 +1,14 @@
 import RiveRuntime
 
-class HybridViewModelImageProperty: HybridViewModelImagePropertySpec {
-  var property: RiveDataBindingViewModel.Instance.ImageProperty!
-  private var listenerIds: [UUID] = []
+class HybridViewModelImageProperty: HybridViewModelImagePropertySpec, ValuedPropertyProtocol {
+  func addListener(onChanged: @escaping () -> Void) throws {
+    try addListener(onChanged: { _ in onChanged() })
+  }
+  
+  var property: ImagePropertyType!
+  lazy var helper = PropertyListenerHelper(property: property!)
 
-  init(property: RiveDataBindingViewModel.Instance.ImageProperty) {
+  init(property: ImagePropertyType) {
     self.property = property
     super.init()
   }
@@ -23,24 +27,5 @@ class HybridViewModelImageProperty: HybridViewModelImagePropertySpec {
     } else {
       property.setValue(nil)
     }
-  }
-
-  func addListener(onChanged: @escaping () -> Void) throws {
-    let id = property.addListener({
-      onChanged()
-    })
-
-    listenerIds.append(id)
-  }
-
-  func removeListeners() throws {
-    for id in listenerIds {
-      property.removeListener(id)
-    }
-    listenerIds.removeAll()
-  }
-
-  func dispose() throws {
-    try? removeListeners()
   }
 }

@@ -4,8 +4,15 @@ import RiveRuntime
 /// Protocol for Rive property types that support listener management
 protocol RivePropertyWithListeners: AnyObject {
   associatedtype ListenerValueType
-  
-  func addListener(_ callback: @escaping (ListenerValueType) -> Void) -> UUID
+  typealias ListenerType = (ListenerValueType) -> Void
+
+  func addListener(_ callback: @escaping ListenerType) -> UUID
+  func removeListener(_ id: UUID)
+}
+
+/// Protocol for Rive property types with void listeners (Trigger, Image)
+protocol RivePropertyWithVoidListeners: AnyObject {
+  func addListener(_ callback: @escaping () -> Void) -> UUID
   func removeListener(_ id: UUID)
 }
 
@@ -33,7 +40,21 @@ extension EnumPropertyType: RivePropertyWithListeners {
 extension ColorPropertyType: RivePropertyWithListeners {
   typealias ListenerValueType = UIColor  // Native: UIColor → Double (needs conversion)
 }
-// Note: TriggerProperty doesn't fit the pattern - it has () -> Void listeners, not (Void) -> Void
+extension TriggerPropertyType: RivePropertyWithListeners {
+  func addListener(_ callback: @escaping ListenerType) -> UUID {
+    RiveDataBindingViewModel.Instance.TriggerProperty.addListener(self)(callback)
+  }
+  
+  typealias ListenerValueType = Void
+}
+
+extension ImagePropertyType: RivePropertyWithListeners {
+  typealias ListenerValueType = Void
+
+  func addListener(_ callback: @escaping ListenerType) -> UUID {
+    RiveDataBindingViewModel.Instance.ImageProperty.addListener(self)(callback)
+  }
+}
 
 /// Helper class for managing ViewModel property listeners
 class PropertyListenerHelper<PropertyType: RivePropertyWithListeners> {
@@ -95,3 +116,4 @@ extension ValuedPropertyProtocol where PropertyType.ListenerValueType == ValueTy
     helper.addListener(onChanged)  // Types match, just forward directly!
   }
 }
+
