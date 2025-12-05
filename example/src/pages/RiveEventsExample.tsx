@@ -1,4 +1,10 @@
-import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ActivityIndicator,
+  TouchableOpacity,
+} from 'react-native';
 import { useState, useEffect } from 'react';
 import {
   Fit,
@@ -17,7 +23,7 @@ import { type Metadata } from '../helpers/metadata';
  *
  * Demonstrates getting and handling Rive events
  */
-export default function EventsExample() {
+export default function EventsExample({ navigation }: { navigation: any }) {
   const { riveViewRef, setHybridRef } = useRive();
   const { riveFile, isLoading, error } = useRiveFile(
     require('../../assets/rive/rating.riv')
@@ -60,6 +66,14 @@ export default function EventsExample() {
           />
         ) : null}
       </View>
+      <TouchableOpacity
+        style={styles.navigateButton}
+        onPress={() => navigation.navigate('EventsDetailView')}
+      >
+        <Text style={styles.navigateButtonText}>
+          Go to Detail View with Another Rive Animation
+        </Text>
+      </TouchableOpacity>
       {lastEvent && (
         <View style={styles.eventInfo}>
           <Text style={styles.eventTitle}>Last Event:</Text>
@@ -145,6 +159,19 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginTop: 10,
     marginBottom: 5,
+  },
+  navigateButton: {
+    backgroundColor: '#007AFF',
+    padding: 15,
+    borderRadius: 10,
+    marginTop: 15,
+    marginBottom: 10,
+  },
+  navigateButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
 });
 
