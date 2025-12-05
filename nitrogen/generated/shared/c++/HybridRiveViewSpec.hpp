@@ -99,6 +99,7 @@ namespace margelo::nitro::rive {
       virtual std::shared_ptr<Promise<void>> play() = 0;
       virtual std::shared_ptr<Promise<void>> pause() = 0;
       virtual std::shared_ptr<Promise<void>> reset() = 0;
+      virtual void playIfNeeded() = 0;
       virtual void onEventListener(const std::function<void(const UnifiedRiveEvent& /* event */)>& onEvent) = 0;
       virtual void removeEventListeners() = 0;
       virtual void setNumberInputValue(const std::string& name, double value, const std::optional<std::string>& path) = 0;

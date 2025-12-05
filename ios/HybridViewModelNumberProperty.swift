@@ -3,12 +3,12 @@ import RiveRuntime
 class HybridViewModelNumberProperty: HybridViewModelNumberPropertySpec, ValuedPropertyProtocol {
   var property: NumberPropertyType!
   lazy var helper = PropertyListenerHelper(property: property!)
-  
+
   init(property: NumberPropertyType) {
     self.property = property
     super.init()
   }
-  
+
   /// ⚠️ DO NOT REMOVE
   /// Nitro requires a parameterless initializer for JS bridging.
   /// This is invoked automatically during hybrid module construction.
@@ -16,7 +16,7 @@ class HybridViewModelNumberProperty: HybridViewModelNumberPropertySpec, ValuedPr
   override init() {
     super.init()
   }
-  
+
   var value: Double {
     get {
       return Double(property.value)
@@ -25,7 +25,7 @@ class HybridViewModelNumberProperty: HybridViewModelNumberPropertySpec, ValuedPr
       property.value = Float(newValue)
     }
   }
-  
+
   // Custom addListener needed because ListenerValueType (Float) != ValueType (Double)
   func addListener(onChanged: @escaping (Double) -> Void) throws {
     helper.addListener { (value: Float) in

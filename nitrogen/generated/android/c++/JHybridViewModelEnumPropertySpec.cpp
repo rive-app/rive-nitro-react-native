@@ -12,6 +12,7 @@
 #include <string>
 #include <functional>
 #include "JFunc_void_std__string.hpp"
+#include <NitroModules/JNICallable.hpp>
 
 namespace margelo::nitro::rive {
 

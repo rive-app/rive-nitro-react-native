@@ -77,6 +77,7 @@ namespace margelo::nitro::rive {
     std::shared_ptr<Promise<void>> play() override;
     std::shared_ptr<Promise<void>> pause() override;
     std::shared_ptr<Promise<void>> reset() override;
+    void playIfNeeded() override;
     void onEventListener(const std::function<void(const UnifiedRiveEvent& /* event */)>& onEvent) override;
     void removeEventListeners() override;
     void setNumberInputValue(const std::string& name, double value, const std::optional<std::string>& path) override;

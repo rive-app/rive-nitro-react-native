@@ -139,6 +139,14 @@ class RiveReactNativeView: UIView, RiveStateMachineDelegate {
   func reset() {
     baseViewModel?.reset()
   }
+  
+  func playIfNeeded() {
+    if let baseViewModel = baseViewModel, (baseViewModel.isPlaying == false) {
+      Task {
+        baseViewModel.play()
+      }
+    }
+   }
 
   func refreshAfterAssetChange() {
     if baseViewModel?.isPlaying == false {

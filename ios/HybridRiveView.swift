@@ -83,6 +83,10 @@ class HybridRiveView: HybridRiveViewSpec {
       try await self.getRiveView().reset()
     }
   }
+  
+  func playIfNeeded() {
+    try? self.getRiveView().playIfNeeded()
+  }
 
   // MARK: View Props
   var dataBind: HybridDataBindMode? {
