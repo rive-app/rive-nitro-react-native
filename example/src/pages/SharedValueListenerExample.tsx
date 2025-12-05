@@ -125,7 +125,6 @@ function AnimatedRiveExample({
   }));
 
   const animateTo800 = useCallback(() => {
-    progress.value = 0;
     progress.value = withSpring(800, {
       damping: 8,
       stiffness: 80,
