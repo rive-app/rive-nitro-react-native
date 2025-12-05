@@ -203,8 +203,8 @@ namespace margelo::nitro::rive {
       auto __value = std::move(__result.value());
       return __value;
     }
-    inline void _playIfNeeded() override {
-      auto __result = _swiftPart._playIfNeeded();
+    inline void playIfNeeded() override {
+      auto __result = _swiftPart.playIfNeeded();
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }

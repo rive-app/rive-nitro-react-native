@@ -96,7 +96,7 @@ function AnimatedRiveExample({
       const property = boxedProperty.unbox();
       property.value = value;
 
-      viewRef.value?.unbox()?._playIfNeeded();
+      viewRef.value?.unbox()?.playIfNeeded();
     },
     [boxedProperty]
   );

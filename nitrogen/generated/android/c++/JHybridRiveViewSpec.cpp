@@ -252,8 +252,8 @@ namespace margelo::nitro::rive {
       return __promise;
     }();
   }
-  void JHybridRiveViewSpec::_playIfNeeded() {
-    static const auto method = javaClassStatic()->getMethod<void()>("_playIfNeeded");
+  void JHybridRiveViewSpec::playIfNeeded() {
+    static const auto method = javaClassStatic()->getMethod<void()>("playIfNeeded");
     method(_javaPart);
   }
   void JHybridRiveViewSpec::onEventListener(const std::function<void(const UnifiedRiveEvent& /* event */)>& onEvent) {

@@ -67,8 +67,8 @@ export interface RiveViewMethods extends HybridViewMethods {
   /** Resets the Rive graphic to its initial state */
   reset(): Promise<void>;
 
-  /** play if needed: experimental function to make sure the animation is playing. Example: use if after property value updated */
-  _playIfNeeded(): void;
+  /** play if needed: low overhead function to make sure the rive graphics is playing. Use after property value update, to make sure graphics is updated */
+  playIfNeeded(): void;
 
   /**
    * Adds an event listener to the Rive view

@@ -132,7 +132,7 @@ abstract class HybridRiveViewSpec: HybridView() {
   
   @DoNotStrip
   @Keep
-  abstract fun _playIfNeeded(): Unit
+  abstract fun playIfNeeded(): Unit
   
   abstract fun onEventListener(onEvent: (event: UnifiedRiveEvent) -> Unit): Unit
   
