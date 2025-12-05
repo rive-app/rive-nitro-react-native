@@ -15,6 +15,8 @@ namespace margelo::nitro::rive {
     // load custom methods/properties
     registerHybrids(this, [](Prototype& prototype) {
       prototype.registerHybridMethod("loadFromURLAsync", &HybridRiveImageFactorySpec::loadFromURLAsync);
+      prototype.registerHybridMethod("loadFromResourceAsync", &HybridRiveImageFactorySpec::loadFromResourceAsync);
+      prototype.registerHybridMethod("loadFromBytesAsync", &HybridRiveImageFactorySpec::loadFromBytesAsync);
     });
   }
 

@@ -11,6 +11,7 @@ import androidx.annotation.Keep
 import com.facebook.jni.HybridData
 import com.facebook.proguard.annotations.DoNotStrip
 import com.margelo.nitro.core.Promise
+import com.margelo.nitro.core.ArrayBuffer
 import com.margelo.nitro.core.HybridObject
 
 /**
@@ -49,6 +50,14 @@ abstract class HybridRiveImageFactorySpec: HybridObject() {
   @DoNotStrip
   @Keep
   abstract fun loadFromURLAsync(url: String): Promise<HybridRiveImageSpec>
+  
+  @DoNotStrip
+  @Keep
+  abstract fun loadFromResourceAsync(resource: String): Promise<HybridRiveImageSpec>
+  
+  @DoNotStrip
+  @Keep
+  abstract fun loadFromBytesAsync(bytes: ArrayBuffer): Promise<HybridRiveImageSpec>
 
   private external fun initHybrid(): HybridData
 

@@ -25,4 +25,18 @@ export interface RiveImageFactory
    * @returns A promise that resolves to the loaded RiveImage
    */
   loadFromURLAsync(url: string): Promise<RiveImage>;
+
+  /**
+   * Load an image from a bundled resource
+   * @param resource The resource name (e.g., "image.png")
+   * @returns A promise that resolves to the loaded RiveImage
+   */
+  loadFromResourceAsync(resource: string): Promise<RiveImage>;
+
+  /**
+   * Load an image from raw bytes
+   * @param bytes The image data as an ArrayBuffer
+   * @returns A promise that resolves to the loaded RiveImage
+   */
+  loadFromBytesAsync(bytes: ArrayBuffer): Promise<RiveImage>;
 }

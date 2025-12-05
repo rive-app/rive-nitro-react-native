@@ -6,70 +6,13 @@ struct FileAndCache {
   var cache: [String: RiveFileAsset]
 }
 
-private func isValidUrl(_ url: String) -> Bool {
-  if let url = URL(string: url) {
-    return url.scheme == "file" || url.scheme == "http" || url.scheme == "https"
-  } else {
-    return false
-  }
-}
-
-func createIncorrectRiveURL(_ url: String) -> NSError {
-  return NSError(
-    domain: RiveErrorDomain, code: 900,
-    userInfo: [
-      NSLocalizedDescriptionKey: "Unable to download Rive file from: \(url)",
-      "name": "IncorrectRiveFileURL",
-    ])
-}
-
 func createAssetFileError(_ assetName: String) -> NitroRiveError {
   return NitroRiveError.fileNotFound(message: "Could not load Rive asset: \(assetName)")
 }
 
 final class ReferencedAssetLoader {
   private func handleRiveError(error: Error) {
-    // TODO allow user to specify onError callback
     RCTLogError("\(error)")
-  }
-
-  private func handleInvalidUrlError(url: String) {
-    handleRiveError(error: createIncorrectRiveURL(url))
-  }
-
-  private func downloadUrlAsset(
-    url: String, listener: @escaping (Data) -> Void, onError: @escaping () -> Void
-  ) {
-    guard isValidUrl(url) else {
-      handleInvalidUrlError(url: url)
-      onError()
-      return
-    }
-
-    if let fileUrl = URL(string: url), fileUrl.scheme == "file" {
-      do {
-        let data = try Data(contentsOf: fileUrl)
-        listener(data)
-      } catch {
-        handleInvalidUrlError(url: url)
-        onError()
-      }
-      return
-    }
-
-    Task {
-      do {
-        let data = try await HTTPLoader.shared.downloadData(from: url)
-        await MainActor.run {
-          listener(data)
-        }
-      } catch {
-        await MainActor.run {
-          self.handleInvalidUrlError(url: url)
-          onError()
-        }
-      }
-    }
   }
 
   private func processAssetBytes(
@@ -112,86 +55,6 @@ final class ReferencedAssetLoader {
     }
   }
 
-  private func handleSourceAssetId(
-    _ sourceAssetId: String, asset: RiveFileAsset, factory: RiveFactory,
-    completion: @escaping () -> Void
-  ) {
-    guard URL(string: sourceAssetId) != nil else {
-      completion()
-      return
-    }
-
-    downloadUrlAsset(
-      url: sourceAssetId,
-      listener: { [weak self] data in
-        self?.processAssetBytes(data, asset: asset, factory: factory, completion: completion)
-      }, onError: completion)
-  }
-
-  private func handleSourceUrl(
-    _ sourceUrl: String, asset: RiveFileAsset, factory: RiveFactory,
-    completion: @escaping () -> Void
-  ) {
-    downloadUrlAsset(
-      url: sourceUrl,
-      listener: { [weak self] data in
-        self?.processAssetBytes(data, asset: asset, factory: factory, completion: completion)
-      }, onError: completion)
-  }
-
-  private func splitFileNameAndExtension(fileName: String) -> (name: String?, ext: String?)? {
-    let components = fileName.split(separator: ".")
-    let name = (fileName as NSString).deletingPathExtension
-    let fileExtension = (fileName as NSString).pathExtension
-    guard components.count == 2 else { return nil }
-    return (name: name, ext: fileExtension)
-  }
-
-  private func loadResourceAsset(
-    sourceAsset: String, path: String?, listener: @escaping (Data) -> Void,
-    onError: @escaping () -> Void
-  ) {
-    guard let splitSourceAssetName = splitFileNameAndExtension(fileName: sourceAsset),
-      let name = splitSourceAssetName.name,
-      let ext = splitSourceAssetName.ext
-    else {
-      handleRiveError(error: createAssetFileError(sourceAsset))
-      onError()
-      return
-    }
-
-    guard let folderUrl = Bundle.main.url(forResource: name, withExtension: ext) else {
-      handleRiveError(error: createAssetFileError(sourceAsset))
-      onError()
-      return
-    }
-
-    DispatchQueue.global(qos: .background).async { [weak self] in
-      do {
-        let fileData = try Data(contentsOf: folderUrl)
-        DispatchQueue.main.async {
-          listener(fileData)
-        }
-      } catch {
-        DispatchQueue.main.async {
-          self?.handleRiveError(error: createAssetFileError(sourceAsset))
-          onError()
-        }
-      }
-    }
-  }
-
-  private func handleSourceAsset(
-    _ sourceAsset: String, path: String?, asset: RiveFileAsset, factory: RiveFactory,
-    completion: @escaping () -> Void
-  ) {
-    loadResourceAsset(
-      sourceAsset: sourceAsset, path: path,
-      listener: { [weak self] data in
-        self?.processAssetBytes(data, asset: asset, factory: factory, completion: completion)
-      }, onError: completion)
-  }
-
   private func handlePreloadedImage(
     _ image: any HybridRiveImageSpec, asset: RiveFileAsset, completion: @escaping () -> Void
   ) {
@@ -215,19 +78,31 @@ final class ReferencedAssetLoader {
       return
     }
 
-    let sourceAssetId = source.sourceAssetId
-    let sourceUrl = source.sourceUrl
-    let sourceAsset = source.sourceAsset
-
-    if let sourceAssetId = sourceAssetId {
-      handleSourceAssetId(sourceAssetId, asset: asset, factory: factory, completion: completion)
-    } else if let sourceUrl = sourceUrl {
-      handleSourceUrl(sourceUrl, asset: asset, factory: factory, completion: completion)
-    } else if let sourceAsset = sourceAsset {
-      handleSourceAsset(
-        sourceAsset, path: source.path, asset: asset, factory: factory, completion: completion)
-    } else {
+    let dataSource: DataSource
+    do {
+      guard let resolved = try DataSourceResolver.resolve(from: source) else {
+        completion()
+        return
+      }
+      dataSource = resolved
+    } catch {
+      handleRiveError(error: error)
       completion()
+      return
+    }
+
+    Task {
+      do {
+        let data = try await dataSource.createLoader().load(from: dataSource)
+        await MainActor.run {
+          self.processAssetBytes(data, asset: asset, factory: factory, completion: completion)
+        }
+      } catch {
+        await MainActor.run {
+          self.handleRiveError(error: error)
+          completion()
+        }
+      }
     }
   }
 
