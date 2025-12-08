@@ -88,10 +88,6 @@ namespace margelo::nitro::rive {
     auto __result = method(_javaPart, artboardBy.has_value() ? JArtboardBy::fromCpp(artboardBy.value()) : nullptr);
     return __result != nullptr ? std::make_optional(__result->cthis()->shared_cast<JHybridViewModelSpec>()) : std::nullopt;
   }
-  void JHybridRiveFileSpec::release() {
-    static const auto method = javaClassStatic()->getMethod<void()>("release");
-    method(_javaPart);
-  }
   void JHybridRiveFileSpec::updateReferencedAssets(const ReferencedAssetsType& referencedAssets) {
     static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<JReferencedAssetsType> /* referencedAssets */)>("updateReferencedAssets");
     method(_javaPart, JReferencedAssetsType::fromCpp(referencedAssets));

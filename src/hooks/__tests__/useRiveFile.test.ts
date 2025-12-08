@@ -10,7 +10,7 @@ jest.mock('react-native/Libraries/Image/Image', () => ({
 
 describe('useRiveFile - updateReferencedAssets', () => {
   const mockRiveFile: RiveFile = {
-    release: jest.fn(),
+    dispose: jest.fn(),
     updateReferencedAssets: jest.fn(),
     viewModelCount: 0,
     viewModelByIndex: jest.fn(),
