@@ -37,6 +37,7 @@
 #include "JHybridViewModelEnumPropertySpec.hpp"
 #include "JHybridViewModelTriggerPropertySpec.hpp"
 #include "JFunc_void.hpp"
+#include "JHybridViewModelImagePropertySpec.hpp"
 #include <NitroModules/DefaultConstructableObject.hpp>
 
 namespace margelo::nitro::rive {
@@ -70,6 +71,7 @@ int initialize(JavaVM* vm) {
     margelo::nitro::rive::JHybridViewModelEnumPropertySpec::registerNatives();
     margelo::nitro::rive::JHybridViewModelTriggerPropertySpec::registerNatives();
     margelo::nitro::rive::JFunc_void_cxx::registerNatives();
+    margelo::nitro::rive::JHybridViewModelImagePropertySpec::registerNatives();
 
     // Register Nitro Hybrid Objects
     HybridObjectRegistry::registerHybridObjectConstructor(
@@ -156,6 +158,14 @@ int initialize(JavaVM* vm) {
       "ViewModelTriggerProperty",
       []() -> std::shared_ptr<HybridObject> {
         static DefaultConstructableObject<JHybridViewModelTriggerPropertySpec::javaobject> object("com/margelo/nitro/rive/HybridViewModelTriggerProperty");
+        auto instance = object.create();
+        return instance->cthis()->shared();
+      }
+    );
+    HybridObjectRegistry::registerHybridObjectConstructor(
+      "ViewModelImageProperty",
+      []() -> std::shared_ptr<HybridObject> {
+        static DefaultConstructableObject<JHybridViewModelImagePropertySpec::javaobject> object("com/margelo/nitro/rive/HybridViewModelImageProperty");
         auto instance = object.create();
         return instance->cthis()->shared();
       }

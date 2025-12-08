@@ -19,6 +19,8 @@ namespace margelo::nitro::rive { class HybridViewModelColorPropertySpec; }
 namespace margelo::nitro::rive { class HybridViewModelEnumPropertySpec; }
 // Forward declaration of `HybridViewModelTriggerPropertySpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridViewModelTriggerPropertySpec; }
+// Forward declaration of `HybridViewModelImagePropertySpec` to properly resolve imports.
+namespace margelo::nitro::rive { class HybridViewModelImagePropertySpec; }
 
 #include <string>
 #include <memory>
@@ -35,6 +37,8 @@ namespace margelo::nitro::rive { class HybridViewModelTriggerPropertySpec; }
 #include "JHybridViewModelEnumPropertySpec.hpp"
 #include "HybridViewModelTriggerPropertySpec.hpp"
 #include "JHybridViewModelTriggerPropertySpec.hpp"
+#include "HybridViewModelImagePropertySpec.hpp"
+#include "JHybridViewModelImagePropertySpec.hpp"
 
 namespace margelo::nitro::rive {
 
@@ -101,6 +105,11 @@ namespace margelo::nitro::rive {
     static const auto method = javaClassStatic()->getMethod<jni::local_ref<JHybridViewModelTriggerPropertySpec::javaobject>(jni::alias_ref<jni::JString> /* path */)>("triggerProperty");
     auto __result = method(_javaPart, jni::make_jstring(path));
     return __result != nullptr ? std::make_optional(__result->cthis()->shared_cast<JHybridViewModelTriggerPropertySpec>()) : std::nullopt;
+  }
+  std::optional<std::shared_ptr<HybridViewModelImagePropertySpec>> JHybridViewModelInstanceSpec::imageProperty(const std::string& path) {
+    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JHybridViewModelImagePropertySpec::javaobject>(jni::alias_ref<jni::JString> /* path */)>("imageProperty");
+    auto __result = method(_javaPart, jni::make_jstring(path));
+    return __result != nullptr ? std::make_optional(__result->cthis()->shared_cast<JHybridViewModelImagePropertySpec>()) : std::nullopt;
   }
 
 } // namespace margelo::nitro::rive

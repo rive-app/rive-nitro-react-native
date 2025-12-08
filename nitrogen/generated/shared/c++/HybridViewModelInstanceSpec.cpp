@@ -21,6 +21,7 @@ namespace margelo::nitro::rive {
       prototype.registerHybridMethod("colorProperty", &HybridViewModelInstanceSpec::colorProperty);
       prototype.registerHybridMethod("enumProperty", &HybridViewModelInstanceSpec::enumProperty);
       prototype.registerHybridMethod("triggerProperty", &HybridViewModelInstanceSpec::triggerProperty);
+      prototype.registerHybridMethod("imageProperty", &HybridViewModelInstanceSpec::imageProperty);
     });
   }
 
