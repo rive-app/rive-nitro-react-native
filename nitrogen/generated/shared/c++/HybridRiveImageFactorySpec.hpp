@@ -20,6 +20,7 @@ namespace margelo::nitro::rive { class HybridRiveImageSpec; }
 #include "HybridRiveImageSpec.hpp"
 #include <NitroModules/Promise.hpp>
 #include <string>
+#include <NitroModules/ArrayBuffer.hpp>
 
 namespace margelo::nitro::rive {
 
@@ -53,6 +54,8 @@ namespace margelo::nitro::rive {
     public:
       // Methods
       virtual std::shared_ptr<Promise<std::shared_ptr<HybridRiveImageSpec>>> loadFromURLAsync(const std::string& url) = 0;
+      virtual std::shared_ptr<Promise<std::shared_ptr<HybridRiveImageSpec>>> loadFromResourceAsync(const std::string& resource) = 0;
+      virtual std::shared_ptr<Promise<std::shared_ptr<HybridRiveImageSpec>>> loadFromBytesAsync(const std::shared_ptr<ArrayBuffer>& bytes) = 0;
 
     protected:
       // Hybrid Setup
