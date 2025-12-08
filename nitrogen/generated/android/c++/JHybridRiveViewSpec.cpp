@@ -48,6 +48,7 @@ namespace margelo::nitro::rive { enum class RiveEventType; }
 #include "RiveError.hpp"
 #include <functional>
 #include "JFunc_void_RiveError.hpp"
+#include <NitroModules/JNICallable.hpp>
 #include "JRiveError.hpp"
 #include "RiveErrorType.hpp"
 #include "JRiveErrorType.hpp"
@@ -171,9 +172,7 @@ namespace margelo::nitro::rive {
         return downcast->cthis()->getFunction();
       } else {
         auto __resultRef = jni::make_global(__result);
-        return [__resultRef](RiveError error) -> void {
-          return __resultRef->invoke(error);
-        };
+        return JNICallable<JFunc_void_RiveError, void(RiveError)>(std::move(__resultRef));
       }
     }();
   }
@@ -208,12 +207,53 @@ namespace margelo::nitro::rive {
     auto __result = method(_javaPart);
     return __result != nullptr ? std::make_optional(__result->cthis()->shared_cast<JHybridViewModelInstanceSpec>()) : std::nullopt;
   }
-  void JHybridRiveViewSpec::play() {
-    static const auto method = javaClassStatic()->getMethod<void()>("play");
-    method(_javaPart);
+  std::shared_ptr<Promise<void>> JHybridRiveViewSpec::play() {
+    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>()>("play");
+    auto __result = method(_javaPart);
+    return [&]() {
+      auto __promise = Promise<void>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& /* unit */) {
+        __promise->resolve();
+      });
+      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
+        jni::JniException __jniError(__throwable);
+        __promise->reject(std::make_exception_ptr(__jniError));
+      });
+      return __promise;
+    }();
   }
-  void JHybridRiveViewSpec::pause() {
-    static const auto method = javaClassStatic()->getMethod<void()>("pause");
+  std::shared_ptr<Promise<void>> JHybridRiveViewSpec::pause() {
+    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>()>("pause");
+    auto __result = method(_javaPart);
+    return [&]() {
+      auto __promise = Promise<void>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& /* unit */) {
+        __promise->resolve();
+      });
+      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
+        jni::JniException __jniError(__throwable);
+        __promise->reject(std::make_exception_ptr(__jniError));
+      });
+      return __promise;
+    }();
+  }
+  std::shared_ptr<Promise<void>> JHybridRiveViewSpec::reset() {
+    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>()>("reset");
+    auto __result = method(_javaPart);
+    return [&]() {
+      auto __promise = Promise<void>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& /* unit */) {
+        __promise->resolve();
+      });
+      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
+        jni::JniException __jniError(__throwable);
+        __promise->reject(std::make_exception_ptr(__jniError));
+      });
+      return __promise;
+    }();
+  }
+  void JHybridRiveViewSpec::playIfNeeded() {
+    static const auto method = javaClassStatic()->getMethod<void()>("playIfNeeded");
     method(_javaPart);
   }
   void JHybridRiveViewSpec::onEventListener(const std::function<void(const UnifiedRiveEvent& /* event */)>& onEvent) {

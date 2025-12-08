@@ -61,9 +61,15 @@ export interface RiveViewMethods extends HybridViewMethods {
    */
   getViewModelInstance(): ViewModelInstance | undefined;
   /** Starts playing the Rive graphic */
-  play(): void;
+  play(): Promise<void>;
   /** Pauses the the Rive graphic */
-  pause(): void;
+  pause(): Promise<void>;
+  /** Resets the Rive graphic to its initial state */
+  reset(): Promise<void>;
+
+  /** play if needed: low overhead function to make sure the rive graphics is playing. Use after property value update, to make sure graphics is updated */
+  playIfNeeded(): void;
+
   /**
    * Adds an event listener to the Rive view
    * @param onEvent - The function to call when an event is triggered

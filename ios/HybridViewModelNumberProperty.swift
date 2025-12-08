@@ -1,14 +1,14 @@
 import RiveRuntime
 
-class HybridViewModelNumberProperty: HybridViewModelNumberPropertySpec {
-  var property: RiveDataBindingViewModel.Instance.NumberProperty!
-  private var listenerIds: [UUID] = []
-  
-  init(property: RiveDataBindingViewModel.Instance.NumberProperty) {
+class HybridViewModelNumberProperty: HybridViewModelNumberPropertySpec, ValuedPropertyProtocol {
+  var property: NumberPropertyType!
+  lazy var helper = PropertyListenerHelper(property: property!)
+
+  init(property: NumberPropertyType) {
     self.property = property
     super.init()
   }
-  
+
   /// ⚠️ DO NOT REMOVE
   /// Nitro requires a parameterless initializer for JS bridging.
   /// This is invoked automatically during hybrid module construction.
@@ -16,7 +16,7 @@ class HybridViewModelNumberProperty: HybridViewModelNumberPropertySpec {
   override init() {
     super.init()
   }
-  
+
   var value: Double {
     get {
       return Double(property.value)
@@ -25,24 +25,11 @@ class HybridViewModelNumberProperty: HybridViewModelNumberPropertySpec {
       property.value = Float(newValue)
     }
   }
-  
+
+  // Custom addListener needed because ListenerValueType (Float) != ValueType (Double)
   func addListener(onChanged: @escaping (Double) -> Void) throws {
-    let id = property.addListener({ value in
+    helper.addListener { (value: Float) in
       onChanged(Double(value))
-    })
-    
-    listenerIds.append(id)
-    
-  }
-  
-  func removeListeners() throws {
-    for id in listenerIds {
-      property.removeListener(id)
     }
-    listenerIds.removeAll()
-  }
-  
-  func dispose() throws {
-    try? removeListeners()
   }
 }

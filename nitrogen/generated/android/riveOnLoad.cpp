@@ -18,6 +18,8 @@
 #include "JHybridRiveSpec.hpp"
 #include "JHybridRiveFileSpec.hpp"
 #include "JHybridRiveFileFactorySpec.hpp"
+#include "JHybridRiveImageSpec.hpp"
+#include "JHybridRiveImageFactorySpec.hpp"
 #include "JHybridRiveViewSpec.hpp"
 #include "JFunc_void_RiveError.hpp"
 #include "JFunc_void_UnifiedRiveEvent.hpp"
@@ -35,6 +37,7 @@
 #include "JHybridViewModelEnumPropertySpec.hpp"
 #include "JHybridViewModelTriggerPropertySpec.hpp"
 #include "JFunc_void.hpp"
+#include "JHybridViewModelImagePropertySpec.hpp"
 #include <NitroModules/DefaultConstructableObject.hpp>
 
 namespace margelo::nitro::rive {
@@ -49,6 +52,8 @@ int initialize(JavaVM* vm) {
     margelo::nitro::rive::JHybridRiveSpec::registerNatives();
     margelo::nitro::rive::JHybridRiveFileSpec::registerNatives();
     margelo::nitro::rive::JHybridRiveFileFactorySpec::registerNatives();
+    margelo::nitro::rive::JHybridRiveImageSpec::registerNatives();
+    margelo::nitro::rive::JHybridRiveImageFactorySpec::registerNatives();
     margelo::nitro::rive::JHybridRiveViewSpec::registerNatives();
     margelo::nitro::rive::JFunc_void_RiveError_cxx::registerNatives();
     margelo::nitro::rive::JFunc_void_UnifiedRiveEvent_cxx::registerNatives();
@@ -66,6 +71,7 @@ int initialize(JavaVM* vm) {
     margelo::nitro::rive::JHybridViewModelEnumPropertySpec::registerNatives();
     margelo::nitro::rive::JHybridViewModelTriggerPropertySpec::registerNatives();
     margelo::nitro::rive::JFunc_void_cxx::registerNatives();
+    margelo::nitro::rive::JHybridViewModelImagePropertySpec::registerNatives();
 
     // Register Nitro Hybrid Objects
     HybridObjectRegistry::registerHybridObjectConstructor(
@@ -157,9 +163,25 @@ int initialize(JavaVM* vm) {
       }
     );
     HybridObjectRegistry::registerHybridObjectConstructor(
+      "ViewModelImageProperty",
+      []() -> std::shared_ptr<HybridObject> {
+        static DefaultConstructableObject<JHybridViewModelImagePropertySpec::javaobject> object("com/margelo/nitro/rive/HybridViewModelImageProperty");
+        auto instance = object.create();
+        return instance->cthis()->shared();
+      }
+    );
+    HybridObjectRegistry::registerHybridObjectConstructor(
       "RiveView",
       []() -> std::shared_ptr<HybridObject> {
         static DefaultConstructableObject<JHybridRiveViewSpec::javaobject> object("com/margelo/nitro/rive/HybridRiveView");
+        auto instance = object.create();
+        return instance->cthis()->shared();
+      }
+    );
+    HybridObjectRegistry::registerHybridObjectConstructor(
+      "RiveImageFactory",
+      []() -> std::shared_ptr<HybridObject> {
+        static DefaultConstructableObject<JHybridRiveImageFactorySpec::javaobject> object("com/margelo/nitro/rive/HybridRiveImageFactory");
         auto instance = object.create();
         return instance->cthis()->shared();
       }

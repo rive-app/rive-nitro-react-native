@@ -10,11 +10,14 @@
 // Include C++ implementation defined types
 #include "HybridRiveFileFactorySpecSwift.hpp"
 #include "HybridRiveFileSpecSwift.hpp"
+#include "HybridRiveImageFactorySpecSwift.hpp"
+#include "HybridRiveImageSpecSwift.hpp"
 #include "HybridRiveSpecSwift.hpp"
 #include "HybridRiveViewSpecSwift.hpp"
 #include "HybridViewModelBooleanPropertySpecSwift.hpp"
 #include "HybridViewModelColorPropertySpecSwift.hpp"
 #include "HybridViewModelEnumPropertySpecSwift.hpp"
+#include "HybridViewModelImagePropertySpecSwift.hpp"
 #include "HybridViewModelInstanceSpecSwift.hpp"
 #include "HybridViewModelNumberPropertySpecSwift.hpp"
 #include "HybridViewModelPropertySpecSwift.hpp"
@@ -55,6 +58,22 @@ namespace margelo::nitro::rive::bridge::swift {
     }
     #endif
     RNRive::HybridViewModelSpec_cxx& swiftPart = swiftWrapper->getSwiftPart();
+    return swiftPart.toUnsafe();
+  }
+  
+  // pragma MARK: std::shared_ptr<HybridRiveImageSpec>
+  std::shared_ptr<HybridRiveImageSpec> create_std__shared_ptr_HybridRiveImageSpec_(void* NON_NULL swiftUnsafePointer) noexcept {
+    RNRive::HybridRiveImageSpec_cxx swiftPart = RNRive::HybridRiveImageSpec_cxx::fromUnsafe(swiftUnsafePointer);
+    return std::make_shared<margelo::nitro::rive::HybridRiveImageSpecSwift>(swiftPart);
+  }
+  void* NON_NULL get_std__shared_ptr_HybridRiveImageSpec_(std__shared_ptr_HybridRiveImageSpec_ cppType) {
+    std::shared_ptr<margelo::nitro::rive::HybridRiveImageSpecSwift> swiftWrapper = std::dynamic_pointer_cast<margelo::nitro::rive::HybridRiveImageSpecSwift>(cppType);
+    #ifdef NITRO_DEBUG
+    if (swiftWrapper == nullptr) [[unlikely]] {
+      throw std::runtime_error("Class \"HybridRiveImageSpec\" is not implemented in Swift!");
+    }
+    #endif
+    RNRive::HybridRiveImageSpec_cxx& swiftPart = swiftWrapper->getSwiftPart();
     return swiftPart.toUnsafe();
   }
   
@@ -106,6 +125,30 @@ namespace margelo::nitro::rive::bridge::swift {
     return swiftPart.toUnsafe();
   }
   
+  // pragma MARK: std::function<void(const std::shared_ptr<HybridRiveImageSpec>& /* result */)>
+  Func_void_std__shared_ptr_HybridRiveImageSpec_ create_Func_void_std__shared_ptr_HybridRiveImageSpec_(void* NON_NULL swiftClosureWrapper) noexcept {
+    auto swiftClosure = RNRive::Func_void_std__shared_ptr_HybridRiveImageSpec_::fromUnsafe(swiftClosureWrapper);
+    return [swiftClosure = std::move(swiftClosure)](const std::shared_ptr<HybridRiveImageSpec>& result) mutable -> void {
+      swiftClosure.call(result);
+    };
+  }
+  
+  // pragma MARK: std::shared_ptr<HybridRiveImageFactorySpec>
+  std::shared_ptr<HybridRiveImageFactorySpec> create_std__shared_ptr_HybridRiveImageFactorySpec_(void* NON_NULL swiftUnsafePointer) noexcept {
+    RNRive::HybridRiveImageFactorySpec_cxx swiftPart = RNRive::HybridRiveImageFactorySpec_cxx::fromUnsafe(swiftUnsafePointer);
+    return std::make_shared<margelo::nitro::rive::HybridRiveImageFactorySpecSwift>(swiftPart);
+  }
+  void* NON_NULL get_std__shared_ptr_HybridRiveImageFactorySpec_(std__shared_ptr_HybridRiveImageFactorySpec_ cppType) {
+    std::shared_ptr<margelo::nitro::rive::HybridRiveImageFactorySpecSwift> swiftWrapper = std::dynamic_pointer_cast<margelo::nitro::rive::HybridRiveImageFactorySpecSwift>(cppType);
+    #ifdef NITRO_DEBUG
+    if (swiftWrapper == nullptr) [[unlikely]] {
+      throw std::runtime_error("Class \"HybridRiveImageFactorySpec\" is not implemented in Swift!");
+    }
+    #endif
+    RNRive::HybridRiveImageFactorySpec_cxx& swiftPart = swiftWrapper->getSwiftPart();
+    return swiftPart.toUnsafe();
+  }
+  
   // pragma MARK: std::shared_ptr<HybridViewModelInstanceSpec>
   std::shared_ptr<HybridViewModelInstanceSpec> create_std__shared_ptr_HybridViewModelInstanceSpec_(void* NON_NULL swiftUnsafePointer) noexcept {
     RNRive::HybridViewModelInstanceSpec_cxx swiftPart = RNRive::HybridViewModelInstanceSpec_cxx::fromUnsafe(swiftUnsafePointer);
@@ -135,6 +178,14 @@ namespace margelo::nitro::rive::bridge::swift {
     auto swiftClosure = RNRive::Func_void_bool::fromUnsafe(swiftClosureWrapper);
     return [swiftClosure = std::move(swiftClosure)](bool result) mutable -> void {
       swiftClosure.call(result);
+    };
+  }
+  
+  // pragma MARK: std::function<void()>
+  Func_void create_Func_void(void* NON_NULL swiftClosureWrapper) noexcept {
+    auto swiftClosure = RNRive::Func_void::fromUnsafe(swiftClosureWrapper);
+    return [swiftClosure = std::move(swiftClosure)]() mutable -> void {
+      swiftClosure.call();
     };
   }
   
@@ -274,6 +325,22 @@ namespace margelo::nitro::rive::bridge::swift {
     return swiftPart.toUnsafe();
   }
   
+  // pragma MARK: std::shared_ptr<HybridViewModelImagePropertySpec>
+  std::shared_ptr<HybridViewModelImagePropertySpec> create_std__shared_ptr_HybridViewModelImagePropertySpec_(void* NON_NULL swiftUnsafePointer) noexcept {
+    RNRive::HybridViewModelImagePropertySpec_cxx swiftPart = RNRive::HybridViewModelImagePropertySpec_cxx::fromUnsafe(swiftUnsafePointer);
+    return std::make_shared<margelo::nitro::rive::HybridViewModelImagePropertySpecSwift>(swiftPart);
+  }
+  void* NON_NULL get_std__shared_ptr_HybridViewModelImagePropertySpec_(std__shared_ptr_HybridViewModelImagePropertySpec_ cppType) {
+    std::shared_ptr<margelo::nitro::rive::HybridViewModelImagePropertySpecSwift> swiftWrapper = std::dynamic_pointer_cast<margelo::nitro::rive::HybridViewModelImagePropertySpecSwift>(cppType);
+    #ifdef NITRO_DEBUG
+    if (swiftWrapper == nullptr) [[unlikely]] {
+      throw std::runtime_error("Class \"HybridViewModelImagePropertySpec\" is not implemented in Swift!");
+    }
+    #endif
+    RNRive::HybridViewModelImagePropertySpec_cxx& swiftPart = swiftWrapper->getSwiftPart();
+    return swiftPart.toUnsafe();
+  }
+  
   // pragma MARK: std::function<void(double /* value */)>
   Func_void_double create_Func_void_double(void* NON_NULL swiftClosureWrapper) noexcept {
     auto swiftClosure = RNRive::Func_void_double::fromUnsafe(swiftClosureWrapper);
@@ -287,14 +354,6 @@ namespace margelo::nitro::rive::bridge::swift {
     auto swiftClosure = RNRive::Func_void_std__string::fromUnsafe(swiftClosureWrapper);
     return [swiftClosure = std::move(swiftClosure)](const std::string& value) mutable -> void {
       swiftClosure.call(value);
-    };
-  }
-  
-  // pragma MARK: std::function<void()>
-  Func_void create_Func_void(void* NON_NULL swiftClosureWrapper) noexcept {
-    auto swiftClosure = RNRive::Func_void::fromUnsafe(swiftClosureWrapper);
-    return [swiftClosure = std::move(swiftClosure)]() mutable -> void {
-      swiftClosure.call();
     };
   }
 

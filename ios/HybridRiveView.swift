@@ -66,6 +66,28 @@ where Wrapped == HybridDataBindMode {
 }
 
 class HybridRiveView: HybridRiveViewSpec {
+  func play() throws -> NitroModules.Promise<Void> {
+    return Promise.async {
+      try await self.getRiveView().play()
+    }
+  }
+
+  func pause() throws -> NitroModules.Promise<Void> {
+    return Promise.async {
+      try await self.getRiveView().pause()
+    }
+  }
+
+  func reset() throws -> NitroModules.Promise<Void> {
+    return Promise.async {
+      try await self.getRiveView().reset()
+    }
+  }
+  
+  func playIfNeeded() {
+    try? self.getRiveView().playIfNeeded()
+  }
+
   // MARK: View Props
   var dataBind: HybridDataBindMode? {
     didSet {
@@ -102,10 +124,6 @@ class HybridRiveView: HybridRiveViewSpec {
     guard let viewModelInstance = try getRiveView().getViewModelInstance() else { return nil }
     return HybridViewModelInstance(viewModelInstance: viewModelInstance)
   }
-
-  func play() throws { try getRiveView().play() }
-
-  func pause() throws { try getRiveView().pause() }
 
   func onEventListener(onEvent: @escaping (UnifiedRiveEvent) -> Void) throws {
     try getRiveView().addEventListener(onEvent)

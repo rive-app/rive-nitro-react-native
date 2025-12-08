@@ -179,14 +179,32 @@ namespace margelo::nitro::rive {
       auto __value = std::move(__result.value());
       return __value;
     }
-    inline void play() override {
+    inline std::shared_ptr<Promise<void>> play() override {
       auto __result = _swiftPart.play();
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }
+      auto __value = std::move(__result.value());
+      return __value;
     }
-    inline void pause() override {
+    inline std::shared_ptr<Promise<void>> pause() override {
       auto __result = _swiftPart.pause();
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline std::shared_ptr<Promise<void>> reset() override {
+      auto __result = _swiftPart.reset();
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline void playIfNeeded() override {
+      auto __result = _swiftPart.playIfNeeded();
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }

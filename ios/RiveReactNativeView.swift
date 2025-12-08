@@ -122,20 +122,35 @@ class RiveReactNativeView: UIView, RiveStateMachineDelegate {
       // this should be added if we support only playing artboards on their own - https://github.com/rive-app/rive-nitro-react-native/pull/23#discussion_r2534698281
       // artboard?.bind(viewModelInstance: instance)
     }
-    baseViewModel?.play()
+    play()
   }
 
+  @MainActor
   func play() {
     baseViewModel?.play()
   }
 
+  @MainActor
   func pause() {
     baseViewModel?.pause()
   }
 
+  @MainActor
+  func reset() {
+    baseViewModel?.reset()
+  }
+  
+  func playIfNeeded() {
+    if let baseViewModel = baseViewModel, (baseViewModel.isPlaying == false) {
+      Task {
+        baseViewModel.play()
+      }
+    }
+   }
+
   func refreshAfterAssetChange() {
     if baseViewModel?.isPlaying == false {
-      baseViewModel?.play()
+      play()
     }
   }
 

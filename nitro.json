@@ -53,9 +53,17 @@
       "swift": "HybridViewModelTriggerProperty",
       "kotlin": "HybridViewModelTriggerProperty"
     },
+    "ViewModelImageProperty": {
+      "swift": "HybridViewModelImageProperty",
+      "kotlin": "HybridViewModelImageProperty"
+    },
     "RiveView": {
       "swift": "HybridRiveView",
       "kotlin": "HybridRiveView"
+    },
+    "RiveImageFactory": {
+      "swift": "HybridRiveImageFactory",
+      "kotlin": "HybridRiveImageFactory"
     }
   },
   "ignorePaths": ["node_modules"]

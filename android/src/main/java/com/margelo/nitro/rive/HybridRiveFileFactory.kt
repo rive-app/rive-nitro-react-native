@@ -7,12 +7,9 @@ import app.rive.runtime.kotlin.core.Rive
 import com.facebook.proguard.annotations.DoNotStrip
 import com.margelo.nitro.core.ArrayBuffer
 import com.margelo.nitro.core.Promise
-import com.margelo.nitro.NitroModules
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.io.File as JavaFile
 import java.net.URI
-import java.net.URL
 
 data class FileAndCache(
   val file: File,
@@ -45,8 +42,7 @@ class HybridRiveFileFactory : HybridRiveFileFactorySpec() {
     return Promise.async {
       try {
         val fileAndCache = withContext(Dispatchers.IO) {
-          val urlObj = URL(url)
-          val riveData = urlObj.readBytes()
+          val riveData = HTTPDataLoader.downloadBytes(url)
           buildRiveFile(riveData, referencedAssets)
         }
 
@@ -56,7 +52,7 @@ class HybridRiveFileFactory : HybridRiveFileFactorySpec() {
         hybridRiveFile.assetLoader = fileAndCache.loader
         hybridRiveFile
       } catch (e: Exception) {
-        throw Error("Failed to download Rive file: ${e.message}")
+        throw Error("Failed to download Rive file: ${e.message}", e)
       }
     }
   }
@@ -72,8 +68,7 @@ class HybridRiveFileFactory : HybridRiveFileFactorySpec() {
         val path = uri.path ?: throw Error("fromFileURL: Invalid URL: $fileURL")
 
         val fileAndCache = withContext(Dispatchers.IO) {
-          val file = JavaFile(path)
-          val riveData = file.readBytes()
+          val riveData = FileDataLoader.loadBytes(path)
           buildRiveFile(riveData, referencedAssets)
         }
 
@@ -92,15 +87,8 @@ class HybridRiveFileFactory : HybridRiveFileFactorySpec() {
   override fun fromResource(resource: String, loadCdn: Boolean, referencedAssets: ReferencedAssetsType?): Promise<HybridRiveFileSpec> {
     return Promise.async {
       try {
-        val context = NitroModules.applicationContext
-          ?: throw Error("Could not load Rive file ($resource) from resource. No application context.")
         val fileAndCache = withContext(Dispatchers.IO) {
-          val resourceId = context.resources.getIdentifier(resource, "raw", context.packageName)
-          if (resourceId == 0) {
-            throw Error("Could not find Rive file: $resource.riv")
-          }
-          val inputStream = context.resources.openRawResource(resourceId)
-          val riveData = inputStream.readBytes()
+          val riveData = ResourceDataLoader.loadBytes(resource)
           buildRiveFile(riveData, referencedAssets)
         }
 

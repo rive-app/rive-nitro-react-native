@@ -36,6 +36,8 @@ target_sources(
   ../nitrogen/generated/shared/c++/HybridRiveSpec.cpp
   ../nitrogen/generated/shared/c++/HybridRiveFileSpec.cpp
   ../nitrogen/generated/shared/c++/HybridRiveFileFactorySpec.cpp
+  ../nitrogen/generated/shared/c++/HybridRiveImageSpec.cpp
+  ../nitrogen/generated/shared/c++/HybridRiveImageFactorySpec.cpp
   ../nitrogen/generated/shared/c++/HybridRiveViewSpec.cpp
   ../nitrogen/generated/shared/c++/views/HybridRiveViewComponent.cpp
   ../nitrogen/generated/shared/c++/HybridViewModelSpec.cpp
@@ -47,10 +49,13 @@ target_sources(
   ../nitrogen/generated/shared/c++/HybridViewModelColorPropertySpec.cpp
   ../nitrogen/generated/shared/c++/HybridViewModelEnumPropertySpec.cpp
   ../nitrogen/generated/shared/c++/HybridViewModelTriggerPropertySpec.cpp
+  ../nitrogen/generated/shared/c++/HybridViewModelImagePropertySpec.cpp
   # Android-specific Nitrogen C++ sources
   ../nitrogen/generated/android/c++/JHybridRiveSpec.cpp
   ../nitrogen/generated/android/c++/JHybridRiveFileSpec.cpp
   ../nitrogen/generated/android/c++/JHybridRiveFileFactorySpec.cpp
+  ../nitrogen/generated/android/c++/JHybridRiveImageSpec.cpp
+  ../nitrogen/generated/android/c++/JHybridRiveImageFactorySpec.cpp
   ../nitrogen/generated/android/c++/JHybridRiveViewSpec.cpp
   ../nitrogen/generated/android/c++/JVariant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName.cpp
   ../nitrogen/generated/android/c++/JEventPropertiesOutput.cpp
@@ -64,6 +69,7 @@ target_sources(
   ../nitrogen/generated/android/c++/JHybridViewModelColorPropertySpec.cpp
   ../nitrogen/generated/android/c++/JHybridViewModelEnumPropertySpec.cpp
   ../nitrogen/generated/android/c++/JHybridViewModelTriggerPropertySpec.cpp
+  ../nitrogen/generated/android/c++/JHybridViewModelImagePropertySpec.cpp
 )
 
 # From node_modules/react-native/ReactAndroid/cmake-utils/folly-flags.cmake

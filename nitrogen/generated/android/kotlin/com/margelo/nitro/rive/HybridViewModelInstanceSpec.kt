@@ -70,6 +70,10 @@ abstract class HybridViewModelInstanceSpec: HybridObject() {
   @DoNotStrip
   @Keep
   abstract fun triggerProperty(path: String): HybridViewModelTriggerPropertySpec?
+  
+  @DoNotStrip
+  @Keep
+  abstract fun imageProperty(path: String): HybridViewModelImagePropertySpec?
 
   private external fun initHybrid(): HybridData
 

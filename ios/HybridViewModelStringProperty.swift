@@ -1,11 +1,11 @@
 import NitroModules
 import RiveRuntime
 
-class HybridViewModelStringProperty: HybridViewModelStringPropertySpec {
-  private var property: RiveDataBindingViewModel.Instance.StringProperty!
-  private var listenerIds: [UUID] = []
+class HybridViewModelStringProperty: HybridViewModelStringPropertySpec, ValuedPropertyProtocol {
+  var property: StringPropertyType!
+  lazy var helper = PropertyListenerHelper(property: property!)
   
-  init(property: RiveDataBindingViewModel.Instance.StringProperty) {
+  init(property: StringPropertyType) {
     self.property = property
     super.init()
   }
@@ -25,23 +25,5 @@ class HybridViewModelStringProperty: HybridViewModelStringPropertySpec {
     set {
       property.value = newValue
     }
-  }
-  
-  func addListener(onChanged: @escaping (String) -> Void) throws {
-    let id = property.addListener({ value in
-      onChanged(value)
-    })
-    listenerIds.append(id)
-  }
-  
-  func removeListeners() throws {
-    for id in listenerIds {
-      property.removeListener(id)
-    }
-    listenerIds.removeAll()
-  }
-  
-  func dispose() throws {
-    try? removeListeners()
   }
 }

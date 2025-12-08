@@ -74,8 +74,10 @@ namespace margelo::nitro::rive {
     std::shared_ptr<Promise<bool>> awaitViewReady() override;
     void bindViewModelInstance(const std::shared_ptr<HybridViewModelInstanceSpec>& viewModelInstance) override;
     std::optional<std::shared_ptr<HybridViewModelInstanceSpec>> getViewModelInstance() override;
-    void play() override;
-    void pause() override;
+    std::shared_ptr<Promise<void>> play() override;
+    std::shared_ptr<Promise<void>> pause() override;
+    std::shared_ptr<Promise<void>> reset() override;
+    void playIfNeeded() override;
     void onEventListener(const std::function<void(const UnifiedRiveEvent& /* event */)>& onEvent) override;
     void removeEventListeners() override;
     void setNumberInputValue(const std::string& name, double value, const std::optional<std::string>& path) override;
