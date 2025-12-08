@@ -8,3 +8,4 @@ export { default as OutOfBandAssets } from './OutOfBandAssets';
 export { default as OutOfBandAssetsWithSuspense } from './OutOfBandAssetsWithSuspense';
 export { default as ManyViewModels } from './ManyViewModels';
 export { default as ResponsiveLayouts } from './ResponsiveLayouts';
+export { default as SharedValueListenerExample } from './SharedValueListenerExample';
