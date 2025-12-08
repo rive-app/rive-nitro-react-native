@@ -52,7 +52,24 @@ class ReferencedAssetLoader {
 
     scope.launch {
       try {
-        val bytes = dataSource.createLoader().load(dataSource)
+        val bytes = when (dataSource) {
+          is DataSource.Http -> {
+            // Check cache first for URL assets
+            val cachedData = URLAssetCache.getCachedData(dataSource.url)
+            if (cachedData != null) {
+              cachedData
+            } else {
+              // Download and cache
+              val downloadedData = dataSource.createLoader().load(dataSource)
+              URLAssetCache.saveToCache(dataSource.url, downloadedData)
+              downloadedData
+            }
+          }
+          else -> {
+            // For non-URL assets, use the loader directly
+            dataSource.createLoader().load(dataSource)
+          }
+        }
         withContext(Dispatchers.Main) {
           processAssetBytes(bytes, asset)
           deferred.complete(Unit)
@@ -82,6 +99,7 @@ class ReferencedAssetLoader {
     return object : FileAssetLoader() {
       override fun loadContents(asset: FileAsset, inBandBytes: ByteArray): Boolean {
         var key = asset.uniqueFilename.substringBeforeLast(".")
+        cache[key] = asset
         var assetData = assetsData[key]
 
         if (assetData == null) {
@@ -92,8 +110,6 @@ class ReferencedAssetLoader {
         if (assetData == null) {
           return false
         }
-
-        cache[key] = asset
 
         loadAsset(assetData, asset)
 

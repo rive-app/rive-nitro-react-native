@@ -16,6 +16,7 @@ namespace margelo::nitro::rive { class HybridRiveImageSpec; }
 #include "JHybridRiveImageSpec.hpp"
 #include <functional>
 #include "JFunc_void.hpp"
+#include <NitroModules/JNICallable.hpp>
 
 namespace margelo::nitro::rive {
 
