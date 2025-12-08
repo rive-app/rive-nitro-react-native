@@ -49,13 +49,13 @@ abstract class HybridViewModelBooleanPropertySpec: HybridViewModelPropertySpec()
   abstract var value: Boolean
 
   // Methods
-  abstract fun addListener(onChanged: (value: Boolean) -> Unit): Unit
+  abstract fun addListener(onChanged: (value: Boolean) -> Unit): () -> Unit
   
   @DoNotStrip
   @Keep
-  private fun addListener_cxx(onChanged: Func_void_bool): Unit {
+  private fun addListener_cxx(onChanged: Func_void_bool): Func_void {
     val __result = addListener(onChanged)
-    return __result
+    return Func_void_java(__result)
   }
   
   @DoNotStrip

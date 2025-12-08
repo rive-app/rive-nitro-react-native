@@ -53,7 +53,7 @@ namespace margelo::nitro::rive {
 
     public:
       // Methods
-      virtual void addListener(const std::function<void(const std::string& /* value */)>& onChanged) = 0;
+      virtual std::function<void()> addListener(const std::function<void(const std::string& /* value */)>& onChanged) = 0;
       virtual void removeListeners() = 0;
 
     protected:

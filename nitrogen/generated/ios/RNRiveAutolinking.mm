@@ -20,7 +20,6 @@
 #include "HybridViewModelBooleanPropertySpecSwift.hpp"
 #include "HybridViewModelColorPropertySpecSwift.hpp"
 #include "HybridViewModelEnumPropertySpecSwift.hpp"
-#include "HybridViewModelTriggerPropertySpecSwift.hpp"
 #include "HybridViewModelImagePropertySpecSwift.hpp"
 #include "HybridRiveViewSpecSwift.hpp"
 #include "HybridRiveImageFactorySpecSwift.hpp"
@@ -101,13 +100,6 @@
     "ViewModelEnumProperty",
     []() -> std::shared_ptr<HybridObject> {
       std::shared_ptr<HybridViewModelEnumPropertySpec> hybridObject = RNRive::RNRiveAutolinking::createViewModelEnumProperty();
-      return hybridObject;
-    }
-  );
-  HybridObjectRegistry::registerHybridObjectConstructor(
-    "ViewModelTriggerProperty",
-    []() -> std::shared_ptr<HybridObject> {
-      std::shared_ptr<HybridViewModelTriggerPropertySpec> hybridObject = RNRive::RNRiveAutolinking::createViewModelTriggerProperty();
       return hybridObject;
     }
   );

@@ -1,12 +1,12 @@
 import RiveRuntime
 
 class HybridViewModelImageProperty: HybridViewModelImagePropertySpec, ValuedPropertyProtocol {
-  func addListener(onChanged: @escaping () -> Void) throws {
-    try addListener(onChanged: { _ in onChanged() })
-  }
-  
   var property: ImagePropertyType!
   lazy var helper = PropertyListenerHelper(property: property!)
+
+  func addListener(onChanged: @escaping () -> Void) throws -> () -> Void {
+    return helper.addListener { _ in onChanged() }
+  }
 
   init(property: ImagePropertyType) {
     self.property = property

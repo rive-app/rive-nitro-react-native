@@ -9,12 +9,14 @@ import kotlinx.coroutines.flow.Flow
 @Keep
 @DoNotStrip
 interface BaseHybridViewModelProperty<T> {
-    val scope: CoroutineScope?
-    val job: Job?
-    val listeners: MutableList<(T) -> Unit>
+  val scope: CoroutineScope?
+  val job: Job?
+  val listeners: MutableMap<String, (T) -> Unit>
 
-    fun ensureValueListenerJob(valueFlow: Flow<T>, drop: Int = 0)
-    fun onChanged(value: T)
-    fun removeListeners()
-    fun dispose()
+  fun ensureValueListenerJob(valueFlow: Flow<T>, drop: Int = 0)
+  fun onChanged(value: T)
+  fun addListenerInternal(callback: (T) -> Unit): () -> Unit
+  fun removeListener(id: String)
+  fun removeListeners()
+  fun dispose()
 }

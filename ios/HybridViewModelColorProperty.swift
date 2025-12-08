@@ -27,9 +27,8 @@ class HybridViewModelColorProperty: HybridViewModelColorPropertySpec, ValuedProp
     }
   }
   
-  // Custom addListener because we need to convert UIColor → Double
-  func addListener(onChanged: @escaping (Double) -> Void) throws {
-    helper.addListener { (color: UIColor) in
+  func addListener(onChanged: @escaping (Double) -> Void) throws -> () -> Void {
+    return helper.addListener { (color: UIColor) in
       onChanged(color.toHexDouble())
     }
   }

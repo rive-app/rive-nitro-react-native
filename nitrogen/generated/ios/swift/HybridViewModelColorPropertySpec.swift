@@ -14,7 +14,7 @@ public protocol HybridViewModelColorPropertySpec_protocol: HybridObject, HybridV
   var value: Double { get set }
 
   // Methods
-  func addListener(onChanged: @escaping (_ value: Double) -> Void) throws -> Void
+  func addListener(onChanged: @escaping (_ value: Double) -> Void) throws -> () -> Void
   func removeListeners() throws -> Void
 }
 

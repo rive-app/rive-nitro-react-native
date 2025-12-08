@@ -45,9 +45,18 @@ namespace margelo::nitro::rive {
   
 
   // Methods
-  void JHybridViewModelTriggerPropertySpec::addListener(const std::function<void()>& onChanged) {
-    static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<JFunc_void::javaobject> /* onChanged */)>("addListener_cxx");
-    method(_javaPart, JFunc_void_cxx::fromCpp(onChanged));
+  std::function<void()> JHybridViewModelTriggerPropertySpec::addListener(const std::function<void()>& onChanged) {
+    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JFunc_void::javaobject>(jni::alias_ref<JFunc_void::javaobject> /* onChanged */)>("addListener_cxx");
+    auto __result = method(_javaPart, JFunc_void_cxx::fromCpp(onChanged));
+    return [&]() -> std::function<void()> {
+      if (__result->isInstanceOf(JFunc_void_cxx::javaClassStatic())) [[likely]] {
+        auto downcast = jni::static_ref_cast<JFunc_void_cxx::javaobject>(__result);
+        return downcast->cthis()->getFunction();
+      } else {
+        auto __resultRef = jni::make_global(__result);
+        return JNICallable<JFunc_void, void()>(std::move(__resultRef));
+      }
+    }();
   }
   void JHybridViewModelTriggerPropertySpec::trigger() {
     static const auto method = javaClassStatic()->getMethod<void()>("trigger");

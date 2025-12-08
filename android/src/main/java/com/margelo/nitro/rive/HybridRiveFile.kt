@@ -75,7 +75,7 @@ class HybridRiveFile : HybridRiveFileSpec() {
 
     for ((key, assetData) in assetsData) {
       val asset = cache[key] ?: continue
-      loadJobs.add(loader.updateAsset(assetData, asset, context))
+      loadJobs.add(loader.updateAsset(assetData, asset))
     }
 
     if (loadJobs.isNotEmpty()) {
