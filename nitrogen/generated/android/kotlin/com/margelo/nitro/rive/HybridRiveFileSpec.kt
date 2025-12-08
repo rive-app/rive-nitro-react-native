@@ -61,10 +61,6 @@ abstract class HybridRiveFileSpec: HybridObject() {
   
   @DoNotStrip
   @Keep
-  abstract fun release(): Unit
-  
-  @DoNotStrip
-  @Keep
   abstract fun updateReferencedAssets(referencedAssets: ReferencedAssetsType): Unit
 
   private external fun initHybrid(): HybridData

@@ -107,12 +107,6 @@ namespace margelo::nitro::rive {
       auto __value = std::move(__result.value());
       return __value;
     }
-    inline void release() override {
-      auto __result = _swiftPart.release();
-      if (__result.hasError()) [[unlikely]] {
-        std::rethrow_exception(__result.error());
-      }
-    }
     inline void updateReferencedAssets(const ReferencedAssetsType& referencedAssets) override {
       auto __result = _swiftPart.updateReferencedAssets(std::forward<decltype(referencedAssets)>(referencedAssets));
       if (__result.hasError()) [[unlikely]] {

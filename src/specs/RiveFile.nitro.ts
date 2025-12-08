@@ -29,8 +29,6 @@ export interface RiveFile
   viewModelByName(name: string): ViewModel | undefined;
   /** Returns the default view model for the provided artboard */
   defaultArtboardViewModel(artboardBy?: ArtboardBy): ViewModel | undefined;
-  /** Release the Rive file. Important to call when done with the file to free resources. */
-  release(): void; // TODO: Switch to `dispose`: https://github.com/mrousavy/nio
   updateReferencedAssets(referencedAssets: ReferencedAssetsType): void;
 }
 
