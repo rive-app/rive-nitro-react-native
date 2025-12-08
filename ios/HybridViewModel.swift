@@ -6,12 +6,7 @@ class HybridViewModel: HybridViewModelSpec {
   init(viewModel: RiveDataBindingViewModel) {
     self.viewModel = viewModel
   }
-  
-  override init() {
-    self.viewModel = nil
-    super.init()
-  }
-  
+
   var propertyCount: Double { Double(viewModel?.propertyCount ?? 0) }
   
   var instanceCount: Double { Double(viewModel?.instanceCount ?? 0) }
