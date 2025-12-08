@@ -68,13 +68,18 @@ export interface RiveViewMethods extends HybridViewMethods {
   reset(): Promise<void>;
   /**
    * Adds an event listener to the Rive view
+   * @deprecated Use data binding instead. See https://rive.app/docs/runtimes/data-binding
    * @param onEvent - The function to call when an event is triggered
    */
   onEventListener(onEvent: (event: UnifiedRiveEvent) => void): void;
-  /** Removes all event listeners from the Rive view */
+  /**
+   * Removes all event listeners from the Rive view
+   * @deprecated Use data binding instead. See https://rive.app/docs/runtimes/data-binding
+   */
   removeEventListeners(): void;
   /**
    * Sets a number state machine input on the Rive view
+   * @deprecated Use data binding instead. See https://rive.app/docs/runtimes/data-binding
    * @param name - The name of the state machine input
    * @param value - The value to set the state machine input to
    * @param path - The optional path to the state machine input on a nested artboard
@@ -82,6 +87,7 @@ export interface RiveViewMethods extends HybridViewMethods {
   setNumberInputValue(name: string, value: number, path?: string): void;
   /**
    * Gets a number state machine input from the Rive view
+   * @deprecated Use data binding instead. See https://rive.app/docs/runtimes/data-binding
    * @param name - The name of the state machine input
    * @param path - The optional path to the state machine input on a nested artboard
    * @returns The value of the state machine input
@@ -89,6 +95,7 @@ export interface RiveViewMethods extends HybridViewMethods {
   getNumberInputValue(name: string, path?: string): number;
   /**
    * Sets a boolean state machine input on the Rive view
+   * @deprecated Use data binding instead. See https://rive.app/docs/runtimes/data-binding
    * @param name - The name of the state machine input
    * @param value - The value to set the state machine input to
    * @param path - The optional path to the state machine input on a nested artboard
@@ -96,6 +103,7 @@ export interface RiveViewMethods extends HybridViewMethods {
   setBooleanInputValue(name: string, value: boolean, path?: string): void;
   /**
    * Gets a boolean state machine input from the Rive view
+   * @deprecated Use data binding instead. See https://rive.app/docs/runtimes/data-binding
    * @param name - The name of the state machine input
    * @param path - The optional path to the state machine input on a nested artboard
    * @returns The value of the state machine input
@@ -103,17 +111,24 @@ export interface RiveViewMethods extends HybridViewMethods {
   getBooleanInputValue(name: string, path?: string): boolean;
   /**
    * Triggers a trigger state machine input on the Rive view
+   * @deprecated Use data binding instead. See https://rive.app/docs/runtimes/data-binding
    * @param name - The name of the state machine input
    * @param path - The optional path to the state machine input on a nested artboard
    */
   triggerInput(name: string, path?: string): void;
   /**
    * Sets the text run value on the Rive view
-   * @param text - The text to set the text run value to
+   * @deprecated Use data binding instead. See https://rive.app/docs/runtimes/data-binding
+   * @param name - The name of the text run
+   * @param value - The text to set the text run value to
+   * @param path - The optional path to the text run on a nested artboard
    */
   setTextRunValue(name: string, value: string, path?: string): void;
   /**
    * Gets the text run value from the Rive view
+   * @deprecated Use data binding instead. See https://rive.app/docs/runtimes/data-binding
+   * @param name - The name of the text run
+   * @param path - The optional path to the text run on a nested artboard
    * @returns The text run value
    */
   getTextRunValue(name: string, path?: string): string;

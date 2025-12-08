@@ -17,6 +17,7 @@ import app.rive.runtime.kotlin.core.RiveOpenURLEvent
 import app.rive.runtime.kotlin.core.SMIBoolean
 import app.rive.runtime.kotlin.core.SMIInput
 import app.rive.runtime.kotlin.core.SMINumber
+import app.rive.runtime.kotlin.core.SMITrigger
 import app.rive.runtime.kotlin.core.ViewModelInstance
 import app.rive.runtime.kotlin.core.errors.ViewModelException
 import com.margelo.nitro.rive.EventPropertiesOutput
@@ -275,15 +276,13 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
     handleInput(
       name = name,
       path = path,
-      type = InputType.BooleanInput,
-      onSuccess = { _ ->
-        // Use Rive Android's queue system to actually set the input
+      type = InputType.Trigger,
+      onSuccess = {
         riveAnimationView?.controller?.fireState(
           stateMachineName = activeStateMachineName,
           inputName = name,
           path = path
         )
-        true
       }
     )
   }
@@ -392,6 +391,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
   private sealed class InputType<T> {
     data object Number : InputType<Double>()
     data object BooleanInput : InputType<Boolean>()
+    data object Trigger : InputType<Unit>()
   }
 
   /**
@@ -412,6 +412,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
     when (type) {
       is InputType.Number -> if (smi !is SMINumber) throw Error("State machine input is not a number")
       is InputType.BooleanInput -> if (smi !is SMIBoolean) throw Error("State machine input is not a boolean")
+      is InputType.Trigger -> if (smi !is SMITrigger) throw Error("State machine input is not a trigger")
     }
 
     try {
