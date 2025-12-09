@@ -52,6 +52,9 @@ export interface ViewModelInstance
 
   /** Get an image property from the view model instance at the given path */
   imageProperty(path: string): ViewModelImageProperty | undefined;
+
+  /** Get a list property from the view model instance at the given path */
+  listProperty(path: string): ViewModelListProperty | undefined;
 }
 
 export interface ViewModelProperty
@@ -123,4 +126,29 @@ export interface ViewModelImageProperty
   set(image: RiveImage | undefined): void;
   /** Add a listener to the view model image property. Returns a function to remove the listener. */
   addListener(onChanged: () => void): () => void;
+}
+
+/**
+ * A list property that contains a dynamic collection of {@link ViewModelInstance} objects.
+ * @see {@link https://rive.app/docs/runtimes/data-binding#lists Rive Data Binding Lists}
+ */
+export interface ViewModelListProperty
+  extends ViewModelProperty,
+    ObservableProperty {
+  /** The number of instances in the list */
+  readonly length: number;
+  /** Get the instance at the given index */
+  instanceAt(index: number): ViewModelInstance | undefined;
+  /** Add an instance to the end of the list */
+  addInstance(instance: ViewModelInstance): void;
+  /** Insert an instance at the given index */
+  insertInstance(instance: ViewModelInstance, index: number): void;
+  /** Remove an instance from the list */
+  removeInstance(instance: ViewModelInstance): void;
+  /** Remove the instance at the given index */
+  removeInstanceAt(index: number): void;
+  /** Swap the instances at the given indices */
+  swap(index1: number, index2: number): void;
+  /** Add a listener to be notified when the list changes */
+  addListener(onChanged: () => void): void;
 }

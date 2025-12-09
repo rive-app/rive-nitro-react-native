@@ -3,7 +3,6 @@ package com.margelo.nitro.rive
 import androidx.annotation.Keep
 import app.rive.runtime.kotlin.core.File
 import com.facebook.proguard.annotations.DoNotStrip
-import com.margelo.nitro.NitroModules
 import java.lang.ref.WeakReference
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
