@@ -69,13 +69,12 @@ class HybridRiveFile : HybridRiveFileSpec() {
     val assetsData = referencedAssets.data ?: return
     val cache = referencedAssetCache ?: return
     val loader = assetLoader ?: return
-    val context = NitroModules.applicationContext ?: return
 
     val loadJobs = mutableListOf<kotlinx.coroutines.Deferred<Unit>>()
 
     for ((key, assetData) in assetsData) {
       val asset = cache[key] ?: continue
-      loadJobs.add(loader.updateAsset(assetData, asset, context))
+      loadJobs.add(loader.updateAsset(assetData, asset))
     }
 
     if (loadJobs.isNotEmpty()) {
