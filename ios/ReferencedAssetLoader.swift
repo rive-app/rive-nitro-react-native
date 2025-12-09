@@ -154,6 +154,10 @@ final class ReferencedAssetLoader {
         assetData = assetsData[key]
       }
 
+      if assetData == nil && !asset.cdnUuid().isEmpty {
+        assetData = ResolvedReferencedAsset(sourceUrl: "\(asset.cdnBaseUrl())/\(asset.cdnUuid())", sourceAsset: nil, sourceAssetId: nil, path: nil, image: nil)
+      }
+
       guard let assetData = assetData else {
         return false
       }

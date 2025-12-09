@@ -100,11 +100,16 @@ class ReferencedAssetLoader {
       override fun loadContents(asset: FileAsset, inBandBytes: ByteArray): Boolean {
         var key = asset.uniqueFilename.substringBeforeLast(".")
         cache[key] = asset
+        cache[asset.name] = asset
         var assetData = assetsData[key]
 
         if (assetData == null) {
           key = asset.name
           assetData = assetsData[asset.name]
+        }
+
+        if (assetData == null && asset.cdnUrl != null) {
+          assetData = ResolvedReferencedAsset(sourceUrl = asset.cdnUrl, sourceAsset = null, image = null, sourceAssetId = null, path = null)
         }
 
         if (assetData == null) {
