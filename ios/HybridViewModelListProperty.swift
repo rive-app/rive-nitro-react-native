@@ -22,21 +22,27 @@ class HybridViewModelListProperty: HybridViewModelListPropertySpec, ValuedProper
     return HybridViewModelInstance(viewModelInstance: instance)
   }
 
-  func addInstance(instance: any HybridViewModelInstanceSpec) throws {
+  private func requireViewModelInstance(_ instance: any HybridViewModelInstanceSpec) throws -> ViewModelInstance {
     guard let hybridInstance = instance as? HybridViewModelInstance,
-          let viewModelInstance = hybridInstance.viewModelInstance else { return }
+          let viewModelInstance = hybridInstance.viewModelInstance else {
+      throw NSError(domain: "HybridViewModelListProperty", code: 1,
+                    userInfo: [NSLocalizedDescriptionKey: "Expected HybridViewModelInstance with valid viewModelInstance"])
+    }
+    return viewModelInstance
+  }
+
+  func addInstance(instance: any HybridViewModelInstanceSpec) throws {
+    let viewModelInstance = try requireViewModelInstance(instance)
     property.addInstance(viewModelInstance)
   }
 
   func insertInstance(instance: any HybridViewModelInstanceSpec, index: Double) throws {
-    guard let hybridInstance = instance as? HybridViewModelInstance,
-          let viewModelInstance = hybridInstance.viewModelInstance else { return }
+    let viewModelInstance = try requireViewModelInstance(instance)
     _ = property.insertInstance(viewModelInstance, at: Int(index))
   }
 
   func removeInstance(instance: any HybridViewModelInstanceSpec) throws {
-    guard let hybridInstance = instance as? HybridViewModelInstance,
-          let viewModelInstance = hybridInstance.viewModelInstance else { return }
+    let viewModelInstance = try requireViewModelInstance(instance)
     property.removeInstance(viewModelInstance)
   }
 

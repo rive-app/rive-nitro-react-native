@@ -13,26 +13,29 @@ class HybridViewModelListProperty(private val listProperty: ViewModelListPropert
   override val length: Double
     get() = listProperty.size.toDouble()
 
+  private fun requireHybridInstance(instance: HybridViewModelInstanceSpec): HybridViewModelInstance {
+    return instance as? HybridViewModelInstance
+      ?: throw IllegalArgumentException("Expected HybridViewModelInstance but got ${instance::class.simpleName}")
+  }
+
   override fun instanceAt(index: Double): HybridViewModelInstanceSpec? {
-    return try {
-      HybridViewModelInstance(listProperty.elementAt(index.toInt()))
-    } catch (e: IndexOutOfBoundsException) {
-      null
-    }
+    val idx = index.toInt()
+    if (idx < 0 || idx >= listProperty.size) return null
+    return HybridViewModelInstance(listProperty.elementAt(idx))
   }
 
   override fun addInstance(instance: HybridViewModelInstanceSpec) {
-    val hybridInstance = instance as? HybridViewModelInstance ?: return
+    val hybridInstance = requireHybridInstance(instance)
     listProperty.add(hybridInstance.viewModelInstance)
   }
 
   override fun insertInstance(instance: HybridViewModelInstanceSpec, index: Double) {
-    val hybridInstance = instance as? HybridViewModelInstance ?: return
+    val hybridInstance = requireHybridInstance(instance)
     listProperty.add(index.toInt(), hybridInstance.viewModelInstance)
   }
 
   override fun removeInstance(instance: HybridViewModelInstanceSpec) {
-    val hybridInstance = instance as? HybridViewModelInstance ?: return
+    val hybridInstance = requireHybridInstance(instance)
     listProperty.remove(hybridInstance.viewModelInstance)
   }
 
