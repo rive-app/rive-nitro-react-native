@@ -22,7 +22,7 @@ class HybridViewModelListProperty: HybridViewModelListPropertySpec, ValuedProper
     return HybridViewModelInstance(viewModelInstance: instance)
   }
 
-  private func requireViewModelInstance(_ instance: any HybridViewModelInstanceSpec) throws -> ViewModelInstance {
+  private func requireViewModelInstance(_ instance: any HybridViewModelInstanceSpec) throws -> RiveDataBindingViewModel.Instance {
     guard let hybridInstance = instance as? HybridViewModelInstance,
           let viewModelInstance = hybridInstance.viewModelInstance else {
       throw NSError(domain: "HybridViewModelListProperty", code: 1,
