@@ -18,7 +18,7 @@ class HybridViewModelListProperty: HybridViewModelListPropertySpec, ValuedProper
   }
 
   func instanceAt(index: Double) throws -> (any HybridViewModelInstanceSpec)? {
-    guard let instance = property.instance(at: Int(index)) else { return nil }
+    guard let instance = property.instance(at: Int32(index)) else { return nil }
     return HybridViewModelInstance(viewModelInstance: instance)
   }
 
@@ -33,25 +33,25 @@ class HybridViewModelListProperty: HybridViewModelListPropertySpec, ValuedProper
 
   func addInstance(instance: any HybridViewModelInstanceSpec) throws {
     let viewModelInstance = try requireViewModelInstance(instance)
-    property.addInstance(viewModelInstance)
+    property.append(viewModelInstance)
   }
 
   func insertInstance(instance: any HybridViewModelInstanceSpec, index: Double) throws {
     let viewModelInstance = try requireViewModelInstance(instance)
-    _ = property.insertInstance(viewModelInstance, at: Int(index))
+    _ = property.insert(viewModelInstance, at: Int32(index))
   }
 
   func removeInstance(instance: any HybridViewModelInstanceSpec) throws {
     let viewModelInstance = try requireViewModelInstance(instance)
-    property.removeInstance(viewModelInstance)
+    property.remove(viewModelInstance)
   }
 
   func removeInstanceAt(index: Double) throws {
-    property.removeInstance(at: Int(index))
+    property.remove(at: Int32(index))
   }
 
   func swap(index1: Double, index2: Double) throws {
-    property.swapInstance(at: Int(index1), withInstanceAt: Int(index2))
+    property.swap(at: UInt32(index1), with: UInt32(index2))
   }
 
   func addListener(onChanged: @escaping () -> Void) throws {
