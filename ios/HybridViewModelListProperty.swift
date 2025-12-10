@@ -9,10 +9,6 @@ class HybridViewModelListProperty: HybridViewModelListPropertySpec, ValuedProper
     super.init()
   }
 
-  override init() {
-    super.init()
-  }
-
   var length: Double {
     Double(property.count)
   }

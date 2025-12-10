@@ -92,24 +92,28 @@ function ListExample({
       stringProp.value = 'new btn';
     }
     listProperty.append(newInstance);
+    riveRef.current?.playIfNeeded();
     refreshLength();
   }, [listProperty, file, refreshLength]);
 
   const handleRemoveFirst = useCallback(() => {
     if (!listProperty || listProperty.length === 0) return;
     listProperty.removeAt(0);
+    riveRef.current?.playIfNeeded();
     refreshLength();
   }, [listProperty, refreshLength]);
 
   const handleRemoveLast = useCallback(() => {
     if (!listProperty || listProperty.length === 0) return;
     listProperty.removeAt(listProperty.length - 1);
+    riveRef.current?.playIfNeeded();
     refreshLength();
   }, [listProperty, refreshLength]);
 
   const handleSwapFirstTwo = useCallback(() => {
     if (!listProperty || listProperty.length < 2) return;
     listProperty.swap(0, 1);
+    riveRef.current?.playIfNeeded();
     refreshLength();
   }, [listProperty, refreshLength]);
 
