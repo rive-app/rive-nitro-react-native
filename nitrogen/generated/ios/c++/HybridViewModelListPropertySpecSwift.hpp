@@ -78,26 +78,26 @@ namespace margelo::nitro::rive {
       auto __value = std::move(__result.value());
       return __value;
     }
-    inline void addInstance(const std::shared_ptr<HybridViewModelInstanceSpec>& instance) override {
-      auto __result = _swiftPart.addInstance(instance);
+    inline void append(const std::shared_ptr<HybridViewModelInstanceSpec>& instance) override {
+      auto __result = _swiftPart.append(instance);
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }
     }
-    inline void insertInstance(const std::shared_ptr<HybridViewModelInstanceSpec>& instance, double index) override {
-      auto __result = _swiftPart.insertInstance(instance, std::forward<decltype(index)>(index));
+    inline void insert(const std::shared_ptr<HybridViewModelInstanceSpec>& instance, double index) override {
+      auto __result = _swiftPart.insert(instance, std::forward<decltype(index)>(index));
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }
     }
-    inline void removeInstance(const std::shared_ptr<HybridViewModelInstanceSpec>& instance) override {
-      auto __result = _swiftPart.removeInstance(instance);
+    inline void remove(const std::shared_ptr<HybridViewModelInstanceSpec>& instance) override {
+      auto __result = _swiftPart.remove(instance);
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }
     }
-    inline void removeInstanceAt(double index) override {
-      auto __result = _swiftPart.removeInstanceAt(std::forward<decltype(index)>(index));
+    inline void removeAt(double index) override {
+      auto __result = _swiftPart.removeAt(std::forward<decltype(index)>(index));
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }

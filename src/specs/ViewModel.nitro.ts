@@ -139,14 +139,14 @@ export interface ViewModelListProperty
   readonly length: number;
   /** Get the instance at the given index */
   instanceAt(index: number): ViewModelInstance | undefined;
-  /** Add an instance to the end of the list */
-  addInstance(instance: ViewModelInstance): void;
+  /** Append an instance to the end of the list */
+  append(instance: ViewModelInstance): void;
   /** Insert an instance at the given index */
-  insertInstance(instance: ViewModelInstance, index: number): void;
+  insert(instance: ViewModelInstance, index: number): void;
   /** Remove an instance from the list */
-  removeInstance(instance: ViewModelInstance): void;
+  remove(instance: ViewModelInstance): void;
   /** Remove the instance at the given index */
-  removeInstanceAt(index: number): void;
+  removeAt(index: number): void;
   /** Swap the instances at the given indices */
   swap(index1: number, index2: number): void;
   /** Add a listener to be notified when the list changes */

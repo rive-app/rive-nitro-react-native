@@ -24,22 +24,22 @@ class HybridViewModelListProperty(private val listProperty: ViewModelListPropert
     return HybridViewModelInstance(listProperty.elementAt(idx))
   }
 
-  override fun addInstance(instance: HybridViewModelInstanceSpec) {
+  override fun append(instance: HybridViewModelInstanceSpec) {
     val hybridInstance = requireHybridInstance(instance)
     listProperty.add(hybridInstance.viewModelInstance)
   }
 
-  override fun insertInstance(instance: HybridViewModelInstanceSpec, index: Double) {
+  override fun insert(instance: HybridViewModelInstanceSpec, index: Double) {
     val hybridInstance = requireHybridInstance(instance)
     listProperty.add(index.toInt(), hybridInstance.viewModelInstance)
   }
 
-  override fun removeInstance(instance: HybridViewModelInstanceSpec) {
+  override fun remove(instance: HybridViewModelInstanceSpec) {
     val hybridInstance = requireHybridInstance(instance)
     listProperty.remove(hybridInstance.viewModelInstance)
   }
 
-  override fun removeInstanceAt(index: Double) {
+  override fun removeAt(index: Double) {
     listProperty.removeAt(index.toInt())
   }
 

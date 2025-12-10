@@ -147,9 +147,9 @@ open class HybridViewModelListPropertySpec_cxx : HybridViewModelPropertySpec_cxx
   }
   
   @inline(__always)
-  public final func addInstance(instance: bridge.std__shared_ptr_HybridViewModelInstanceSpec_) -> bridge.Result_void_ {
+  public final func append(instance: bridge.std__shared_ptr_HybridViewModelInstanceSpec_) -> bridge.Result_void_ {
     do {
-      try self.__implementation.addInstance(instance: { () -> HybridViewModelInstanceSpec in
+      try self.__implementation.append(instance: { () -> HybridViewModelInstanceSpec in
         let __unsafePointer = bridge.get_std__shared_ptr_HybridViewModelInstanceSpec_(instance)
         let __instance = HybridViewModelInstanceSpec_cxx.fromUnsafe(__unsafePointer)
         return __instance.getHybridViewModelInstanceSpec()
@@ -162,9 +162,9 @@ open class HybridViewModelListPropertySpec_cxx : HybridViewModelPropertySpec_cxx
   }
   
   @inline(__always)
-  public final func insertInstance(instance: bridge.std__shared_ptr_HybridViewModelInstanceSpec_, index: Double) -> bridge.Result_void_ {
+  public final func insert(instance: bridge.std__shared_ptr_HybridViewModelInstanceSpec_, index: Double) -> bridge.Result_void_ {
     do {
-      try self.__implementation.insertInstance(instance: { () -> HybridViewModelInstanceSpec in
+      try self.__implementation.insert(instance: { () -> HybridViewModelInstanceSpec in
         let __unsafePointer = bridge.get_std__shared_ptr_HybridViewModelInstanceSpec_(instance)
         let __instance = HybridViewModelInstanceSpec_cxx.fromUnsafe(__unsafePointer)
         return __instance.getHybridViewModelInstanceSpec()
@@ -177,9 +177,9 @@ open class HybridViewModelListPropertySpec_cxx : HybridViewModelPropertySpec_cxx
   }
   
   @inline(__always)
-  public final func removeInstance(instance: bridge.std__shared_ptr_HybridViewModelInstanceSpec_) -> bridge.Result_void_ {
+  public final func remove(instance: bridge.std__shared_ptr_HybridViewModelInstanceSpec_) -> bridge.Result_void_ {
     do {
-      try self.__implementation.removeInstance(instance: { () -> HybridViewModelInstanceSpec in
+      try self.__implementation.remove(instance: { () -> HybridViewModelInstanceSpec in
         let __unsafePointer = bridge.get_std__shared_ptr_HybridViewModelInstanceSpec_(instance)
         let __instance = HybridViewModelInstanceSpec_cxx.fromUnsafe(__unsafePointer)
         return __instance.getHybridViewModelInstanceSpec()
@@ -192,9 +192,9 @@ open class HybridViewModelListPropertySpec_cxx : HybridViewModelPropertySpec_cxx
   }
   
   @inline(__always)
-  public final func removeInstanceAt(index: Double) -> bridge.Result_void_ {
+  public final func removeAt(index: Double) -> bridge.Result_void_ {
     do {
-      try self.__implementation.removeInstanceAt(index: index)
+      try self.__implementation.removeAt(index: index)
       return bridge.create_Result_void_()
     } catch (let __error) {
       let __exceptionPtr = __error.toCpp()

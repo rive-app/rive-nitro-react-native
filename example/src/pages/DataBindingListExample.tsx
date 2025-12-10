@@ -63,7 +63,7 @@ function ListExample({
   instance: ViewModelInstance;
   file: RiveFile;
 }) {
-  const riveRef = useRef<RiveViewRef>(undefined);
+  const riveRef = useRef<RiveViewRef>(null);
   const [isPlaying, setIsPlaying] = useState(true);
   const listProperty = useMemo(
     () => instance.listProperty('ListItemVM'),
@@ -91,19 +91,19 @@ function ListExample({
     if (stringProp) {
       stringProp.value = 'new btn';
     }
-    listProperty.addInstance(newInstance);
+    listProperty.append(newInstance);
     refreshLength();
   }, [listProperty, file, refreshLength]);
 
   const handleRemoveFirst = useCallback(() => {
     if (!listProperty || listProperty.length === 0) return;
-    listProperty.removeInstanceAt(0);
+    listProperty.removeAt(0);
     refreshLength();
   }, [listProperty, refreshLength]);
 
   const handleRemoveLast = useCallback(() => {
     if (!listProperty || listProperty.length === 0) return;
-    listProperty.removeInstanceAt(listProperty.length - 1);
+    listProperty.removeAt(listProperty.length - 1);
     refreshLength();
   }, [listProperty, refreshLength]);
 

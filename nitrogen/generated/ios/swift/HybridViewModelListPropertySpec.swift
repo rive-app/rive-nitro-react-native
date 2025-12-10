@@ -15,10 +15,10 @@ public protocol HybridViewModelListPropertySpec_protocol: HybridObject, HybridVi
 
   // Methods
   func instanceAt(index: Double) throws -> (any HybridViewModelInstanceSpec)?
-  func addInstance(instance: (any HybridViewModelInstanceSpec)) throws -> Void
-  func insertInstance(instance: (any HybridViewModelInstanceSpec), index: Double) throws -> Void
-  func removeInstance(instance: (any HybridViewModelInstanceSpec)) throws -> Void
-  func removeInstanceAt(index: Double) throws -> Void
+  func append(instance: (any HybridViewModelInstanceSpec)) throws -> Void
+  func insert(instance: (any HybridViewModelInstanceSpec), index: Double) throws -> Void
+  func remove(instance: (any HybridViewModelInstanceSpec)) throws -> Void
+  func removeAt(index: Double) throws -> Void
   func swap(index1: Double, index2: Double) throws -> Void
   func addListener(onChanged: @escaping () -> Void) throws -> Void
   func removeListeners() throws -> Void

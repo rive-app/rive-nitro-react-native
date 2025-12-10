@@ -31,22 +31,22 @@ class HybridViewModelListProperty: HybridViewModelListPropertySpec, ValuedProper
     return viewModelInstance
   }
 
-  func addInstance(instance: any HybridViewModelInstanceSpec) throws {
+  func append(instance: any HybridViewModelInstanceSpec) throws {
     let viewModelInstance = try requireViewModelInstance(instance)
     property.append(viewModelInstance)
   }
 
-  func insertInstance(instance: any HybridViewModelInstanceSpec, index: Double) throws {
+  func insert(instance: any HybridViewModelInstanceSpec, index: Double) throws {
     let viewModelInstance = try requireViewModelInstance(instance)
     _ = property.insert(viewModelInstance, at: Int32(index))
   }
 
-  func removeInstance(instance: any HybridViewModelInstanceSpec) throws {
+  func remove(instance: any HybridViewModelInstanceSpec) throws {
     let viewModelInstance = try requireViewModelInstance(instance)
     property.remove(viewModelInstance)
   }
 
-  func removeInstanceAt(index: Double) throws {
+  func removeAt(index: Double) throws {
     property.remove(at: Int32(index))
   }
 

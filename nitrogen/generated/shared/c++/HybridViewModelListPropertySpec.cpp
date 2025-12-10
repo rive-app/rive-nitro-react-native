@@ -17,10 +17,10 @@ namespace margelo::nitro::rive {
     registerHybrids(this, [](Prototype& prototype) {
       prototype.registerHybridGetter("length", &HybridViewModelListPropertySpec::getLength);
       prototype.registerHybridMethod("instanceAt", &HybridViewModelListPropertySpec::instanceAt);
-      prototype.registerHybridMethod("addInstance", &HybridViewModelListPropertySpec::addInstance);
-      prototype.registerHybridMethod("insertInstance", &HybridViewModelListPropertySpec::insertInstance);
-      prototype.registerHybridMethod("removeInstance", &HybridViewModelListPropertySpec::removeInstance);
-      prototype.registerHybridMethod("removeInstanceAt", &HybridViewModelListPropertySpec::removeInstanceAt);
+      prototype.registerHybridMethod("append", &HybridViewModelListPropertySpec::append);
+      prototype.registerHybridMethod("insert", &HybridViewModelListPropertySpec::insert);
+      prototype.registerHybridMethod("remove", &HybridViewModelListPropertySpec::remove);
+      prototype.registerHybridMethod("removeAt", &HybridViewModelListPropertySpec::removeAt);
       prototype.registerHybridMethod("swap", &HybridViewModelListPropertySpec::swap);
       prototype.registerHybridMethod("addListener", &HybridViewModelListPropertySpec::addListener);
       prototype.registerHybridMethod("removeListeners", &HybridViewModelListPropertySpec::removeListeners);

@@ -59,20 +59,20 @@ namespace margelo::nitro::rive {
     auto __result = method(_javaPart, index);
     return __result != nullptr ? std::make_optional(__result->cthis()->shared_cast<JHybridViewModelInstanceSpec>()) : std::nullopt;
   }
-  void JHybridViewModelListPropertySpec::addInstance(const std::shared_ptr<HybridViewModelInstanceSpec>& instance) {
-    static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<JHybridViewModelInstanceSpec::javaobject> /* instance */)>("addInstance");
+  void JHybridViewModelListPropertySpec::append(const std::shared_ptr<HybridViewModelInstanceSpec>& instance) {
+    static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<JHybridViewModelInstanceSpec::javaobject> /* instance */)>("append");
     method(_javaPart, std::dynamic_pointer_cast<JHybridViewModelInstanceSpec>(instance)->getJavaPart());
   }
-  void JHybridViewModelListPropertySpec::insertInstance(const std::shared_ptr<HybridViewModelInstanceSpec>& instance, double index) {
-    static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<JHybridViewModelInstanceSpec::javaobject> /* instance */, double /* index */)>("insertInstance");
+  void JHybridViewModelListPropertySpec::insert(const std::shared_ptr<HybridViewModelInstanceSpec>& instance, double index) {
+    static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<JHybridViewModelInstanceSpec::javaobject> /* instance */, double /* index */)>("insert");
     method(_javaPart, std::dynamic_pointer_cast<JHybridViewModelInstanceSpec>(instance)->getJavaPart(), index);
   }
-  void JHybridViewModelListPropertySpec::removeInstance(const std::shared_ptr<HybridViewModelInstanceSpec>& instance) {
-    static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<JHybridViewModelInstanceSpec::javaobject> /* instance */)>("removeInstance");
+  void JHybridViewModelListPropertySpec::remove(const std::shared_ptr<HybridViewModelInstanceSpec>& instance) {
+    static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<JHybridViewModelInstanceSpec::javaobject> /* instance */)>("remove");
     method(_javaPart, std::dynamic_pointer_cast<JHybridViewModelInstanceSpec>(instance)->getJavaPart());
   }
-  void JHybridViewModelListPropertySpec::removeInstanceAt(double index) {
-    static const auto method = javaClassStatic()->getMethod<void(double /* index */)>("removeInstanceAt");
+  void JHybridViewModelListPropertySpec::removeAt(double index) {
+    static const auto method = javaClassStatic()->getMethod<void(double /* index */)>("removeAt");
     method(_javaPart, index);
   }
   void JHybridViewModelListPropertySpec::swap(double index1, double index2) {
