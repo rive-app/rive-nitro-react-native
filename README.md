@@ -6,12 +6,17 @@
 [![React Native](https://img.shields.io/badge/React_Native-0.78+-61dafb)](https://reactnative.dev/)
 [![iOS](https://img.shields.io/badge/iOS-15.1+-blue)](#requirements)
 [![Android](https://img.shields.io/badge/Android-7.0+-green)](#requirements)
+[![Rive iOS Runtime](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Frive-app%2Frive-nitro-react-native%2Fmain%2Fpackage.json&query=%24.runtimeVersions.ios&label=Rive%20iOS%20Runtime&color=informational)](https://github.com/rive-app/rive-nitro-react-native/blob/main/package.json)
 
-Rive React Native 2.0
+[![Rive Android Runtime](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Frive-app%2Frive-nitro-react-native%2Fmain%2Fpackage.json&query=%24.runtimeVersions.android&label=Rive%20Android%20Runtime&color=informational)](https://github.com/rive-app/rive-nitro-react-native/blob/main/package.json)
 
-## Development Preview
+**Rive React Native 2.0**
 
-> **⚠️ Development Preview**: This package is currently in development preview. While it's functional and actively maintained, the API may change in future releases. We recommend testing thoroughly before using in production applications. We're actively gathering feedback to improve the library. Please share your thoughts and report any issues you encounter.
+![Rive hero image](https://cdn.rive.app/rive_logo_dark_bg.png)
+
+## Early Release
+
+> **⚠️ Early Release**: This package is in active development. We recommend testing thoroughly before using in production applications. We're actively gathering feedback to improve the library. Please share your thoughts and report any issues you encounter.
 
 ## Requirements
 
