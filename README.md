@@ -117,6 +117,7 @@ export default {
   },
 };
 ```
+
 </details>
 
 ## Error Handling
@@ -237,9 +238,9 @@ This section tracks new features and improvements planned for this runtime that 
 | Feature                                                                                               | Status |
 | ----------------------------------------------------------------------------------------------------- | ------ |
 | [Reusable .riv File resources (preloading)](https://github.com/rive-app/rive-react-native/issues/260) | ✅     |
-| [Data Binding - Images](https://github.com/rive-app/rive-nitro-react-native/issues/9)                 | 🚧     |
+| [Data Binding - Images](https://github.com/rive-app/rive-nitro-react-native/issues/9)                 | ✅     |
 | [Data Binding - Artboards](https://github.com/rive-app/rive-nitro-react-native/issues/10)             | 🚧     |
-| [Data Binding - Lists](https://github.com/rive-app/rive-nitro-react-native/issues/11)                 | 🚧     |
+| [Data Binding - Lists](https://github.com/rive-app/rive-nitro-react-native/issues/11)                 | ✅     |
 | [Data Binding - Value props](https://github.com/rive-app/rive-nitro-react-native/pull/24)             | 🚧     |
 | [Suspense](https://github.com/rive-app/rive-nitro-react-native/pull/19)                               | 🚧     |
 
@@ -254,4 +255,3 @@ MIT
 ---
 
 Made with [create-react-native-library](https://github.com/callstack/react-native-builder-bob)
-
