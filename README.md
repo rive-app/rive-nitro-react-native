@@ -1,5 +1,8 @@
 # @rive-app/react-native
 
+![Build Status](https://github.com/rive-app/rive-nitro-react-native/actions/workflows/ci.yml/badge.svg)
+![NPM Version](https://img.shields.io/npm/v/@rive-app/react-native)
+
 Rive React Native 2.0
 
 ## Development Preview
@@ -117,6 +120,7 @@ export default {
   },
 };
 ```
+
 </details>
 
 ## Error Handling
@@ -254,4 +258,3 @@ MIT
 ---
 
 Made with [create-react-native-library](https://github.com/callstack/react-native-builder-bob)
-
