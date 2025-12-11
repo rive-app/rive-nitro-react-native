@@ -1,7 +1,11 @@
 # @rive-app/react-native
 
-![Build Status](https://github.com/rive-app/rive-nitro-react-native/actions/workflows/ci.yml/badge.svg)
-![NPM Version](https://img.shields.io/npm/v/@rive-app/react-native)
+[![Build](https://github.com/rive-app/rive-nitro-react-native/actions/workflows/ci.yml/badge.svg)](https://github.com/rive-app/rive-nitro-react-native/actions)
+[![NPM Version](https://img.shields.io/npm/v/@rive-app/react-native)](https://www.npmjs.com/package/@rive-app/react-native)
+[![Downloads](https://img.shields.io/npm/dm/@rive-app/react-native)](https://www.npmjs.com/package/@rive-app/react-native)
+[![React Native](https://img.shields.io/badge/React_Native-0.78+-61dafb)](https://reactnative.dev/)
+[![iOS](https://img.shields.io/badge/iOS-15.1+-blue)](#requirements)
+[![Android](https://img.shields.io/badge/Android-7.0+-green)](#requirements)
 
 Rive React Native 2.0
 
