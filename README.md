@@ -6,9 +6,8 @@
 [![React Native](https://img.shields.io/badge/React_Native-0.78+-61dafb)](https://reactnative.dev/)
 [![iOS](https://img.shields.io/badge/iOS-15.1+-blue)](#requirements)
 [![Android](https://img.shields.io/badge/Android-7.0+-green)](#requirements)
-[![Rive iOS Runtime](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Frive-app%2Frive-nitro-react-native%2Fmain%2Fpackage.json&query=%24.runtimeVersions.ios&label=Rive%20iOS%20Runtime&color=informational)](https://github.com/rive-app/rive-nitro-react-native/blob/main/package.json)
-
-[![Rive Android Runtime](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Frive-app%2Frive-nitro-react-native%2Fmain%2Fpackage.json&query=%24.runtimeVersions.android&label=Rive%20Android%20Runtime&color=informational)](https://github.com/rive-app/rive-nitro-react-native/blob/main/package.json)
+[![Rive iOS Runtime](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Frive-app%2Frive-nitro-react-native%2Fmain%2Fpackage.json&query=%24.runtimeVersions.ios&label=Rive%20iOS%20Runtime&color=informational)](https://github.com/rive-app/rive-ios/releases)
+[![Rive Android Runtime](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Frive-app%2Frive-nitro-react-native%2Fmain%2Fpackage.json&query=%24.runtimeVersions.android&label=Rive%20Android%20Runtime&color=informational)](https://github.com/rive-app/rive-android/releases)
 
 **Rive React Native 2.0**
 
