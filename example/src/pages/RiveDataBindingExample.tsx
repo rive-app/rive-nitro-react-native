@@ -1,11 +1,5 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  ActivityIndicator,
-  Button,
-} from 'react-native';
-import { useEffect, useMemo, useState, useRef } from 'react';
+import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
+import { useEffect, useMemo } from 'react';
 import {
   Fit,
   RiveView,
@@ -98,67 +92,15 @@ function DataBindingExample({
     setBarColor('#0000FF');
   }, [setBarColor, setButtonText]);
 
-  // Direct addListener usage (without hooks)
-  const [coinValue, setCoinValue] = useState<number | null>(null);
-  const [isListening, setIsListening] = useState(true);
-  const removeListenerRef = useRef<(() => void) | null>(null);
-
-  useEffect(() => {
-    const coinProperty = instance.numberProperty('Coin/Item_Value');
-    if (!coinProperty) return;
-
-    // Add listener and store the remover function
-    removeListenerRef.current = coinProperty.addListener((value) => {
-      console.log('Coin value changed:', value);
-      setCoinValue(value);
-    });
-
-    return () => {
-      // Clean up on unmount
-      removeListenerRef.current?.();
-    };
-  }, [instance]);
-
-  const toggleListener = () => {
-    if (isListening && removeListenerRef.current) {
-      // Remove the listener by calling the remover function
-      removeListenerRef.current();
-      removeListenerRef.current = null;
-      setIsListening(false);
-    } else if (!isListening) {
-      // Re-add the listener
-      const coinProperty = instance.numberProperty('Coin/Item_Value');
-      if (coinProperty) {
-        removeListenerRef.current = coinProperty.addListener((value) => {
-          console.log('Coin value changed:', value);
-          setCoinValue(value);
-        });
-        setIsListening(true);
-      }
-    }
-  };
-
   return (
-    <View style={styles.flex}>
-      <View style={styles.listenerDemo}>
-        <Text style={styles.listenerText}>
-          Coin Value: {coinValue ?? 'N/A'}{' '}
-          {isListening ? '(listening)' : '(paused)'}
-        </Text>
-        <Button
-          title={isListening ? 'Remove Listener' : 'Add Listener'}
-          onPress={toggleListener}
-        />
-      </View>
-      <RiveView
-        style={styles.rive}
-        autoPlay={true}
-        dataBind={instance}
-        fit={Fit.Layout}
-        layoutScaleFactor={1}
-        file={file}
-      />
-    </View>
+    <RiveView
+      style={styles.rive}
+      autoPlay={true}
+      dataBind={instance}
+      fit={Fit.Layout}
+      layoutScaleFactor={1}
+      file={file}
+    />
   );
 }
 
@@ -177,9 +119,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f5f5f5',
   },
-  flex: {
-    flex: 1,
-  },
   rive: {
     flex: 1,
     width: '100%',
@@ -189,16 +128,5 @@ const styles = StyleSheet.create({
     color: 'red',
     textAlign: 'center',
     padding: 20,
-  },
-  listenerDemo: {
-    padding: 16,
-    backgroundColor: '#e8e8e8',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  listenerText: {
-    fontSize: 16,
-    fontWeight: '500',
   },
 });
