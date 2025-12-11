@@ -49,10 +49,6 @@
       "swift": "HybridViewModelEnumProperty",
       "kotlin": "HybridViewModelEnumProperty"
     },
-    "ViewModelTriggerProperty": {
-      "swift": "HybridViewModelTriggerProperty",
-      "kotlin": "HybridViewModelTriggerProperty"
-    },
     "ViewModelImageProperty": {
       "swift": "HybridViewModelImageProperty",
       "kotlin": "HybridViewModelImageProperty"

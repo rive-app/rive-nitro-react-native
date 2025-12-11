@@ -26,10 +26,7 @@ class HybridViewModelNumberProperty: HybridViewModelNumberPropertySpec, ValuedPr
     }
   }
 
-  // Custom addListener needed because ListenerValueType (Float) != ValueType (Double)
-  func addListener(onChanged: @escaping (Double) -> Void) throws {
-    helper.addListener { (value: Float) in
-      onChanged(Double(value))
-    }
+  func addListener(onChanged: @escaping (Double) -> Void) throws -> () -> Void {
+    return helper.addListener({ floatValue in onChanged(Double(floatValue)) })
   }
 }

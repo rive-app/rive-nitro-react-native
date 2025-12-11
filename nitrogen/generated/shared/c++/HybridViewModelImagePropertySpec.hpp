@@ -56,7 +56,7 @@ namespace margelo::nitro::rive {
     public:
       // Methods
       virtual void set(const std::optional<std::shared_ptr<HybridRiveImageSpec>>& image) = 0;
-      virtual void addListener(const std::function<void()>& onChanged) = 0;
+      virtual std::function<void()> addListener(const std::function<void()>& onChanged) = 0;
       virtual void removeListeners() = 0;
 
     protected:

@@ -14,7 +14,7 @@ public protocol HybridViewModelTriggerPropertySpec_protocol: HybridObject, Hybri
   
 
   // Methods
-  func addListener(onChanged: @escaping () -> Void) throws -> Void
+  func addListener(onChanged: @escaping () -> Void) throws -> () -> Void
   func trigger() throws -> Void
   func removeListeners() throws -> Void
 }

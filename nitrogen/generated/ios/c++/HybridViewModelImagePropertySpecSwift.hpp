@@ -74,11 +74,13 @@ namespace margelo::nitro::rive {
         std::rethrow_exception(__result.error());
       }
     }
-    inline void addListener(const std::function<void()>& onChanged) override {
+    inline std::function<void()> addListener(const std::function<void()>& onChanged) override {
       auto __result = _swiftPart.addListener(onChanged);
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }
+      auto __value = std::move(__result.value());
+      return __value;
     }
     inline void removeListeners() override {
       auto __result = _swiftPart.removeListeners();

@@ -15,8 +15,9 @@ class HybridViewModelBooleanProperty(private val viewModelBoolean: ViewModelBool
       viewModelBoolean.value = value
     }
 
-  override fun addListener(onChanged: (value: Boolean) -> Unit) {
-    listeners.add(onChanged)
+  override fun addListener(onChanged: (value: Boolean) -> Unit): () -> Unit {
+    val remover = addListenerInternal(onChanged)
     ensureValueListenerJob(viewModelBoolean.valueFlow)
+    return remover
   }
 }

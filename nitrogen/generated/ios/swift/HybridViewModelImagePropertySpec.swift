@@ -15,7 +15,7 @@ public protocol HybridViewModelImagePropertySpec_protocol: HybridObject, HybridV
 
   // Methods
   func set(image: (any HybridRiveImageSpec)?) throws -> Void
-  func addListener(onChanged: @escaping () -> Void) throws -> Void
+  func addListener(onChanged: @escaping () -> Void) throws -> () -> Void
   func removeListeners() throws -> Void
 }
 
