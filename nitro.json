@@ -21,38 +21,6 @@
       "swift": "HybridRiveFile",
       "kotlin": "HybridRiveFile"
     },
-    "ViewModel": {
-      "swift": "HybridViewModel",
-      "kotlin": "HybridViewModel"
-    },
-    "ViewModelInstance": {
-      "swift": "HybridViewModelInstance",
-      "kotlin": "HybridViewModelInstance"
-    },
-    "ViewModelNumberProperty": {
-      "swift": "HybridViewModelNumberProperty",
-      "kotlin": "HybridViewModelNumberProperty"
-    },
-    "ViewModelStringProperty": {
-      "swift": "HybridViewModelStringProperty",
-      "kotlin": "HybridViewModelStringProperty"
-    },
-    "ViewModelBooleanProperty": {
-      "swift": "HybridViewModelBooleanProperty",
-      "kotlin": "HybridViewModelBooleanProperty"
-    },
-    "ViewModelColorProperty": {
-      "swift": "HybridViewModelColorProperty",
-      "kotlin": "HybridViewModelColorProperty"
-    },
-    "ViewModelEnumProperty": {
-      "swift": "HybridViewModelEnumProperty",
-      "kotlin": "HybridViewModelEnumProperty"
-    },
-    "ViewModelImageProperty": {
-      "swift": "HybridViewModelImageProperty",
-      "kotlin": "HybridViewModelImageProperty"
-    },
     "RiveView": {
       "swift": "HybridRiveView",
       "kotlin": "HybridRiveView"
