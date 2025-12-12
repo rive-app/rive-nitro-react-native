@@ -47,7 +47,13 @@ class HybridViewModelListProperty: HybridViewModelListPropertySpec, ValuedProper
   }
 
   func swap(index1: Double, index2: Double) throws -> Bool {
-    return property.swap(at: UInt32(index1), with: UInt32(index2))
+    let idx1 = UInt32(index1)
+    let idx2 = UInt32(index2)
+    guard idx1 < property.count && idx2 < property.count else {
+      return false
+    }
+    property.swap(at: idx1, with: idx2)
+    return true
   }
 
   func addListener(onChanged: @escaping () -> Void) throws {

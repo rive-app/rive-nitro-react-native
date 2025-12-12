@@ -47,11 +47,17 @@ class HybridViewModelListProperty(private val listProperty: ViewModelListPropert
   }
 
   override fun swap(index1: Double, index2: Double): Boolean {
-    return listProperty.swap(index1.toInt(), index2.toInt())
+    val idx1 = index1.toInt()
+    val idx2 = index2.toInt()
+    if (idx1 < 0 || idx1 >= listProperty.size || idx2 < 0 || idx2 >= listProperty.size) {
+      return false
+    }
+    listProperty.swap(idx1, idx2)
+    return true
   }
 
   override fun addListener(onChanged: () -> Unit) {
-    listeners.add { _ -> onChanged() }
+    listeners.add { onChanged() }
     ensureValueListenerJob(listProperty.valueFlow.map { })
   }
 }
