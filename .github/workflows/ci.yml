@@ -103,6 +103,7 @@ jobs:
         uses: ./.github/actions/setup
 
       - name: Cache turborepo for Android
+        id: turbo-cache-android
         uses: actions/cache@v4
         with:
           path: ${{ env.TURBO_CACHE_DIR }}
@@ -144,6 +145,7 @@ jobs:
       - name: Build example for Android
         env:
           JAVA_OPTS: "-XX:MaxHeapSize=6g"
+          TURBO_FORCE: ${{ steps.turbo-cache-android.outputs.cache-hit != 'true' }}
         run: |
           yarn turbo run build:android --cache-dir="${{ env.TURBO_CACHE_DIR }}"
 
@@ -160,6 +162,7 @@ jobs:
         uses: ./.github/actions/setup
 
       - name: Cache turborepo for iOS
+        id: turbo-cache-ios
         uses: actions/cache@v4
         with:
           path: ${{ env.TURBO_CACHE_DIR }}
@@ -208,5 +211,7 @@ jobs:
           key: ${{ steps.cocoapods-cache.outputs.cache-key }}
 
       - name: Build example for iOS
+        env:
+          TURBO_FORCE: ${{ steps.turbo-cache-ios.outputs.cache-hit != 'true' }}
         run: |
           yarn turbo run build:ios --cache-dir="${{ env.TURBO_CACHE_DIR }}"

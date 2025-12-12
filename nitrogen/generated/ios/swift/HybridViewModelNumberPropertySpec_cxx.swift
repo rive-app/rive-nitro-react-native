@@ -130,18 +130,22 @@ open class HybridViewModelNumberPropertySpec_cxx : HybridViewModelPropertySpec_c
 
   // Methods
   @inline(__always)
-  public final func addListener(onChanged: bridge.Func_void_double) -> bridge.Result_void_ {
+  public final func addListener(onChanged: bridge.Func_void_double) -> bridge.Result_std__function_void____ {
     do {
-      try self.__implementation.addListener(onChanged: { () -> (Double) -> Void in
+      let __result = try self.__implementation.addListener(onChanged: { () -> (Double) -> Void in
         let __wrappedFunction = bridge.wrap_Func_void_double(onChanged)
         return { (__value: Double) -> Void in
           __wrappedFunction.call(__value)
         }
       }())
-      return bridge.create_Result_void_()
+      let __resultCpp = { () -> bridge.Func_void in
+        let __closureWrapper = Func_void(__result)
+        return bridge.create_Func_void(__closureWrapper.toUnsafe())
+      }()
+      return bridge.create_Result_std__function_void____(__resultCpp)
     } catch (let __error) {
       let __exceptionPtr = __error.toCpp()
-      return bridge.create_Result_void_(__exceptionPtr)
+      return bridge.create_Result_std__function_void____(__exceptionPtr)
     }
   }
   

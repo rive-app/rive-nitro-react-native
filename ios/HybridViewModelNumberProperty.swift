@@ -9,14 +9,6 @@ class HybridViewModelNumberProperty: HybridViewModelNumberPropertySpec, ValuedPr
     super.init()
   }
 
-  /// ⚠️ DO NOT REMOVE
-  /// Nitro requires a parameterless initializer for JS bridging.
-  /// This is invoked automatically during hybrid module construction.
-  /// Internally we always use `init(property:)`
-  override init() {
-    super.init()
-  }
-
   var value: Double {
     get {
       return Double(property.value)
@@ -26,10 +18,7 @@ class HybridViewModelNumberProperty: HybridViewModelNumberPropertySpec, ValuedPr
     }
   }
 
-  // Custom addListener needed because ListenerValueType (Float) != ValueType (Double)
-  func addListener(onChanged: @escaping (Double) -> Void) throws {
-    helper.addListener { (value: Float) in
-      onChanged(Double(value))
-    }
+  func addListener(onChanged: @escaping (Double) -> Void) throws -> () -> Void {
+    return helper.addListener({ floatValue in onChanged(Double(floatValue)) })
   }
 }

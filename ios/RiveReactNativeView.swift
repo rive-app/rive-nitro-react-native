@@ -58,6 +58,8 @@ class RiveReactNativeView: UIView, RiveStateMachineDelegate {
   func configure(_ config: ViewConfiguration, dataBindingChanged: Bool = false, reload: Bool = false, initialUpdate: Bool = false) throws {
     if reload {
       cleanup()
+      try validateConfiguration(config)
+
       let model = RiveModel(riveFile: config.riveFile)
       baseViewModel = RiveViewModel(model, stateMachineName: config.stateMachineName, autoPlay: config.autoPlay, artboardName: config.artboardName)
       createViewFromViewModel()
@@ -321,5 +323,39 @@ class RiveReactNativeView: UIView, RiveStateMachineDelegate {
     }
 
     return try onSuccess(input)
+  }
+
+  private func validateConfiguration(_ config: ViewConfiguration) throws {
+    try validateArtboardName(config.artboardName, in: config.riveFile)
+    try validateStateMachineName(config.stateMachineName, artboardName: config.artboardName, in: config.riveFile)
+  }
+
+  private func validateArtboardName(_ artboardName: String?, in riveFile: RiveFile) throws {
+    guard let artboardName = artboardName else { return }
+    let artboardNames = riveFile.artboardNames()
+    if !artboardNames.contains(artboardName) {
+      throw NSError(
+        domain: RiveErrorDomain,
+        code: Int(RiveErrorCode.noArtboardFound.rawValue),
+        userInfo: [NSLocalizedDescriptionKey: "Artboard '\(artboardName)' not found. Available: \(artboardNames.joined(separator: ", "))"]
+      )
+    }
+  }
+
+  private func validateStateMachineName(_ stateMachineName: String?, artboardName: String?, in riveFile: RiveFile) throws {
+    guard let stateMachineName = stateMachineName else { return }
+    let artboard = artboardName != nil
+      ? try? riveFile.artboard(fromName: artboardName!)
+      : try? riveFile.artboard()
+
+    guard let artboard = artboard else { return }
+    let stateMachineNames = artboard.stateMachineNames()
+    if !stateMachineNames.contains(stateMachineName) {
+      throw NSError(
+        domain: RiveErrorDomain,
+        code: Int(RiveErrorCode.noStateMachineFound.rawValue),
+        userInfo: [NSLocalizedDescriptionKey: "State machine '\(stateMachineName)' not found. Available: \(stateMachineNames.joined(separator: ", "))"]
+      )
+    }
   }
 }

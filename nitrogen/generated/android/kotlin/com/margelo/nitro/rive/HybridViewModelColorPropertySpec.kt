@@ -49,13 +49,13 @@ abstract class HybridViewModelColorPropertySpec: HybridViewModelPropertySpec() {
   abstract var value: Double
 
   // Methods
-  abstract fun addListener(onChanged: (value: Double) -> Unit): Unit
+  abstract fun addListener(onChanged: (value: Double) -> Unit): () -> Unit
   
   @DoNotStrip
   @Keep
-  private fun addListener_cxx(onChanged: Func_void_double): Unit {
+  private fun addListener_cxx(onChanged: Func_void_double): Func_void {
     val __result = addListener(onChanged)
-    return __result
+    return Func_void_java(__result)
   }
   
   @DoNotStrip

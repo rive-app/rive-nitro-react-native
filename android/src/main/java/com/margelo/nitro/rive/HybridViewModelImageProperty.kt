@@ -14,8 +14,9 @@ class HybridViewModelImageProperty(private val viewModelImage: ViewModelImagePro
     viewModelImage.set((image as? HybridRiveImage)?.renderImage)
   }
 
-  override fun addListener(onChanged: () -> Unit) {
-    listeners.add { _ -> onChanged() }
-    ensureValueListenerJob(viewModelImage.valueFlow.map { Unit })
+  override fun addListener(onChanged: () -> Unit): () -> Unit {
+    val remover = addListenerInternal { _ -> onChanged() }
+    ensureValueListenerJob(viewModelImage.valueFlow.map { })
+    return remover
   }
 }

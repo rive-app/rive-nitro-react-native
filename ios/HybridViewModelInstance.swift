@@ -6,12 +6,7 @@ class HybridViewModelInstance: HybridViewModelInstanceSpec {
   init(viewModelInstance: RiveDataBindingViewModel.Instance) {
     self.viewModelInstance = viewModelInstance
   }
-  
-  override init() {
-    self.viewModelInstance = nil
-    super.init()
-  }
-  
+
   var instanceName: String { viewModelInstance?.name ?? "" }
   
   func numberProperty(path: String) throws -> (any HybridViewModelNumberPropertySpec)? {

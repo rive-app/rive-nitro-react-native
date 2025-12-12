@@ -1155,6 +1155,15 @@ namespace margelo::nitro::rive::bridge::swift {
     return Func_void_double_Wrapper(std::move(value));
   }
   
+  // pragma MARK: Result<std::function<void()>>
+  using Result_std__function_void____ = Result<std::function<void()>>;
+  inline Result_std__function_void____ create_Result_std__function_void____(const std::function<void()>& value) noexcept {
+    return Result<std::function<void()>>::withValue(value);
+  }
+  inline Result_std__function_void____ create_Result_std__function_void____(const std::exception_ptr& error) noexcept {
+    return Result<std::function<void()>>::withError(error);
+  }
+  
   // pragma MARK: std::function<void(const std::string& /* value */)>
   /**
    * Specialized version of `std::function<void(const std::string&)>`.

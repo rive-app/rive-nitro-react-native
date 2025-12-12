@@ -15,8 +15,9 @@ class HybridViewModelEnumProperty(private val viewModelEnum: ViewModelEnumProper
       viewModelEnum.value = value
     }
 
-  override fun addListener(onChanged: (value: String) -> Unit) {
-    listeners.add(onChanged)
+  override fun addListener(onChanged: (value: String) -> Unit): () -> Unit {
+    val remover = addListenerInternal(onChanged)
     ensureValueListenerJob(viewModelEnum.valueFlow)
+    return remover
   }
 }

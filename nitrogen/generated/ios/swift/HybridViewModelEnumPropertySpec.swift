@@ -14,7 +14,7 @@ public protocol HybridViewModelEnumPropertySpec_protocol: HybridObject, HybridVi
   var value: String { get set }
 
   // Methods
-  func addListener(onChanged: @escaping (_ value: String) -> Void) throws -> Void
+  func addListener(onChanged: @escaping (_ value: String) -> Void) throws -> () -> Void
   func removeListeners() throws -> Void
 }
 

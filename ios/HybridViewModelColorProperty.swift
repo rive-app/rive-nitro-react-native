@@ -9,15 +9,7 @@ class HybridViewModelColorProperty: HybridViewModelColorPropertySpec, ValuedProp
     self.property = property
     super.init()
   }
-  
-  /// ⚠️ DO NOT REMOVE
-  /// Nitro requires a parameterless initializer for JS bridging.
-  /// This is invoked automatically during hybrid module construction.
-  /// Internally we always use `init(property:)`
-  override init() {
-    super.init()
-  }
-  
+
   var value: Double {
     get {
       return property.value.toHexDouble()
@@ -27,9 +19,8 @@ class HybridViewModelColorProperty: HybridViewModelColorPropertySpec, ValuedProp
     }
   }
   
-  // Custom addListener because we need to convert UIColor → Double
-  func addListener(onChanged: @escaping (Double) -> Void) throws {
-    helper.addListener { (color: UIColor) in
+  func addListener(onChanged: @escaping (Double) -> Void) throws -> () -> Void {
+    return helper.addListener { (color: UIColor) in
       onChanged(color.toHexDouble())
     }
   }

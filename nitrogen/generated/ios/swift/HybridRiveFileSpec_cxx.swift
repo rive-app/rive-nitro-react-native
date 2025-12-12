@@ -192,17 +192,6 @@ open class HybridRiveFileSpec_cxx {
   }
   
   @inline(__always)
-  public final func release() -> bridge.Result_void_ {
-    do {
-      try self.__implementation.release()
-      return bridge.create_Result_void_()
-    } catch (let __error) {
-      let __exceptionPtr = __error.toCpp()
-      return bridge.create_Result_void_(__exceptionPtr)
-    }
-  }
-  
-  @inline(__always)
   public final func updateReferencedAssets(referencedAssets: ReferencedAssetsType) -> bridge.Result_void_ {
     do {
       try self.__implementation.updateReferencedAssets(referencedAssets: referencedAssets)

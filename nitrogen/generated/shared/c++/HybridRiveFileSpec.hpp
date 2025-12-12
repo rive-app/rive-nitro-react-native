@@ -61,7 +61,6 @@ namespace margelo::nitro::rive {
       virtual std::optional<std::shared_ptr<HybridViewModelSpec>> viewModelByIndex(double index) = 0;
       virtual std::optional<std::shared_ptr<HybridViewModelSpec>> viewModelByName(const std::string& name) = 0;
       virtual std::optional<std::shared_ptr<HybridViewModelSpec>> defaultArtboardViewModel(const std::optional<ArtboardBy>& artboardBy) = 0;
-      virtual void release() = 0;
       virtual void updateReferencedAssets(const ReferencedAssetsType& referencedAssets) = 0;
 
     protected:

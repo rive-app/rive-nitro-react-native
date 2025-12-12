@@ -13,9 +13,10 @@ class HybridViewModelTriggerProperty(private val viewModelTrigger: ViewModelTrig
     viewModelTrigger.trigger()
   }
 
-  override fun addListener(onChanged: () -> Unit) {
-    listeners.add { _ -> onChanged() }
+  override fun addListener(onChanged: () -> Unit): () -> Unit {
+    val remover = addListenerInternal { _ -> onChanged() }
     // We drop the first value as a trigger has no initial value
     ensureValueListenerJob(viewModelTrigger.valueFlow, 1)
+    return remover
   }
 }

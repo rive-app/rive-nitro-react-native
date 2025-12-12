@@ -105,6 +105,6 @@ export function useRiveProperty<P extends ViewModelProperty, T>(
 interface ObservableViewModelProperty<T>
   extends ViewModelProperty,
     ObservableProperty {
-  addListener: (onChanged: (value: T) => void) => void;
+  addListener: (onChanged: (value: T) => void) => () => void;
   value: T;
 }

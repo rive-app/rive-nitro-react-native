@@ -58,7 +58,7 @@ export interface ViewModelProperty
   extends HybridObject<{ ios: 'swift'; android: 'kotlin' }> {}
 
 export interface ObservableProperty {
-  /** Remove all listeners from the view model number property */
+  /** Remove all listeners from the property */
   removeListeners(): void;
 }
 
@@ -67,8 +67,8 @@ export interface ViewModelNumberProperty
     ObservableProperty {
   /** The value of the view model number property */
   value: number;
-  /** Add a listener to the view model number property */
-  addListener(onChanged: (value: number) => void): void;
+  /** Add a listener to the view model number property. Returns a function to remove the listener. */
+  addListener(onChanged: (value: number) => void): () => void;
 }
 
 export interface ViewModelStringProperty
@@ -76,8 +76,8 @@ export interface ViewModelStringProperty
     ObservableProperty {
   /** The value of the view model string property */
   value: string;
-  /** Add a listener to the view model string property */
-  addListener(onChanged: (value: string) => void): void;
+  /** Add a listener to the view model string property. Returns a function to remove the listener. */
+  addListener(onChanged: (value: string) => void): () => void;
 }
 
 export interface ViewModelBooleanProperty
@@ -85,8 +85,8 @@ export interface ViewModelBooleanProperty
     ObservableProperty {
   /** The value of the view model boolean property */
   value: boolean;
-  /** Add a listener to the view model boolean property */
-  addListener(onChanged: (value: boolean) => void): void;
+  /** Add a listener to the view model boolean property. Returns a function to remove the listener. */
+  addListener(onChanged: (value: boolean) => void): () => void;
 }
 
 export interface ViewModelColorProperty
@@ -94,8 +94,8 @@ export interface ViewModelColorProperty
     ObservableProperty {
   /** The value of the view model color property */
   value: number;
-  /** Add a listener to the view model color property */
-  addListener(onChanged: (value: number) => void): void;
+  /** Add a listener to the view model color property. Returns a function to remove the listener. */
+  addListener(onChanged: (value: number) => void): () => void;
 }
 
 export interface ViewModelEnumProperty
@@ -103,15 +103,15 @@ export interface ViewModelEnumProperty
     ObservableProperty {
   /** The value of the view model enum property */
   value: string;
-  /** Add a listener to the view model enum property */
-  addListener(onChanged: (value: string) => void): void;
+  /** Add a listener to the view model enum property. Returns a function to remove the listener. */
+  addListener(onChanged: (value: string) => void): () => void;
 }
 
 export interface ViewModelTriggerProperty
   extends ViewModelProperty,
     ObservableProperty {
-  /** Add a listener to the view model trigger property */
-  addListener(onChanged: () => void): void;
+  /** Add a listener to the view model trigger property. Returns a function to remove the listener. */
+  addListener(onChanged: () => void): () => void;
   /** Trigger the view model trigger property */
   trigger(): void;
 }
@@ -121,6 +121,6 @@ export interface ViewModelImageProperty
     ObservableProperty {
   /** Set the image property value */
   set(image: RiveImage | undefined): void;
-  /** Add a listener to the view model image property */
-  addListener(onChanged: () => void): void;
+  /** Add a listener to the view model image property. Returns a function to remove the listener. */
+  addListener(onChanged: () => void): () => void;
 }

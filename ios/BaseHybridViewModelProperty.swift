@@ -65,11 +65,18 @@ class PropertyListenerHelper<PropertyType: RivePropertyWithListeners> {
     self.property = property
   }
 
-  /// Adds a listener to the property and automatically tracks its ID for cleanup
-  func addListener(_ callback: @escaping (PropertyType.ListenerValueType) -> Void) {
-    guard let property = property else { return }
+  /// Adds a listener to the property and returns a removal function for cleanup
+  func addListener(_ callback: @escaping (PropertyType.ListenerValueType) -> Void) -> () -> Void {
+    guard let property = property else {
+      return {}
+    }
     let id = property.addListener(callback)
     listenerIds.append(id)
+    return { [weak self, weak property] in
+      guard let property = property else { return }
+      property.removeListener(id)
+      self?.listenerIds.removeAll { $0 == id }
+    }
   }
 
   func removeListeners() throws {
@@ -94,7 +101,7 @@ protocol ValuedPropertyProtocol<ValueType> {
   var property: PropertyType! { get }
   var helper: PropertyListenerHelper<PropertyType> { get }
 
-  func addListener(onChanged: @escaping (ValueType) -> Void) throws
+  func addListener(onChanged: @escaping (ValueType) -> Void) throws -> () -> Void
   func removeListeners() throws
   func dispose() throws
 }
@@ -112,7 +119,7 @@ extension ValuedPropertyProtocol {
 
 /// Automatic addListener() ONLY when ListenerValueType == ValueType (no conversion needed)
 extension ValuedPropertyProtocol where PropertyType.ListenerValueType == ValueType {
-  func addListener(onChanged: @escaping (ValueType) -> Void) throws {
-    helper.addListener(onChanged)  // Types match, just forward directly!
+  func addListener(onChanged: @escaping (ValueType) -> Void) throws -> () -> Void {
+    return helper.addListener(onChanged)
   }
 }

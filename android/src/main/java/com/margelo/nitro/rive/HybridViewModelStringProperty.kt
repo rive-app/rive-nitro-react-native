@@ -15,8 +15,9 @@ class HybridViewModelStringProperty(private val viewModelString: ViewModelString
       viewModelString.value = value
     }
 
-  override fun addListener(onChanged: (value: String) -> Unit) {
-    listeners.add(onChanged)
+  override fun addListener(onChanged: (value: String) -> Unit): () -> Unit {
+    val remover = addListenerInternal(onChanged)
     ensureValueListenerJob(viewModelString.valueFlow)
+    return remover
   }
 }

@@ -99,12 +99,15 @@ class HybridRiveFile: HybridRiveFileSpec, RiveViewSource {
     }
   }
   
-  func release() throws {
-    //  iOS does not need to release the Rive file.
+  func dispose() {
+    weakViews.removeAll()
+    referencedAssetCache = nil
+    assetLoader = nil
+    cachedFactory = nil
     riveFile = nil
   }
-  
+
   deinit {
-    try? release()
+    dispose()
   }
 }

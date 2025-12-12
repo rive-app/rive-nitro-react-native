@@ -85,8 +85,9 @@ class HybridRiveFile : HybridRiveFileSpec() {
     }
   }
 
-  override fun release() {
+  override fun dispose() {
     scope.cancel()
+    weakViews.clear()
     assetLoader?.dispose()
     assetLoader = null
     riveFile?.release()

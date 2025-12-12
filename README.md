@@ -1,10 +1,21 @@
 # @rive-app/react-native
 
-Rive React Native 2.0
+[![Build](https://github.com/rive-app/rive-nitro-react-native/actions/workflows/ci.yml/badge.svg)](https://github.com/rive-app/rive-nitro-react-native/actions)
+[![NPM Version](https://img.shields.io/npm/v/@rive-app/react-native)](https://www.npmjs.com/package/@rive-app/react-native)
+[![Downloads](https://img.shields.io/npm/dm/@rive-app/react-native)](https://www.npmjs.com/package/@rive-app/react-native)
+[![React Native](https://img.shields.io/badge/React_Native-0.78+-61dafb)](https://reactnative.dev/)
+[![iOS](https://img.shields.io/badge/iOS-15.1+-blue)](#requirements)
+[![Android](https://img.shields.io/badge/Android-7.0+-green)](#requirements)
+[![Rive iOS Runtime](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Frive-app%2Frive-nitro-react-native%2Fmain%2Fpackage.json&query=%24.runtimeVersions.ios&label=Rive%20iOS%20Runtime&color=informational)](https://github.com/rive-app/rive-ios/releases)
+[![Rive Android Runtime](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Frive-app%2Frive-nitro-react-native%2Fmain%2Fpackage.json&query=%24.runtimeVersions.android&label=Rive%20Android%20Runtime&color=informational)](https://github.com/rive-app/rive-android/releases)
 
-## Development Preview
+**Rive React Native 2.0**
 
-> **⚠️ Development Preview**: This package is currently in development preview. While it's functional and actively maintained, the API may change in future releases. We recommend testing thoroughly before using in production applications. We're actively gathering feedback to improve the library. Please share your thoughts and report any issues you encounter.
+![Rive hero image](https://cdn.rive.app/rive_logo_dark_bg.png)
+
+## Early Release
+
+> **⚠️ Early Release**: This package is in active development. We recommend testing thoroughly before using in production applications. We're actively gathering feedback to improve the library. Please share your thoughts and report any issues you encounter.
 
 ## Requirements
 
@@ -23,7 +34,7 @@ Rive React Native 2.0
 ## Installation
 
 ```sh
-npm install rive-app/rive-nitro-react-native react-native-nitro-modules
+npm install @rive-app/react-native react-native-nitro-modules
 ```
 
 > `react-native-nitro-modules` is required as this library relies on [Nitro Modules](https://nitro.margelo.com/).
@@ -117,6 +128,7 @@ export default {
   },
 };
 ```
+
 </details>
 
 ## Error Handling
@@ -237,9 +249,9 @@ This section tracks new features and improvements planned for this runtime that 
 | Feature                                                                                               | Status |
 | ----------------------------------------------------------------------------------------------------- | ------ |
 | [Reusable .riv File resources (preloading)](https://github.com/rive-app/rive-react-native/issues/260) | ✅     |
-| [Data Binding - Images](https://github.com/rive-app/rive-nitro-react-native/issues/9)                 | 🚧     |
+| [Data Binding - Images](https://github.com/rive-app/rive-nitro-react-native/issues/9)                 | ✅     |
 | [Data Binding - Artboards](https://github.com/rive-app/rive-nitro-react-native/issues/10)             | 🚧     |
-| [Data Binding - Lists](https://github.com/rive-app/rive-nitro-react-native/issues/11)                 | 🚧     |
+| [Data Binding - Lists](https://github.com/rive-app/rive-nitro-react-native/issues/11)                 | ✅     |
 | [Data Binding - Value props](https://github.com/rive-app/rive-nitro-react-native/pull/24)             | 🚧     |
 | [Suspense](https://github.com/rive-app/rive-nitro-react-native/pull/19)                               | 🚧     |
 
@@ -254,4 +266,3 @@ MIT
 ---
 
 Made with [create-react-native-library](https://github.com/callstack/react-native-builder-bob)
-

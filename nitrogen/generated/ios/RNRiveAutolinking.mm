@@ -13,15 +13,6 @@
 #include "HybridRiveSpecSwift.hpp"
 #include "HybridRiveFileFactorySpecSwift.hpp"
 #include "HybridRiveFileSpecSwift.hpp"
-#include "HybridViewModelSpecSwift.hpp"
-#include "HybridViewModelInstanceSpecSwift.hpp"
-#include "HybridViewModelNumberPropertySpecSwift.hpp"
-#include "HybridViewModelStringPropertySpecSwift.hpp"
-#include "HybridViewModelBooleanPropertySpecSwift.hpp"
-#include "HybridViewModelColorPropertySpecSwift.hpp"
-#include "HybridViewModelEnumPropertySpecSwift.hpp"
-#include "HybridViewModelTriggerPropertySpecSwift.hpp"
-#include "HybridViewModelImagePropertySpecSwift.hpp"
 #include "HybridRiveViewSpecSwift.hpp"
 #include "HybridRiveImageFactorySpecSwift.hpp"
 
@@ -52,69 +43,6 @@
     "RiveFile",
     []() -> std::shared_ptr<HybridObject> {
       std::shared_ptr<HybridRiveFileSpec> hybridObject = RNRive::RNRiveAutolinking::createRiveFile();
-      return hybridObject;
-    }
-  );
-  HybridObjectRegistry::registerHybridObjectConstructor(
-    "ViewModel",
-    []() -> std::shared_ptr<HybridObject> {
-      std::shared_ptr<HybridViewModelSpec> hybridObject = RNRive::RNRiveAutolinking::createViewModel();
-      return hybridObject;
-    }
-  );
-  HybridObjectRegistry::registerHybridObjectConstructor(
-    "ViewModelInstance",
-    []() -> std::shared_ptr<HybridObject> {
-      std::shared_ptr<HybridViewModelInstanceSpec> hybridObject = RNRive::RNRiveAutolinking::createViewModelInstance();
-      return hybridObject;
-    }
-  );
-  HybridObjectRegistry::registerHybridObjectConstructor(
-    "ViewModelNumberProperty",
-    []() -> std::shared_ptr<HybridObject> {
-      std::shared_ptr<HybridViewModelNumberPropertySpec> hybridObject = RNRive::RNRiveAutolinking::createViewModelNumberProperty();
-      return hybridObject;
-    }
-  );
-  HybridObjectRegistry::registerHybridObjectConstructor(
-    "ViewModelStringProperty",
-    []() -> std::shared_ptr<HybridObject> {
-      std::shared_ptr<HybridViewModelStringPropertySpec> hybridObject = RNRive::RNRiveAutolinking::createViewModelStringProperty();
-      return hybridObject;
-    }
-  );
-  HybridObjectRegistry::registerHybridObjectConstructor(
-    "ViewModelBooleanProperty",
-    []() -> std::shared_ptr<HybridObject> {
-      std::shared_ptr<HybridViewModelBooleanPropertySpec> hybridObject = RNRive::RNRiveAutolinking::createViewModelBooleanProperty();
-      return hybridObject;
-    }
-  );
-  HybridObjectRegistry::registerHybridObjectConstructor(
-    "ViewModelColorProperty",
-    []() -> std::shared_ptr<HybridObject> {
-      std::shared_ptr<HybridViewModelColorPropertySpec> hybridObject = RNRive::RNRiveAutolinking::createViewModelColorProperty();
-      return hybridObject;
-    }
-  );
-  HybridObjectRegistry::registerHybridObjectConstructor(
-    "ViewModelEnumProperty",
-    []() -> std::shared_ptr<HybridObject> {
-      std::shared_ptr<HybridViewModelEnumPropertySpec> hybridObject = RNRive::RNRiveAutolinking::createViewModelEnumProperty();
-      return hybridObject;
-    }
-  );
-  HybridObjectRegistry::registerHybridObjectConstructor(
-    "ViewModelTriggerProperty",
-    []() -> std::shared_ptr<HybridObject> {
-      std::shared_ptr<HybridViewModelTriggerPropertySpec> hybridObject = RNRive::RNRiveAutolinking::createViewModelTriggerProperty();
-      return hybridObject;
-    }
-  );
-  HybridObjectRegistry::registerHybridObjectConstructor(
-    "ViewModelImageProperty",
-    []() -> std::shared_ptr<HybridObject> {
-      std::shared_ptr<HybridViewModelImagePropertySpec> hybridObject = RNRive::RNRiveAutolinking::createViewModelImageProperty();
       return hybridObject;
     }
   );

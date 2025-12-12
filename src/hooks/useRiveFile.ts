@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { Image } from 'react-native';
 import { RiveFileFactory } from '../core/RiveFile';
+import { callDispose } from '../core/callDispose';
 import type {
   RiveFile,
   ResolvedReferencedAsset,
@@ -160,7 +161,7 @@ export function useRiveFile(
 
     return () => {
       if (currentFile) {
-        currentFile.release();
+        callDispose(currentFile);
       }
     };
   }, [input]);

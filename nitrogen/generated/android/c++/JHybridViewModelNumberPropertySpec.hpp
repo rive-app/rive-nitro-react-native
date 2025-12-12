@@ -56,7 +56,7 @@ namespace margelo::nitro::rive {
 
   public:
     // Methods
-    void addListener(const std::function<void(double /* value */)>& onChanged) override;
+    std::function<void()> addListener(const std::function<void(double /* value */)>& onChanged) override;
     void removeListeners() override;
 
   private:
