@@ -10,15 +10,14 @@ assignees: ''
 <!-- Thanks for using Rive!
 
 If something isn't working like you expected, please:
-- Make sure you've updated rive-nitro-react-native to the latest version:
-            https://www.npmjs.com/package/rive-react-native
-- Check out our help center
-            https://help.rive.app/
-- You can file a new feature request at
-            https://feedback.rive.app/
+- Make sure you've updated `@rive-app/react-native` to the latest version:
+            https://www.npmjs.com/package/@rive-app/react-native
+- Check out the React Native docs
+            https://rive.app/docs/runtimes/react-native/react-native
+- Reach out to us on the community
+            https://community.rive.app
 
-If you think you found a bug or if you can't find what you're looking for
-in our docs, fill out the template below.
+If you think you found a bug or if you can't find what you're looking for in our docs, fill out the template below.
 
 -->
 
@@ -30,7 +29,6 @@ in our docs, fill out the template below.
 Please provide the most **minimal repro** you can:
 - If the problem is small enough, paste a code snippet
 - Otherwise, you can attach a ZIP archive or paste a link to a GitHub repository with the bundle that reproduces the issue
-
 -->
 
 #### Source `.riv`/`.rev` file
@@ -49,14 +47,12 @@ You can also privately share the `.riv`/`.rev` file with us at hello@rive.app.
 #### Screenshots
 <!-- If applicable, add screenshots to help explain your problem. -->
 
-![Screenshot](url)
-
 ### Device & Versions (please complete the following information)
 - Device: [e.g. Android Emulator, iOS Simulator]
 - OS: [e.g. Android SDK API Level 30, iOS 14.5]
 - React Native Version: [Check your package.json or run `npx react-native info` e.g.: `0.79.2`]
 - Expo Version (if applicable): [Check your package.json or run `npx expo-env-info | grep 'expo:'` e.g.: `~54.0.0`]
-- rive-nitro-react-native Version: [Check your package.json e.g.: `0.1.0`]
+- `@rive-app/react-native` Version: [Check your package.json e.g.: `0.1.0`]
 
 #### Additional context
 <!-- Add any other context about the problem here. -->
