@@ -23,6 +23,7 @@ typealias EnumPropertyType = RiveDataBindingViewModel.Instance.EnumProperty
 typealias ColorPropertyType = RiveDataBindingViewModel.Instance.ColorProperty
 typealias TriggerPropertyType = RiveDataBindingViewModel.Instance.TriggerProperty
 typealias ImagePropertyType = RiveDataBindingViewModel.Instance.ImageProperty
+typealias ListPropertyType = RiveDataBindingViewModel.Instance.ListProperty
 
 // Make all Rive property types conform to the protocol
 extension BooleanPropertyType: RivePropertyWithListeners {
@@ -49,6 +50,14 @@ extension TriggerPropertyType: RivePropertyWithListeners {
 }
 
 extension ImagePropertyType: RivePropertyWithListeners {
+  typealias ListenerValueType = Void
+
+  func addListener(_ callback: @escaping ListenerType) -> UUID {
+    addListener { callback(()) }
+  }
+}
+
+extension ListPropertyType: RivePropertyWithListeners {
   typealias ListenerValueType = Void
 
   func addListener(_ callback: @escaping ListenerType) -> UUID {

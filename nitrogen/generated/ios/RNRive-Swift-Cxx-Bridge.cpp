@@ -19,6 +19,7 @@
 #include "HybridViewModelEnumPropertySpecSwift.hpp"
 #include "HybridViewModelImagePropertySpecSwift.hpp"
 #include "HybridViewModelInstanceSpecSwift.hpp"
+#include "HybridViewModelListPropertySpecSwift.hpp"
 #include "HybridViewModelNumberPropertySpecSwift.hpp"
 #include "HybridViewModelPropertySpecSwift.hpp"
 #include "HybridViewModelSpecSwift.hpp"
@@ -338,6 +339,22 @@ namespace margelo::nitro::rive::bridge::swift {
     }
     #endif
     RNRive::HybridViewModelImagePropertySpec_cxx& swiftPart = swiftWrapper->getSwiftPart();
+    return swiftPart.toUnsafe();
+  }
+  
+  // pragma MARK: std::shared_ptr<HybridViewModelListPropertySpec>
+  std::shared_ptr<HybridViewModelListPropertySpec> create_std__shared_ptr_HybridViewModelListPropertySpec_(void* NON_NULL swiftUnsafePointer) noexcept {
+    RNRive::HybridViewModelListPropertySpec_cxx swiftPart = RNRive::HybridViewModelListPropertySpec_cxx::fromUnsafe(swiftUnsafePointer);
+    return std::make_shared<margelo::nitro::rive::HybridViewModelListPropertySpecSwift>(swiftPart);
+  }
+  void* NON_NULL get_std__shared_ptr_HybridViewModelListPropertySpec_(std__shared_ptr_HybridViewModelListPropertySpec_ cppType) {
+    std::shared_ptr<margelo::nitro::rive::HybridViewModelListPropertySpecSwift> swiftWrapper = std::dynamic_pointer_cast<margelo::nitro::rive::HybridViewModelListPropertySpecSwift>(cppType);
+    #ifdef NITRO_DEBUG
+    if (swiftWrapper == nullptr) [[unlikely]] {
+      throw std::runtime_error("Class \"HybridViewModelListPropertySpec\" is not implemented in Swift!");
+    }
+    #endif
+    RNRive::HybridViewModelListPropertySpec_cxx& swiftPart = swiftWrapper->getSwiftPart();
     return swiftPart.toUnsafe();
   }
   

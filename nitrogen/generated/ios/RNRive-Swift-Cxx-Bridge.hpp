@@ -42,6 +42,8 @@ namespace margelo::nitro::rive { class HybridViewModelEnumPropertySpec; }
 namespace margelo::nitro::rive { class HybridViewModelImagePropertySpec; }
 // Forward declaration of `HybridViewModelInstanceSpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridViewModelInstanceSpec; }
+// Forward declaration of `HybridViewModelListPropertySpec` to properly resolve imports.
+namespace margelo::nitro::rive { class HybridViewModelListPropertySpec; }
 // Forward declaration of `HybridViewModelNumberPropertySpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridViewModelNumberPropertySpec; }
 // Forward declaration of `HybridViewModelPropertySpec` to properly resolve imports.
@@ -88,6 +90,8 @@ namespace RNRive { class HybridViewModelEnumPropertySpec_cxx; }
 namespace RNRive { class HybridViewModelImagePropertySpec_cxx; }
 // Forward declaration of `HybridViewModelInstanceSpec_cxx` to properly resolve imports.
 namespace RNRive { class HybridViewModelInstanceSpec_cxx; }
+// Forward declaration of `HybridViewModelListPropertySpec_cxx` to properly resolve imports.
+namespace RNRive { class HybridViewModelListPropertySpec_cxx; }
 // Forward declaration of `HybridViewModelNumberPropertySpec_cxx` to properly resolve imports.
 namespace RNRive { class HybridViewModelNumberPropertySpec_cxx; }
 // Forward declaration of `HybridViewModelPropertySpec_cxx` to properly resolve imports.
@@ -117,6 +121,7 @@ namespace RNRive { class HybridViewModelTriggerPropertySpec_cxx; }
 #include "HybridViewModelEnumPropertySpec.hpp"
 #include "HybridViewModelImagePropertySpec.hpp"
 #include "HybridViewModelInstanceSpec.hpp"
+#include "HybridViewModelListPropertySpec.hpp"
 #include "HybridViewModelNumberPropertySpec.hpp"
 #include "HybridViewModelPropertySpec.hpp"
 #include "HybridViewModelSpec.hpp"
@@ -1070,6 +1075,36 @@ namespace margelo::nitro::rive::bridge::swift {
     return *optional;
   }
   
+  // pragma MARK: std::shared_ptr<HybridViewModelListPropertySpec>
+  /**
+   * Specialized version of `std::shared_ptr<HybridViewModelListPropertySpec>`.
+   */
+  using std__shared_ptr_HybridViewModelListPropertySpec_ = std::shared_ptr<HybridViewModelListPropertySpec>;
+  std::shared_ptr<HybridViewModelListPropertySpec> create_std__shared_ptr_HybridViewModelListPropertySpec_(void* NON_NULL swiftUnsafePointer) noexcept;
+  void* NON_NULL get_std__shared_ptr_HybridViewModelListPropertySpec_(std__shared_ptr_HybridViewModelListPropertySpec_ cppType);
+  
+  // pragma MARK: std::shared_ptr<HybridViewModelPropertySpec>
+  inline std::shared_ptr<HybridViewModelPropertySpec> upcast_ViewModelListProperty_to_ViewModelProperty(std::shared_ptr<HybridViewModelListPropertySpec> child) noexcept { return child; }
+  
+  // pragma MARK: std::weak_ptr<HybridViewModelListPropertySpec>
+  using std__weak_ptr_HybridViewModelListPropertySpec_ = std::weak_ptr<HybridViewModelListPropertySpec>;
+  inline std__weak_ptr_HybridViewModelListPropertySpec_ weakify_std__shared_ptr_HybridViewModelListPropertySpec_(const std::shared_ptr<HybridViewModelListPropertySpec>& strong) noexcept { return strong; }
+  
+  // pragma MARK: std::optional<std::shared_ptr<HybridViewModelListPropertySpec>>
+  /**
+   * Specialized version of `std::optional<std::shared_ptr<HybridViewModelListPropertySpec>>`.
+   */
+  using std__optional_std__shared_ptr_HybridViewModelListPropertySpec__ = std::optional<std::shared_ptr<HybridViewModelListPropertySpec>>;
+  inline std::optional<std::shared_ptr<HybridViewModelListPropertySpec>> create_std__optional_std__shared_ptr_HybridViewModelListPropertySpec__(const std::shared_ptr<HybridViewModelListPropertySpec>& value) noexcept {
+    return std::optional<std::shared_ptr<HybridViewModelListPropertySpec>>(value);
+  }
+  inline bool has_value_std__optional_std__shared_ptr_HybridViewModelListPropertySpec__(const std::optional<std::shared_ptr<HybridViewModelListPropertySpec>>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline std::shared_ptr<HybridViewModelListPropertySpec> get_std__optional_std__shared_ptr_HybridViewModelListPropertySpec__(const std::optional<std::shared_ptr<HybridViewModelListPropertySpec>>& optional) noexcept {
+    return *optional;
+  }
+  
   // pragma MARK: Result<std::optional<std::shared_ptr<HybridViewModelNumberPropertySpec>>>
   using Result_std__optional_std__shared_ptr_HybridViewModelNumberPropertySpec___ = Result<std::optional<std::shared_ptr<HybridViewModelNumberPropertySpec>>>;
   inline Result_std__optional_std__shared_ptr_HybridViewModelNumberPropertySpec___ create_Result_std__optional_std__shared_ptr_HybridViewModelNumberPropertySpec___(const std::optional<std::shared_ptr<HybridViewModelNumberPropertySpec>>& value) noexcept {
@@ -1131,6 +1166,15 @@ namespace margelo::nitro::rive::bridge::swift {
   }
   inline Result_std__optional_std__shared_ptr_HybridViewModelImagePropertySpec___ create_Result_std__optional_std__shared_ptr_HybridViewModelImagePropertySpec___(const std::exception_ptr& error) noexcept {
     return Result<std::optional<std::shared_ptr<HybridViewModelImagePropertySpec>>>::withError(error);
+  }
+  
+  // pragma MARK: Result<std::optional<std::shared_ptr<HybridViewModelListPropertySpec>>>
+  using Result_std__optional_std__shared_ptr_HybridViewModelListPropertySpec___ = Result<std::optional<std::shared_ptr<HybridViewModelListPropertySpec>>>;
+  inline Result_std__optional_std__shared_ptr_HybridViewModelListPropertySpec___ create_Result_std__optional_std__shared_ptr_HybridViewModelListPropertySpec___(const std::optional<std::shared_ptr<HybridViewModelListPropertySpec>>& value) noexcept {
+    return Result<std::optional<std::shared_ptr<HybridViewModelListPropertySpec>>>::withValue(value);
+  }
+  inline Result_std__optional_std__shared_ptr_HybridViewModelListPropertySpec___ create_Result_std__optional_std__shared_ptr_HybridViewModelListPropertySpec___(const std::exception_ptr& error) noexcept {
+    return Result<std::optional<std::shared_ptr<HybridViewModelListPropertySpec>>>::withError(error);
   }
   
   // pragma MARK: std::function<void(double /* value */)>

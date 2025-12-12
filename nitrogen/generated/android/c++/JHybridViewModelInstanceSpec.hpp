@@ -61,6 +61,7 @@ namespace margelo::nitro::rive {
     std::optional<std::shared_ptr<HybridViewModelEnumPropertySpec>> enumProperty(const std::string& path) override;
     std::optional<std::shared_ptr<HybridViewModelTriggerPropertySpec>> triggerProperty(const std::string& path) override;
     std::optional<std::shared_ptr<HybridViewModelImagePropertySpec>> imageProperty(const std::string& path) override;
+    std::optional<std::shared_ptr<HybridViewModelListPropertySpec>> listProperty(const std::string& path) override;
 
   private:
     friend HybridBase;
