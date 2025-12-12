@@ -18,33 +18,36 @@ class HybridViewModelListProperty(private val listProperty: ViewModelListPropert
       ?: throw IllegalArgumentException("Expected HybridViewModelInstance but got ${instance::class.simpleName}")
   }
 
-  override fun instanceAt(index: Double): HybridViewModelInstanceSpec? {
+  override fun getInstanceAt(index: Double): HybridViewModelInstanceSpec? {
     val idx = index.toInt()
     if (idx < 0 || idx >= listProperty.size) return null
     return HybridViewModelInstance(listProperty.elementAt(idx))
   }
 
-  override fun append(instance: HybridViewModelInstanceSpec) {
+  override fun addInstance(instance: HybridViewModelInstanceSpec) {
     val hybridInstance = requireHybridInstance(instance)
     listProperty.add(hybridInstance.viewModelInstance)
   }
 
-  override fun insert(instance: HybridViewModelInstanceSpec, index: Double) {
+  override fun addInstanceAt(instance: HybridViewModelInstanceSpec, index: Double): Boolean {
     val hybridInstance = requireHybridInstance(instance)
-    listProperty.add(index.toInt(), hybridInstance.viewModelInstance)
+    val idx = index.toInt()
+    if (idx < 0 || idx > listProperty.size) return false
+    listProperty.add(idx, hybridInstance.viewModelInstance)
+    return true
   }
 
-  override fun remove(instance: HybridViewModelInstanceSpec) {
+  override fun removeInstance(instance: HybridViewModelInstanceSpec) {
     val hybridInstance = requireHybridInstance(instance)
     listProperty.remove(hybridInstance.viewModelInstance)
   }
 
-  override fun removeAt(index: Double) {
+  override fun removeInstanceAt(index: Double) {
     listProperty.removeAt(index.toInt())
   }
 
-  override fun swap(index1: Double, index2: Double) {
-    listProperty.swap(index1.toInt(), index2.toInt())
+  override fun swap(index1: Double, index2: Double): Boolean {
+    return listProperty.swap(index1.toInt(), index2.toInt())
   }
 
   override fun addListener(onChanged: () -> Unit) {

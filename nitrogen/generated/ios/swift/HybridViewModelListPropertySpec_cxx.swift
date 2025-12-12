@@ -126,9 +126,9 @@ open class HybridViewModelListPropertySpec_cxx : HybridViewModelPropertySpec_cxx
 
   // Methods
   @inline(__always)
-  public final func instanceAt(index: Double) -> bridge.Result_std__optional_std__shared_ptr_HybridViewModelInstanceSpec___ {
+  public final func getInstanceAt(index: Double) -> bridge.Result_std__optional_std__shared_ptr_HybridViewModelInstanceSpec___ {
     do {
-      let __result = try self.__implementation.instanceAt(index: index)
+      let __result = try self.__implementation.getInstanceAt(index: index)
       let __resultCpp = { () -> bridge.std__optional_std__shared_ptr_HybridViewModelInstanceSpec__ in
         if let __unwrappedValue = __result {
           return bridge.create_std__optional_std__shared_ptr_HybridViewModelInstanceSpec__({ () -> bridge.std__shared_ptr_HybridViewModelInstanceSpec_ in
@@ -147,9 +147,9 @@ open class HybridViewModelListPropertySpec_cxx : HybridViewModelPropertySpec_cxx
   }
   
   @inline(__always)
-  public final func append(instance: bridge.std__shared_ptr_HybridViewModelInstanceSpec_) -> bridge.Result_void_ {
+  public final func addInstance(instance: bridge.std__shared_ptr_HybridViewModelInstanceSpec_) -> bridge.Result_void_ {
     do {
-      try self.__implementation.append(instance: { () -> HybridViewModelInstanceSpec in
+      try self.__implementation.addInstance(instance: { () -> HybridViewModelInstanceSpec in
         let __unsafePointer = bridge.get_std__shared_ptr_HybridViewModelInstanceSpec_(instance)
         let __instance = HybridViewModelInstanceSpec_cxx.fromUnsafe(__unsafePointer)
         return __instance.getHybridViewModelInstanceSpec()
@@ -162,24 +162,25 @@ open class HybridViewModelListPropertySpec_cxx : HybridViewModelPropertySpec_cxx
   }
   
   @inline(__always)
-  public final func insert(instance: bridge.std__shared_ptr_HybridViewModelInstanceSpec_, index: Double) -> bridge.Result_void_ {
+  public final func addInstanceAt(instance: bridge.std__shared_ptr_HybridViewModelInstanceSpec_, index: Double) -> bridge.Result_bool_ {
     do {
-      try self.__implementation.insert(instance: { () -> HybridViewModelInstanceSpec in
+      let __result = try self.__implementation.addInstanceAt(instance: { () -> HybridViewModelInstanceSpec in
         let __unsafePointer = bridge.get_std__shared_ptr_HybridViewModelInstanceSpec_(instance)
         let __instance = HybridViewModelInstanceSpec_cxx.fromUnsafe(__unsafePointer)
         return __instance.getHybridViewModelInstanceSpec()
       }(), index: index)
-      return bridge.create_Result_void_()
+      let __resultCpp = __result
+      return bridge.create_Result_bool_(__resultCpp)
     } catch (let __error) {
       let __exceptionPtr = __error.toCpp()
-      return bridge.create_Result_void_(__exceptionPtr)
+      return bridge.create_Result_bool_(__exceptionPtr)
     }
   }
   
   @inline(__always)
-  public final func remove(instance: bridge.std__shared_ptr_HybridViewModelInstanceSpec_) -> bridge.Result_void_ {
+  public final func removeInstance(instance: bridge.std__shared_ptr_HybridViewModelInstanceSpec_) -> bridge.Result_void_ {
     do {
-      try self.__implementation.remove(instance: { () -> HybridViewModelInstanceSpec in
+      try self.__implementation.removeInstance(instance: { () -> HybridViewModelInstanceSpec in
         let __unsafePointer = bridge.get_std__shared_ptr_HybridViewModelInstanceSpec_(instance)
         let __instance = HybridViewModelInstanceSpec_cxx.fromUnsafe(__unsafePointer)
         return __instance.getHybridViewModelInstanceSpec()
@@ -192,9 +193,9 @@ open class HybridViewModelListPropertySpec_cxx : HybridViewModelPropertySpec_cxx
   }
   
   @inline(__always)
-  public final func removeAt(index: Double) -> bridge.Result_void_ {
+  public final func removeInstanceAt(index: Double) -> bridge.Result_void_ {
     do {
-      try self.__implementation.removeAt(index: index)
+      try self.__implementation.removeInstanceAt(index: index)
       return bridge.create_Result_void_()
     } catch (let __error) {
       let __exceptionPtr = __error.toCpp()
@@ -203,13 +204,14 @@ open class HybridViewModelListPropertySpec_cxx : HybridViewModelPropertySpec_cxx
   }
   
   @inline(__always)
-  public final func swap(index1: Double, index2: Double) -> bridge.Result_void_ {
+  public final func swap(index1: Double, index2: Double) -> bridge.Result_bool_ {
     do {
-      try self.__implementation.swap(index1: index1, index2: index2)
-      return bridge.create_Result_void_()
+      let __result = try self.__implementation.swap(index1: index1, index2: index2)
+      let __resultCpp = __result
+      return bridge.create_Result_bool_(__resultCpp)
     } catch (let __error) {
       let __exceptionPtr = __error.toCpp()
-      return bridge.create_Result_void_(__exceptionPtr)
+      return bridge.create_Result_bool_(__exceptionPtr)
     }
   }
   

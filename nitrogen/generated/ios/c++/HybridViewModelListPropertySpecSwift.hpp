@@ -70,43 +70,47 @@ namespace margelo::nitro::rive {
 
   public:
     // Methods
-    inline std::optional<std::shared_ptr<HybridViewModelInstanceSpec>> instanceAt(double index) override {
-      auto __result = _swiftPart.instanceAt(std::forward<decltype(index)>(index));
+    inline std::optional<std::shared_ptr<HybridViewModelInstanceSpec>> getInstanceAt(double index) override {
+      auto __result = _swiftPart.getInstanceAt(std::forward<decltype(index)>(index));
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }
       auto __value = std::move(__result.value());
       return __value;
     }
-    inline void append(const std::shared_ptr<HybridViewModelInstanceSpec>& instance) override {
-      auto __result = _swiftPart.append(instance);
+    inline void addInstance(const std::shared_ptr<HybridViewModelInstanceSpec>& instance) override {
+      auto __result = _swiftPart.addInstance(instance);
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }
     }
-    inline void insert(const std::shared_ptr<HybridViewModelInstanceSpec>& instance, double index) override {
-      auto __result = _swiftPart.insert(instance, std::forward<decltype(index)>(index));
+    inline bool addInstanceAt(const std::shared_ptr<HybridViewModelInstanceSpec>& instance, double index) override {
+      auto __result = _swiftPart.addInstanceAt(instance, std::forward<decltype(index)>(index));
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline void removeInstance(const std::shared_ptr<HybridViewModelInstanceSpec>& instance) override {
+      auto __result = _swiftPart.removeInstance(instance);
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }
     }
-    inline void remove(const std::shared_ptr<HybridViewModelInstanceSpec>& instance) override {
-      auto __result = _swiftPart.remove(instance);
+    inline void removeInstanceAt(double index) override {
+      auto __result = _swiftPart.removeInstanceAt(std::forward<decltype(index)>(index));
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }
     }
-    inline void removeAt(double index) override {
-      auto __result = _swiftPart.removeAt(std::forward<decltype(index)>(index));
-      if (__result.hasError()) [[unlikely]] {
-        std::rethrow_exception(__result.error());
-      }
-    }
-    inline void swap(double index1, double index2) override {
+    inline bool swap(double index1, double index2) override {
       auto __result = _swiftPart.swap(std::forward<decltype(index1)>(index1), std::forward<decltype(index2)>(index2));
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }
+      auto __value = std::move(__result.value());
+      return __value;
     }
     inline void addListener(const std::function<void()>& onChanged) override {
       auto __result = _swiftPart.addListener(onChanged);

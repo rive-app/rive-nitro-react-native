@@ -55,12 +55,12 @@ namespace margelo::nitro::rive {
 
     public:
       // Methods
-      virtual std::optional<std::shared_ptr<HybridViewModelInstanceSpec>> instanceAt(double index) = 0;
-      virtual void append(const std::shared_ptr<HybridViewModelInstanceSpec>& instance) = 0;
-      virtual void insert(const std::shared_ptr<HybridViewModelInstanceSpec>& instance, double index) = 0;
-      virtual void remove(const std::shared_ptr<HybridViewModelInstanceSpec>& instance) = 0;
-      virtual void removeAt(double index) = 0;
-      virtual void swap(double index1, double index2) = 0;
+      virtual std::optional<std::shared_ptr<HybridViewModelInstanceSpec>> getInstanceAt(double index) = 0;
+      virtual void addInstance(const std::shared_ptr<HybridViewModelInstanceSpec>& instance) = 0;
+      virtual bool addInstanceAt(const std::shared_ptr<HybridViewModelInstanceSpec>& instance, double index) = 0;
+      virtual void removeInstance(const std::shared_ptr<HybridViewModelInstanceSpec>& instance) = 0;
+      virtual void removeInstanceAt(double index) = 0;
+      virtual bool swap(double index1, double index2) = 0;
       virtual void addListener(const std::function<void()>& onChanged) = 0;
       virtual void removeListeners() = 0;
 

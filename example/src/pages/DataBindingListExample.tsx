@@ -91,21 +91,21 @@ function ListExample({
     if (stringProp) {
       stringProp.value = 'new btn';
     }
-    listProperty.append(newInstance);
+    listProperty.addInstance(newInstance);
     riveRef.current?.playIfNeeded();
     refreshLength();
   }, [listProperty, file, refreshLength]);
 
   const handleRemoveFirst = useCallback(() => {
     if (!listProperty || listProperty.length === 0) return;
-    listProperty.removeAt(0);
+    listProperty.removeInstanceAt(0);
     riveRef.current?.playIfNeeded();
     refreshLength();
   }, [listProperty, refreshLength]);
 
   const handleRemoveLast = useCallback(() => {
     if (!listProperty || listProperty.length === 0) return;
-    listProperty.removeAt(listProperty.length - 1);
+    listProperty.removeInstanceAt(listProperty.length - 1);
     riveRef.current?.playIfNeeded();
     refreshLength();
   }, [listProperty, refreshLength]);
@@ -121,7 +121,7 @@ function ListExample({
     if (!listProperty) return;
     console.log(`List has ${listProperty.length} items:`);
     for (let i = 0; i < listProperty.length; i++) {
-      const item = listProperty.instanceAt(i);
+      const item = listProperty.getInstanceAt(i);
       console.log(`  [${i}]: ${item?.instanceName ?? 'undefined'}`);
     }
   }, [listProperty]);

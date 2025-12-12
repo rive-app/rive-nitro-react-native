@@ -49,27 +49,27 @@ abstract class HybridViewModelListPropertySpec: HybridViewModelPropertySpec() {
   // Methods
   @DoNotStrip
   @Keep
-  abstract fun instanceAt(index: Double): HybridViewModelInstanceSpec?
+  abstract fun getInstanceAt(index: Double): HybridViewModelInstanceSpec?
   
   @DoNotStrip
   @Keep
-  abstract fun append(instance: HybridViewModelInstanceSpec): Unit
+  abstract fun addInstance(instance: HybridViewModelInstanceSpec): Unit
   
   @DoNotStrip
   @Keep
-  abstract fun insert(instance: HybridViewModelInstanceSpec, index: Double): Unit
+  abstract fun addInstanceAt(instance: HybridViewModelInstanceSpec, index: Double): Boolean
   
   @DoNotStrip
   @Keep
-  abstract fun remove(instance: HybridViewModelInstanceSpec): Unit
+  abstract fun removeInstance(instance: HybridViewModelInstanceSpec): Unit
   
   @DoNotStrip
   @Keep
-  abstract fun removeAt(index: Double): Unit
+  abstract fun removeInstanceAt(index: Double): Unit
   
   @DoNotStrip
   @Keep
-  abstract fun swap(index1: Double, index2: Double): Unit
+  abstract fun swap(index1: Double, index2: Double): Boolean
   
   abstract fun addListener(onChanged: () -> Unit): Unit
   

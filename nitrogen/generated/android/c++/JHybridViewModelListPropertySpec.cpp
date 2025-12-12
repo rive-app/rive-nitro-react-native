@@ -54,30 +54,32 @@ namespace margelo::nitro::rive {
   }
 
   // Methods
-  std::optional<std::shared_ptr<HybridViewModelInstanceSpec>> JHybridViewModelListPropertySpec::instanceAt(double index) {
-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JHybridViewModelInstanceSpec::javaobject>(double /* index */)>("instanceAt");
+  std::optional<std::shared_ptr<HybridViewModelInstanceSpec>> JHybridViewModelListPropertySpec::getInstanceAt(double index) {
+    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JHybridViewModelInstanceSpec::javaobject>(double /* index */)>("getInstanceAt");
     auto __result = method(_javaPart, index);
     return __result != nullptr ? std::make_optional(__result->cthis()->shared_cast<JHybridViewModelInstanceSpec>()) : std::nullopt;
   }
-  void JHybridViewModelListPropertySpec::append(const std::shared_ptr<HybridViewModelInstanceSpec>& instance) {
-    static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<JHybridViewModelInstanceSpec::javaobject> /* instance */)>("append");
+  void JHybridViewModelListPropertySpec::addInstance(const std::shared_ptr<HybridViewModelInstanceSpec>& instance) {
+    static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<JHybridViewModelInstanceSpec::javaobject> /* instance */)>("addInstance");
     method(_javaPart, std::dynamic_pointer_cast<JHybridViewModelInstanceSpec>(instance)->getJavaPart());
   }
-  void JHybridViewModelListPropertySpec::insert(const std::shared_ptr<HybridViewModelInstanceSpec>& instance, double index) {
-    static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<JHybridViewModelInstanceSpec::javaobject> /* instance */, double /* index */)>("insert");
-    method(_javaPart, std::dynamic_pointer_cast<JHybridViewModelInstanceSpec>(instance)->getJavaPart(), index);
+  bool JHybridViewModelListPropertySpec::addInstanceAt(const std::shared_ptr<HybridViewModelInstanceSpec>& instance, double index) {
+    static const auto method = javaClassStatic()->getMethod<jboolean(jni::alias_ref<JHybridViewModelInstanceSpec::javaobject> /* instance */, double /* index */)>("addInstanceAt");
+    auto __result = method(_javaPart, std::dynamic_pointer_cast<JHybridViewModelInstanceSpec>(instance)->getJavaPart(), index);
+    return static_cast<bool>(__result);
   }
-  void JHybridViewModelListPropertySpec::remove(const std::shared_ptr<HybridViewModelInstanceSpec>& instance) {
-    static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<JHybridViewModelInstanceSpec::javaobject> /* instance */)>("remove");
+  void JHybridViewModelListPropertySpec::removeInstance(const std::shared_ptr<HybridViewModelInstanceSpec>& instance) {
+    static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<JHybridViewModelInstanceSpec::javaobject> /* instance */)>("removeInstance");
     method(_javaPart, std::dynamic_pointer_cast<JHybridViewModelInstanceSpec>(instance)->getJavaPart());
   }
-  void JHybridViewModelListPropertySpec::removeAt(double index) {
-    static const auto method = javaClassStatic()->getMethod<void(double /* index */)>("removeAt");
+  void JHybridViewModelListPropertySpec::removeInstanceAt(double index) {
+    static const auto method = javaClassStatic()->getMethod<void(double /* index */)>("removeInstanceAt");
     method(_javaPart, index);
   }
-  void JHybridViewModelListPropertySpec::swap(double index1, double index2) {
-    static const auto method = javaClassStatic()->getMethod<void(double /* index1 */, double /* index2 */)>("swap");
-    method(_javaPart, index1, index2);
+  bool JHybridViewModelListPropertySpec::swap(double index1, double index2) {
+    static const auto method = javaClassStatic()->getMethod<jboolean(double /* index1 */, double /* index2 */)>("swap");
+    auto __result = method(_javaPart, index1, index2);
+    return static_cast<bool>(__result);
   }
   void JHybridViewModelListPropertySpec::addListener(const std::function<void()>& onChanged) {
     static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<JFunc_void::javaobject> /* onChanged */)>("addListener_cxx");
