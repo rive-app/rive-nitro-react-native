@@ -71,13 +71,13 @@ abstract class HybridViewModelListPropertySpec: HybridViewModelPropertySpec() {
   @Keep
   abstract fun swap(index1: Double, index2: Double): Boolean
   
-  abstract fun addListener(onChanged: () -> Unit): Unit
+  abstract fun addListener(onChanged: () -> Unit): () -> Unit
   
   @DoNotStrip
   @Keep
-  private fun addListener_cxx(onChanged: Func_void): Unit {
+  private fun addListener_cxx(onChanged: Func_void): Func_void {
     val __result = addListener(onChanged)
-    return __result
+    return Func_void_java(__result)
   }
   
   @DoNotStrip

@@ -56,8 +56,9 @@ class HybridViewModelListProperty(private val listProperty: ViewModelListPropert
     return true
   }
 
-  override fun addListener(onChanged: () -> Unit) {
-    listeners.add { _: Unit -> onChanged() }
+  override fun addListener(onChanged: () -> Unit): () -> Unit {
+    val remover = addListenerInternal { _ -> onChanged() }
     ensureValueListenerJob(listProperty.valueFlow.map { })
+    return remover
   }
 }

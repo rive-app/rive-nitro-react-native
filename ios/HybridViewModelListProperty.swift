@@ -56,7 +56,7 @@ class HybridViewModelListProperty: HybridViewModelListPropertySpec, ValuedProper
     return true
   }
 
-  func addListener(onChanged: @escaping () -> Void) throws {
-    try addListener(onChanged: { _ in onChanged() })
+  func addListener(onChanged: @escaping () -> Void) throws -> () -> Void {
+    helper.addListener({ _ in onChanged() })
   }
 }

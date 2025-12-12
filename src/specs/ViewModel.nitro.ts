@@ -149,6 +149,6 @@ export interface ViewModelListProperty
   removeInstanceAt(index: number): void;
   /** Swap the instances at the given indices, returns true if successful */
   swap(index1: number, index2: number): boolean;
-  /** Add a listener to be notified when the list changes */
-  addListener(onChanged: () => void): void;
+  /** Add a listener to be notified when the list changes. Returns a function to remove the listener. */
+  addListener(onChanged: () => void): () => void;
 }
