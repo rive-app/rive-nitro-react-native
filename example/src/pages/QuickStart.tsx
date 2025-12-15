@@ -41,10 +41,8 @@ export default function QuickStart() {
   );
 
   useEffect(() => {
-    if (viewModelInstance && setHealth) {
-      setHealth(9);
-    }
-  }, [viewModelInstance, setHealth]);
+    setHealth?.(9);
+  }, [setHealth]);
 
   const handleTakeDamage = () => {
     if (health !== undefined && setHealth) {
