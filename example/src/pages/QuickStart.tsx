@@ -6,7 +6,7 @@
   - Data Binding: https://rive.app/docs/runtimes/data-binding
 */
 
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Button, SafeAreaView, ScrollView, StyleSheet } from 'react-native';
 import {
   RiveView,
@@ -24,7 +24,10 @@ export default function QuickStart() {
     require('../../assets/rive/quick_start.riv')
   );
   const { riveViewRef, setHybridRef } = useRive();
-  const viewModelInstance = riveViewRef?.getViewModelInstance();
+  const viewModelInstance = useMemo(
+    () => riveViewRef?.getViewModelInstance(),
+    [riveViewRef]
+  );
 
   const { value: health, setValue: setHealth } = useRiveNumber(
     'health',
