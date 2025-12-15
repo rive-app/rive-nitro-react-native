@@ -41,24 +41,24 @@ export default function QuickStart() {
   );
 
   useEffect(() => {
-    setHealth?.(9);
+    setHealth(9);
   }, [setHealth]);
 
   const handleTakeDamage = () => {
-    if (health !== undefined && setHealth) {
+    if (health !== undefined) {
       setHealth(health - 7);
       riveViewRef?.play();
     }
   };
 
   const handleMaxHealth = () => {
-    setHealth?.(100);
+    setHealth(100);
     riveViewRef?.play();
   };
 
   const handleGameOver = () => {
-    setHealth?.(0);
-    gameOverTrigger?.();
+    setHealth(0);
+    gameOverTrigger();
     riveViewRef?.play();
   };
 
