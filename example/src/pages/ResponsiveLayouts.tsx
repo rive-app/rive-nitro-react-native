@@ -1,10 +1,11 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   Button,
   ActivityIndicator,
+  useWindowDimensions,
 } from 'react-native';
 import {
   Fit,
@@ -20,6 +21,11 @@ export default function ResponsiveLayoutsExample() {
   );
   const [scaleFactor, setScaleFactor] = useState(4.0);
   const riveRef = useRef<RiveViewRef>(null);
+  const { width, height } = useWindowDimensions();
+
+  useEffect(() => {
+    riveRef.current?.playIfNeeded();
+  }, [width, height]);
 
   const increaseScale = () => {
     setScaleFactor((prev) => prev + 0.5);
