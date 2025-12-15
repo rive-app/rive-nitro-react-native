@@ -43,4 +43,9 @@ class HybridViewModelInstance: HybridViewModelInstanceSpec {
     guard let property = viewModelInstance?.imageProperty(fromPath: path) else { return nil }
     return HybridViewModelImageProperty(property: property)
   }
+
+  func listProperty(path: String) throws -> (any HybridViewModelListPropertySpec)? {
+    guard let property = viewModelInstance?.listProperty(fromPath: path) else { return nil }
+    return HybridViewModelListProperty(property: property)
+  }
 }

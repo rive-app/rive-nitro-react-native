@@ -38,6 +38,7 @@
 #include "JHybridViewModelEnumPropertySpec.hpp"
 #include "JHybridViewModelTriggerPropertySpec.hpp"
 #include "JHybridViewModelImagePropertySpec.hpp"
+#include "JHybridViewModelListPropertySpec.hpp"
 #include <NitroModules/DefaultConstructableObject.hpp>
 
 namespace margelo::nitro::rive {
@@ -72,6 +73,7 @@ int initialize(JavaVM* vm) {
     margelo::nitro::rive::JHybridViewModelEnumPropertySpec::registerNatives();
     margelo::nitro::rive::JHybridViewModelTriggerPropertySpec::registerNatives();
     margelo::nitro::rive::JHybridViewModelImagePropertySpec::registerNatives();
+    margelo::nitro::rive::JHybridViewModelListPropertySpec::registerNatives();
 
     // Register Nitro Hybrid Objects
     HybridObjectRegistry::registerHybridObjectConstructor(
