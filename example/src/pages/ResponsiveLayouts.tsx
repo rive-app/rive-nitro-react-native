@@ -1,6 +1,11 @@
 import { useState } from 'react';
-import { View, Text, StyleSheet, Button, ActivityIndicator } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Button,
+  ActivityIndicator,
+} from 'react-native';
 import { Fit, RiveView, useRiveFile } from '@rive-app/react-native';
 import { type Metadata } from '../helpers/metadata';
 
@@ -15,7 +20,7 @@ export default function ResponsiveLayoutsExample() {
     setScaleFactor((prev) => Math.max(0.5, prev - 0.5));
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       {isLoading ? (
         <ActivityIndicator size="large" style={styles.rive} />
       ) : error ? (
@@ -39,7 +44,7 @@ export default function ResponsiveLayoutsExample() {
           <Button title="+" onPress={increaseScale} />
         </View>
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
 
