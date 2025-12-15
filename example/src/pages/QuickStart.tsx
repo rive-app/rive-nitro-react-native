@@ -7,7 +7,8 @@
 */
 
 import { useEffect, useMemo } from 'react';
-import { Button, SafeAreaView, ScrollView, StyleSheet } from 'react-native';
+import { Button, ScrollView, StyleSheet } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   RiveView,
   useRive,
@@ -47,19 +48,19 @@ export default function QuickStart() {
   const handleTakeDamage = () => {
     if (health !== undefined) {
       setHealth(health - 7);
-      riveViewRef?.play();
+      riveViewRef!.play();
     }
   };
 
   const handleMaxHealth = () => {
     setHealth(100);
-    riveViewRef?.play();
+    riveViewRef!.play();
   };
 
   const handleGameOver = () => {
     setHealth(0);
     gameOverTrigger();
-    riveViewRef?.play();
+    riveViewRef!.play();
   };
 
   return (
