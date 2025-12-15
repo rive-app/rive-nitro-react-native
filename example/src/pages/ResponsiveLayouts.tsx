@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import { View, Text, StyleSheet, Button } from 'react-native';
+import { View, Text, StyleSheet, Button, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Fit, RiveView, useRiveFile } from '@rive-app/react-native';
 import { type Metadata } from '../helpers/metadata';
 
 export default function ResponsiveLayoutsExample() {
-  const { riveFile } = useRiveFile(
+  const { riveFile, isLoading, error } = useRiveFile(
     require('../../assets/rive/layouts_demo.riv')
   );
   const [scaleFactor, setScaleFactor] = useState(4.0);
@@ -16,7 +16,11 @@ export default function ResponsiveLayoutsExample() {
 
   return (
     <SafeAreaView style={styles.container}>
-      {riveFile && (
+      {isLoading ? (
+        <ActivityIndicator size="large" style={styles.rive} />
+      ) : error ? (
+        <Text style={styles.errorText}>{error}</Text>
+      ) : riveFile ? (
         <RiveView
           file={riveFile}
           fit={Fit.Layout}
@@ -24,7 +28,7 @@ export default function ResponsiveLayoutsExample() {
           style={styles.rive}
           autoPlay={true}
         />
-      )}
+      ) : null}
       <View style={styles.controls}>
         <Text style={styles.label}>Layout Scale Factor</Text>
         <View style={styles.scaleControls}>
@@ -70,5 +74,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '500',
     marginTop: 16,
+  },
+  errorText: {
+    color: 'red',
+    textAlign: 'center',
+    padding: 20,
+    flex: 1,
   },
 });
