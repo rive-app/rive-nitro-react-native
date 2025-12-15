@@ -1,55 +1,74 @@
-import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
+import { useState } from 'react';
+import { View, Text, StyleSheet, Button } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Fit, RiveView, useRiveFile } from '@rive-app/react-native';
 import { type Metadata } from '../helpers/metadata';
 
-/**
- * Demonstrates responsive layouts using Fit.Layout and layoutScaleFactor
- *
- * See https://rive.app/docs/runtimes/layout
- */
 export default function ResponsiveLayoutsExample() {
-  const { riveFile, isLoading, error } = useRiveFile(
+  const { riveFile } = useRiveFile(
     require('../../assets/rive/layouts_demo.riv')
   );
+  const [scaleFactor, setScaleFactor] = useState(4.0);
+
+  const increaseScale = () => setScaleFactor((prev) => prev + 0.5);
+  const decreaseScale = () =>
+    setScaleFactor((prev) => Math.max(0.5, prev - 0.5));
 
   return (
-    <View style={styles.container}>
-      {isLoading ? (
-        <ActivityIndicator size="large" color="#0000ff" />
-      ) : error ? (
-        <Text style={styles.errorText}>{error}</Text>
-      ) : riveFile ? (
+    <SafeAreaView style={styles.container}>
+      {riveFile && (
         <RiveView
           file={riveFile}
           fit={Fit.Layout}
-          layoutScaleFactor={1} // adjust the layout scale factor to control the layout scale
+          layoutScaleFactor={scaleFactor}
           style={styles.rive}
+          autoPlay={true}
         />
-      ) : null}
-    </View>
+      )}
+      <View style={styles.controls}>
+        <Text style={styles.label}>Layout Scale Factor</Text>
+        <View style={styles.scaleControls}>
+          <Button title="-" onPress={decreaseScale} />
+          <View style={styles.scaleText}>
+            <Text>{scaleFactor.toFixed(1)}x</Text>
+          </View>
+          <Button title="+" onPress={increaseScale} />
+        </View>
+      </View>
+    </SafeAreaView>
   );
 }
 
-const styles = StyleSheet.create({
-  // Adjust the container size and the layout will adjust based on the .riv file layout rules
-  container: {
-    width: '100%',
-    height: '100%',
-  },
-  rive: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: '100%',
-    height: '100%',
-  },
-  errorText: {
-    color: 'red',
-    textAlign: 'center',
-    padding: 20,
-  },
-});
-
 ResponsiveLayoutsExample.metadata = {
   name: 'Responsive Layouts',
-  description: 'Sample .riv file with responsive layouts',
+  description: 'Interactive layout scale factor controls',
 } satisfies Metadata;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  rive: {
+    width: '100%',
+    flex: 1,
+  },
+  controls: {
+    padding: 16,
+    alignItems: 'center',
+  },
+  scaleControls: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 16,
+    gap: 16,
+  },
+  scaleText: {
+    minWidth: 50,
+    alignItems: 'center',
+  },
+  label: {
+    fontSize: 16,
+    fontWeight: '500',
+    marginTop: 16,
+  },
+});
