@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import {
   View,
   Text,
@@ -6,7 +6,12 @@ import {
   Button,
   ActivityIndicator,
 } from 'react-native';
-import { Fit, RiveView, useRiveFile } from '@rive-app/react-native';
+import {
+  Fit,
+  RiveView,
+  useRiveFile,
+  type RiveViewRef,
+} from '@rive-app/react-native';
 import { type Metadata } from '../helpers/metadata';
 
 export default function ResponsiveLayoutsExample() {
@@ -14,10 +19,16 @@ export default function ResponsiveLayoutsExample() {
     require('../../assets/rive/layouts_demo.riv')
   );
   const [scaleFactor, setScaleFactor] = useState(4.0);
+  const riveRef = useRef<RiveViewRef>(null);
 
-  const increaseScale = () => setScaleFactor((prev) => prev + 0.5);
-  const decreaseScale = () =>
+  const increaseScale = () => {
+    setScaleFactor((prev) => prev + 0.5);
+    riveRef.current?.playIfNeeded();
+  };
+  const decreaseScale = () => {
     setScaleFactor((prev) => Math.max(0.5, prev - 0.5));
+    riveRef.current?.playIfNeeded();
+  };
 
   return (
     <View style={styles.container}>
@@ -27,6 +38,7 @@ export default function ResponsiveLayoutsExample() {
         <Text style={styles.errorText}>{error}</Text>
       ) : riveFile ? (
         <RiveView
+          hybridRef={{ f: (ref) => (riveRef.current = ref) }}
           file={riveFile}
           fit={Fit.Layout}
           layoutScaleFactor={scaleFactor}
