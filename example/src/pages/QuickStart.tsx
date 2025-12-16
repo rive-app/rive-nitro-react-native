@@ -7,7 +7,7 @@
 */
 
 import { useEffect, useMemo } from 'react';
-import { Button, ScrollView, StyleSheet } from 'react-native';
+import { Button, View, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   RiveView,
@@ -65,7 +65,7 @@ export default function QuickStart() {
 
   return (
     <SafeAreaView style={styles.safeAreaViewContainer}>
-      <ScrollView contentContainerStyle={styles.container}>
+      <View style={styles.container}>
         {riveFile && (
           <RiveView
             hybridRef={setHybridRef}
@@ -76,7 +76,7 @@ export default function QuickStart() {
             dataBind={DataBindMode.Auto}
           />
         )}
-      </ScrollView>
+      </View>
       <Button onPress={handleTakeDamage} title="Take Damage" />
       <Button onPress={handleMaxHealth} title="Max Health" />
       <Button onPress={handleGameOver} title="Game Over" />
@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   container: {
-    flexGrow: 1,
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },
