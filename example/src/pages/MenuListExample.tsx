@@ -7,7 +7,7 @@ import {
   TextInput,
   ScrollView,
 } from 'react-native';
-import { useMemo, useRef } from 'react';
+import { useRef, useMemo } from 'react';
 import {
   Fit,
   RiveView,
