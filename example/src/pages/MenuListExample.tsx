@@ -16,8 +16,6 @@ import {
   useRiveFile,
   useRiveList,
   useViewModelInstance,
-  useRive,
-  DataBindMode,
 } from '@rive-app/react-native';
 import { type Metadata } from '../helpers/metadata';
 
@@ -40,8 +38,7 @@ export default function MenuListExample() {
 }
 
 function MenuList({ file }: { file: RiveFile }) {
-  const { riveViewRef, setHybridRef } = useRive();
-  const instance = useViewModelInstance(riveViewRef);
+  const instance = useViewModelInstance(file);
 
   const addLabelRef = useRef<TextInput>(null);
   const lastAdded = useRef<ViewModelInstance | null>(null);
@@ -123,10 +120,9 @@ function MenuList({ file }: { file: RiveFile }) {
   return (
     <View style={styles.container}>
       <RiveView
-        hybridRef={setHybridRef}
         style={styles.rive}
         autoPlay={true}
-        dataBind={DataBindMode.Auto}
+        dataBind={instance ?? undefined}
         fit={Fit.FitWidth}
         file={file}
       />
