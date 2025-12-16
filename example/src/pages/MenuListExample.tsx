@@ -15,6 +15,7 @@ import {
   type RiveFile,
   useRiveFile,
   useRiveList,
+  useViewModelInstance,
 } from '@rive-app/react-native';
 import { type Metadata } from '../helpers/metadata';
 
@@ -38,17 +39,12 @@ export default function MenuListExample() {
 
 function WithViewModelSetup({ file }: { file: RiveFile }) {
   const viewModel = useMemo(() => file.viewModelByName('main'), [file]);
-  const instance = useMemo(
-    () => viewModel?.createDefaultInstance(),
-    [viewModel]
-  );
+  const instance = useViewModelInstance(viewModel);
 
-  if (!instance || !viewModel) {
+  if (!instance) {
     return (
       <Text style={styles.errorText}>
-        {!viewModel
-          ? "No view model 'main' found"
-          : 'Failed to create view model instance'}
+        Failed to create view model instance for 'main'
       </Text>
     );
   }
