@@ -155,6 +155,7 @@ export function useViewModelInstance(
         prevInstanceRef.current.instance
       ) {
         callDispose(prevInstanceRef.current.instance);
+        prevInstanceRef.current = null;
       }
     };
   }, []);
