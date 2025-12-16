@@ -5,7 +5,7 @@ import {
   ActivityIndicator,
   TouchableOpacity,
 } from 'react-native';
-import { useMemo, useState, useCallback, useRef } from 'react';
+import { useMemo, useState, useRef } from 'react';
 import {
   Fit,
   RiveView,
@@ -13,6 +13,7 @@ import {
   type RiveFile,
   type RiveViewRef,
   useRiveFile,
+  useRiveList,
 } from '@rive-app/react-native';
 import { type Metadata } from '../helpers/metadata';
 
@@ -65,18 +66,10 @@ function ListExample({
 }) {
   const riveRef = useRef<RiveViewRef>(null);
   const [isPlaying, setIsPlaying] = useState(true);
-  const listProperty = useMemo(
-    () => instance.listProperty('ListItemVM'),
-    [instance]
-  );
-  const [listLength, setListLength] = useState(listProperty?.length ?? 0);
+  const { length, addInstance, removeInstanceAt, swap, getInstanceAt, error } =
+    useRiveList('ListItemVM', instance);
 
-  const refreshLength = useCallback(() => {
-    setListLength(listProperty?.length ?? 0);
-  }, [listProperty]);
-
-  const handleAddItem = useCallback(() => {
-    if (!listProperty) return;
+  const handleAddItem = () => {
     const buttonVM = file.viewModelByName('button VM');
     if (!buttonVM) {
       console.error('button VM view model not found');
@@ -91,54 +84,47 @@ function ListExample({
     if (stringProp) {
       stringProp.value = 'new btn';
     }
-    listProperty.addInstance(newInstance);
+    addInstance(newInstance);
     riveRef.current?.playIfNeeded();
-    refreshLength();
-  }, [listProperty, file, refreshLength]);
+  };
 
-  const handleRemoveFirst = useCallback(() => {
-    if (!listProperty || listProperty.length === 0) return;
-    listProperty.removeInstanceAt(0);
+  const handleRemoveFirst = () => {
+    if (length === 0) return;
+    removeInstanceAt(0);
     riveRef.current?.playIfNeeded();
-    refreshLength();
-  }, [listProperty, refreshLength]);
+  };
 
-  const handleRemoveLast = useCallback(() => {
-    if (!listProperty || listProperty.length === 0) return;
-    listProperty.removeInstanceAt(listProperty.length - 1);
+  const handleRemoveLast = () => {
+    if (length === 0) return;
+    removeInstanceAt(length - 1);
     riveRef.current?.playIfNeeded();
-    refreshLength();
-  }, [listProperty, refreshLength]);
+  };
 
-  const handleSwapFirstTwo = useCallback(() => {
-    if (!listProperty || listProperty.length < 2) return;
-    listProperty.swap(0, 1);
+  const handleSwapFirstTwo = () => {
+    if (length < 2) return;
+    swap(0, 1);
     riveRef.current?.playIfNeeded();
-    refreshLength();
-  }, [listProperty, refreshLength]);
+  };
 
-  const logListItems = useCallback(() => {
-    if (!listProperty) return;
-    console.log(`List has ${listProperty.length} items:`);
-    for (let i = 0; i < listProperty.length; i++) {
-      const item = listProperty.getInstanceAt(i);
+  const logListItems = () => {
+    console.log(`List has ${length} items:`);
+    for (let i = 0; i < length; i++) {
+      const item = getInstanceAt(i);
       console.log(`  [${i}]: ${item?.instanceName ?? 'undefined'}`);
     }
-  }, [listProperty]);
+  };
 
-  const handlePlayPause = useCallback(() => {
+  const handlePlayPause = () => {
     if (isPlaying) {
       riveRef.current?.pause();
     } else {
       riveRef.current?.play();
     }
     setIsPlaying(!isPlaying);
-  }, [isPlaying]);
+  };
 
-  if (!listProperty) {
-    return (
-      <Text style={styles.errorText}>ListItemVM list property not found</Text>
-    );
+  if (error) {
+    return <Text style={styles.errorText}>{error.message}</Text>;
   }
 
   return (
@@ -156,7 +142,7 @@ function ListExample({
         file={file}
       />
       <View style={styles.controls}>
-        <Text style={styles.infoText}>List length: {listLength}</Text>
+        <Text style={styles.infoText}>List length: {length}</Text>
         <View style={styles.buttonRow}>
           <TouchableOpacity style={styles.button} onPress={handleAddItem}>
             <Text style={styles.buttonText}>Add Item</Text>
