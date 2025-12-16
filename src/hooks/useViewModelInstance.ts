@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import type { ViewModel, ViewModelInstance } from '../specs/ViewModel.nitro';
 import type { RiveFile } from '../specs/RiveFile.nitro';
 import type { RiveViewRef } from '../index';
+import { callDispose } from '../core/callDispose';
 
 export interface UseViewModelInstanceParams {
   /**
@@ -92,7 +93,7 @@ export function useViewModelInstance(
       setInstance(vmi ?? null);
       return () => {
         if (vmi) {
-          vmi.dispose();
+          callDispose(vmi);
         }
       };
     }
@@ -110,7 +111,7 @@ export function useViewModelInstance(
 
     return () => {
       if (vmi) {
-        vmi.dispose();
+        callDispose(vmi);
       }
     };
   }, [source, name, useNew]);
