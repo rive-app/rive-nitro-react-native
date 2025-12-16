@@ -40,6 +40,20 @@ export default function MenuListExample() {
 function MenuList({ file }: { file: RiveFile }) {
   const instance = useViewModelInstance(file);
 
+  if (!instance) {
+    return <ActivityIndicator size="large" color="#007AFF" />;
+  }
+
+  return <MenuListContent file={file} instance={instance} />;
+}
+
+function MenuListContent({
+  file,
+  instance,
+}: {
+  file: RiveFile;
+  instance: ViewModelInstance;
+}) {
   const addLabelRef = useRef<TextInput>(null);
   const lastAdded = useRef<ViewModelInstance | null>(null);
   const indexToDeleteRef = useRef<TextInput>(null);
@@ -115,22 +129,18 @@ function MenuList({ file }: { file: RiveFile }) {
     menuItemLabel.value = label;
   };
 
-  const controlsDisabled = !instance;
-
   return (
     <View style={styles.container}>
       <RiveView
         style={styles.rive}
         autoPlay={true}
-        dataBind={instance ?? undefined}
+        dataBind={instance}
         fit={Fit.FitWidth}
         file={file}
       />
 
       <ScrollView style={styles.controls}>
-        <Text style={styles.listLength}>
-          {instance ? `Menu Items: ${length}` : 'Loading...'}
-        </Text>
+        <Text style={styles.listLength}>Menu Items: {length}</Text>
         {error && <Text style={styles.errorText}>{error.message}</Text>}
 
         <View style={styles.controlGroup}>
@@ -142,17 +152,12 @@ function MenuList({ file }: { file: RiveFile }) {
             onChangeText={(text) => (addLabelValue.current = text)}
           />
           <TouchableOpacity
-            style={[styles.button, controlsDisabled && styles.buttonDisabled]}
+            style={styles.button}
             onPress={() => addNewMenuItem(addLabelValue.current)}
-            disabled={controlsDisabled}
           >
             <Text style={styles.buttonText}>Add Menu Item</Text>
           </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.button, controlsDisabled && styles.buttonDisabled]}
-            onPress={removeLastAdded}
-            disabled={controlsDisabled}
-          >
+          <TouchableOpacity style={styles.button} onPress={removeLastAdded}>
             <Text style={styles.buttonText}>Delete Last Added</Text>
           </TouchableOpacity>
         </View>
@@ -166,11 +171,10 @@ function MenuList({ file }: { file: RiveFile }) {
             onChangeText={(text) => (indexToDeleteValue.current = text)}
           />
           <TouchableOpacity
-            style={[styles.button, controlsDisabled && styles.buttonDisabled]}
+            style={styles.button}
             onPress={() =>
               removeByIndex(parseInt(indexToDeleteValue.current, 10))
             }
-            disabled={controlsDisabled}
           >
             <Text style={styles.buttonText}>Remove by Index</Text>
           </TouchableOpacity>
@@ -192,14 +196,13 @@ function MenuList({ file }: { file: RiveFile }) {
             onChangeText={(text) => (index2Value.current = text)}
           />
           <TouchableOpacity
-            style={[styles.button, controlsDisabled && styles.buttonDisabled]}
+            style={styles.button}
             onPress={() =>
               swapIndexes(
                 parseInt(index1Value.current, 10),
                 parseInt(index2Value.current, 10)
               )
             }
-            disabled={controlsDisabled}
           >
             <Text style={styles.buttonText}>Swap Indexes</Text>
           </TouchableOpacity>
@@ -221,14 +224,13 @@ function MenuList({ file }: { file: RiveFile }) {
             onChangeText={(text) => (updateLabelValue.current = text)}
           />
           <TouchableOpacity
-            style={[styles.button, controlsDisabled && styles.buttonDisabled]}
+            style={styles.button}
             onPress={() =>
               updateLabelAtIndex(
                 parseInt(updateIndexValue.current, 10),
                 updateLabelValue.current
               )
             }
-            disabled={controlsDisabled}
           >
             <Text style={styles.buttonText}>Update Label</Text>
           </TouchableOpacity>
@@ -297,9 +299,6 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 14,
     borderRadius: 6,
-  },
-  buttonDisabled: {
-    backgroundColor: '#555',
   },
   buttonText: {
     color: '#fff',
