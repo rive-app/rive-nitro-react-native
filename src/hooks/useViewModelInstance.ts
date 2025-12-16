@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useMemo, useEffect, useRef } from 'react';
 import type { ViewModel, ViewModelInstance } from '../specs/ViewModel.nitro';
 import type { RiveFile } from '../specs/RiveFile.nitro';
 import type { RiveViewRef } from '../index';
@@ -13,22 +13,60 @@ export interface UseViewModelInstanceParams {
    * Create a new (blank) instance from the ViewModel.
    */
   useNew?: boolean;
+  /**
+   * If true, throws an error when the instance cannot be obtained.
+   * This is useful with Error Boundaries and ensures TypeScript knows
+   * the return value is non-null.
+   */
+  required?: boolean;
 }
 
-type ViewModelSource = ViewModel | RiveFile | RiveViewRef | null | undefined;
+type ViewModelSource = ViewModel | RiveFile | RiveViewRef;
 
-function isRiveViewRef(source: ViewModelSource): source is RiveViewRef {
+function isRiveViewRef(source: ViewModelSource | null): source is RiveViewRef {
   return (
     source !== null && source !== undefined && 'getViewModelInstance' in source
   );
 }
 
-function isRiveFile(source: ViewModelSource): source is RiveFile {
+function isRiveFile(source: ViewModelSource | null): source is RiveFile {
   return (
     source !== null &&
     source !== undefined &&
     'defaultArtboardViewModel' in source
   );
+}
+
+function createInstance(
+  source: ViewModelSource | null,
+  name: string | undefined,
+  useNew: boolean
+): { instance: ViewModelInstance | null; needsDispose: boolean } {
+  if (!source) {
+    return { instance: null, needsDispose: false };
+  }
+
+  if (isRiveViewRef(source)) {
+    const vmi = source.getViewModelInstance();
+    return { instance: vmi ?? null, needsDispose: false };
+  }
+
+  if (isRiveFile(source)) {
+    const viewModel = source.defaultArtboardViewModel();
+    const vmi = viewModel?.createDefaultInstance();
+    return { instance: vmi ?? null, needsDispose: true };
+  }
+
+  // ViewModel source
+  let vmi: ViewModelInstance | undefined;
+  if (name) {
+    vmi = source.createInstanceByName(name);
+  } else if (useNew) {
+    vmi = source.createInstance();
+  } else {
+    vmi = source.createDefaultInstance();
+  }
+  return { instance: vmi ?? null, needsDispose: true };
 }
 
 /**
@@ -65,56 +103,68 @@ function isRiveFile(source: ViewModelSource): source is RiveFile {
  * const viewModel = file.viewModelByName('TodoItem');
  * const newInstance = useViewModelInstance(viewModel, { useNew: true });
  * ```
+ *
+ * @example
+ * ```tsx
+ * // With required: true (throws if null, use with Error Boundary)
+ * const instance = useViewModelInstance(riveFile, { required: true });
+ * // instance is guaranteed to be non-null here
+ * ```
  */
 export function useViewModelInstance(
   source: ViewModelSource,
+  params: UseViewModelInstanceParams & { required: true }
+): ViewModelInstance;
+export function useViewModelInstance(
+  source: ViewModelSource | null,
+  params?: UseViewModelInstanceParams
+): ViewModelInstance | null;
+export function useViewModelInstance(
+  source: ViewModelSource | null,
   params?: UseViewModelInstanceParams
 ): ViewModelInstance | null {
-  const [instance, setInstance] = useState<ViewModelInstance | null>(null);
-
   const name = params?.name;
   const useNew = params?.useNew ?? false;
+  const required = params?.required ?? false;
 
-  useEffect(() => {
-    if (!source) {
-      setInstance(null);
-      return;
-    }
+  const prevInstanceRef = useRef<{
+    instance: ViewModelInstance | null;
+    needsDispose: boolean;
+  } | null>(null);
 
-    if (isRiveViewRef(source)) {
-      const vmi = source.getViewModelInstance();
-      setInstance(vmi ?? null);
-      return;
-    }
-
-    if (isRiveFile(source)) {
-      const viewModel = source.defaultArtboardViewModel();
-      const vmi = viewModel?.createDefaultInstance();
-      setInstance(vmi ?? null);
-      return () => {
-        if (vmi) {
-          callDispose(vmi);
-        }
-      };
-    }
-
-    // ViewModel source
-    let vmi: ViewModelInstance | undefined;
-    if (name) {
-      vmi = source.createInstanceByName(name);
-    } else if (useNew) {
-      vmi = source.createInstance();
-    } else {
-      vmi = source.createDefaultInstance();
-    }
-    setInstance(vmi ?? null);
-
-    return () => {
-      if (vmi) {
-        callDispose(vmi);
-      }
-    };
+  const result = useMemo(() => {
+    return createInstance(source, name, useNew);
   }, [source, name, useNew]);
 
-  return instance;
+  // Dispose previous instance if it changed and needed disposal
+  if (
+    prevInstanceRef.current &&
+    prevInstanceRef.current.instance !== result.instance &&
+    prevInstanceRef.current.needsDispose &&
+    prevInstanceRef.current.instance
+  ) {
+    callDispose(prevInstanceRef.current.instance);
+  }
+  prevInstanceRef.current = result;
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (
+        prevInstanceRef.current?.needsDispose &&
+        prevInstanceRef.current.instance
+      ) {
+        callDispose(prevInstanceRef.current.instance);
+      }
+    };
+  }, []);
+
+  if (required && result.instance === null) {
+    throw new Error(
+      'useViewModelInstance: Failed to get ViewModelInstance. ' +
+        'Ensure the source has a valid ViewModel and instance available.'
+    );
+  }
+
+  return result.instance;
 }
