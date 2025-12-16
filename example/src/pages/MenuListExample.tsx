@@ -16,6 +16,8 @@ import {
   useRiveFile,
   useRiveList,
   useViewModelInstance,
+  useRive,
+  DataBindMode,
 } from '@rive-app/react-native';
 import { type Metadata } from '../helpers/metadata';
 
@@ -29,7 +31,7 @@ export default function MenuListExample() {
       {isLoading ? (
         <ActivityIndicator size="large" color="#007AFF" />
       ) : riveFile ? (
-        <WithViewModelSetup file={riveFile} />
+        <MenuList file={riveFile} />
       ) : (
         <Text style={styles.errorText}>{error || 'Unexpected error'}</Text>
       )}
@@ -37,28 +39,10 @@ export default function MenuListExample() {
   );
 }
 
-function WithViewModelSetup({ file }: { file: RiveFile }) {
-  const viewModel = useMemo(() => file.viewModelByName('main'), [file]);
-  const instance = useViewModelInstance(viewModel);
+function MenuList({ file }: { file: RiveFile }) {
+  const { riveViewRef, setHybridRef } = useRive();
+  const instance = useViewModelInstance(riveViewRef);
 
-  if (!instance) {
-    return (
-      <Text style={styles.errorText}>
-        Failed to create view model instance for 'main'
-      </Text>
-    );
-  }
-
-  return <MenuList instance={instance} file={file} />;
-}
-
-function MenuList({
-  instance,
-  file,
-}: {
-  instance: ViewModelInstance;
-  file: RiveFile;
-}) {
   const addLabelRef = useRef<TextInput>(null);
   const lastAdded = useRef<ViewModelInstance | null>(null);
   const indexToDeleteRef = useRef<TextInput>(null);
@@ -134,22 +118,24 @@ function MenuList({
     menuItemLabel.value = label;
   };
 
-  if (error) {
-    return <Text style={styles.errorText}>{error.message}</Text>;
-  }
+  const controlsDisabled = !instance;
 
   return (
     <View style={styles.container}>
       <RiveView
+        hybridRef={setHybridRef}
         style={styles.rive}
         autoPlay={true}
-        dataBind={instance}
+        dataBind={DataBindMode.Auto}
         fit={Fit.FitWidth}
         file={file}
       />
 
       <ScrollView style={styles.controls}>
-        <Text style={styles.listLength}>Menu Items: {length}</Text>
+        <Text style={styles.listLength}>
+          {instance ? `Menu Items: ${length}` : 'Loading...'}
+        </Text>
+        {error && <Text style={styles.errorText}>{error.message}</Text>}
 
         <View style={styles.controlGroup}>
           <TextInput
@@ -160,12 +146,17 @@ function MenuList({
             onChangeText={(text) => (addLabelValue.current = text)}
           />
           <TouchableOpacity
-            style={styles.button}
+            style={[styles.button, controlsDisabled && styles.buttonDisabled]}
             onPress={() => addNewMenuItem(addLabelValue.current)}
+            disabled={controlsDisabled}
           >
             <Text style={styles.buttonText}>Add Menu Item</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.button} onPress={removeLastAdded}>
+          <TouchableOpacity
+            style={[styles.button, controlsDisabled && styles.buttonDisabled]}
+            onPress={removeLastAdded}
+            disabled={controlsDisabled}
+          >
             <Text style={styles.buttonText}>Delete Last Added</Text>
           </TouchableOpacity>
         </View>
@@ -179,10 +170,11 @@ function MenuList({
             onChangeText={(text) => (indexToDeleteValue.current = text)}
           />
           <TouchableOpacity
-            style={styles.button}
+            style={[styles.button, controlsDisabled && styles.buttonDisabled]}
             onPress={() =>
               removeByIndex(parseInt(indexToDeleteValue.current, 10))
             }
+            disabled={controlsDisabled}
           >
             <Text style={styles.buttonText}>Remove by Index</Text>
           </TouchableOpacity>
@@ -204,13 +196,14 @@ function MenuList({
             onChangeText={(text) => (index2Value.current = text)}
           />
           <TouchableOpacity
-            style={styles.button}
+            style={[styles.button, controlsDisabled && styles.buttonDisabled]}
             onPress={() =>
               swapIndexes(
                 parseInt(index1Value.current, 10),
                 parseInt(index2Value.current, 10)
               )
             }
+            disabled={controlsDisabled}
           >
             <Text style={styles.buttonText}>Swap Indexes</Text>
           </TouchableOpacity>
@@ -232,13 +225,14 @@ function MenuList({
             onChangeText={(text) => (updateLabelValue.current = text)}
           />
           <TouchableOpacity
-            style={styles.button}
+            style={[styles.button, controlsDisabled && styles.buttonDisabled]}
             onPress={() =>
               updateLabelAtIndex(
                 parseInt(updateIndexValue.current, 10),
                 updateLabelValue.current
               )
             }
+            disabled={controlsDisabled}
           >
             <Text style={styles.buttonText}>Update Label</Text>
           </TouchableOpacity>
@@ -307,6 +301,9 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 14,
     borderRadius: 6,
+  },
+  buttonDisabled: {
+    backgroundColor: '#555',
   },
   buttonText: {
     color: '#fff',
