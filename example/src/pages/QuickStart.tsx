@@ -71,7 +71,7 @@ export default function QuickStart() {
             hybridRef={setHybridRef}
             file={riveFile}
             fit={Fit.Layout}
-            style={styles.animation}
+            style={styles.rive}
             autoPlay={true}
             dataBind={DataBindMode.Auto}
           />
@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  animation: {
+  rive: {
     width: '100%',
     height: 400,
   },
