@@ -66,18 +66,14 @@ export function useRiveProperty<P extends ViewModelProperty, T>(
 
     // If an override callback is provided, use it.
     // Otherwise, use the default callback.
-    if (options.onPropertyEventOverride) {
-      property.addListener(options.onPropertyEventOverride);
-    } else {
-      property.addListener((newValue) => {
-        setValue(newValue);
-      });
-    }
+    const removeListener = options.onPropertyEventOverride
+      ? property.addListener(options.onPropertyEventOverride)
+      : property.addListener((newValue) => {
+          setValue(newValue);
+        });
 
-    // Cleanup: Remove listeners and dispose of the property
-    // This ensures proper cleanup of event listeners and resources
     return () => {
-      property.removeListeners();
+      removeListener();
       property.dispose();
     };
   }, [options, property]);
