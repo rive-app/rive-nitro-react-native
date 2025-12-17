@@ -19,6 +19,12 @@ export interface UseViewModelInstanceParams {
    * the return value is non-null.
    */
   required?: boolean;
+  /**
+   * Called synchronously when a new instance is created, before the hook returns.
+   * Use this to set initial values that need to be available immediately.
+   * Note: This callback is excluded from deps - changing it won't recreate the instance.
+   */
+  onInit?: (instance: ViewModelInstance) => void;
 }
 
 type ViewModelSource = ViewModel | RiveFile | RiveViewRef;
@@ -110,6 +116,18 @@ function createInstance(
  * const instance = useViewModelInstance(riveFile, { required: true });
  * // instance is guaranteed to be non-null here
  * ```
+ *
+ * @example
+ * ```tsx
+ * // With onInit to set initial values synchronously
+ * const instance = useViewModelInstance(riveFile, {
+ *   onInit: (vmi) => {
+ *     vmi.numberProperty('count').set(initialCount);
+ *     vmi.stringProperty('name').set(userName);
+ *   }
+ * });
+ * // Values are already set here
+ * ```
  */
 export function useViewModelInstance(
   source: ViewModelSource,
@@ -126,6 +144,7 @@ export function useViewModelInstance(
   const name = params?.name;
   const useNew = params?.useNew ?? false;
   const required = params?.required ?? false;
+  const onInit = params?.onInit;
 
   const prevInstanceRef = useRef<{
     instance: ViewModelInstance | null;
@@ -133,7 +152,12 @@ export function useViewModelInstance(
   } | null>(null);
 
   const result = useMemo(() => {
-    return createInstance(source, name, useNew);
+    const created = createInstance(source, name, useNew);
+    if (created.instance && onInit) {
+      onInit(created.instance);
+    }
+    return created;
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- onInit excluded intentionally
   }, [source, name, useNew]);
 
   // Dispose previous instance if it changed and needed disposal
