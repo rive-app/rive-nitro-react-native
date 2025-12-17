@@ -8234,6 +8234,7 @@ __metadata:
     expo-image: ~3.0.10
     expo-linking: ~8.0.8
     expo-router: ~6.0.13
+    expo-screen-orientation: ~9.0.8
     expo-splash-screen: ~31.0.10
     expo-status-bar: ~3.0.8
     expo-symbols: ~1.0.7
@@ -8409,6 +8410,16 @@ __metadata:
     react-server-dom-webpack:
       optional: true
   checksum: 18e719936751f94f98d607966488ac7abd4a4e6eaa2ce6ab14d27c6e16b227c7a70aeee78d4c9a4758606de590d76ef5559b93521bc0b37469250c2ea3a20096
+  languageName: node
+  linkType: hard
+
+"expo-screen-orientation@npm:~9.0.8":
+  version: 9.0.8
+  resolution: "expo-screen-orientation@npm:9.0.8"
+  peerDependencies:
+    expo: "*"
+    react-native: "*"
+  checksum: 9971094875bd8756bfa16a88f6a85ef7661e284ffa85a8a415fcb359f3571d2c69ea341edbf6d844dbb007e035bed13c3be0a0c20d569f10048ff5e46683ebc6
   languageName: node
   linkType: hard
 

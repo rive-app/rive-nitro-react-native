@@ -3,7 +3,7 @@
     "name": "expo-example",
     "slug": "expo-example",
     "version": "1.0.0",
-    "orientation": "portrait",
+    "orientation": "default",
     "icon": "./assets/images/icon.png",
     "scheme": "expoexample",
     "userInterfaceStyle": "automatic",
@@ -39,6 +39,12 @@
           "dark": {
             "backgroundColor": "#000000"
           }
+        }
+      ],
+      [
+        "expo-screen-orientation",
+        {
+          "initialOrientation": "DEFAULT"
         }
       ]
     ],
