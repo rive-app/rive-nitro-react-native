@@ -11,66 +11,45 @@ class HybridViewModelInstance(val viewModelInstance: ViewModelInstance) : Hybrid
   override val instanceName: String
     get() = viewModelInstance.name
 
-  override fun numberProperty(path: String): HybridViewModelNumberPropertySpec? {
-    try {
-        val numberProper = viewModelInstance.getNumberProperty(path)
-        return HybridViewModelNumberProperty(numberProper)
+  // Returns null if ViewModelException is thrown for iOS parity
+  // (iOS SDK returns nil when property not found, Android SDK throws)
+  private inline fun <T> getPropertyOrNull(block: () -> T): T? {
+    return try {
+      block()
     } catch (e: ViewModelException) {
-      return null
+      null
     }
   }
 
-  override fun stringProperty(path: String): HybridViewModelStringPropertySpec? {
-    try {
-      val stringProperty = viewModelInstance.getStringProperty(path)
-      return HybridViewModelStringProperty(stringProperty)
-    } catch (e: ViewModelException) {
-      return null
-    }
+  override fun numberProperty(path: String) = getPropertyOrNull {
+    HybridViewModelNumberProperty(viewModelInstance.getNumberProperty(path))
   }
 
-  override fun booleanProperty(path: String): HybridViewModelBooleanPropertySpec? {
-    try {
-      val booleanProperty = viewModelInstance.getBooleanProperty(path)
-      return HybridViewModelBooleanProperty(booleanProperty)
-    } catch (e: ViewModelException) {
-      return null
-    }
+  override fun stringProperty(path: String) = getPropertyOrNull {
+    HybridViewModelStringProperty(viewModelInstance.getStringProperty(path))
   }
 
-  override fun colorProperty(path: String): HybridViewModelColorPropertySpec? {
-    try {
-      val colorProperty = viewModelInstance.getColorProperty(path)
-      return HybridViewModelColorProperty(colorProperty)
-    } catch (e: ViewModelException) {
-      return null
-    }
+  override fun booleanProperty(path: String) = getPropertyOrNull {
+    HybridViewModelBooleanProperty(viewModelInstance.getBooleanProperty(path))
   }
 
-  override fun enumProperty(path: String): HybridViewModelEnumPropertySpec? {
-    try {
-      val enumProperty = viewModelInstance.getEnumProperty(path)
-      return HybridViewModelEnumProperty(enumProperty)
-    } catch (e: ViewModelException) {
-      return null
-    }
+  override fun colorProperty(path: String) = getPropertyOrNull {
+    HybridViewModelColorProperty(viewModelInstance.getColorProperty(path))
   }
 
-  override fun triggerProperty(path: String): HybridViewModelTriggerPropertySpec? {
-    try {
-      val triggerProperty = viewModelInstance.getTriggerProperty(path)
-      return HybridViewModelTriggerProperty(triggerProperty)
-    } catch (e: ViewModelException) {
-      return null
-    }
+  override fun enumProperty(path: String) = getPropertyOrNull {
+    HybridViewModelEnumProperty(viewModelInstance.getEnumProperty(path))
   }
 
-  override fun imageProperty(path: String): HybridViewModelImagePropertySpec? {
-    try {
-      val imageProperty = viewModelInstance.getImageProperty(path)
-      return HybridViewModelImageProperty(imageProperty)
-    } catch (e: ViewModelException) {
-      return null
-    }
+  override fun triggerProperty(path: String) = getPropertyOrNull {
+    HybridViewModelTriggerProperty(viewModelInstance.getTriggerProperty(path))
+  }
+
+  override fun imageProperty(path: String) = getPropertyOrNull {
+    HybridViewModelImageProperty(viewModelInstance.getImageProperty(path))
+  }
+
+  override fun listProperty(path: String) = getPropertyOrNull {
+    HybridViewModelListProperty(viewModelInstance.getListProperty(path))
   }
 }

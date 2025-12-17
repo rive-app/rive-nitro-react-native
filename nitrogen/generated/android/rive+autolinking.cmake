@@ -50,6 +50,7 @@ target_sources(
   ../nitrogen/generated/shared/c++/HybridViewModelEnumPropertySpec.cpp
   ../nitrogen/generated/shared/c++/HybridViewModelTriggerPropertySpec.cpp
   ../nitrogen/generated/shared/c++/HybridViewModelImagePropertySpec.cpp
+  ../nitrogen/generated/shared/c++/HybridViewModelListPropertySpec.cpp
   # Android-specific Nitrogen C++ sources
   ../nitrogen/generated/android/c++/JHybridRiveSpec.cpp
   ../nitrogen/generated/android/c++/JHybridRiveFileSpec.cpp
@@ -70,6 +71,7 @@ target_sources(
   ../nitrogen/generated/android/c++/JHybridViewModelEnumPropertySpec.cpp
   ../nitrogen/generated/android/c++/JHybridViewModelTriggerPropertySpec.cpp
   ../nitrogen/generated/android/c++/JHybridViewModelImagePropertySpec.cpp
+  ../nitrogen/generated/android/c++/JHybridViewModelListPropertySpec.cpp
 )
 
 # From node_modules/react-native/ReactAndroid/cmake-utils/folly-flags.cmake
