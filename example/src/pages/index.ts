@@ -1,3 +1,4 @@
+export { default as QuickStart } from './QuickStart';
 export { default as RiveFileLoadingExample } from './RiveFileLoadingExample';
 export { default as DataBindingExample } from './RiveDataBindingExample';
 export { default as TemplatePage } from './TemplatePage';
