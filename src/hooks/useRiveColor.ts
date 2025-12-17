@@ -3,13 +3,18 @@ import type {
   ViewModelColorProperty,
   ViewModelInstance,
 } from '../specs/ViewModel.nitro';
-import { type UseRivePropertyResult } from '../types';
 import { useRiveProperty } from './useRiveProperty';
 import { RiveColor } from '../core/RiveColor';
 
 const COLOR_PROPERTY_OPTIONS = {
   getProperty: (vmi: ViewModelInstance, p: string) => vmi.colorProperty(p),
 };
+
+export interface UseRiveColorResult {
+  value: RiveColor | undefined;
+  setValue: (value: RiveColor | string) => void;
+  error: Error | null;
+}
 
 /**
  * Hook for interacting with color ViewModel instance properties.
@@ -21,9 +26,7 @@ const COLOR_PROPERTY_OPTIONS = {
 export function useRiveColor(
   path: string,
   viewModelInstance?: ViewModelInstance | null
-): UseRivePropertyResult<RiveColor> & {
-  setValue: (value: RiveColor | string) => void;
-} {
+): UseRiveColorResult {
   const [rawValue, setRawValue, error] = useRiveProperty<
     ViewModelColorProperty,
     number

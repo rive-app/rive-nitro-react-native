@@ -28,7 +28,12 @@ export function useRiveProperty<P extends ViewModelProperty, T>(
     /** Optional override callback for property events (mainly used by triggers) */
     onPropertyEventOverride?: (...args: any[]) => void;
   }
-): [T | undefined, (value: T) => void, Error | null, P | undefined] {
+): [
+  T | undefined,
+  (value: T | ((prevValue: T | undefined) => T)) => void,
+  Error | null,
+  P | undefined,
+] {
   const [value, setValue] = useState<T | undefined>(undefined);
   const [error, setError] = useState<Error | null>(null);
 
@@ -79,7 +84,7 @@ export function useRiveProperty<P extends ViewModelProperty, T>(
 
   // Set the value of the property
   const setPropertyValue = useCallback(
-    (newValue: T) => {
+    (valueOrUpdater: T | ((prevValue: T | undefined) => T)) => {
       if (!property) {
         setError(
           new Error(
@@ -87,6 +92,12 @@ export function useRiveProperty<P extends ViewModelProperty, T>(
           )
         );
       } else {
+        const newValue =
+          typeof valueOrUpdater === 'function'
+            ? (valueOrUpdater as (prevValue: T | undefined) => T)(
+                property.value
+              )
+            : valueOrUpdater;
         property.value = newValue;
       }
     },
