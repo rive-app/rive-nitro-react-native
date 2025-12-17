@@ -3,13 +3,23 @@ import type {
   ViewModelColorProperty,
   ViewModelInstance,
 } from '../specs/ViewModel.nitro';
-import { type UseRivePropertyResult } from '../types';
 import { useRiveProperty } from './useRiveProperty';
 import { RiveColor } from '../core/RiveColor';
 
 const COLOR_PROPERTY_OPTIONS = {
   getProperty: (vmi: ViewModelInstance, p: string) => vmi.colorProperty(p),
 };
+
+type ColorInput = RiveColor | string;
+type ColorSetValueAction =
+  | ColorInput
+  | ((prevValue: RiveColor | undefined) => ColorInput);
+
+export interface UseRiveColorResult {
+  value: RiveColor | undefined;
+  setValue: (value: ColorSetValueAction) => void;
+  error: Error | null;
+}
 
 /**
  * Hook for interacting with color ViewModel instance properties.
@@ -21,9 +31,7 @@ const COLOR_PROPERTY_OPTIONS = {
 export function useRiveColor(
   path: string,
   viewModelInstance?: ViewModelInstance | null
-): UseRivePropertyResult<RiveColor> & {
-  setValue: (value: RiveColor | string) => void;
-} {
+): UseRiveColorResult {
   const [rawValue, setRawValue, error] = useRiveProperty<
     ViewModelColorProperty,
     number
@@ -33,12 +41,20 @@ export function useRiveColor(
     rawValue !== undefined ? RiveColor.fromInt(rawValue) : undefined;
 
   const setValue = useCallback(
-    (newValue: RiveColor | string) => {
-      const color =
-        typeof newValue === 'string'
-          ? RiveColor.fromHexString(newValue)
-          : newValue;
-      setRawValue(color.toInt());
+    (valueOrUpdater: ColorSetValueAction) => {
+      setRawValue((prevRaw: number | undefined) => {
+        const prevColor =
+          prevRaw !== undefined ? RiveColor.fromInt(prevRaw) : undefined;
+        const newColorInput =
+          typeof valueOrUpdater === 'function'
+            ? valueOrUpdater(prevColor)
+            : valueOrUpdater;
+        const color =
+          typeof newColorInput === 'string'
+            ? RiveColor.fromHexString(newColorInput)
+            : newColorInput;
+        return color.toInt();
+      });
     },
     [setRawValue]
   );
