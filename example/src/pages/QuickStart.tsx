@@ -6,17 +6,15 @@
   - Data Binding: https://rive.app/docs/runtimes/data-binding
 */
 
-import { useEffect, useMemo } from 'react';
 import { Button, View, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   RiveView,
   useRive,
   useRiveFile,
   useRiveNumber,
   useRiveTrigger,
+  useViewModelInstance,
   Fit,
-  DataBindMode,
 } from '@rive-app/react-native';
 import type { Metadata } from '../helpers/metadata';
 
@@ -25,15 +23,11 @@ export default function QuickStart() {
     require('../../assets/rive/quick_start.riv')
   );
   const { riveViewRef, setHybridRef } = useRive();
-  const viewModelInstance = useMemo(
-    () => riveViewRef?.getViewModelInstance(),
-    [riveViewRef]
-  );
+  const viewModelInstance = useViewModelInstance(riveFile, {
+    onInit: (vmi) => (vmi.numberProperty('health')!.value = 9),
+  });
 
-  const { value: health, setValue: setHealth } = useRiveNumber(
-    'health',
-    viewModelInstance
-  );
+  const { setValue: setHealth } = useRiveNumber('health', viewModelInstance);
 
   const { trigger: gameOverTrigger } = useRiveTrigger(
     'gameOver',
@@ -41,15 +35,9 @@ export default function QuickStart() {
     { onTrigger: () => console.log('Game Over Triggered') }
   );
 
-  useEffect(() => {
-    setHealth(9);
-  }, [setHealth]);
-
   const handleTakeDamage = () => {
-    if (health !== undefined) {
-      setHealth(health - 7);
-      riveViewRef!.play();
-    }
+    setHealth((h) => (h ?? 0) - 7);
+    riveViewRef!.play();
   };
 
   const handleMaxHealth = () => {
@@ -64,23 +52,21 @@ export default function QuickStart() {
   };
 
   return (
-    <SafeAreaView style={styles.safeAreaViewContainer}>
-      <View style={styles.container}>
-        {riveFile && (
-          <RiveView
-            hybridRef={setHybridRef}
-            file={riveFile}
-            fit={Fit.Layout}
-            style={styles.rive}
-            autoPlay={true}
-            dataBind={DataBindMode.Auto}
-          />
-        )}
-      </View>
+    <View style={styles.container}>
+      {riveFile && viewModelInstance && (
+        <RiveView
+          hybridRef={setHybridRef}
+          file={riveFile}
+          fit={Fit.Layout}
+          style={styles.rive}
+          autoPlay={true}
+          dataBind={viewModelInstance}
+        />
+      )}
       <Button onPress={handleTakeDamage} title="Take Damage" />
       <Button onPress={handleMaxHealth} title="Max Health" />
       <Button onPress={handleGameOver} title="Game Over" />
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -90,9 +76,6 @@ QuickStart.metadata = {
 } satisfies Metadata;
 
 const styles = StyleSheet.create({
-  safeAreaViewContainer: {
-    flex: 1,
-  },
   container: {
     flex: 1,
     alignItems: 'center',
