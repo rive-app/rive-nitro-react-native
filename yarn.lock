@@ -3637,6 +3637,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@react-native-community/slider@npm:^5.1.1":
+  version: 5.1.1
+  resolution: "@react-native-community/slider@npm:5.1.1"
+  checksum: 63ab94d8ac22a0e4d7b86f0800283154604e93008dd04103e01a6aa5c56712d74f9b829665cd012ebc4fe29fa31f5a0d7e110bdeaa11bc9b347090f348428021
+  languageName: node
+  linkType: hard
+
 "@react-native-picker/picker@npm:^2.11.4":
   version: 2.11.4
   resolution: "@react-native-picker/picker@npm:2.11.4"
@@ -8218,6 +8225,7 @@ __metadata:
   resolution: "expo-example@workspace:expo-example"
   dependencies:
     "@expo/vector-icons": ^15.0.3
+    "@react-native-community/slider": ^5.1.1
     "@react-native-picker/picker": ^2.11.4
     "@react-navigation/bottom-tabs": ^7.4.0
     "@react-navigation/elements": ^2.6.3
@@ -13921,6 +13929,7 @@ __metadata:
     "@react-native-community/cli": 18.0.0
     "@react-native-community/cli-platform-android": 18.0.0
     "@react-native-community/cli-platform-ios": 18.0.0
+    "@react-native-community/slider": ^5.1.1
     "@react-native-picker/picker": ^2.11.4
     "@react-native/babel-preset": 0.79.2
     "@react-native/metro-config": 0.79.2
