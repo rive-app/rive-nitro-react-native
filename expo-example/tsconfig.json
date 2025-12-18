@@ -3,6 +3,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
+      "@navigation": ["./navigation"],
       "@/*": ["./*"],
       "@example/*": ["../example/src/*"],
       "@rive-app/react-native": ["../src/index"]

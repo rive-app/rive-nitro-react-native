@@ -1,0 +1,10 @@
+{
+  "extends": "../tsconfig",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@navigation": ["./src/navigation"],
+      "@rive-app/react-native": ["../src/index"]
+    }
+  }
+}
