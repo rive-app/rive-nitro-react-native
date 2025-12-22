@@ -7,7 +7,12 @@ import {
 } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import { runOnUI } from 'react-native-reanimated';
+import { installWorkletDispatcher } from '@rive-app/react-native';
 import { PagesList } from './PagesList';
+
+// Install dispatcher on Reanimated's UI runtime for worklet-based listeners
+installWorkletDispatcher(runOnUI);
 
 type RootStackParamList = {
   Home: undefined;
