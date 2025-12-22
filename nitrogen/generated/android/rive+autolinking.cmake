@@ -41,6 +41,7 @@ target_sources(
   ../nitrogen/generated/shared/c++/HybridRiveImageFactorySpec.cpp
   ../nitrogen/generated/shared/c++/HybridRiveViewSpec.cpp
   ../nitrogen/generated/shared/c++/views/HybridRiveViewComponent.cpp
+  ../nitrogen/generated/shared/c++/HybridRiveWorkletBridgeSpec.cpp
   ../nitrogen/generated/shared/c++/HybridViewModelSpec.cpp
   ../nitrogen/generated/shared/c++/HybridViewModelInstanceSpec.cpp
   ../nitrogen/generated/shared/c++/HybridViewModelPropertySpec.cpp

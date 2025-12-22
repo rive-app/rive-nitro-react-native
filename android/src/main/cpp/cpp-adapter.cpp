@@ -1,6 +1,9 @@
 #include <jni.h>
 #include "riveOnLoad.hpp"
+#include "JRiveWorkletDispatcher.hpp"
 
 JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM* vm, void*) {
-  return margelo::nitro::rive::initialize(vm);
+  auto result = margelo::nitro::rive::initialize(vm);
+  margelo::nitro::rive::JRiveWorkletDispatcher::registerNatives();
+  return result;
 }
