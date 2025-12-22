@@ -1,17 +1,74 @@
-import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ActivityIndicator,
+  Pressable,
+  Switch,
+} from 'react-native';
+import { useEffect, useMemo, useState } from 'react';
 import Animated, {
+  runOnUI,
   useSharedValue,
   useAnimatedStyle,
+  type SharedValue,
 } from 'react-native-reanimated';
-import { useEffect, useMemo } from 'react';
+import { NitroModules } from 'react-native-nitro-modules';
 import {
   Fit,
   RiveView,
   useRiveFile,
   type RiveFile,
   type ViewModelInstance,
+  type ViewModelNumberProperty,
 } from '@rive-app/react-native';
 import { type Metadata } from '../helpers/metadata';
+
+declare global {
+  var __callMicrotasks: () => void;
+}
+
+/**
+ * Syncs a Rive ViewModel number property to a Reanimated SharedValue.
+ * @param useUIThread - If true, runs listener on UI thread (won't freeze when JS blocked).
+ *                      If false, runs on JS thread (will freeze when JS blocked).
+ */
+function useRiveNumberListener(
+  property: ViewModelNumberProperty | undefined,
+  sharedValue: SharedValue<number>,
+  useUIThread: boolean
+) {
+  useEffect(() => {
+    if (!property) return;
+
+    if (useUIThread) {
+      // UI thread version - won't freeze when JS thread is blocked
+      const boxedProperty = NitroModules.box(property);
+      const sv = sharedValue;
+
+      runOnUI(() => {
+        'worklet';
+        const prop = boxedProperty.unbox();
+        prop.addListener((value: number) => {
+          'worklet';
+          sv.value = value;
+          global.__callMicrotasks();
+        });
+      })();
+
+      return () => {
+        property.removeListeners();
+      };
+    } else {
+      // JS thread version - will freeze when JS thread is blocked
+      const removeListener = property.addListener((value: number) => {
+        sharedValue.value = value;
+      });
+
+      return removeListener;
+    }
+  }, [property, sharedValue, useUIThread]);
+}
 
 export default function RiveToReactNativeExample() {
   const { riveFile, isLoading, error } = useRiveFile(
@@ -37,6 +94,7 @@ function WithViewModelSetup({ file }: { file: RiveFile }) {
     () => viewModel?.createDefaultInstance(),
     [viewModel]
   );
+  const [useUIThread, setUseUIThread] = useState(true);
 
   if (!instance || !viewModel) {
     return (
@@ -58,15 +116,26 @@ function WithViewModelSetup({ file }: { file: RiveFile }) {
     );
   }
 
-  return <BouncingBallTracker instance={instance} file={file} />;
+  return (
+    <BouncingBallTracker
+      instance={instance}
+      file={file}
+      useUIThread={useUIThread}
+      onToggle={setUseUIThread}
+    />
+  );
 }
 
 function BouncingBallTracker({
   instance,
   file,
+  useUIThread,
+  onToggle,
 }: {
   instance: ViewModelInstance;
   file: RiveFile;
+  useUIThread: boolean;
+  onToggle: (value: boolean) => void;
 }) {
   const pointerY = useSharedValue(0);
 
@@ -75,20 +144,7 @@ function BouncingBallTracker({
     [instance]
   );
 
-  useEffect(() => {
-    if (!yposProperty) return;
-
-    yposProperty.addListener((value) => {
-      'worklet';
-      console.log('worklet:', _WORKLET, __RUNTIME_KIND);
-      pointerY.value = value;
-      return true;
-    });
-
-    return () => {
-      yposProperty.removeListeners();
-    };
-  }, [yposProperty, pointerY]);
+  useRiveNumberListener(yposProperty, pointerY, useUIThread);
 
   const pointerStyle = useAnimatedStyle(() => ({
     transform: [{ translateY: pointerY.value }],
@@ -109,12 +165,15 @@ function BouncingBallTracker({
   return (
     <View style={styles.container}>
       <Text style={styles.subtitle}>
-        Rive animation drives the ball position.{'\n'}React Native listens and
-        moves the blue pointer to track it.
+        Rive drives the ball position via data binding.{'\n'}React Native tracks
+        it with the blue pointer using addListener.
       </Text>
-      <Text style={styles.subtitle}>
-        No re-renders - using direct addListener
-      </Text>
+
+      <View style={styles.switchContainer}>
+        <Text style={styles.switchLabel}>JS Thread</Text>
+        <Switch value={useUIThread} onValueChange={onToggle} />
+        <Text style={styles.switchLabel}>UI Thread</Text>
+      </View>
 
       <View style={styles.contentContainer}>
         <RiveView
@@ -129,7 +188,38 @@ function BouncingBallTracker({
           <Text style={styles.pointerText}>RN</Text>
         </Animated.View>
       </View>
+
+      <BlockJSThreadButton />
     </View>
+  );
+}
+
+function BlockJSThreadButton() {
+  const [isBlocking, setIsBlocking] = useState(false);
+
+  const handlePress = () => {
+    setIsBlocking(true);
+
+    // Use setTimeout to let the state update render before blocking
+    setTimeout(() => {
+      const start = Date.now();
+      while (Date.now() - start < 2000) {
+        // Busy poll - blocks JS thread for 2 seconds
+      }
+      setIsBlocking(false);
+    }, 50);
+  };
+
+  return (
+    <Pressable
+      style={[styles.blockButton, isBlocking && styles.blockButtonActive]}
+      onPress={handlePress}
+      disabled={isBlocking}
+    >
+      <Text style={styles.blockButtonText}>
+        {isBlocking ? 'JS Thread Blocked...' : 'Block JS Thread (2s)'}
+      </Text>
+    </Pressable>
   );
 }
 
@@ -157,11 +247,15 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     paddingHorizontal: 20,
   },
-  valueText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    textAlign: 'center',
+  switchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
     marginBottom: 10,
+  },
+  switchLabel: {
+    fontSize: 14,
     color: '#333',
   },
   contentContainer: {
@@ -216,5 +310,21 @@ const styles = StyleSheet.create({
     textAlign: 'left',
     fontSize: 14,
     lineHeight: 22,
+  },
+  blockButton: {
+    backgroundColor: '#4CAF50',
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderRadius: 8,
+    marginTop: 20,
+    alignSelf: 'center',
+  },
+  blockButtonActive: {
+    backgroundColor: '#f44336',
+  },
+  blockButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });

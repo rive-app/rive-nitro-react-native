@@ -15,6 +15,7 @@
 #include "HybridRiveFileSpecSwift.hpp"
 #include "HybridRiveViewSpecSwift.hpp"
 #include "HybridRiveImageFactorySpecSwift.hpp"
+#include "HybridRiveWorkletBridge.hpp"
 
 @interface RNRiveAutolinking : NSObject
 @end
@@ -58,6 +59,15 @@
     []() -> std::shared_ptr<HybridObject> {
       std::shared_ptr<HybridRiveImageFactorySpec> hybridObject = RNRive::RNRiveAutolinking::createRiveImageFactory();
       return hybridObject;
+    }
+  );
+  HybridObjectRegistry::registerHybridObjectConstructor(
+    "RiveWorkletBridge",
+    []() -> std::shared_ptr<HybridObject> {
+      static_assert(std::is_default_constructible_v<HybridRiveWorkletBridge>,
+                    "The HybridObject \"HybridRiveWorkletBridge\" is not default-constructible! "
+                    "Create a public constructor that takes zero arguments to be able to autolink this HybridObject.");
+      return std::make_shared<HybridRiveWorkletBridge>();
     }
   );
 }
