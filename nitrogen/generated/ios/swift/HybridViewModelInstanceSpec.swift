@@ -22,6 +22,7 @@ public protocol HybridViewModelInstanceSpec_protocol: HybridObject {
   func triggerProperty(path: String) throws -> (any HybridViewModelTriggerPropertySpec)?
   func imageProperty(path: String) throws -> (any HybridViewModelImagePropertySpec)?
   func listProperty(path: String) throws -> (any HybridViewModelListPropertySpec)?
+  func artboardProperty(path: String) throws -> (any HybridViewModelArtboardPropertySpec)?
 }
 
 public extension HybridViewModelInstanceSpec_protocol {

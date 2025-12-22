@@ -33,6 +33,7 @@ target_sources(
   # Autolinking Setup
   ../nitrogen/generated/android/riveOnLoad.cpp
   # Shared Nitrogen C++ sources
+  ../nitrogen/generated/shared/c++/HybridBindableArtboardSpec.cpp
   ../nitrogen/generated/shared/c++/HybridRiveSpec.cpp
   ../nitrogen/generated/shared/c++/HybridRiveFileSpec.cpp
   ../nitrogen/generated/shared/c++/HybridRiveFileFactorySpec.cpp
@@ -51,7 +52,9 @@ target_sources(
   ../nitrogen/generated/shared/c++/HybridViewModelTriggerPropertySpec.cpp
   ../nitrogen/generated/shared/c++/HybridViewModelImagePropertySpec.cpp
   ../nitrogen/generated/shared/c++/HybridViewModelListPropertySpec.cpp
+  ../nitrogen/generated/shared/c++/HybridViewModelArtboardPropertySpec.cpp
   # Android-specific Nitrogen C++ sources
+  ../nitrogen/generated/android/c++/JHybridBindableArtboardSpec.cpp
   ../nitrogen/generated/android/c++/JHybridRiveSpec.cpp
   ../nitrogen/generated/android/c++/JHybridRiveFileSpec.cpp
   ../nitrogen/generated/android/c++/JHybridRiveFileFactorySpec.cpp
@@ -72,6 +75,7 @@ target_sources(
   ../nitrogen/generated/android/c++/JHybridViewModelTriggerPropertySpec.cpp
   ../nitrogen/generated/android/c++/JHybridViewModelImagePropertySpec.cpp
   ../nitrogen/generated/android/c++/JHybridViewModelListPropertySpec.cpp
+  ../nitrogen/generated/android/c++/JHybridViewModelArtboardPropertySpec.cpp
 )
 
 # From node_modules/react-native/ReactAndroid/cmake-utils/folly-flags.cmake

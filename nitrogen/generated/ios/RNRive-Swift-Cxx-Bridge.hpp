@@ -20,6 +20,8 @@ namespace margelo::nitro::rive { struct DataBindByName; }
 namespace margelo::nitro::rive { enum class DataBindMode; }
 // Forward declaration of `Fit` to properly resolve imports.
 namespace margelo::nitro::rive { enum class Fit; }
+// Forward declaration of `HybridBindableArtboardSpec` to properly resolve imports.
+namespace margelo::nitro::rive { class HybridBindableArtboardSpec; }
 // Forward declaration of `HybridRiveFileFactorySpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridRiveFileFactorySpec; }
 // Forward declaration of `HybridRiveFileSpec` to properly resolve imports.
@@ -32,6 +34,8 @@ namespace margelo::nitro::rive { class HybridRiveImageSpec; }
 namespace margelo::nitro::rive { class HybridRiveSpec; }
 // Forward declaration of `HybridRiveViewSpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridRiveViewSpec; }
+// Forward declaration of `HybridViewModelArtboardPropertySpec` to properly resolve imports.
+namespace margelo::nitro::rive { class HybridViewModelArtboardPropertySpec; }
 // Forward declaration of `HybridViewModelBooleanPropertySpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridViewModelBooleanPropertySpec; }
 // Forward declaration of `HybridViewModelColorPropertySpec` to properly resolve imports.
@@ -68,6 +72,8 @@ namespace margelo::nitro::rive { enum class RiveEventType; }
 namespace margelo::nitro::rive { struct UnifiedRiveEvent; }
 
 // Forward declarations of Swift defined types
+// Forward declaration of `HybridBindableArtboardSpec_cxx` to properly resolve imports.
+namespace RNRive { class HybridBindableArtboardSpec_cxx; }
 // Forward declaration of `HybridRiveFileFactorySpec_cxx` to properly resolve imports.
 namespace RNRive { class HybridRiveFileFactorySpec_cxx; }
 // Forward declaration of `HybridRiveFileSpec_cxx` to properly resolve imports.
@@ -80,6 +86,8 @@ namespace RNRive { class HybridRiveImageSpec_cxx; }
 namespace RNRive { class HybridRiveSpec_cxx; }
 // Forward declaration of `HybridRiveViewSpec_cxx` to properly resolve imports.
 namespace RNRive { class HybridRiveViewSpec_cxx; }
+// Forward declaration of `HybridViewModelArtboardPropertySpec_cxx` to properly resolve imports.
+namespace RNRive { class HybridViewModelArtboardPropertySpec_cxx; }
 // Forward declaration of `HybridViewModelBooleanPropertySpec_cxx` to properly resolve imports.
 namespace RNRive { class HybridViewModelBooleanPropertySpec_cxx; }
 // Forward declaration of `HybridViewModelColorPropertySpec_cxx` to properly resolve imports.
@@ -110,12 +118,14 @@ namespace RNRive { class HybridViewModelTriggerPropertySpec_cxx; }
 #include "DataBindByName.hpp"
 #include "DataBindMode.hpp"
 #include "Fit.hpp"
+#include "HybridBindableArtboardSpec.hpp"
 #include "HybridRiveFileFactorySpec.hpp"
 #include "HybridRiveFileSpec.hpp"
 #include "HybridRiveImageFactorySpec.hpp"
 #include "HybridRiveImageSpec.hpp"
 #include "HybridRiveSpec.hpp"
 #include "HybridRiveViewSpec.hpp"
+#include "HybridViewModelArtboardPropertySpec.hpp"
 #include "HybridViewModelBooleanPropertySpec.hpp"
 #include "HybridViewModelColorPropertySpec.hpp"
 #include "HybridViewModelEnumPropertySpec.hpp"
@@ -143,6 +153,7 @@ namespace RNRive { class HybridViewModelTriggerPropertySpec_cxx; }
 #include <string>
 #include <unordered_map>
 #include <variant>
+#include <vector>
 
 /**
  * Contains specialized versions of C++ templated types so they can be accessed from Swift,
@@ -150,6 +161,18 @@ namespace RNRive { class HybridViewModelTriggerPropertySpec_cxx; }
  */
 namespace margelo::nitro::rive::bridge::swift {
 
+  // pragma MARK: std::shared_ptr<HybridBindableArtboardSpec>
+  /**
+   * Specialized version of `std::shared_ptr<HybridBindableArtboardSpec>`.
+   */
+  using std__shared_ptr_HybridBindableArtboardSpec_ = std::shared_ptr<HybridBindableArtboardSpec>;
+  std::shared_ptr<HybridBindableArtboardSpec> create_std__shared_ptr_HybridBindableArtboardSpec_(void* NON_NULL swiftUnsafePointer) noexcept;
+  void* NON_NULL get_std__shared_ptr_HybridBindableArtboardSpec_(std__shared_ptr_HybridBindableArtboardSpec_ cppType);
+  
+  // pragma MARK: std::weak_ptr<HybridBindableArtboardSpec>
+  using std__weak_ptr_HybridBindableArtboardSpec_ = std::weak_ptr<HybridBindableArtboardSpec>;
+  inline std__weak_ptr_HybridBindableArtboardSpec_ weakify_std__shared_ptr_HybridBindableArtboardSpec_(const std::shared_ptr<HybridBindableArtboardSpec>& strong) noexcept { return strong; }
+  
   // pragma MARK: std::shared_ptr<HybridRiveSpec>
   /**
    * Specialized version of `std::shared_ptr<HybridRiveSpec>`.
@@ -310,6 +333,17 @@ namespace margelo::nitro::rive::bridge::swift {
     return *optional;
   }
   
+  // pragma MARK: std::vector<std::string>
+  /**
+   * Specialized version of `std::vector<std::string>`.
+   */
+  using std__vector_std__string_ = std::vector<std::string>;
+  inline std::vector<std::string> create_std__vector_std__string_(size_t size) noexcept {
+    std::vector<std::string> vector;
+    vector.reserve(size);
+    return vector;
+  }
+  
   // pragma MARK: std::shared_ptr<HybridRiveFileSpec>
   /**
    * Specialized version of `std::shared_ptr<HybridRiveFileSpec>`.
@@ -338,6 +372,15 @@ namespace margelo::nitro::rive::bridge::swift {
   }
   inline Result_void_ create_Result_void_(const std::exception_ptr& error) noexcept {
     return Result<void>::withError(error);
+  }
+  
+  // pragma MARK: Result<std::shared_ptr<HybridBindableArtboardSpec>>
+  using Result_std__shared_ptr_HybridBindableArtboardSpec__ = Result<std::shared_ptr<HybridBindableArtboardSpec>>;
+  inline Result_std__shared_ptr_HybridBindableArtboardSpec__ create_Result_std__shared_ptr_HybridBindableArtboardSpec__(const std::shared_ptr<HybridBindableArtboardSpec>& value) noexcept {
+    return Result<std::shared_ptr<HybridBindableArtboardSpec>>::withValue(value);
+  }
+  inline Result_std__shared_ptr_HybridBindableArtboardSpec__ create_Result_std__shared_ptr_HybridBindableArtboardSpec__(const std::exception_ptr& error) noexcept {
+    return Result<std::shared_ptr<HybridBindableArtboardSpec>>::withError(error);
   }
   
   // pragma MARK: std::shared_ptr<Promise<std::shared_ptr<HybridRiveFileSpec>>>
@@ -1105,6 +1148,36 @@ namespace margelo::nitro::rive::bridge::swift {
     return *optional;
   }
   
+  // pragma MARK: std::shared_ptr<HybridViewModelArtboardPropertySpec>
+  /**
+   * Specialized version of `std::shared_ptr<HybridViewModelArtboardPropertySpec>`.
+   */
+  using std__shared_ptr_HybridViewModelArtboardPropertySpec_ = std::shared_ptr<HybridViewModelArtboardPropertySpec>;
+  std::shared_ptr<HybridViewModelArtboardPropertySpec> create_std__shared_ptr_HybridViewModelArtboardPropertySpec_(void* NON_NULL swiftUnsafePointer) noexcept;
+  void* NON_NULL get_std__shared_ptr_HybridViewModelArtboardPropertySpec_(std__shared_ptr_HybridViewModelArtboardPropertySpec_ cppType);
+  
+  // pragma MARK: std::shared_ptr<HybridViewModelPropertySpec>
+  inline std::shared_ptr<HybridViewModelPropertySpec> upcast_ViewModelArtboardProperty_to_ViewModelProperty(std::shared_ptr<HybridViewModelArtboardPropertySpec> child) noexcept { return child; }
+  
+  // pragma MARK: std::weak_ptr<HybridViewModelArtboardPropertySpec>
+  using std__weak_ptr_HybridViewModelArtboardPropertySpec_ = std::weak_ptr<HybridViewModelArtboardPropertySpec>;
+  inline std__weak_ptr_HybridViewModelArtboardPropertySpec_ weakify_std__shared_ptr_HybridViewModelArtboardPropertySpec_(const std::shared_ptr<HybridViewModelArtboardPropertySpec>& strong) noexcept { return strong; }
+  
+  // pragma MARK: std::optional<std::shared_ptr<HybridViewModelArtboardPropertySpec>>
+  /**
+   * Specialized version of `std::optional<std::shared_ptr<HybridViewModelArtboardPropertySpec>>`.
+   */
+  using std__optional_std__shared_ptr_HybridViewModelArtboardPropertySpec__ = std::optional<std::shared_ptr<HybridViewModelArtboardPropertySpec>>;
+  inline std::optional<std::shared_ptr<HybridViewModelArtboardPropertySpec>> create_std__optional_std__shared_ptr_HybridViewModelArtboardPropertySpec__(const std::shared_ptr<HybridViewModelArtboardPropertySpec>& value) noexcept {
+    return std::optional<std::shared_ptr<HybridViewModelArtboardPropertySpec>>(value);
+  }
+  inline bool has_value_std__optional_std__shared_ptr_HybridViewModelArtboardPropertySpec__(const std::optional<std::shared_ptr<HybridViewModelArtboardPropertySpec>>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline std::shared_ptr<HybridViewModelArtboardPropertySpec> get_std__optional_std__shared_ptr_HybridViewModelArtboardPropertySpec__(const std::optional<std::shared_ptr<HybridViewModelArtboardPropertySpec>>& optional) noexcept {
+    return *optional;
+  }
+  
   // pragma MARK: Result<std::optional<std::shared_ptr<HybridViewModelNumberPropertySpec>>>
   using Result_std__optional_std__shared_ptr_HybridViewModelNumberPropertySpec___ = Result<std::optional<std::shared_ptr<HybridViewModelNumberPropertySpec>>>;
   inline Result_std__optional_std__shared_ptr_HybridViewModelNumberPropertySpec___ create_Result_std__optional_std__shared_ptr_HybridViewModelNumberPropertySpec___(const std::optional<std::shared_ptr<HybridViewModelNumberPropertySpec>>& value) noexcept {
@@ -1177,6 +1250,15 @@ namespace margelo::nitro::rive::bridge::swift {
     return Result<std::optional<std::shared_ptr<HybridViewModelListPropertySpec>>>::withError(error);
   }
   
+  // pragma MARK: Result<std::optional<std::shared_ptr<HybridViewModelArtboardPropertySpec>>>
+  using Result_std__optional_std__shared_ptr_HybridViewModelArtboardPropertySpec___ = Result<std::optional<std::shared_ptr<HybridViewModelArtboardPropertySpec>>>;
+  inline Result_std__optional_std__shared_ptr_HybridViewModelArtboardPropertySpec___ create_Result_std__optional_std__shared_ptr_HybridViewModelArtboardPropertySpec___(const std::optional<std::shared_ptr<HybridViewModelArtboardPropertySpec>>& value) noexcept {
+    return Result<std::optional<std::shared_ptr<HybridViewModelArtboardPropertySpec>>>::withValue(value);
+  }
+  inline Result_std__optional_std__shared_ptr_HybridViewModelArtboardPropertySpec___ create_Result_std__optional_std__shared_ptr_HybridViewModelArtboardPropertySpec___(const std::exception_ptr& error) noexcept {
+    return Result<std::optional<std::shared_ptr<HybridViewModelArtboardPropertySpec>>>::withError(error);
+  }
+  
   // pragma MARK: std::function<void(double /* value */)>
   /**
    * Specialized version of `std::function<void(double)>`.
@@ -1228,6 +1310,21 @@ namespace margelo::nitro::rive::bridge::swift {
   Func_void_std__string create_Func_void_std__string(void* NON_NULL swiftClosureWrapper) noexcept;
   inline Func_void_std__string_Wrapper wrap_Func_void_std__string(Func_void_std__string value) noexcept {
     return Func_void_std__string_Wrapper(std::move(value));
+  }
+  
+  // pragma MARK: std::optional<std::shared_ptr<HybridBindableArtboardSpec>>
+  /**
+   * Specialized version of `std::optional<std::shared_ptr<HybridBindableArtboardSpec>>`.
+   */
+  using std__optional_std__shared_ptr_HybridBindableArtboardSpec__ = std::optional<std::shared_ptr<HybridBindableArtboardSpec>>;
+  inline std::optional<std::shared_ptr<HybridBindableArtboardSpec>> create_std__optional_std__shared_ptr_HybridBindableArtboardSpec__(const std::shared_ptr<HybridBindableArtboardSpec>& value) noexcept {
+    return std::optional<std::shared_ptr<HybridBindableArtboardSpec>>(value);
+  }
+  inline bool has_value_std__optional_std__shared_ptr_HybridBindableArtboardSpec__(const std::optional<std::shared_ptr<HybridBindableArtboardSpec>>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline std::shared_ptr<HybridBindableArtboardSpec> get_std__optional_std__shared_ptr_HybridBindableArtboardSpec__(const std::optional<std::shared_ptr<HybridBindableArtboardSpec>>& optional) noexcept {
+    return *optional;
   }
 
 } // namespace margelo::nitro::rive::bridge::swift
