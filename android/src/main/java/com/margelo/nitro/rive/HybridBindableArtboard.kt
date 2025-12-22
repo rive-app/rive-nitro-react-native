@@ -6,11 +6,17 @@ import com.facebook.proguard.annotations.DoNotStrip
 
 @Keep
 @DoNotStrip
-class HybridBindableArtboard(val bindableArtboard: BindableArtboard) : HybridBindableArtboardSpec() {
+class HybridBindableArtboard(private var bindableArtboard: BindableArtboard?) : HybridBindableArtboardSpec() {
+
   override val artboardName: String
-    get() = bindableArtboard.name
+    get() = bindableArtboard?.name ?: ""
+
+  override fun dispose() {
+    bindableArtboard?.release()
+    bindableArtboard = null
+  }
 
   protected fun finalize() {
-    bindableArtboard.release()
+    dispose()
   }
 }

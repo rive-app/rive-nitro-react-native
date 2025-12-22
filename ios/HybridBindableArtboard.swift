@@ -12,4 +12,8 @@ class HybridBindableArtboard: HybridBindableArtboardSpec {
   var artboardName: String {
     bindableArtboard.name
   }
+
+  func dispose() {
+    // iOS uses ARC, no explicit cleanup needed
+  }
 }
