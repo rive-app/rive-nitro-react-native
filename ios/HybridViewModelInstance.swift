@@ -2,12 +2,22 @@ import RiveRuntime
 
 class HybridViewModelInstance: HybridViewModelInstanceSpec {
   let viewModelInstance: RiveDataBindingViewModel.Instance?
-  
+
   init(viewModelInstance: RiveDataBindingViewModel.Instance) {
     self.viewModelInstance = viewModelInstance
   }
 
   var instanceName: String { viewModelInstance?.name ?? "" }
+
+  var properties: [ViewModelPropertyInfo] {
+    guard let instance = viewModelInstance else { return [] }
+    return instance.properties.map { prop in
+      ViewModelPropertyInfo(
+        name: prop.name,
+        type: ViewModelPropertyType(from: prop.type)
+      )
+    }
+  }
   
   func numberProperty(path: String) throws -> (any HybridViewModelNumberPropertySpec)? {
     guard let property = viewModelInstance?.numberProperty(fromPath: path) else { return nil }

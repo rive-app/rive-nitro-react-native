@@ -12,6 +12,7 @@ import NitroModules
 public protocol HybridViewModelInstanceSpec_protocol: HybridObject {
   // Properties
   var instanceName: String { get }
+  var properties: [ViewModelPropertyInfo] { get }
 
   // Methods
   func numberProperty(path: String) throws -> (any HybridViewModelNumberPropertySpec)?

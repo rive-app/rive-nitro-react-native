@@ -11,3 +11,4 @@ export { default as ManyViewModels } from './ManyViewModels';
 export { default as ResponsiveLayouts } from './ResponsiveLayouts';
 export { default as SharedValueListenerExample } from './SharedValueListenerExample';
 export { default as MenuListExample } from './MenuListExample';
+export { default as PropertyInspector } from './PropertyInspector';

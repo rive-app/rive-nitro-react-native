@@ -51,6 +51,7 @@ namespace margelo::nitro::rive {
   public:
     // Properties
     std::string getInstanceName() override;
+    std::vector<ViewModelPropertyInfo> getProperties() override;
 
   public:
     // Methods
