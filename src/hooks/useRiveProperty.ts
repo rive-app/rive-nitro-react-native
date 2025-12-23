@@ -34,15 +34,7 @@ export function useRiveProperty<P extends ViewModelProperty, T>(
   Error | null,
   P | undefined,
 ] {
-  const [value, setValue] = useState<T | undefined>(undefined);
-  const [error, setError] = useState<Error | null>(null);
-
-  // Clear error when path or instance changes
-  useEffect(() => {
-    setError(null);
-  }, [path, viewModelInstance]);
-
-  // Get the property
+  // Get the property first so we can read its initial value
   const property = useMemo(() => {
     if (!viewModelInstance) return;
     return options.getProperty(
@@ -50,6 +42,22 @@ export function useRiveProperty<P extends ViewModelProperty, T>(
       path
     ) as unknown as ObservableViewModelProperty<T>;
   }, [options, viewModelInstance, path]);
+
+  // Initialize state with property's current value (if available)
+  const [value, setValue] = useState<T | undefined>(() => property?.value);
+  const [error, setError] = useState<Error | null>(null);
+
+  // Sync value when property reference changes (path or instance changed)
+  useEffect(() => {
+    if (property) {
+      setValue(property.value);
+    }
+  }, [property]);
+
+  // Clear error when path or instance changes
+  useEffect(() => {
+    setError(null);
+  }, [path, viewModelInstance]);
 
   // Set error if property is not found
   useEffect(() => {
