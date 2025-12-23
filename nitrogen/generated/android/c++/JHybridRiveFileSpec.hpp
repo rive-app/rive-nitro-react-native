@@ -51,6 +51,8 @@ namespace margelo::nitro::rive {
   public:
     // Properties
     std::optional<double> getViewModelCount() override;
+    double getArtboardCount() override;
+    std::vector<std::string> getArtboardNames() override;
 
   public:
     // Methods
@@ -58,6 +60,7 @@ namespace margelo::nitro::rive {
     std::optional<std::shared_ptr<HybridViewModelSpec>> viewModelByName(const std::string& name) override;
     std::optional<std::shared_ptr<HybridViewModelSpec>> defaultArtboardViewModel(const std::optional<ArtboardBy>& artboardBy) override;
     void updateReferencedAssets(const ReferencedAssetsType& referencedAssets) override;
+    std::shared_ptr<HybridBindableArtboardSpec> getBindableArtboard(const std::string& name) override;
 
   private:
     friend HybridBase;

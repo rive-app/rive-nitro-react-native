@@ -48,6 +48,18 @@ class HybridRiveFile : HybridRiveFileSpec() {
     }
   }
 
+  override val artboardCount: Double
+    get() = riveFile?.artboardNames?.size?.toDouble() ?: 0.0
+
+  override val artboardNames: Array<String>
+    get() = riveFile?.artboardNames?.toTypedArray() ?: emptyArray()
+
+  override fun getBindableArtboard(name: String): HybridBindableArtboardSpec {
+    val file = riveFile ?: throw IllegalStateException("RiveFile not loaded")
+    val bindable = file.createBindableArtboardByName(name)
+    return HybridBindableArtboard(bindable)
+  }
+
   fun registerView(view: HybridRiveView) {
     weakViews.add(WeakReference(view))
   }

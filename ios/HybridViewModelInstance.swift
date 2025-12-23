@@ -48,4 +48,9 @@ class HybridViewModelInstance: HybridViewModelInstanceSpec {
     guard let property = viewModelInstance?.listProperty(fromPath: path) else { return nil }
     return HybridViewModelListProperty(property: property)
   }
+
+  func artboardProperty(path: String) throws -> (any HybridViewModelArtboardPropertySpec)? {
+    guard let property = viewModelInstance?.artboardProperty(fromPath: path) else { return nil }
+    return HybridViewModelArtboardProperty(property: property)
+  }
 }

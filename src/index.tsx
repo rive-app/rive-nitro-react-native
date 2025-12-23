@@ -31,7 +31,9 @@ export type {
   ViewModelTriggerProperty,
   ViewModelImageProperty,
   ViewModelListProperty,
+  ViewModelArtboardProperty,
 } from './specs/ViewModel.nitro';
+export type { BindableArtboard } from './specs/BindableArtboard.nitro';
 export { Fit } from './core/Fit';
 export { Alignment } from './core/Alignment';
 export { RiveFileFactory } from './core/RiveFile';
