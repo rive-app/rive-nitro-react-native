@@ -289,4 +289,41 @@ open class HybridViewModelInstanceSpec_cxx {
       return bridge.create_Result_std__optional_std__shared_ptr_HybridViewModelListPropertySpec___(__exceptionPtr)
     }
   }
+  
+  @inline(__always)
+  public final func viewModelInstanceProperty(path: std.string) -> bridge.Result_std__optional_std__shared_ptr_HybridViewModelInstanceSpec___ {
+    do {
+      let __result = try self.__implementation.viewModelInstanceProperty(path: String(path))
+      let __resultCpp = { () -> bridge.std__optional_std__shared_ptr_HybridViewModelInstanceSpec__ in
+        if let __unwrappedValue = __result {
+          return bridge.create_std__optional_std__shared_ptr_HybridViewModelInstanceSpec__({ () -> bridge.std__shared_ptr_HybridViewModelInstanceSpec_ in
+            let __cxxWrapped = __unwrappedValue.getCxxWrapper()
+            return __cxxWrapped.getCxxPart()
+          }())
+        } else {
+          return .init()
+        }
+      }()
+      return bridge.create_Result_std__optional_std__shared_ptr_HybridViewModelInstanceSpec___(__resultCpp)
+    } catch (let __error) {
+      let __exceptionPtr = __error.toCpp()
+      return bridge.create_Result_std__optional_std__shared_ptr_HybridViewModelInstanceSpec___(__exceptionPtr)
+    }
+  }
+  
+  @inline(__always)
+  public final func setViewModelInstanceProperty(path: std.string, instance: bridge.std__shared_ptr_HybridViewModelInstanceSpec_) -> bridge.Result_bool_ {
+    do {
+      let __result = try self.__implementation.setViewModelInstanceProperty(path: String(path), instance: { () -> HybridViewModelInstanceSpec in
+        let __unsafePointer = bridge.get_std__shared_ptr_HybridViewModelInstanceSpec_(instance)
+        let __instance = HybridViewModelInstanceSpec_cxx.fromUnsafe(__unsafePointer)
+        return __instance.getHybridViewModelInstanceSpec()
+      }())
+      let __resultCpp = __result
+      return bridge.create_Result_bool_(__resultCpp)
+    } catch (let __error) {
+      let __exceptionPtr = __error.toCpp()
+      return bridge.create_Result_bool_(__exceptionPtr)
+    }
+  }
 }

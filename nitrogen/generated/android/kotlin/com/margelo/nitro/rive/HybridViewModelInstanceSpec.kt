@@ -78,6 +78,14 @@ abstract class HybridViewModelInstanceSpec: HybridObject() {
   @DoNotStrip
   @Keep
   abstract fun listProperty(path: String): HybridViewModelListPropertySpec?
+  
+  @DoNotStrip
+  @Keep
+  abstract fun viewModelInstanceProperty(path: String): HybridViewModelInstanceSpec?
+  
+  @DoNotStrip
+  @Keep
+  abstract fun setViewModelInstanceProperty(path: String, instance: HybridViewModelInstanceSpec): Boolean
 
   private external fun initHybrid(): HybridData
 
