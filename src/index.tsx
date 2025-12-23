@@ -31,6 +31,8 @@ export type {
   ViewModelTriggerProperty,
   ViewModelImageProperty,
   ViewModelListProperty,
+  ViewModelPropertyType,
+  ViewModelPropertyInfo,
 } from './specs/ViewModel.nitro';
 export { Fit } from './core/Fit';
 export { Alignment } from './core/Alignment';

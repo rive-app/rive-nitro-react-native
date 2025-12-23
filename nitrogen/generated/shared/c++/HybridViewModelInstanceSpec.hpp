@@ -13,6 +13,8 @@
 #error NitroModules cannot be found! Are you sure you installed NitroModules properly?
 #endif
 
+// Forward declaration of `ViewModelPropertyInfo` to properly resolve imports.
+namespace margelo::nitro::rive { struct ViewModelPropertyInfo; }
 // Forward declaration of `HybridViewModelNumberPropertySpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridViewModelNumberPropertySpec; }
 // Forward declaration of `HybridViewModelStringPropertySpec` to properly resolve imports.
@@ -31,6 +33,8 @@ namespace margelo::nitro::rive { class HybridViewModelImagePropertySpec; }
 namespace margelo::nitro::rive { class HybridViewModelListPropertySpec; }
 
 #include <string>
+#include "ViewModelPropertyInfo.hpp"
+#include <vector>
 #include <memory>
 #include "HybridViewModelNumberPropertySpec.hpp"
 #include <optional>
@@ -70,6 +74,7 @@ namespace margelo::nitro::rive {
     public:
       // Properties
       virtual std::string getInstanceName() = 0;
+      virtual std::vector<ViewModelPropertyInfo> getProperties() = 0;
 
     public:
       // Methods

@@ -66,6 +66,10 @@ namespace margelo::nitro::rive { struct RiveError; }
 namespace margelo::nitro::rive { enum class RiveEventType; }
 // Forward declaration of `UnifiedRiveEvent` to properly resolve imports.
 namespace margelo::nitro::rive { struct UnifiedRiveEvent; }
+// Forward declaration of `ViewModelPropertyInfo` to properly resolve imports.
+namespace margelo::nitro::rive { struct ViewModelPropertyInfo; }
+// Forward declaration of `ViewModelPropertyType` to properly resolve imports.
+namespace margelo::nitro::rive { enum class ViewModelPropertyType; }
 
 // Forward declarations of Swift defined types
 // Forward declaration of `HybridRiveFileFactorySpec_cxx` to properly resolve imports.
@@ -133,6 +137,8 @@ namespace RNRive { class HybridViewModelTriggerPropertySpec_cxx; }
 #include "RiveErrorType.hpp"
 #include "RiveEventType.hpp"
 #include "UnifiedRiveEvent.hpp"
+#include "ViewModelPropertyInfo.hpp"
+#include "ViewModelPropertyType.hpp"
 #include <NitroModules/Promise.hpp>
 #include <NitroModules/PromiseHolder.hpp>
 #include <NitroModules/Result.hpp>
@@ -143,6 +149,7 @@ namespace RNRive { class HybridViewModelTriggerPropertySpec_cxx; }
 #include <string>
 #include <unordered_map>
 #include <variant>
+#include <vector>
 
 /**
  * Contains specialized versions of C++ templated types so they can be accessed from Swift,
@@ -851,6 +858,17 @@ namespace margelo::nitro::rive::bridge::swift {
   }
   inline Result_std__string_ create_Result_std__string_(const std::exception_ptr& error) noexcept {
     return Result<std::string>::withError(error);
+  }
+  
+  // pragma MARK: std::vector<ViewModelPropertyInfo>
+  /**
+   * Specialized version of `std::vector<ViewModelPropertyInfo>`.
+   */
+  using std__vector_ViewModelPropertyInfo_ = std::vector<ViewModelPropertyInfo>;
+  inline std::vector<ViewModelPropertyInfo> create_std__vector_ViewModelPropertyInfo_(size_t size) noexcept {
+    std::vector<ViewModelPropertyInfo> vector;
+    vector.reserve(size);
+    return vector;
   }
   
   // pragma MARK: std::shared_ptr<HybridViewModelPropertySpec>

@@ -120,6 +120,19 @@ open class HybridViewModelInstanceSpec_cxx {
       return std.string(self.__implementation.instanceName)
     }
   }
+  
+  public final var properties: bridge.std__vector_ViewModelPropertyInfo_ {
+    @inline(__always)
+    get {
+      return { () -> bridge.std__vector_ViewModelPropertyInfo_ in
+        var __vector = bridge.create_std__vector_ViewModelPropertyInfo_(self.__implementation.properties.count)
+        for __item in self.__implementation.properties {
+          __vector.push_back(__item)
+        }
+        return __vector
+      }()
+    }
+  }
 
   // Methods
   @inline(__always)

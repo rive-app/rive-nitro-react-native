@@ -53,6 +53,10 @@ abstract class HybridViewModelSpec: HybridObject() {
   @get:DoNotStrip
   @get:Keep
   abstract val modelName: String
+  
+  @get:DoNotStrip
+  @get:Keep
+  abstract val properties: Array<ViewModelPropertyInfo>
 
   // Methods
   @DoNotStrip

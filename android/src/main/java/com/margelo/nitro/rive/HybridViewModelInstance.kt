@@ -11,6 +11,10 @@ class HybridViewModelInstance(val viewModelInstance: ViewModelInstance) : Hybrid
   override val instanceName: String
     get() = viewModelInstance.name
 
+  // Note: Android SDK doesn't expose ViewModelInstance.properties publicly
+  override val properties: Array<ViewModelPropertyInfo>
+    get() = emptyArray()
+
   // Returns null if ViewModelException is thrown for iOS parity
   // (iOS SDK returns nil when property not found, Android SDK throws)
   private inline fun <T> getPropertyOrNull(block: () -> T): T? {

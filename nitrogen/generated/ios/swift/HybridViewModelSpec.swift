@@ -14,6 +14,7 @@ public protocol HybridViewModelSpec_protocol: HybridObject {
   var propertyCount: Double { get }
   var instanceCount: Double { get }
   var modelName: String { get }
+  var properties: [ViewModelPropertyInfo] { get }
 
   // Methods
   func createInstanceByIndex(index: Double) throws -> (any HybridViewModelInstanceSpec)?

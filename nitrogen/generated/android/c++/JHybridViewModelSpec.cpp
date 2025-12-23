@@ -7,10 +7,19 @@
 
 #include "JHybridViewModelSpec.hpp"
 
+// Forward declaration of `ViewModelPropertyInfo` to properly resolve imports.
+namespace margelo::nitro::rive { struct ViewModelPropertyInfo; }
+// Forward declaration of `ViewModelPropertyType` to properly resolve imports.
+namespace margelo::nitro::rive { enum class ViewModelPropertyType; }
 // Forward declaration of `HybridViewModelInstanceSpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridViewModelInstanceSpec; }
 
 #include <string>
+#include "ViewModelPropertyInfo.hpp"
+#include <vector>
+#include "JViewModelPropertyInfo.hpp"
+#include "ViewModelPropertyType.hpp"
+#include "JViewModelPropertyType.hpp"
 #include <memory>
 #include "HybridViewModelInstanceSpec.hpp"
 #include <optional>
@@ -59,6 +68,20 @@ namespace margelo::nitro::rive {
     static const auto method = javaClassStatic()->getMethod<jni::local_ref<jni::JString>()>("getModelName");
     auto __result = method(_javaPart);
     return __result->toStdString();
+  }
+  std::vector<ViewModelPropertyInfo> JHybridViewModelSpec::getProperties() {
+    static const auto method = javaClassStatic()->getMethod<jni::local_ref<jni::JArrayClass<JViewModelPropertyInfo>>()>("getProperties");
+    auto __result = method(_javaPart);
+    return [&]() {
+      size_t __size = __result->size();
+      std::vector<ViewModelPropertyInfo> __vector;
+      __vector.reserve(__size);
+      for (size_t __i = 0; __i < __size; __i++) {
+        auto __element = __result->getElement(__i);
+        __vector.push_back(__element->toCpp());
+      }
+      return __vector;
+    }();
   }
 
   // Methods

@@ -15,6 +15,7 @@ namespace margelo::nitro::rive {
     // load custom methods/properties
     registerHybrids(this, [](Prototype& prototype) {
       prototype.registerHybridGetter("instanceName", &HybridViewModelInstanceSpec::getInstanceName);
+      prototype.registerHybridGetter("properties", &HybridViewModelInstanceSpec::getProperties);
       prototype.registerHybridMethod("numberProperty", &HybridViewModelInstanceSpec::numberProperty);
       prototype.registerHybridMethod("stringProperty", &HybridViewModelInstanceSpec::stringProperty);
       prototype.registerHybridMethod("booleanProperty", &HybridViewModelInstanceSpec::booleanProperty);
