@@ -28,6 +28,8 @@ namespace margelo::nitro::rive { class HybridViewModelTriggerPropertySpec; }
 namespace margelo::nitro::rive { class HybridViewModelImagePropertySpec; }
 // Forward declaration of `HybridViewModelListPropertySpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridViewModelListPropertySpec; }
+// Forward declaration of `HybridViewModelInstanceSpec` to properly resolve imports.
+namespace margelo::nitro::rive { class HybridViewModelInstanceSpec; }
 
 #include <string>
 #include <memory>
@@ -40,6 +42,7 @@ namespace margelo::nitro::rive { class HybridViewModelListPropertySpec; }
 #include "HybridViewModelTriggerPropertySpec.hpp"
 #include "HybridViewModelImagePropertySpec.hpp"
 #include "HybridViewModelListPropertySpec.hpp"
+#include "HybridViewModelInstanceSpec.hpp"
 
 #include "RNRive-Swift-Cxx-Umbrella.hpp"
 
@@ -146,6 +149,22 @@ namespace margelo::nitro::rive {
     }
     inline std::optional<std::shared_ptr<HybridViewModelListPropertySpec>> listProperty(const std::string& path) override {
       auto __result = _swiftPart.listProperty(path);
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline std::optional<std::shared_ptr<HybridViewModelInstanceSpec>> viewModelInstanceProperty(const std::string& path) override {
+      auto __result = _swiftPart.viewModelInstanceProperty(path);
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline bool setViewModelInstanceProperty(const std::string& path, const std::shared_ptr<HybridViewModelInstanceSpec>& instance) override {
+      auto __result = _swiftPart.setViewModelInstanceProperty(path, instance);
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }

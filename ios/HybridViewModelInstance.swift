@@ -48,4 +48,17 @@ class HybridViewModelInstance: HybridViewModelInstanceSpec {
     guard let property = viewModelInstance?.listProperty(fromPath: path) else { return nil }
     return HybridViewModelListProperty(property: property)
   }
+
+  func viewModelInstanceProperty(path: String) throws -> (any HybridViewModelInstanceSpec)? {
+    guard let instance = viewModelInstance?.viewModelInstanceProperty(fromPath: path) else { return nil }
+    return HybridViewModelInstance(viewModelInstance: instance)
+  }
+
+  func setViewModelInstanceProperty(path: String, instance: any HybridViewModelInstanceSpec) throws -> Bool {
+    guard let hybridInstance = instance as? HybridViewModelInstance,
+          let nativeInstance = hybridInstance.viewModelInstance else {
+      return false
+    }
+    return viewModelInstance?.setViewModelInstanceProperty(fromPath: path, to: nativeInstance) ?? false
+  }
 }

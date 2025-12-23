@@ -62,6 +62,8 @@ namespace margelo::nitro::rive {
     std::optional<std::shared_ptr<HybridViewModelTriggerPropertySpec>> triggerProperty(const std::string& path) override;
     std::optional<std::shared_ptr<HybridViewModelImagePropertySpec>> imageProperty(const std::string& path) override;
     std::optional<std::shared_ptr<HybridViewModelListPropertySpec>> listProperty(const std::string& path) override;
+    std::optional<std::shared_ptr<HybridViewModelInstanceSpec>> viewModelInstanceProperty(const std::string& path) override;
+    bool setViewModelInstanceProperty(const std::string& path, const std::shared_ptr<HybridViewModelInstanceSpec>& instance) override;
 
   private:
     friend HybridBase;
