@@ -59,6 +59,19 @@ export interface ViewModelInstance
 
   /** Get an artboard property from the view model instance at the given path */
   artboardProperty(path: string): ViewModelArtboardProperty | undefined;
+
+  /**
+   * Get a nested ViewModel instance at the given path.
+   * Supports path notation with "/" for nested access (e.g., "Parent/Child").
+   */
+  viewModel(path: string): ViewModelInstance | undefined;
+
+  /**
+   * Replace the ViewModel instance at the given path with a new instance.
+   * The replacement instance must be compatible with the expected ViewModel type.
+   * @throws Error if path not found or types incompatible
+   */
+  replaceViewModel(path: string, instance: ViewModelInstance): void;
 }
 
 export interface ViewModelProperty

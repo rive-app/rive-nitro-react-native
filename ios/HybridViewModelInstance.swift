@@ -53,4 +53,20 @@ class HybridViewModelInstance: HybridViewModelInstanceSpec {
     guard let property = viewModelInstance?.artboardProperty(fromPath: path) else { return nil }
     return HybridViewModelArtboardProperty(property: property)
   }
+
+  func viewModel(path: String) throws -> (any HybridViewModelInstanceSpec)? {
+    guard let instance = viewModelInstance?.viewModelInstanceProperty(fromPath: path) else { return nil }
+    return HybridViewModelInstance(viewModelInstance: instance)
+  }
+
+  func replaceViewModel(path: String, instance: any HybridViewModelInstanceSpec) throws {
+    guard let hybridInstance = instance as? HybridViewModelInstance,
+          let nativeInstance = hybridInstance.viewModelInstance else {
+      throw RuntimeError.error(withMessage: "Invalid ViewModelInstance provided to replaceViewModel")
+    }
+    let success = viewModelInstance?.setViewModelInstanceProperty(fromPath: path, to: nativeInstance) ?? false
+    if !success {
+      throw RuntimeError.error(withMessage: "Failed to replace ViewModel at path: \(path)")
+    }
+  }
 }

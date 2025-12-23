@@ -31,6 +31,8 @@ namespace margelo::nitro::rive { class HybridViewModelImagePropertySpec; }
 namespace margelo::nitro::rive { class HybridViewModelListPropertySpec; }
 // Forward declaration of `HybridViewModelArtboardPropertySpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridViewModelArtboardPropertySpec; }
+// Forward declaration of `HybridViewModelInstanceSpec` to properly resolve imports.
+namespace margelo::nitro::rive { class HybridViewModelInstanceSpec; }
 
 #include <string>
 #include <memory>
@@ -44,6 +46,7 @@ namespace margelo::nitro::rive { class HybridViewModelArtboardPropertySpec; }
 #include "HybridViewModelImagePropertySpec.hpp"
 #include "HybridViewModelListPropertySpec.hpp"
 #include "HybridViewModelArtboardPropertySpec.hpp"
+#include "HybridViewModelInstanceSpec.hpp"
 
 namespace margelo::nitro::rive {
 
@@ -85,6 +88,8 @@ namespace margelo::nitro::rive {
       virtual std::optional<std::shared_ptr<HybridViewModelImagePropertySpec>> imageProperty(const std::string& path) = 0;
       virtual std::optional<std::shared_ptr<HybridViewModelListPropertySpec>> listProperty(const std::string& path) = 0;
       virtual std::optional<std::shared_ptr<HybridViewModelArtboardPropertySpec>> artboardProperty(const std::string& path) = 0;
+      virtual std::optional<std::shared_ptr<HybridViewModelInstanceSpec>> viewModel(const std::string& path) = 0;
+      virtual void replaceViewModel(const std::string& path, const std::shared_ptr<HybridViewModelInstanceSpec>& instance) = 0;
 
     protected:
       // Hybrid Setup

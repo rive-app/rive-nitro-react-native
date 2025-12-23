@@ -12,3 +12,4 @@ export { default as ResponsiveLayouts } from './ResponsiveLayouts';
 export { default as SharedValueListenerExample } from './SharedValueListenerExample';
 export { default as MenuListExample } from './MenuListExample';
 export { default as DataBindingArtboardsExample } from './DataBindingArtboardsExample';
+export { default as NestedViewModelExample } from './NestedViewModelExample';
