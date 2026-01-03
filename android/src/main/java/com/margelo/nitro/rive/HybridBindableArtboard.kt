@@ -9,7 +9,8 @@ import com.facebook.proguard.annotations.DoNotStrip
 class HybridBindableArtboard(internal var bindableArtboard: BindableArtboard?) : HybridBindableArtboardSpec() {
 
   override val artboardName: String
-    get() = bindableArtboard?.name ?: ""
+    get() = bindableArtboard?.name
+      ?: throw IllegalStateException("BindableArtboard has been disposed")
 
   override fun dispose() {
     bindableArtboard?.release()

@@ -2,7 +2,7 @@ import NitroModules
 import RiveRuntime
 
 class HybridBindableArtboard: HybridBindableArtboardSpec {
-  let bindableArtboard: RiveBindableArtboard
+  internal var bindableArtboard: RiveBindableArtboard?
 
   init(bindableArtboard: RiveBindableArtboard) {
     self.bindableArtboard = bindableArtboard
@@ -10,10 +10,14 @@ class HybridBindableArtboard: HybridBindableArtboardSpec {
   }
 
   var artboardName: String {
-    bindableArtboard.name
+    guard let artboard = bindableArtboard else {
+      RCTLogError("[BindableArtboard] has been disposed")
+      return ""
+    }
+    return artboard.name
   }
 
   func dispose() {
-    // iOS uses ARC, no explicit cleanup needed
+    bindableArtboard = nil
   }
 }
