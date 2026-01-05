@@ -8,8 +8,8 @@ jest.mock('react-native/Libraries/Image/Image', () => ({
   })),
 }));
 
-describe('useRiveFile - input stability', () => {
-  const mockRiveFile: RiveFile = {
+function createMockRiveFile(): RiveFile {
+  return {
     dispose: jest.fn(),
     updateReferencedAssets: jest.fn(),
     viewModelCount: 0,
@@ -17,6 +17,10 @@ describe('useRiveFile - input stability', () => {
     viewModelByName: jest.fn(),
     defaultArtboardViewModel: jest.fn(),
   } as any;
+}
+
+describe('useRiveFile - input stability', () => {
+  const mockRiveFile = createMockRiveFile();
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -95,14 +99,7 @@ describe('useRiveFile - input stability', () => {
 });
 
 describe('useRiveFile - updateReferencedAssets', () => {
-  const mockRiveFile: RiveFile = {
-    dispose: jest.fn(),
-    updateReferencedAssets: jest.fn(),
-    viewModelCount: 0,
-    viewModelByIndex: jest.fn(),
-    viewModelByName: jest.fn(),
-    defaultArtboardViewModel: jest.fn(),
-  } as any;
+  const mockRiveFile = createMockRiveFile();
 
   beforeEach(() => {
     jest.clearAllMocks();
