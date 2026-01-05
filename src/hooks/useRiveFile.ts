@@ -16,6 +16,12 @@ import type {
 export type { ReferencedAssets, ResolvedReferencedAssets };
 export type RiveFileInput = number | { uri: string } | string | ArrayBuffer;
 
+function isUriInput(
+  input: RiveFileInput | undefined
+): input is { uri: string } {
+  return input != null && typeof input === 'object' && 'uri' in input;
+}
+
 export type UseRiveFileOptions = {
   referencedAssets?: ReferencedAssets;
 };
@@ -101,12 +107,18 @@ export function useRiveFile(
   );
   const initialReferencedAssets = useRef(referencedAssets);
 
+  const inputKind = isUriInput(input) ? 'uri' : 'primitive';
+  const inputValue = isUriInput(input) ? input.uri : input;
+
   useEffect(() => {
     let currentFile: RiveFile | null = null;
 
     const loadRiveFile = async () => {
       try {
-        const currentInput = input;
+        const currentInput =
+          inputKind === 'uri'
+            ? { uri: inputValue as string }
+            : (inputValue as Exclude<RiveFileInput, { uri: string }>);
 
         if (currentInput == null) {
           setResult({
@@ -164,7 +176,7 @@ export function useRiveFile(
         callDispose(currentFile);
       }
     };
-  }, [input]);
+  }, [inputKind, inputValue]);
 
   const { riveFile } = result;
   useEffect(() => {
