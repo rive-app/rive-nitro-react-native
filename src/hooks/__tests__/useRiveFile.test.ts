@@ -1,4 +1,4 @@
-import { renderHook, waitFor } from '@testing-library/react-native';
+import { renderHook, waitFor, act } from '@testing-library/react-native';
 import { useRiveFile } from '../useRiveFile';
 import type { RiveFile } from '../../specs/RiveFile.nitro';
 
@@ -7,6 +7,47 @@ jest.mock('react-native/Libraries/Image/Image', () => ({
     uri: `asset://resolved/${source}`,
   })),
 }));
+
+describe('useRiveFile - input stability', () => {
+  const mockRiveFile: RiveFile = {
+    dispose: jest.fn(),
+    updateReferencedAssets: jest.fn(),
+    viewModelCount: 0,
+    viewModelByIndex: jest.fn(),
+    viewModelByName: jest.fn(),
+    defaultArtboardViewModel: jest.fn(),
+  } as any;
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    // fromSource internally calls fromURL for http(s) URIs
+    (global as any).mockRiveFileFactory.fromURL.mockResolvedValue(mockRiveFile);
+  });
+
+  it('should not reload file when input object reference changes but uri is the same', async () => {
+    const { result, rerender } = renderHook(
+      (props: { input: { uri: string } }) => useRiveFile(props.input),
+      { initialProps: { input: { uri: 'https://example.com/animation.riv' } } }
+    );
+
+    await waitFor(() => {
+      expect((result.current as any).isLoading).toBe(false);
+    });
+
+    const callCountBefore = (global as any).mockRiveFileFactory.fromURL.mock
+      .calls.length;
+
+    await act(async () => {
+      // Pass NEW object reference with SAME uri value
+      rerender({ input: { uri: 'https://example.com/animation.riv' } });
+      await new Promise((resolve) => setTimeout(resolve, 50));
+    });
+
+    const callCountAfter = (global as any).mockRiveFileFactory.fromURL.mock
+      .calls.length;
+    expect(callCountAfter).toBe(callCountBefore);
+  });
+});
 
 describe('useRiveFile - updateReferencedAssets', () => {
   const mockRiveFile: RiveFile = {
