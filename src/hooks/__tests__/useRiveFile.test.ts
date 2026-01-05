@@ -57,19 +57,16 @@ describe('useRiveFile - input stability', () => {
     const MAX_RENDERS = 10;
     const url = 'https://example.com/animation.riv';
 
-    const { result, rerender } = renderHook(
-      () => {
-        renderCount++;
-        if (renderCount > MAX_RENDERS) {
-          throw new Error(
-            `Infinite re-render detected: ${renderCount} renders exceeded max of ${MAX_RENDERS}`
-          );
-        }
-        // Simulate inline object creation (new reference each render)
-        return useRiveFile({ uri: url });
-      },
-      {}
-    );
+    const { result, rerender } = renderHook(() => {
+      renderCount++;
+      if (renderCount > MAX_RENDERS) {
+        throw new Error(
+          `Infinite re-render detected: ${renderCount} renders exceeded max of ${MAX_RENDERS}`
+        );
+      }
+      // Simulate inline object creation (new reference each render)
+      return useRiveFile({ uri: url });
+    }, {});
 
     // First render: isLoading=true
     expect(renderCount).toBe(1);
@@ -92,9 +89,9 @@ describe('useRiveFile - input stability', () => {
     expect(renderCount).toBe(renderCountAfterLoad + 1);
 
     // File should not have been reloaded
-    expect(
-      (global as any).mockRiveFileFactory.fromURL.mock.calls.length
-    ).toBe(1);
+    expect((global as any).mockRiveFileFactory.fromURL.mock.calls.length).toBe(
+      1
+    );
   });
 });
 
