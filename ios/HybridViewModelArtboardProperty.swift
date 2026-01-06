@@ -1,10 +1,7 @@
 import RiveRuntime
 
-class HybridViewModelArtboardProperty: HybridViewModelArtboardPropertySpec, ValuedPropertyProtocol {
-  typealias ValueType = Void
-
-  var property: ArtboardPropertyType!
-  lazy var helper = PropertyListenerHelper(property: property!)
+class HybridViewModelArtboardProperty: HybridViewModelArtboardPropertySpec {
+  private let property: ArtboardPropertyType
 
   init(property: ArtboardPropertyType) {
     self.property = property
@@ -17,9 +14,5 @@ class HybridViewModelArtboardProperty: HybridViewModelArtboardPropertySpec, Valu
     } else {
       property.setValue(nil)
     }
-  }
-
-  func addListener(onChanged: @escaping () -> Void) throws -> () -> Void {
-    return helper.addListener { _ in onChanged() }
   }
 }

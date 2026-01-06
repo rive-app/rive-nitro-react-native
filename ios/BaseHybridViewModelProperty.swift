@@ -66,14 +66,6 @@ extension ListPropertyType: RivePropertyWithListeners {
   }
 }
 
-extension ArtboardPropertyType: RivePropertyWithListeners {
-  typealias ListenerValueType = Void
-
-  func addListener(_ callback: @escaping ListenerType) -> UUID {
-    addListener { _ in callback(()) }
-  }
-}
-
 /// Helper class for managing ViewModel property listeners
 class PropertyListenerHelper<PropertyType: RivePropertyWithListeners> {
   private var listenerIds: [UUID] = []

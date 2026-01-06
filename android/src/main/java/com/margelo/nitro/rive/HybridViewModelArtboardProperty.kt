@@ -13,13 +13,4 @@ class HybridViewModelArtboardProperty(private val property: ViewModelArtboardPro
     val bindable = (artboard as? HybridBindableArtboard)?.bindableArtboard
     property.set(bindable)
   }
-
-  // Android SDK doesn't support listeners on artboard properties
-  override fun addListener(onChanged: () -> Unit): () -> Unit {
-    return {}
-  }
-
-  override fun removeListeners() {
-    // No-op on Android - artboard properties don't support listeners
-  }
 }

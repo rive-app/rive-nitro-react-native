@@ -162,14 +162,10 @@ export interface ViewModelListProperty
  * This is a write-only property - artboards can be set but not read.
  * @see {@link https://rive.app/docs/runtimes/data-binding Rive Data Binding Documentation}
  */
-export interface ViewModelArtboardProperty
-  extends ViewModelProperty,
-    ObservableProperty {
+export interface ViewModelArtboardProperty extends ViewModelProperty {
   /**
    * Set the artboard for this property.
    * Pass undefined to clear the currently bound artboard.
    */
   set(artboard: BindableArtboard | undefined): void;
-  /** Add a listener called when the artboard property changes. Returns cleanup function. */
-  addListener(onChanged: () => void): () => void;
 }
