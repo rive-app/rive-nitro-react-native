@@ -12,6 +12,10 @@
 // Forward declaration of `HybridViewModelInstanceSpec_cxx` to properly resolve imports.
 namespace RNRive { class HybridViewModelInstanceSpec_cxx; }
 
+// Forward declaration of `ViewModelPropertyInfo` to properly resolve imports.
+namespace margelo::nitro::rive { struct ViewModelPropertyInfo; }
+// Forward declaration of `ViewModelPropertyType` to properly resolve imports.
+namespace margelo::nitro::rive { enum class ViewModelPropertyType; }
 // Forward declaration of `HybridViewModelNumberPropertySpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridViewModelNumberPropertySpec; }
 // Forward declaration of `HybridViewModelStringPropertySpec` to properly resolve imports.
@@ -30,6 +34,9 @@ namespace margelo::nitro::rive { class HybridViewModelImagePropertySpec; }
 namespace margelo::nitro::rive { class HybridViewModelListPropertySpec; }
 
 #include <string>
+#include "ViewModelPropertyInfo.hpp"
+#include <vector>
+#include "ViewModelPropertyType.hpp"
 #include <memory>
 #include "HybridViewModelNumberPropertySpec.hpp"
 #include <optional>
@@ -83,6 +90,10 @@ namespace margelo::nitro::rive {
     // Properties
     inline std::string getInstanceName() noexcept override {
       auto __result = _swiftPart.getInstanceName();
+      return __result;
+    }
+    inline std::vector<ViewModelPropertyInfo> getProperties() noexcept override {
+      auto __result = _swiftPart.getProperties();
       return __result;
     }
 

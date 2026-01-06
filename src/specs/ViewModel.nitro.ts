@@ -2,6 +2,34 @@ import type { HybridObject } from 'react-native-nitro-modules';
 import type { RiveImage } from './RiveImage.nitro';
 
 /**
+ * Property type enumeration for view model properties.
+ */
+export type ViewModelPropertyType =
+  | 'none'
+  | 'string'
+  | 'number'
+  | 'boolean'
+  | 'color'
+  | 'list'
+  | 'enum'
+  | 'trigger'
+  | 'viewModel'
+  | 'integer'
+  | 'symbolListIndex'
+  | 'assetImage'
+  | 'artboard'
+  | 'input'
+  | 'any';
+
+/**
+ * Property metadata containing name and type information.
+ */
+export interface ViewModelPropertyInfo {
+  readonly name: string;
+  readonly type: ViewModelPropertyType;
+}
+
+/**
  * A Rive View Model as created in the Rive editor.
  * @see {@link https://rive.app/docs/runtimes/data-binding Rive Data Binding Documentation}
  */
@@ -13,6 +41,8 @@ export interface ViewModel
   readonly instanceCount: number;
   /** The name of the view model */
   readonly modelName: string;
+  /** All properties defined on this view model */
+  readonly properties: ViewModelPropertyInfo[];
   /** Create a new instance of the view model by index */
   createInstanceByIndex(index: number): ViewModelInstance | undefined;
   /** Create a new instance of the view model by name */
@@ -32,6 +62,11 @@ export interface ViewModelInstance
   extends HybridObject<{ ios: 'swift'; android: 'kotlin' }> {
   /** The name of the view model instance */
   readonly instanceName: string;
+  /**
+   * All properties available on this view model instance.
+   * @platform iOS only. On Android, returns empty array due to SDK limitation.
+   */
+  readonly properties: ViewModelPropertyInfo[];
   /** Get a number property from the view model instance at the given path */
   numberProperty(path: string): ViewModelNumberProperty | undefined;
 
