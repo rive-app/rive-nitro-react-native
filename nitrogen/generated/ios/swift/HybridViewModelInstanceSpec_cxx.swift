@@ -289,4 +289,25 @@ open class HybridViewModelInstanceSpec_cxx {
       return bridge.create_Result_std__optional_std__shared_ptr_HybridViewModelListPropertySpec___(__exceptionPtr)
     }
   }
+  
+  @inline(__always)
+  public final func artboardProperty(path: std.string) -> bridge.Result_std__optional_std__shared_ptr_HybridViewModelArtboardPropertySpec___ {
+    do {
+      let __result = try self.__implementation.artboardProperty(path: String(path))
+      let __resultCpp = { () -> bridge.std__optional_std__shared_ptr_HybridViewModelArtboardPropertySpec__ in
+        if let __unwrappedValue = __result {
+          return bridge.create_std__optional_std__shared_ptr_HybridViewModelArtboardPropertySpec__({ () -> bridge.std__shared_ptr_HybridViewModelArtboardPropertySpec_ in
+            let __cxxWrapped = __unwrappedValue.getCxxWrapper()
+            return __cxxWrapped.getCxxPart()
+          }())
+        } else {
+          return .init()
+        }
+      }()
+      return bridge.create_Result_std__optional_std__shared_ptr_HybridViewModelArtboardPropertySpec___(__resultCpp)
+    } catch (let __error) {
+      let __exceptionPtr = __error.toCpp()
+      return bridge.create_Result_std__optional_std__shared_ptr_HybridViewModelArtboardPropertySpec___(__exceptionPtr)
+    }
+  }
 }

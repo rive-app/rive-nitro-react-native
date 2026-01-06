@@ -15,10 +15,13 @@ namespace margelo::nitro::rive {
     // load custom methods/properties
     registerHybrids(this, [](Prototype& prototype) {
       prototype.registerHybridGetter("viewModelCount", &HybridRiveFileSpec::getViewModelCount);
+      prototype.registerHybridGetter("artboardCount", &HybridRiveFileSpec::getArtboardCount);
+      prototype.registerHybridGetter("artboardNames", &HybridRiveFileSpec::getArtboardNames);
       prototype.registerHybridMethod("viewModelByIndex", &HybridRiveFileSpec::viewModelByIndex);
       prototype.registerHybridMethod("viewModelByName", &HybridRiveFileSpec::viewModelByName);
       prototype.registerHybridMethod("defaultArtboardViewModel", &HybridRiveFileSpec::defaultArtboardViewModel);
       prototype.registerHybridMethod("updateReferencedAssets", &HybridRiveFileSpec::updateReferencedAssets);
+      prototype.registerHybridMethod("getBindableArtboard", &HybridRiveFileSpec::getBindableArtboard);
     });
   }
 

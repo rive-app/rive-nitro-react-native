@@ -15,6 +15,7 @@
 #include <fbjni/fbjni.h>
 #include <NitroModules/HybridObjectRegistry.hpp>
 
+#include "JHybridBindableArtboardSpec.hpp"
 #include "JHybridRiveSpec.hpp"
 #include "JHybridRiveFileSpec.hpp"
 #include "JHybridRiveFileFactorySpec.hpp"
@@ -39,6 +40,7 @@
 #include "JHybridViewModelTriggerPropertySpec.hpp"
 #include "JHybridViewModelImagePropertySpec.hpp"
 #include "JHybridViewModelListPropertySpec.hpp"
+#include "JHybridViewModelArtboardPropertySpec.hpp"
 #include <NitroModules/DefaultConstructableObject.hpp>
 
 namespace margelo::nitro::rive {
@@ -50,6 +52,7 @@ int initialize(JavaVM* vm) {
 
   return facebook::jni::initialize(vm, [] {
     // Register native JNI methods
+    margelo::nitro::rive::JHybridBindableArtboardSpec::registerNatives();
     margelo::nitro::rive::JHybridRiveSpec::registerNatives();
     margelo::nitro::rive::JHybridRiveFileSpec::registerNatives();
     margelo::nitro::rive::JHybridRiveFileFactorySpec::registerNatives();
@@ -74,6 +77,7 @@ int initialize(JavaVM* vm) {
     margelo::nitro::rive::JHybridViewModelTriggerPropertySpec::registerNatives();
     margelo::nitro::rive::JHybridViewModelImagePropertySpec::registerNatives();
     margelo::nitro::rive::JHybridViewModelListPropertySpec::registerNatives();
+    margelo::nitro::rive::JHybridViewModelArtboardPropertySpec::registerNatives();
 
     // Register Nitro Hybrid Objects
     HybridObjectRegistry::registerHybridObjectConstructor(

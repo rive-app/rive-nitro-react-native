@@ -68,6 +68,25 @@ class HybridRiveFile: HybridRiveFileSpec, RiveViewSource {
     return HybridViewModel(viewModel: vm)
   }
   
+  var artboardCount: Double {
+    Double(riveFile?.artboardNames().count ?? 0)
+  }
+
+  var artboardNames: [String] {
+    riveFile?.artboardNames() ?? []
+  }
+
+  func getBindableArtboard(name: String) throws -> any HybridBindableArtboardSpec {
+    guard let bindable = try riveFile?.bindableArtboard(withName: name) else {
+      throw NSError(
+        domain: "RiveError",
+        code: 0,
+        userInfo: [NSLocalizedDescriptionKey: "Artboard '\(name)' not found"]
+      )
+    }
+    return HybridBindableArtboard(bindableArtboard: bindable)
+  }
+
   func updateReferencedAssets(referencedAssets: ReferencedAssetsType) {
     guard let assetsData = referencedAssets.data,
           let cache = referencedAssetCache,

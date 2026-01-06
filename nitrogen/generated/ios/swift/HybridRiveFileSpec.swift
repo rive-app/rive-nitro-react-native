@@ -12,12 +12,15 @@ import NitroModules
 public protocol HybridRiveFileSpec_protocol: HybridObject {
   // Properties
   var viewModelCount: Double? { get }
+  var artboardCount: Double { get }
+  var artboardNames: [String] { get }
 
   // Methods
   func viewModelByIndex(index: Double) throws -> (any HybridViewModelSpec)?
   func viewModelByName(name: String) throws -> (any HybridViewModelSpec)?
   func defaultArtboardViewModel(artboardBy: ArtboardBy?) throws -> (any HybridViewModelSpec)?
   func updateReferencedAssets(referencedAssets: ReferencedAssetsType) throws -> Void
+  func getBindableArtboard(name: String) throws -> (any HybridBindableArtboardSpec)
 }
 
 public extension HybridRiveFileSpec_protocol {

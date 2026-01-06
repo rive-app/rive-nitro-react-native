@@ -23,6 +23,8 @@ namespace margelo::nitro::rive { class HybridViewModelTriggerPropertySpec; }
 namespace margelo::nitro::rive { class HybridViewModelImagePropertySpec; }
 // Forward declaration of `HybridViewModelListPropertySpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridViewModelListPropertySpec; }
+// Forward declaration of `HybridViewModelArtboardPropertySpec` to properly resolve imports.
+namespace margelo::nitro::rive { class HybridViewModelArtboardPropertySpec; }
 
 #include <string>
 #include <memory>
@@ -43,6 +45,8 @@ namespace margelo::nitro::rive { class HybridViewModelListPropertySpec; }
 #include "JHybridViewModelImagePropertySpec.hpp"
 #include "HybridViewModelListPropertySpec.hpp"
 #include "JHybridViewModelListPropertySpec.hpp"
+#include "HybridViewModelArtboardPropertySpec.hpp"
+#include "JHybridViewModelArtboardPropertySpec.hpp"
 
 namespace margelo::nitro::rive {
 
@@ -119,6 +123,11 @@ namespace margelo::nitro::rive {
     static const auto method = javaClassStatic()->getMethod<jni::local_ref<JHybridViewModelListPropertySpec::javaobject>(jni::alias_ref<jni::JString> /* path */)>("listProperty");
     auto __result = method(_javaPart, jni::make_jstring(path));
     return __result != nullptr ? std::make_optional(__result->cthis()->shared_cast<JHybridViewModelListPropertySpec>()) : std::nullopt;
+  }
+  std::optional<std::shared_ptr<HybridViewModelArtboardPropertySpec>> JHybridViewModelInstanceSpec::artboardProperty(const std::string& path) {
+    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JHybridViewModelArtboardPropertySpec::javaobject>(jni::alias_ref<jni::JString> /* path */)>("artboardProperty");
+    auto __result = method(_javaPart, jni::make_jstring(path));
+    return __result != nullptr ? std::make_optional(__result->cthis()->shared_cast<JHybridViewModelArtboardPropertySpec>()) : std::nullopt;
   }
 
 } // namespace margelo::nitro::rive

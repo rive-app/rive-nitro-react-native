@@ -24,6 +24,7 @@ typealias ColorPropertyType = RiveDataBindingViewModel.Instance.ColorProperty
 typealias TriggerPropertyType = RiveDataBindingViewModel.Instance.TriggerProperty
 typealias ImagePropertyType = RiveDataBindingViewModel.Instance.ImageProperty
 typealias ListPropertyType = RiveDataBindingViewModel.Instance.ListProperty
+typealias ArtboardPropertyType = RiveDataBindingViewModel.Instance.ArtboardProperty
 
 // Make all Rive property types conform to the protocol
 extension BooleanPropertyType: RivePropertyWithListeners {
