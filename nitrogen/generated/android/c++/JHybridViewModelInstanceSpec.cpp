@@ -25,6 +25,8 @@ namespace margelo::nitro::rive { class HybridViewModelImagePropertySpec; }
 namespace margelo::nitro::rive { class HybridViewModelListPropertySpec; }
 // Forward declaration of `HybridViewModelArtboardPropertySpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridViewModelArtboardPropertySpec; }
+// Forward declaration of `HybridViewModelInstanceSpec` to properly resolve imports.
+namespace margelo::nitro::rive { class HybridViewModelInstanceSpec; }
 
 #include <string>
 #include <memory>
@@ -47,6 +49,8 @@ namespace margelo::nitro::rive { class HybridViewModelArtboardPropertySpec; }
 #include "JHybridViewModelListPropertySpec.hpp"
 #include "HybridViewModelArtboardPropertySpec.hpp"
 #include "JHybridViewModelArtboardPropertySpec.hpp"
+#include "HybridViewModelInstanceSpec.hpp"
+#include "JHybridViewModelInstanceSpec.hpp"
 
 namespace margelo::nitro::rive {
 
@@ -128,6 +132,15 @@ namespace margelo::nitro::rive {
     static const auto method = javaClassStatic()->getMethod<jni::local_ref<JHybridViewModelArtboardPropertySpec::javaobject>(jni::alias_ref<jni::JString> /* path */)>("artboardProperty");
     auto __result = method(_javaPart, jni::make_jstring(path));
     return __result != nullptr ? std::make_optional(__result->cthis()->shared_cast<JHybridViewModelArtboardPropertySpec>()) : std::nullopt;
+  }
+  std::optional<std::shared_ptr<HybridViewModelInstanceSpec>> JHybridViewModelInstanceSpec::viewModel(const std::string& path) {
+    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JHybridViewModelInstanceSpec::javaobject>(jni::alias_ref<jni::JString> /* path */)>("viewModel");
+    auto __result = method(_javaPart, jni::make_jstring(path));
+    return __result != nullptr ? std::make_optional(__result->cthis()->shared_cast<JHybridViewModelInstanceSpec>()) : std::nullopt;
+  }
+  void JHybridViewModelInstanceSpec::replaceViewModel(const std::string& path, const std::shared_ptr<HybridViewModelInstanceSpec>& instance) {
+    static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<jni::JString> /* path */, jni::alias_ref<JHybridViewModelInstanceSpec::javaobject> /* instance */)>("replaceViewModel");
+    method(_javaPart, jni::make_jstring(path), std::dynamic_pointer_cast<JHybridViewModelInstanceSpec>(instance)->getJavaPart());
   }
 
 } // namespace margelo::nitro::rive
