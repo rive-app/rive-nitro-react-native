@@ -245,8 +245,10 @@ jobs:
       - name: Boot iOS Simulator
         run: |
           xcrun simctl boot "iPhone 16 Pro" || true
+          xcrun simctl bootstatus "iPhone 16 Pro" -b
 
       - name: Run harness tests on iOS
+        timeout-minutes: 15
         run: |
           cd example
           yarn test:harness:ios
