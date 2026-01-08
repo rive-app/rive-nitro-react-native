@@ -207,3 +207,46 @@ jobs:
           TURBO_FORCE: ${{ steps.turbo-cache-ios.outputs.cache-hit != 'true' }}
         run: |
           yarn turbo run build:ios --cache-dir="${{ env.TURBO_CACHE_DIR }}"
+
+  test-harness-ios:
+    needs: build-ios
+    runs-on: macos-latest
+    env:
+      XCODE_VERSION: 16.4
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup
+        uses: ./.github/actions/setup
+
+      - name: Use appropriate Xcode version
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: ${{ env.XCODE_VERSION }}
+
+      - name: Restore cocoapods
+        id: cocoapods-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            **/ios/Pods
+          key: ${{ runner.os }}-cocoapods-${{ hashFiles('example/ios/Podfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cocoapods-
+
+      - name: Install cocoapods
+        if: steps.cocoapods-cache.outputs.cache-hit != 'true'
+        run: |
+          cd example
+          bundle install
+          bundle exec pod install --project-directory=ios
+
+      - name: Boot iOS Simulator
+        run: |
+          xcrun simctl boot "iPhone 16 Pro" || true
+
+      - name: Run harness tests on iOS
+        run: |
+          cd example
+          yarn test:harness:ios

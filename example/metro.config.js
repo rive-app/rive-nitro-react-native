@@ -1,6 +1,7 @@
 const path = require('path');
 const { getDefaultConfig } = require('@react-native/metro-config');
 const { getConfig } = require('react-native-builder-bob/metro-config');
+const { withRnHarness } = require('react-native-harness/metro');
 
 const root = path.resolve(__dirname, '..');
 
@@ -13,7 +14,9 @@ config.transformer.unstable_allowRequireContext = true;
  *
  * @type {import('metro-config').MetroConfig}
  */
-module.exports = getConfig(config, {
-  root,
-  project: __dirname,
-});
+module.exports = withRnHarness(
+  getConfig(config, {
+    root,
+    project: __dirname,
+  })
+);
