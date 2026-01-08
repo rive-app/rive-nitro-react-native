@@ -212,6 +212,8 @@ jobs:
     runs-on: macos-latest
     env:
       XCODE_VERSION: 16.4
+      DEVICE_MODEL: iPhone 16 Pro
+      IOS_VERSION: "18.5"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -241,13 +243,33 @@ jobs:
           bundle install
           bundle exec pod install --project-directory=ios
 
-      - name: Boot iOS Simulator
+      - name: Build iOS app
+        working-directory: example/ios
         run: |
-          xcrun simctl boot "iPhone 16 Pro" || true
-          xcrun simctl bootstatus "iPhone 16 Pro" -b
+          set -o pipefail && xcodebuild \
+            -derivedDataPath build \
+            -workspace RiveExample.xcworkspace \
+            -scheme RiveExample \
+            -sdk iphonesimulator \
+            -configuration Debug \
+            -destination 'platform=iOS Simulator,name=${{ env.DEVICE_MODEL }}' \
+            build \
+            CODE_SIGNING_ALLOWED=NO
+
+      - name: Setup iOS Simulator
+        uses: futureware-tech/simulator-action@v4
+        with:
+          model: ${{ env.DEVICE_MODEL }}
+          os: iOS
+          os_version: ${{ env.IOS_VERSION }}
+          wait_for_boot: true
+
+      - name: Install app on simulator
+        run: |
+          xcrun simctl install booted example/ios/build/Build/Products/Debug-iphonesimulator/RiveExample.app
 
       - name: Run harness tests on iOS
-        timeout-minutes: 15
+        timeout-minutes: 10
         run: |
           cd example
           yarn test:harness:ios
