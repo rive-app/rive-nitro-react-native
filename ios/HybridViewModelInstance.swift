@@ -1,3 +1,4 @@
+import NitroModules
 import RiveRuntime
 
 class HybridViewModelInstance: HybridViewModelInstanceSpec {
