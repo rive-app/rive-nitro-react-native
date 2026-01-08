@@ -16,15 +16,20 @@ for (const suite of allSuites) {
       file = await RiveFileFactory.fromSource(suite.riveAsset, undefined);
     });
 
-    const tests = suite.getTests(
-      // Create a proxy that will access the file after beforeAll runs
-      new Proxy({} as RiveFile, {
-        get: (_target, prop) => {
-          return (file as unknown as Record<string, unknown>)[prop as string];
-        },
-      }),
-      harnessBackend
-    );
+    // Create a proxy that forwards all property access and method calls to file
+    const fileProxy = new Proxy({} as RiveFile, {
+      get: (_target, prop) => {
+        const value = (file as unknown as Record<string, unknown>)[
+          prop as string
+        ];
+        if (typeof value === 'function') {
+          return value.bind(file);
+        }
+        return value;
+      },
+    });
+
+    const tests = suite.getTests(fileProxy, harnessBackend);
 
     for (const test of tests) {
       it(test.name, async () => {
