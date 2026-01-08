@@ -1,6 +1,10 @@
 import { androidPlatform, androidEmulator } from '@react-native-harness/platform-android';
 import { applePlatform, appleSimulator } from '@react-native-harness/platform-apple';
 
+// Allow CI to override device/version via environment variables
+const deviceModel = process.env.DEVICE_MODEL || 'iPhone 16 Pro';
+const iosVersion = process.env.IOS_VERSION || '18.6';
+
 export default {
   entryPoint: './index.js',
   appRegistryComponentName: 'RiveExample',
@@ -12,7 +16,7 @@ export default {
     }),
     applePlatform({
       name: 'ios',
-      device: appleSimulator('iPhone 16 Pro', '18.5'),
+      device: appleSimulator(deviceModel, iosVersion),
       bundleId: 'rive.example',
     }),
   ],
