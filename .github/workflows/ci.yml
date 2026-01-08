@@ -293,12 +293,37 @@ jobs:
         timeout-minutes: 10
         run: |
           cd example
-          yarn test:harness:ios
+          # Start log streaming in background
+          xcrun simctl spawn booted log stream --level=debug --predicate 'processImagePath CONTAINS "RiveExample" OR subsystem CONTAINS "rive"' > ../simulator.log 2>&1 &
+          LOG_PID=$!
+
+          # Run harness tests
+          yarn test:harness:ios || TEST_RESULT=$?
+
+          # Stop log streaming
+          kill $LOG_PID 2>/dev/null || true
+
+          # Exit with test result
+          exit ${TEST_RESULT:-0}
 
       - name: Capture logs on failure
         if: failure()
         run: |
-          echo "=== Simulator System Log ==="
-          xcrun simctl spawn booted log show --predicate 'process == "RiveExample"' --last 5m 2>/dev/null | tail -100 || echo "No logs found"
-          echo "=== List installed apps ==="
-          xcrun simctl listapps booted 2>/dev/null | head -50 || true
+          echo "=== Simulator Stream Log ==="
+          cat simulator.log 2>/dev/null | tail -500 || echo "No stream log found"
+
+          echo ""
+          echo "=== Crash Reports ==="
+          find ~/Library/Logs/DiagnosticReports -name "*RiveExample*" -mmin -10 -exec cat {} \; 2>/dev/null || echo "No crash reports found"
+
+          echo ""
+          echo "=== System Log (broader filter) ==="
+          xcrun simctl spawn booted log show --last 5m --predicate 'processImagePath CONTAINS "RiveExample" OR message CONTAINS "rive" OR message CONTAINS "harness"' 2>/dev/null | tail -200 || echo "No logs found"
+
+      - name: Upload logs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: harness-logs
+          path: |
+            simulator.log
