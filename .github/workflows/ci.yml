@@ -268,8 +268,37 @@ jobs:
         run: |
           xcrun simctl install booted example/ios/build/Build/Products/Debug-iphonesimulator/RiveExample.app
 
+      - name: Debug - Check Metro asset serving
+        run: |
+          cd example
+          yarn start &
+          METRO_PID=$!
+          sleep 15
+          echo "Checking Metro status..."
+          curl -v http://localhost:8081/status || echo "Metro status failed"
+          echo "Checking asset availability..."
+          curl -v http://localhost:8081/assets/rive/viewmodelproperty.riv -o /dev/null || echo "Asset fetch failed"
+          kill $METRO_PID || true
+
+      - name: Debug - Test app launch
+        run: |
+          echo "Attempting to launch app..."
+          xcrun simctl launch --console booted rive.example 2>&1 &
+          sleep 10
+          echo "Checking if app is running..."
+          xcrun simctl listapps booted | grep -A5 "rive.example" || true
+          xcrun simctl terminate booted rive.example || true
+
       - name: Run harness tests on iOS
         timeout-minutes: 10
         run: |
           cd example
           yarn test:harness:ios
+
+      - name: Capture logs on failure
+        if: failure()
+        run: |
+          echo "=== Simulator System Log ==="
+          xcrun simctl spawn booted log show --predicate 'process == "RiveExample"' --last 5m 2>/dev/null | tail -100 || echo "No logs found"
+          echo "=== List installed apps ==="
+          xcrun simctl listapps booted 2>/dev/null | head -50 || true
