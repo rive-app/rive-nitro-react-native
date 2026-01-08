@@ -31,8 +31,10 @@
     "@react-native/babel-preset": "0.79.2",
     "@react-native/metro-config": "0.79.2",
     "@react-native/typescript-config": "0.79.2",
+    "@types/deep-equal": "^1.0.4",
     "@types/react": "^19.0.0",
     "babel-plugin-react-compiler": "^1.0.0",
+    "deep-equal": "^2.2.3",
     "react-native-builder-bob": "^0.40.10"
   },
   "engines": {
