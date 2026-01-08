@@ -1,3 +1,7 @@
+/**
+ * Chainable assertion API adapted from Nitro.
+ * @see https://github.com/mrousavy/nitro/blob/main/example/src/testing/State.ts
+ */
 import type { AssertionBackend, JSType } from './types';
 
 function stringify(value: unknown): string {
