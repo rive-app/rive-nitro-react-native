@@ -1,3 +1,7 @@
+/**
+ * Assertion backend that throws on failure, for in-app test UI.
+ * @see https://github.com/mrousavy/nitro/blob/main/example/src/testing/backends/throwing.ts
+ */
 import deepEqual from 'deep-equal';
 import type { AssertionBackend, JSType } from './types';
 

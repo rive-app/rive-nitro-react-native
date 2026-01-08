@@ -1,3 +1,7 @@
+/**
+ * Test runner factory with timeout handling, adapted from Nitro.
+ * @see https://github.com/mrousavy/nitro/blob/main/example/src/testing/createTestRunner.ts
+ */
 import { State } from './State';
 import type { AssertionBackend } from './types';
 

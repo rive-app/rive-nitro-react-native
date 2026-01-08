@@ -1,3 +1,7 @@
+/**
+ * Testing infrastructure adapted from Nitro's example app.
+ * @see https://github.com/mrousavy/nitro/tree/main/example/src/testing
+ */
 import type { RiveFile } from '@rive-app/react-native';
 
 export type JSType =
