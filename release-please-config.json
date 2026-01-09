@@ -3,6 +3,7 @@
   "release-type": "node",
   "bump-minor-pre-major": true,
   "bump-patch-for-minor-pre-major": true,
+  "last-release-sha": "6bc90fc567ad1c9f5930d29224fe406e7be2acaa",
   "packages": {
     ".": {
       "changelog-path": "CHANGELOG.md",
