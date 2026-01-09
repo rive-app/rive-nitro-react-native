@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.1.4](https://github.com/rive-app/rive-nitro-react-native/compare/v0.1.3...v0.1.4) (2026-01-09)
+
+
+### Features
+
+* add data binding artboards support ([#95](https://github.com/rive-app/rive-nitro-react-native/issues/95)) ([515070e](https://github.com/rive-app/rive-nitro-react-native/commit/515070ed673fa267426ebd99fa3f1cc2ec561d97))
+* add release-please for automated releases ([#109](https://github.com/rive-app/rive-nitro-react-native/issues/109)) ([6403bd4](https://github.com/rive-app/rive-nitro-react-native/commit/6403bd4ffe8a5254773b860049d77842c6ad9d76))
+* add viewModel and replaceViewModel for nested ViewModel access ([#96](https://github.com/rive-app/rive-nitro-react-native/issues/96)) ([3f61c98](https://github.com/rive-app/rive-nitro-react-native/commit/3f61c983f067fec381cb686a5eabcedb229441e3))
+
+
+### Bug Fixes
+
+* add missing NitroModules import in HybridViewModelInstance ([#107](https://github.com/rive-app/rive-nitro-react-native/issues/107)) ([6bc90fc](https://github.com/rive-app/rive-nitro-react-native/commit/6bc90fc567ad1c9f5930d29224fe406e7be2acaa))
+* read initial value in useRiveProperty hooks ([#97](https://github.com/rive-app/rive-nitro-react-native/issues/97)) ([26223f2](https://github.com/rive-app/rive-nitro-react-native/commit/26223f2cbfde703df4e1d91a97d9f69a7a518219))
+
 ## [0.1.3](https://github.com/rive-app/rive-nitro-react-native/compare/v0.1.2...v0.1.3) (2024-12-20)
 
 ### Features
