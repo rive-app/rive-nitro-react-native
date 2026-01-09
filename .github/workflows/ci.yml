@@ -280,15 +280,6 @@ jobs:
           curl -v http://localhost:8081/assets/rive/viewmodelproperty.riv -o /dev/null || echo "Asset fetch failed"
           kill $METRO_PID || true
 
-      - name: Debug - Test app launch
-        run: |
-          echo "Attempting to launch app..."
-          xcrun simctl launch --console booted rive.example 2>&1 &
-          sleep 10
-          echo "Checking if app is running..."
-          xcrun simctl listapps booted | grep -A5 "rive.example" || true
-          xcrun simctl terminate booted rive.example || true
-
       - name: Run harness tests on iOS
         timeout-minutes: 10
         run: |
