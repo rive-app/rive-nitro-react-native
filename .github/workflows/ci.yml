@@ -268,62 +268,8 @@ jobs:
         run: |
           xcrun simctl install booted example/ios/build/Build/Products/Debug-iphonesimulator/RiveExample.app
 
-      - name: Debug - Check Metro asset serving
-        run: |
-          cd example
-          yarn start &
-          METRO_PID=$!
-          sleep 15
-          echo "Checking Metro status..."
-          curl -v http://localhost:8081/status || echo "Metro status failed"
-          echo "Checking asset availability..."
-          curl -v http://localhost:8081/assets/rive/viewmodelproperty.riv -o /dev/null || echo "Asset fetch failed"
-          kill $METRO_PID || true
-
-      - name: Debug - Test app launch
-        run: |
-          echo "Attempting to launch app..."
-          xcrun simctl launch --console booted rive.example 2>&1 &
-          sleep 10
-          echo "Checking if app is running..."
-          xcrun simctl listapps booted | grep -A5 "rive.example" || true
-          xcrun simctl terminate booted rive.example || true
-
       - name: Run harness tests on iOS
         timeout-minutes: 10
         run: |
           cd example
-          # Start log streaming in background
-          xcrun simctl spawn booted log stream --level=debug --predicate 'processImagePath CONTAINS "RiveExample" OR subsystem CONTAINS "rive"' > ../simulator.log 2>&1 &
-          LOG_PID=$!
-
-          # Run harness tests
-          yarn test:harness:ios || TEST_RESULT=$?
-
-          # Stop log streaming
-          kill $LOG_PID 2>/dev/null || true
-
-          # Exit with test result
-          exit ${TEST_RESULT:-0}
-
-      - name: Capture logs on failure
-        if: failure()
-        run: |
-          echo "=== Simulator Stream Log ==="
-          cat simulator.log 2>/dev/null | tail -500 || echo "No stream log found"
-
-          echo ""
-          echo "=== Crash Reports ==="
-          find ~/Library/Logs/DiagnosticReports -name "*RiveExample*" -mmin -10 -exec cat {} \; 2>/dev/null || echo "No crash reports found"
-
-          echo ""
-          echo "=== System Log (broader filter) ==="
-          xcrun simctl spawn booted log show --last 5m --predicate 'processImagePath CONTAINS "RiveExample" OR message CONTAINS "rive" OR message CONTAINS "harness"' 2>/dev/null | tail -200 || echo "No logs found"
-
-      - name: Upload logs
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: harness-logs
-          path: |
-            simulator.log
+          yarn test:harness:ios
