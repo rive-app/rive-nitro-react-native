@@ -1,6 +1,7 @@
 /**
  * Assertion backend for react-native-harness CI tests.
  * Wraps Jest's expect() to implement AssertionBackend interface.
+ * @see https://github.com/mrousavy/nitro/blob/main/example/src/testing/backends/harness.ts
  */
 import { expect } from 'react-native-harness';
 import type { AssertionBackend, JSType } from './types';

@@ -272,4 +272,6 @@ jobs:
         timeout-minutes: 10
         run: |
           cd example
+          # Give simulator time to fully stabilize after app install
+          sleep 10
           yarn test:harness:ios
