@@ -41,13 +41,20 @@ Pod::Spec.new do |s|
   s.platforms    = { :ios => min_ios_version_supported }
   s.source       = { :git => "https://github.com/rive-app/rive-nitro-react-native.git", :tag => "#{s.version}" }
 
-  s.source_files = "ios/**/*.{h,m,mm,swift}"
+  s.source_files = "ios/**/*.{h,m,mm,swift}", "cpp/**/*.{hpp,cpp}"
 
   s.public_header_files = ['ios/RCTSwiftLog.h']
+  s.private_header_files = ['cpp/**/*.hpp']
+
+  # Set pod_target_xcconfig BEFORE add_nitrogen_files so it gets merged with Nitro's settings
+  s.pod_target_xcconfig = {
+    'HEADER_SEARCH_PATHS' => '"$(PODS_TARGET_SRCROOT)/cpp"'
+  }
+
   load 'nitrogen/generated/ios/RNRive+autolinking.rb'
   add_nitrogen_files(s)
 
   s.dependency "RiveRuntime", rive_ios_version
 
- install_modules_dependencies(s)
+  install_modules_dependencies(s)
 end
