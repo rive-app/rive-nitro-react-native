@@ -212,8 +212,6 @@ jobs:
     runs-on: macos-latest
     env:
       XCODE_VERSION: 16.4
-      DEVICE_MODEL: iPhone 16 Pro
-      IOS_VERSION: "18.6"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -252,69 +250,12 @@ jobs:
             -scheme RiveExample \
             -sdk iphonesimulator \
             -configuration Debug \
-            -destination 'platform=iOS Simulator,name=${{ env.DEVICE_MODEL }}' \
             build \
             CODE_SIGNING_ALLOWED=NO
 
-      - name: Setup iOS Simulator
-        uses: futureware-tech/simulator-action@v4
-        with:
-          model: ${{ env.DEVICE_MODEL }}
-          os: iOS
-          os_version: ${{ env.IOS_VERSION }}
-          wait_for_boot: true
-
-      - name: Install app on simulator
-        run: |
-          xcrun simctl install booted example/ios/build/Build/Products/Debug-iphonesimulator/RiveExample.app
-
-      - name: Warmup - Start Metro and launch app once
-        run: |
-          cd example
-          yarn start &
-          METRO_PID=$!
-          sleep 10
-          echo "Launching app to warm up..."
-          xcrun simctl launch booted rive.example
-          sleep 5
-          xcrun simctl terminate booted rive.example || true
-          kill $METRO_PID || true
-
       - name: Run harness tests on iOS
-        timeout-minutes: 10
-        run: |
-          cd example
-          # Start log streaming in background
-          xcrun simctl spawn booted log stream --level=debug --predicate 'processImagePath CONTAINS "RiveExample" OR subsystem CONTAINS "rive"' > ../simulator.log 2>&1 &
-          LOG_PID=$!
-
-          # Run harness tests
-          yarn test:harness:ios || TEST_RESULT=$?
-
-          # Stop log streaming
-          kill $LOG_PID 2>/dev/null || true
-
-          # Exit with test result
-          exit ${TEST_RESULT:-0}
-
-      - name: Capture logs on failure
-        if: failure()
-        run: |
-          echo "=== Simulator Stream Log ==="
-          cat simulator.log 2>/dev/null | tail -500 || echo "No stream log found"
-
-          echo ""
-          echo "=== Crash Reports ==="
-          find ~/Library/Logs/DiagnosticReports -name "*RiveExample*" -mmin -10 -exec cat {} \; 2>/dev/null || echo "No crash reports found"
-
-          echo ""
-          echo "=== System Log (broader filter) ==="
-          xcrun simctl spawn booted log show --last 5m --predicate 'processImagePath CONTAINS "RiveExample" OR message CONTAINS "rive" OR message CONTAINS "harness"' 2>/dev/null | tail -200 || echo "No logs found"
-
-      - name: Upload logs
-        if: failure()
-        uses: actions/upload-artifact@v4
+        uses: callstackincubator/react-native-harness/actions/ios@main
         with:
-          name: harness-logs
-          path: |
-            simulator.log
+          app: example/ios/build/Build/Products/Debug-iphonesimulator/RiveExample.app
+          runner: ios
+          projectRoot: example
