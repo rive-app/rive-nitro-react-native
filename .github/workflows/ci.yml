@@ -256,6 +256,6 @@ jobs:
       - name: Run harness tests on iOS
         uses: callstackincubator/react-native-harness/actions/ios@main
         with:
-          app: example/ios/build/Build/Products/Debug-iphonesimulator/RiveExample.app
+          app: ios/build/Build/Products/Debug-iphonesimulator/RiveExample.app
           runner: ios
           projectRoot: example
