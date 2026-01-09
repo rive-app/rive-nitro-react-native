@@ -253,6 +253,9 @@ jobs:
             build \
             CODE_SIGNING_ALLOWED=NO
 
+      - name: Install pnpm
+        run: npm install -g pnpm
+
       - name: Run harness tests on iOS
         uses: callstackincubator/react-native-harness/actions/ios@main
         with:
