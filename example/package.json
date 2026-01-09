@@ -7,7 +7,9 @@
     "ios": "react-native run-ios",
     "start": "react-native start",
     "build:android": "react-native build-android --extra-params \"--no-daemon --console=plain -PreactNativeArchitectures=arm64-v8a\"",
-    "build:ios": "react-native build-ios --mode Debug"
+    "build:ios": "react-native build-ios --mode Debug",
+    "test:harness:ios": "react-native-harness --harnessRunner ios",
+    "test:harness:android": "react-native-harness --harnessRunner android"
   },
   "dependencies": {
     "@react-native-picker/picker": "^2.11.4",
@@ -28,12 +30,17 @@
     "@react-native-community/cli": "18.0.0",
     "@react-native-community/cli-platform-android": "18.0.0",
     "@react-native-community/cli-platform-ios": "18.0.0",
+    "@react-native-harness/platform-android": "^1.0.0-alpha.20",
+    "@react-native-harness/platform-apple": "^1.0.0-alpha.20",
     "@react-native/babel-preset": "0.79.2",
     "@react-native/metro-config": "0.79.2",
     "@react-native/typescript-config": "0.79.2",
+    "@types/deep-equal": "^1.0.4",
     "@types/react": "^19.0.0",
     "babel-plugin-react-compiler": "^1.0.0",
-    "react-native-builder-bob": "^0.40.10"
+    "deep-equal": "^2.2.3",
+    "react-native-builder-bob": "^0.40.10",
+    "react-native-harness": "^1.0.0-alpha.20"
   },
   "engines": {
     "node": ">=18"
