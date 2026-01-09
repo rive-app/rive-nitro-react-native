@@ -3,7 +3,7 @@
  * @see https://github.com/mrousavy/nitro/blob/main/example/src/testing/backends/throwing.ts
  */
 import deepEqual from 'deep-equal';
-import type { AssertionBackend, JSType } from './types';
+import type { AssertionBackend, JSType } from '../types';
 
 export const throwingBackend: AssertionBackend = {
   assertEqual<T>(actual: T, expected: T, message: string): void {

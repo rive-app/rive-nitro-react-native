@@ -1,7 +1,7 @@
 export { State } from './State';
 export { createTestRunner, type TestRunner } from './createTestRunner';
-export { throwingBackend } from './throwingBackend';
-export { harnessBackend } from './harnessBackend';
+export { throwingBackend } from './backends/throwing';
+export { harnessBackend } from './backends/harness';
 export type {
   AssertionBackend,
   JSType,

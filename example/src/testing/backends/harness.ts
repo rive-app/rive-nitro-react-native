@@ -4,7 +4,7 @@
  * @see https://github.com/mrousavy/nitro/blob/main/example/src/testing/backends/harness.ts
  */
 import { expect } from 'react-native-harness';
-import type { AssertionBackend, JSType } from './types';
+import type { AssertionBackend, JSType } from '../types';
 
 export const harnessBackend: AssertionBackend = {
   assertEqual<T>(actual: T, expected: T, _message: string): void {
