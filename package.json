@@ -1,6 +1,6 @@
 {
   "name": "@rive-app/react-native",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Rive React Native",
   "main": "./lib/module/index.js",
   "types": "./lib/typescript/src/index.d.ts",
