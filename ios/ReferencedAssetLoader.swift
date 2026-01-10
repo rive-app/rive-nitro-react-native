@@ -93,7 +93,23 @@ final class ReferencedAssetLoader {
 
     Task {
       do {
-        let data = try await dataSource.createLoader().load(from: dataSource)
+        let data: Data
+
+        // Check cache first for URL assets
+        if case .http(let url) = dataSource {
+          if let cachedData = URLAssetCache.getCachedData(for: url.absoluteString) {
+            data = cachedData
+          } else {
+            // Download and cache
+            let downloadedData = try await dataSource.createLoader().load(from: dataSource)
+            URLAssetCache.saveToCache(downloadedData, for: url.absoluteString)
+            data = downloadedData
+          }
+        } else {
+          // For non-URL assets, use the loader directly
+          data = try await dataSource.createLoader().load(from: dataSource)
+        }
+
         await MainActor.run {
           self.processAssetBytes(data, asset: asset, factory: factory, completion: completion)
         }
@@ -120,18 +136,31 @@ final class ReferencedAssetLoader {
   )
     -> LoadAsset?
   {
-    guard let referencedAssets = referencedAssets, let referencedAssets = referencedAssets.data
+    guard let referencedAssets = referencedAssets, let assetsData = referencedAssets.data
     else {
       return nil
     }
     return { (asset: RiveFileAsset, _: Data, factory: RiveFactory) -> Bool in
-      let assetByUniqueName = referencedAssets[asset.uniqueName()]
-      guard let assetData = assetByUniqueName ?? referencedAssets[asset.name()] else {
-        return false
+      cache.value[asset.uniqueName()] = asset
+      cache.value[asset.name()] = asset
+      factoryOut.value = factory
+
+      // Look up asset data by unique name or name
+      var key = (asset.uniqueName() as NSString).deletingPathExtension
+      var assetData = assetsData[key]
+
+      if assetData == nil {
+        key = asset.name()
+        assetData = assetsData[key]
       }
 
-      cache.value[asset.uniqueName()] = asset
-      factoryOut.value = factory
+      if assetData == nil && !asset.cdnUuid().isEmpty {
+        assetData = ResolvedReferencedAsset(sourceUrl: "\(asset.cdnBaseUrl())/\(asset.cdnUuid())", sourceAsset: nil, sourceAssetId: nil, path: nil, image: nil)
+      }
+
+      guard let assetData = assetData else {
+        return false
+      }
 
       self.loadAssetInternal(
         source: assetData, asset: asset, factory: factory,
