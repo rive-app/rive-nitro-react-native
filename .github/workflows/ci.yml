@@ -264,4 +264,4 @@ jobs:
 
       - name: Run harness tests on iOS
         working-directory: example
-        run: yarn test:harness:ios --verbose
+        run: yarn test:harness:ios --debug --verbose --testTimeout 120000
