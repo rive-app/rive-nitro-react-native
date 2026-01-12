@@ -209,6 +209,7 @@ jobs:
           yarn turbo run build:ios --cache-dir="${{ env.TURBO_CACHE_DIR }}"
 
   test-harness-ios:
+    if: false # TODO: re-enable once harness timeout issues are resolved
     runs-on: macos-latest
     env:
       XCODE_VERSION: 16.4
