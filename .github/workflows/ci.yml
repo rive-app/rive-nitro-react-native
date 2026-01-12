@@ -253,12 +253,15 @@ jobs:
             build \
             CODE_SIGNING_ALLOWED=NO
 
-      - name: Install pnpm
-        run: npm install -g pnpm
+      - name: Boot iOS Simulator
+        uses: futureware-tech/simulator-action@v4
+        with:
+          model: 'iPhone 16 Pro'
+          os_version: '18.6'
+
+      - name: Install app on simulator
+        run: xcrun simctl install booted example/ios/build/Build/Products/Debug-iphonesimulator/RiveExample.app
 
       - name: Run harness tests on iOS
-        uses: callstackincubator/react-native-harness/actions/ios@main
-        with:
-          app: ios/build/Build/Products/Debug-iphonesimulator/RiveExample.app
-          runner: ios
-          projectRoot: example
+        working-directory: example
+        run: yarn test:harness:ios --verbose
