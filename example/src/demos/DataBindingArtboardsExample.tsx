@@ -15,15 +15,20 @@ import {
 } from '@rive-app/react-native';
 import { type Metadata } from '../shared/metadata';
 
-/*
-  Data Binding Artboards
-
-  Marketplace:
-  - Main: https://rive.app/marketplace/24641-46042-data-binding-artboards/
-  - Assets: https://rive.app/marketplace/24642-47536-data-binding-artboards/
-
-  Docs: https://rive.app/docs/runtimes/data-binding#artboards
-*/
+/**
+ * Data Binding Artboards Example
+ *
+ * Demonstrates swapping artboards at runtime using data binding.
+ * The main Rive file includes a view model with a property of type `Artboard`
+ * called "CharacterArtboard". This property can be set to any artboard from
+ * either the main file or an external file.
+ *
+ * Marketplace:
+ * - Main: https://rive.app/marketplace/24641-46042-data-binding-artboards/
+ * - Assets: https://rive.app/marketplace/24642-47536-data-binding-artboards/
+ *
+ * Docs: https://rive.app/docs/runtimes/data-binding#artboards
+ */
 
 export default function DataBindingArtboardsExample() {
   // Main scene file - contains the Card view model with CharacterArtboard property
