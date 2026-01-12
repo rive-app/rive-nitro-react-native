@@ -9,12 +9,7 @@ import {
 import { useState, useEffect } from 'react';
 import { RiveFileFactory } from '@rive-app/react-native';
 import type { Metadata } from '../helpers/metadata';
-import {
-  throwingBackend,
-  type TestCase,
-  type TestResult,
-  type TestStatus,
-} from '../testing';
+import type { TestCase, TestResult, TestStatus } from '../testing';
 import { allSuites } from '../testing/suites';
 
 interface LoadedSuite {
@@ -46,7 +41,7 @@ export default function TestsPage() {
             suite.riveAsset,
             undefined
           );
-          const tests = suite.getTests(file, throwingBackend);
+          const tests = suite.getTests(file);
           loaded.push({ name: suite.name, tests });
 
           const initialStates = new Map<string, TestState>();
