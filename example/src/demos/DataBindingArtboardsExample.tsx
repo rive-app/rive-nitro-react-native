@@ -181,12 +181,7 @@ function ArtboardSwapper({
             ]}
             onPress={() => swapArtboard(option)}
           >
-            <Text
-              style={[
-                styles.buttonText,
-                currentArtboard === option.label && styles.buttonTextActive,
-              ]}
-            >
+            <Text style={styles.buttonText}>
               {option.label}
               {option.fromAssets ? ' (external)' : ' (internal)'}
             </Text>
@@ -260,9 +255,6 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#fff',
-  },
-  buttonTextActive: {
     color: '#fff',
   },
   loadingText: {

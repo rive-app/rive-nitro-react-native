@@ -50,7 +50,7 @@ try {
     /\.tsx$/
   );
 } catch {
-  // local reproducers folder may be empty or not exist
+  // folder may be empty or not exist
 }
 
 export const DemosList = loadPagesFromContext(demosContext, 'demos');
