@@ -3531,6 +3531,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@react-native-async-storage/async-storage@npm:^2.1.2":
+  version: 2.2.0
+  resolution: "@react-native-async-storage/async-storage@npm:2.2.0"
+  dependencies:
+    merge-options: ^3.0.4
+  peerDependencies:
+    react-native: ^0.0.0-0 || >=0.65 <1.0
+  checksum: efbb9c801fb7eecfad1568d6a5e9d247db420b8ba8f1789d5b783e679432567a53cf54c7e7b5e6f315276f33d1df297253549e0cefef2e683539df346d2a1f2d
+  languageName: node
+  linkType: hard
+
 "@react-native-community/cli-clean@npm:18.0.0":
   version: 18.0.0
   resolution: "@react-native-community/cli-clean@npm:18.0.0"
@@ -8595,6 +8606,7 @@ __metadata:
   resolution: "expo-example@workspace:expo-example"
   dependencies:
     "@expo/vector-icons": ^15.0.3
+    "@react-native-async-storage/async-storage": ^2.1.2
     "@react-native-picker/picker": ^2.11.4
     "@react-navigation/bottom-tabs": ^7.4.0
     "@react-navigation/elements": ^2.6.3
@@ -10457,6 +10469,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"is-plain-obj@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "is-plain-obj@npm:2.1.0"
+  checksum: cec9100678b0a9fe0248a81743041ed990c2d4c99f893d935545cfbc42876cbe86d207f3b895700c690ad2fa520e568c44afc1605044b535a7820c1d40e38daa
+  languageName: node
+  linkType: hard
+
 "is-regex@npm:^1.1.4, is-regex@npm:^1.2.1":
   version: 1.2.1
   resolution: "is-regex@npm:1.2.1"
@@ -12026,6 +12045,15 @@ __metadata:
   version: 13.2.0
   resolution: "meow@npm:13.2.0"
   checksum: 79c61dc02ad448ff5c29bbaf1ef42181f1eae9947112c0e23db93e84cbc2708ecda53e54bfc6689f1e55255b2cea26840ec76e57a5773a16ca45f4fe2163ec1c
+  languageName: node
+  linkType: hard
+
+"merge-options@npm:^3.0.4":
+  version: 3.0.4
+  resolution: "merge-options@npm:3.0.4"
+  dependencies:
+    is-plain-obj: ^2.1.0
+  checksum: d86ddb3dd6e85d558dbf25dc944f3527b6bacb944db3fdda6e84a3f59c4e4b85231095f58b835758b9a57708342dee0f8de0dffa352974a48221487fe9f4584f
   languageName: node
   linkType: hard
 
@@ -14422,6 +14450,7 @@ __metadata:
     "@babel/core": ^7.25.2
     "@babel/preset-env": ^7.25.3
     "@babel/runtime": ^7.25.0
+    "@react-native-async-storage/async-storage": ^2.1.2
     "@react-native-community/cli": 18.0.0
     "@react-native-community/cli-platform-android": 18.0.0
     "@react-native-community/cli-platform-ios": 18.0.0
@@ -17502,8 +17531,8 @@ __metadata:
   linkType: hard
 
 "zustand@npm:^5.0.5":
-  version: 5.0.9
-  resolution: "zustand@npm:5.0.9"
+  version: 5.0.10
+  resolution: "zustand@npm:5.0.10"
   peerDependencies:
     "@types/react": ">=18.0.0"
     immer: ">=9.0.6"
@@ -17518,6 +17547,6 @@ __metadata:
       optional: true
     use-sync-external-store:
       optional: true
-  checksum: 04bd9abf9f0958a979f6003fadfdcc48970c87323a622bf20cc3ad0c52c58b9d25136e03bddf3b902c4bedc393a2ffd0b66bc46865f6a356f8ec43b6df47e2d4
+  checksum: 52d39ad5a0a496a443ced50e773a47df4bda4f718c96e45a08c92675e45d7ac77ce75903b8e3754f17a2e99c71f5864ae8c2b2477aeb4c6f5c2a19e3e64e57ba
   languageName: node
   linkType: hard

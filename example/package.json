@@ -12,6 +12,7 @@
     "test:harness:android": "react-native-harness --harnessRunner android"
   },
   "dependencies": {
+    "@react-native-async-storage/async-storage": "^2.1.2",
     "@react-native-picker/picker": "^2.11.4",
     "@react-navigation/native": "^7.1.9",
     "@react-navigation/stack": "^7.3.2",
