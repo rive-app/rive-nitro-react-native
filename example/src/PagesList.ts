@@ -1,23 +1,25 @@
 import type { Metadata } from './helpers/metadata';
-import * as Pages from './pages';
 
-type PageIds = keyof typeof Pages;
 type PageType = React.ComponentType & { metadata?: Metadata };
 
-const PageEntries = Object.entries(Pages) as [PageIds, PageType][];
-
 export type PageItem = {
-  id: PageIds;
+  id: string;
   name: string;
   description: string;
   component: React.ComponentType;
 };
 
-const PagesList: PageItem[] = PageEntries.map(([key, Component]) => ({
-  id: key,
-  name: Component.metadata?.name ?? key,
-  description: Component.metadata?.description ?? '',
-  component: Component,
-}));
+const pagesContext = require.context('./pages', false, /\.tsx$/);
 
-export { PagesList };
+export const PagesList: PageItem[] = pagesContext.keys().map((key) => {
+  const module = pagesContext(key) as { default: PageType };
+  const Component = module.default;
+  const id = key.replace(/^\.\//, '').replace(/\.tsx$/, '');
+
+  return {
+    id,
+    name: Component.metadata?.name ?? id,
+    description: Component.metadata?.description ?? '',
+    component: Component,
+  };
+});

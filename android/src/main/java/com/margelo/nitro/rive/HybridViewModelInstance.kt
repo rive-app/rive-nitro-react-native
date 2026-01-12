@@ -52,4 +52,17 @@ class HybridViewModelInstance(val viewModelInstance: ViewModelInstance) : Hybrid
   override fun listProperty(path: String) = getPropertyOrNull {
     HybridViewModelListProperty(viewModelInstance.getListProperty(path))
   }
+
+  override fun artboardProperty(path: String) = getPropertyOrNull {
+    HybridViewModelArtboardProperty(viewModelInstance.getArtboardProperty(path))
+  }
+
+  override fun viewModel(path: String) = getPropertyOrNull {
+    HybridViewModelInstance(viewModelInstance.getInstanceProperty(path))
+  }
+
+  override fun replaceViewModel(path: String, instance: HybridViewModelInstanceSpec) {
+    val nativeInstance = (instance as HybridViewModelInstance).viewModelInstance
+    viewModelInstance.setInstanceProperty(path, nativeInstance)
+  }
 }

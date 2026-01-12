@@ -1,3 +1,4 @@
+import NitroModules
 import RiveRuntime
 
 class HybridViewModelInstance: HybridViewModelInstanceSpec {
@@ -47,5 +48,26 @@ class HybridViewModelInstance: HybridViewModelInstanceSpec {
   func listProperty(path: String) throws -> (any HybridViewModelListPropertySpec)? {
     guard let property = viewModelInstance?.listProperty(fromPath: path) else { return nil }
     return HybridViewModelListProperty(property: property)
+  }
+
+  func artboardProperty(path: String) throws -> (any HybridViewModelArtboardPropertySpec)? {
+    guard let property = viewModelInstance?.artboardProperty(fromPath: path) else { return nil }
+    return HybridViewModelArtboardProperty(property: property)
+  }
+
+  func viewModel(path: String) throws -> (any HybridViewModelInstanceSpec)? {
+    guard let instance = viewModelInstance?.viewModelInstanceProperty(fromPath: path) else { return nil }
+    return HybridViewModelInstance(viewModelInstance: instance)
+  }
+
+  func replaceViewModel(path: String, instance: any HybridViewModelInstanceSpec) throws {
+    guard let hybridInstance = instance as? HybridViewModelInstance,
+          let nativeInstance = hybridInstance.viewModelInstance else {
+      throw RuntimeError.error(withMessage: "Invalid ViewModelInstance provided to replaceViewModel")
+    }
+    let success = viewModelInstance?.setViewModelInstanceProperty(fromPath: path, to: nativeInstance) ?? false
+    if !success {
+      throw RuntimeError.error(withMessage: "Failed to replace ViewModel at path: \(path)")
+    }
   }
 }

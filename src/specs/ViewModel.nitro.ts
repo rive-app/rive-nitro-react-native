@@ -1,5 +1,6 @@
 import type { HybridObject } from 'react-native-nitro-modules';
 import type { RiveImage } from './RiveImage.nitro';
+import type { BindableArtboard } from './BindableArtboard.nitro';
 
 /**
  * A Rive View Model as created in the Rive editor.
@@ -55,6 +56,22 @@ export interface ViewModelInstance
 
   /** Get a list property from the view model instance at the given path */
   listProperty(path: string): ViewModelListProperty | undefined;
+
+  /** Get an artboard property from the view model instance at the given path */
+  artboardProperty(path: string): ViewModelArtboardProperty | undefined;
+
+  /**
+   * Get a nested ViewModel instance at the given path.
+   * Supports path notation with "/" for nested access (e.g., "Parent/Child").
+   */
+  viewModel(path: string): ViewModelInstance | undefined;
+
+  /**
+   * Replace the ViewModel instance at the given path with a new instance.
+   * The replacement instance must be compatible with the expected ViewModel type.
+   * @throws Error if path not found or types incompatible
+   */
+  replaceViewModel(path: string, instance: ViewModelInstance): void;
 }
 
 export interface ViewModelProperty
@@ -151,4 +168,17 @@ export interface ViewModelListProperty
   swap(index1: number, index2: number): boolean;
   /** Add a listener to be notified when the list changes. Returns a function to remove the listener. */
   addListener(onChanged: () => void): () => void;
+}
+
+/**
+ * An artboard property that allows swapping artboards at runtime.
+ * This is a write-only property - artboards can be set but not read.
+ * @see {@link https://rive.app/docs/runtimes/data-binding Rive Data Binding Documentation}
+ */
+export interface ViewModelArtboardProperty extends ViewModelProperty {
+  /**
+   * Set the artboard for this property.
+   * Pass undefined to clear the currently bound artboard.
+   */
+  set(artboard: BindableArtboard | undefined): void;
 }
