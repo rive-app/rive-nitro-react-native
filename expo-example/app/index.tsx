@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
+import { StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -86,8 +86,8 @@ export default function HomeScreen() {
   };
 
   const handleRunTests = () => {
-    Alert.alert('Tests', 'TODO: Run tests');
     setShowMenu(false);
+    router.push('/TestsPage' as any);
   };
 
   const handleNavigate = (id: string) => {
