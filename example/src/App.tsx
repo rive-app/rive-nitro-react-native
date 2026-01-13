@@ -5,6 +5,8 @@ import {
   StyleSheet,
   TouchableOpacity,
   ScrollView,
+  ActionSheetIOS,
+  Platform,
   Alert,
 } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
@@ -27,13 +29,47 @@ type RootStackParamList = {
 
 const Stack = createStackNavigator<RootStackParamList>();
 
+function invokeGC() {
+  if (typeof global.gc === 'function') {
+    global.gc();
+    Alert.alert('GC', 'Garbage collection invoked');
+  } else {
+    Alert.alert('GC', 'GC not available (Hermes debugger not attached)');
+  }
+}
+
+function showDevMenu() {
+  const options = ['Run Tests', 'Invoke GC', 'Cancel'];
+  const cancelButtonIndex = 2;
+
+  if (Platform.OS === 'ios') {
+    ActionSheetIOS.showActionSheetWithOptions(
+      { options, cancelButtonIndex },
+      (buttonIndex) => {
+        if (buttonIndex === 0) {
+          Alert.alert('Tests', 'Navigate to Tests section to run tests');
+        } else if (buttonIndex === 1) {
+          invokeGC();
+        }
+      }
+    );
+  } else {
+    Alert.alert('Dev Menu', undefined, [
+      {
+        text: 'Run Tests',
+        onPress: () =>
+          Alert.alert('Tests', 'Navigate to Tests section to run tests'),
+      },
+      { text: 'Invoke GC', onPress: invokeGC },
+      { text: 'Cancel', style: 'cancel' },
+    ]);
+  }
+}
+
 function HeaderMenuButton() {
   return (
-    <TouchableOpacity
-      onPress={() => Alert.alert('Tests', 'TODO: Run tests')}
-      style={styles.headerButton}
-    >
-      <Text style={styles.headerButtonText}>⚙</Text>
+    <TouchableOpacity onPress={showDevMenu} style={styles.headerButton}>
+      <Text style={styles.headerButtonText}>🔧</Text>
     </TouchableOpacity>
   );
 }
