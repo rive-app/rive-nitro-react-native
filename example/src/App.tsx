@@ -9,7 +9,7 @@ import {
   Platform,
   Alert,
 } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
@@ -38,35 +38,37 @@ function invokeGC() {
   }
 }
 
-function showDevMenu() {
-  const options = ['Run Tests', 'Invoke GC', 'Cancel'];
-  const cancelButtonIndex = 2;
-
-  if (Platform.OS === 'ios') {
-    ActionSheetIOS.showActionSheetWithOptions(
-      { options, cancelButtonIndex },
-      (buttonIndex) => {
-        if (buttonIndex === 0) {
-          Alert.alert('Tests', 'Navigate to Tests section to run tests');
-        } else if (buttonIndex === 1) {
-          invokeGC();
-        }
-      }
-    );
-  } else {
-    Alert.alert('Dev Menu', undefined, [
-      {
-        text: 'Run Tests',
-        onPress: () =>
-          Alert.alert('Tests', 'Navigate to Tests section to run tests'),
-      },
-      { text: 'Invoke GC', onPress: invokeGC },
-      { text: 'Cancel', style: 'cancel' },
-    ]);
-  }
-}
-
 function HeaderMenuButton() {
+  const navigation = useNavigation<any>();
+
+  const openTests = () => {
+    navigation.navigate('TestsPage');
+  };
+
+  const showDevMenu = () => {
+    const options = ['Run Tests', 'Invoke GC', 'Cancel'];
+    const cancelButtonIndex = 2;
+
+    if (Platform.OS === 'ios') {
+      ActionSheetIOS.showActionSheetWithOptions(
+        { options, cancelButtonIndex },
+        (buttonIndex) => {
+          if (buttonIndex === 0) {
+            openTests();
+          } else if (buttonIndex === 1) {
+            invokeGC();
+          }
+        }
+      );
+    } else {
+      Alert.alert('Dev Menu', undefined, [
+        { text: 'Run Tests', onPress: openTests },
+        { text: 'Invoke GC', onPress: invokeGC },
+        { text: 'Cancel', style: 'cancel' },
+      ]);
+    }
+  };
+
   return (
     <TouchableOpacity onPress={showDevMenu} style={styles.headerButton}>
       <Text style={styles.headerButtonText}>🔧</Text>
