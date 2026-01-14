@@ -1,6 +1,6 @@
 {
   "name": "@rive-app/react-native",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Rive React Native",
   "main": "./lib/module/index.js",
   "types": "./lib/typescript/src/index.d.ts",
@@ -64,8 +64,8 @@
   },
   "homepage": "https://github.com/rive-app/rive-nitro-react-native#readme",
   "runtimeVersions": {
-    "ios": "6.12.3",
-    "android": "10.5.3"
+    "ios": "6.13.0",
+    "android": "11.1.0"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
