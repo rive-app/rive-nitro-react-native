@@ -5,7 +5,7 @@ import type { TestSuite } from '../types';
 
 const ASSET = require('../../../assets/rive/viewmodelproperty.riv');
 
-export function testViewModelBasicFunctionality(file: RiveFile): void {
+function testViewModelBasicFunctionality(file: RiveFile): void {
   const vm = file.defaultArtboardViewModel();
   expect(vm).toBeDefined();
 
@@ -24,7 +24,7 @@ export function testViewModelBasicFunctionality(file: RiveFile): void {
   expect(vm1?.stringProperty('name')).toBeDefined();
 }
 
-export function testReplaceViewModelSharesState(file: RiveFile): void {
+function testReplaceViewModelSharesState(file: RiveFile): void {
   const vm = file.defaultArtboardViewModel();
   const instance = vm?.createDefaultInstance();
   expect(instance).toBeDefined();
