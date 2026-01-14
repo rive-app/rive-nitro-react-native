@@ -7,23 +7,13 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { getTestCollector } from 'react-native-harness';
+import type { TestSuite, TestCase } from '@react-native-harness/bridge';
 import { useState, useEffect } from 'react';
 import type { Metadata } from '../helpers/metadata';
 
 const testContext = require.context('../../__tests__', false, /\.harness\.ts$/);
 
 type TestStatus = 'pending' | 'running' | 'passed' | 'failed';
-
-interface TestCase {
-  name: string;
-  fn: () => void | Promise<void>;
-}
-
-interface TestSuite {
-  name: string;
-  tests: TestCase[];
-  suites: TestSuite[];
-}
 
 interface TestState {
   status: TestStatus;
