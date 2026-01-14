@@ -1,3 +1,2 @@
-export type { TestCase, TestSuite } from './tests';
-export { suites } from './tests';
+export { registerTests } from './tests';
 export type { TestStatus } from './types';

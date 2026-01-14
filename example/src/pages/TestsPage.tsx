@@ -4,31 +4,57 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
+  ActivityIndicator,
 } from 'react-native';
-import { useState } from 'react';
+import { getTestCollector } from 'react-native-harness';
+import { useState, useEffect } from 'react';
 import type { Metadata } from '../helpers/metadata';
-import type { TestCase, TestStatus } from '../testing';
-import { suites } from '../testing';
+import { registerTests } from '../testing/tests';
+
+type TestStatus = 'pending' | 'running' | 'passed' | 'failed';
+
+interface TestCase {
+  name: string;
+  fn: () => void | Promise<void>;
+}
+
+interface TestSuite {
+  name: string;
+  tests: TestCase[];
+  suites: TestSuite[];
+}
 
 interface TestState {
   status: TestStatus;
   error?: string;
 }
 
-function getInitialTestStates(): Map<string, TestState> {
-  const states = new Map<string, TestState>();
-  for (const suite of suites) {
-    for (const test of suite.tests) {
-      states.set(`${suite.name}::${test.name}`, { status: 'pending' });
-    }
-  }
-  return states;
-}
-
 export default function TestsPage() {
-  const [testStates, setTestStates] =
-    useState<Map<string, TestState>>(getInitialTestStates);
+  const [suites, setSuites] = useState<TestSuite[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [testStates, setTestStates] = useState<Map<string, TestState>>(
+    new Map()
+  );
   const [runningAll, setRunningAll] = useState(false);
+
+  useEffect(() => {
+    async function collectTests() {
+      const collector = getTestCollector();
+      const result = await collector.collect(registerTests, 'tests.ts');
+
+      setSuites(result.testSuite.suites);
+
+      const states = new Map<string, TestState>();
+      for (const suite of result.testSuite.suites) {
+        for (const test of suite.tests) {
+          states.set(`${suite.name}::${test.name}`, { status: 'pending' });
+        }
+      }
+      setTestStates(states);
+      setLoading(false);
+    }
+    collectTests();
+  }, []);
 
   function getTestKey(suiteName: string, testName: string): string {
     return `${suiteName}::${testName}`;
@@ -87,6 +113,15 @@ export default function TestsPage() {
       case 'failed':
         return '#FF3B30';
     }
+  }
+
+  if (loading) {
+    return (
+      <View style={styles.centered}>
+        <ActivityIndicator size="large" color="#007AFF" />
+        <Text style={styles.loadingText}>Collecting tests...</Text>
+      </View>
+    );
   }
 
   const passedCount = Array.from(testStates.values()).filter(
@@ -163,6 +198,16 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+  },
+  centered: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: '#666',
   },
   header: {
     padding: 16,
