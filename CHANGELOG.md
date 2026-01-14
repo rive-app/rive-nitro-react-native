@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.5](https://github.com/rive-app/rive-nitro-react-native/compare/v0.1.4...v0.1.5) (2026-01-14)
+
+
+### Features
+
+* add in-app test runner ([#106](https://github.com/rive-app/rive-nitro-react-native/issues/106)) ([d7ace51](https://github.com/rive-app/rive-nitro-react-native/commit/d7ace51d9579b85a71454be4a31adc9732a8dfba))
+* bump native versions for scripting support ([#121](https://github.com/rive-app/rive-nitro-react-native/issues/121)) ([d7119b3](https://github.com/rive-app/rive-nitro-react-native/commit/d7119b38551bbd7817b7359551c0c7b0dbb5a54f))
+
 ## [0.1.4](https://github.com/rive-app/rive-nitro-react-native/compare/v0.1.3...v0.1.4) (2026-01-09)
 
 
