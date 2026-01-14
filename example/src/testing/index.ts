@@ -1,5 +1,3 @@
-export type { TestCase, TestSuite } from './registry';
-export { getSuites } from './registry';
+export type { TestCase, TestSuite } from './tests';
+export { suites } from './tests';
 export type { TestStatus } from './types';
-
-import './tests';

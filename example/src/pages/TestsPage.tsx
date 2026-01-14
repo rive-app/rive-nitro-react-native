@@ -8,7 +8,7 @@ import {
 import { useState } from 'react';
 import type { Metadata } from '../helpers/metadata';
 import type { TestCase, TestStatus } from '../testing';
-import { getSuites } from '../testing';
+import { suites } from '../testing';
 
 interface TestState {
   status: TestStatus;
@@ -17,7 +17,7 @@ interface TestState {
 
 function getInitialTestStates(): Map<string, TestState> {
   const states = new Map<string, TestState>();
-  for (const suite of getSuites()) {
+  for (const suite of suites) {
     for (const test of suite.tests) {
       states.set(`${suite.name}::${test.name}`, { status: 'pending' });
     }
@@ -54,7 +54,7 @@ export default function TestsPage() {
   async function runAllTests() {
     setRunningAll(true);
 
-    for (const suite of getSuites()) {
+    for (const suite of suites) {
       for (const test of suite.tests) {
         await runTest(suite.name, test);
       }
@@ -117,7 +117,7 @@ export default function TestsPage() {
       </View>
 
       <ScrollView style={styles.scrollView}>
-        {getSuites().map((suite) => (
+        {suites.map((suite) => (
           <View key={suite.name} style={styles.suite}>
             <Text style={styles.suiteName}>{suite.name}</Text>
             {suite.tests.map((test) => {
