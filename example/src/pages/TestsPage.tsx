@@ -7,8 +7,8 @@ import {
 } from 'react-native';
 import { useState } from 'react';
 import type { Metadata } from '../helpers/metadata';
-import type { TestCase, TestResult, TestStatus } from '../testing';
-import { allSuites } from '../testing/suites';
+import type { TestCase, TestStatus } from '../testing';
+import { getSuites } from '../testing';
 
 interface TestState {
   status: TestStatus;
@@ -17,7 +17,7 @@ interface TestState {
 
 function getInitialTestStates(): Map<string, TestState> {
   const states = new Map<string, TestState>();
-  for (const suite of allSuites) {
+  for (const suite of getSuites()) {
     for (const test of suite.tests) {
       states.set(`${suite.name}::${test.name}`, { status: 'pending' });
     }
@@ -39,13 +39,8 @@ export default function TestsPage() {
     setTestStates((prev) => new Map(prev).set(key, { status: 'running' }));
 
     try {
-      const result: TestResult = await test.run();
-      setTestStates((prev) =>
-        new Map(prev).set(key, {
-          status: result.status,
-          error: result.error,
-        })
-      );
+      await test.fn();
+      setTestStates((prev) => new Map(prev).set(key, { status: 'passed' }));
     } catch (e) {
       setTestStates((prev) =>
         new Map(prev).set(key, {
@@ -59,7 +54,7 @@ export default function TestsPage() {
   async function runAllTests() {
     setRunningAll(true);
 
-    for (const suite of allSuites) {
+    for (const suite of getSuites()) {
       for (const test of suite.tests) {
         await runTest(suite.name, test);
       }
@@ -122,7 +117,7 @@ export default function TestsPage() {
       </View>
 
       <ScrollView style={styles.scrollView}>
-        {allSuites.map((suite) => (
+        {getSuites().map((suite) => (
           <View key={suite.name} style={styles.suite}>
             <Text style={styles.suiteName}>{suite.name}</Text>
             {suite.tests.map((test) => {
