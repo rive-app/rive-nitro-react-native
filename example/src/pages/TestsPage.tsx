@@ -9,7 +9,8 @@ import {
 import { getTestCollector } from 'react-native-harness';
 import { useState, useEffect } from 'react';
 import type { Metadata } from '../helpers/metadata';
-import { registerTests } from '../testing/tests';
+
+const testContext = require.context('../../__tests__', false, /\.harness\.ts$/);
 
 type TestStatus = 'pending' | 'running' | 'passed' | 'failed';
 
@@ -40,7 +41,9 @@ export default function TestsPage() {
   useEffect(() => {
     async function collectTests() {
       const collector = getTestCollector();
-      const result = await collector.collect(registerTests, 'tests.ts');
+      const result = await collector.collect(() => {
+        testContext.keys().forEach((key) => testContext(key));
+      }, 'harness-tests');
 
       setSuites(result.testSuite.suites);
 
