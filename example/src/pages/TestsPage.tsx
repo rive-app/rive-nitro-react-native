@@ -4,64 +4,31 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  ActivityIndicator,
 } from 'react-native';
-import { useState, useEffect } from 'react';
-import { RiveFileFactory } from '@rive-app/react-native';
+import { useState } from 'react';
 import type { Metadata } from '../helpers/metadata';
 import type { TestCase, TestResult, TestStatus } from '../testing';
 import { allSuites } from '../testing/suites';
-
-interface LoadedSuite {
-  name: string;
-  tests: TestCase[];
-}
 
 interface TestState {
   status: TestStatus;
   error?: string;
 }
 
-export default function TestsPage() {
-  const [loading, setLoading] = useState(true);
-  const [loadError, setLoadError] = useState<string | null>(null);
-  const [suites, setSuites] = useState<LoadedSuite[]>([]);
-  const [testStates, setTestStates] = useState<Map<string, TestState>>(
-    new Map()
-  );
-  const [runningAll, setRunningAll] = useState(false);
-
-  useEffect(() => {
-    async function loadSuites() {
-      try {
-        const loaded: LoadedSuite[] = [];
-
-        for (const suite of allSuites) {
-          const file = await RiveFileFactory.fromSource(
-            suite.riveAsset,
-            undefined
-          );
-          const tests = suite.getTests(file);
-          loaded.push({ name: suite.name, tests });
-
-          const initialStates = new Map<string, TestState>();
-          for (const test of tests) {
-            initialStates.set(getTestKey(suite.name, test.name), {
-              status: 'pending',
-            });
-          }
-          setTestStates((prev) => new Map([...prev, ...initialStates]));
-        }
-
-        setSuites(loaded);
-        setLoading(false);
-      } catch (e) {
-        setLoadError(e instanceof Error ? e.message : String(e));
-        setLoading(false);
-      }
+function getInitialTestStates(): Map<string, TestState> {
+  const states = new Map<string, TestState>();
+  for (const suite of allSuites) {
+    for (const test of suite.tests) {
+      states.set(`${suite.name}::${test.name}`, { status: 'pending' });
     }
-    loadSuites();
-  }, []);
+  }
+  return states;
+}
+
+export default function TestsPage() {
+  const [testStates, setTestStates] =
+    useState<Map<string, TestState>>(getInitialTestStates);
+  const [runningAll, setRunningAll] = useState(false);
 
   function getTestKey(suiteName: string, testName: string): string {
     return `${suiteName}::${testName}`;
@@ -92,7 +59,7 @@ export default function TestsPage() {
   async function runAllTests() {
     setRunningAll(true);
 
-    for (const suite of suites) {
+    for (const suite of allSuites) {
       for (const test of suite.tests) {
         await runTest(suite.name, test);
       }
@@ -127,24 +94,6 @@ export default function TestsPage() {
     }
   }
 
-  if (loading) {
-    return (
-      <View style={styles.centered}>
-        <ActivityIndicator size="large" color="#007AFF" />
-        <Text style={styles.loadingText}>Loading test suites...</Text>
-      </View>
-    );
-  }
-
-  if (loadError) {
-    return (
-      <View style={styles.centered}>
-        <Text style={styles.errorText}>Failed to load tests:</Text>
-        <Text style={styles.errorDetail}>{loadError}</Text>
-      </View>
-    );
-  }
-
   const passedCount = Array.from(testStates.values()).filter(
     (s) => s.status === 'passed'
   ).length;
@@ -173,7 +122,7 @@ export default function TestsPage() {
       </View>
 
       <ScrollView style={styles.scrollView}>
-        {suites.map((suite) => (
+        {allSuites.map((suite) => (
           <View key={suite.name} style={styles.suite}>
             <Text style={styles.suiteName}>{suite.name}</Text>
             {suite.tests.map((test) => {
@@ -219,28 +168,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-  },
-  centered: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
-  loadingText: {
-    marginTop: 10,
-    fontSize: 16,
-    color: '#666',
-  },
-  errorText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#FF3B30',
-    marginBottom: 8,
-  },
-  errorDetail: {
-    fontSize: 14,
-    color: '#666',
-    textAlign: 'center',
   },
   header: {
     padding: 16,

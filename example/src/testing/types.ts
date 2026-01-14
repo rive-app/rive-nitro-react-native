@@ -1,5 +1,3 @@
-import type { RiveFile } from '@rive-app/react-native';
-
 export type TestStatus = 'pending' | 'running' | 'passed' | 'failed';
 
 export interface TestResult {
@@ -14,6 +12,5 @@ export interface TestCase {
 
 export interface TestSuite {
   name: string;
-  riveAsset: number;
-  getTests: (file: RiveFile) => TestCase[];
+  tests: TestCase[];
 }
