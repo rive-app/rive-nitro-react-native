@@ -33,7 +33,7 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           reporter: github-pr-review
-          ktlint_version: "1.5.0"
+          ktlint_version: '1.5.0'
           android: true
 
   lint:
@@ -136,13 +136,13 @@ jobs:
 
       - name: Build example for Android
         env:
-          JAVA_OPTS: "-XX:MaxHeapSize=6g"
+          JAVA_OPTS: '-XX:MaxHeapSize=6g'
           TURBO_FORCE: ${{ steps.turbo-cache-android.outputs.cache-hit != 'true' }}
         run: |
           yarn turbo run build:android --cache-dir="${{ env.TURBO_CACHE_DIR }}"
 
   build-ios:
-    runs-on: macos-latest
+    runs-on: ghcr.io/cirruslabs/macos-runner:sonoma
     env:
       XCODE_VERSION: 16.4
       TURBO_CACHE_DIR: .turbo/ios
@@ -210,7 +210,7 @@ jobs:
 
   test-harness-ios:
     if: false # TODO: re-enable once harness timeout issues are resolved
-    runs-on: macos-latest
+    runs-on: ghcr.io/cirruslabs/macos-runner:sonoma
     env:
       XCODE_VERSION: 16.4
     steps:
