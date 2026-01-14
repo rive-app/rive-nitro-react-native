@@ -8,6 +8,7 @@ module.exports = getConfig(
   {
     presets: ['module:@react-native/babel-preset'],
     plugins: [
+      '@babel/plugin-transform-class-static-block',
       ['babel-plugin-react-compiler', {}],
       'react-native-reanimated/plugin',
     ],

@@ -123,7 +123,7 @@ export namespace RiveFileFactory {
 
     if (!assetURI) {
       throw new Error(
-        `Invalid source provided, ${source} is not a valid asset ID or URI`
+        `Invalid source: could not resolve asset ${source}. Ensure 'riv' is in metro.config.js assetExts.`
       );
     }
 

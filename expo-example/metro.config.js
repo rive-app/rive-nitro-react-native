@@ -37,8 +37,15 @@ function resolveExampleAliasToSourceDir(context, moduleName, projectRoot) {
   return null;
 }
 
+// Force all react-native imports to resolve to expo-example's node_modules
+// This fixes duplicate module instances when library code imports react-native
+const rnPath = path.join(__dirname, 'node_modules/react-native/index.js');
 const originalResolveRequest = finalConfig.resolver.resolveRequest;
 finalConfig.resolver.resolveRequest = (context, moduleName, platform) => {
+  if (moduleName === 'react-native') {
+    return { type: 'sourceFile', filePath: rnPath };
+  }
+
   const customResolution = resolveExampleAliasToSourceDir(
     context,
     moduleName,
