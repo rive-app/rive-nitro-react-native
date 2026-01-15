@@ -12,6 +12,10 @@ const path = require('path');
 function withSingleReactNative(config, projectDir) {
   const rnPath = path.join(projectDir, 'node_modules/react-native/index.js');
   const originalResolveRequest = config.resolver.resolveRequest;
+  const defaultResolve = (context, moduleName, platform) =>
+    context.resolveRequest(context, moduleName, platform);
+  const resolveRequest = originalResolveRequest ?? defaultResolve;
+
   return {
     ...config,
     resolver: {
@@ -20,9 +24,7 @@ function withSingleReactNative(config, projectDir) {
         if (moduleName === 'react-native') {
           return { type: 'sourceFile', filePath: rnPath };
         }
-        return originalResolveRequest
-          ? originalResolveRequest(context, moduleName, platform)
-          : context.resolveRequest(context, moduleName, platform);
+        return resolveRequest(context, moduleName, platform);
       },
     },
   };
