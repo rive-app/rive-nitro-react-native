@@ -142,7 +142,7 @@ jobs:
           yarn turbo run build:android --cache-dir="${{ env.TURBO_CACHE_DIR }}"
 
   build-ios:
-    runs-on: ghcr.io/cirruslabs/macos-runner:sequoia
+    runs-on: ghcr.io/cirruslabs/macos-sequoia-xcode:16.4
     env:
       XCODE_VERSION: 16.4
       TURBO_CACHE_DIR: .turbo/ios
@@ -208,7 +208,7 @@ jobs:
           yarn turbo run build:ios --cache-dir="${{ env.TURBO_CACHE_DIR }}"
 
   test-harness-ios:
-    runs-on: ghcr.io/cirruslabs/macos-runner:sequoia
+    runs-on: ghcr.io/cirruslabs/macos-sequoia-xcode:16.4
     env:
       XCODE_VERSION: 16.4
     steps:
