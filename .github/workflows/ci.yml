@@ -144,7 +144,7 @@ jobs:
   build-ios:
     runs-on: ghcr.io/cirruslabs/macos-runner:sonoma
     env:
-      XCODE_VERSION: 16.4
+      XCODE_VERSION: 16.1
       TURBO_CACHE_DIR: .turbo/ios
     steps:
       - name: Checkout
@@ -209,10 +209,9 @@ jobs:
           yarn turbo run build:ios --cache-dir="${{ env.TURBO_CACHE_DIR }}"
 
   test-harness-ios:
-    if: false # TODO: re-enable once harness timeout issues are resolved
     runs-on: ghcr.io/cirruslabs/macos-runner:sonoma
     env:
-      XCODE_VERSION: 16.4
+      XCODE_VERSION: 16.1
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -263,6 +262,41 @@ jobs:
       - name: Install app on simulator
         run: xcrun simctl install booted example/ios/build/Build/Products/Debug-iphonesimulator/RiveExample.app
 
+      - name: Wait for simulator to be fully ready
+        run: |
+          echo "Waiting for simulator to be fully ready..."
+          sleep 10
+          xcrun simctl list devices | grep Booted
+
       - name: Run harness tests on iOS
         working-directory: example
-        run: yarn test:harness:ios --debug --verbose --testTimeout 120000
+        run: |
+          # Retry up to 3 times only on timeout (exit code 124)
+          for attempt in 1 2 3; do
+            echo "=== Attempt $attempt of 3 ==="
+            set +e
+            timeout 180 yarn test:harness:ios --verbose --testTimeout 120000
+            exit_code=$?
+            set -e
+
+            echo "Exit code: $exit_code"
+
+            if [ $exit_code -eq 0 ]; then
+              echo "Tests passed on attempt $attempt"
+              exit 0
+            elif [ $exit_code -eq 124 ]; then
+              echo "Timeout on attempt $attempt, retrying..."
+              sleep 5
+            else
+              echo "Tests failed with exit code $exit_code (not retrying)"
+              exit $exit_code
+            fi
+          done
+          echo "All attempts timed out"
+          exit 1
+
+      - name: Debug - Check for console logs
+        if: failure()
+        run: |
+          echo "=== Checking simulator logs for errors ==="
+          xcrun simctl spawn booted log show --predicate 'processImagePath CONTAINS "RiveExample"' --last 5m --style compact 2>&1 | tail -200 || echo "No logs found"
