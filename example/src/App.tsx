@@ -4,7 +4,6 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  ScrollView,
   ActionSheetIOS,
   Platform,
   Alert,
@@ -12,12 +11,8 @@ import {
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {
-  PagesList,
-  PagesListByCategory,
-  type PageItem,
-  type Category,
-} from './PagesList';
+import { PagesList, type PageItem } from './PagesList';
+import { HomeMenu } from './shared/HomeMenu';
 
 const LAST_OPENED_KEY = '@rive_example_last_opened';
 
@@ -76,40 +71,6 @@ function HeaderMenuButton() {
   );
 }
 
-const CATEGORY_LABELS: Record<Category, string> = {
-  demos: 'Demos',
-  exercisers: 'Exercisers',
-  tests: 'Tests',
-  reproducers: 'Reproducers',
-};
-
-function Section({
-  title,
-  pages,
-  onNavigate,
-}: {
-  title: string;
-  pages: PageItem[];
-  onNavigate: (id: string) => void;
-}) {
-  if (pages.length === 0) return null;
-
-  return (
-    <View style={styles.section}>
-      <Text style={styles.sectionTitle}>{title}</Text>
-      {pages.map(({ id, name }) => (
-        <TouchableOpacity
-          key={id}
-          style={styles.button}
-          onPress={() => onNavigate(id)}
-        >
-          <Text style={styles.buttonText}>{name}</Text>
-        </TouchableOpacity>
-      ))}
-    </View>
-  );
-}
-
 function HomeScreen({ navigation }: { navigation: any }) {
   const [lastOpened, setLastOpened] = useState<PageItem | null>(null);
 
@@ -128,30 +89,9 @@ function HomeScreen({ navigation }: { navigation: any }) {
   };
 
   return (
-    <ScrollView style={styles.container}>
-      <Text style={styles.header}>Rive React Native Examples</Text>
-
-      {lastOpened && (
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Recent</Text>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => handleNavigate(lastOpened.id)}
-          >
-            <Text style={styles.buttonText}>{lastOpened.name}</Text>
-          </TouchableOpacity>
-        </View>
-      )}
-
-      {(Object.keys(CATEGORY_LABELS) as Category[]).map((category) => (
-        <Section
-          key={category}
-          title={CATEGORY_LABELS[category]}
-          pages={PagesListByCategory[category]}
-          onNavigate={handleNavigate}
-        />
-      ))}
-    </ScrollView>
+    <View style={styles.container}>
+      <HomeMenu lastOpened={lastOpened} onNavigate={handleNavigate} />
+    </View>
   );
 }
 
@@ -194,37 +134,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-  },
-  header: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginTop: 40,
-    marginBottom: 20,
-  },
-  section: {
-    paddingHorizontal: 20,
-    marginBottom: 20,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#666',
-    marginBottom: 10,
-    textTransform: 'uppercase',
-    letterSpacing: 1,
-  },
-  button: {
-    backgroundColor: '#007AFF',
-    padding: 15,
-    borderRadius: 10,
-    marginBottom: 10,
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
-    textAlign: 'center',
   },
   headerButton: {
     marginRight: 16,

@@ -1,65 +1,14 @@
 import { useEffect, useState } from 'react';
-import { StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { StyleSheet, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { IconSymbol } from '@/components/ui/icon-symbol';
-import {
-  PagesList,
-  PagesListByCategory,
-  type PageItem,
-  type Category,
-} from '@example/PagesList';
+import { HomeMenu, PagesList, type PageItem } from '@example/shared/HomeMenu';
 
 const LAST_OPENED_KEY = '@rive_example_last_opened';
-
-const CATEGORY_LABELS: Record<Category, string> = {
-  demos: 'Demos',
-  exercisers: 'Exercisers',
-  tests: 'Tests',
-  reproducers: 'Reproducers',
-};
-
-function Section({
-  title,
-  pages,
-  onNavigate,
-}: {
-  title: string;
-  pages: PageItem[];
-  onNavigate: (id: string) => void;
-}) {
-  if (pages.length === 0) return null;
-
-  return (
-    <ThemedView style={styles.section}>
-      <ThemedText style={styles.sectionTitle}>{title}</ThemedText>
-      {pages.map((page) => (
-        <TouchableOpacity
-          key={page.id}
-          style={styles.exampleCard}
-          onPress={() => onNavigate(page.id)}
-        >
-          <ThemedView style={styles.cardContainer}>
-            <ThemedView style={styles.cardContent}>
-              <ThemedView style={styles.textContainer}>
-                <ThemedText type="defaultSemiBold" style={styles.cardTitle}>
-                  {page.name}
-                </ThemedText>
-                <ThemedText style={styles.cardDescription}>
-                  {page.description}
-                </ThemedText>
-              </ThemedView>
-              <IconSymbol size={20} name="chevron.right" color="#999" />
-            </ThemedView>
-          </ThemedView>
-        </TouchableOpacity>
-      ))}
-    </ThemedView>
-  );
-}
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -119,38 +68,7 @@ export default function HomeScreen() {
         )}
       </ThemedView>
 
-      <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
-      >
-        {lastOpened && (
-          <TouchableOpacity
-            style={styles.recentCard}
-            onPress={() => handleNavigate(lastOpened.id)}
-          >
-            <ThemedView style={styles.recentContent}>
-              <IconSymbol
-                size={18}
-                name="clock.arrow.circlepath"
-                color="#666"
-              />
-              <ThemedText type="defaultSemiBold" style={styles.recentTitle}>
-                {lastOpened.name}
-              </ThemedText>
-              <IconSymbol size={20} name="chevron.right" color="#999" />
-            </ThemedView>
-          </TouchableOpacity>
-        )}
-
-        {(Object.keys(CATEGORY_LABELS) as Category[]).map((category) => (
-          <Section
-            key={category}
-            title={CATEGORY_LABELS[category]}
-            pages={PagesListByCategory[category]}
-            onNavigate={handleNavigate}
-          />
-        ))}
-      </ScrollView>
+      <HomeMenu lastOpened={lastOpened} onNavigate={handleNavigate} />
     </ThemedView>
   );
 }
@@ -189,67 +107,5 @@ const styles = StyleSheet.create({
   menuItemText: {
     fontSize: 16,
     color: '#007AFF',
-  },
-  scrollView: {
-    flex: 1,
-  },
-  scrollContent: {
-    padding: 16,
-  },
-  section: {
-    marginBottom: 20,
-  },
-  sectionTitle: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#666',
-    marginBottom: 10,
-    textTransform: 'uppercase',
-    letterSpacing: 1,
-  },
-  exampleCard: {
-    marginBottom: 8,
-    borderRadius: 12,
-    overflow: 'hidden',
-  },
-  cardContainer: {
-    backgroundColor: '#F5F5F5',
-    borderRadius: 12,
-  },
-  recentCard: {
-    marginBottom: 20,
-    borderRadius: 12,
-    overflow: 'hidden',
-    backgroundColor: '#F5F5F5',
-  },
-  recentContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    gap: 10,
-  },
-  recentTitle: {
-    flex: 1,
-    fontSize: 16,
-  },
-  cardContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-  },
-  textContainer: {
-    flex: 1,
-    marginRight: 8,
-  },
-  cardTitle: {
-    fontSize: 16,
-    marginBottom: 4,
-  },
-  cardDescription: {
-    fontSize: 13,
-    opacity: 0.7,
-    lineHeight: 18,
   },
 });
