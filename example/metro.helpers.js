@@ -2,7 +2,8 @@ const path = require('path');
 
 /**
  * Forces all react-native imports to resolve to a single instance from the project's node_modules.
- * This fixes duplicate module instances in monorepo setups where the library has its own react-native.
+ * Both the library (root) and example apps have their own react-native in node_modules.
+ * Without this, Metro may resolve react-native from the library's node_modules, causing duplicate instances.
  *
  * @param {import('metro-config').MetroConfig} config - Metro configuration
  * @param {string} projectDir - Directory containing node_modules with react-native
