@@ -13,6 +13,9 @@ import type { Metadata } from '../shared/metadata';
 
 const testContext = require.context('../../__tests__', false, /\.harness\.tsx?$/);
 
+// Cache collected suites at module level (require.context only executes once)
+let cachedSuites: TestSuite[] | null = null;
+
 type TestStatus = 'pending' | 'running' | 'passed' | 'failed';
 
 interface TestState {
@@ -20,30 +23,36 @@ interface TestState {
   error?: string;
 }
 
+function buildTestStates(suites: TestSuite[]): Map<string, TestState> {
+  const states = new Map<string, TestState>();
+  for (const suite of suites) {
+    for (const test of suite.tests) {
+      states.set(`${suite.name}::${test.name}`, { status: 'pending' });
+    }
+  }
+  return states;
+}
+
 export default function TestsPage() {
-  const [suites, setSuites] = useState<TestSuite[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [suites, setSuites] = useState<TestSuite[]>(cachedSuites ?? []);
+  const [loading, setLoading] = useState(cachedSuites === null);
   const [testStates, setTestStates] = useState<Map<string, TestState>>(
-    new Map()
+    () => (cachedSuites ? buildTestStates(cachedSuites) : new Map())
   );
   const [runningAll, setRunningAll] = useState(false);
 
   useEffect(() => {
+    if (cachedSuites !== null) return;
+
     async function collectTests() {
       const collector = getTestCollector();
       const result = await collector.collect(() => {
         testContext.keys().forEach((key) => testContext(key));
       }, 'harness-tests');
 
-      setSuites(result.testSuite.suites);
-
-      const states = new Map<string, TestState>();
-      for (const suite of result.testSuite.suites) {
-        for (const test of suite.tests) {
-          states.set(`${suite.name}::${test.name}`, { status: 'pending' });
-        }
-      }
-      setTestStates(states);
+      cachedSuites = result.testSuite.suites;
+      setSuites(cachedSuites);
+      setTestStates(buildTestStates(cachedSuites));
       setLoading(false);
     }
     collectTests();
