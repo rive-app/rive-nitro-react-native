@@ -142,7 +142,7 @@ jobs:
           yarn turbo run build:android --cache-dir="${{ env.TURBO_CACHE_DIR }}"
 
   build-ios:
-    runs-on: ghcr.io/cirruslabs/macos-runner:sonoma
+    runs-on: ghcr.io/cirruslabs/macos-runner:sequoia
     env:
       XCODE_VERSION: 16.4
       TURBO_CACHE_DIR: .turbo/ios
@@ -170,10 +170,10 @@ jobs:
             echo "turbo_cache_hit=1" >> $GITHUB_ENV
           fi
 
-      - name: Install Xcode 16.4 using xcodes
+      - name: Select Xcode 16.4
         if: env.turbo_cache_hit != 1
         run: |
-          xcodes install ${{ env.XCODE_VERSION }} --select --experimental-unxip
+          xcodes select ${{ env.XCODE_VERSION }}
 
       - name: Restore cocoapods
         if: env.turbo_cache_hit != 1
@@ -208,7 +208,7 @@ jobs:
           yarn turbo run build:ios --cache-dir="${{ env.TURBO_CACHE_DIR }}"
 
   test-harness-ios:
-    runs-on: ghcr.io/cirruslabs/macos-runner:sonoma
+    runs-on: ghcr.io/cirruslabs/macos-runner:sequoia
     env:
       XCODE_VERSION: 16.4
     steps:
@@ -218,9 +218,9 @@ jobs:
       - name: Setup
         uses: ./.github/actions/setup
 
-      - name: Install Xcode 16.4 using xcodes
+      - name: Select Xcode 16.4
         run: |
-          xcodes install ${{ env.XCODE_VERSION }} --select --experimental-unxip
+          xcodes select ${{ env.XCODE_VERSION }}
 
       - name: Restore cocoapods
         id: cocoapods-cache
