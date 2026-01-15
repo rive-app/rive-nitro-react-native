@@ -142,9 +142,9 @@ jobs:
           yarn turbo run build:android --cache-dir="${{ env.TURBO_CACHE_DIR }}"
 
   build-ios:
-    runs-on: ghcr.io/cirruslabs/macos-sequoia-xcode:16.4
+    runs-on: ghcr.io/cirruslabs/macos-runner:sonoma
     env:
-      XCODE_VERSION: 16.4
+      XCODE_VERSION: 16.1
       TURBO_CACHE_DIR: .turbo/ios
     steps:
       - name: Checkout
@@ -208,9 +208,9 @@ jobs:
           yarn turbo run build:ios --cache-dir="${{ env.TURBO_CACHE_DIR }}"
 
   test-harness-ios:
-    runs-on: ghcr.io/cirruslabs/macos-sequoia-xcode:16.4
+    runs-on: ghcr.io/cirruslabs/macos-runner:sonoma
     env:
-      XCODE_VERSION: 16.4
+      XCODE_VERSION: 16.1
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -255,7 +255,7 @@ jobs:
         uses: futureware-tech/simulator-action@v4
         with:
           model: 'iPhone 16 Pro'
-          os_version: '18.6'
+          os_version: '18.1'
 
       - name: Install app on simulator
         run: xcrun simctl install booted example/ios/build/Build/Products/Debug-iphonesimulator/RiveExample.app
