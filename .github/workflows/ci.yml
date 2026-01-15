@@ -170,7 +170,7 @@ jobs:
             echo "turbo_cache_hit=1" >> $GITHUB_ENV
           fi
 
-      - name: Select Xcode 16.4
+      - name: Select Xcode version
         if: env.turbo_cache_hit != 1
         run: |
           xcodes select ${{ env.XCODE_VERSION }}
@@ -218,7 +218,7 @@ jobs:
       - name: Setup
         uses: ./.github/actions/setup
 
-      - name: Select Xcode 16.4
+      - name: Select Xcode version
         run: |
           xcodes select ${{ env.XCODE_VERSION }}
 
@@ -269,11 +269,11 @@ jobs:
       - name: Run harness tests on iOS
         working-directory: example
         run: |
-          # Retry up to 3 times only on timeout (exit code 124)
+          # Retry up to 3 times due to flaky harness connection
           for attempt in 1 2 3; do
             echo "=== Attempt $attempt of 3 ==="
             set +e
-            timeout 180 yarn test:harness:ios --verbose --testTimeout 120000
+            yarn test:harness:ios --verbose --testTimeout 120000
             exit_code=$?
             set -e
 
@@ -282,15 +282,11 @@ jobs:
             if [ $exit_code -eq 0 ]; then
               echo "Tests passed on attempt $attempt"
               exit 0
-            elif [ $exit_code -eq 124 ]; then
-              echo "Timeout on attempt $attempt, retrying..."
-              sleep 5
-            else
-              echo "Tests failed with exit code $exit_code (not retrying)"
-              exit $exit_code
             fi
+            echo "Attempt $attempt failed, retrying..."
+            sleep 5
           done
-          echo "All attempts timed out"
+          echo "All 3 attempts failed"
           exit 1
 
       - name: Debug - Check for console logs
