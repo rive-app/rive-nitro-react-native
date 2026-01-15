@@ -2,13 +2,15 @@
 const { getDefaultConfig } = require('expo/metro-config');
 const { getConfig } = require('react-native-builder-bob/metro-config');
 const path = require('path');
+const { withSingleReactNative } = require('../example/metro.helpers');
+
 const root = path.resolve(__dirname, '..');
 
 /** @type {import('expo/metro-config').MetroConfig} */
 const config = getDefaultConfig(__dirname);
 config.resolver.assetExts = [...config.resolver.assetExts, 'riv'];
 
-const finalConfig = getConfig(config, {
+const bobConfig = getConfig(config, {
   root,
   project: __dirname,
 });
@@ -37,29 +39,25 @@ function resolveExampleAliasToSourceDir(context, moduleName, projectRoot) {
   return null;
 }
 
-// Force all react-native imports to resolve to expo-example's node_modules
-// This fixes duplicate module instances when library code imports react-native
-const rnPath = path.join(__dirname, 'node_modules/react-native/index.js');
-const originalResolveRequest = finalConfig.resolver.resolveRequest;
-finalConfig.resolver.resolveRequest = (context, moduleName, platform) => {
-  if (moduleName === 'react-native') {
-    return { type: 'sourceFile', filePath: rnPath };
-  }
-
-  const customResolution = resolveExampleAliasToSourceDir(
-    context,
-    moduleName,
-    root
-  );
-
-  if (customResolution) {
-    return customResolution;
-  }
-
-  if (originalResolveRequest) {
-    return originalResolveRequest(context, moduleName, platform);
-  }
-  return context.resolveRequest(context, moduleName, platform);
+const originalResolveRequest = bobConfig.resolver.resolveRequest;
+const configWithAlias = {
+  ...bobConfig,
+  resolver: {
+    ...bobConfig.resolver,
+    resolveRequest: (context, moduleName, platform) => {
+      const customResolution = resolveExampleAliasToSourceDir(
+        context,
+        moduleName,
+        root
+      );
+      if (customResolution) {
+        return customResolution;
+      }
+      return originalResolveRequest
+        ? originalResolveRequest(context, moduleName, platform)
+        : context.resolveRequest(context, moduleName, platform);
+    },
+  },
 };
 
-module.exports = finalConfig;
+module.exports = withSingleReactNative(configWithAlias, __dirname);

@@ -2,6 +2,7 @@ const path = require('path');
 const { getDefaultConfig } = require('@react-native/metro-config');
 const { getConfig } = require('react-native-builder-bob/metro-config');
 const { withRnHarness } = require('react-native-harness/metro');
+const { withSingleReactNative } = require('./metro.helpers');
 
 const root = path.resolve(__dirname, '..');
 
@@ -20,15 +21,4 @@ const finalConfig = getConfig(config, {
   project: __dirname,
 });
 
-// Force all react-native imports to resolve to example's node_modules
-// This fixes duplicate module instances in harness tests
-const rnPath = path.join(__dirname, 'node_modules/react-native/index.js');
-const originalResolveRequest = finalConfig.resolver.resolveRequest;
-finalConfig.resolver.resolveRequest = (context, moduleName, platform) => {
-  if (moduleName === 'react-native') {
-    return { type: 'sourceFile', filePath: rnPath };
-  }
-  return originalResolveRequest(context, moduleName, platform);
-};
-
-module.exports = withRnHarness(finalConfig);
+module.exports = withRnHarness(withSingleReactNative(finalConfig, __dirname));
