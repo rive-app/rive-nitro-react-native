@@ -176,7 +176,6 @@ function ArtboardSwapper({
             key={option.label}
             style={[
               styles.button,
-              !option.fromAssets && styles.secondaryButton,
               currentArtboard === option.label && styles.buttonActive,
             ]}
             onPress={() => swapArtboard(option)}
@@ -245,9 +244,6 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     backgroundColor: '#007AFF',
     borderRadius: 8,
-  },
-  secondaryButton: {
-    backgroundColor: '#5856D6',
   },
   buttonActive: {
     backgroundColor: '#34C759',
