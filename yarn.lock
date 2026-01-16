@@ -4468,12 +4468,12 @@ __metadata:
     eslint-plugin-jest: ^29.1.0
     eslint-plugin-prettier: ^5.2.3
     jest: ^29.7.0
-    nitrogen: 0.31.10
+    nitrogen: 0.33.1
     prettier: ^3.0.3
     react: 19.0.0
     react-native: 0.79.2
     react-native-builder-bob: ^0.40.10
-    react-native-nitro-modules: 0.31.10
+    react-native-nitro-modules: 0.33.1
     react-test-renderer: 19.0.0
     release-it: ^17.10.0
     turbo: ^1.10.7
@@ -4481,7 +4481,7 @@ __metadata:
   peerDependencies:
     react: "*"
     react-native: "*"
-    react-native-nitro-modules: ">=0.31.8"
+    react-native-nitro-modules: ">=0.33.1"
   languageName: unknown
   linkType: soft
 
@@ -8633,7 +8633,7 @@ __metadata:
     react-dom: 19.1.0
     react-native: 0.81.5
     react-native-gesture-handler: 2.29.1
-    react-native-nitro-modules: 0.31.10
+    react-native-nitro-modules: 0.33.1
     react-native-reanimated: 4.1.5
     react-native-safe-area-context: ~5.6.0
     react-native-screens: ~4.16.0
@@ -13086,18 +13086,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nitrogen@npm:0.31.10":
-  version: 0.31.10
-  resolution: "nitrogen@npm:0.31.10"
+"nitrogen@npm:0.33.1":
+  version: 0.33.1
+  resolution: "nitrogen@npm:0.33.1"
   dependencies:
     chalk: ^5.3.0
-    react-native-nitro-modules: ^0.31.10
+    react-native-nitro-modules: ^0.33.1
     ts-morph: ^27.0.0
     yargs: ^18.0.0
     zod: ^4.0.5
   bin:
     nitrogen: lib/index.js
-  checksum: 6bba165b334172d6ea060affefc14aded38294cd9ef23f58a3aff9fc89f41d7b62e6ae9897bec5d8ce181bb9656d387c67f2649b91ad133041db0aa04826ff71
+  checksum: 8eba18c69416ffd5ed45e058a195c7c11fd16da22692c4b28e67edca6b7321efd99f4a29200ce09f3ec4661f83c6c9437b5842ae9d71cb5fb268cb68e6457ce7
   languageName: node
   linkType: hard
 
@@ -14418,13 +14418,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-nitro-modules@npm:0.31.10, react-native-nitro-modules@npm:^0.31.10":
-  version: 0.31.10
-  resolution: "react-native-nitro-modules@npm:0.31.10"
+"react-native-nitro-modules@npm:0.33.1, react-native-nitro-modules@npm:^0.33.1":
+  version: 0.33.1
+  resolution: "react-native-nitro-modules@npm:0.33.1"
   peerDependencies:
     react: "*"
     react-native: "*"
-  checksum: 1c8d2f12ff29b6733c784c5fd0dedcbec4ceec9f82eb49f49e7734f31b9367346938010dcacf69bf695a352e36fec5aa23fd57b8091f6acd78c3d9a61e14ea7f
+  checksum: 3f0bf39343aae48ee9323b8f3c86c81b34c516b022ad2b3739c5dc1379d9155436417e92975dfbc57740d2086b47bd16935d15bca5cd12f157fcf7772e204f11
   languageName: node
   linkType: hard
 
@@ -14471,7 +14471,7 @@ __metadata:
     react-native-builder-bob: ^0.40.10
     react-native-gesture-handler: 2.29.1
     react-native-harness: ^1.0.0-alpha.20
-    react-native-nitro-modules: 0.31.10
+    react-native-nitro-modules: 0.33.1
     react-native-reanimated: 4.1.5
     react-native-safe-area-context: ^5.4.0
     react-native-worklets: 0.6.1
