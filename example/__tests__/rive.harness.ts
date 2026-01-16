@@ -13,7 +13,7 @@ describe('RiveFile Loading', () => {
 
   it('fromURL works', async () => {
     const file = await RiveFileFactory.fromURL(
-      'http://localhost:8081/assets/assets/rive/viewmodelproperty.riv',
+      'https://cdn.rive.app/animations/vehicles.riv',
       undefined
     );
     expect(file).toBeDefined();

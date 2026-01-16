@@ -12,7 +12,7 @@ import {
   RiveView,
 } from '@rive-app/react-native';
 import { Picker } from '@react-native-picker/picker';
-import { type Metadata } from '../helpers/metadata';
+import { type Metadata } from '../shared/metadata';
 
 export default function OutOfBandAssetsExample() {
   const [uri, setUri] = React.useState('https://picsum.photos/id/372/500/500');

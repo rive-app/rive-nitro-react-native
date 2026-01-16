@@ -11,7 +11,7 @@ import {
   useRiveTrigger,
   useRiveFile,
 } from '@rive-app/react-native';
-import { type Metadata } from '../helpers/metadata';
+import { type Metadata } from '../shared/metadata';
 
 export default function WithRiveFile() {
   const { riveFile, isLoading, error } = useRiveFile(

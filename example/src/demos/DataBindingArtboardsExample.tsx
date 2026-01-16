@@ -13,21 +13,21 @@ import {
   type RiveFile,
   type BindableArtboard,
 } from '@rive-app/react-native';
-import { type Metadata } from '../helpers/metadata';
+import { type Metadata } from '../shared/metadata';
 
 /**
  * Data Binding Artboards Example
  *
  * Demonstrates swapping artboards at runtime using data binding.
- * Based on: https://rive.app/docs/runtimes/data-binding#artboards
- *
  * The main Rive file includes a view model with a property of type `Artboard`
  * called "CharacterArtboard". This property can be set to any artboard from
  * either the main file or an external file.
  *
- * Rive source files:
+ * Marketplace:
  * - Main: https://rive.app/marketplace/24641-46042-data-binding-artboards/
  * - Assets: https://rive.app/marketplace/24642-47536-data-binding-artboards/
+ *
+ * Docs: https://rive.app/docs/runtimes/data-binding#artboards
  */
 
 export default function DataBindingArtboardsExample() {
@@ -176,17 +176,11 @@ function ArtboardSwapper({
             key={option.label}
             style={[
               styles.button,
-              !option.fromAssets && styles.secondaryButton,
               currentArtboard === option.label && styles.buttonActive,
             ]}
             onPress={() => swapArtboard(option)}
           >
-            <Text
-              style={[
-                styles.buttonText,
-                currentArtboard === option.label && styles.buttonTextActive,
-              ]}
-            >
+            <Text style={styles.buttonText}>
               {option.label}
               {option.fromAssets ? ' (external)' : ' (internal)'}
             </Text>
@@ -251,18 +245,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#007AFF',
     borderRadius: 8,
   },
-  secondaryButton: {
-    backgroundColor: '#5856D6',
-  },
   buttonActive: {
     backgroundColor: '#34C759',
   },
   buttonText: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#fff',
-  },
-  buttonTextActive: {
     color: '#fff',
   },
   loadingText: {

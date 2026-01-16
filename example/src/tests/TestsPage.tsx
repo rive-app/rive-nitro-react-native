@@ -9,9 +9,25 @@ import {
 import { getTestCollector } from 'react-native-harness';
 import type { TestSuite, TestCase } from '@react-native-harness/bridge';
 import { useState, useEffect } from 'react';
-import type { Metadata } from '../helpers/metadata';
+import type { Metadata } from '../shared/metadata';
 
-const testContext = require.context('../../__tests__', false, /\.harness\.ts$/);
+const testContext = require.context(
+  '../../__tests__',
+  false,
+  /\.harness\.tsx?$/
+);
+
+// Cache collected suites globally (persists across HMR, require.context only executes once)
+const CACHE_KEY = '__RIVE_TEST_SUITES__';
+type GlobalCache = { [CACHE_KEY]?: TestSuite[] };
+
+function getCachedSuites(): TestSuite[] | null {
+  return (global as unknown as GlobalCache)[CACHE_KEY] ?? null;
+}
+
+function setCachedSuites(suites: TestSuite[]): void {
+  (global as unknown as GlobalCache)[CACHE_KEY] = suites;
+}
 
 type TestStatus = 'pending' | 'running' | 'passed' | 'failed';
 
@@ -20,30 +36,38 @@ interface TestState {
   error?: string;
 }
 
+function buildTestStates(suites: TestSuite[]): Map<string, TestState> {
+  const states = new Map<string, TestState>();
+  for (const suite of suites) {
+    for (const test of suite.tests) {
+      states.set(`${suite.name}::${test.name}`, { status: 'pending' });
+    }
+  }
+  return states;
+}
+
 export default function TestsPage() {
-  const [suites, setSuites] = useState<TestSuite[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [testStates, setTestStates] = useState<Map<string, TestState>>(
-    new Map()
+  const cached = getCachedSuites();
+  const [suites, setSuites] = useState<TestSuite[]>(cached ?? []);
+  const [loading, setLoading] = useState(cached === null);
+  const [testStates, setTestStates] = useState<Map<string, TestState>>(() =>
+    cached ? buildTestStates(cached) : new Map()
   );
   const [runningAll, setRunningAll] = useState(false);
 
   useEffect(() => {
+    if (getCachedSuites() !== null) return;
+
     async function collectTests() {
       const collector = getTestCollector();
       const result = await collector.collect(() => {
         testContext.keys().forEach((key) => testContext(key));
       }, 'harness-tests');
 
-      setSuites(result.testSuite.suites);
-
-      const states = new Map<string, TestState>();
-      for (const suite of result.testSuite.suites) {
-        for (const test of suite.tests) {
-          states.set(`${suite.name}::${test.name}`, { status: 'pending' });
-        }
-      }
-      setTestStates(states);
+      const collectedSuites = result.testSuite.suites;
+      setCachedSuites(collectedSuites);
+      setSuites(collectedSuites);
+      setTestStates(buildTestStates(collectedSuites));
       setLoading(false);
     }
     collectTests();

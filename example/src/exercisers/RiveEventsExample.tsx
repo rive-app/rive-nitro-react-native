@@ -8,7 +8,7 @@ import {
   type RiveEvent,
   RiveEventType,
 } from '@rive-app/react-native';
-import { type Metadata } from '../helpers/metadata';
+import { type Metadata } from '../shared/metadata';
 
 /**
  * @deprecated Rive events at runtime is deprecated. Use data binding instead.

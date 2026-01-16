@@ -15,7 +15,7 @@ import {
   type RiveImage,
 } from '@rive-app/react-native';
 import { Picker } from '@react-native-picker/picker';
-import { type Metadata } from '../helpers/metadata';
+import { type Metadata } from '../shared/metadata';
 
 class ErrorBoundary extends React.Component<
   {

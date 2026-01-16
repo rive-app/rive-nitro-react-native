@@ -1,15 +1,28 @@
-import { StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { useEffect, useState } from 'react';
+import { StyleSheet, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { IconSymbol } from '@/components/ui/icon-symbol';
-import { PagesList, type PageItem } from '@example/PagesList';
+import { HomeMenu, PagesList, type PageItem } from '@example/shared/HomeMenu';
+
+const LAST_OPENED_KEY = '@rive_example_last_opened';
 
 export default function HomeScreen() {
   const router = useRouter();
   const [showMenu, setShowMenu] = useState(false);
+  const [lastOpened, setLastOpened] = useState<PageItem | null>(null);
+
+  useEffect(() => {
+    AsyncStorage.getItem(LAST_OPENED_KEY).then((id) => {
+      if (id) {
+        const page = PagesList.find((p) => p.id === id);
+        if (page) setLastOpened(page);
+      }
+    });
+  }, []);
 
   const handleInvokeGC = () => {
     if (typeof global.gc === 'function') {
@@ -19,6 +32,16 @@ export default function HomeScreen() {
       console.error('global.gc is not available');
     }
     setShowMenu(false);
+  };
+
+  const handleRunTests = () => {
+    setShowMenu(false);
+    router.push('/TestsPage' as any);
+  };
+
+  const handleNavigate = (id: string) => {
+    AsyncStorage.setItem(LAST_OPENED_KEY, id);
+    router.push(`/${id}` as any);
   };
 
   return (
@@ -35,6 +58,9 @@ export default function HomeScreen() {
         </TouchableOpacity>
         {showMenu && (
           <ThemedView style={styles.menu}>
+            <TouchableOpacity onPress={handleRunTests} style={styles.menuItem}>
+              <ThemedText style={styles.menuItemText}>Run Tests</ThemedText>
+            </TouchableOpacity>
             <TouchableOpacity onPress={handleInvokeGC} style={styles.menuItem}>
               <ThemedText style={styles.menuItemText}>Invoke GC</ThemedText>
             </TouchableOpacity>
@@ -42,32 +68,7 @@ export default function HomeScreen() {
         )}
       </ThemedView>
 
-      <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
-      >
-        {PagesList.map((page: PageItem) => (
-          <TouchableOpacity
-            key={page.id}
-            style={styles.exampleCard}
-            onPress={() => router.push(`/${page.id}` as any)}
-          >
-            <ThemedView style={styles.cardContainer}>
-              <ThemedView style={styles.cardContent}>
-                <ThemedView style={styles.textContainer}>
-                  <ThemedText type="defaultSemiBold" style={styles.cardTitle}>
-                    {page.name}
-                  </ThemedText>
-                  <ThemedText style={styles.cardDescription}>
-                    {page.description}
-                  </ThemedText>
-                </ThemedView>
-                <IconSymbol size={20} name="chevron.right" color="#999" />
-              </ThemedView>
-            </ThemedView>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
+      <HomeMenu lastOpened={lastOpened} onNavigate={handleNavigate} />
     </ThemedView>
   );
 }
@@ -106,39 +107,5 @@ const styles = StyleSheet.create({
   menuItemText: {
     fontSize: 16,
     color: '#007AFF',
-  },
-  scrollView: {
-    flex: 1,
-  },
-  scrollContent: {
-    padding: 16,
-  },
-  exampleCard: {
-    marginBottom: 8,
-    borderRadius: 12,
-    overflow: 'hidden',
-  },
-  cardContainer: {
-    backgroundColor: '#F5F5F5',
-    borderRadius: 12,
-  },
-  cardContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-  },
-  textContainer: {
-    flex: 1,
-    marginRight: 8,
-  },
-  cardTitle: {
-    fontSize: 16,
-    marginBottom: 4,
-  },
-  cardDescription: {
-    fontSize: 13,
-    opacity: 0.7,
-    lineHeight: 18,
   },
 });
