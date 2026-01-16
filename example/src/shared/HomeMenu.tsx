@@ -66,7 +66,10 @@ export type HomeMenuProps = {
 
 export function HomeMenu({ lastOpened, onNavigate }: HomeMenuProps) {
   return (
-    <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
+    <ScrollView
+      style={styles.scrollView}
+      contentContainerStyle={styles.scrollContent}
+    >
       {lastOpened && (
         <TouchableOpacity
           style={styles.recentCard}

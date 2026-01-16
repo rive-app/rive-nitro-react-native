@@ -11,7 +11,11 @@ import type { TestSuite, TestCase } from '@react-native-harness/bridge';
 import { useState, useEffect } from 'react';
 import type { Metadata } from '../shared/metadata';
 
-const testContext = require.context('../../__tests__', false, /\.harness\.tsx?$/);
+const testContext = require.context(
+  '../../__tests__',
+  false,
+  /\.harness\.tsx?$/
+);
 
 // Cache collected suites at module level (require.context only executes once)
 let cachedSuites: TestSuite[] | null = null;
@@ -36,8 +40,8 @@ function buildTestStates(suites: TestSuite[]): Map<string, TestState> {
 export default function TestsPage() {
   const [suites, setSuites] = useState<TestSuite[]>(cachedSuites ?? []);
   const [loading, setLoading] = useState(cachedSuites === null);
-  const [testStates, setTestStates] = useState<Map<string, TestState>>(
-    () => (cachedSuites ? buildTestStates(cachedSuites) : new Map())
+  const [testStates, setTestStates] = useState<Map<string, TestState>>(() =>
+    cachedSuites ? buildTestStates(cachedSuites) : new Map()
   );
   const [runningAll, setRunningAll] = useState(false);
 
