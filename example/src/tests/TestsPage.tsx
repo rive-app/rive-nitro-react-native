@@ -17,8 +17,17 @@ const testContext = require.context(
   /\.harness\.tsx?$/
 );
 
-// Cache collected suites at module level (require.context only executes once)
-let cachedSuites: TestSuite[] | null = null;
+// Cache collected suites globally (persists across HMR, require.context only executes once)
+const CACHE_KEY = '__RIVE_TEST_SUITES__';
+type GlobalCache = { [CACHE_KEY]?: TestSuite[] };
+
+function getCachedSuites(): TestSuite[] | null {
+  return (global as unknown as GlobalCache)[CACHE_KEY] ?? null;
+}
+
+function setCachedSuites(suites: TestSuite[]): void {
+  (global as unknown as GlobalCache)[CACHE_KEY] = suites;
+}
 
 type TestStatus = 'pending' | 'running' | 'passed' | 'failed';
 
@@ -38,15 +47,16 @@ function buildTestStates(suites: TestSuite[]): Map<string, TestState> {
 }
 
 export default function TestsPage() {
-  const [suites, setSuites] = useState<TestSuite[]>(cachedSuites ?? []);
-  const [loading, setLoading] = useState(cachedSuites === null);
+  const cached = getCachedSuites();
+  const [suites, setSuites] = useState<TestSuite[]>(cached ?? []);
+  const [loading, setLoading] = useState(cached === null);
   const [testStates, setTestStates] = useState<Map<string, TestState>>(() =>
-    cachedSuites ? buildTestStates(cachedSuites) : new Map()
+    cached ? buildTestStates(cached) : new Map()
   );
   const [runningAll, setRunningAll] = useState(false);
 
   useEffect(() => {
-    if (cachedSuites !== null) return;
+    if (getCachedSuites() !== null) return;
 
     async function collectTests() {
       const collector = getTestCollector();
@@ -54,9 +64,10 @@ export default function TestsPage() {
         testContext.keys().forEach((key) => testContext(key));
       }, 'harness-tests');
 
-      cachedSuites = result.testSuite.suites;
-      setSuites(cachedSuites);
-      setTestStates(buildTestStates(cachedSuites));
+      const collectedSuites = result.testSuite.suites;
+      setCachedSuites(collectedSuites);
+      setSuites(collectedSuites);
+      setTestStates(buildTestStates(collectedSuites));
       setLoading(false);
     }
     collectTests();
