@@ -209,7 +209,6 @@ jobs:
           yarn turbo run build:ios --cache-dir="${{ env.TURBO_CACHE_DIR }}"
 
   test-harness-ios:
-    if: false # TODO: re-enable once harness timeout issues are resolved
     runs-on: macos-latest
     env:
       XCODE_VERSION: 16.4
@@ -263,6 +262,30 @@ jobs:
       - name: Install app on simulator
         run: xcrun simctl install booted example/ios/build/Build/Products/Debug-iphonesimulator/RiveExample.app
 
+      - name: Wait for simulator to be fully ready
+        run: |
+          echo "Waiting for simulator to be fully ready..."
+          sleep 10
+          xcrun simctl list devices | grep Booted
+
       - name: Run harness tests on iOS
         working-directory: example
-        run: yarn test:harness:ios --debug --verbose --testTimeout 120000
+        run: |
+          # Retry up to 3 times due to flaky harness connection
+          for attempt in 1 2 3; do
+            echo "Attempt $attempt of 3"
+            if yarn test:harness:ios --verbose --testTimeout 120000; then
+              echo "Tests passed on attempt $attempt"
+              exit 0
+            fi
+            echo "Attempt $attempt failed, retrying..."
+            sleep 5
+          done
+          echo "All attempts failed"
+          exit 1
+
+      - name: Debug - Check for console logs
+        if: failure()
+        run: |
+          echo "=== Checking simulator logs for errors ==="
+          xcrun simctl spawn booted log show --predicate 'processImagePath CONTAINS "RiveExample"' --last 5m --style compact 2>&1 | tail -200 || echo "No logs found"
