@@ -134,7 +134,7 @@ open class HybridViewModelArtboardPropertySpec_cxx : HybridViewModelPropertySpec
       try self.__implementation.set(artboard: { () -> (any HybridBindableArtboardSpec)? in
         if bridge.has_value_std__optional_std__shared_ptr_HybridBindableArtboardSpec__(artboard) {
           let __unwrapped = bridge.get_std__optional_std__shared_ptr_HybridBindableArtboardSpec__(artboard)
-          return { () -> HybridBindableArtboardSpec in
+          return { () -> any HybridBindableArtboardSpec in
             let __unsafePointer = bridge.get_std__shared_ptr_HybridBindableArtboardSpec_(__unwrapped)
             let __instance = HybridBindableArtboardSpec_cxx.fromUnsafe(__unsafePointer)
             return __instance.getHybridBindableArtboardSpec()

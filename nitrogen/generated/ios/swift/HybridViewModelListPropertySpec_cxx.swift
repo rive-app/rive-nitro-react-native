@@ -157,7 +157,7 @@ open class HybridViewModelListPropertySpec_cxx : HybridViewModelPropertySpec_cxx
   @inline(__always)
   public final func addInstance(instance: bridge.std__shared_ptr_HybridViewModelInstanceSpec_) -> bridge.Result_void_ {
     do {
-      try self.__implementation.addInstance(instance: { () -> HybridViewModelInstanceSpec in
+      try self.__implementation.addInstance(instance: { () -> any HybridViewModelInstanceSpec in
         let __unsafePointer = bridge.get_std__shared_ptr_HybridViewModelInstanceSpec_(instance)
         let __instance = HybridViewModelInstanceSpec_cxx.fromUnsafe(__unsafePointer)
         return __instance.getHybridViewModelInstanceSpec()
@@ -172,7 +172,7 @@ open class HybridViewModelListPropertySpec_cxx : HybridViewModelPropertySpec_cxx
   @inline(__always)
   public final func addInstanceAt(instance: bridge.std__shared_ptr_HybridViewModelInstanceSpec_, index: Double) -> bridge.Result_bool_ {
     do {
-      let __result = try self.__implementation.addInstanceAt(instance: { () -> HybridViewModelInstanceSpec in
+      let __result = try self.__implementation.addInstanceAt(instance: { () -> any HybridViewModelInstanceSpec in
         let __unsafePointer = bridge.get_std__shared_ptr_HybridViewModelInstanceSpec_(instance)
         let __instance = HybridViewModelInstanceSpec_cxx.fromUnsafe(__unsafePointer)
         return __instance.getHybridViewModelInstanceSpec()
@@ -188,7 +188,7 @@ open class HybridViewModelListPropertySpec_cxx : HybridViewModelPropertySpec_cxx
   @inline(__always)
   public final func removeInstance(instance: bridge.std__shared_ptr_HybridViewModelInstanceSpec_) -> bridge.Result_void_ {
     do {
-      try self.__implementation.removeInstance(instance: { () -> HybridViewModelInstanceSpec in
+      try self.__implementation.removeInstance(instance: { () -> any HybridViewModelInstanceSpec in
         let __unsafePointer = bridge.get_std__shared_ptr_HybridViewModelInstanceSpec_(instance)
         let __instance = HybridViewModelInstanceSpec_cxx.fromUnsafe(__unsafePointer)
         return __instance.getHybridViewModelInstanceSpec()

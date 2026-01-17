@@ -343,7 +343,7 @@ open class HybridViewModelInstanceSpec_cxx {
   @inline(__always)
   public final func replaceViewModel(path: std.string, instance: bridge.std__shared_ptr_HybridViewModelInstanceSpec_) -> bridge.Result_void_ {
     do {
-      try self.__implementation.replaceViewModel(path: String(path), instance: { () -> HybridViewModelInstanceSpec in
+      try self.__implementation.replaceViewModel(path: String(path), instance: { () -> any HybridViewModelInstanceSpec in
         let __unsafePointer = bridge.get_std__shared_ptr_HybridViewModelInstanceSpec_(instance)
         let __instance = HybridViewModelInstanceSpec_cxx.fromUnsafe(__unsafePointer)
         return __instance.getHybridViewModelInstanceSpec()

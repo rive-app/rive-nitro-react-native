@@ -23,7 +23,7 @@ public final class Func_void_std__shared_ptr_HybridRiveFileSpec_ {
 
   @inline(__always)
   public func call(value: bridge.std__shared_ptr_HybridRiveFileSpec_) -> Void {
-    self.closure({ () -> HybridRiveFileSpec in
+    self.closure({ () -> any HybridRiveFileSpec in
       let __unsafePointer = bridge.get_std__shared_ptr_HybridRiveFileSpec_(value)
       let __instance = HybridRiveFileSpec_cxx.fromUnsafe(__unsafePointer)
       return __instance.getHybridRiveFileSpec()

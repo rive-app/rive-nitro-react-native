@@ -204,7 +204,7 @@ open class HybridRiveViewSpec_cxx {
     }
     @inline(__always)
     set {
-      self.__implementation.file = { () -> HybridRiveFileSpec in
+      self.__implementation.file = { () -> any HybridRiveFileSpec in
         let __unsafePointer = bridge.get_std__shared_ptr_HybridRiveFileSpec_(newValue)
         let __instance = HybridRiveFileSpec_cxx.fromUnsafe(__unsafePointer)
         return __instance.getHybridRiveFileSpec()
@@ -296,7 +296,7 @@ open class HybridRiveViewSpec_cxx {
             switch __variant.index() {
               case 0:
                 let __actual = __variant.get_0()
-                return .first({ () -> HybridViewModelInstanceSpec in
+                return .first({ () -> any HybridViewModelInstanceSpec in
                   let __unsafePointer = bridge.get_std__shared_ptr_HybridViewModelInstanceSpec_(__actual)
                   let __instance = HybridViewModelInstanceSpec_cxx.fromUnsafe(__unsafePointer)
                   return __instance.getHybridViewModelInstanceSpec()
@@ -360,7 +360,7 @@ open class HybridRiveViewSpec_cxx {
   @inline(__always)
   public final func bindViewModelInstance(viewModelInstance: bridge.std__shared_ptr_HybridViewModelInstanceSpec_) -> bridge.Result_void_ {
     do {
-      try self.__implementation.bindViewModelInstance(viewModelInstance: { () -> HybridViewModelInstanceSpec in
+      try self.__implementation.bindViewModelInstance(viewModelInstance: { () -> any HybridViewModelInstanceSpec in
         let __unsafePointer = bridge.get_std__shared_ptr_HybridViewModelInstanceSpec_(viewModelInstance)
         let __instance = HybridViewModelInstanceSpec_cxx.fromUnsafe(__unsafePointer)
         return __instance.getHybridViewModelInstanceSpec()

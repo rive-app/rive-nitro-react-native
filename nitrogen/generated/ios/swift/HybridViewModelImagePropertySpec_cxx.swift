@@ -134,7 +134,7 @@ open class HybridViewModelImagePropertySpec_cxx : HybridViewModelPropertySpec_cx
       try self.__implementation.set(image: { () -> (any HybridRiveImageSpec)? in
         if bridge.has_value_std__optional_std__shared_ptr_HybridRiveImageSpec__(image) {
           let __unwrapped = bridge.get_std__optional_std__shared_ptr_HybridRiveImageSpec__(image)
-          return { () -> HybridRiveImageSpec in
+          return { () -> any HybridRiveImageSpec in
             let __unsafePointer = bridge.get_std__shared_ptr_HybridRiveImageSpec_(__unwrapped)
             let __instance = HybridRiveImageSpec_cxx.fromUnsafe(__unsafePointer)
             return __instance.getHybridRiveImageSpec()
