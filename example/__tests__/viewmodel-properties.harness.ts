@@ -4,6 +4,7 @@ import { RiveFileFactory } from '@rive-app/react-native';
 
 const DATABINDING = require('../assets/rive/databinding.riv');
 
+
 async function createGordonInstance(): Promise<ViewModelInstance> {
   const file = await RiveFileFactory.fromSource(DATABINDING, undefined);
   const vm = file.viewModelByName('Person');
