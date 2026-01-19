@@ -99,7 +99,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ${{ env.TURBO_CACHE_DIR }}
-          key: ${{ runner.os }}-turborepo-android-${{ hashFiles('yarn.lock', 'android/**', 'nitrogen/generated/android/**') }}
+          key: ${{ runner.os }}-turborepo-android-${{ hashFiles('yarn.lock', 'android/**', 'nitrogen/generated/android/**', 'src/specs/*.nitro.ts') }}
           restore-keys: |
             ${{ runner.os }}-turborepo-android-
 
@@ -158,7 +158,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ${{ env.TURBO_CACHE_DIR }}
-          key: ${{ runner.os }}-turborepo-ios-${{ hashFiles('yarn.lock', 'ios/**', 'nitrogen/generated/ios/**', '*.podspec') }}
+          key: ${{ runner.os }}-turborepo-ios-${{ hashFiles('yarn.lock', 'ios/**', 'nitrogen/generated/ios/**', '*.podspec', 'src/specs/*.nitro.ts') }}
           restore-keys: |
             ${{ runner.os }}-turborepo-ios-
 
@@ -241,7 +241,17 @@ jobs:
           bundle install
           bundle exec pod install --project-directory=ios
 
+      - name: Restore iOS build cache
+        id: ios-build-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: example/ios/build
+          key: ${{ runner.os }}-ios-build-${{ env.XCODE_VERSION }}-${{ hashFiles('yarn.lock', 'ios/**', 'nitrogen/generated/ios/**', '*.podspec', 'example/ios/Podfile.lock', 'example/ios/RiveExample/**') }}
+          restore-keys: |
+            ${{ runner.os }}-ios-build-${{ env.XCODE_VERSION }}-
+
       - name: Build iOS app
+        if: steps.ios-build-cache.outputs.cache-hit != 'true'
         working-directory: example/ios
         run: |
           set -o pipefail && xcodebuild \
@@ -252,6 +262,13 @@ jobs:
             -configuration Debug \
             build \
             CODE_SIGNING_ALLOWED=NO
+
+      - name: Save iOS build cache
+        if: steps.ios-build-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: example/ios/build
+          key: ${{ steps.ios-build-cache.outputs.cache-primary-key }}
 
       - name: Boot iOS Simulator
         uses: futureware-tech/simulator-action@v4
