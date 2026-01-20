@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.2.0](https://github.com/rive-app/rive-nitro-react-native/compare/v0.1.5...v0.2.0) (2026-01-20)
+
+
+### ⚠ BREAKING CHANGES
+
+* upgraded to Nitro 0.33.2 to fix view recycling
+
+### Bug Fixes
+
+* **ios:** upgrade to Nitro 0.33.2 with Xcode 16.4 compatibility ([2ae4ea5](https://github.com/rive-app/rive-nitro-react-native/commit/2ae4ea5efd604222b46134cc6394151198ba1653))
+* upgraded to Nitro 0.33.2 to fix view recycling ([2ae4ea5](https://github.com/rive-app/rive-nitro-react-native/commit/2ae4ea5efd604222b46134cc6394151198ba1653))
+
 ## [0.1.5](https://github.com/rive-app/rive-nitro-react-native/compare/v0.1.4...v0.1.5) (2026-01-14)
 
 
