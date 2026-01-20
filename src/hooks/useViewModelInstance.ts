@@ -3,16 +3,9 @@ import type { ViewModel, ViewModelInstance } from '../specs/ViewModel.nitro';
 import type { RiveFile } from '../specs/RiveFile.nitro';
 import type { RiveViewRef } from '../index';
 import { callDispose } from '../core/callDispose';
+import { ArtboardByName } from '../specs/ArtboardBy';
 
-export interface UseViewModelInstanceParams {
-  /**
-   * Get a specifically named instance from the ViewModel.
-   */
-  name?: string;
-  /**
-   * Create a new (blank) instance from the ViewModel.
-   */
-  useNew?: boolean;
+interface UseViewModelInstanceBaseParams {
   /**
    * If true, throws an error when the instance cannot be obtained.
    * This is useful with Error Boundaries and ensures TypeScript knows
@@ -27,27 +20,57 @@ export interface UseViewModelInstanceParams {
   onInit?: (instance: ViewModelInstance) => void;
 }
 
+export interface UseViewModelInstanceFileParams
+  extends UseViewModelInstanceBaseParams {
+  /**
+   * The name of the artboard to get the ViewModel from.
+   * If not provided, uses the default artboard.
+   */
+  artboardName?: string;
+  /**
+   * The ViewModel instance name (uses `createInstanceByName()`).
+   * If not provided, creates the default instance.
+   */
+  name?: string;
+}
+
+export interface UseViewModelInstanceViewModelParams
+  extends UseViewModelInstanceBaseParams {
+  /**
+   * The ViewModel instance name (uses `createInstanceByName()`).
+   * If not provided, creates the default instance.
+   */
+  name?: string;
+  /**
+   * Create a new (blank) instance from the ViewModel.
+   */
+  useNew?: boolean;
+}
+
+export type UseViewModelInstanceRefParams = UseViewModelInstanceBaseParams;
+
 type ViewModelSource = ViewModel | RiveFile | RiveViewRef;
 
 function isRiveViewRef(source: ViewModelSource | null): source is RiveViewRef {
-  return (
-    source !== null && source !== undefined && 'getViewModelInstance' in source
-  );
+  return source !== null && 'getViewModelInstance' in source;
 }
 
 function isRiveFile(source: ViewModelSource | null): source is RiveFile {
-  return (
-    source !== null &&
-    source !== undefined &&
-    'defaultArtboardViewModel' in source
-  );
+  return source !== null && 'defaultArtboardViewModel' in source;
 }
+
+type CreateInstanceResult = {
+  instance: ViewModelInstance | null;
+  needsDispose: boolean;
+  error?: string;
+};
 
 function createInstance(
   source: ViewModelSource | null,
   name: string | undefined,
+  artboardName: string | undefined,
   useNew: boolean
-): { instance: ViewModelInstance | null; needsDispose: boolean } {
+): CreateInstanceResult {
   if (!source) {
     return { instance: null, needsDispose: false };
   }
@@ -58,8 +81,29 @@ function createInstance(
   }
 
   if (isRiveFile(source)) {
-    const viewModel = source.defaultArtboardViewModel();
-    const vmi = viewModel?.createDefaultInstance();
+    const viewModel = source.defaultArtboardViewModel(
+      artboardName ? ArtboardByName(artboardName) : undefined
+    );
+    if (!viewModel) {
+      if (artboardName) {
+        return {
+          instance: null,
+          needsDispose: false,
+          error: `Artboard '${artboardName}' not found or has no ViewModel`,
+        };
+      }
+      return { instance: null, needsDispose: false };
+    }
+    const vmi = name
+      ? viewModel.createInstanceByName(name)
+      : viewModel.createDefaultInstance();
+    if (!vmi && name) {
+      return {
+        instance: null,
+        needsDispose: false,
+        error: `ViewModel instance '${name}' not found`,
+      };
+    }
     return { instance: vmi ?? null, needsDispose: true };
   }
 
@@ -67,6 +111,13 @@ function createInstance(
   let vmi: ViewModelInstance | undefined;
   if (name) {
     vmi = source.createInstanceByName(name);
+    if (!vmi) {
+      return {
+        instance: null,
+        needsDispose: false,
+        error: `ViewModel instance '${name}' not found`,
+      };
+    }
   } else if (useNew) {
     vmi = source.createInstance();
   } else {
@@ -79,7 +130,7 @@ function createInstance(
  * Hook for getting a ViewModelInstance from a RiveFile, ViewModel, or RiveViewRef.
  *
  * @param source - The RiveFile, ViewModel, or RiveViewRef to get an instance from
- * @param params - Configuration for which instance to retrieve (only used with ViewModel)
+ * @param params - Configuration for which instance to retrieve
  * @returns The ViewModelInstance or null if not found
  *
  * @example
@@ -87,6 +138,20 @@ function createInstance(
  * // From RiveFile (get default instance)
  * const { riveFile } = useRiveFile(require('./animation.riv'));
  * const instance = useViewModelInstance(riveFile);
+ * ```
+ *
+ * @example
+ * ```tsx
+ * // From RiveFile with specific instance name
+ * const { riveFile } = useRiveFile(require('./animation.riv'));
+ * const instance = useViewModelInstance(riveFile, { name: 'PersonInstance' });
+ * ```
+ *
+ * @example
+ * ```tsx
+ * // From RiveFile with specific artboard
+ * const { riveFile } = useRiveFile(require('./animation.riv'));
+ * const instance = useViewModelInstance(riveFile, { artboardName: 'MainArtboard' });
  * ```
  *
  * @example
@@ -129,20 +194,50 @@ function createInstance(
  * // Values are already set here
  * ```
  */
+// RiveFile overloads
 export function useViewModelInstance(
-  source: ViewModelSource,
-  params: UseViewModelInstanceParams & { required: true }
+  source: RiveFile,
+  params: UseViewModelInstanceFileParams & { required: true }
 ): ViewModelInstance;
 export function useViewModelInstance(
-  source: ViewModelSource | null,
-  params?: UseViewModelInstanceParams
+  source: RiveFile | null,
+  params?: UseViewModelInstanceFileParams
 ): ViewModelInstance | null;
+
+// ViewModel overloads
+export function useViewModelInstance(
+  source: ViewModel,
+  params: UseViewModelInstanceViewModelParams & { required: true }
+): ViewModelInstance;
+export function useViewModelInstance(
+  source: ViewModel | null,
+  params?: UseViewModelInstanceViewModelParams
+): ViewModelInstance | null;
+
+// RiveViewRef overloads
+export function useViewModelInstance(
+  source: RiveViewRef,
+  params: UseViewModelInstanceRefParams & { required: true }
+): ViewModelInstance;
+export function useViewModelInstance(
+  source: RiveViewRef | null,
+  params?: UseViewModelInstanceRefParams
+): ViewModelInstance | null;
+
+// Implementation
 export function useViewModelInstance(
   source: ViewModelSource | null,
-  params?: UseViewModelInstanceParams
+  params?:
+    | UseViewModelInstanceFileParams
+    | UseViewModelInstanceViewModelParams
+    | UseViewModelInstanceRefParams
 ): ViewModelInstance | null {
-  const name = params?.name;
-  const useNew = params?.useNew ?? false;
+  const name = (params as UseViewModelInstanceFileParams | undefined)?.name;
+  const artboardName = (params as UseViewModelInstanceFileParams | undefined)
+    ?.artboardName;
+  const useNew =
+    (params as UseViewModelInstanceViewModelParams | undefined)?.useNew ??
+    false;
   const required = params?.required ?? false;
   const onInit = params?.onInit;
 
@@ -152,13 +247,13 @@ export function useViewModelInstance(
   } | null>(null);
 
   const result = useMemo(() => {
-    const created = createInstance(source, name, useNew);
+    const created = createInstance(source, name, artboardName, useNew);
     if (created.instance && onInit) {
       onInit(created.instance);
     }
     return created;
     // eslint-disable-next-line react-hooks/exhaustive-deps -- onInit excluded intentionally
-  }, [source, name, useNew]);
+  }, [source, name, artboardName, useNew]);
 
   // Dispose previous instance if it changed and needed disposal
   if (
@@ -186,8 +281,10 @@ export function useViewModelInstance(
 
   if (required && result.instance === null) {
     throw new Error(
-      'useViewModelInstance: Failed to get ViewModelInstance. ' +
-        'Ensure the source has a valid ViewModel and instance available.'
+      result.error
+        ? `useViewModelInstance: ${result.error}`
+        : 'useViewModelInstance: Failed to get ViewModelInstance. ' +
+          'Ensure the source has a valid ViewModel and instance available.'
     );
   }
 
