@@ -9,7 +9,9 @@
     "build:android": "react-native build-android --extra-params \"--no-daemon --console=plain -PreactNativeArchitectures=arm64-v8a\"",
     "build:ios": "react-native build-ios --mode Debug",
     "test:harness:ios": "react-native-harness --harnessRunner ios",
-    "test:harness:android": "react-native-harness --harnessRunner android"
+    "test:harness:android": "react-native-harness --harnessRunner android",
+    "test:harness:ios:coverage": "NYC_CWD=.. react-native-harness --harnessRunner ios --coverage",
+    "test:harness:android:coverage": "NYC_CWD=.. react-native-harness --harnessRunner android --coverage"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^2.1.2",
