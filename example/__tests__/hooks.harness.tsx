@@ -58,7 +58,9 @@ describe('useRiveNumber Hook', () => {
     expectDefined(instance);
 
     const context = createHookContext();
-    await render(<UseRiveNumberTestComponent instance={instance} context={context} />);
+    await render(
+      <UseRiveNumberTestComponent instance={instance} context={context} />
+    );
 
     await waitFor(
       () => {
@@ -79,7 +81,9 @@ describe('useRiveNumber Hook', () => {
     expectDefined(instance);
 
     const context = createHookContext();
-    await render(<UseRiveNumberTestComponent instance={instance} context={context} />);
+    await render(
+      <UseRiveNumberTestComponent instance={instance} context={context} />
+    );
 
     await waitFor(
       () => {
