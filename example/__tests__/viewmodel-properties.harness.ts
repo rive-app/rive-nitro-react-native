@@ -4,13 +4,17 @@ import { RiveFileFactory } from '@rive-app/react-native';
 
 const DATABINDING = require('../assets/rive/databinding.riv');
 
+function expectDefined<T>(value: T): asserts value is NonNullable<T> {
+  expect(value).toBeDefined();
+}
+
 async function createGordonInstance(): Promise<ViewModelInstance> {
   const file = await RiveFileFactory.fromSource(DATABINDING, undefined);
   const vm = file.viewModelByName('Person');
-  expect(vm).toBeDefined();
-  const instance = vm!.createInstanceByName('Gordon');
-  expect(instance).toBeDefined();
-  return instance!;
+  expectDefined(vm);
+  const instance = vm.createInstanceByName('Gordon');
+  expectDefined(instance);
+  return instance;
 }
 
 /* eslint-disable no-bitwise */
@@ -27,82 +31,82 @@ describe('ViewModel Properties', () => {
   it('numberProperty get/set works', async () => {
     const instance = await createGordonInstance();
     const ageProperty = instance.numberProperty('age');
-    expect(ageProperty).toBeDefined();
-    expect(ageProperty!.value).toBe(30);
+    expectDefined(ageProperty);
+    expect(ageProperty.value).toBe(30);
 
-    ageProperty!.value = 33;
-    expect(ageProperty!.value).toBe(33);
+    ageProperty.value = 33;
+    expect(ageProperty.value).toBe(33);
   });
 
   it('stringProperty get/set works', async () => {
     const instance = await createGordonInstance();
     const nameProperty = instance.stringProperty('name');
-    expect(nameProperty).toBeDefined();
-    expect(nameProperty!.value).toBe('Gordon');
+    expectDefined(nameProperty);
+    expect(nameProperty.value).toBe('Gordon');
 
-    nameProperty!.value = 'Peter';
-    expect(nameProperty!.value).toBe('Peter');
+    nameProperty.value = 'Peter';
+    expect(nameProperty.value).toBe('Peter');
   });
 
   it('booleanProperty get/set works', async () => {
     const instance = await createGordonInstance();
     const booleanProperty = instance.booleanProperty('likes_popcorn');
-    expect(booleanProperty).toBeDefined();
-    expect(booleanProperty!.value).toBe(false);
+    expectDefined(booleanProperty);
+    expect(booleanProperty.value).toBe(false);
 
-    booleanProperty!.value = true;
-    expect(booleanProperty!.value).toBe(true);
+    booleanProperty.value = true;
+    expect(booleanProperty.value).toBe(true);
   });
 
   it('colorProperty get/set works', async () => {
     const instance = await createGordonInstance();
     const colorProperty = instance.colorProperty('favourite_color');
-    expect(colorProperty).toBeDefined();
+    expectDefined(colorProperty);
 
-    const initialRGB = getRGB(colorProperty!.value);
+    const initialRGB = getRGB(colorProperty.value);
     expect(initialRGB).toEqual({ r: 255, g: 0, b: 0 });
 
-    colorProperty!.value = 0xff00ff00;
-    const newRGB = getRGB(colorProperty!.value);
+    colorProperty.value = 0xff00ff00;
+    const newRGB = getRGB(colorProperty.value);
     expect(newRGB).toEqual({ r: 0, g: 255, b: 0 });
   });
 
   it('enumProperty get/set works', async () => {
     const instance = await createGordonInstance();
     const enumProperty = instance.enumProperty('favourite_pet');
-    expect(enumProperty).toBeDefined();
-    expect(enumProperty!.value).toBe('dog');
+    expectDefined(enumProperty);
+    expect(enumProperty.value).toBe('dog');
 
-    enumProperty!.value = 'cat';
-    expect(enumProperty!.value).toBe('cat');
+    enumProperty.value = 'cat';
+    expect(enumProperty.value).toBe('cat');
 
-    enumProperty!.value = 'snakeLizard';
-    expect(enumProperty!.value).toBe('cat');
+    enumProperty.value = 'snakeLizard';
+    expect(enumProperty.value).toBe('cat');
   });
 
   it('triggerProperty can be triggered', async () => {
     const instance = await createGordonInstance();
     const triggerProperty = instance.triggerProperty('jump');
-    expect(triggerProperty).toBeDefined();
+    expectDefined(triggerProperty);
 
-    expect(() => triggerProperty!.trigger()).not.toThrow();
+    expect(() => triggerProperty.trigger()).not.toThrow();
   });
 
   it('nested viewModel property access works', async () => {
     const instance = await createGordonInstance();
     const petViewModel = instance.viewModel('pet');
-    expect(petViewModel).toBeDefined();
+    expectDefined(petViewModel);
 
-    const petName = petViewModel!.stringProperty('name');
-    expect(petName).toBeDefined();
-    expect(petName!.value).toBe('Jameson');
+    const petName = petViewModel.stringProperty('name');
+    expectDefined(petName);
+    expect(petName.value).toBe('Jameson');
 
-    const petType = petViewModel!.enumProperty('type');
-    expect(petType).toBeDefined();
-    expect(petType!.value).toBe('frog');
+    const petType = petViewModel.enumProperty('type');
+    expectDefined(petType);
+    expect(petType.value).toBe('frog');
 
-    petType!.value = 'chipmunk';
-    expect(petType!.value).toBe('chipmunk');
+    petType.value = 'chipmunk';
+    expect(petType.value).toBe('chipmunk');
   });
 
   it('nested path property access works', async () => {
@@ -110,17 +114,17 @@ describe('ViewModel Properties', () => {
     const nestedStringProperty = instance.stringProperty('pet/name');
     const nestedEnumProperty = instance.enumProperty('pet/type');
 
-    expect(nestedStringProperty).toBeDefined();
-    expect(nestedEnumProperty).toBeDefined();
+    expectDefined(nestedStringProperty);
+    expectDefined(nestedEnumProperty);
 
-    expect(nestedStringProperty!.value).toBe('Jameson');
-    expect(nestedEnumProperty!.value).toBe('frog');
+    expect(nestedStringProperty.value).toBe('Jameson');
+    expect(nestedEnumProperty.value).toBe('frog');
 
-    nestedStringProperty!.value = 'Max';
-    nestedEnumProperty!.value = 'owl';
+    nestedStringProperty.value = 'Max';
+    nestedEnumProperty.value = 'owl';
 
-    expect(nestedStringProperty!.value).toBe('Max');
-    expect(nestedEnumProperty!.value).toBe('owl');
+    expect(nestedStringProperty.value).toBe('Max');
+    expect(nestedEnumProperty.value).toBe('owl');
   });
 
   it('non-existent properties return undefined', async () => {
@@ -133,5 +137,91 @@ describe('ViewModel Properties', () => {
     expect(instance.enumProperty('nonexistent')).toBeUndefined();
     expect(instance.triggerProperty('nonexistent')).toBeUndefined();
     expect(instance.viewModel('nonexistent')).toBeUndefined();
+  });
+});
+
+describe('Property Listeners', () => {
+  it('numberProperty addListener returns cleanup function', async () => {
+    const instance = await createGordonInstance();
+    const prop = instance.numberProperty('age');
+    expectDefined(prop);
+
+    const cleanup = prop.addListener(() => {});
+    expect(typeof cleanup).toBe('function');
+    cleanup();
+  });
+
+  it('stringProperty addListener returns cleanup function', async () => {
+    const instance = await createGordonInstance();
+    const prop = instance.stringProperty('name');
+    expectDefined(prop);
+
+    const cleanup = prop.addListener(() => {});
+    expect(typeof cleanup).toBe('function');
+    cleanup();
+  });
+
+  it('booleanProperty addListener returns cleanup function', async () => {
+    const instance = await createGordonInstance();
+    const prop = instance.booleanProperty('likes_popcorn');
+    expectDefined(prop);
+
+    const cleanup = prop.addListener(() => {});
+    expect(typeof cleanup).toBe('function');
+    cleanup();
+  });
+
+  it('colorProperty addListener returns cleanup function', async () => {
+    const instance = await createGordonInstance();
+    const prop = instance.colorProperty('favourite_color');
+    expectDefined(prop);
+
+    const cleanup = prop.addListener(() => {});
+    expect(typeof cleanup).toBe('function');
+    cleanup();
+  });
+
+  it('enumProperty addListener returns cleanup function', async () => {
+    const instance = await createGordonInstance();
+    const prop = instance.enumProperty('favourite_pet');
+    expectDefined(prop);
+
+    const cleanup = prop.addListener(() => {});
+    expect(typeof cleanup).toBe('function');
+    cleanup();
+  });
+
+  it('triggerProperty addListener returns cleanup function', async () => {
+    const instance = await createGordonInstance();
+    const prop = instance.triggerProperty('jump');
+    expectDefined(prop);
+
+    const cleanup = prop.addListener(() => {});
+    expect(typeof cleanup).toBe('function');
+    cleanup();
+  });
+
+  it('removeListeners does not throw', async () => {
+    const instance = await createGordonInstance();
+    const prop = instance.numberProperty('age');
+    expectDefined(prop);
+
+    prop.addListener(() => {});
+    prop.addListener(() => {});
+
+    expect(() => prop.removeListeners()).not.toThrow();
+  });
+
+  it('multiple addListener calls return independent cleanup functions', async () => {
+    const instance = await createGordonInstance();
+    const prop = instance.numberProperty('age');
+    expectDefined(prop);
+
+    const cleanup1 = prop.addListener(() => {});
+    const cleanup2 = prop.addListener(() => {});
+
+    expect(cleanup1).not.toBe(cleanup2);
+    expect(() => cleanup1()).not.toThrow();
+    expect(() => cleanup2()).not.toThrow();
   });
 });
