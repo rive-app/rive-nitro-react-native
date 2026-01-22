@@ -75,7 +75,7 @@ export interface UseViewModelInstanceViewModelParams
    * The ViewModel instance name (uses `createInstanceByName()`).
    * If not provided, creates the default instance.
    */
-  instanceName?: string;
+  name?: string;
   /**
    * Create a new (blank) instance from the ViewModel.
    */
@@ -287,8 +287,10 @@ export function useViewModelInstance(
     | UseViewModelInstanceViewModelParams
     | UseViewModelInstanceRefParams
 ): ViewModelInstance | null {
-  const instanceName = (params as { instanceName?: string } | undefined)
+  const fileInstanceName = (params as { instanceName?: string } | undefined)
     ?.instanceName;
+  const viewModelInstanceName = (params as { name?: string } | undefined)?.name;
+  const instanceName = fileInstanceName ?? viewModelInstanceName;
   const artboardName = (params as UseViewModelInstanceFileParams | undefined)
     ?.artboardName;
   const viewModelName = (params as UseViewModelInstanceFileParams | undefined)
