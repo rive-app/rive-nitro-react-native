@@ -307,14 +307,14 @@ describe('useViewModelInstance - RiveFile with viewModelName parameter', () => {
 });
 
 describe('useViewModelInstance - ViewModel source', () => {
-  it('should use createInstanceByName when name is provided with ViewModel', () => {
+  it('should use createInstanceByName when instanceName is provided with ViewModel', () => {
     const namedInstance = createMockViewModelInstance();
     const mockViewModel = createMockViewModel({
       namedInstances: { Gordon: namedInstance },
     });
 
     const { result } = renderHook(() =>
-      useViewModelInstance(mockViewModel, { name: 'Gordon' })
+      useViewModelInstance(mockViewModel, { instanceName: 'Gordon' })
     );
 
     expect(mockViewModel.createInstanceByName).toHaveBeenCalledWith('Gordon');

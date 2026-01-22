@@ -20,18 +20,8 @@ interface UseViewModelInstanceBaseParams {
   onInit?: (instance: ViewModelInstance) => void;
 }
 
-export interface UseViewModelInstanceFileParams
+interface UseViewModelInstanceFileBaseParams
   extends UseViewModelInstanceBaseParams {
-  /**
-   * The name of the artboard to get the ViewModel from.
-   * If not provided, uses the default artboard.
-   */
-  artboardName?: string;
-  /**
-   * The name of the ViewModel to use (uses `viewModelByName()`).
-   * If not provided, uses `defaultArtboardViewModel()`.
-   */
-  viewModelName?: string;
   /**
    * The ViewModel instance name (uses `createInstanceByName()`).
    * If not provided, creates the default instance.
@@ -39,13 +29,53 @@ export interface UseViewModelInstanceFileParams
   instanceName?: string;
 }
 
+/**
+ * Use the ViewModel assigned to the default artboard.
+ */
+interface UseViewModelInstanceFileDefault
+  extends UseViewModelInstanceFileBaseParams {
+  artboardName?: never;
+  viewModelName?: never;
+}
+
+/**
+ * Use the ViewModel assigned to a specific artboard.
+ */
+interface UseViewModelInstanceFileByArtboard
+  extends UseViewModelInstanceFileBaseParams {
+  /**
+   * Get the ViewModel assigned to this artboard.
+   */
+  artboardName: string;
+  viewModelName?: never;
+}
+
+/**
+ * Use a ViewModel by name (file-wide lookup).
+ * ViewModels are defined at the file level, not per-artboard.
+ */
+interface UseViewModelInstanceFileByViewModelName
+  extends UseViewModelInstanceFileBaseParams {
+  artboardName?: never;
+  /**
+   * The name of the ViewModel to use (uses `viewModelByName()`).
+   * ViewModels are defined at the file level and looked up by name across the entire file.
+   */
+  viewModelName: string;
+}
+
+export type UseViewModelInstanceFileParams =
+  | UseViewModelInstanceFileDefault
+  | UseViewModelInstanceFileByArtboard
+  | UseViewModelInstanceFileByViewModelName;
+
 export interface UseViewModelInstanceViewModelParams
   extends UseViewModelInstanceBaseParams {
   /**
    * The ViewModel instance name (uses `createInstanceByName()`).
    * If not provided, creates the default instance.
    */
-  name?: string;
+  instanceName?: string;
   /**
    * Create a new (blank) instance from the ViewModel.
    */
@@ -257,13 +287,8 @@ export function useViewModelInstance(
     | UseViewModelInstanceViewModelParams
     | UseViewModelInstanceRefParams
 ): ViewModelInstance | null {
-  const fileInstanceName = (
-    params as UseViewModelInstanceFileParams | undefined
-  )?.instanceName;
-  const viewModelInstanceName = (
-    params as UseViewModelInstanceViewModelParams | undefined
-  )?.name;
-  const instanceName = fileInstanceName ?? viewModelInstanceName;
+  const instanceName = (params as { instanceName?: string } | undefined)
+    ?.instanceName;
   const artboardName = (params as UseViewModelInstanceFileParams | undefined)
     ?.artboardName;
   const viewModelName = (params as UseViewModelInstanceFileParams | undefined)
