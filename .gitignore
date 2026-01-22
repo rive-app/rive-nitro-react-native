@@ -90,3 +90,6 @@ android/generated
 # Local reproducers (not checked in)
 example/src/reproducers/local/*
 !example/src/reproducers/local/.gitkeep
+
+# Test coverage
+coverage/
