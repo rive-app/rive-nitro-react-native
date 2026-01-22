@@ -1904,7 +1904,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - RNWorklets
     - Yoga
-  - RNRive (0.1.5):
+  - RNRive (0.2.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -2330,7 +2330,7 @@ SPEC CHECKSUMS:
   RNCPicker: 83c74db2de8274d8a8f3e18d91dea174a708f8c4
   RNGestureHandler: bff91bb5ab5688265c70f74180ef718b94f33fe3
   RNReanimated: 9a24892f34ea317264883806d2e3de7ce34eab90
-  RNRive: 73aa1ec7d3ef4da1030e81643808adb538bc05ca
+  RNRive: 509163d7fb4dcced11210670f0f6e7cb2f904e30
   RNWorklets: ddf16938b1ed7e878563a4fc8a690968ef3d27f1
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   Yoga: 9f110fc4b7aa538663cba3c14cbb1c335f43c13f

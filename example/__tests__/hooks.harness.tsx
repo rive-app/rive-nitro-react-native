@@ -16,7 +16,6 @@ import {
 } from '@rive-app/react-native';
 import type { ViewModelInstance } from '@rive-app/react-native';
 
-const QUICK_START = require('../assets/rive/quick_start.riv');
 const DATABINDING = require('../assets/rive/databinding.riv');
 
 type UseRiveNumberContext = {
@@ -45,7 +44,7 @@ function UseRiveNumberTestComponent({
   instance: ViewModelInstance;
   context: UseRiveNumberContext;
 }) {
-  const { value, setValue, error } = useRiveNumber('health', instance);
+  const { value, setValue, error } = useRiveNumber('age', instance);
 
   useEffect(() => {
     context.value = value;
@@ -94,54 +93,58 @@ function expectDefined<T>(value: T): asserts value is NonNullable<T> {
 
 describe('useRiveNumber Hook', () => {
   it('returns value from number property', async () => {
-    const file = await RiveFileFactory.fromSource(QUICK_START, undefined);
-    const vm = file.defaultArtboardViewModel();
+    const file = await RiveFileFactory.fromSource(DATABINDING, undefined);
+    const vm = file.viewModelByName('Person');
     expectDefined(vm);
-    const instance = vm.createDefaultInstance();
+    const instance = vm.createInstanceByName('Gordon');
     expectDefined(instance);
 
     const context = createUseRiveNumberContext();
-    await render(
-      <UseRiveNumberTestComponent instance={instance} context={context} />
-    );
+    try {
+      await render(
+        <UseRiveNumberTestComponent instance={instance} context={context} />
+      );
 
-    await waitFor(
-      () => {
-        expect(context.error).toBeNull();
-        expect(typeof context.value).toBe('number');
-      },
-      { timeout: 5000 }
-    );
-
-    cleanup();
+      await waitFor(
+        () => {
+          expect(context.error).toBeNull();
+          expect(typeof context.value).toBe('number');
+        },
+        { timeout: 5000 }
+      );
+    } finally {
+      cleanup();
+    }
   });
 
   it('can set value via setValue', async () => {
-    const file = await RiveFileFactory.fromSource(QUICK_START, undefined);
-    const vm = file.defaultArtboardViewModel();
+    const file = await RiveFileFactory.fromSource(DATABINDING, undefined);
+    const vm = file.viewModelByName('Person');
     expectDefined(vm);
-    const instance = vm.createDefaultInstance();
+    const instance = vm.createInstanceByName('Gordon');
     expectDefined(instance);
 
     const context = createUseRiveNumberContext();
-    await render(
-      <UseRiveNumberTestComponent instance={instance} context={context} />
-    );
+    try {
+      await render(
+        <UseRiveNumberTestComponent instance={instance} context={context} />
+      );
 
-    await waitFor(
-      () => {
-        expect(context.setValue).not.toBeNull();
-      },
-      { timeout: 5000 }
-    );
+      await waitFor(
+        () => {
+          expect(context.setValue).not.toBeNull();
+        },
+        { timeout: 5000 }
+      );
 
-    context.setValue!(42);
+      context.setValue!(42);
 
-    const property = instance.numberProperty('health');
-    expectDefined(property);
-    expect(property.value).toBe(42);
-
-    cleanup();
+      const property = instance.numberProperty('age');
+      expectDefined(property);
+      expect(property.value).toBe(42);
+    } finally {
+      cleanup();
+    }
   });
 });
 

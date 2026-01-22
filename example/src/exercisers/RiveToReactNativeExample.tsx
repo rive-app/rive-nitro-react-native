@@ -22,7 +22,7 @@ import {
   type ViewModelInstance,
   type ViewModelNumberProperty,
 } from '@rive-app/react-native';
-import { type Metadata } from '../helpers/metadata';
+import { type Metadata } from '../shared/metadata';
 
 declare global {
   var __callMicrotasks: () => void;
