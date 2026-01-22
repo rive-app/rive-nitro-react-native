@@ -28,10 +28,15 @@ export interface UseViewModelInstanceFileParams
    */
   artboardName?: string;
   /**
+   * The name of the ViewModel to use (uses `viewModelByName()`).
+   * If not provided, uses `defaultArtboardViewModel()`.
+   */
+  viewModelName?: string;
+  /**
    * The ViewModel instance name (uses `createInstanceByName()`).
    * If not provided, creates the default instance.
    */
-  name?: string;
+  instanceName?: string;
 }
 
 export interface UseViewModelInstanceViewModelParams
@@ -67,8 +72,9 @@ type CreateInstanceResult = {
 
 function createInstance(
   source: ViewModelSource | null,
-  name: string | undefined,
+  instanceName: string | undefined,
   artboardName: string | undefined,
+  viewModelName: string | undefined,
   useNew: boolean
 ): CreateInstanceResult {
   if (!source) {
@@ -81,27 +87,39 @@ function createInstance(
   }
 
   if (isRiveFile(source)) {
-    const viewModel = source.defaultArtboardViewModel(
-      artboardName ? ArtboardByName(artboardName) : undefined
-    );
-    if (!viewModel) {
-      if (artboardName) {
+    let viewModel: ViewModel | undefined;
+    if (viewModelName) {
+      viewModel = source.viewModelByName(viewModelName);
+      if (!viewModel) {
         return {
           instance: null,
           needsDispose: false,
-          error: `Artboard '${artboardName}' not found or has no ViewModel`,
+          error: `ViewModel '${viewModelName}' not found`,
         };
       }
-      return { instance: null, needsDispose: false };
+    } else {
+      viewModel = source.defaultArtboardViewModel(
+        artboardName ? ArtboardByName(artboardName) : undefined
+      );
+      if (!viewModel) {
+        if (artboardName) {
+          return {
+            instance: null,
+            needsDispose: false,
+            error: `Artboard '${artboardName}' not found or has no ViewModel`,
+          };
+        }
+        return { instance: null, needsDispose: false };
+      }
     }
-    const vmi = name
-      ? viewModel.createInstanceByName(name)
+    const vmi = instanceName
+      ? viewModel.createInstanceByName(instanceName)
       : viewModel.createDefaultInstance();
-    if (!vmi && name) {
+    if (!vmi && instanceName) {
       return {
         instance: null,
         needsDispose: false,
-        error: `ViewModel instance '${name}' not found`,
+        error: `ViewModel instance '${instanceName}' not found`,
       };
     }
     return { instance: vmi ?? null, needsDispose: true };
@@ -109,13 +127,13 @@ function createInstance(
 
   // ViewModel source
   let vmi: ViewModelInstance | undefined;
-  if (name) {
-    vmi = source.createInstanceByName(name);
+  if (instanceName) {
+    vmi = source.createInstanceByName(instanceName);
     if (!vmi) {
       return {
         instance: null,
         needsDispose: false,
-        error: `ViewModel instance '${name}' not found`,
+        error: `ViewModel instance '${instanceName}' not found`,
       };
     }
   } else if (useNew) {
@@ -144,7 +162,14 @@ function createInstance(
  * ```tsx
  * // From RiveFile with specific instance name
  * const { riveFile } = useRiveFile(require('./animation.riv'));
- * const instance = useViewModelInstance(riveFile, { name: 'PersonInstance' });
+ * const instance = useViewModelInstance(riveFile, { instanceName: 'PersonInstance' });
+ * ```
+ *
+ * @example
+ * ```tsx
+ * // From RiveFile with specific ViewModel name
+ * const { riveFile } = useRiveFile(require('./animation.riv'));
+ * const instance = useViewModelInstance(riveFile, { viewModelName: 'Settings' });
  * ```
  *
  * @example
@@ -232,9 +257,17 @@ export function useViewModelInstance(
     | UseViewModelInstanceViewModelParams
     | UseViewModelInstanceRefParams
 ): ViewModelInstance | null {
-  const name = (params as UseViewModelInstanceFileParams | undefined)?.name;
+  const fileInstanceName = (
+    params as UseViewModelInstanceFileParams | undefined
+  )?.instanceName;
+  const viewModelInstanceName = (
+    params as UseViewModelInstanceViewModelParams | undefined
+  )?.name;
+  const instanceName = fileInstanceName ?? viewModelInstanceName;
   const artboardName = (params as UseViewModelInstanceFileParams | undefined)
     ?.artboardName;
+  const viewModelName = (params as UseViewModelInstanceFileParams | undefined)
+    ?.viewModelName;
   const useNew =
     (params as UseViewModelInstanceViewModelParams | undefined)?.useNew ??
     false;
@@ -247,13 +280,19 @@ export function useViewModelInstance(
   } | null>(null);
 
   const result = useMemo(() => {
-    const created = createInstance(source, name, artboardName, useNew);
+    const created = createInstance(
+      source,
+      instanceName,
+      artboardName,
+      viewModelName,
+      useNew
+    );
     if (created.instance && onInit) {
       onInit(created.instance);
     }
     return created;
     // eslint-disable-next-line react-hooks/exhaustive-deps -- onInit excluded intentionally
-  }, [source, name, artboardName, useNew]);
+  }, [source, instanceName, artboardName, viewModelName, useNew]);
 
   // Dispose previous instance if it changed and needed disposal
   if (
