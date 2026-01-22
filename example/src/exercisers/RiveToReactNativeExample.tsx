@@ -226,7 +226,9 @@ function BlockJSThreadButton() {
 RiveToReactNativeExample.metadata = {
   name: 'Rive → React Native',
   description:
-    'Demonstrates Rive animation driving React Native UI through data binding listeners',
+    'Demonstrates Rive graphics driving React Native UI through data binding listeners',
+  riveMarketplaceLink:
+    'https://rive.app/community/files/25997-48571-demo-for-tracking-rive-property-in-react-native/',
 } satisfies Metadata;
 
 const styles = StyleSheet.create({
