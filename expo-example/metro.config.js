@@ -27,11 +27,11 @@ const blockPatterns = [
     escapeRegex(path.join(exampleNodeModules, 'react-native-worklets')) + '.*'
   ),
 ];
-const existingBlockList = finalConfig.resolver.blockList;
+const existingBlockList = bobConfig.resolver.blockList;
 if (existingBlockList) {
   blockPatterns.push(existingBlockList);
 }
-finalConfig.resolver.blockList = new RegExp(
+bobConfig.resolver.blockList = new RegExp(
   blockPatterns.map((r) => r.source).join('|')
 );
 
