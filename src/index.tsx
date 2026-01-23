@@ -56,3 +56,5 @@ export { useRiveFile } from './hooks/useRiveFile';
 export { type RiveFileInput } from './hooks/useRiveFile';
 export { type SetValueAction } from './types';
 export { DataBindMode };
+export { installWorkletDispatcher } from './core/WorkletBridge';
+export type { RiveWorkletBridge } from './specs/RiveWorkletBridge.nitro';

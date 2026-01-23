@@ -11,10 +11,15 @@ import {
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { runOnUI } from 'react-native-reanimated';
+import { installWorkletDispatcher } from '@rive-app/react-native';
 import { PagesList, type PageItem } from './PagesList';
 import { HomeMenu } from './shared/HomeMenu';
 
 const LAST_OPENED_KEY = '@rive_example_last_opened';
+
+// Install dispatcher on Reanimated's UI runtime for worklet-based listeners
+installWorkletDispatcher(runOnUI);
 
 type RootStackParamList = {
   Home: undefined;

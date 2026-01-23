@@ -28,6 +28,9 @@
     "RiveImageFactory": {
       "swift": "HybridRiveImageFactory",
       "kotlin": "HybridRiveImageFactory"
+    },
+    "RiveWorkletBridge": {
+      "cpp": "HybridRiveWorkletBridge"
     }
   },
   "ignorePaths": ["node_modules"]

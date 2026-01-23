@@ -1,0 +1,33 @@
+coverage:
+  status:
+    project:
+      default:
+        target: auto
+        threshold: 1%
+    patch:
+      default:
+        target: auto
+
+comment:
+  layout: "header, diff, flags, components"
+  behavior: default
+  require_changes: true
+
+flags:
+  unit:
+    paths:
+      - src/
+    carryforward: true
+  harness:
+    paths:
+      - src/
+    carryforward: true
+
+ignore:
+  - "**/*.nitro.ts"
+  - "**/index.ts"
+  - "**/index.tsx"
+  - "nitrogen/**"
+  - "example/**"
+  - "expo-example/**"
+  - "lib/**"

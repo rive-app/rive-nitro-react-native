@@ -7,6 +7,8 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { getTestCollector } from 'react-native-harness';
+// @ts-expect-error - internal module not exported
+import { TestComponentOverlay } from '@react-native-harness/runtime/dist/render/TestComponentOverlay';
 import type { TestSuite, TestCase } from '@react-native-harness/bridge';
 import { useState, useEffect } from 'react';
 import type { Metadata } from '../shared/metadata';
@@ -85,10 +87,11 @@ export default function TestsPage() {
       await test.fn();
       setTestStates((prev) => new Map(prev).set(key, { status: 'passed' }));
     } catch (e) {
+      const errorMessage = e instanceof Error ? e.message : String(e);
       setTestStates((prev) =>
         new Map(prev).set(key, {
           status: 'failed',
-          error: e instanceof Error ? e.message : String(e),
+          error: errorMessage,
         })
       );
     }
@@ -202,6 +205,7 @@ export default function TestsPage() {
           </View>
         ))}
       </ScrollView>
+      <TestComponentOverlay />
     </View>
   );
 }

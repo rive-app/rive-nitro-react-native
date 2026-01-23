@@ -15,6 +15,26 @@ const bobConfig = getConfig(config, {
   project: __dirname,
 });
 
+// Block resolution from example/node_modules to avoid version conflicts
+// (expo-example uses different reanimated/worklets versions than example app)
+const escapeRegex = (str) => str.replace(/[/\\]/g, '[/\\\\]');
+const exampleNodeModules = path.join(root, 'example', 'node_modules');
+const blockPatterns = [
+  new RegExp(
+    escapeRegex(path.join(exampleNodeModules, 'react-native-reanimated')) + '.*'
+  ),
+  new RegExp(
+    escapeRegex(path.join(exampleNodeModules, 'react-native-worklets')) + '.*'
+  ),
+];
+const existingBlockList = bobConfig.resolver.blockList;
+if (existingBlockList) {
+  blockPatterns.push(existingBlockList);
+}
+bobConfig.resolver.blockList = new RegExp(
+  blockPatterns.map((r) => r.source).join('|')
+);
+
 /**
  * Resolves @example/* path aliases to the example/src/* directory.
  * Metro doesn't natively understand TypeScript path mappings, so this
