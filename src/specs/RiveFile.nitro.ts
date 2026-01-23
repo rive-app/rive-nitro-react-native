@@ -4,6 +4,17 @@ import type { ArtboardBy } from './ArtboardBy';
 import type { RiveImage } from './RiveImage.nitro';
 import type { BindableArtboard } from './BindableArtboard.nitro';
 
+/**
+ * Represents an enum definition from a Rive file.
+ * Useful for debugging and building dynamic UIs based on available enum values.
+ */
+export interface RiveEnumDefinition {
+  /** The name of the enum (e.g., "Status") */
+  readonly name: string;
+  /** All possible values for this enum (e.g., ["Active", "Inactive", "Pending"]) */
+  readonly values: string[];
+}
+
 export type ResolvedReferencedAsset = {
   sourceUrl?: string;
   sourceAsset?: string;
@@ -42,6 +53,13 @@ export interface RiveFile
    * @see {@link https://rive.app/docs/runtimes/data-binding Rive Data Binding Documentation}
    */
   getBindableArtboard(name: string): BindableArtboard;
+
+  /**
+   * Get all enums defined in this Rive file.
+   * Useful for debugging and building dynamic UIs.
+   * @experimental Uses the experimental Rive API on iOS
+   */
+  getEnums(): Promise<RiveEnumDefinition[]>;
 }
 
 export interface RiveFileFactory

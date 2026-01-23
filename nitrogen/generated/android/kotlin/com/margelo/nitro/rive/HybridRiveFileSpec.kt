@@ -10,6 +10,7 @@ package com.margelo.nitro.rive
 import androidx.annotation.Keep
 import com.facebook.jni.HybridData
 import com.facebook.proguard.annotations.DoNotStrip
+import com.margelo.nitro.core.Promise
 import com.margelo.nitro.core.HybridObject
 
 /**
@@ -74,6 +75,10 @@ abstract class HybridRiveFileSpec: HybridObject() {
   @DoNotStrip
   @Keep
   abstract fun getBindableArtboard(name: String): HybridBindableArtboardSpec
+  
+  @DoNotStrip
+  @Keep
+  abstract fun getEnums(): Promise<Array<RiveEnumDefinition>>
 
   private external fun initHybrid(): HybridData
 

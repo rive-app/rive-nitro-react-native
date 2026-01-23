@@ -16,6 +16,7 @@ final class HybridRiveFileFactory: HybridRiveFileFactorySpec, @unchecked Sendabl
   ///   - fileWithCustomAssetLoader: Closure to load the file with a custom asset loader.
   ///   - file: Closure to load the file without a custom asset loader.
   ///   - referencedAssets: Optional referenced assets.
+  ///   - experimentalSource: Closure to extract the experimental source from the prepared result.
   /// - Returns: A promise resolving to a `HybridRiveFileSpec`.
   /// - Throws: Runtime errors if any step fails.
   func genericFrom<CheckResult, Prepared>(
@@ -23,12 +24,14 @@ final class HybridRiveFileFactory: HybridRiveFileFactorySpec, @unchecked Sendabl
     prepare: @escaping (CheckResult) async throws -> Prepared,
     fileWithCustomAssetLoader: @escaping (Prepared, @escaping LoadAsset) throws -> RiveFile,
     file: @escaping (Prepared) throws -> RiveFile,
-    referencedAssets: ReferencedAssetsType?
+    referencedAssets: ReferencedAssetsType?,
+    experimentalSource: @escaping (Prepared) -> ExperimentalFileSource?
   ) throws -> Promise<(any HybridRiveFileSpec)> {
     return Promise.async {
       do {
         let checked = try check()
         let prepared = try await prepare(checked)
+        let expSource = experimentalSource(prepared)
 
         let result = try await withCheckedThrowingContinuation { continuation in
           DispatchQueue.global(qos: .userInitiated).async {
@@ -73,6 +76,7 @@ final class HybridRiveFileFactory: HybridRiveFileFactorySpec, @unchecked Sendabl
           hybridRiveFile.cachedFactory = factory
         }
         hybridRiveFile.assetLoader = result.loader
+        hybridRiveFile.experimentalSource = expSource
         return hybridRiveFile
       } catch let error as NSError {
         throw RuntimeError.error(
@@ -98,7 +102,8 @@ final class HybridRiveFileFactory: HybridRiveFileFactorySpec, @unchecked Sendabl
         try RiveFile(data: data, loadCdn: loadCdn, customAssetLoader: loader)
       },
       file: { (data) in try RiveFile(data: data, loadCdn: loadCdn) },
-      referencedAssets: referencedAssets
+      referencedAssets: referencedAssets,
+      experimentalSource: { data in .data(data) }
     )
   }
 
@@ -119,7 +124,8 @@ final class HybridRiveFileFactory: HybridRiveFileFactorySpec, @unchecked Sendabl
         try RiveFile(data: data, loadCdn: loadCdn, customAssetLoader: loader)
       },
       file: { (data) in try RiveFile(data: data, loadCdn: loadCdn) },
-      referencedAssets: referencedAssets
+      referencedAssets: referencedAssets,
+      experimentalSource: { data in .data(data) }
     )
   }
 
@@ -137,7 +143,8 @@ final class HybridRiveFileFactory: HybridRiveFileFactorySpec, @unchecked Sendabl
         try RiveFile(resource: resource, loadCdn: loadCdn, customAssetLoader: loader)
       },
       file: { (resource) in try RiveFile(resource: resource, loadCdn: loadCdn) },
-      referencedAssets: referencedAssets
+      referencedAssets: referencedAssets,
+      experimentalSource: { resource in .resource(resource) }
     )
   }
 
@@ -157,7 +164,8 @@ final class HybridRiveFileFactory: HybridRiveFileFactorySpec, @unchecked Sendabl
         try RiveFile(data: data, loadCdn: loadCdn, customAssetLoader: loader)
       },
       file: { (data) in try RiveFile(data: data, loadCdn: loadCdn) },
-      referencedAssets: referencedAssets
+      referencedAssets: referencedAssets,
+      experimentalSource: { data in .data(data) }
     )
   }
 }

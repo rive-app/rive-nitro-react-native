@@ -1,6 +1,16 @@
+import NitroModules
 import RiveRuntime
+#if RIVE_EXPERIMENTAL_API
+@_spi(RiveExperimental) import RiveRuntime
+#endif
 
 typealias ReferencedAssetCache = [String: RiveFileAsset]
+
+/// Source for creating experimental File instances
+enum ExperimentalFileSource {
+  case data(Data)
+  case resource(String)
+}
 
 class HybridRiveFile: HybridRiveFileSpec, RiveViewSource {
   var riveFile: RiveFile?
@@ -8,6 +18,9 @@ class HybridRiveFile: HybridRiveFileSpec, RiveViewSource {
   var assetLoader: ReferencedAssetLoader?
   var cachedFactory: RiveFactory?
   private var weakViews: [Weak<RiveReactNativeView>] = []
+
+  /// Source for experimental API - stored to create experimental File on demand
+  var experimentalSource: ExperimentalFileSource?
 
   public func setRiveFile(_ riveFile: RiveFile) {
     self.riveFile = riveFile
@@ -118,6 +131,42 @@ class HybridRiveFile: HybridRiveFileSpec, RiveViewSource {
     }
   }
   
+  func getEnums() throws -> Promise<[RiveEnumDefinition]> {
+    return Promise.async { [weak self] in
+      #if RIVE_EXPERIMENTAL_API
+      guard let source = self?.experimentalSource else {
+        throw NSError(
+          domain: "RiveError",
+          code: 1,
+          userInfo: [NSLocalizedDescriptionKey: "getEnums requires experimental API. Use USE_RIVE_SPM=1 with pod install."]
+        )
+      }
+
+      // Create worker and experimental file on demand
+      let worker = await Worker()
+      let experimentalSource: Source
+      switch source {
+      case .data(let data):
+        experimentalSource = .data(data)
+      case .resource(let name):
+        experimentalSource = .local(name, nil)
+      }
+
+      let file = try await File(source: experimentalSource, worker: worker)
+      let viewModelEnums = try await file.getViewModelEnums()
+      return viewModelEnums.map { vmEnum in
+        RiveEnumDefinition(name: vmEnum.name, values: vmEnum.values)
+      }
+      #else
+      throw NSError(
+        domain: "RiveError",
+        code: 1,
+        userInfo: [NSLocalizedDescriptionKey: "getEnums requires RiveRuntime 6.15.0+ with experimental API. Use USE_RIVE_SPM=1 with pod install."]
+      )
+      #endif
+    }
+  }
+
   func dispose() {
     weakViews.removeAll()
     referencedAssetCache = nil

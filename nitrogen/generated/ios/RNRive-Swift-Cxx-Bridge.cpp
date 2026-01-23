@@ -96,6 +96,22 @@ namespace margelo::nitro::rive::bridge::swift {
     return swiftPart.toUnsafe();
   }
   
+  // pragma MARK: std::function<void(const std::vector<RiveEnumDefinition>& /* result */)>
+  Func_void_std__vector_RiveEnumDefinition_ create_Func_void_std__vector_RiveEnumDefinition_(void* NON_NULL swiftClosureWrapper) noexcept {
+    auto swiftClosure = RNRive::Func_void_std__vector_RiveEnumDefinition_::fromUnsafe(swiftClosureWrapper);
+    return [swiftClosure = std::move(swiftClosure)](const std::vector<RiveEnumDefinition>& result) mutable -> void {
+      swiftClosure.call(result);
+    };
+  }
+  
+  // pragma MARK: std::function<void(const std::exception_ptr& /* error */)>
+  Func_void_std__exception_ptr create_Func_void_std__exception_ptr(void* NON_NULL swiftClosureWrapper) noexcept {
+    auto swiftClosure = RNRive::Func_void_std__exception_ptr::fromUnsafe(swiftClosureWrapper);
+    return [swiftClosure = std::move(swiftClosure)](const std::exception_ptr& error) mutable -> void {
+      swiftClosure.call(error);
+    };
+  }
+  
   // pragma MARK: std::shared_ptr<HybridRiveFileSpec>
   std::shared_ptr<HybridRiveFileSpec> create_std__shared_ptr_HybridRiveFileSpec_(void* NON_NULL swiftUnsafePointer) noexcept {
     RNRive::HybridRiveFileSpec_cxx swiftPart = RNRive::HybridRiveFileSpec_cxx::fromUnsafe(swiftUnsafePointer);
@@ -117,14 +133,6 @@ namespace margelo::nitro::rive::bridge::swift {
     auto swiftClosure = RNRive::Func_void_std__shared_ptr_HybridRiveFileSpec_::fromUnsafe(swiftClosureWrapper);
     return [swiftClosure = std::move(swiftClosure)](const std::shared_ptr<HybridRiveFileSpec>& result) mutable -> void {
       swiftClosure.call(result);
-    };
-  }
-  
-  // pragma MARK: std::function<void(const std::exception_ptr& /* error */)>
-  Func_void_std__exception_ptr create_Func_void_std__exception_ptr(void* NON_NULL swiftClosureWrapper) noexcept {
-    auto swiftClosure = RNRive::Func_void_std__exception_ptr::fromUnsafe(swiftClosureWrapper);
-    return [swiftClosure = std::move(swiftClosure)](const std::exception_ptr& error) mutable -> void {
-      swiftClosure.call(error);
     };
   }
   

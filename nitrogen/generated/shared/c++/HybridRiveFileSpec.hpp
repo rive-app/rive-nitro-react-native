@@ -21,6 +21,8 @@ namespace margelo::nitro::rive { struct ArtboardBy; }
 namespace margelo::nitro::rive { struct ReferencedAssetsType; }
 // Forward declaration of `HybridBindableArtboardSpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridBindableArtboardSpec; }
+// Forward declaration of `RiveEnumDefinition` to properly resolve imports.
+namespace margelo::nitro::rive { struct RiveEnumDefinition; }
 
 #include <optional>
 #include <string>
@@ -30,6 +32,8 @@ namespace margelo::nitro::rive { class HybridBindableArtboardSpec; }
 #include "ArtboardBy.hpp"
 #include "ReferencedAssetsType.hpp"
 #include "HybridBindableArtboardSpec.hpp"
+#include "RiveEnumDefinition.hpp"
+#include <NitroModules/Promise.hpp>
 
 namespace margelo::nitro::rive {
 
@@ -69,6 +73,7 @@ namespace margelo::nitro::rive {
       virtual std::optional<std::shared_ptr<HybridViewModelSpec>> defaultArtboardViewModel(const std::optional<ArtboardBy>& artboardBy) = 0;
       virtual void updateReferencedAssets(const ReferencedAssetsType& referencedAssets) = 0;
       virtual std::shared_ptr<HybridBindableArtboardSpec> getBindableArtboard(const std::string& name) = 0;
+      virtual std::shared_ptr<Promise<std::vector<RiveEnumDefinition>>> getEnums() = 0;
 
     protected:
       // Hybrid Setup

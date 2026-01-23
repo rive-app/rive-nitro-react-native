@@ -62,6 +62,8 @@ namespace margelo::nitro::rive { class HybridViewModelTriggerPropertySpec; }
 namespace margelo::nitro::rive { struct ReferencedAssetsType; }
 // Forward declaration of `ResolvedReferencedAsset` to properly resolve imports.
 namespace margelo::nitro::rive { struct ResolvedReferencedAsset; }
+// Forward declaration of `RiveEnumDefinition` to properly resolve imports.
+namespace margelo::nitro::rive { struct RiveEnumDefinition; }
 // Forward declaration of `RiveErrorType` to properly resolve imports.
 namespace margelo::nitro::rive { enum class RiveErrorType; }
 // Forward declaration of `RiveError` to properly resolve imports.
@@ -139,6 +141,7 @@ namespace RNRive { class HybridViewModelTriggerPropertySpec_cxx; }
 #include "HybridViewModelTriggerPropertySpec.hpp"
 #include "ReferencedAssetsType.hpp"
 #include "ResolvedReferencedAsset.hpp"
+#include "RiveEnumDefinition.hpp"
 #include "RiveError.hpp"
 #include "RiveErrorType.hpp"
 #include "RiveEventType.hpp"
@@ -344,6 +347,73 @@ namespace margelo::nitro::rive::bridge::swift {
     return vector;
   }
   
+  // pragma MARK: std::vector<RiveEnumDefinition>
+  /**
+   * Specialized version of `std::vector<RiveEnumDefinition>`.
+   */
+  using std__vector_RiveEnumDefinition_ = std::vector<RiveEnumDefinition>;
+  inline std::vector<RiveEnumDefinition> create_std__vector_RiveEnumDefinition_(size_t size) noexcept {
+    std::vector<RiveEnumDefinition> vector;
+    vector.reserve(size);
+    return vector;
+  }
+  
+  // pragma MARK: std::shared_ptr<Promise<std::vector<RiveEnumDefinition>>>
+  /**
+   * Specialized version of `std::shared_ptr<Promise<std::vector<RiveEnumDefinition>>>`.
+   */
+  using std__shared_ptr_Promise_std__vector_RiveEnumDefinition___ = std::shared_ptr<Promise<std::vector<RiveEnumDefinition>>>;
+  inline std::shared_ptr<Promise<std::vector<RiveEnumDefinition>>> create_std__shared_ptr_Promise_std__vector_RiveEnumDefinition___() noexcept {
+    return Promise<std::vector<RiveEnumDefinition>>::create();
+  }
+  inline PromiseHolder<std::vector<RiveEnumDefinition>> wrap_std__shared_ptr_Promise_std__vector_RiveEnumDefinition___(std::shared_ptr<Promise<std::vector<RiveEnumDefinition>>> promise) noexcept {
+    return PromiseHolder<std::vector<RiveEnumDefinition>>(std::move(promise));
+  }
+  
+  // pragma MARK: std::function<void(const std::vector<RiveEnumDefinition>& /* result */)>
+  /**
+   * Specialized version of `std::function<void(const std::vector<RiveEnumDefinition>&)>`.
+   */
+  using Func_void_std__vector_RiveEnumDefinition_ = std::function<void(const std::vector<RiveEnumDefinition>& /* result */)>;
+  /**
+   * Wrapper class for a `std::function<void(const std::vector<RiveEnumDefinition>& / * result * /)>`, this can be used from Swift.
+   */
+  class Func_void_std__vector_RiveEnumDefinition__Wrapper final {
+  public:
+    explicit Func_void_std__vector_RiveEnumDefinition__Wrapper(std::function<void(const std::vector<RiveEnumDefinition>& /* result */)>&& func): _function(std::make_unique<std::function<void(const std::vector<RiveEnumDefinition>& /* result */)>>(std::move(func))) {}
+    inline void call(std::vector<RiveEnumDefinition> result) const noexcept {
+      _function->operator()(result);
+    }
+  private:
+    std::unique_ptr<std::function<void(const std::vector<RiveEnumDefinition>& /* result */)>> _function;
+  } SWIFT_NONCOPYABLE;
+  Func_void_std__vector_RiveEnumDefinition_ create_Func_void_std__vector_RiveEnumDefinition_(void* NON_NULL swiftClosureWrapper) noexcept;
+  inline Func_void_std__vector_RiveEnumDefinition__Wrapper wrap_Func_void_std__vector_RiveEnumDefinition_(Func_void_std__vector_RiveEnumDefinition_ value) noexcept {
+    return Func_void_std__vector_RiveEnumDefinition__Wrapper(std::move(value));
+  }
+  
+  // pragma MARK: std::function<void(const std::exception_ptr& /* error */)>
+  /**
+   * Specialized version of `std::function<void(const std::exception_ptr&)>`.
+   */
+  using Func_void_std__exception_ptr = std::function<void(const std::exception_ptr& /* error */)>;
+  /**
+   * Wrapper class for a `std::function<void(const std::exception_ptr& / * error * /)>`, this can be used from Swift.
+   */
+  class Func_void_std__exception_ptr_Wrapper final {
+  public:
+    explicit Func_void_std__exception_ptr_Wrapper(std::function<void(const std::exception_ptr& /* error */)>&& func): _function(std::make_unique<std::function<void(const std::exception_ptr& /* error */)>>(std::move(func))) {}
+    inline void call(std::exception_ptr error) const noexcept {
+      _function->operator()(error);
+    }
+  private:
+    std::unique_ptr<std::function<void(const std::exception_ptr& /* error */)>> _function;
+  } SWIFT_NONCOPYABLE;
+  Func_void_std__exception_ptr create_Func_void_std__exception_ptr(void* NON_NULL swiftClosureWrapper) noexcept;
+  inline Func_void_std__exception_ptr_Wrapper wrap_Func_void_std__exception_ptr(Func_void_std__exception_ptr value) noexcept {
+    return Func_void_std__exception_ptr_Wrapper(std::move(value));
+  }
+  
   // pragma MARK: std::shared_ptr<HybridRiveFileSpec>
   /**
    * Specialized version of `std::shared_ptr<HybridRiveFileSpec>`.
@@ -383,6 +453,15 @@ namespace margelo::nitro::rive::bridge::swift {
     return Result<std::shared_ptr<HybridBindableArtboardSpec>>::withError(error);
   }
   
+  // pragma MARK: Result<std::shared_ptr<Promise<std::vector<RiveEnumDefinition>>>>
+  using Result_std__shared_ptr_Promise_std__vector_RiveEnumDefinition____ = Result<std::shared_ptr<Promise<std::vector<RiveEnumDefinition>>>>;
+  inline Result_std__shared_ptr_Promise_std__vector_RiveEnumDefinition____ create_Result_std__shared_ptr_Promise_std__vector_RiveEnumDefinition____(const std::shared_ptr<Promise<std::vector<RiveEnumDefinition>>>& value) noexcept {
+    return Result<std::shared_ptr<Promise<std::vector<RiveEnumDefinition>>>>::withValue(value);
+  }
+  inline Result_std__shared_ptr_Promise_std__vector_RiveEnumDefinition____ create_Result_std__shared_ptr_Promise_std__vector_RiveEnumDefinition____(const std::exception_ptr& error) noexcept {
+    return Result<std::shared_ptr<Promise<std::vector<RiveEnumDefinition>>>>::withError(error);
+  }
+  
   // pragma MARK: std::shared_ptr<Promise<std::shared_ptr<HybridRiveFileSpec>>>
   /**
    * Specialized version of `std::shared_ptr<Promise<std::shared_ptr<HybridRiveFileSpec>>>`.
@@ -415,28 +494,6 @@ namespace margelo::nitro::rive::bridge::swift {
   Func_void_std__shared_ptr_HybridRiveFileSpec_ create_Func_void_std__shared_ptr_HybridRiveFileSpec_(void* NON_NULL swiftClosureWrapper) noexcept;
   inline Func_void_std__shared_ptr_HybridRiveFileSpec__Wrapper wrap_Func_void_std__shared_ptr_HybridRiveFileSpec_(Func_void_std__shared_ptr_HybridRiveFileSpec_ value) noexcept {
     return Func_void_std__shared_ptr_HybridRiveFileSpec__Wrapper(std::move(value));
-  }
-  
-  // pragma MARK: std::function<void(const std::exception_ptr& /* error */)>
-  /**
-   * Specialized version of `std::function<void(const std::exception_ptr&)>`.
-   */
-  using Func_void_std__exception_ptr = std::function<void(const std::exception_ptr& /* error */)>;
-  /**
-   * Wrapper class for a `std::function<void(const std::exception_ptr& / * error * /)>`, this can be used from Swift.
-   */
-  class Func_void_std__exception_ptr_Wrapper final {
-  public:
-    explicit Func_void_std__exception_ptr_Wrapper(std::function<void(const std::exception_ptr& /* error */)>&& func): _function(std::make_unique<std::function<void(const std::exception_ptr& /* error */)>>(std::move(func))) {}
-    inline void call(std::exception_ptr error) const noexcept {
-      _function->operator()(error);
-    }
-  private:
-    std::unique_ptr<std::function<void(const std::exception_ptr& /* error */)>> _function;
-  } SWIFT_NONCOPYABLE;
-  Func_void_std__exception_ptr create_Func_void_std__exception_ptr(void* NON_NULL swiftClosureWrapper) noexcept;
-  inline Func_void_std__exception_ptr_Wrapper wrap_Func_void_std__exception_ptr(Func_void_std__exception_ptr value) noexcept {
-    return Func_void_std__exception_ptr_Wrapper(std::move(value));
   }
   
   // pragma MARK: std::optional<ReferencedAssetsType>
