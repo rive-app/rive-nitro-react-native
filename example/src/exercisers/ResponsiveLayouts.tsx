@@ -13,7 +13,7 @@ import {
   useRiveFile,
   type RiveViewRef,
 } from '@rive-app/react-native';
-import { type Metadata } from '../helpers/metadata';
+import { type Metadata } from '../shared/metadata';
 
 /**
  * Demonstrates responsive layouts using Fit.Layout and layoutScaleFactor

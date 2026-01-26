@@ -2,13 +2,15 @@
 const { getDefaultConfig } = require('expo/metro-config');
 const { getConfig } = require('react-native-builder-bob/metro-config');
 const path = require('path');
+const { withSingleReactNative } = require('../example/metro.helpers');
+
 const root = path.resolve(__dirname, '..');
 
 /** @type {import('expo/metro-config').MetroConfig} */
 const config = getDefaultConfig(__dirname);
 config.resolver.assetExts = [...config.resolver.assetExts, 'riv'];
 
-const finalConfig = getConfig(config, {
+const bobConfig = getConfig(config, {
   root,
   project: __dirname,
 });
@@ -37,22 +39,25 @@ function resolveExampleAliasToSourceDir(context, moduleName, projectRoot) {
   return null;
 }
 
-const originalResolveRequest = finalConfig.resolver.resolveRequest;
-finalConfig.resolver.resolveRequest = (context, moduleName, platform) => {
-  const customResolution = resolveExampleAliasToSourceDir(
-    context,
-    moduleName,
-    root
-  );
-
-  if (customResolution) {
-    return customResolution;
-  }
-
-  if (originalResolveRequest) {
-    return originalResolveRequest(context, moduleName, platform);
-  }
-  return context.resolveRequest(context, moduleName, platform);
+const originalResolveRequest = bobConfig.resolver.resolveRequest;
+const configWithAlias = {
+  ...bobConfig,
+  resolver: {
+    ...bobConfig.resolver,
+    resolveRequest: (context, moduleName, platform) => {
+      const customResolution = resolveExampleAliasToSourceDir(
+        context,
+        moduleName,
+        root
+      );
+      if (customResolution) {
+        return customResolution;
+      }
+      return originalResolveRequest
+        ? originalResolveRequest(context, moduleName, platform)
+        : context.resolveRequest(context, moduleName, platform);
+    },
+  },
 };
 
-module.exports = finalConfig;
+module.exports = withSingleReactNative(configWithAlias, __dirname);

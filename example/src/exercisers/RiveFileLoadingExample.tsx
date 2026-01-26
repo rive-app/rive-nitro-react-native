@@ -13,8 +13,8 @@ import {
   type RiveFileInput,
 } from '@rive-app/react-native';
 import { useState, useEffect } from 'react';
-import { downloadFileAsArrayBuffer } from '../helpers/fileHelpers';
-import { type Metadata } from '../helpers/metadata';
+import { downloadFileAsArrayBuffer } from '../shared/fileHelpers';
+import { type Metadata } from '../shared/metadata';
 
 const LOADING_METHODS = {
   SOURCE: 'Source',

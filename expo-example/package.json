@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
+    "@react-native-async-storage/async-storage": "^2.1.2",
     "@react-native-picker/picker": "^2.11.4",
     "@react-navigation/bottom-tabs": "^7.4.0",
     "@react-navigation/elements": "^2.6.3",
@@ -34,7 +35,7 @@
     "react-dom": "19.1.0",
     "react-native": "0.81.5",
     "react-native-gesture-handler": "2.29.1",
-    "react-native-nitro-modules": "0.31.10",
+    "react-native-nitro-modules": "0.33.2",
     "react-native-reanimated": "4.1.5",
     "react-native-safe-area-context": "~5.6.0",
     "react-native-screens": "~4.16.0",

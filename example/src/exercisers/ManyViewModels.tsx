@@ -1,6 +1,6 @@
 import { StyleSheet, View, Text, TouchableOpacity, Button } from 'react-native';
 import { useState, useMemo, useRef, useEffect } from 'react';
-import type { Metadata } from '../helpers/metadata';
+import type { Metadata } from '../shared/metadata';
 import {
   DataBindMode,
   RiveView,

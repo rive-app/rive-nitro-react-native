@@ -25,7 +25,7 @@
 - **Android**: SDK 24 (Android 7.0) or later
 - **Xcode**: 16.4 or later
 - **JDK**: 17 or later
-- **Nitro Modules**: 0.25.2 or later
+- **Nitro Modules**: 0.33.2 or later
 
 ## Known Issues
 

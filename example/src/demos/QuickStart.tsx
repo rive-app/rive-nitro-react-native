@@ -16,7 +16,7 @@ import {
   useViewModelInstance,
   Fit,
 } from '@rive-app/react-native';
-import type { Metadata } from '../helpers/metadata';
+import type { Metadata } from '../shared/metadata';
 
 export default function QuickStart() {
   const { riveFile } = useRiveFile(
@@ -73,6 +73,7 @@ export default function QuickStart() {
 QuickStart.metadata = {
   name: 'Quick Start',
   description: 'Basic data binding example with health and game over trigger',
+  order: 0,
 } satisfies Metadata;
 
 const styles = StyleSheet.create({

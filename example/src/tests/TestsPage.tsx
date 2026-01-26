@@ -6,61 +6,71 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from 'react-native';
+import { getTestCollector } from 'react-native-harness';
+import type { TestSuite, TestCase } from '@react-native-harness/bridge';
 import { useState, useEffect } from 'react';
-import { RiveFileFactory } from '@rive-app/react-native';
-import type { Metadata } from '../helpers/metadata';
-import type { TestCase, TestResult, TestStatus } from '../testing';
-import { allSuites } from '../testing/suites';
+import type { Metadata } from '../shared/metadata';
 
-interface LoadedSuite {
-  name: string;
-  tests: TestCase[];
+const testContext = require.context(
+  '../../__tests__',
+  false,
+  /\.harness\.tsx?$/
+);
+
+// Cache collected suites globally (persists across HMR, require.context only executes once)
+const CACHE_KEY = '__RIVE_TEST_SUITES__';
+type GlobalCache = { [CACHE_KEY]?: TestSuite[] };
+
+function getCachedSuites(): TestSuite[] | null {
+  return (global as unknown as GlobalCache)[CACHE_KEY] ?? null;
 }
+
+function setCachedSuites(suites: TestSuite[]): void {
+  (global as unknown as GlobalCache)[CACHE_KEY] = suites;
+}
+
+type TestStatus = 'pending' | 'running' | 'passed' | 'failed';
 
 interface TestState {
   status: TestStatus;
   error?: string;
 }
 
+function buildTestStates(suites: TestSuite[]): Map<string, TestState> {
+  const states = new Map<string, TestState>();
+  for (const suite of suites) {
+    for (const test of suite.tests) {
+      states.set(`${suite.name}::${test.name}`, { status: 'pending' });
+    }
+  }
+  return states;
+}
+
 export default function TestsPage() {
-  const [loading, setLoading] = useState(true);
-  const [loadError, setLoadError] = useState<string | null>(null);
-  const [suites, setSuites] = useState<LoadedSuite[]>([]);
-  const [testStates, setTestStates] = useState<Map<string, TestState>>(
-    new Map()
+  const cached = getCachedSuites();
+  const [suites, setSuites] = useState<TestSuite[]>(cached ?? []);
+  const [loading, setLoading] = useState(cached === null);
+  const [testStates, setTestStates] = useState<Map<string, TestState>>(() =>
+    cached ? buildTestStates(cached) : new Map()
   );
   const [runningAll, setRunningAll] = useState(false);
 
   useEffect(() => {
-    async function loadSuites() {
-      try {
-        const loaded: LoadedSuite[] = [];
+    if (getCachedSuites() !== null) return;
 
-        for (const suite of allSuites) {
-          const file = await RiveFileFactory.fromSource(
-            suite.riveAsset,
-            undefined
-          );
-          const tests = suite.getTests(file);
-          loaded.push({ name: suite.name, tests });
+    async function collectTests() {
+      const collector = getTestCollector();
+      const result = await collector.collect(() => {
+        testContext.keys().forEach((key) => testContext(key));
+      }, 'harness-tests');
 
-          const initialStates = new Map<string, TestState>();
-          for (const test of tests) {
-            initialStates.set(getTestKey(suite.name, test.name), {
-              status: 'pending',
-            });
-          }
-          setTestStates((prev) => new Map([...prev, ...initialStates]));
-        }
-
-        setSuites(loaded);
-        setLoading(false);
-      } catch (e) {
-        setLoadError(e instanceof Error ? e.message : String(e));
-        setLoading(false);
-      }
+      const collectedSuites = result.testSuite.suites;
+      setCachedSuites(collectedSuites);
+      setSuites(collectedSuites);
+      setTestStates(buildTestStates(collectedSuites));
+      setLoading(false);
     }
-    loadSuites();
+    collectTests();
   }, []);
 
   function getTestKey(suiteName: string, testName: string): string {
@@ -72,13 +82,8 @@ export default function TestsPage() {
     setTestStates((prev) => new Map(prev).set(key, { status: 'running' }));
 
     try {
-      const result: TestResult = await test.run();
-      setTestStates((prev) =>
-        new Map(prev).set(key, {
-          status: result.status,
-          error: result.error,
-        })
-      );
+      await test.fn();
+      setTestStates((prev) => new Map(prev).set(key, { status: 'passed' }));
     } catch (e) {
       setTestStates((prev) =>
         new Map(prev).set(key, {
@@ -131,16 +136,7 @@ export default function TestsPage() {
     return (
       <View style={styles.centered}>
         <ActivityIndicator size="large" color="#007AFF" />
-        <Text style={styles.loadingText}>Loading test suites...</Text>
-      </View>
-    );
-  }
-
-  if (loadError) {
-    return (
-      <View style={styles.centered}>
-        <Text style={styles.errorText}>Failed to load tests:</Text>
-        <Text style={styles.errorDetail}>{loadError}</Text>
+        <Text style={styles.loadingText}>Collecting tests...</Text>
       </View>
     );
   }
@@ -224,23 +220,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
   },
   loadingText: {
     marginTop: 10,
     fontSize: 16,
     color: '#666',
-  },
-  errorText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#FF3B30',
-    marginBottom: 8,
-  },
-  errorDetail: {
-    fontSize: 14,
-    color: '#666',
-    textAlign: 'center',
   },
   header: {
     padding: 16,

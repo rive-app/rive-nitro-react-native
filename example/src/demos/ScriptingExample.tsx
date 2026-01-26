@@ -7,7 +7,7 @@
 
 import { View, StyleSheet } from 'react-native';
 import { RiveView, useRiveFile, DataBindMode } from '@rive-app/react-native';
-import type { Metadata } from '../helpers/metadata';
+import type { Metadata } from '../shared/metadata';
 
 export default function ScriptingExample() {
   const { riveFile } = useRiveFile(require('../../assets/rive/blinko.riv'));

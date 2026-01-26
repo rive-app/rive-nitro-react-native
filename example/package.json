@@ -9,16 +9,19 @@
     "build:android": "react-native build-android --extra-params \"--no-daemon --console=plain -PreactNativeArchitectures=arm64-v8a\"",
     "build:ios": "react-native build-ios --mode Debug",
     "test:harness:ios": "react-native-harness --harnessRunner ios",
-    "test:harness:android": "react-native-harness --harnessRunner android"
+    "test:harness:android": "react-native-harness --harnessRunner android",
+    "test:harness:ios:coverage": "NYC_CWD=.. react-native-harness --harnessRunner ios --coverage",
+    "test:harness:android:coverage": "NYC_CWD=.. react-native-harness --harnessRunner android --coverage"
   },
   "dependencies": {
+    "@react-native-async-storage/async-storage": "^2.1.2",
     "@react-native-picker/picker": "^2.11.4",
     "@react-navigation/native": "^7.1.9",
     "@react-navigation/stack": "^7.3.2",
     "react": "19.0.0",
     "react-native": "0.79.2",
     "react-native-gesture-handler": "2.29.1",
-    "react-native-nitro-modules": "0.31.10",
+    "react-native-nitro-modules": "0.33.2",
     "react-native-reanimated": "4.1.5",
     "react-native-safe-area-context": "^5.4.0",
     "react-native-worklets": "0.6.1"
