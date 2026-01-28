@@ -22,6 +22,7 @@ namespace margelo::nitro::rive {
       prototype.registerHybridMethod("defaultArtboardViewModel", &HybridRiveFileSpec::defaultArtboardViewModel);
       prototype.registerHybridMethod("updateReferencedAssets", &HybridRiveFileSpec::updateReferencedAssets);
       prototype.registerHybridMethod("getBindableArtboard", &HybridRiveFileSpec::getBindableArtboard);
+      prototype.registerHybridMethod("getEnums", &HybridRiveFileSpec::getEnums);
     });
   }
 

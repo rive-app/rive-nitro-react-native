@@ -21,6 +21,7 @@ public protocol HybridRiveFileSpec_protocol: HybridObject {
   func defaultArtboardViewModel(artboardBy: ArtboardBy?) throws -> (any HybridViewModelSpec)?
   func updateReferencedAssets(referencedAssets: ReferencedAssetsType) throws -> Void
   func getBindableArtboard(name: String) throws -> (any HybridBindableArtboardSpec)
+  func getEnums() throws -> Promise<[RiveEnumDefinition]>
 }
 
 public extension HybridRiveFileSpec_protocol {

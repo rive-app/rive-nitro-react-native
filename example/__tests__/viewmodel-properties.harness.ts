@@ -1,5 +1,8 @@
 import { describe, it, expect } from 'react-native-harness';
-import type { ViewModelInstance } from '@rive-app/react-native';
+import type {
+  ViewModelInstance,
+  RiveEnumDefinition,
+} from '@rive-app/react-native';
 import { RiveFileFactory } from '@rive-app/react-native';
 
 const DATABINDING = require('../assets/rive/databinding.riv');
@@ -223,5 +226,20 @@ describe('Property Listeners', () => {
     expect(cleanup1).not.toBe(cleanup2);
     expect(() => cleanup1()).not.toThrow();
     expect(() => cleanup2()).not.toThrow();
+  });
+});
+
+describe('RiveFile Enums', () => {
+  const expectedEnums: RiveEnumDefinition[] = [
+    { name: 'Pets', values: ['chipmunk', 'rat', 'frog', 'owl', 'cat', 'dog'] },
+  ];
+
+  it('getEnums returns enum definitions from file', async () => {
+    const file = await RiveFileFactory.fromSource(DATABINDING, undefined);
+    const enums = await file.getEnums();
+
+    expect(enums.length).toBe(expectedEnums.length);
+    expect(enums[0]?.name).toBe(expectedEnums[0]?.name);
+    expect(enums[0]?.values).toEqual(expectedEnums[0]?.values);
   });
 });

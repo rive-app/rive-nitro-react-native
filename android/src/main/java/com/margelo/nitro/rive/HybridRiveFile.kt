@@ -3,6 +3,7 @@ package com.margelo.nitro.rive
 import androidx.annotation.Keep
 import app.rive.runtime.kotlin.core.File
 import com.facebook.proguard.annotations.DoNotStrip
+import com.margelo.nitro.core.Promise
 import java.lang.ref.WeakReference
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -92,6 +93,22 @@ class HybridRiveFile : HybridRiveFileSpec() {
       scope.launch {
         loadJobs.awaitAll()
         refreshAfterAssetChange()
+      }
+    }
+  }
+
+  override fun getEnums(): Promise<Array<RiveEnumDefinition>> {
+    return Promise.async {
+      val file = riveFile ?: return@async emptyArray()
+      try {
+        file.enums.map { enum ->
+          RiveEnumDefinition(
+            name = enum.name,
+            values = enum.values.toTypedArray()
+          )
+        }.toTypedArray()
+      } catch (e: NoSuchMethodError) {
+        throw UnsupportedOperationException("getEnums requires rive-android SDK with enums support")
       }
     }
   }

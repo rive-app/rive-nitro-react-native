@@ -24,11 +24,17 @@ if !rive_ios_version && package['runtimeVersions'] && package['runtimeVersions']
   rive_ios_version = package['runtimeVersions']['ios']
 end
 
-if !rive_ios_version
+use_rive_spm = ENV['USE_RIVE_SPM'] == '1' || (defined?($UseRiveSPM) && $UseRiveSPM)
+
+if !use_rive_spm && !rive_ios_version
   raise "Internal Error: Failed to determine Rive iOS SDK version. Please ensure package.json contains 'runtimeVersions.ios'"
 end
 
-Pod::UI.puts "@rive-app/react-native: Rive iOS SDK #{rive_ios_version}"
+if use_rive_spm
+  Pod::UI.puts "@rive-app/react-native: Using RiveRuntime via Swift Package Manager"
+else
+  Pod::UI.puts "@rive-app/react-native: Rive iOS SDK #{rive_ios_version}"
+end
 
 Pod::Spec.new do |s|
   s.name         = "RNRive"
@@ -47,7 +53,19 @@ Pod::Spec.new do |s|
   load 'nitrogen/generated/ios/RNRive+autolinking.rb'
   add_nitrogen_files(s)
 
-  s.dependency "RiveRuntime", rive_ios_version
+  if use_rive_spm
+    spm_dependency(s,
+      url: 'https://github.com/rive-app/rive-ios.git',
+      requirement: {kind: 'upToNextMajorVersion', minimumVersion: '6.15.0'},
+      products: ['RiveRuntime']
+    )
+  else
+    s.dependency "RiveRuntime", rive_ios_version
+  end
 
  install_modules_dependencies(s)
+
+  if use_rive_spm
+    s.xcconfig = { 'OTHER_SWIFT_FLAGS' => '$(inherited) -DRIVE_EXPERIMENTAL_API' }
+  end
 end

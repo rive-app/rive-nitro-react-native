@@ -62,6 +62,7 @@ namespace margelo::nitro::rive {
     std::optional<std::shared_ptr<HybridViewModelSpec>> defaultArtboardViewModel(const std::optional<ArtboardBy>& artboardBy) override;
     void updateReferencedAssets(const ReferencedAssetsType& referencedAssets) override;
     std::shared_ptr<HybridBindableArtboardSpec> getBindableArtboard(const std::string& name) override;
+    std::shared_ptr<Promise<std::vector<RiveEnumDefinition>>> getEnums() override;
 
   private:
     friend HybridBase;
