@@ -89,7 +89,10 @@ class HybridRiveFile: HybridRiveFileSpec {
   }
 
   func getBindableArtboard(name: String) throws -> any HybridBindableArtboardSpec {
-    return HybridBindableArtboard(name: name)
+    guard let file = file else {
+      throw RuntimeError.error(withMessage: "No file available for getBindableArtboard")
+    }
+    return HybridBindableArtboard(name: name, file: file)
   }
 
   func updateReferencedAssets(referencedAssets: ReferencedAssetsType) {

@@ -83,21 +83,53 @@ final class ExperimentalAssetLoader {
       }
     }
 
-    // Try to infer from data magic bytes
-    if data.count >= 4 {
-      let bytes = [UInt8](data.prefix(4))
-      // PNG: 89 50 4E 47
-      if bytes[0] == 0x89 && bytes[1] == 0x50 && bytes[2] == 0x4E && bytes[3] == 0x47 {
-        return .image
+    return inferAssetTypeFromMagicBytes(data)
+  }
+
+  private static func inferAssetTypeFromMagicBytes(_ data: Data) -> AssetType? {
+    guard data.count >= 4 else { return nil }
+    let bytes = [UInt8](data.prefix(min(data.count, 12)))
+
+    // PNG: 89 50 4E 47
+    if bytes[0] == 0x89 && bytes[1] == 0x50 && bytes[2] == 0x4E && bytes[3] == 0x47 {
+      return .image
+    }
+    // JPEG: FF D8 FF
+    if bytes[0] == 0xFF && bytes[1] == 0xD8 && bytes[2] == 0xFF {
+      return .image
+    }
+    // RIFF container: WebP (image) vs WAV (audio)
+    if bytes[0] == 0x52 && bytes[1] == 0x49 && bytes[2] == 0x46 && bytes[3] == 0x46 && bytes.count >= 12 {
+      // bytes 8-11 identify the format: WEBP or WAVE
+      if bytes[8] == 0x57 && bytes[9] == 0x45 && bytes[10] == 0x42 && bytes[11] == 0x50 {
+        return .image  // RIFF....WEBP
       }
-      // JPEG: FF D8 FF
-      if bytes[0] == 0xFF && bytes[1] == 0xD8 && bytes[2] == 0xFF {
-        return .image
+      if bytes[8] == 0x57 && bytes[9] == 0x41 && bytes[10] == 0x56 && bytes[11] == 0x45 {
+        return .audio  // RIFF....WAVE
       }
-      // WebP: RIFF....WEBP
-      if bytes[0] == 0x52 && bytes[1] == 0x49 && bytes[2] == 0x46 && bytes[3] == 0x46 {
-        return .image
-      }
+    }
+    // OGG: 4F 67 67 53
+    if bytes[0] == 0x4F && bytes[1] == 0x67 && bytes[2] == 0x67 && bytes[3] == 0x53 {
+      return .audio
+    }
+    // FLAC: 66 4C 61 43
+    if bytes[0] == 0x66 && bytes[1] == 0x4C && bytes[2] == 0x61 && bytes[3] == 0x43 {
+      return .audio
+    }
+    // MP3: FF FB, FF F3, FF F2 (sync word), or ID3 tag
+    if bytes[0] == 0xFF && (bytes[1] == 0xFB || bytes[1] == 0xF3 || bytes[1] == 0xF2) {
+      return .audio
+    }
+    if bytes[0] == 0x49 && bytes[1] == 0x44 && bytes[2] == 0x33 {
+      return .audio  // ID3 tag header
+    }
+    // TrueType: 00 01 00 00
+    if bytes[0] == 0x00 && bytes[1] == 0x01 && bytes[2] == 0x00 && bytes[3] == 0x00 {
+      return .font
+    }
+    // OpenType: 4F 54 54 4F ("OTTO")
+    if bytes[0] == 0x4F && bytes[1] == 0x54 && bytes[2] == 0x54 && bytes[3] == 0x4F {
+      return .font
     }
 
     return nil
