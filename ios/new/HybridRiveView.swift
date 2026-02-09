@@ -5,9 +5,6 @@ import UIKit
 
 private struct DefaultConfiguration {
   static let autoPlay = true
-  static let alignment = RiveAlignment.center
-  static let fit = RiveFit.contain
-  static let layoutScaleFactor = 1.0
 }
 
 typealias HybridDataBindMode = Variant__any_HybridViewModelInstanceSpec__DataBindMode_DataBindByName
@@ -183,9 +180,7 @@ class HybridRiveView: HybridRiveViewSpec {
         stateMachineName: stateMachineName,
         autoPlay: autoPlay ?? DefaultConfiguration.autoPlay,
         file: riveFile,
-        alignment: convertAlignment(alignment) ?? DefaultConfiguration.alignment,
-        fit: convertFit(fit) ?? DefaultConfiguration.fit,
-        layoutScaleFactor: layoutScaleFactor ?? DefaultConfiguration.layoutScaleFactor,
+        fit: toExperimentalFit(fit, alignment: alignment, layoutScaleFactor: layoutScaleFactor),
         bindData: try dataBind.toExperimentalBindData()
       )
 
@@ -205,7 +200,30 @@ class HybridRiveView: HybridRiveViewSpec {
   private var initialUpdate = true
 
   // MARK: Helpers
-  private func convertAlignment(_ alignment: Alignment?) -> RiveAlignment? {
+  private func toExperimentalFit(
+    _ fit: Fit?,
+    alignment: Alignment?,
+    layoutScaleFactor: Double?
+  ) -> RiveRuntime.Fit {
+    let expAlignment = toExperimentalAlignment(alignment) ?? .center
+
+    switch fit ?? .contain {
+    case .fill: return .fill(alignment: expAlignment)
+    case .contain: return .contain(alignment: expAlignment)
+    case .cover: return .cover(alignment: expAlignment)
+    case .fitwidth: return .fitWidth(alignment: expAlignment)
+    case .fitheight: return .fitHeight(alignment: expAlignment)
+    case .none: return .none(alignment: expAlignment)
+    case .scaledown: return .scaleDown(alignment: expAlignment)
+    case .layout:
+      if let sf = layoutScaleFactor {
+        return .layout(scaleFactor: .explicit(Float(sf)))
+      }
+      return .layout(scaleFactor: .automatic)
+    }
+  }
+
+  private func toExperimentalAlignment(_ alignment: Alignment?) -> RiveRuntime.Alignment? {
     guard let alignment = alignment else { return nil }
 
     switch alignment {
@@ -218,21 +236,6 @@ class HybridRiveView: HybridRiveViewSpec {
     case .bottomleft: return .bottomLeft
     case .bottomcenter: return .bottomCenter
     case .bottomright: return .bottomRight
-    }
-  }
-
-  private func convertFit(_ fit: Fit?) -> RiveFit? {
-    guard let fit = fit else { return nil }
-
-    switch fit {
-    case .fill: return .fill
-    case .contain: return .contain
-    case .cover: return .cover
-    case .fitwidth: return .fitWidth
-    case .fitheight: return .fitHeight
-    case .none: return .noFit
-    case .scaledown: return .scaleDown
-    case .layout: return .layout
     }
   }
 }
