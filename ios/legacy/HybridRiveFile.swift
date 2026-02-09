@@ -30,26 +30,26 @@ class HybridRiveFile: HybridRiveFileSpec, RiveViewSource {
       view.refreshAfterAssetChange()
     }
   }
-
+  
   var viewModelCount: Double? {
     guard let count = riveFile?.viewModelCount else { return nil }
     return Double(count)
   }
-
+  
   func viewModelByIndex(index: Double) throws -> (any HybridViewModelSpec)? {
     guard index >= 0 else { return nil }
     guard let vm = riveFile?.viewModel(at: UInt(index)) else { return nil }
     return HybridViewModel(viewModel: vm)
   }
-
+  
   func viewModelByName(name: String) throws -> (any HybridViewModelSpec)? {
     guard let vm = riveFile?.viewModelNamed(name) else { return nil }
     return HybridViewModel(viewModel: vm)
   }
-
+  
   func defaultArtboardViewModel(artboardBy: ArtboardBy?) throws -> (any HybridViewModelSpec)? {
     let artboard: RiveArtboard?
-
+    
     if let artboardBy = artboardBy {
       switch artboardBy.type {
       case .index:
@@ -64,12 +64,12 @@ class HybridRiveFile: HybridRiveFileSpec, RiveViewSource {
     } else {
       artboard = try? riveFile?.artboard()
     }
-
+    
     guard let artboard = artboard,
           let vm = riveFile?.defaultViewModel(for: artboard) else { return nil }
     return HybridViewModel(viewModel: vm)
   }
-
+  
   var artboardCount: Double {
     Double(riveFile?.artboardNames().count ?? 0)
   }
