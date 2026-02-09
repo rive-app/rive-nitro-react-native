@@ -25,6 +25,7 @@ public protocol HybridRiveFileSpec_protocol: HybridObject {
   func getArtboardCountAsync() throws -> Promise<Double>
   func getArtboardNamesAsync() throws -> Promise<[String]>
   func getBindableArtboard(name: String) throws -> (any HybridBindableArtboardSpec)
+  func getEnums() throws -> [RiveEnumDefinition]
 }
 
 public extension HybridRiveFileSpec_protocol {
