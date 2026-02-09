@@ -1,7 +1,16 @@
 import NitroModules
 import RiveRuntime
+#if RIVE_EXPERIMENTAL_API
+@_spi(RiveExperimental) import RiveRuntime
+#endif
 
 typealias ReferencedAssetCache = [String: RiveFileAsset]
+
+/// Source for creating experimental File instances
+enum ExperimentalFileSource {
+  case data(Data)
+  case resource(String)
+}
 
 class HybridRiveFile: HybridRiveFileSpec, RiveViewSource {
   var riveFile: RiveFile?
@@ -9,6 +18,9 @@ class HybridRiveFile: HybridRiveFileSpec, RiveViewSource {
   var assetLoader: ReferencedAssetLoader?
   var cachedFactory: RiveFactory?
   private var weakViews: [Weak<RiveReactNativeView>] = []
+
+  /// Source for experimental API - stored to create experimental File on demand
+  var experimentalSource: ExperimentalFileSource?
 
   public func setRiveFile(_ riveFile: RiveFile) {
     self.riveFile = riveFile
@@ -30,23 +42,23 @@ class HybridRiveFile: HybridRiveFileSpec, RiveViewSource {
       view.refreshAfterAssetChange()
     }
   }
-  
+
   var viewModelCount: Double? {
     guard let count = riveFile?.viewModelCount else { return nil }
     return Double(count)
   }
-  
+
   func viewModelByIndex(index: Double) throws -> (any HybridViewModelSpec)? {
     guard index >= 0 else { return nil }
     guard let vm = riveFile?.viewModel(at: UInt(index)) else { return nil }
     return HybridViewModel(viewModel: vm)
   }
-  
+
   func viewModelByName(name: String) throws -> (any HybridViewModelSpec)? {
     guard let vm = riveFile?.viewModelNamed(name) else { return nil }
     return HybridViewModel(viewModel: vm)
   }
-  
+
   func defaultArtboardViewModel(artboardBy: ArtboardBy?) throws -> (any HybridViewModelSpec)? {
     guard let file = riveFile else { return nil }
     let artboard: RiveArtboard?
@@ -65,12 +77,12 @@ class HybridRiveFile: HybridRiveFileSpec, RiveViewSource {
     } else {
       artboard = try? file.artboard()
     }
-    
+
     guard let artboard = artboard,
           let vm = file.defaultViewModel(for: artboard) else { return nil }
     return HybridViewModel(viewModel: vm)
   }
-  
+
   var artboardCount: Double {
     Double(riveFile?.artboardNames().count ?? 0)
   }
@@ -150,7 +162,42 @@ class HybridRiveFile: HybridRiveFileSpec, RiveViewSource {
       }
     }
   }
-  
+
+  func getEnums() throws -> [RiveEnumDefinition] {
+    #if RIVE_EXPERIMENTAL_API
+    guard let source = experimentalSource else {
+      throw NSError(
+        domain: "RiveError",
+        code: 1,
+        userInfo: [NSLocalizedDescriptionKey: "getEnums requires experimental API. Use USE_RIVE_SPM=1 with pod install."]
+      )
+    }
+
+    return try blockingAsync {
+      let worker = await Worker()
+      let experimentalSource: Source
+      switch source {
+      case .data(let data):
+        experimentalSource = .data(data)
+      case .resource(let name):
+        experimentalSource = .local(name, nil)
+      }
+
+      let file = try await File(source: experimentalSource, worker: worker)
+      let viewModelEnums = try await file.getViewModelEnums()
+      return viewModelEnums.map { vmEnum in
+        RiveEnumDefinition(name: vmEnum.name, values: vmEnum.values)
+      }
+    }
+    #else
+    throw NSError(
+      domain: "RiveError",
+      code: 1,
+      userInfo: [NSLocalizedDescriptionKey: "getEnums requires RiveRuntime 6.15.0+ with experimental API. Use USE_RIVE_SPM=1 with pod install."]
+    )
+    #endif
+  }
+
   func dispose() {
     weakViews.removeAll()
     referencedAssetCache = nil

@@ -3,15 +3,15 @@ import RiveRuntime
 
 class HybridRiveImage: HybridRiveImageSpec {
   let renderImage: RiveRenderImage
-  private let dataSize: Int
+  let rawData: Data
 
-  init(renderImage: RiveRenderImage, dataSize: Int) {
+  init(renderImage: RiveRenderImage, rawData: Data) {
     self.renderImage = renderImage
-    self.dataSize = dataSize
+    self.rawData = rawData
     super.init()
   }
 
   var byteSize: Double {
-    Double(dataSize)
+    Double(rawData.count)
   }
 }
