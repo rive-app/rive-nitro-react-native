@@ -14,9 +14,7 @@ struct ExperimentalViewConfiguration {
   let stateMachineName: String?
   let autoPlay: Bool
   let file: File
-  let alignment: RiveAlignment
-  let fit: RiveFit
-  let layoutScaleFactor: Double
+  let fit: RiveRuntime.Fit
   let bindData: ExperimentalBindData
 }
 
@@ -81,7 +79,8 @@ class RiveReactNativeView: UIView {
             file: config.file,
             artboard: artboard,
             stateMachine: stateMachine,
-            dataBind: dataBind
+            dataBind: dataBind,
+            fit: config.fit
           )
           RCTLog("[RiveReactNativeView] Rive instance created successfully")
 
@@ -104,6 +103,8 @@ class RiveReactNativeView: UIView {
           RCTLogError("[RiveReactNativeView] Failed to configure: \(error)")
         }
       }
+    } else {
+      riveInstance?.fit = config.fit
     }
   }
 
