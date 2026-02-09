@@ -13,14 +13,26 @@ class HybridViewModelTriggerProperty: HybridViewModelTriggerPropertySpec {
   }
 
   func trigger() {
-    // TODO: Experimental API trigger - API changed, needs update
-    // instance.trigger(self.prop)
+    let inst = instance
+    let p = prop
+    Task { @MainActor in
+      inst.fire(trigger: p)
+    }
   }
 
   func addListener(onChanged: @escaping () -> Void) throws -> () -> Void {
-    // TODO: Experimental API trigger stream - API changed, needs update
-    // The triggerStream method may have been removed or renamed
-    return {}
+    let id = UUID()
+    let task = Task { @MainActor [weak self] in
+      guard let self else { return }
+      for try await _ in self.instance.stream(of: self.prop) {
+        onChanged()
+      }
+    }
+    listenerTasks[id] = task
+    return { [weak self] in
+      self?.listenerTasks[id]?.cancel()
+      self?.listenerTasks.removeValue(forKey: id)
+    }
   }
 
   func removeListeners() throws {
