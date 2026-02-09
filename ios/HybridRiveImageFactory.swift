@@ -8,7 +8,7 @@ final class HybridRiveImageFactory: HybridRiveImageFactorySpec {
       guard let renderImage = RiveRenderImage(data: data) else {
         throw RuntimeError.error(withMessage: "Failed to decode image")
       }
-      return HybridRiveImage(renderImage: renderImage, dataSize: data.count)
+      return HybridRiveImage(renderImage: renderImage, rawData: data)
     }
   }
 

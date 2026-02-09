@@ -27,6 +27,7 @@ namespace margelo::nitro::rive {
       prototype.registerHybridMethod("getArtboardCountAsync", &HybridRiveFileSpec::getArtboardCountAsync);
       prototype.registerHybridMethod("getArtboardNamesAsync", &HybridRiveFileSpec::getArtboardNamesAsync);
       prototype.registerHybridMethod("getBindableArtboard", &HybridRiveFileSpec::getBindableArtboard);
+      prototype.registerHybridMethod("getEnums", &HybridRiveFileSpec::getEnums);
     });
   }
 

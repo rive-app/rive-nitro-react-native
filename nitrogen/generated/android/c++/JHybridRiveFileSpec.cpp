@@ -11,6 +11,8 @@
 namespace margelo::nitro::rive { class HybridViewModelSpec; }
 // Forward declaration of `HybridBindableArtboardSpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridBindableArtboardSpec; }
+// Forward declaration of `RiveEnumDefinition` to properly resolve imports.
+namespace margelo::nitro::rive { struct RiveEnumDefinition; }
 // Forward declaration of `ArtboardBy` to properly resolve imports.
 namespace margelo::nitro::rive { struct ArtboardBy; }
 // Forward declaration of `ArtboardByTypes` to properly resolve imports.
@@ -32,6 +34,8 @@ namespace margelo::nitro::rive { class HybridRiveImageSpec; }
 #include <NitroModules/JPromise.hpp>
 #include "HybridBindableArtboardSpec.hpp"
 #include "JHybridBindableArtboardSpec.hpp"
+#include "RiveEnumDefinition.hpp"
+#include "JRiveEnumDefinition.hpp"
 #include "ArtboardBy.hpp"
 #include "JArtboardBy.hpp"
 #include "ArtboardByTypes.hpp"
@@ -221,6 +225,20 @@ namespace margelo::nitro::rive {
     static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JHybridBindableArtboardSpec::JavaPart>(jni::alias_ref<jni::JString> /* name */)>("getBindableArtboard");
     auto __result = method(_javaPart, jni::make_jstring(name));
     return __result->getJHybridBindableArtboardSpec();
+  }
+  std::vector<RiveEnumDefinition> JHybridRiveFileSpec::getEnums() {
+    static const auto method = javaClassStatic()->getMethod<jni::local_ref<jni::JArrayClass<JRiveEnumDefinition>>()>("getEnums");
+    auto __result = method(_javaPart);
+    return [&]() {
+      size_t __size = __result->size();
+      std::vector<RiveEnumDefinition> __vector;
+      __vector.reserve(__size);
+      for (size_t __i = 0; __i < __size; __i++) {
+        auto __element = __result->getElement(__i);
+        __vector.push_back(__element->toCpp());
+      }
+      return __vector;
+    }();
   }
 
 } // namespace margelo::nitro::rive
