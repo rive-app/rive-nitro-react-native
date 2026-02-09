@@ -8,11 +8,11 @@ enum AssetType {
 
   init?(fromName name: String) {
     let lowercased = name.lowercased()
-    if lowercased.contains("image") || lowercased.hasSuffix(".png") || lowercased.hasSuffix(".jpg") || lowercased.hasSuffix(".jpeg") || lowercased.hasSuffix(".webp") {
+    if lowercased.hasSuffix(".png") || lowercased.hasSuffix(".jpg") || lowercased.hasSuffix(".jpeg") || lowercased.hasSuffix(".webp") {
       self = .image
-    } else if lowercased.contains("font") || lowercased.hasSuffix(".ttf") || lowercased.hasSuffix(".otf") {
+    } else if lowercased.hasSuffix(".ttf") || lowercased.hasSuffix(".otf") {
       self = .font
-    } else if lowercased.contains("audio") || lowercased.hasSuffix(".wav") || lowercased.hasSuffix(".mp3") || lowercased.hasSuffix(".flac") || lowercased.hasSuffix(".ogg") {
+    } else if lowercased.hasSuffix(".wav") || lowercased.hasSuffix(".mp3") || lowercased.hasSuffix(".flac") || lowercased.hasSuffix(".ogg") {
       self = .audio
     } else {
       return nil
