@@ -4,7 +4,7 @@ import NitroModules
 class HybridViewModelTriggerProperty: HybridViewModelTriggerPropertySpec {
   private let instance: ViewModelInstance
   private let prop: TriggerProperty
-  private var listenerTasks: [UUID: Task<Void, Never>] = [:]
+  private var listenerTasks: [UUID: Task<Void, any Error>] = [:]
 
   init(instance: ViewModelInstance, path: String) {
     self.instance = instance
