@@ -36,6 +36,7 @@ class HybridRiveFile: HybridRiveFileSpec, RiveViewSource {
   }
   
   func viewModelByIndex(index: Double) throws -> (any HybridViewModelSpec)? {
+    guard index >= 0 else { return nil }
     guard let vm = riveFile?.viewModel(at: UInt(index)) else { return nil }
     return HybridViewModel(viewModel: vm)
   }

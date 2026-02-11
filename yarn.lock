@@ -3820,7 +3820,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native-harness/platform-android@npm:^1.0.0-alpha.20":
+"@react-native-harness/platform-android@npm:^1.0.0-alpha.25":
   version: 1.0.0-canary.1766225407244
   resolution: "@react-native-harness/platform-android@npm:1.0.0-canary.1766225407244"
   dependencies:
@@ -3832,7 +3832,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native-harness/platform-apple@npm:^1.0.0-alpha.20":
+"@react-native-harness/platform-apple@npm:^1.0.0-alpha.25":
   version: 1.0.0-canary.1766225407244
   resolution: "@react-native-harness/platform-apple@npm:1.0.0-canary.1766225407244"
   dependencies:
@@ -14382,7 +14382,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-harness@npm:^1.0.0-alpha.20":
+"react-native-harness@npm:^1.0.0-alpha.25":
   version: 1.0.0-canary.1766225407244
   resolution: "react-native-harness@npm:1.0.0-canary.1766225407244"
   dependencies:
@@ -14454,8 +14454,8 @@ __metadata:
     "@react-native-community/cli": 18.0.0
     "@react-native-community/cli-platform-android": 18.0.0
     "@react-native-community/cli-platform-ios": 18.0.0
-    "@react-native-harness/platform-android": ^1.0.0-alpha.20
-    "@react-native-harness/platform-apple": ^1.0.0-alpha.20
+    "@react-native-harness/platform-android": ^1.0.0-alpha.25
+    "@react-native-harness/platform-apple": ^1.0.0-alpha.25
     "@react-native-picker/picker": ^2.11.4
     "@react-native/babel-preset": 0.79.2
     "@react-native/metro-config": 0.79.2
@@ -14470,7 +14470,7 @@ __metadata:
     react-native: 0.79.2
     react-native-builder-bob: ^0.40.10
     react-native-gesture-handler: 2.29.1
-    react-native-harness: ^1.0.0-alpha.20
+    react-native-harness: ^1.0.0-alpha.25
     react-native-nitro-modules: 0.33.2
     react-native-reanimated: 4.1.5
     react-native-safe-area-context: ^5.4.0
