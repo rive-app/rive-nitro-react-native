@@ -16,6 +16,7 @@ class HybridViewModel(private val viewModel: ViewModel) : HybridViewModelSpec() 
     get() = viewModel.name
 
   override fun createInstanceByIndex(index: Double): HybridViewModelInstanceSpec? {
+    if (index < 0) return null
     try {
       val vmi = viewModel.createInstanceFromIndex(index.toInt())
       return HybridViewModelInstance(vmi)

@@ -24,13 +24,22 @@ class HybridRiveFile : HybridRiveFileSpec() {
     get() = riveFile?.viewModelCount?.toDouble()
 
   override fun viewModelByIndex(index: Double): HybridViewModelSpec? {
-    val vm = riveFile?.getViewModelByIndex(index.toInt()) ?: return null
-    return HybridViewModel(vm)
+    if (index < 0) return null
+    return try {
+      val vm = riveFile?.getViewModelByIndex(index.toInt()) ?: return null
+      HybridViewModel(vm)
+    } catch (e: Exception) {
+      null
+    }
   }
 
   override fun viewModelByName(name: String): HybridViewModelSpec? {
-    val vm = riveFile?.getViewModelByName(name) ?: return null
-    return HybridViewModel(vm)
+    return try {
+      val vm = riveFile?.getViewModelByName(name) ?: return null
+      HybridViewModel(vm)
+    } catch (e: Exception) {
+      null
+    }
   }
 
   override fun defaultArtboardViewModel(artboardBy: ArtboardBy?): HybridViewModelSpec? {
