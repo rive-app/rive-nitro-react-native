@@ -79,8 +79,7 @@ class RiveReactNativeView: UIView {
             file: config.file,
             artboard: artboard,
             stateMachine: stateMachine,
-            dataBind: dataBind,
-            fit: config.fit
+            dataBind: dataBind
           )
           RCTLog("[RiveReactNativeView] Rive instance created successfully")
 
@@ -88,6 +87,11 @@ class RiveReactNativeView: UIView {
           RCTLog("[RiveReactNativeView] Setting up RiveUIView...")
           self.setupRiveUIView(with: rive)
           RCTLog("[RiveReactNativeView] RiveUIView setup complete")
+
+          // Set fit after view is in the hierarchy — passing fit to
+          // the Rive() constructor breaks .layout mode because the
+          // MTKView drawable isn't ready yet at construction time.
+          rive.fit = config.fit
 
           if config.autoPlay {
             self.isPaused = false
