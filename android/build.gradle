@@ -111,7 +111,7 @@ android {
     targetCompatibility JavaVersion.VERSION_1_8
   }
 
-  def useNewRiveApi = findProperty('USE_RIVE_NEW_API') == 'true'
+  def useNewRiveApi = rootProject.findProperty('USE_RIVE_NEW_API') == 'true'
 
   sourceSets {
     main {
