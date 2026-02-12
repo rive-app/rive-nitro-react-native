@@ -118,10 +118,17 @@ android {
     targetCompatibility JavaVersion.VERSION_1_8
   }
 
+  def useNewRiveApi = findProperty('USE_RIVE_NEW_API') == 'true'
+
   sourceSets {
     main {
       java.srcDirs += ["generated/java",
                        "generated/jni"]
+      if (useNewRiveApi) {
+        java.srcDirs += ["src/experimental/java"]
+      } else {
+        java.srcDirs += ["src/legacy/java"]
+      }
     }
   }
 }
