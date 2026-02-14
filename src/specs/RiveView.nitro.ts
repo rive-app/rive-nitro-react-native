@@ -25,7 +25,7 @@ export interface DataBindByName {
 export interface RiveViewProps extends HybridViewProps {
   /** Name of the artboard to display from the Rive file */
   artboardName?: string;
-  /** Name of the state mgachine to play */
+  /** Name of the state machine to play */
   stateMachineName?: string;
   /** Whether to automatically start playing the state machine */
   autoPlay?: boolean;

@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.1](https://github.com/rive-app/rive-nitro-react-native/compare/v0.2.0...v0.2.1) (2026-01-23)
+
+
+### Features
+
+* useViewModelInstance use name and artboardName when getting vmi from a file ([#129](https://github.com/rive-app/rive-nitro-react-native/issues/129)) ([5615654](https://github.com/rive-app/rive-nitro-react-native/commit/56156545442b8f529d559cdcf96df523026fbe16))
+
 ## [0.2.0](https://github.com/rive-app/rive-nitro-react-native/compare/v0.1.5...v0.2.0) (2026-01-20)
 
 
