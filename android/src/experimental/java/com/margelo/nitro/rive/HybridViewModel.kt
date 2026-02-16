@@ -16,23 +16,31 @@ class HybridViewModel(
   private val riveFile: RiveFile,
   private val riveWorker: CommandQueue,
   private val viewModelName: String,
-  private val parentFile: HybridRiveFile
+  private val parentFile: HybridRiveFile,
+  private val vmSource: ViewModelSource = ViewModelSource.Named(viewModelName)
 ) : HybridViewModelSpec() {
   companion object {
     private const val TAG = "HybridViewModel"
   }
 
   override val propertyCount: Double
-    get() = 0.0
+    get() = try {
+      runBlocking { riveFile.getViewModelProperties(viewModelName) }.size.toDouble()
+    } catch (e: Exception) {
+      Log.e(TAG, "propertyCount failed", e)
+      0.0
+    }
 
   override val instanceCount: Double
-    get() = 0.0
+    get() = try {
+      runBlocking { riveFile.getViewModelInstanceNames(viewModelName) }.size.toDouble()
+    } catch (e: Exception) {
+      Log.e(TAG, "instanceCount failed", e)
+      0.0
+    }
 
   override val modelName: String
     get() = viewModelName
-
-  private val vmSource: ViewModelSource.Named
-    get() = ViewModelSource.Named(viewModelName)
 
   override fun createInstanceByIndex(index: Double): HybridViewModelInstanceSpec? {
     return createDefaultInstance()
@@ -40,9 +48,11 @@ class HybridViewModel(
 
   override fun createInstanceByName(name: String): HybridViewModelInstanceSpec? {
     return try {
+      val instanceNames = runBlocking { riveFile.getViewModelInstanceNames(viewModelName) }
+      if (!instanceNames.contains(name)) return null
       val source = vmSource.namedInstance(name)
       val vmi = ViewModelInstance.fromFile(riveFile, source)
-      HybridViewModelInstance(vmi, riveWorker, parentFile)
+      HybridViewModelInstance(vmi, riveWorker, parentFile, viewModelName, name)
     } catch (e: Exception) {
       Log.e(TAG, "createInstanceByName('$name') failed", e)
       null
@@ -53,7 +63,7 @@ class HybridViewModel(
     return try {
       val source = vmSource.defaultInstance()
       val vmi = ViewModelInstance.fromFile(riveFile, source)
-      HybridViewModelInstance(vmi, riveWorker, parentFile)
+      HybridViewModelInstance(vmi, riveWorker, parentFile, viewModelName)
     } catch (e: Exception) {
       Log.e(TAG, "createDefaultInstance failed", e)
       null
@@ -64,7 +74,7 @@ class HybridViewModel(
     return try {
       val source = vmSource.blankInstance()
       val vmi = ViewModelInstance.fromFile(riveFile, source)
-      HybridViewModelInstance(vmi, riveWorker, parentFile)
+      HybridViewModelInstance(vmi, riveWorker, parentFile, viewModelName)
     } catch (e: Exception) {
       Log.e(TAG, "createInstance (blank) failed", e)
       null

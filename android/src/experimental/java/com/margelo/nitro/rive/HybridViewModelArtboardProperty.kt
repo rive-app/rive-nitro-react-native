@@ -19,9 +19,9 @@ class HybridViewModelArtboardProperty(
 
   override fun set(artboard: HybridBindableArtboardSpec?) {
     val hybridArtboard = artboard as? HybridBindableArtboard ?: return
-    val file = riveFile.riveFile ?: return
+    val sourceFile = hybridArtboard.file.riveFile ?: return
     try {
-      val newArtboard = Artboard.fromFile(file, hybridArtboard.artboardName)
+      val newArtboard = Artboard.fromFile(sourceFile, hybridArtboard.artboardName)
       instance.setArtboard(path, newArtboard)
     } catch (e: Exception) {
       Log.e(TAG, "Failed to set artboard for path '$path'", e)
