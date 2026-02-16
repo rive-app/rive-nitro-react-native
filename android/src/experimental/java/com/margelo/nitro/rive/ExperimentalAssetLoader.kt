@@ -110,9 +110,14 @@ object ExperimentalAssetLoader {
     // JPEG: FF D8 FF
     if (data[0] == 0xFF.toByte() && data[1] == 0xD8.toByte() &&
       data[2] == 0xFF.toByte()) return AssetType.IMAGE
-    // WebP: RIFF....WEBP
+    // RIFF container: WebP (RIFF....WEBP) or WAV (RIFF....WAVE)
     if (data[0] == 0x52.toByte() && data[1] == 0x49.toByte() &&
-      data[2] == 0x46.toByte() && data[3] == 0x46.toByte()) return AssetType.IMAGE
+      data[2] == 0x46.toByte() && data[3] == 0x46.toByte()) {
+      if (data.size >= 12 &&
+        data[8] == 0x57.toByte() && data[9] == 0x41.toByte() &&
+        data[10] == 0x56.toByte() && data[11] == 0x45.toByte()) return AssetType.AUDIO // "WAVE"
+      return AssetType.IMAGE // assume WebP for other RIFF
+    }
     // ID3 (MP3): 49 44 33
     if (data[0] == 0x49.toByte() && data[1] == 0x44.toByte() &&
       data[2] == 0x33.toByte()) return AssetType.AUDIO
