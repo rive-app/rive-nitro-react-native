@@ -49,7 +49,11 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
     private const val TAG = "HybridRiveView"
   }
 
-  override val view: RiveReactNativeView = RiveReactNativeView(context)
+  override val view: RiveReactNativeView = RiveReactNativeView(context).apply {
+    onError = { msg ->
+      this@HybridRiveView.onError(RiveError(type = RiveErrorType.UNKNOWN, message = msg))
+    }
+  }
   private var needsReload = false
   private var dataBindingChanged = false
   private var initialUpdate = true
@@ -157,13 +161,15 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
       val hybridFile = file as? HybridRiveFile
       val riveFile = hybridFile?.riveFile ?: return@logged
 
+      val convertedFit = convertFit(fit, layoutScaleFactor?.toFloat()) ?: DefaultConfiguration.FIT
       val config = ViewConfiguration(
         artboardName = artboardName,
         stateMachineName = stateMachineName,
         autoPlay = autoPlay ?: DefaultConfiguration.AUTOPLAY,
         riveFile = riveFile,
+        riveWorker = HybridRiveFileFactory.getSharedWorker(),
         alignment = convertAlignment(alignment) ?: DefaultConfiguration.ALIGNMENT,
-        fit = convertFit(fit) ?: DefaultConfiguration.FIT,
+        fit = convertedFit,
         layoutScaleFactor = layoutScaleFactor?.toFloat() ?: DefaultConfiguration.LAYOUTSCALEFACTOR,
         bindData = dataBind.toBindData()
       )
@@ -225,7 +231,7 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
     }
   }
 
-  private fun convertFit(fit: Fit?): RiveFit? {
+  private fun convertFit(fit: Fit?, layoutScaleFactor: Float? = null): RiveFit? {
     if (fit == null) return null
     return when (fit) {
       Fit.FILL -> RiveFit.Fill
@@ -235,7 +241,7 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
       Fit.FITHEIGHT -> RiveFit.FitHeight()
       Fit.NONE -> RiveFit.None()
       Fit.SCALEDOWN -> RiveFit.ScaleDown()
-      Fit.LAYOUT -> RiveFit.Layout()
+      Fit.LAYOUT -> RiveFit.Layout(scaleFactor = layoutScaleFactor ?: 1f)
     }
   }
 

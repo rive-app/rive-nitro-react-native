@@ -4,10 +4,13 @@ import android.util.Log
 import androidx.annotation.Keep
 import app.rive.Artboard
 import app.rive.RiveFile
+import app.rive.ViewModelInstance
 import app.rive.ViewModelSource
 import app.rive.core.CommandQueue
+import app.rive.runtime.kotlin.core.ViewModel.PropertyDataType
 import com.facebook.proguard.annotations.DoNotStrip
 import java.lang.ref.WeakReference
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 
 @Keep
@@ -61,18 +64,23 @@ class HybridRiveFile(
   override fun defaultArtboardViewModel(artboardBy: ArtboardBy?): HybridViewModelSpec? {
     val file = riveFile ?: return null
     return try {
-      val artboardNames = runBlocking { file.getArtboardNames() }
       val artboardName = when (artboardBy?.type) {
-        ArtboardByTypes.INDEX -> artboardNames.getOrNull(artboardBy.index!!.toInt())
+        ArtboardByTypes.INDEX -> {
+          val artboardNames = runBlocking { file.getArtboardNames() }
+          artboardNames.getOrNull(artboardBy.index!!.toInt())
+        }
         ArtboardByTypes.NAME -> artboardBy.name
-        null -> artboardNames.firstOrNull()
-      } ?: return null
+        null -> null
+      }
 
-      val artboard = Artboard.fromFile(file, artboardName)
+      val artboard = if (artboardName != null) {
+        Artboard.fromFile(file, artboardName)
+      } else {
+        Artboard.fromFile(file)
+      }
       val vmSource = ViewModelSource.DefaultForArtboard(artboard)
-      val vmNames = runBlocking { file.getViewModelNames() }
-      if (vmNames.isEmpty()) return null
-      HybridViewModel(file, riveWorker, vmNames.first(), this)
+      val resolvedName = runBlocking { resolveDefaultVMName(file, vmSource) }
+      HybridViewModel(file, riveWorker, resolvedName, this, vmSource)
     } catch (e: Exception) {
       Log.e(TAG, "defaultArtboardViewModel failed", e)
       null
@@ -131,6 +139,49 @@ class HybridRiveFile(
 
   fun unregisterView(view: HybridRiveView) {
     weakViews.removeAll { it.get() == view }
+  }
+
+  /**
+   * Resolves the actual ViewModel name for a DefaultForArtboard source.
+   * The new Rive SDK doesn't expose VM name from DefaultForArtboard directly,
+   * so we compare property values between the artboard VMI and named VMIs.
+   */
+  private suspend fun resolveDefaultVMName(
+    file: RiveFile,
+    vmSource: ViewModelSource.DefaultForArtboard
+  ): String {
+    val vmNames = file.getViewModelNames()
+    if (vmNames.size <= 1) return vmNames.firstOrNull() ?: "default"
+
+    val artboardVmi = ViewModelInstance.fromFile(file, vmSource.defaultInstance())
+    try {
+      // Find a string property to use as identifier for value comparison
+      val testPropName = vmNames.firstNotNullOfOrNull { name ->
+        file.getViewModelProperties(name)
+          .firstOrNull { it.type == PropertyDataType.STRING }
+          ?.name
+      } ?: return vmNames.first()
+
+      val artboardValue = try {
+        artboardVmi.getStringFlow(testPropName).first()
+      } catch (_: Exception) { return vmNames.first() }
+
+      for (name in vmNames) {
+        val namedVmi = ViewModelInstance.fromFile(file, ViewModelSource.Named(name).defaultInstance())
+        try {
+          val namedValue = try {
+            namedVmi.getStringFlow(testPropName).first()
+          } catch (_: Exception) { continue }
+          if (namedValue == artboardValue) return name
+        } finally {
+          namedVmi.close()
+        }
+      }
+    } finally {
+      artboardVmi.close()
+    }
+
+    return vmNames.firstOrNull() ?: "default"
   }
 
   override fun dispose() {
