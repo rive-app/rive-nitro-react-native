@@ -14,7 +14,7 @@ export default {
   runners: [
     androidPlatform({
       name: 'android',
-      device: androidEmulator(process.env.ANDROID_AVD || 'Pixel_8_API_35'),
+      device: androidEmulator(process.env.ANDROID_AVD || 'Medium_Phone_API_35'),
       bundleId: 'rive.example',
     }),
     applePlatform({

@@ -28,7 +28,7 @@ class HybridViewModelColorProperty(
       }
     }
     set(value) {
-      instance.setColor(path, value.toInt())
+      instance.setColor(path, value.toLong().toInt())
     }
 
   override fun addListener(onChanged: (value: Double) -> Unit): () -> Unit {
