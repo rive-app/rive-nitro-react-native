@@ -50,7 +50,7 @@ namespace margelo::nitro::rive {
 
   public:
     // Properties
-    
+    std::string getBackend() override;
 
   public:
     // Methods

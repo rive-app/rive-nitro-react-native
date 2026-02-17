@@ -10,7 +10,7 @@ import NitroModules
 /// See ``HybridRiveFileFactorySpec``
 public protocol HybridRiveFileFactorySpec_protocol: HybridObject {
   // Properties
-  
+  var backend: String { get }
 
   // Methods
   func fromURL(url: String, loadCdn: Bool, referencedAssets: ReferencedAssetsType?) throws -> Promise<(any HybridRiveFileSpec)>

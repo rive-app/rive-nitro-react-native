@@ -16,12 +16,12 @@ namespace margelo::nitro::rive { struct ResolvedReferencedAsset; }
 // Forward declaration of `HybridRiveImageSpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridRiveImageSpec; }
 
+#include <string>
 #include <memory>
 #include "HybridRiveFileSpec.hpp"
 #include <NitroModules/Promise.hpp>
 #include <NitroModules/JPromise.hpp>
 #include "JHybridRiveFileSpec.hpp"
-#include <string>
 #include "ReferencedAssetsType.hpp"
 #include <optional>
 #include "JReferencedAssetsType.hpp"
@@ -63,7 +63,11 @@ namespace margelo::nitro::rive {
   }
 
   // Properties
-  
+  std::string JHybridRiveFileFactorySpec::getBackend() {
+    static const auto method = javaClassStatic()->getMethod<jni::local_ref<jni::JString>()>("getBackend");
+    auto __result = method(_javaPart);
+    return __result->toStdString();
+  }
 
   // Methods
   std::shared_ptr<Promise<std::shared_ptr<HybridRiveFileSpec>>> JHybridRiveFileFactorySpec::fromURL(const std::string& url, bool loadCdn, const std::optional<ReferencedAssetsType>& referencedAssets) {
