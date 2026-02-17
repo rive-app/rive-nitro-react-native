@@ -35,8 +35,10 @@ export interface RiveFile
   extends HybridObject<{ ios: 'swift'; android: 'kotlin' }> {
   /** @deprecated Use getViewModelNamesAsync instead */
   readonly viewModelCount?: number;
-  /** @deprecated Use getViewModelNamesAsync + viewModelByNameAsync instead */
+  /** @deprecated Use viewModelByIndexAsync instead */
   viewModelByIndex(index: number): ViewModel | undefined;
+  /** Get a view model by index */
+  viewModelByIndexAsync(index: number): Promise<ViewModel | undefined>;
   /** @deprecated Use viewModelByNameAsync instead */
   viewModelByName(name: string): ViewModel | undefined;
   /** @deprecated Use defaultArtboardViewModelAsync instead */

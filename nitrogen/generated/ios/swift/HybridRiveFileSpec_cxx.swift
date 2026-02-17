@@ -177,6 +177,34 @@ open class HybridRiveFileSpec_cxx {
   }
   
   @inline(__always)
+  public final func viewModelByIndexAsync(index: Double) -> bridge.Result_std__shared_ptr_Promise_std__optional_std__shared_ptr_HybridViewModelSpec_____ {
+    do {
+      let __result = try self.__implementation.viewModelByIndexAsync(index: index)
+      let __resultCpp = { () -> bridge.std__shared_ptr_Promise_std__optional_std__shared_ptr_HybridViewModelSpec____ in
+        let __promise = bridge.create_std__shared_ptr_Promise_std__optional_std__shared_ptr_HybridViewModelSpec____()
+        let __promiseHolder = bridge.wrap_std__shared_ptr_Promise_std__optional_std__shared_ptr_HybridViewModelSpec____(__promise)
+        __result
+          .then({ __result in __promiseHolder.resolve({ () -> bridge.std__optional_std__shared_ptr_HybridViewModelSpec__ in
+              if let __unwrappedValue = __result {
+                return bridge.create_std__optional_std__shared_ptr_HybridViewModelSpec__({ () -> bridge.std__shared_ptr_HybridViewModelSpec_ in
+                  let __cxxWrapped = __unwrappedValue.getCxxWrapper()
+                  return __cxxWrapped.getCxxPart()
+                }())
+              } else {
+                return .init()
+              }
+            }()) })
+          .catch({ __error in __promiseHolder.reject(__error.toCpp()) })
+        return __promise
+      }()
+      return bridge.create_Result_std__shared_ptr_Promise_std__optional_std__shared_ptr_HybridViewModelSpec_____(__resultCpp)
+    } catch (let __error) {
+      let __exceptionPtr = __error.toCpp()
+      return bridge.create_Result_std__shared_ptr_Promise_std__optional_std__shared_ptr_HybridViewModelSpec_____(__exceptionPtr)
+    }
+  }
+  
+  @inline(__always)
   public final func viewModelByName(name: std.string) -> bridge.Result_std__optional_std__shared_ptr_HybridViewModelSpec___ {
     do {
       let __result = try self.__implementation.viewModelByName(name: String(name))
