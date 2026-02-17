@@ -16,6 +16,7 @@ class HybridViewModel(private val viewModel: ViewModel) : HybridViewModelSpec() 
   override val modelName: String
     get() = viewModel.name
 
+  // Deprecated: Use createInstanceByIndexAsync instead
   override fun createInstanceByIndex(index: Double): HybridViewModelInstanceSpec? {
     if (index < 0) return null
     try {
@@ -23,6 +24,17 @@ class HybridViewModel(private val viewModel: ViewModel) : HybridViewModelSpec() 
       return HybridViewModelInstance(vmi)
     } catch (e: ViewModelException) {
       return null
+    }
+  }
+
+  override fun createInstanceByIndexAsync(index: Double): Promise<HybridViewModelInstanceSpec?> {
+    return Promise.async {
+      try {
+        val vmi = viewModel.createInstanceFromIndex(index.toInt())
+        HybridViewModelInstance(vmi)
+      } catch (e: ViewModelException) {
+        null
+      }
     }
   }
 

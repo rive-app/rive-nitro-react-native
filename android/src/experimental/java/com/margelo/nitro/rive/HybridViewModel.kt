@@ -8,6 +8,7 @@ import app.rive.ViewModelInstanceSource
 import app.rive.ViewModelSource
 import app.rive.core.CommandQueue
 import com.facebook.proguard.annotations.DoNotStrip
+import com.margelo.nitro.core.Promise
 import kotlinx.coroutines.runBlocking
 
 @Keep
@@ -42,8 +43,17 @@ class HybridViewModel(
   override val modelName: String
     get() = viewModelName
 
+  // Deprecated: Use createInstanceByIndexAsync instead
   override fun createInstanceByIndex(index: Double): HybridViewModelInstanceSpec? {
     return createDefaultInstance()
+  }
+
+  override fun createInstanceByIndexAsync(index: Double): Promise<HybridViewModelInstanceSpec?> {
+    return Promise.async {
+      val source = vmSource.defaultInstance()
+      val vmi = ViewModelInstance.fromFile(riveFile, source)
+      HybridViewModelInstance(vmi, riveWorker, parentFile, viewModelName)
+    }
   }
 
   override fun createInstanceByName(name: String): HybridViewModelInstanceSpec? {

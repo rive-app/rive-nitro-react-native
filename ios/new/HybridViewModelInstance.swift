@@ -55,19 +55,24 @@ class HybridViewModelInstance: HybridViewModelInstanceSpec {
     return HybridViewModelArtboardProperty(instance: viewModelInstance, path: path)
   }
 
-  func viewModel(path: String) throws -> (any HybridViewModelInstanceSpec)? {
-    // Note: Experimental API doesn't throw for non-existent paths - it returns
-    // an invalid ViewModelInstance and logs an error. We can't validate here.
+  private func viewModelImpl(path: String) async throws -> (any HybridViewModelInstanceSpec)? {
     let prop = ViewModelInstanceProperty(path: path)
     do {
-      return try blockingAsync {
-        let vmi = try await self.viewModelInstance.value(of: prop)
-        return HybridViewModelInstance(viewModelInstance: vmi, worker: self.worker)
-      }
+      let vmi = try await self.viewModelInstance.value(of: prop)
+      return HybridViewModelInstance(viewModelInstance: vmi, worker: self.worker)
     } catch {
       RCTLogError("[ViewModelInstance] viewModel(path: '\(path)') failed: \(error)")
       return nil
     }
+  }
+
+  // Deprecated: Use viewModelAsync instead
+  func viewModel(path: String) throws -> (any HybridViewModelInstanceSpec)? {
+    return try blockingAsync { try await self.viewModelImpl(path: path) }
+  }
+
+  func viewModelAsync(path: String) throws -> Promise<(any HybridViewModelInstanceSpec)?> {
+    return Promise.async { try await self.viewModelImpl(path: path) }
   }
 
   func replaceViewModel(path: String, instance: any HybridViewModelInstanceSpec) throws {

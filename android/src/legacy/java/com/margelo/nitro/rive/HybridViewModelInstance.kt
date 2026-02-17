@@ -61,8 +61,17 @@ class HybridViewModelInstance(val viewModelInstance: ViewModelInstance) : Hybrid
     HybridViewModelArtboardProperty(viewModelInstance.getArtboardProperty(path))
   }
 
+  // Deprecated: Use viewModelAsync instead
   override fun viewModel(path: String) = getPropertyOrNull {
     HybridViewModelInstance(viewModelInstance.getInstanceProperty(path))
+  }
+
+  override fun viewModelAsync(path: String): Promise<HybridViewModelInstanceSpec?> {
+    return Promise.async {
+      getPropertyOrNull {
+        HybridViewModelInstance(viewModelInstance.getInstanceProperty(path))
+      }
+    }
   }
 
   override fun replaceViewModel(path: String, instance: HybridViewModelInstanceSpec) {
