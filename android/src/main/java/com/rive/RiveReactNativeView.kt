@@ -77,6 +77,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
   private var eventListeners: MutableList<RiveFileController.RiveEventListener> = mutableListOf()
   private val viewReadyDeferred = CompletableDeferred<Boolean>()
   private var _activeStateMachineName: String? = null
+  private var _pendingBindData: BindData? = null
   private var willDispose = false
 
   init {
@@ -119,8 +120,8 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
       riveAnimationView?.layoutScaleFactor = config.layoutScaleFactor
     }
 
-    if (dataBindingChanged || initialUpdate) {
-      applyDataBinding(config.bindData)
+    if (dataBindingChanged || initialUpdate || reload) {
+      applyDataBinding(config.bindData, config.autoPlay)
     }
 
     viewReadyDeferred.complete(true)
@@ -142,50 +143,36 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
     }
   }
 
-  fun applyDataBinding(bindData: BindData) {
+  fun applyDataBinding(bindData: BindData, autoPlay: Boolean) {
     val stateMachines = riveAnimationView?.controller?.stateMachines
-    if (stateMachines.isNullOrEmpty()) return
-
-    val stateMachine = stateMachines.first()
-
-    when (bindData) {
-      is BindData.None -> {
-        stateMachine.viewModelInstance = null
-      }
-      is BindData.Auto -> {
-        val artboard = riveAnimationView?.controller?.activeArtboard
-        val file = riveAnimationView?.controller?.file
-        if (artboard != null && file != null) {
-          try {
-            file.defaultViewModelForArtboard(artboard)
-          } catch (e: ViewModelException) {
-            null
-          }?.let {
-            val instance = it.createDefaultInstance()
-            stateMachine.viewModelInstance = instance
-          }
-        }
-      }
-      is BindData.Instance -> {
-        stateMachine.viewModelInstance = bindData.instance
-      }
-      is BindData.ByName -> {
-        val artboard = riveAnimationView?.controller?.activeArtboard
-        val file = riveAnimationView?.controller?.file
-        if (artboard != null && file != null) {
-          val viewModel = file.defaultViewModelForArtboard(artboard)
-          val instance = viewModel.createInstanceFromName(bindData.name)
-          stateMachine.viewModelInstance = instance
-        }
-      }
+    if (stateMachines.isNullOrEmpty()) {
+      _pendingBindData = bindData
+      return
     }
 
-    stateMachine.name.let { smName ->
-      riveAnimationView?.play(smName, isStateMachine = true)
+    bindToStateMachine(bindData)
+
+    if (autoPlay) {
+      stateMachines.first().name.let { smName ->
+        riveAnimationView?.play(smName, isStateMachine = true)
+      }
     }
   }
 
-  fun play() = riveAnimationView?.play()
+  fun play() {
+    if (_activeStateMachineName == null) {
+      _activeStateMachineName = getSafeStateMachineName()
+    }
+    riveAnimationView?.play()
+    applyPendingBindData()
+  }
+
+  private fun applyPendingBindData() {
+    _pendingBindData?.let { bindData ->
+      _pendingBindData = null
+      bindToStateMachine(bindData)
+    }
+  }
 
   fun pause() = riveAnimationView?.pause()
 
@@ -324,6 +311,44 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
 
   //region Internal
 
+  private fun bindToStateMachine(bindData: BindData) {
+    val stateMachines = riveAnimationView?.controller?.stateMachines
+    if (stateMachines.isNullOrEmpty()) return
+    val stateMachine = stateMachines.first()
+
+    when (bindData) {
+      is BindData.None -> {
+        stateMachine.viewModelInstance = null
+      }
+      is BindData.Auto -> {
+        val artboard = riveAnimationView?.controller?.activeArtboard
+        val file = riveAnimationView?.controller?.file
+        if (artboard != null && file != null) {
+          try {
+            file.defaultViewModelForArtboard(artboard)
+          } catch (e: ViewModelException) {
+            null
+          }?.let {
+            val instance = it.createDefaultInstance()
+            stateMachine.viewModelInstance = instance
+          }
+        }
+      }
+      is BindData.Instance -> {
+        stateMachine.viewModelInstance = bindData.instance
+      }
+      is BindData.ByName -> {
+        val artboard = riveAnimationView?.controller?.activeArtboard
+        val file = riveAnimationView?.controller?.file
+        if (artboard != null && file != null) {
+          val viewModel = file.defaultViewModelForArtboard(artboard)
+          val instance = viewModel.createInstanceFromName(bindData.name)
+          stateMachine.viewModelInstance = instance
+        }
+      }
+    }
+  }
+
   private fun convertEventProperties(properties: Map<String, Any>?): Map<String, EventPropertiesOutput>? {
     if (properties == null) return null
 
@@ -363,24 +388,17 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
     }
   }
 
-  // TODO: this is throwing when autoplay is false
-  // TODO: This is a temporary solution to get the state machine name as Android supports
+  // This is a temporary solution to get the state machine name as Android supports
   // playing multiple state machines, but in React Native we only allow playing one.
   /**
-   * Gets the name of the active state machine.
-   * @throws Error if the state machine name could not be found
-   * @return The name of the state machine that "is playing" / "will be played"
+   * Gets the name of the active state machine, or null if no state machines are loaded yet
+   * (e.g. when autoPlay is false and the state machine hasn't been started).
+   * @return The name of the state machine, or null
    */
-  private fun getSafeStateMachineName(): String {
-    try {
-      val stateMachines = riveAnimationView?.controller?.stateMachines
-      if (stateMachines.isNullOrEmpty()) {
-        throw Exception("No state machines found in the Rive file")
-      }
-      return stateMachines.first().name
-    } catch (e: Exception) {
-      throw Error(e.message)
-    }
+  private fun getSafeStateMachineName(): String? {
+    val stateMachines = riveAnimationView?.controller?.stateMachines
+    if (stateMachines.isNullOrEmpty()) return null
+    return stateMachines.first().name
   }
 
   /**
