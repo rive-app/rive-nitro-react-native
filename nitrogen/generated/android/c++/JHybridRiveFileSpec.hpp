@@ -57,6 +57,7 @@ namespace margelo::nitro::rive {
   public:
     // Methods
     std::optional<std::shared_ptr<HybridViewModelSpec>> viewModelByIndex(double index) override;
+    std::shared_ptr<Promise<std::optional<std::shared_ptr<HybridViewModelSpec>>>> viewModelByIndexAsync(double index) override;
     std::optional<std::shared_ptr<HybridViewModelSpec>> viewModelByName(const std::string& name) override;
     std::optional<std::shared_ptr<HybridViewModelSpec>> defaultArtboardViewModel(const std::optional<ArtboardBy>& artboardBy) override;
     void updateReferencedAssets(const ReferencedAssetsType& referencedAssets) override;

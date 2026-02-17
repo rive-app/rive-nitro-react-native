@@ -35,8 +35,6 @@ namespace margelo::nitro::rive { class HybridRiveImageSpec; }
 #include "HybridBindableArtboardSpec.hpp"
 #include "JHybridBindableArtboardSpec.hpp"
 #include "RiveEnumDefinition.hpp"
-#include <NitroModules/Promise.hpp>
-#include <NitroModules/JPromise.hpp>
 #include "JRiveEnumDefinition.hpp"
 #include "ArtboardBy.hpp"
 #include "JArtboardBy.hpp"
@@ -110,6 +108,22 @@ namespace margelo::nitro::rive {
     static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JHybridViewModelSpec::JavaPart>(double /* index */)>("viewModelByIndex");
     auto __result = method(_javaPart, index);
     return __result != nullptr ? std::make_optional(__result->getJHybridViewModelSpec()) : std::nullopt;
+  }
+  std::shared_ptr<Promise<std::optional<std::shared_ptr<HybridViewModelSpec>>>> JHybridRiveFileSpec::viewModelByIndexAsync(double index) {
+    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(double /* index */)>("viewModelByIndexAsync");
+    auto __result = method(_javaPart, index);
+    return [&]() {
+      auto __promise = Promise<std::optional<std::shared_ptr<HybridViewModelSpec>>>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& __boxedResult) {
+        auto __result = jni::static_ref_cast<JHybridViewModelSpec::javaobject>(__boxedResult);
+        __promise->resolve(__result != nullptr ? std::make_optional(__result->cthis()->shared_cast<JHybridViewModelSpec>()) : std::nullopt);
+      });
+      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
+        jni::JniException __jniError(__throwable);
+        __promise->reject(std::make_exception_ptr(__jniError));
+      });
+      return __promise;
+    }();
   }
   std::optional<std::shared_ptr<HybridViewModelSpec>> JHybridRiveFileSpec::viewModelByName(const std::string& name) {
     static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JHybridViewModelSpec::JavaPart>(jni::alias_ref<jni::JString> /* name */)>("viewModelByName");

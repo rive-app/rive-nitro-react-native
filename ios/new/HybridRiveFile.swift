@@ -25,12 +25,21 @@ class HybridRiveFile: HybridRiveFileSpec {
     }
   }
 
-  func viewModelByIndex(index: Double) throws -> (any HybridViewModelSpec)? {
+  private func viewModelByIndexImpl(index: Double) async throws -> (any HybridViewModelSpec)? {
     guard let file = file, let worker = worker else { return nil }
-    let names = try blockingAsync { try await file.getViewModelNames() }
+    let names = try await file.getViewModelNames()
     let idx = Int(index)
     guard idx >= 0 && idx < names.count else { return nil }
     return HybridViewModel(file: file, vmName: names[idx], worker: worker)
+  }
+
+  // Deprecated: Use viewModelByIndexAsync instead
+  func viewModelByIndex(index: Double) throws -> (any HybridViewModelSpec)? {
+    return try blockingAsync { try await self.viewModelByIndexImpl(index: index) }
+  }
+
+  func viewModelByIndexAsync(index: Double) throws -> Promise<(any HybridViewModelSpec)?> {
+    return Promise.async { try await self.viewModelByIndexImpl(index: index) }
   }
 
   func viewModelByName(name: String) throws -> (any HybridViewModelSpec)? {
@@ -107,7 +116,7 @@ class HybridRiveFile: HybridRiveFileSpec {
   }
 
   func getEnums() throws -> Promise<[RiveEnumDefinition]> {
-    guard let file = file else { return Promise.resolved([]) }
+    guard let file = file else { return Promise.resolved(withResult: []) }
     return Promise.async {
       let viewModelEnums = try await file.getViewModelEnums()
       return viewModelEnums.map { vmEnum in

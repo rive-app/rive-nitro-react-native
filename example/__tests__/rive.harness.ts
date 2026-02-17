@@ -30,12 +30,12 @@ describe('ViewModel', () => {
     const instance = vm?.createDefaultInstance();
     expect(instance).toBeDefined();
 
-    const vm1 = instance?.viewModel('vm1');
-    const vm2 = instance?.viewModel('vm2');
+    const vm1 = await instance?.viewModelAsync('vm1');
+    const vm2 = await instance?.viewModelAsync('vm2');
     expect(vm1).toBeDefined();
     expect(vm2).toBeDefined();
 
-    expect(instance?.viewModel('nonexistent')).toBeUndefined();
+    expect(await instance?.viewModelAsync('nonexistent')).toBeUndefined();
 
     expect(vm1?.instanceName).toBeDefined();
     expect(typeof vm1?.instanceName).toBe('string');
@@ -48,7 +48,7 @@ describe('ViewModel', () => {
     const instance = vm?.createDefaultInstance();
     expect(instance).toBeDefined();
 
-    const vm2Instance = instance?.viewModel('vm2');
+    const vm2Instance = await instance?.viewModelAsync('vm2');
     expect(vm2Instance).toBeDefined();
 
     const vm2NameProp = vm2Instance?.stringProperty('name');
@@ -58,7 +58,7 @@ describe('ViewModel', () => {
 
     instance?.replaceViewModel('vm1', vm2Instance!);
 
-    const vm1AfterReplace = instance?.viewModel('vm1');
+    const vm1AfterReplace = await instance?.viewModelAsync('vm1');
     const vm1NameProp = vm1AfterReplace?.stringProperty('name');
     // Android experimental backend doesn't support replaceViewModel yet (no-op)
     const val = vm1NameProp?.value;

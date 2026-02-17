@@ -55,9 +55,17 @@ class HybridViewModelInstance: HybridViewModelInstanceSpec {
     return HybridViewModelArtboardProperty(property: property)
   }
 
+  // Deprecated: Use viewModelAsync instead
   func viewModel(path: String) throws -> (any HybridViewModelInstanceSpec)? {
     guard let instance = viewModelInstance?.viewModelInstanceProperty(fromPath: path) else { return nil }
     return HybridViewModelInstance(viewModelInstance: instance)
+  }
+
+  func viewModelAsync(path: String) throws -> Promise<(any HybridViewModelInstanceSpec)?> {
+    return Promise.async {
+      guard let instance = self.viewModelInstance?.viewModelInstanceProperty(fromPath: path) else { return nil }
+      return HybridViewModelInstance(viewModelInstance: instance)
+    }
   }
 
   func replaceViewModel(path: String, instance: any HybridViewModelInstanceSpec) throws {
