@@ -84,6 +84,8 @@ export interface RiveFileFactory extends HybridObject<{
   ios: 'swift';
   android: 'kotlin';
 }> {
+  /** Which backend is in use: "legacy" or "experimental" */
+  readonly backend: string;
   fromURL(
     url: string,
     loadCdn: boolean,

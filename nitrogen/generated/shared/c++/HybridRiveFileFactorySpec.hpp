@@ -18,10 +18,10 @@ namespace margelo::nitro::rive { class HybridRiveFileSpec; }
 // Forward declaration of `ReferencedAssetsType` to properly resolve imports.
 namespace margelo::nitro::rive { struct ReferencedAssetsType; }
 
+#include <string>
 #include <memory>
 #include "HybridRiveFileSpec.hpp"
 #include <NitroModules/Promise.hpp>
-#include <string>
 #include "ReferencedAssetsType.hpp"
 #include <optional>
 #include <NitroModules/ArrayBuffer.hpp>
@@ -53,7 +53,7 @@ namespace margelo::nitro::rive {
 
     public:
       // Properties
-      
+      virtual std::string getBackend() = 0;
 
     public:
       // Methods

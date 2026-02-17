@@ -61,6 +61,8 @@ object RiveErrorLogger : app.rive.RiveLog.Logger {
 @Keep
 @DoNotStrip
 class HybridRiveFileFactory : HybridRiveFileFactorySpec() {
+  override val backend: String = "experimental"
+
   companion object {
     private const val TAG = "HybridRiveFileFactory"
 

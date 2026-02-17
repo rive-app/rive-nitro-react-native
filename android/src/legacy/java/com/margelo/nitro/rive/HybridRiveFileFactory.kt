@@ -20,6 +20,8 @@ data class FileAndCache(
 @Keep
 @DoNotStrip
 class HybridRiveFileFactory : HybridRiveFileFactorySpec() {
+  override val backend: String = "legacy"
+
   private fun buildRiveFile(
     data: ByteArray,
     referencedAssets: ReferencedAssetsType?
