@@ -138,18 +138,20 @@ class HybridRiveFile : HybridRiveFileSpec() {
     }
   }
 
-  override fun getEnums(): Array<RiveEnumDefinition> {
-    val file = riveFile ?: return emptyArray()
-    return try {
-      file.enums
-        .map { enum ->
-          RiveEnumDefinition(
-            name = enum.name,
-            values = enum.values.toTypedArray()
-          )
-        }.toTypedArray()
-    } catch (e: NoSuchMethodError) {
-      throw UnsupportedOperationException("getEnums requires rive-android SDK with enums support")
+  override fun getEnums(): Promise<Array<RiveEnumDefinition>> {
+    val file = riveFile ?: return Promise.resolved(emptyArray())
+    return Promise.async {
+      try {
+        file.enums
+          .map { enum ->
+            RiveEnumDefinition(
+              name = enum.name,
+              values = enum.values.toTypedArray()
+            )
+          }.toTypedArray()
+      } catch (e: NoSuchMethodError) {
+        throw UnsupportedOperationException("getEnums requires rive-android SDK with enums support")
+      }
     }
   }
 

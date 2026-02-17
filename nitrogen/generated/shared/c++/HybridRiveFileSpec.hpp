@@ -34,6 +34,7 @@ namespace margelo::nitro::rive { struct RiveEnumDefinition; }
 #include <NitroModules/Promise.hpp>
 #include "HybridBindableArtboardSpec.hpp"
 #include "RiveEnumDefinition.hpp"
+#include <NitroModules/Promise.hpp>
 
 namespace margelo::nitro::rive {
 
@@ -78,7 +79,7 @@ namespace margelo::nitro::rive {
       virtual std::shared_ptr<Promise<double>> getArtboardCountAsync() = 0;
       virtual std::shared_ptr<Promise<std::vector<std::string>>> getArtboardNamesAsync() = 0;
       virtual std::shared_ptr<HybridBindableArtboardSpec> getBindableArtboard(const std::string& name) = 0;
-      virtual std::vector<RiveEnumDefinition> getEnums() = 0;
+      virtual std::shared_ptr<Promise<std::vector<RiveEnumDefinition>>> getEnums() = 0;
 
     protected:
       // Hybrid Setup

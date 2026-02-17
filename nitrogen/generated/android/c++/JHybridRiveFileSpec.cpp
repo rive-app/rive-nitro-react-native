@@ -35,6 +35,8 @@ namespace margelo::nitro::rive { class HybridRiveImageSpec; }
 #include "HybridBindableArtboardSpec.hpp"
 #include "JHybridBindableArtboardSpec.hpp"
 #include "RiveEnumDefinition.hpp"
+#include <NitroModules/Promise.hpp>
+#include <NitroModules/JPromise.hpp>
 #include "JRiveEnumDefinition.hpp"
 #include "ArtboardBy.hpp"
 #include "JArtboardBy.hpp"
@@ -226,18 +228,29 @@ namespace margelo::nitro::rive {
     auto __result = method(_javaPart, jni::make_jstring(name));
     return __result->getJHybridBindableArtboardSpec();
   }
-  std::vector<RiveEnumDefinition> JHybridRiveFileSpec::getEnums() {
-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<jni::JArrayClass<JRiveEnumDefinition>>()>("getEnums");
+  std::shared_ptr<Promise<std::vector<RiveEnumDefinition>>> JHybridRiveFileSpec::getEnums() {
+    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>()>("getEnums");
     auto __result = method(_javaPart);
     return [&]() {
-      size_t __size = __result->size();
-      std::vector<RiveEnumDefinition> __vector;
-      __vector.reserve(__size);
-      for (size_t __i = 0; __i < __size; __i++) {
-        auto __element = __result->getElement(__i);
-        __vector.push_back(__element->toCpp());
-      }
-      return __vector;
+      auto __promise = Promise<std::vector<RiveEnumDefinition>>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& __boxedResult) {
+        auto __result = jni::static_ref_cast<jni::JArrayClass<JRiveEnumDefinition>>(__boxedResult);
+        __promise->resolve([&]() {
+          size_t __size = __result->size();
+          std::vector<RiveEnumDefinition> __vector;
+          __vector.reserve(__size);
+          for (size_t __i = 0; __i < __size; __i++) {
+            auto __element = __result->getElement(__i);
+            __vector.push_back(__element->toCpp());
+          }
+          return __vector;
+        }());
+      });
+      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
+        jni::JniException __jniError(__throwable);
+        __promise->reject(std::make_exception_ptr(__jniError));
+      });
+      return __promise;
     }();
   }
 

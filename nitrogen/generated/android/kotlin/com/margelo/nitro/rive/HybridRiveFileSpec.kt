@@ -81,7 +81,7 @@ abstract class HybridRiveFileSpec: HybridObject() {
   
   @DoNotStrip
   @Keep
-  abstract fun getEnums(): Array<RiveEnumDefinition>
+  abstract fun getEnums(): Promise<Array<RiveEnumDefinition>>
 
   // Default implementation of `HybridObject.toString()`
   override fun toString(): String {
