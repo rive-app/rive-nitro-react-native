@@ -14,6 +14,7 @@ class HybridViewModel: HybridViewModelSpec {
   var modelName: String { viewModel?.name ?? "" }
   
   func createInstanceByIndex(index: Double) throws -> (any HybridViewModelInstanceSpec)? {
+    guard index >= 0 else { return nil }
     guard let viewModel = viewModel,
           let vmi = viewModel.createInstance(fromIndex: UInt(index)) else { return nil }
     return HybridViewModelInstance(viewModelInstance: vmi)
