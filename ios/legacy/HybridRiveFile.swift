@@ -150,12 +150,14 @@ class HybridRiveFile: HybridRiveFileSpec, RiveViewSource {
     }
   }
 
-  func getEnums() throws -> [RiveEnumDefinition] {
-    throw NSError(
-      domain: "RiveError",
-      code: 1,
-      userInfo: [NSLocalizedDescriptionKey: "getEnums requires the experimental iOS backend. Use USE_RIVE_SPM=1 with pod install."]
-    )
+  func getEnums() throws -> Promise<[RiveEnumDefinition]> {
+    return Promise.async {
+      throw NSError(
+        domain: "RiveError",
+        code: 1,
+        userInfo: [NSLocalizedDescriptionKey: "getEnums requires the experimental iOS backend. Use USE_RIVE_SPM=1 with pod install."]
+      )
+    }
   }
 
   func dispose() {

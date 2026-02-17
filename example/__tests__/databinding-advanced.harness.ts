@@ -68,6 +68,30 @@ describe('RiveFile ViewModel Access', () => {
   });
 });
 
+describe('File Enums', () => {
+  it('getEnums() returns Pets enum with expected values', async () => {
+    const file = await loadFile(DATABINDING);
+
+    // getEnums throws on the legacy backend
+    let enums;
+    try {
+      enums = await file.getEnums();
+    } catch {
+      return;
+    }
+    expect(enums.length).toBeGreaterThan(0);
+
+    const petsEnum = enums.find((e) => e.name === 'Pets');
+    expectDefined(petsEnum);
+    expect(petsEnum.values).toContain('dog');
+    expect(petsEnum.values).toContain('cat');
+    expect(petsEnum.values).toContain('frog');
+    expect(petsEnum.values).toContain('owl');
+    expect(petsEnum.values).toContain('chipmunk');
+    expect(petsEnum.values).toContain('rat');
+  });
+});
+
 describe('ViewModel Properties Metadata', () => {
   it('Person VM has expected propertyCount and instanceCount', async () => {
     const file = await loadFile(DATABINDING);

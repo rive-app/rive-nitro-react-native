@@ -9,6 +9,7 @@ import app.rive.ViewModelSource
 import app.rive.core.CommandQueue
 import app.rive.runtime.kotlin.core.ViewModel.PropertyDataType
 import com.facebook.proguard.annotations.DoNotStrip
+import com.margelo.nitro.core.Promise
 import java.lang.ref.WeakReference
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
@@ -113,19 +114,16 @@ class HybridRiveFile(
     return HybridBindableArtboard(name, this)
   }
 
-  override fun getEnums(): Array<RiveEnumDefinition> {
-    val file = riveFile ?: return emptyArray()
-    return try {
-      val enums = runBlocking { file.getEnums() }
+  override fun getEnums(): Promise<Array<RiveEnumDefinition>> {
+    val file = riveFile ?: return Promise.resolved(emptyArray())
+    return Promise.async {
+      val enums = file.getEnums()
       enums.map { enum ->
         RiveEnumDefinition(
           name = enum.name,
           values = enum.values.toTypedArray()
         )
       }.toTypedArray()
-    } catch (e: Exception) {
-      Log.e(TAG, "getEnums failed", e)
-      emptyArray()
     }
   }
 
