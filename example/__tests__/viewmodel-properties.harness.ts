@@ -182,7 +182,10 @@ describe('Property Listeners', () => {
   });
 
   it('colorProperty addListener returns cleanup function', async () => {
-    if (Platform.OS === 'ios' && RiveFileFactory.getBackend() === 'experimental') {
+    if (
+      Platform.OS === 'ios' &&
+      RiveFileFactory.getBackend() === 'experimental'
+    ) {
       // rive-ios experimental: Color.argbValue is internal, addListener not supported
       return;
     }
