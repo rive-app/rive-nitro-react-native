@@ -73,13 +73,8 @@ export interface ViewModelInstance
   /** Get an artboard property from the view model instance at the given path */
   artboardProperty(path: string): ViewModelArtboardProperty | undefined;
 
-  /**
-   * Get a nested ViewModel instance at the given path.
-   * Supports path notation with "/" for nested access (e.g., "Parent/Child").
-   * @deprecated Use viewModelAsync instead
-   */
+  /** @deprecated Use viewModelAsync instead */
   viewModel(path: string): ViewModelInstance | undefined;
-
   /** Get a nested ViewModel instance at the given path. Supports "/" for nested access (e.g., "Parent/Child"). */
   viewModelAsync(path: string): Promise<ViewModelInstance | undefined>;
 

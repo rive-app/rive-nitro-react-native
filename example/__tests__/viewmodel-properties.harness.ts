@@ -104,7 +104,7 @@ describe('ViewModel Properties', () => {
 
   it('nested viewModel property access works', async () => {
     const instance = await createGordonInstance();
-    const petViewModel = instance.viewModel('pet');
+    const petViewModel = await instance.viewModelAsync('pet');
     expectDefined(petViewModel);
 
     const petName = petViewModel.stringProperty('name');
@@ -146,7 +146,7 @@ describe('ViewModel Properties', () => {
     expect(instance.colorProperty('nonexistent')).toBeUndefined();
     expect(instance.enumProperty('nonexistent')).toBeUndefined();
     expect(instance.triggerProperty('nonexistent')).toBeUndefined();
-    expect(instance.viewModel('nonexistent')).toBeUndefined();
+    expect(await instance.viewModelAsync('nonexistent')).toBeUndefined();
   });
 });
 

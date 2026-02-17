@@ -58,6 +58,7 @@ namespace margelo::nitro::rive {
       virtual std::shared_ptr<Promise<double>> getPropertyCountAsync() = 0;
       virtual std::shared_ptr<Promise<double>> getInstanceCountAsync() = 0;
       virtual std::optional<std::shared_ptr<HybridViewModelInstanceSpec>> createInstanceByIndex(double index) = 0;
+      virtual std::shared_ptr<Promise<std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>>> createInstanceByIndexAsync(double index) = 0;
       virtual std::optional<std::shared_ptr<HybridViewModelInstanceSpec>> createInstanceByName(const std::string& name) = 0;
       virtual std::optional<std::shared_ptr<HybridViewModelInstanceSpec>> createDefaultInstance() = 0;
       virtual std::optional<std::shared_ptr<HybridViewModelInstanceSpec>> createInstance() = 0;

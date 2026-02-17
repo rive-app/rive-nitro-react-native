@@ -37,17 +37,26 @@ class HybridRiveFile(
       }
     }
 
-  override fun viewModelByIndex(index: Double): HybridViewModelSpec? {
+  private suspend fun viewModelByIndexImpl(index: Double): HybridViewModelSpec? {
     val file = riveFile ?: return null
+    val names = file.getViewModelNames()
+    val idx = index.toInt()
+    if (idx < 0 || idx >= names.size) return null
+    return HybridViewModel(file, riveWorker, names[idx], this)
+  }
+
+  // Deprecated: Use viewModelByIndexAsync instead
+  override fun viewModelByIndex(index: Double): HybridViewModelSpec? {
     return try {
-      val names = runBlocking { file.getViewModelNames() }
-      val idx = index.toInt()
-      if (idx < 0 || idx >= names.size) return null
-      HybridViewModel(file, riveWorker, names[idx], this)
+      runBlocking { viewModelByIndexImpl(index) }
     } catch (e: Exception) {
       Log.e(TAG, "viewModelByIndex($index) failed", e)
       null
     }
+  }
+
+  override fun viewModelByIndexAsync(index: Double): Promise<HybridViewModelSpec?> {
+    return Promise.async { viewModelByIndexImpl(index) }
   }
 
   override fun viewModelByName(name: String): HybridViewModelSpec? {

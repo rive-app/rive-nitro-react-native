@@ -34,6 +34,7 @@ namespace margelo::nitro::rive { struct RiveEnumDefinition; }
 #include <vector>
 #include <memory>
 #include "HybridViewModelSpec.hpp"
+#include <NitroModules/Promise.hpp>
 #include "ArtboardBy.hpp"
 #include "ArtboardByTypes.hpp"
 #include "ReferencedAssetsType.hpp"
@@ -43,7 +44,6 @@ namespace margelo::nitro::rive { struct RiveEnumDefinition; }
 #include <NitroModules/Promise.hpp>
 #include "HybridBindableArtboardSpec.hpp"
 #include "RiveEnumDefinition.hpp"
-#include <NitroModules/Promise.hpp>
 
 #include "RNRive-Swift-Cxx-Umbrella.hpp"
 
@@ -107,6 +107,14 @@ namespace margelo::nitro::rive {
     // Methods
     inline std::optional<std::shared_ptr<HybridViewModelSpec>> viewModelByIndex(double index) override {
       auto __result = _swiftPart.viewModelByIndex(std::forward<decltype(index)>(index));
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline std::shared_ptr<Promise<std::optional<std::shared_ptr<HybridViewModelSpec>>>> viewModelByIndexAsync(double index) override {
+      auto __result = _swiftPart.viewModelByIndexAsync(std::forward<decltype(index)>(index));
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }
