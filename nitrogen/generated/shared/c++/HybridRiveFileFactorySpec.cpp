@@ -14,6 +14,7 @@ namespace margelo::nitro::rive {
     HybridObject::loadHybridMethods();
     // load custom methods/properties
     registerHybrids(this, [](Prototype& prototype) {
+      prototype.registerHybridGetter("backend", &HybridRiveFileFactorySpec::getBackend);
       prototype.registerHybridMethod("fromURL", &HybridRiveFileFactorySpec::fromURL);
       prototype.registerHybridMethod("fromFileURL", &HybridRiveFileFactorySpec::fromFileURL);
       prototype.registerHybridMethod("fromResource", &HybridRiveFileFactorySpec::fromResource);

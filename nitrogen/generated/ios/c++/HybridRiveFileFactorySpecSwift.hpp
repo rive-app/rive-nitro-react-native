@@ -23,10 +23,10 @@ namespace margelo::nitro::rive { class HybridRiveImageSpec; }
 // Forward declaration of `ArrayBufferHolder` to properly resolve imports.
 namespace NitroModules { class ArrayBufferHolder; }
 
+#include <string>
 #include <memory>
 #include "HybridRiveFileSpec.hpp"
 #include <NitroModules/Promise.hpp>
-#include <string>
 #include "ReferencedAssetsType.hpp"
 #include <optional>
 #include "ResolvedReferencedAsset.hpp"
@@ -81,7 +81,10 @@ namespace margelo::nitro::rive {
 
   public:
     // Properties
-    
+    inline std::string getBackend() noexcept override {
+      auto __result = _swiftPart.getBackend();
+      return __result;
+    }
 
   public:
     // Methods
