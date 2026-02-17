@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'react-native-harness';
+import { Platform } from 'react-native';
 import type { ViewModelInstance } from '@rive-app/react-native';
 import { RiveFileFactory } from '@rive-app/react-native';
 
