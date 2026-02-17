@@ -29,6 +29,12 @@ function getRGB(color: number): { r: number; g: number; b: number } {
 /* eslint-enable no-bitwise */
 
 describe('ViewModel Properties', () => {
+  it('backend property is accessible', () => {
+    const backend = RiveFileFactory.getBackend();
+    expect(typeof backend).toBe('string');
+    expect(['legacy', 'experimental']).toContain(backend);
+  });
+
   it('numberProperty get/set works', async () => {
     const instance = await createGordonInstance();
     const ageProperty = instance.numberProperty('age');
@@ -176,6 +182,11 @@ describe('Property Listeners', () => {
   });
 
   it('colorProperty addListener returns cleanup function', async () => {
+    if (Platform.OS === 'ios' && RiveFileFactory.getBackend() === 'experimental') {
+      // rive-ios experimental: Color.argbValue is internal, addListener not supported
+      return;
+    }
+
     const instance = await createGordonInstance();
     const prop = instance.colorProperty('favourite_color');
     expectDefined(prop);
