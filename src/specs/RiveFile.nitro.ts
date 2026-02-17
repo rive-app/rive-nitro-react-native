@@ -75,7 +75,7 @@ export interface RiveFile
    * Useful for debugging and building dynamic UIs.
    * @experimental Uses the experimental Rive API on iOS
    */
-  getEnums(): RiveEnumDefinition[];
+  getEnums(): Promise<RiveEnumDefinition[]>;
 }
 
 export interface RiveFileFactory

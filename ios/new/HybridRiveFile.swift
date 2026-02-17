@@ -106,9 +106,9 @@ class HybridRiveFile: HybridRiveFileSpec {
     }
   }
 
-  func getEnums() throws -> [RiveEnumDefinition] {
-    guard let file = file else { return [] }
-    return try blockingAsync {
+  func getEnums() throws -> Promise<[RiveEnumDefinition]> {
+    guard let file = file else { return Promise.resolved([]) }
+    return Promise.async {
       let viewModelEnums = try await file.getViewModelEnums()
       return viewModelEnums.map { vmEnum in
         RiveEnumDefinition(name: vmEnum.name, values: vmEnum.values)

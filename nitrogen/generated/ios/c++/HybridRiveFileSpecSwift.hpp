@@ -43,6 +43,7 @@ namespace margelo::nitro::rive { struct RiveEnumDefinition; }
 #include <NitroModules/Promise.hpp>
 #include "HybridBindableArtboardSpec.hpp"
 #include "RiveEnumDefinition.hpp"
+#include <NitroModules/Promise.hpp>
 
 #include "RNRive-Swift-Cxx-Umbrella.hpp"
 
@@ -182,7 +183,7 @@ namespace margelo::nitro::rive {
       auto __value = std::move(__result.value());
       return __value;
     }
-    inline std::vector<RiveEnumDefinition> getEnums() override {
+    inline std::shared_ptr<Promise<std::vector<RiveEnumDefinition>>> getEnums() override {
       auto __result = _swiftPart.getEnums();
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
