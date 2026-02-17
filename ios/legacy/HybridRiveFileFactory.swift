@@ -2,6 +2,8 @@ import NitroModules
 import RiveRuntime
 
 final class HybridRiveFileFactory: HybridRiveFileFactorySpec, @unchecked Sendable {
+  var backend: String { "legacy" }
+
   let assetLoader = ReferencedAssetLoader()
 
   /// Asynchronously creates a `HybridRiveFileSpec` by performing the following steps:

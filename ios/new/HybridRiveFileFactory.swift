@@ -2,6 +2,7 @@
 import NitroModules
 
 final class HybridRiveFileFactory: HybridRiveFileFactorySpec, @unchecked Sendable {
+  var backend: String { "experimental" }
 
   // All files must share the same Worker so artboard handles are valid across files
   // (each Worker has its own C++ command server with its own m_artboards map)

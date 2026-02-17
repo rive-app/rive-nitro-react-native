@@ -15,6 +15,11 @@ const RiveFileInternal =
  * Provides static methods to load Rive files from URLs, resources, or raw bytes.
  */
 export namespace RiveFileFactory {
+  /** Which backend is in use: "legacy" or "experimental" */
+  export function getBackend(): string {
+    return RiveFileInternal.backend;
+  }
+
   /**
    * Creates a RiveFile instance from a URL.
    * @param url - The URL of the Rive (.riv) file
