@@ -20,6 +20,7 @@ namespace margelo::nitro::rive {
       prototype.registerHybridMethod("getPropertyCountAsync", &HybridViewModelSpec::getPropertyCountAsync);
       prototype.registerHybridMethod("getInstanceCountAsync", &HybridViewModelSpec::getInstanceCountAsync);
       prototype.registerHybridMethod("createInstanceByIndex", &HybridViewModelSpec::createInstanceByIndex);
+      prototype.registerHybridMethod("createInstanceByIndexAsync", &HybridViewModelSpec::createInstanceByIndexAsync);
       prototype.registerHybridMethod("createInstanceByName", &HybridViewModelSpec::createInstanceByName);
       prototype.registerHybridMethod("createDefaultInstance", &HybridViewModelSpec::createDefaultInstance);
       prototype.registerHybridMethod("createInstance", &HybridViewModelSpec::createInstance);

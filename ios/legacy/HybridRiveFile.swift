@@ -36,9 +36,17 @@ class HybridRiveFile: HybridRiveFileSpec, RiveViewSource {
     return Double(count)
   }
   
+  // Deprecated: Use viewModelByIndexAsync instead
   func viewModelByIndex(index: Double) throws -> (any HybridViewModelSpec)? {
     guard index >= 0, let vm = riveFile?.viewModel(at: UInt(index)) else { return nil }
     return HybridViewModel(viewModel: vm)
+  }
+
+  func viewModelByIndexAsync(index: Double) throws -> Promise<(any HybridViewModelSpec)?> {
+    return Promise.async {
+      guard index >= 0, let vm = self.riveFile?.viewModel(at: UInt(index)) else { return nil }
+      return HybridViewModel(viewModel: vm)
+    }
   }
   
   func viewModelByName(name: String) throws -> (any HybridViewModelSpec)? {

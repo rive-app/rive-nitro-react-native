@@ -66,6 +66,22 @@ namespace margelo::nitro::rive::bridge::swift {
     return swiftPart.toUnsafe();
   }
   
+  // pragma MARK: std::function<void(const std::optional<std::shared_ptr<HybridViewModelSpec>>& /* result */)>
+  Func_void_std__optional_std__shared_ptr_HybridViewModelSpec__ create_Func_void_std__optional_std__shared_ptr_HybridViewModelSpec__(void* NON_NULL swiftClosureWrapper) noexcept {
+    auto swiftClosure = RNRive::Func_void_std__optional_std__shared_ptr_HybridViewModelSpec__::fromUnsafe(swiftClosureWrapper);
+    return [swiftClosure = std::move(swiftClosure)](const std::optional<std::shared_ptr<HybridViewModelSpec>>& result) mutable -> void {
+      swiftClosure.call(result);
+    };
+  }
+  
+  // pragma MARK: std::function<void(const std::exception_ptr& /* error */)>
+  Func_void_std__exception_ptr create_Func_void_std__exception_ptr(void* NON_NULL swiftClosureWrapper) noexcept {
+    auto swiftClosure = RNRive::Func_void_std__exception_ptr::fromUnsafe(swiftClosureWrapper);
+    return [swiftClosure = std::move(swiftClosure)](const std::exception_ptr& error) mutable -> void {
+      swiftClosure.call(error);
+    };
+  }
+  
   // pragma MARK: std::shared_ptr<HybridRiveImageSpec>
   std::shared_ptr<HybridRiveImageSpec> create_std__shared_ptr_HybridRiveImageSpec_(void* NON_NULL swiftUnsafePointer) noexcept {
     RNRive::HybridRiveImageSpec_cxx swiftPart = RNRive::HybridRiveImageSpec_cxx::fromUnsafe(swiftUnsafePointer);
@@ -87,14 +103,6 @@ namespace margelo::nitro::rive::bridge::swift {
     auto swiftClosure = RNRive::Func_void_std__vector_RiveEnumDefinition_::fromUnsafe(swiftClosureWrapper);
     return [swiftClosure = std::move(swiftClosure)](const std::vector<RiveEnumDefinition>& result) mutable -> void {
       swiftClosure.call(result);
-    };
-  }
-  
-  // pragma MARK: std::function<void(const std::exception_ptr& /* error */)>
-  Func_void_std__exception_ptr create_Func_void_std__exception_ptr(void* NON_NULL swiftClosureWrapper) noexcept {
-    auto swiftClosure = RNRive::Func_void_std__exception_ptr::fromUnsafe(swiftClosureWrapper);
-    return [swiftClosure = std::move(swiftClosure)](const std::exception_ptr& error) mutable -> void {
-      swiftClosure.call(error);
     };
   }
   
@@ -280,6 +288,14 @@ namespace margelo::nitro::rive::bridge::swift {
     #endif
     RNRive::HybridRiveViewSpec_cxx& swiftPart = swiftWrapper->getSwiftPart();
     return swiftPart.toUnsafe();
+  }
+  
+  // pragma MARK: std::function<void(const std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>& /* result */)>
+  Func_void_std__optional_std__shared_ptr_HybridViewModelInstanceSpec__ create_Func_void_std__optional_std__shared_ptr_HybridViewModelInstanceSpec__(void* NON_NULL swiftClosureWrapper) noexcept {
+    auto swiftClosure = RNRive::Func_void_std__optional_std__shared_ptr_HybridViewModelInstanceSpec__::fromUnsafe(swiftClosureWrapper);
+    return [swiftClosure = std::move(swiftClosure)](const std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>& result) mutable -> void {
+      swiftClosure.call(result);
+    };
   }
   
   // pragma MARK: std::shared_ptr<HybridViewModelPropertySpec>

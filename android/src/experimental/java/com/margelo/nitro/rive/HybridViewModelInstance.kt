@@ -6,6 +6,7 @@ import app.rive.ViewModelInstance
 import app.rive.ViewModelInstanceSource
 import app.rive.core.CommandQueue
 import com.facebook.proguard.annotations.DoNotStrip
+import com.margelo.nitro.core.Promise
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 
@@ -128,17 +129,26 @@ class HybridViewModelInstance(
     }
   }
 
-  override fun viewModel(path: String): HybridViewModelInstanceSpec? {
+  private fun viewModelImpl(path: String): HybridViewModelInstanceSpec? {
     if (!hasProperty(path)) return null
+    val file = parentFile.riveFile ?: return null
+    val source = ViewModelInstanceSource.Reference(viewModelInstance, path)
+    val childVmi = ViewModelInstance.fromFile(file, source)
+    return HybridViewModelInstance(childVmi, riveWorker, parentFile)
+  }
+
+  // Deprecated: Use viewModelAsync instead
+  override fun viewModel(path: String): HybridViewModelInstanceSpec? {
     return try {
-      val file = parentFile.riveFile ?: return null
-      val source = ViewModelInstanceSource.Reference(viewModelInstance, path)
-      val childVmi = ViewModelInstance.fromFile(file, source)
-      HybridViewModelInstance(childVmi, riveWorker, parentFile)
+      viewModelImpl(path)
     } catch (e: Exception) {
       Log.e(TAG, "viewModel failed for path '$path'", e)
       null
     }
+  }
+
+  override fun viewModelAsync(path: String): Promise<HybridViewModelInstanceSpec?> {
+    return Promise.async { viewModelImpl(path) }
   }
 
   override fun replaceViewModel(path: String, instance: HybridViewModelInstanceSpec) {

@@ -26,14 +26,14 @@ describe('RiveFile ViewModel Access', () => {
 
   it('viewModelByIndex(0) returns a ViewModel', async () => {
     const file = await loadFile(DATABINDING);
-    const vm = file.viewModelByIndex(0);
+    const vm = await file.viewModelByIndexAsync(0);
     expect(vm).toBeDefined();
   });
 
   it('viewModelByIndex(-1) returns undefined or throws', async () => {
     const file = await loadFile(DATABINDING);
     try {
-      const vm = file.viewModelByIndex(-1);
+      const vm = await file.viewModelByIndexAsync(-1);
       expect(vm).toBeUndefined();
     } catch {
       // Android Rive SDK throws a JNI exception for invalid indices
@@ -43,7 +43,7 @@ describe('RiveFile ViewModel Access', () => {
   it('viewModelByIndex(100) returns undefined or throws', async () => {
     const file = await loadFile(DATABINDING);
     try {
-      const vm = file.viewModelByIndex(100);
+      const vm = await file.viewModelByIndexAsync(100);
       expect(vm).toBeUndefined();
     } catch {
       // Android Rive SDK throws a JNI exception for out-of-range indices
@@ -128,10 +128,10 @@ describe('ViewModel Creation Variants', () => {
 
   it('createInstanceByIndex(0) works', async () => {
     const file = await loadFile(DATABINDING);
-    const vm = file.viewModelByIndex(0);
+    const vm = await file.viewModelByIndexAsync(0);
     expectDefined(vm);
 
-    const instance = vm.createInstanceByIndex(0);
+    const instance = await vm.createInstanceByIndexAsync(0);
     expectDefined(instance);
   });
 
@@ -141,7 +141,7 @@ describe('ViewModel Creation Variants', () => {
     expectDefined(vm);
 
     // Legacy returns undefined, experimental returns an empty instance
-    vm.createInstanceByIndex(100);
+    await vm.createInstanceByIndexAsync(100);
     expect(true).toBe(true);
   });
 
@@ -354,7 +354,7 @@ describe.skip('Image Properties', () => {
     const file = await loadFile(DATABINDING_IMAGES);
     const vm = file.viewModelByName('MyViewModel');
     expectDefined(vm);
-    const instance = vm.createInstanceByIndex(0);
+    const instance = await vm.createInstanceByIndexAsync(0);
     expectDefined(instance);
 
     const imageProp = instance.imageProperty('bound_image');

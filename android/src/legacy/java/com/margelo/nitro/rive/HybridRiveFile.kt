@@ -24,6 +24,7 @@ class HybridRiveFile : HybridRiveFileSpec() {
   override val viewModelCount: Double?
     get() = riveFile?.viewModelCount?.toDouble()
 
+  // Deprecated: Use viewModelByIndexAsync instead
   override fun viewModelByIndex(index: Double): HybridViewModelSpec? {
     if (index < 0) return null
     return try {
@@ -31,6 +32,17 @@ class HybridRiveFile : HybridRiveFileSpec() {
       HybridViewModel(vm)
     } catch (e: Exception) {
       null
+    }
+  }
+
+  override fun viewModelByIndexAsync(index: Double): Promise<HybridViewModelSpec?> {
+    return Promise.async {
+      try {
+        val vm = riveFile?.getViewModelByIndex(index.toInt()) ?: return@async null
+        HybridViewModel(vm)
+      } catch (e: Exception) {
+        null
+      }
     }
   }
 
