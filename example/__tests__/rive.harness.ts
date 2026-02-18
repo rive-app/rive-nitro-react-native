@@ -60,8 +60,6 @@ describe('ViewModel', () => {
 
     const vm1AfterReplace = instance?.viewModel('vm1');
     const vm1NameProp = vm1AfterReplace?.stringProperty('name');
-    // Android experimental backend doesn't support replaceViewModel yet (no-op)
-    const replaceVal = vm1NameProp?.value;
-    expect(replaceVal === testValue || replaceVal === 'name1').toBe(true);
+    expect(vm1NameProp?.value).toBe(testValue);
   });
 });
