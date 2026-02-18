@@ -12,7 +12,7 @@ class HybridViewModelColorProperty(private val viewModelColor: ViewModelColorPro
   override var value: Double
     get() = viewModelColor.value.toDouble()
     set(value) {
-      viewModelColor.value = value.toInt()
+      viewModelColor.value = value.toLong().toInt()
     }
 
   override fun addListener(onChanged: (value: Double) -> Unit): () -> Unit {
