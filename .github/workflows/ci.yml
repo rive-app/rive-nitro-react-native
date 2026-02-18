@@ -472,3 +472,198 @@ jobs:
         run: |
           echo "=== Checking logcat for errors ==="
           adb logcat -d -s ReactNativeJS:* RiveExample:* RNRive:* | tail -200 || echo "No logs found"
+
+  test-harness-ios-experimental:
+    runs-on: macos-latest
+    timeout-minutes: 60
+    env:
+      XCODE_VERSION: 16.4
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup
+        uses: ./.github/actions/setup
+
+      - name: Use appropriate Xcode version
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: ${{ env.XCODE_VERSION }}
+
+      - name: Restore cocoapods
+        id: cocoapods-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            **/ios/Pods
+          key: ${{ runner.os }}-experimental-cocoapods-${{ hashFiles('example/ios/Podfile', '*.podspec') }}
+          restore-keys: |
+            ${{ runner.os }}-experimental-cocoapods-
+
+      - name: Install cocoapods (experimental SPM)
+        if: steps.cocoapods-cache.outputs.cache-hit != 'true'
+        run: |
+          cd example
+          bundle install
+          USE_RIVE_SPM=1 bundle exec pod install --project-directory=ios
+
+      - name: Save cocoapods cache
+        if: steps.cocoapods-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            **/ios/Pods
+          key: ${{ steps.cocoapods-cache.outputs.cache-key }}
+
+      - name: Restore iOS build cache
+        id: ios-build-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: example/ios/build
+          key: ${{ runner.os }}-ios-experimental-build-${{ env.XCODE_VERSION }}-${{ hashFiles('yarn.lock', 'ios/**', 'nitrogen/generated/ios/**', '*.podspec', 'example/ios/Podfile', 'example/ios/RiveExample/**') }}
+          restore-keys: |
+            ${{ runner.os }}-ios-experimental-build-${{ env.XCODE_VERSION }}-
+
+      - name: Build iOS app
+        if: steps.ios-build-cache.outputs.cache-hit != 'true'
+        working-directory: example/ios
+        run: |
+          set -o pipefail && xcodebuild \
+            -derivedDataPath build \
+            -workspace RiveExample.xcworkspace \
+            -scheme RiveExample \
+            -sdk iphonesimulator \
+            -configuration Debug \
+            build \
+            CODE_SIGNING_ALLOWED=NO
+
+      - name: Save iOS build cache
+        if: steps.ios-build-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: example/ios/build
+          key: ${{ steps.ios-build-cache.outputs.cache-primary-key }}
+
+      - name: Boot iOS Simulator
+        uses: futureware-tech/simulator-action@v4
+        with:
+          model: 'iPhone 16 Pro'
+          os_version: '18.6'
+
+      - name: Install app on simulator
+        run: xcrun simctl install booted example/ios/build/Build/Products/Debug-iphonesimulator/RiveExample.app
+
+      - name: Wait for simulator to be fully ready
+        run: |
+          echo "Waiting for simulator to be fully ready..."
+          sleep 10
+          xcrun simctl list devices | grep Booted
+
+      - name: Run harness tests on iOS
+        working-directory: example
+        run: |
+          for attempt in 1 2 3; do
+            echo "Attempt $attempt of 3"
+            if yarn test:harness:ios --verbose --testTimeout 120000; then
+              echo "Tests passed on attempt $attempt"
+              exit 0
+            fi
+            echo "Attempt $attempt failed, retrying..."
+            sleep 5
+          done
+          echo "All attempts failed"
+          exit 1
+
+      - name: Debug - Check for console logs
+        if: failure()
+        run: |
+          echo "=== Checking simulator logs for errors ==="
+          xcrun simctl spawn booted log show --predicate 'processImagePath CONTAINS "RiveExample"' --last 5m --style compact 2>&1 | tail -200 || echo "No logs found"
+
+  test-harness-android-experimental:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      ANDROID_API_LEVEL: 35
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup
+        uses: ./.github/actions/setup
+
+      - name: Install JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Finalize Android SDK
+        run: |
+          /bin/bash -c "yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses > /dev/null"
+
+      - name: Enable experimental Rive API
+        run: |
+          sed -i 's/USE_RIVE_NEW_API=false/USE_RIVE_NEW_API=true/' example/android/gradle.properties
+
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/wrapper
+            ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-harness-experimental-${{ hashFiles('example/android/gradle/wrapper/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-harness-experimental-
+            ${{ runner.os }}-gradle-harness-
+            ${{ runner.os }}-gradle-
+
+      - name: Restore Android build cache
+        id: android-build-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: example/android/app/build
+          key: ${{ runner.os }}-android-experimental-build-${{ env.ANDROID_API_LEVEL }}-${{ hashFiles('yarn.lock', 'android/**', 'nitrogen/generated/android/**', 'example/android/app/build.gradle', 'example/android/gradle.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-android-experimental-build-${{ env.ANDROID_API_LEVEL }}-
+
+      - name: Build Android app
+        if: steps.android-build-cache.outputs.cache-hit != 'true'
+        working-directory: example/android
+        env:
+          JAVA_OPTS: "-XX:MaxHeapSize=6g"
+        run: |
+          ./gradlew assembleDebug --no-daemon --console=plain -PreactNativeArchitectures=x86_64
+
+      - name: Save Android build cache
+        if: steps.android-build-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: example/android/app/build
+          key: ${{ steps.android-build-cache.outputs.cache-primary-key }}
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Run harness tests on Android
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ env.ANDROID_API_LEVEL }}
+          arch: x86_64
+          target: google_apis
+          force-avd-creation: false
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
+          disable-animations: true
+          script: |
+            adb install example/android/app/build/outputs/apk/debug/app-debug.apk
+            sleep 10
+            cd example && for attempt in 1 2 3; do echo "Attempt $attempt of 3"; if timeout 300 env ANDROID_AVD=test yarn test:harness:android --verbose --testTimeout 120000; then echo "Tests passed on attempt $attempt"; exit 0; fi; echo "Attempt $attempt failed (exit $?), retrying..."; sleep 5; done; echo "All attempts failed"; exit 1
+
+      - name: Debug - Check logcat
+        if: failure() || cancelled()
+        run: |
+          echo "=== Checking logcat for errors ==="
+          adb logcat -d -s ReactNativeJS:* RiveExample:* RNRive:* | tail -200 || echo "No logs found"
