@@ -18,7 +18,9 @@ public protocol HybridRiveFileSpec_protocol: HybridObject {
   func viewModelByIndex(index: Double) throws -> (any HybridViewModelSpec)?
   func viewModelByIndexAsync(index: Double) throws -> Promise<(any HybridViewModelSpec)?>
   func viewModelByName(name: String) throws -> (any HybridViewModelSpec)?
+  func viewModelByNameAsync(name: String) throws -> Promise<(any HybridViewModelSpec)?>
   func defaultArtboardViewModel(artboardBy: ArtboardBy?) throws -> (any HybridViewModelSpec)?
+  func defaultArtboardViewModelAsync(artboardBy: ArtboardBy?) throws -> Promise<(any HybridViewModelSpec)?>
   func updateReferencedAssets(referencedAssets: ReferencedAssetsType) throws -> Void
   func getViewModelNamesAsync() throws -> Promise<[String]>
   func viewModelByNameAsync(name: String, validate: Bool?) throws -> Promise<(any HybridViewModelSpec)?>

@@ -30,12 +30,22 @@ class HybridViewModel: HybridViewModelSpec {
     }
   }
   
+  // Deprecated: Use createInstanceByNameAsync instead
   func createInstanceByName(name: String) throws -> (any HybridViewModelInstanceSpec)? {
     guard let viewModel = viewModel,
           let vmi = viewModel.createInstance(fromName: name) else { return nil }
     return HybridViewModelInstance(viewModelInstance: vmi)
   }
-  
+
+  func createInstanceByNameAsync(name: String) throws -> Promise<(any HybridViewModelInstanceSpec)?> {
+    return Promise.async {
+      guard let viewModel = self.viewModel,
+            let vmi = viewModel.createInstance(fromName: name) else { return nil }
+      return HybridViewModelInstance(viewModelInstance: vmi)
+    }
+  }
+
+  // Deprecated: Use createDefaultInstanceAsync instead
   func createDefaultInstance() throws -> (any HybridViewModelInstanceSpec)? {
     guard let viewModel = viewModel,
           let vmi = viewModel.createDefaultInstance() else {
@@ -43,7 +53,16 @@ class HybridViewModel: HybridViewModelSpec {
     }
     return HybridViewModelInstance(viewModelInstance: vmi)
   }
-  
+
+  func createDefaultInstanceAsync() throws -> Promise<(any HybridViewModelInstanceSpec)?> {
+    return Promise.async {
+      guard let viewModel = self.viewModel,
+            let vmi = viewModel.createDefaultInstance() else { return nil }
+      return HybridViewModelInstance(viewModelInstance: vmi)
+    }
+  }
+
+  // Deprecated: Use createInstanceAsync instead
   func createInstance() throws -> (any HybridViewModelInstanceSpec)? {
     guard let viewModel = viewModel,
           let vmi = viewModel.createInstance() else { return nil }
@@ -68,5 +87,13 @@ class HybridViewModel: HybridViewModelSpec {
 
   func createBlankInstanceAsync() throws -> Promise<(any HybridViewModelInstanceSpec)?> {
     return Promise.async { try self.createInstance() }
+  }
+
+  func createInstanceAsync() throws -> Promise<(any HybridViewModelInstanceSpec)?> {
+    return Promise.async {
+      guard let viewModel = self.viewModel,
+            let vmi = viewModel.createInstance() else { return nil }
+      return HybridViewModelInstance(viewModelInstance: vmi)
+    }
   }
 }

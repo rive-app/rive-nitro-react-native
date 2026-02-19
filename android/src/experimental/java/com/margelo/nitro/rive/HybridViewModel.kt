@@ -56,19 +56,29 @@ class HybridViewModel(
     }
   }
 
+  private suspend fun createInstanceByNameImpl(name: String): HybridViewModelInstanceSpec? {
+    val instanceNames = riveFile.getViewModelInstanceNames(viewModelName)
+    if (!instanceNames.contains(name)) return null
+    val source = vmSource.namedInstance(name)
+    val vmi = ViewModelInstance.fromFile(riveFile, source)
+    return HybridViewModelInstance(vmi, riveWorker, parentFile, viewModelName, name)
+  }
+
+  // Deprecated: Use createInstanceByNameAsync instead
   override fun createInstanceByName(name: String): HybridViewModelInstanceSpec? {
     return try {
-      val instanceNames = runBlocking { riveFile.getViewModelInstanceNames(viewModelName) }
-      if (!instanceNames.contains(name)) return null
-      val source = vmSource.namedInstance(name)
-      val vmi = ViewModelInstance.fromFile(riveFile, source)
-      HybridViewModelInstance(vmi, riveWorker, parentFile, viewModelName, name)
+      runBlocking { createInstanceByNameImpl(name) }
     } catch (e: Exception) {
       Log.e(TAG, "createInstanceByName('$name') failed", e)
       null
     }
   }
 
+  override fun createInstanceByNameAsync(name: String): Promise<HybridViewModelInstanceSpec?> {
+    return Promise.async { createInstanceByNameImpl(name) }
+  }
+
+  // Deprecated: Use createDefaultInstanceAsync instead
   override fun createDefaultInstance(): HybridViewModelInstanceSpec? {
     return try {
       val source = vmSource.defaultInstance()
@@ -80,6 +90,15 @@ class HybridViewModel(
     }
   }
 
+  override fun createDefaultInstanceAsync(): Promise<HybridViewModelInstanceSpec?> {
+    return Promise.async {
+      val source = vmSource.defaultInstance()
+      val vmi = ViewModelInstance.fromFile(riveFile, source)
+      HybridViewModelInstance(vmi, riveWorker, parentFile, viewModelName)
+    }
+  }
+
+  // Deprecated: Use createInstanceAsync instead
   override fun createInstance(): HybridViewModelInstanceSpec? {
     return try {
       val source = vmSource.blankInstance()
@@ -88,6 +107,14 @@ class HybridViewModel(
     } catch (e: Exception) {
       Log.e(TAG, "createInstance (blank) failed", e)
       null
+    }
+  }
+
+  override fun createInstanceAsync(): Promise<HybridViewModelInstanceSpec?> {
+    return Promise.async {
+      val source = vmSource.blankInstance()
+      val vmi = ViewModelInstance.fromFile(riveFile, source)
+      HybridViewModelInstance(vmi, riveWorker, parentFile, viewModelName)
     }
   }
 }

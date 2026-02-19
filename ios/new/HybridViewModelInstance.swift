@@ -4,16 +4,17 @@ import NitroModules
 class HybridViewModelInstance: HybridViewModelInstanceSpec {
   let viewModelInstance: ViewModelInstance
   let worker: Worker
+  private let _instanceName: String
 
-  init(viewModelInstance: ViewModelInstance, worker: Worker) {
+  init(viewModelInstance: ViewModelInstance, worker: Worker, instanceName: String = "") {
     self.viewModelInstance = viewModelInstance
     self.worker = worker
+    self._instanceName = instanceName
   }
 
-  var instanceName: String {
-    // TODO: Experimental API - ViewModelInstance.name may have been removed
-    ""
-  }
+  // TODO: Workaround — rive-ios experimental SDK doesn't expose ViewModelInstance.name.
+  // Only works when caller knows the name (createInstanceByName). Falls back to "" otherwise.
+  var instanceName: String { _instanceName }
 
   // Note: Unlike legacy API, experimental API can't sync-validate if property exists
   // Non-existent properties return wrapper objects that fail on getValue()
@@ -59,7 +60,7 @@ class HybridViewModelInstance: HybridViewModelInstanceSpec {
     let prop = ViewModelInstanceProperty(path: path)
     do {
       let vmi = try await self.viewModelInstance.value(of: prop)
-      return HybridViewModelInstance(viewModelInstance: vmi, worker: self.worker)
+      return HybridViewModelInstance(viewModelInstance: vmi, worker: self.worker, instanceName: path)
     } catch {
       RCTLogError("[ViewModelInstance] viewModel(path: '\(path)') failed: \(error)")
       return nil

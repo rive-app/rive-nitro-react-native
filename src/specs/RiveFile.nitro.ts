@@ -43,6 +43,10 @@ export interface RiveFile
   viewModelByName(name: string): ViewModel | undefined;
   /** @deprecated Use defaultArtboardViewModelAsync instead */
   defaultArtboardViewModel(artboardBy?: ArtboardBy): ViewModel | undefined;
+  /** Returns the default view model for the provided artboard */
+  defaultArtboardViewModelAsync(
+    artboardBy?: ArtboardBy
+  ): Promise<ViewModel | undefined>;
   updateReferencedAssets(referencedAssets: ReferencedAssetsType): void;
 
   /** @deprecated Use getArtboardCountAsync instead */

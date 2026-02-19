@@ -129,8 +129,24 @@ namespace margelo::nitro::rive {
       auto __value = std::move(__result.value());
       return __value;
     }
+    inline std::shared_ptr<Promise<std::optional<std::shared_ptr<HybridViewModelSpec>>>> viewModelByNameAsync(const std::string& name) override {
+      auto __result = _swiftPart.viewModelByNameAsync(name);
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
     inline std::optional<std::shared_ptr<HybridViewModelSpec>> defaultArtboardViewModel(const std::optional<ArtboardBy>& artboardBy) override {
       auto __result = _swiftPart.defaultArtboardViewModel(artboardBy);
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline std::shared_ptr<Promise<std::optional<std::shared_ptr<HybridViewModelSpec>>>> defaultArtboardViewModelAsync(const std::optional<ArtboardBy>& artboardBy) override {
+      auto __result = _swiftPart.defaultArtboardViewModelAsync(artboardBy);
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }

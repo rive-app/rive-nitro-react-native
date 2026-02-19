@@ -46,6 +46,7 @@ class HybridRiveFile : HybridRiveFileSpec() {
     }
   }
 
+  // Deprecated: Use viewModelByNameAsync instead
   override fun viewModelByName(name: String): HybridViewModelSpec? {
     return try {
       val vm = riveFile?.getViewModelByName(name) ?: return null
@@ -55,6 +56,14 @@ class HybridRiveFile : HybridRiveFileSpec() {
     }
   }
 
+  override fun viewModelByNameAsync(name: String): Promise<HybridViewModelSpec?> {
+    return Promise.async {
+      val vm = riveFile?.getViewModelByName(name) ?: return@async null
+      HybridViewModel(vm)
+    }
+  }
+
+  // Deprecated: Use defaultArtboardViewModelAsync instead
   override fun defaultArtboardViewModel(artboardBy: ArtboardBy?): HybridViewModelSpec? {
     try {
       val artboard = when (artboardBy?.type) {
@@ -68,6 +77,10 @@ class HybridRiveFile : HybridRiveFileSpec() {
     } catch (e: Exception) {
       return null
     }
+  }
+
+  override fun defaultArtboardViewModelAsync(artboardBy: ArtboardBy?): Promise<HybridViewModelSpec?> {
+    return Promise.async { defaultArtboardViewModel(artboardBy) }
   }
 
   override val artboardCount: Double

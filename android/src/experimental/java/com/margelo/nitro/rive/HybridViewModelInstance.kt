@@ -39,6 +39,8 @@ class HybridViewModelInstance(
     return propertyNames.contains(path)
   }
 
+  // TODO: Workaround — rive-android experimental SDK doesn't expose ViewModelInstance.name.
+  // Only works when caller knows the name (createInstanceByName). Falls back to "" otherwise.
   override val instanceName: String
     get() = _instanceName ?: ""
 
