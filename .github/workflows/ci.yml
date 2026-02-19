@@ -292,24 +292,16 @@ jobs:
         run: |
           trap '' TERM
 
-          # Kill a process and all its descendants
-          kill_tree() {
-            local pid=$1
-            for child in $(pgrep -P $pid 2>/dev/null); do
-              kill_tree $child
-            done
-            kill -9 $pid 2>/dev/null || true
-          }
-
           # Background monitor: logs port/process state every 10s during an attempt
           start_monitor() {
             (
               while true; do
                 sleep 10
+                ts=$(date +%H:%M:%S)
                 metro=$(lsof -ti:8081 2>/dev/null || echo "no")
                 bridge=$(lsof -ti:3001 2>/dev/null || echo "no")
                 app=$(pgrep -f RiveExample 2>/dev/null || echo "no")
-                echo "[monitor] metro:$metro bridge:$bridge app:$app"
+                echo "[$ts] metro:$metro bridge:$bridge app:$app"
               done
             ) &
             MONITOR_PID=$!
@@ -319,20 +311,26 @@ jobs:
             wait $MONITOR_PID 2>/dev/null || true
           }
 
+          nuke_harness() {
+            echo "[cleanup] killing all harness/metro/node processes"
+            pkill -9 -f "react-native-harness" 2>/dev/null || true
+            pkill -9 -f "test:harness" 2>/dev/null || true
+            pkill -9 -f "@react-native-harness" 2>/dev/null || true
+            pkill -9 -f "metro" 2>/dev/null || true
+            lsof -ti:8081 | xargs kill -9 2>/dev/null || true
+            lsof -ti:3001 | xargs kill -9 2>/dev/null || true
+          }
+
           run_with_timeout() {
             yarn test:harness:ios --verbose --testTimeout 120000 &
             local pid=$!
-            ( sleep 90 && echo "[watchdog] 90s timeout — killing process tree for $pid" && kill_tree $pid ) &
+            ( sleep 90 && echo "[watchdog] 90s timeout hit" && kill -9 $pid 2>/dev/null ) &
             local watchdog=$!
             wait $pid 2>/dev/null || true
             local exit_code=$?
             kill $watchdog 2>/dev/null || true
             wait $watchdog 2>/dev/null || true
-            # Clean up any orphaned node/metro/harness processes
-            pkill -9 -f "test:harness:ios" 2>/dev/null || true
-            pkill -9 -f "react-native-harness" 2>/dev/null || true
-            lsof -ti:8081 | xargs kill -9 2>/dev/null || true
-            lsof -ti:3001 | xargs kill -9 2>/dev/null || true
+            nuke_harness
             return $exit_code
           }
 
