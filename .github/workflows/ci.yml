@@ -210,6 +210,7 @@ jobs:
 
   test-harness-ios:
     runs-on: macos-latest
+    timeout-minutes: 60
     env:
       XCODE_VERSION: 16.4
     steps:
@@ -306,3 +307,86 @@ jobs:
         run: |
           echo "=== Checking simulator logs for errors ==="
           xcrun simctl spawn booted log show --predicate 'processImagePath CONTAINS "RiveExample"' --last 5m --style compact 2>&1 | tail -200 || echo "No logs found"
+
+  test-harness-android:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      ANDROID_API_LEVEL: 35
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup
+        uses: ./.github/actions/setup
+
+      - name: Install JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Finalize Android SDK
+        run: |
+          /bin/bash -c "yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses > /dev/null"
+
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/wrapper
+            ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-harness-${{ hashFiles('example/android/gradle/wrapper/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-harness-
+            ${{ runner.os }}-gradle-
+
+      - name: Restore Android build cache
+        id: android-build-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: example/android/app/build
+          key: ${{ runner.os }}-android-build-${{ env.ANDROID_API_LEVEL }}-${{ hashFiles('yarn.lock', 'android/**', 'nitrogen/generated/android/**', 'example/android/app/build.gradle', 'example/android/gradle.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-android-build-${{ env.ANDROID_API_LEVEL }}-
+
+      - name: Build Android app
+        if: steps.android-build-cache.outputs.cache-hit != 'true'
+        working-directory: example/android
+        env:
+          JAVA_OPTS: "-XX:MaxHeapSize=6g"
+        run: |
+          ./gradlew assembleDebug --no-daemon --console=plain -PreactNativeArchitectures=x86_64
+
+      - name: Save Android build cache
+        if: steps.android-build-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: example/android/app/build
+          key: ${{ steps.android-build-cache.outputs.cache-primary-key }}
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Run harness tests on Android
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ env.ANDROID_API_LEVEL }}
+          arch: x86_64
+          target: google_apis
+          force-avd-creation: false
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
+          disable-animations: true
+          script: |
+            adb install example/android/app/build/outputs/apk/debug/app-debug.apk
+            sleep 10
+            cd example && for attempt in 1 2 3; do echo "Attempt $attempt of 3"; if timeout 300 env ANDROID_AVD=test yarn test:harness:android --verbose --testTimeout 120000; then echo "Tests passed on attempt $attempt"; exit 0; fi; echo "Attempt $attempt failed (exit $?), retrying..."; sleep 5; done; echo "All attempts failed"; exit 1
+
+      - name: Debug - Check logcat
+        if: failure() || cancelled()
+        run: |
+          echo "=== Checking logcat for errors ==="
+          adb logcat -d -s ReactNativeJS:* RiveExample:* RNRive:* | tail -200 || echo "No logs found"
