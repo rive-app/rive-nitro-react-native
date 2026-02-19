@@ -289,14 +289,25 @@ jobs:
       - name: Run harness tests on iOS
         working-directory: example
         run: |
+          run_with_timeout() {
+            yarn test:harness:ios --verbose --testTimeout 120000 &
+            local pid=$!
+            ( sleep 300 && kill $pid 2>/dev/null ) &
+            local watchdog=$!
+            wait $pid 2>/dev/null
+            local exit_code=$?
+            kill $watchdog 2>/dev/null
+            wait $watchdog 2>/dev/null
+            return $exit_code
+          }
           # Retry up to 3 times due to flaky harness connection
           for attempt in 1 2 3; do
             echo "Attempt $attempt of 3"
-            if yarn test:harness:ios --verbose --testTimeout 120000; then
+            if run_with_timeout; then
               echo "Tests passed on attempt $attempt"
               exit 0
             fi
-            echo "Attempt $attempt failed, retrying..."
+            echo "Attempt $attempt failed (exit $?), retrying..."
             sleep 5
           done
           echo "All attempts failed"
