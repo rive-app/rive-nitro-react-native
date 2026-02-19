@@ -42,38 +42,54 @@ class HybridRiveFile: HybridRiveFileSpec {
     return Promise.async { try await self.viewModelByIndexImpl(index: index) }
   }
 
-  func viewModelByName(name: String) throws -> (any HybridViewModelSpec)? {
+  private func viewModelByNameImpl(name: String) async throws -> (any HybridViewModelSpec)? {
     guard let file = file, let worker = worker else { return nil }
-    let names = try blockingAsync { try await file.getViewModelNames() }
+    let names = try await file.getViewModelNames()
     guard names.contains(name) else { return nil }
     return HybridViewModel(file: file, vmName: name, worker: worker)
   }
 
-  func defaultArtboardViewModel(artboardBy: ArtboardBy?) throws -> (any HybridViewModelSpec)? {
+  // Deprecated: Use viewModelByNameAsync instead
+  func viewModelByName(name: String) throws -> (any HybridViewModelSpec)? {
+    return try blockingAsync { try await self.viewModelByNameImpl(name: name) }
+  }
+
+  func viewModelByNameAsync(name: String) throws -> Promise<(any HybridViewModelSpec)?> {
+    return Promise.async { try await self.viewModelByNameImpl(name: name) }
+  }
+
+  private func defaultArtboardViewModelImpl(artboardBy: ArtboardBy?) async throws -> (any HybridViewModelSpec)? {
     guard let file = file, let worker = worker else { return nil }
-    return try blockingAsync {
-      let artboardName: String?
-      if let artboardBy = artboardBy {
-        switch artboardBy.type {
-        case .name:
-          artboardName = artboardBy.name
-        case .index:
-          guard let index = artboardBy.index else { return nil }
-          let names = try await file.getArtboardNames()
-          let idx = Int(index)
-          guard idx >= 0 && idx < names.count else { return nil }
-          artboardName = names[idx]
-        default:
-          artboardName = nil
-        }
-      } else {
+    let artboardName: String?
+    if let artboardBy = artboardBy {
+      switch artboardBy.type {
+      case .name:
+        artboardName = artboardBy.name
+      case .index:
+        guard let index = artboardBy.index else { return nil }
+        let names = try await file.getArtboardNames()
+        let idx = Int(index)
+        guard idx >= 0 && idx < names.count else { return nil }
+        artboardName = names[idx]
+      default:
         artboardName = nil
       }
-
-      let artboard = try await file.createArtboard(artboardName)
-      let vmInfo = try await file.getDefaultViewModelInfo(for: artboard)
-      return HybridViewModel(file: file, vmName: vmInfo.viewModelName, worker: worker)
+    } else {
+      artboardName = nil
     }
+
+    let artboard = try await file.createArtboard(artboardName)
+    let vmInfo = try await file.getDefaultViewModelInfo(for: artboard)
+    return HybridViewModel(file: file, vmName: vmInfo.viewModelName, worker: worker)
+  }
+
+  // Deprecated: Use defaultArtboardViewModelAsync instead
+  func defaultArtboardViewModel(artboardBy: ArtboardBy?) throws -> (any HybridViewModelSpec)? {
+    return try blockingAsync { try await self.defaultArtboardViewModelImpl(artboardBy: artboardBy) }
+  }
+
+  func defaultArtboardViewModelAsync(artboardBy: ArtboardBy?) throws -> Promise<(any HybridViewModelSpec)?> {
+    return Promise.async { try await self.defaultArtboardViewModelImpl(artboardBy: artboardBy) }
   }
 
   var artboardCount: Double {
