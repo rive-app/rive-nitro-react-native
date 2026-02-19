@@ -49,11 +49,20 @@ class HybridRiveFile: HybridRiveFileSpec, RiveViewSource {
     }
   }
   
+  // Deprecated: Use viewModelByNameAsync instead
   func viewModelByName(name: String) throws -> (any HybridViewModelSpec)? {
     guard let vm = riveFile?.viewModelNamed(name) else { return nil }
     return HybridViewModel(viewModel: vm)
   }
-  
+
+  func viewModelByNameAsync(name: String) throws -> Promise<(any HybridViewModelSpec)?> {
+    return Promise.async {
+      guard let vm = self.riveFile?.viewModelNamed(name) else { return nil }
+      return HybridViewModel(viewModel: vm)
+    }
+  }
+
+  // Deprecated: Use defaultArtboardViewModelAsync instead
   func defaultArtboardViewModel(artboardBy: ArtboardBy?) throws -> (any HybridViewModelSpec)? {
     guard let file = riveFile else { return nil }
     let artboard: RiveArtboard?
@@ -77,7 +86,13 @@ class HybridRiveFile: HybridRiveFileSpec, RiveViewSource {
           let vm = file.defaultViewModel(for: artboard) else { return nil }
     return HybridViewModel(viewModel: vm)
   }
-  
+
+  func defaultArtboardViewModelAsync(artboardBy: ArtboardBy?) throws -> Promise<(any HybridViewModelSpec)?> {
+    return Promise.async {
+      try self.defaultArtboardViewModel(artboardBy: artboardBy)
+    }
+  }
+
   var artboardCount: Double {
     Double(riveFile?.artboardNames().count ?? 0)
   }

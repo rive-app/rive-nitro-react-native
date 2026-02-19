@@ -53,7 +53,15 @@ abstract class HybridRiveFileSpec: HybridObject() {
   
   @DoNotStrip
   @Keep
+  abstract fun viewModelByNameAsync(name: String): Promise<HybridViewModelSpec?>
+  
+  @DoNotStrip
+  @Keep
   abstract fun defaultArtboardViewModel(artboardBy: ArtboardBy?): HybridViewModelSpec?
+  
+  @DoNotStrip
+  @Keep
+  abstract fun defaultArtboardViewModelAsync(artboardBy: ArtboardBy?): Promise<HybridViewModelSpec?>
   
   @DoNotStrip
   @Keep

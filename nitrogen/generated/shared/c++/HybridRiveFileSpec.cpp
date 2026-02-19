@@ -20,7 +20,9 @@ namespace margelo::nitro::rive {
       prototype.registerHybridMethod("viewModelByIndex", &HybridRiveFileSpec::viewModelByIndex);
       prototype.registerHybridMethod("viewModelByIndexAsync", &HybridRiveFileSpec::viewModelByIndexAsync);
       prototype.registerHybridMethod("viewModelByName", &HybridRiveFileSpec::viewModelByName);
+      prototype.registerHybridMethod("viewModelByNameAsync", &HybridRiveFileSpec::viewModelByNameAsync);
       prototype.registerHybridMethod("defaultArtboardViewModel", &HybridRiveFileSpec::defaultArtboardViewModel);
+      prototype.registerHybridMethod("defaultArtboardViewModelAsync", &HybridRiveFileSpec::defaultArtboardViewModelAsync);
       prototype.registerHybridMethod("updateReferencedAssets", &HybridRiveFileSpec::updateReferencedAssets);
       prototype.registerHybridMethod("getViewModelNamesAsync", &HybridRiveFileSpec::getViewModelNamesAsync);
       prototype.registerHybridMethod("viewModelByNameAsync", &HybridRiveFileSpec::viewModelByNameAsync);

@@ -34,7 +34,7 @@ class HybridViewModel: HybridViewModelSpec {
 
   private func createInstanceByNameImpl(name: String) async throws -> (any HybridViewModelInstanceSpec)? {
     let vmi = try await self.file.createViewModelInstance(.name(name, from: .name(self.vmName)))
-    return HybridViewModelInstance(viewModelInstance: vmi, worker: self.worker)
+    return HybridViewModelInstance(viewModelInstance: vmi, worker: self.worker, instanceName: name)
   }
 
   // Deprecated: Use createInstanceByNameAsync instead
