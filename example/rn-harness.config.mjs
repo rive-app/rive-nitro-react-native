@@ -8,7 +8,7 @@ const iosVersion = process.env.IOS_VERSION || '18.6';
 export default {
   entryPoint: './index.js',
   appRegistryComponentName: 'RiveExample',
-  bridgeTimeout: 120000,
+  bridgeTimeout: 60000,
   runners: [
     androidPlatform({
       name: 'android',
