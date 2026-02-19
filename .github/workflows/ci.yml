@@ -288,34 +288,38 @@ jobs:
 
       - name: Run harness tests on iOS
         working-directory: example
+        shell: bash --noprofile --norc -o pipefail {0}
         run: |
+          # Trap SIGTERM so watchdog kill doesn't take down the whole script
+          trap '' TERM
+
           # Background monitor: logs port/process state every 10s during an attempt
           start_monitor() {
             (
               while true; do
                 sleep 10
-                local metro=$(lsof -ti:8081 2>/dev/null || echo "no")
-                local bridge=$(lsof -ti:3001 2>/dev/null || echo "no")
-                local app=$(pgrep -f RiveExample 2>/dev/null || echo "no")
+                metro=$(lsof -ti:8081 2>/dev/null || echo "no")
+                bridge=$(lsof -ti:3001 2>/dev/null || echo "no")
+                app=$(pgrep -f RiveExample 2>/dev/null || echo "no")
                 echo "[monitor] metro:$metro bridge:$bridge app:$app"
               done
             ) &
             MONITOR_PID=$!
           }
           stop_monitor() {
-            kill $MONITOR_PID 2>/dev/null
-            wait $MONITOR_PID 2>/dev/null
+            kill $MONITOR_PID 2>/dev/null || true
+            wait $MONITOR_PID 2>/dev/null || true
           }
 
           run_with_timeout() {
             yarn test:harness:ios --verbose --testTimeout 120000 &
             local pid=$!
-            ( sleep 180 && kill $pid 2>/dev/null ) &
+            ( sleep 180 && kill -9 $pid 2>/dev/null ) &
             local watchdog=$!
-            wait $pid 2>/dev/null
+            wait $pid 2>/dev/null || true
             local exit_code=$?
-            kill $watchdog 2>/dev/null
-            wait $watchdog 2>/dev/null
+            kill $watchdog 2>/dev/null || true
+            wait $watchdog 2>/dev/null || true
             return $exit_code
           }
 
