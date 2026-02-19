@@ -2142,7 +2142,6 @@ DEPENDENCIES:
 
 SPEC REPOS:
   trunk:
-    - RiveRuntime
     - SocketRocket
 
 EXTERNAL SOURCES:
