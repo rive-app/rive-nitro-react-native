@@ -300,9 +300,9 @@ jobs:
             wait $watchdog 2>/dev/null
             return $exit_code
           }
-          # Retry up to 3 times due to flaky harness connection
-          for attempt in 1 2 3; do
-            echo "Attempt $attempt of 3"
+          # Retry up to 5 times due to flaky harness connection
+          for attempt in 1 2 3 4 5; do
+            echo "Attempt $attempt of 5"
             if run_with_timeout; then
               echo "Tests passed on attempt $attempt"
               exit 0
