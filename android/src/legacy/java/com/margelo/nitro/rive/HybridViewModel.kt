@@ -38,6 +38,7 @@ class HybridViewModel(private val viewModel: ViewModel) : HybridViewModelSpec() 
     }
   }
 
+  // Deprecated: Use createInstanceByNameAsync instead
   override fun createInstanceByName(name: String): HybridViewModelInstanceSpec? {
     try {
       val vmi = viewModel.createInstanceFromName(name)
@@ -47,6 +48,18 @@ class HybridViewModel(private val viewModel: ViewModel) : HybridViewModelSpec() 
     }
   }
 
+  override fun createInstanceByNameAsync(name: String): Promise<HybridViewModelInstanceSpec?> {
+    return Promise.async {
+      try {
+        val vmi = viewModel.createInstanceFromName(name)
+        HybridViewModelInstance(vmi)
+      } catch (e: ViewModelException) {
+        null
+      }
+    }
+  }
+
+  // Deprecated: Use createDefaultInstanceAsync instead
   override fun createDefaultInstance(): HybridViewModelInstanceSpec? {
     try {
       val vmi = viewModel.createDefaultInstance()
@@ -56,6 +69,18 @@ class HybridViewModel(private val viewModel: ViewModel) : HybridViewModelSpec() 
     }
   }
 
+  override fun createDefaultInstanceAsync(): Promise<HybridViewModelInstanceSpec?> {
+    return Promise.async {
+      try {
+        val vmi = viewModel.createDefaultInstance()
+        HybridViewModelInstance(vmi)
+      } catch (e: ViewModelException) {
+        null
+      }
+    }
+  }
+
+  // Deprecated: Use createInstanceAsync instead
   override fun createInstance(): HybridViewModelInstanceSpec? {
     try {
       val vmi = viewModel.createBlankInstance()
@@ -83,5 +108,16 @@ class HybridViewModel(private val viewModel: ViewModel) : HybridViewModelSpec() 
 
   override fun createBlankInstanceAsync(): Promise<HybridViewModelInstanceSpec?> {
     return Promise.async { createInstance() }
+  }
+
+  override fun createInstanceAsync(): Promise<HybridViewModelInstanceSpec?> {
+    return Promise.async {
+      try {
+        val vmi = viewModel.createBlankInstance()
+        HybridViewModelInstance(vmi)
+      } catch (e: ViewModelException) {
+        null
+      }
+    }
   }
 }

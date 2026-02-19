@@ -7,7 +7,7 @@ import {
   cleanup,
 } from 'react-native-harness';
 import { useEffect } from 'react';
-import { Platform, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import {
   RiveFileFactory,
   ArtboardByName,
@@ -15,12 +15,6 @@ import {
   type RiveFile,
 } from '@rive-app/react-native';
 import type { ViewModelInstance } from '@rive-app/react-native';
-
-function isExperimentalIOS() {
-  return (
-    Platform.OS === 'ios' && RiveFileFactory.getBackend() === 'experimental'
-  );
-}
 
 const MULTI_AB = require('../assets/rive/arbtboards-models-instances.riv');
 
@@ -260,9 +254,7 @@ describe('useViewModelInstance by viewModelName + instanceName verifies _id', ()
     );
     await waitFor(() => expect(ctx.instance).not.toBeNull(), { timeout: 5000 });
     expect(ctx.id).toBe('vm1.vmi1.id');
-    if (!isExperimentalIOS()) {
-      expect(ctx.instanceName).toBe('vmi1');
-    }
+    expect(ctx.instanceName).toBe('vmi1');
     cleanup();
   });
 
@@ -279,9 +271,7 @@ describe('useViewModelInstance by viewModelName + instanceName verifies _id', ()
     );
     await waitFor(() => expect(ctx.instance).not.toBeNull(), { timeout: 5000 });
     expect(ctx.id).toBe('vm1.vmi2.id');
-    if (!isExperimentalIOS()) {
-      expect(ctx.instanceName).toBe('vmi2');
-    }
+    expect(ctx.instanceName).toBe('vmi2');
     cleanup();
   });
 
@@ -298,9 +288,7 @@ describe('useViewModelInstance by viewModelName + instanceName verifies _id', ()
     );
     await waitFor(() => expect(ctx.instance).not.toBeNull(), { timeout: 5000 });
     expect(ctx.id).toBe('vm2.vmi2.id');
-    if (!isExperimentalIOS()) {
-      expect(ctx.instanceName).toBe('vmi2');
-    }
+    expect(ctx.instanceName).toBe('vmi2');
     cleanup();
   });
 
@@ -317,9 +305,7 @@ describe('useViewModelInstance by viewModelName + instanceName verifies _id', ()
     );
     await waitFor(() => expect(ctx.instance).not.toBeNull(), { timeout: 5000 });
     expect(ctx.id).toBe('vm3.vmi1.id');
-    if (!isExperimentalIOS()) {
-      expect(ctx.instanceName).toBe('vmi1');
-    }
+    expect(ctx.instanceName).toBe('vmi1');
     cleanup();
   });
 
