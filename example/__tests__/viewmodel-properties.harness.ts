@@ -99,7 +99,10 @@ describe('ViewModel Properties', () => {
     // Most backends reject invalid enum values; the value should revert to 'cat'
     // Android legacy SDK accepts them (reads back 'snakeLizard')
     const val = enumProperty.value;
-    if (Platform.OS === 'android' && RiveFileFactory.getBackend() === 'legacy') {
+    if (
+      Platform.OS === 'android' &&
+      RiveFileFactory.getBackend() === 'legacy'
+    ) {
       expect(val === 'cat' || val === 'snakeLizard').toBe(true);
     } else {
       expect(val).toBe('cat');
