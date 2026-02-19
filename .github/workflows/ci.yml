@@ -289,10 +289,21 @@ jobs:
       - name: Run harness tests on iOS
         working-directory: example
         run: |
+          debug_state() {
+            echo "--- Debug: simulator & app state ---"
+            xcrun simctl list devices | grep -i booted || echo "No booted simulators"
+            xcrun simctl listapps booted 2>/dev/null | grep -A2 rive.example || echo "App not found in installed apps"
+            echo "Metro port 8081: $(lsof -ti:8081 2>/dev/null || echo 'not listening')"
+            echo "Bridge port 3001: $(lsof -ti:3001 2>/dev/null || echo 'not listening')"
+            echo "RiveExample processes: $(pgrep -fl RiveExample 2>/dev/null || echo 'none')"
+            xcrun simctl spawn booted log show --predicate 'processImagePath CONTAINS "RiveExample"' --last 2m --style compact 2>&1 | tail -30 || true
+            echo "--- End debug ---"
+          }
+
           run_with_timeout() {
             yarn test:harness:ios --verbose --testTimeout 120000 &
             local pid=$!
-            ( sleep 90 && kill $pid 2>/dev/null ) &
+            ( sleep 120 && kill $pid 2>/dev/null ) &
             local watchdog=$!
             wait $pid 2>/dev/null
             local exit_code=$?
@@ -300,24 +311,32 @@ jobs:
             wait $watchdog 2>/dev/null
             return $exit_code
           }
+
           # Retry up to 5 times due to flaky harness connection
           for attempt in 1 2 3 4 5; do
-            echo "Attempt $attempt of 5"
+            echo "=== Attempt $attempt of 5 ==="
+            debug_state
             if run_with_timeout; then
               echo "Tests passed on attempt $attempt"
               exit 0
             fi
             echo "Attempt $attempt failed (exit $?), retrying..."
+            debug_state
+            # Kill leftover Metro/node processes between retries
+            lsof -ti:8081 | xargs kill -9 2>/dev/null || true
+            lsof -ti:3001 | xargs kill -9 2>/dev/null || true
             sleep 5
           done
           echo "All attempts failed"
           exit 1
 
       - name: Debug - Check for console logs
-        if: failure()
+        if: failure() || cancelled()
         run: |
-          echo "=== Checking simulator logs for errors ==="
+          echo "=== Simulator logs (last 5m) ==="
           xcrun simctl spawn booted log show --predicate 'processImagePath CONTAINS "RiveExample"' --last 5m --style compact 2>&1 | tail -200 || echo "No logs found"
+          echo "=== System log for Metro/Node ==="
+          xcrun simctl spawn booted log show --predicate 'process CONTAINS "node" OR process CONTAINS "metro"' --last 5m --style compact 2>&1 | tail -50 || true
 
   test-harness-android:
     runs-on: ubuntu-latest
