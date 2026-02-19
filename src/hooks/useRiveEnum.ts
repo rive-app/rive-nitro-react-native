@@ -1,10 +1,13 @@
-import { useCallback } from 'react';
 import {
   type ViewModelEnumProperty,
   type ViewModelInstance,
 } from '../specs/ViewModel.nitro';
 import type { UseRivePropertyResult } from '../types';
 import { useRiveProperty } from './useRiveProperty';
+
+const ENUM_PROPERTY_OPTIONS = {
+  getProperty: (vmi: ViewModelInstance, p: string) => vmi.enumProperty(p),
+};
 
 /**
  * Hook for interacting with enum ViewModel instance properties.
@@ -20,8 +23,6 @@ export function useRiveEnum(
   const [value, setValue, error] = useRiveProperty<
     ViewModelEnumProperty,
     string
-  >(viewModelInstance, path, {
-    getProperty: useCallback((vmi, p) => vmi.enumProperty(p), []),
-  });
+  >(viewModelInstance, path, ENUM_PROPERTY_OPTIONS);
   return { value, setValue, error };
 }
