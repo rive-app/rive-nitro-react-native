@@ -59,42 +59,60 @@ class HybridRiveFile(
     return Promise.async { viewModelByIndexImpl(index) }
   }
 
-  override fun viewModelByName(name: String): HybridViewModelSpec? {
+  private suspend fun viewModelByNameImpl(name: String): HybridViewModelSpec? {
     val file = riveFile ?: return null
+    val names = file.getViewModelNames()
+    if (!names.contains(name)) return null
+    return HybridViewModel(file, riveWorker, name, this)
+  }
+
+  // Deprecated: Use viewModelByNameAsync instead
+  override fun viewModelByName(name: String): HybridViewModelSpec? {
     return try {
-      val names = runBlocking { file.getViewModelNames() }
-      if (!names.contains(name)) return null
-      HybridViewModel(file, riveWorker, name, this)
+      runBlocking { viewModelByNameImpl(name) }
     } catch (e: Exception) {
       Log.e(TAG, "viewModelByName('$name') failed", e)
       null
     }
   }
 
-  override fun defaultArtboardViewModel(artboardBy: ArtboardBy?): HybridViewModelSpec? {
-    val file = riveFile ?: return null
-    return try {
-      val artboardName = when (artboardBy?.type) {
-        ArtboardByTypes.INDEX -> {
-          val artboardNames = runBlocking { file.getArtboardNames() }
-          artboardNames.getOrNull(artboardBy.index!!.toInt())
-        }
-        ArtboardByTypes.NAME -> artboardBy.name
-        null -> null
-      }
+  override fun viewModelByNameAsync(name: String): Promise<HybridViewModelSpec?> {
+    return Promise.async { viewModelByNameImpl(name) }
+  }
 
-      val artboard = if (artboardName != null) {
-        Artboard.fromFile(file, artboardName)
-      } else {
-        Artboard.fromFile(file)
+  private suspend fun defaultArtboardViewModelImpl(artboardBy: ArtboardBy?): HybridViewModelSpec? {
+    val file = riveFile ?: return null
+    val artboardName = when (artboardBy?.type) {
+      ArtboardByTypes.INDEX -> {
+        val artboardNames = file.getArtboardNames()
+        artboardNames.getOrNull(artboardBy.index!!.toInt())
       }
-      val vmSource = ViewModelSource.DefaultForArtboard(artboard)
-      val resolvedName = runBlocking { resolveDefaultVMName(file, vmSource) }
-      HybridViewModel(file, riveWorker, resolvedName, this, vmSource)
+      ArtboardByTypes.NAME -> artboardBy.name
+      null -> null
+    }
+
+    val artboard = if (artboardName != null) {
+      Artboard.fromFile(file, artboardName)
+    } else {
+      Artboard.fromFile(file)
+    }
+    val vmSource = ViewModelSource.DefaultForArtboard(artboard)
+    val resolvedName = resolveDefaultVMName(file, vmSource)
+    return HybridViewModel(file, riveWorker, resolvedName, this, vmSource)
+  }
+
+  // Deprecated: Use defaultArtboardViewModelAsync instead
+  override fun defaultArtboardViewModel(artboardBy: ArtboardBy?): HybridViewModelSpec? {
+    return try {
+      runBlocking { defaultArtboardViewModelImpl(artboardBy) }
     } catch (e: Exception) {
       Log.e(TAG, "defaultArtboardViewModel failed", e)
       null
     }
+  }
+
+  override fun defaultArtboardViewModelAsync(artboardBy: ArtboardBy?): Promise<HybridViewModelSpec?> {
+    return Promise.async { defaultArtboardViewModelImpl(artboardBy) }
   }
 
   override val artboardCount: Double
