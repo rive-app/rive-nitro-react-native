@@ -288,25 +288,109 @@ jobs:
 
       - name: Run harness tests on iOS
         working-directory: example
+        timeout-minutes: 15
+        shell: bash --noprofile --norc -o pipefail {0}
         run: |
-          # Retry up to 3 times due to flaky harness connection
-          for attempt in 1 2 3; do
-            echo "Attempt $attempt of 3"
-            if yarn test:harness:ios --verbose --testTimeout 120000; then
+          # Background monitor: logs port/process state every 10s during an attempt
+          start_monitor() {
+            (
+              while true; do
+                sleep 10
+                ts=$(date +%H:%M:%S)
+                metro=$(lsof -ti:8081 2>/dev/null || echo "no")
+                bridge=$(lsof -ti:3001 2>/dev/null || echo "no")
+                app=$(pgrep -f RiveExample 2>/dev/null || echo "no")
+                echo "[$ts] metro:$metro bridge:$bridge app:$app"
+              done
+            ) &
+            MONITOR_PID=$!
+          }
+          stop_monitor() {
+            kill $MONITOR_PID 2>/dev/null || true
+            wait $MONITOR_PID 2>/dev/null || true
+          }
+
+          wait_for_port_free() {
+            local port=$1
+            local timeout=${2:-10}
+            local i=0
+            while lsof -ti:$port >/dev/null 2>&1; do
+              if [ $i -ge $timeout ]; then
+                echo "  WARNING: port $port still in use after ${timeout}s"
+                return 1
+              fi
+              sleep 1
+              i=$((i + 1))
+            done
+            echo "  port $port is free (${i}s)"
+            return 0
+          }
+
+          nuke_harness() {
+            echo "[$(date +%H:%M:%S)] cleanup: killing all harness/metro/node processes"
+            pkill -9 -f "react-native-harness" 2>/dev/null || true
+            pkill -9 -f "jest" 2>/dev/null || true
+            lsof -ti:8081 | xargs kill -9 2>/dev/null || true
+            lsof -ti:3001 | xargs kill -9 2>/dev/null || true
+            wait_for_port_free 8081
+            wait_for_port_free 3001
+          }
+
+          # Pre-warm Metro: compile the JS bundle once so all test attempts use cached transforms.
+          # The harness starts its own Metro, but it reuses the on-disk transform cache.
+          echo "=== Pre-warming Metro bundle ==="
+          npx react-native start --port 8081 --no-interactive &
+          PREWARM_PID=$!
+
+          # Wait for Metro to be responsive
+          for i in $(seq 1 30); do
+            if curl -s http://localhost:8081/status 2>/dev/null | grep -q "packager-status:running"; then
+              echo "Metro is running (after ${i}s)"
+              break
+            fi
+            sleep 2
+          done
+
+          # Trigger full bundle compilation (the slow part on cold start)
+          echo "Fetching iOS bundle to warm cache..."
+          if curl -s --max-time 300 -o /dev/null -w "Bundle fetch: HTTP %{http_code} in %{time_total}s\n" \
+            "http://localhost:8081/index.bundle?platform=ios&dev=true&minify=false"; then
+            echo "Metro bundle cache is warm"
+          else
+            echo "WARNING: Metro pre-warm failed (will rely on bridgeTimeout fallback)"
+          fi
+
+          # Kill pre-warm Metro — harness needs to start its own, but cache persists on disk
+          kill $PREWARM_PID 2>/dev/null || true
+          wait $PREWARM_PID 2>/dev/null || true
+          wait_for_port_free 8081
+          echo "=== Pre-warm complete ==="
+
+          # Retry up to 5 times — bridgeTimeout (300s) handles connection failures,
+          # testTimeout (120s) handles hung tests, step timeout-minutes (15) is the backstop
+          for attempt in 1 2 3 4 5; do
+            echo "=== Attempt $attempt of 5 ==="
+            start_monitor
+            yarn test:harness:ios --verbose --testTimeout 120000
+            exit_code=$?
+            stop_monitor
+            if [ $exit_code -eq 0 ]; then
               echo "Tests passed on attempt $attempt"
               exit 0
             fi
-            echo "Attempt $attempt failed, retrying..."
-            sleep 5
+            echo "Attempt $attempt failed (exit $exit_code), retrying..."
+            nuke_harness
           done
           echo "All attempts failed"
           exit 1
 
       - name: Debug - Check for console logs
-        if: failure()
+        if: failure() || cancelled()
         run: |
-          echo "=== Checking simulator logs for errors ==="
+          echo "=== Simulator logs (last 5m) ==="
           xcrun simctl spawn booted log show --predicate 'processImagePath CONTAINS "RiveExample"' --last 5m --style compact 2>&1 | tail -200 || echo "No logs found"
+          echo "=== System log for Metro/Node ==="
+          xcrun simctl spawn booted log show --predicate 'process CONTAINS "node" OR process CONTAINS "metro"' --last 5m --style compact 2>&1 | tail -50 || true
 
   test-harness-android:
     runs-on: ubuntu-latest
