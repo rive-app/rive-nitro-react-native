@@ -99,7 +99,11 @@ describe('ViewModel Properties', () => {
     // Most backends reject invalid enum values; the value should revert to 'cat'
     // Android legacy SDK accepts them (reads back 'snakeLizard')
     const val = enumProperty.value;
-    expect(val === 'cat' || val === 'snakeLizard').toBe(true);
+    if (Platform.OS === 'android' && RiveFileFactory.getBackend() === 'legacy') {
+      expect(val === 'cat' || val === 'snakeLizard').toBe(true);
+    } else {
+      expect(val).toBe('cat');
+    }
   });
 
   it('triggerProperty can be triggered', async () => {
