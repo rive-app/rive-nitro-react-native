@@ -289,21 +289,28 @@ jobs:
       - name: Run harness tests on iOS
         working-directory: example
         run: |
-          debug_state() {
-            echo "--- Debug: simulator & app state ---"
-            xcrun simctl list devices | grep -i booted || echo "No booted simulators"
-            xcrun simctl listapps booted 2>/dev/null | grep -A2 rive.example || echo "App not found in installed apps"
-            echo "Metro port 8081: $(lsof -ti:8081 2>/dev/null || echo 'not listening')"
-            echo "Bridge port 3001: $(lsof -ti:3001 2>/dev/null || echo 'not listening')"
-            echo "RiveExample processes: $(pgrep -fl RiveExample 2>/dev/null || echo 'none')"
-            xcrun simctl spawn booted log show --predicate 'processImagePath CONTAINS "RiveExample"' --last 2m --style compact 2>&1 | tail -30 || true
-            echo "--- End debug ---"
+          # Background monitor: logs port/process state every 10s during an attempt
+          start_monitor() {
+            (
+              while true; do
+                sleep 10
+                local metro=$(lsof -ti:8081 2>/dev/null || echo "no")
+                local bridge=$(lsof -ti:3001 2>/dev/null || echo "no")
+                local app=$(pgrep -f RiveExample 2>/dev/null || echo "no")
+                echo "[monitor] metro:$metro bridge:$bridge app:$app"
+              done
+            ) &
+            MONITOR_PID=$!
+          }
+          stop_monitor() {
+            kill $MONITOR_PID 2>/dev/null
+            wait $MONITOR_PID 2>/dev/null
           }
 
           run_with_timeout() {
             yarn test:harness:ios --verbose --testTimeout 120000 &
             local pid=$!
-            ( sleep 120 && kill $pid 2>/dev/null ) &
+            ( sleep 180 && kill $pid 2>/dev/null ) &
             local watchdog=$!
             wait $pid 2>/dev/null
             local exit_code=$?
@@ -315,13 +322,14 @@ jobs:
           # Retry up to 5 times due to flaky harness connection
           for attempt in 1 2 3 4 5; do
             echo "=== Attempt $attempt of 5 ==="
-            debug_state
+            start_monitor
             if run_with_timeout; then
+              stop_monitor
               echo "Tests passed on attempt $attempt"
               exit 0
             fi
+            stop_monitor
             echo "Attempt $attempt failed (exit $?), retrying..."
-            debug_state
             # Kill leftover Metro/node processes between retries
             lsof -ti:8081 | xargs kill -9 2>/dev/null || true
             lsof -ti:3001 | xargs kill -9 2>/dev/null || true
