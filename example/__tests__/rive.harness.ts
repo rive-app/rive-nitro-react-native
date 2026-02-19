@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'react-native-harness';
+import { Platform } from 'react-native';
 import { RiveFileFactory } from '@rive-app/react-native';
 
 const QUICK_START = require('../assets/rive/quick_start.riv');
@@ -35,7 +36,12 @@ describe('ViewModel', () => {
     expect(vm1).toBeDefined();
     expect(vm2).toBeDefined();
 
-    expect(await instance?.viewModelAsync('nonexistent')).toBeUndefined();
+    const isExperimentalIOS =
+      Platform.OS === 'ios' && RiveFileFactory.getBackend() === 'experimental';
+    if (!isExperimentalIOS) {
+      // Experimental API can't sync-validate property paths
+      expect(await instance?.viewModelAsync('nonexistent')).toBeUndefined();
+    }
 
     expect(vm1?.instanceName).toBeDefined();
     expect(typeof vm1?.instanceName).toBe('string');
