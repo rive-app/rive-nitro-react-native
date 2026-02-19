@@ -292,7 +292,7 @@ jobs:
           run_with_timeout() {
             yarn test:harness:ios --verbose --testTimeout 120000 &
             local pid=$!
-            ( sleep 300 && kill $pid 2>/dev/null ) &
+            ( sleep 90 && kill $pid 2>/dev/null ) &
             local watchdog=$!
             wait $pid 2>/dev/null
             local exit_code=$?
