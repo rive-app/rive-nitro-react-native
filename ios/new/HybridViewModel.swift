@@ -19,24 +19,7 @@ class HybridViewModel: HybridViewModelSpec {
   var instanceCount: Double { 0 }
 
   private func createDefaultInstanceImpl() async throws -> (any HybridViewModelInstanceSpec)? {
-    let artboard = try await self.file.createArtboard(nil)
-    let vmInfo = try await self.file.getDefaultViewModelInfo(for: artboard)
-
-    if vmInfo.viewModelName == self.vmName {
-      let vmi = try await self.file.createViewModelInstance(.viewModelDefault(from: .artboardDefault(artboard)))
-      return HybridViewModelInstance(viewModelInstance: vmi, worker: self.worker)
-    }
-
-    if !vmInfo.instanceName.isEmpty {
-      do {
-        let vmi = try await self.file.createViewModelInstance(.name(vmInfo.instanceName, from: .name(self.vmName)))
-        return HybridViewModelInstance(viewModelInstance: vmi, worker: self.worker)
-      } catch {
-        // Named instance failed, fall through to blank
-      }
-    }
-
-    let vmi = try await self.file.createViewModelInstance(.blank(from: .name(self.vmName)))
+    let vmi = try await self.file.createViewModelInstance(.viewModelDefault(from: .name(self.vmName)))
     return HybridViewModelInstance(viewModelInstance: vmi, worker: self.worker)
   }
 
@@ -49,21 +32,40 @@ class HybridViewModel: HybridViewModelSpec {
     return Promise.async { try await self.createDefaultInstanceImpl() }
   }
 
-  func createInstanceByName(name: String) throws -> (any HybridViewModelInstanceSpec)? {
-    return try blockingAsync {
-      let vmi = try await self.file.createViewModelInstance(.name(name, from: .name(self.vmName)))
-      return HybridViewModelInstance(viewModelInstance: vmi, worker: self.worker)
-    }
+  private func createInstanceByNameImpl(name: String) async throws -> (any HybridViewModelInstanceSpec)? {
+    let vmi = try await self.file.createViewModelInstance(.name(name, from: .name(self.vmName)))
+    return HybridViewModelInstance(viewModelInstance: vmi, worker: self.worker)
   }
 
+  // Deprecated: Use createInstanceByNameAsync instead
+  func createInstanceByName(name: String) throws -> (any HybridViewModelInstanceSpec)? {
+    return try blockingAsync { try await self.createInstanceByNameImpl(name: name) }
+  }
+
+  func createInstanceByNameAsync(name: String) throws -> Promise<(any HybridViewModelInstanceSpec)?> {
+    return Promise.async { try await self.createInstanceByNameImpl(name: name) }
+  }
+
+  // Deprecated: Use createDefaultInstanceAsync instead
   func createDefaultInstance() throws -> (any HybridViewModelInstanceSpec)? {
     return try blockingAsync { try await self.createDefaultInstanceImpl() }
   }
 
+  func createDefaultInstanceAsync() throws -> Promise<(any HybridViewModelInstanceSpec)?> {
+    return Promise.async { try await self.createDefaultInstanceImpl() }
+  }
+
+  private func createInstanceImpl() async throws -> (any HybridViewModelInstanceSpec)? {
+    let vmi = try await self.file.createViewModelInstance(.blank(from: .name(self.vmName)))
+    return HybridViewModelInstance(viewModelInstance: vmi, worker: self.worker)
+  }
+
+  // Deprecated: Use createInstanceAsync instead
   func createInstance() throws -> (any HybridViewModelInstanceSpec)? {
-    return try blockingAsync {
-      let vmi = try await self.file.createViewModelInstance(.blank(from: .name(self.vmName)))
-      return HybridViewModelInstance(viewModelInstance: vmi, worker: self.worker)
-    }
+    return try blockingAsync { try await self.createInstanceImpl() }
+  }
+
+  func createInstanceAsync() throws -> Promise<(any HybridViewModelInstanceSpec)?> {
+    return Promise.async { try await self.createInstanceImpl() }
   }
 }
