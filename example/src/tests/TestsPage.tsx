@@ -5,10 +5,17 @@ import {
   ScrollView,
   TouchableOpacity,
   ActivityIndicator,
+  LayoutAnimation,
 } from 'react-native';
 import { getTestCollector } from 'react-native-harness';
+// @ts-expect-error - internal module not exported
+import { TestComponentOverlay } from '@react-native-harness/runtime/dist/render/TestComponentOverlay';
+// @ts-expect-error - internal module not exported
+import { useRenderedElement } from '@react-native-harness/runtime/dist/ui/state';
+// @ts-expect-error - internal module not exported
+import { cleanup as cleanupRenderedElement } from '@react-native-harness/runtime/dist/render/cleanup';
 import type { TestSuite, TestCase } from '@react-native-harness/bridge';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import type { Metadata } from '../shared/metadata';
 
 const testContext = require.context(
@@ -44,6 +51,61 @@ function buildTestStates(suites: TestSuite[]): Map<string, TestState> {
     }
   }
   return states;
+}
+
+const OVERLAY_BAR_HEIGHT = 32;
+const OVERLAY_EXPANDED_HEIGHT = 250;
+
+function CollapsibleOverlay() {
+  const { element } = useRenderedElement();
+  const [expanded, setExpanded] = useState(false);
+  const hasContent = element !== null;
+  const prevHasContent = useRef(hasContent);
+
+  useEffect(() => {
+    if (prevHasContent.current !== hasContent) {
+      LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+      prevHasContent.current = hasContent;
+    }
+  }, [hasContent]);
+
+  return (
+    <View>
+      {hasContent && (
+        <TouchableOpacity
+          onPress={() => {
+            LayoutAnimation.configureNext(
+              LayoutAnimation.Presets.easeInEaseOut
+            );
+            setExpanded((prev) => !prev);
+          }}
+          style={{
+            height: OVERLAY_BAR_HEIGHT,
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: '#2a2a3e',
+            borderTopWidth: 1,
+            borderTopColor: '#444',
+          }}
+        >
+          <Text style={{ color: '#aaa', fontSize: 11, fontWeight: '600' }}>
+            {expanded ? 'Hide test view' : 'Show test view'}
+          </Text>
+        </TouchableOpacity>
+      )}
+      {/* TestComponentOverlay uses absoluteFillObject, so we contain it
+          with position:relative + explicit height + overflow:hidden */}
+      <View
+        style={{
+          height: hasContent && expanded ? OVERLAY_EXPANDED_HEIGHT : 0,
+          position: 'relative',
+          overflow: 'hidden',
+        }}
+      >
+        <TestComponentOverlay />
+      </View>
+    </View>
+  );
 }
 
 export default function TestsPage() {
@@ -85,12 +147,28 @@ export default function TestsPage() {
       await test.fn();
       setTestStates((prev) => new Map(prev).set(key, { status: 'passed' }));
     } catch (e) {
+      const errorMessage = e instanceof Error ? e.message : String(e);
+      cleanupRenderedElement();
       setTestStates((prev) =>
         new Map(prev).set(key, {
           status: 'failed',
-          error: e instanceof Error ? e.message : String(e),
+          error: errorMessage,
         })
       );
+    }
+  }
+
+  async function runSuite(suite: TestSuite) {
+    setTestStates((prev) => {
+      const next = new Map(prev);
+      for (const test of suite.tests) {
+        next.set(getTestKey(suite.name, test.name), { status: 'pending' });
+      }
+      return next;
+    });
+
+    for (const test of suite.tests) {
+      await runTest(suite.name, test);
     }
   }
 
@@ -98,9 +176,7 @@ export default function TestsPage() {
     setRunningAll(true);
 
     for (const suite of suites) {
-      for (const test of suite.tests) {
-        await runTest(suite.name, test);
-      }
+      await runSuite(suite);
     }
 
     setRunningAll(false);
@@ -171,7 +247,9 @@ export default function TestsPage() {
       <ScrollView style={styles.scrollView}>
         {suites.map((suite) => (
           <View key={suite.name} style={styles.suite}>
-            <Text style={styles.suiteName}>{suite.name}</Text>
+            <TouchableOpacity onPress={() => runSuite(suite)}>
+              <Text style={styles.suiteName}>{suite.name}</Text>
+            </TouchableOpacity>
             {suite.tests.map((test) => {
               const key = getTestKey(suite.name, test.name);
               const state = testStates.get(key) || { status: 'pending' };
@@ -182,14 +260,22 @@ export default function TestsPage() {
                   onPress={() => runTest(suite.name, test)}
                   disabled={state.status === 'running'}
                 >
-                  <Text
-                    style={[
-                      styles.statusIcon,
-                      { color: getStatusColor(state.status) },
-                    ]}
-                  >
-                    {getStatusIcon(state.status)}
-                  </Text>
+                  {state.status === 'running' ? (
+                    <ActivityIndicator
+                      size="small"
+                      color="#007AFF"
+                      style={styles.statusIcon}
+                    />
+                  ) : (
+                    <Text
+                      style={[
+                        styles.statusIcon,
+                        { color: getStatusColor(state.status) },
+                      ]}
+                    >
+                      {getStatusIcon(state.status)}
+                    </Text>
+                  )}
                   <View style={styles.testInfo}>
                     <Text style={styles.testName}>{test.name}</Text>
                     {state.error && (
@@ -202,6 +288,7 @@ export default function TestsPage() {
           </View>
         ))}
       </ScrollView>
+      <CollapsibleOverlay />
     </View>
   );
 }

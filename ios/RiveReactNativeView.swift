@@ -81,8 +81,8 @@ class RiveReactNativeView: UIView, RiveStateMachineDelegate {
       viewReadyContinuation = nil
     }
 
-    if dataBindingChanged || initialUpdate {
-      try applyDataBinding(config.bindData)
+    if dataBindingChanged || initialUpdate || reload {
+      try applyDataBinding(config.bindData, autoPlay: config.autoPlay)
     }
   }
 
@@ -94,19 +94,28 @@ class RiveReactNativeView: UIView, RiveStateMachineDelegate {
     return baseViewModel?.riveModel?.stateMachine?.viewModelInstance
   }
 
-  func applyDataBinding(_ bindData: BindData) throws {
+  func applyDataBinding(_ bindData: BindData, autoPlay: Bool) throws {
+    try bindToStateMachine(bindData)
+
+    if autoPlay {
+      play()
+    }
+  }
+
+  @MainActor
+  func play() {
+    baseViewModel?.play()
+  }
+
+  private func bindToStateMachine(_ bindData: BindData) throws {
     let stateMachine = baseViewModel?.riveModel?.stateMachine
     let artboard = baseViewModel?.riveModel?.artboard
 
     switch bindData {
     case .none:
       baseViewModel?.riveModel?.disableAutoBind()
-
     case .auto:
-      baseViewModel?.riveModel?.enableAutoBind { _ in
-        // Auto-bind callback
-      }
-
+      baseViewModel?.riveModel?.enableAutoBind { _ in }
     case .byName(let name):
       guard let artboard = artboard,
         let riveFile = baseViewModel?.riveModel?.riveFile,
@@ -116,20 +125,9 @@ class RiveReactNativeView: UIView, RiveStateMachineDelegate {
         throw NitroRiveError.instanceNotFound(message: "\(name) instance not found")
       }
       stateMachine?.bind(viewModelInstance: instance)
-      // this should be added if we support only playing artboards on their own - https://github.com/rive-app/rive-nitro-react-native/pull/23#discussion_r2534698281
-      // artboard.bind(viewModelInstance: instance)
-
     case .instance(let instance):
       stateMachine?.bind(viewModelInstance: instance)
-      // this should be added if we support only playing artboards on their own - https://github.com/rive-app/rive-nitro-react-native/pull/23#discussion_r2534698281
-      // artboard?.bind(viewModelInstance: instance)
     }
-    play()
-  }
-
-  @MainActor
-  func play() {
-    baseViewModel?.play()
   }
 
   @MainActor
