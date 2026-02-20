@@ -6,6 +6,6 @@ final class HybridRiveRuntime: HybridRiveRuntimeSpec {
   var initError: String? { nil }
 
   func initialize() throws -> Promise<Void> {
-    return .resolved(with: ())
+    return .resolved()
   }
 }
