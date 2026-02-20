@@ -40,7 +40,11 @@ object RiveInitializer {
     @Synchronized
     fun manualInitialize() {
         val ctx = context
-            ?: throw RuntimeException("Context not available. Ensure RivePackage is registered.")
+        if (ctx == null) {
+            error = "Context not available. Ensure RivePackage is registered."
+            Log.e(TAG, "Manual init failed: $error")
+            return
+        }
         if (isInitialized) return
         try {
             Rive.init(ctx)
@@ -49,7 +53,6 @@ object RiveInitializer {
         } catch (e: Throwable) {
             error = formatError(e)
             Log.e(TAG, "Manual init failed: $error", e)
-            throw RuntimeException("Rive initialization failed: $error")
         }
     }
 

@@ -6,7 +6,12 @@ const RiveRuntimeInternal =
 
 export namespace RiveRuntime {
   export async function initialize(): Promise<void> {
-    return RiveRuntimeInternal.initialize();
+    await RiveRuntimeInternal.initialize();
+    if (!RiveRuntimeInternal.isInitialized) {
+      throw new Error(
+        `Rive initialization failed: ${RiveRuntimeInternal.initError ?? 'Unknown error'}`
+      );
+    }
   }
 
   export function getStatus(): { isInitialized: boolean; error?: string } {
