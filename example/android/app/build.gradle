@@ -86,15 +86,19 @@ android {
         versionName "1.0"
         multiDexEnabled true
 
-        // Restrict ABIs to emulate native lib loading failures on mismatched devices.
-        // Set Rive_RiveRuntimeAndroidAbiFilter in gradle.properties (e.g. "x86")
-        // then run on an arm64 device to trigger a Rive init failure.
-        if (project.hasProperty('Rive_RiveRuntimeAndroidAbiFilter')) {
-            ndk {
-                abiFilters project.property('Rive_RiveRuntimeAndroidAbiFilter')
-            }
+    }
+
+    // Exclude Rive native libs to emulate a native lib loading failure.
+    // Set Rive_RiveRuntimeAndroidExcludeNativeLibs=true in gradle.properties
+    // to strip librive-android.so from the APK — Rive.init() will fail but the
+    // rest of the app keeps working, so the Runtime Init exerciser can show the error.
+    if (project.hasProperty('Rive_RiveRuntimeAndroidExcludeNativeLibs') &&
+        project.property('Rive_RiveRuntimeAndroidExcludeNativeLibs').toBoolean()) {
+        packagingOptions {
+            exclude '**/librive-android.so'
         }
     }
+
     signingConfigs {
         debug {
             storeFile file('debug.keystore')
