@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.3](https://github.com/rive-app/rive-nitro-react-native/compare/v0.2.2...v0.2.3) (2026-02-20)
+
+
+### Bug Fixes
+
+* respect autoPlay={false} in applyDataBinding ([#140](https://github.com/rive-app/rive-nitro-react-native/issues/140)) ([ac976f8](https://github.com/rive-app/rive-nitro-react-native/commit/ac976f8decdee39f1d8d0bc645f24ae40966afd4))
+
 ## [0.2.2](https://github.com/rive-app/rive-nitro-react-native/compare/v0.2.1...v0.2.2) (2026-02-20)
 
 
