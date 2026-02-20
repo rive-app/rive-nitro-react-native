@@ -30,8 +30,8 @@ object RiveInitializer {
             isInitialized = true
             error = null
             true
-        } catch (e: Exception) {
-            error = e.message ?: e.toString()
+        } catch (e: Throwable) {
+            error = formatError(e)
             Log.e(TAG, "Auto-init failed: $error", e)
             false
         }
@@ -39,16 +39,23 @@ object RiveInitializer {
 
     @Synchronized
     fun manualInitialize() {
-        val ctx = context ?: throw Error("Context not available. Ensure RivePackage is registered.")
+        val ctx = context
+            ?: throw RuntimeException("Context not available. Ensure RivePackage is registered.")
         if (isInitialized) return
         try {
             Rive.init(ctx)
             isInitialized = true
             error = null
-        } catch (e: Exception) {
-            error = e.message ?: e.toString()
+        } catch (e: Throwable) {
+            error = formatError(e)
             Log.e(TAG, "Manual init failed: $error", e)
-            throw Error("Rive initialization failed: $error", e)
+            throw RuntimeException("Rive initialization failed: $error")
         }
+    }
+
+    private fun formatError(e: Throwable): String {
+        val name = e::class.simpleName ?: "Unknown"
+        val msg = e.message ?: e.toString()
+        return "$name: $msg"
     }
 }
