@@ -34,9 +34,9 @@ target_sources(
   ../nitrogen/generated/android/riveOnLoad.cpp
   # Shared Nitrogen C++ sources
   ../nitrogen/generated/shared/c++/HybridBindableArtboardSpec.cpp
-  ../nitrogen/generated/shared/c++/HybridRiveSpec.cpp
   ../nitrogen/generated/shared/c++/HybridRiveFileSpec.cpp
   ../nitrogen/generated/shared/c++/HybridRiveFileFactorySpec.cpp
+  ../nitrogen/generated/shared/c++/HybridRiveFontConfigSpec.cpp
   ../nitrogen/generated/shared/c++/HybridRiveImageSpec.cpp
   ../nitrogen/generated/shared/c++/HybridRiveImageFactorySpec.cpp
   ../nitrogen/generated/shared/c++/HybridRiveRuntimeSpec.cpp
@@ -56,9 +56,9 @@ target_sources(
   ../nitrogen/generated/shared/c++/HybridViewModelArtboardPropertySpec.cpp
   # Android-specific Nitrogen C++ sources
   ../nitrogen/generated/android/c++/JHybridBindableArtboardSpec.cpp
-  ../nitrogen/generated/android/c++/JHybridRiveSpec.cpp
   ../nitrogen/generated/android/c++/JHybridRiveFileSpec.cpp
   ../nitrogen/generated/android/c++/JHybridRiveFileFactorySpec.cpp
+  ../nitrogen/generated/android/c++/JHybridRiveFontConfigSpec.cpp
   ../nitrogen/generated/android/c++/JHybridRiveImageSpec.cpp
   ../nitrogen/generated/android/c++/JHybridRiveImageFactorySpec.cpp
   ../nitrogen/generated/android/c++/JHybridRiveRuntimeSpec.cpp

@@ -16,9 +16,9 @@
 #include <NitroModules/HybridObjectRegistry.hpp>
 
 #include "JHybridBindableArtboardSpec.hpp"
-#include "JHybridRiveSpec.hpp"
 #include "JHybridRiveFileSpec.hpp"
 #include "JHybridRiveFileFactorySpec.hpp"
+#include "JHybridRiveFontConfigSpec.hpp"
 #include "JHybridRiveImageSpec.hpp"
 #include "JHybridRiveImageFactorySpec.hpp"
 #include "JHybridRiveRuntimeSpec.hpp"
@@ -54,9 +54,9 @@ int initialize(JavaVM* vm) {
   return facebook::jni::initialize(vm, [] {
     // Register native JNI methods
     margelo::nitro::rive::JHybridBindableArtboardSpec::registerNatives();
-    margelo::nitro::rive::JHybridRiveSpec::registerNatives();
     margelo::nitro::rive::JHybridRiveFileSpec::registerNatives();
     margelo::nitro::rive::JHybridRiveFileFactorySpec::registerNatives();
+    margelo::nitro::rive::JHybridRiveFontConfigSpec::registerNatives();
     margelo::nitro::rive::JHybridRiveImageSpec::registerNatives();
     margelo::nitro::rive::JHybridRiveImageFactorySpec::registerNatives();
     margelo::nitro::rive::JHybridRiveRuntimeSpec::registerNatives();
@@ -83,9 +83,9 @@ int initialize(JavaVM* vm) {
 
     // Register Nitro Hybrid Objects
     HybridObjectRegistry::registerHybridObjectConstructor(
-      "Rive",
+      "RiveFontConfig",
       []() -> std::shared_ptr<HybridObject> {
-        static DefaultConstructableObject<JHybridRiveSpec::javaobject> object("com/margelo/nitro/rive/Rive");
+        static DefaultConstructableObject<JHybridRiveFontConfigSpec::javaobject> object("com/margelo/nitro/rive/HybridRiveFontConfig");
         auto instance = object.create();
         return instance->cthis()->shared();
       }

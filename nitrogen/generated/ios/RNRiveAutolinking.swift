@@ -12,16 +12,16 @@ import NitroModules
 public final class RNRiveAutolinking {
   public typealias bridge = margelo.nitro.rive.bridge.swift
 
-  public static func createRive() -> bridge.std__shared_ptr_HybridRiveSpec_ {
-    let hybridObject = Rive()
-    return { () -> bridge.std__shared_ptr_HybridRiveSpec_ in
+  public static func createRiveFontConfig() -> bridge.std__shared_ptr_HybridRiveFontConfigSpec_ {
+    let hybridObject = HybridRiveFontConfig()
+    return { () -> bridge.std__shared_ptr_HybridRiveFontConfigSpec_ in
       let __cxxWrapped = hybridObject.getCxxWrapper()
       return __cxxWrapped.getCxxPart()
     }()
   }
   
-  public static func isRiveRecyclable() -> Bool {
-    return Rive.self is any RecyclableView.Type
+  public static func isRiveFontConfigRecyclable() -> Bool {
+    return HybridRiveFontConfig.self is any RecyclableView.Type
   }
   
   public static func createRiveFileFactory() -> bridge.std__shared_ptr_HybridRiveFileFactorySpec_ {

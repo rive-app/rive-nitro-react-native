@@ -9,9 +9,9 @@
     "androidCxxLibName": "rive"
   },
   "autolinking": {
-    "Rive": {
-      "swift": "Rive",
-      "kotlin": "Rive"
+    "RiveFontConfig": {
+      "swift": "HybridRiveFontConfig",
+      "kotlin": "HybridRiveFontConfig"
     },
     "RiveFileFactory": {
       "swift": "HybridRiveFileFactory",
