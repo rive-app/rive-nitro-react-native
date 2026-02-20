@@ -1580,24 +1580,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@clack/core@npm:1.0.0-alpha.5":
-  version: 1.0.0-alpha.5
-  resolution: "@clack/core@npm:1.0.0-alpha.5"
+"@clack/core@npm:1.0.0-alpha.7":
+  version: 1.0.0-alpha.7
+  resolution: "@clack/core@npm:1.0.0-alpha.7"
   dependencies:
     picocolors: ^1.0.0
     sisteransi: ^1.0.5
-  checksum: d59c0e0f510313c42f52a5551a63ec714955409dfd0110e9cb29af51140b08577f09aeb5609b228ab4a62f02d109d747d395b006f00bda69e0b86c508f51d25c
+  checksum: 83610b248ba0595108e2448eb2137443c882d347ea4ad8b76c045721c560f31eb9f87a4ce9e86d55c97901b81a347c644a25414942f803f95ff53a91c9f30f8f
   languageName: node
   linkType: hard
 
-"@clack/prompts@npm:1.0.0-alpha.5":
-  version: 1.0.0-alpha.5
-  resolution: "@clack/prompts@npm:1.0.0-alpha.5"
+"@clack/prompts@npm:1.0.0-alpha.9":
+  version: 1.0.0-alpha.9
+  resolution: "@clack/prompts@npm:1.0.0-alpha.9"
   dependencies:
-    "@clack/core": 1.0.0-alpha.5
+    "@clack/core": 1.0.0-alpha.7
     picocolors: ^1.0.0
     sisteransi: ^1.0.5
-  checksum: 32cfc1d0e7fa958e3226225612213fab01012a64d6c9b83401c61e632e6a7c7aeb30df1f05c0e7e97c3e48145692af02436eda75cb644245bde868962ee67848
+  checksum: 0753528900519f5206c49cea0e52a1e0335f23e08edbb6b08fbabdd6b5460c38e8510e650d3f894118f7bb3c82d127ad350d028c2716a4f9f3e5f5a805c0eb57
   languageName: node
   linkType: hard
 
@@ -3720,169 +3720,176 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native-harness/babel-preset@npm:1.0.0-canary.1766225407244":
-  version: 1.0.0-canary.1766225407244
-  resolution: "@react-native-harness/babel-preset@npm:1.0.0-canary.1766225407244"
+"@react-native-harness/babel-preset@npm:1.0.0-alpha.25":
+  version: 1.0.0-alpha.25
+  resolution: "@react-native-harness/babel-preset@npm:1.0.0-alpha.25"
   dependencies:
     "@babel/plugin-transform-class-static-block": ^7.27.1
     babel-plugin-istanbul: ^7.0.1
   peerDependencies:
     "@babel/core": ^7.22.0
-  checksum: 302aed5b33113f22fca8647fc25c9801309ea12631a3029ad30af4d391a9c2d85722a8bb0c2197ca31ab25673927a23afe839636c29fe3fde8f7d735e32463dc
+    "@babel/plugin-transform-react-jsx": "*"
+  checksum: 3f21507a45439045f6fd3d78a4821824d89445d9e4666bd67e1cc360b5dea429e430ab335af9514a246f3cf3e204055d531b9720878f8c5eb435fa0e14f991f1
   languageName: node
   linkType: hard
 
-"@react-native-harness/bridge@npm:1.0.0-canary.1766225407244":
-  version: 1.0.0-canary.1766225407244
-  resolution: "@react-native-harness/bridge@npm:1.0.0-canary.1766225407244"
+"@react-native-harness/bridge@npm:1.0.0-alpha.25":
+  version: 1.0.0-alpha.25
+  resolution: "@react-native-harness/bridge@npm:1.0.0-alpha.25"
   dependencies:
-    "@react-native-harness/tools": 1.0.0-canary.1766225407244
+    "@react-native-harness/platforms": 1.0.0-alpha.25
+    "@react-native-harness/tools": 1.0.0-alpha.25
     birpc: ^2.4.0
+    pixelmatch: ^7.1.0
+    pngjs: ^7.0.0
+    ssim.js: ^3.5.0
     tslib: ^2.3.0
     ws: ^8.18.2
-  checksum: f4abb9c9344738b96c72b5e685ddc877b4ed82f7d88e775fb9d97838bf14ae6d6ddfb51430e8f0966b40ec099dff0551b5e8bd1eb2ce84fee19c49b065c80824
+  checksum: e5ce3d39782a25a8139506fa6c35e47fcde71c7584d4e800bc8b4d32c31e79709786049940ef6fe9d0390e6450d8804307015b46a8532fab5e64b82e6f084137
   languageName: node
   linkType: hard
 
-"@react-native-harness/bundler-metro@npm:1.0.0-canary.1766225407244":
-  version: 1.0.0-canary.1766225407244
-  resolution: "@react-native-harness/bundler-metro@npm:1.0.0-canary.1766225407244"
+"@react-native-harness/bundler-metro@npm:1.0.0-alpha.25":
+  version: 1.0.0-alpha.25
+  resolution: "@react-native-harness/bundler-metro@npm:1.0.0-alpha.25"
   dependencies:
-    "@react-native-harness/config": 1.0.0-canary.1766225407244
-    "@react-native-harness/metro": 1.0.0-canary.1766225407244
-    "@react-native-harness/tools": 1.0.0-canary.1766225407244
+    "@react-native-harness/config": 1.0.0-alpha.25
+    "@react-native-harness/metro": 1.0.0-alpha.25
+    "@react-native-harness/tools": 1.0.0-alpha.25
     connect: ^3.7.0
     nocache: ^4.0.0
     tslib: ^2.3.0
   peerDependencies:
     metro: "*"
     metro-config: "*"
-  checksum: 37d09953607a8b4252a3b374792be477148166d3706004857b1841f3e528fa60a4a851cd569d150389b95c1b2124bc2cea68ea6d37176926d03e48a31d412355
+  checksum: a78d134d4e8afe8b55fb1461fff979535d1e16578ad44bbb0e5277736e1b801a35ddb64a25afc507d8f8cb28b80cea51fb057346ad69e031dca84a650f96ee35
   languageName: node
   linkType: hard
 
-"@react-native-harness/cli@npm:1.0.0-canary.1766225407244":
-  version: 1.0.0-canary.1766225407244
-  resolution: "@react-native-harness/cli@npm:1.0.0-canary.1766225407244"
+"@react-native-harness/cli@npm:1.0.0-alpha.25":
+  version: 1.0.0-alpha.25
+  resolution: "@react-native-harness/cli@npm:1.0.0-alpha.25"
   dependencies:
-    "@react-native-harness/bridge": 1.0.0-canary.1766225407244
-    "@react-native-harness/config": 1.0.0-canary.1766225407244
+    "@react-native-harness/bridge": 1.0.0-alpha.25
+    "@react-native-harness/config": 1.0.0-alpha.25
+    "@react-native-harness/platforms": 1.0.0-alpha.25
+    "@react-native-harness/tools": 1.0.0-alpha.25
     tslib: ^2.3.0
   peerDependencies:
     jest-cli: "*"
-  checksum: 728263085cfc5914ca4a20bb153f48d8319f93f393540a11328b0cb24d701aa3b98f3e24b55afd7341dc44d01e64adeeedf87922252cee91d78bbf71682fc0dc
+  checksum: f34bc57ccdfad8d233dbc08cdc99de4fe6ff745b499fc23542cedf5850adf9d4c37257ac0413ca3e6499dd9f1d5bd8bef69d10b3a040be779b9e0eb10b29cb31
   languageName: node
   linkType: hard
 
-"@react-native-harness/config@npm:1.0.0-canary.1766225407244":
-  version: 1.0.0-canary.1766225407244
-  resolution: "@react-native-harness/config@npm:1.0.0-canary.1766225407244"
+"@react-native-harness/config@npm:1.0.0-alpha.25":
+  version: 1.0.0-alpha.25
+  resolution: "@react-native-harness/config@npm:1.0.0-alpha.25"
   dependencies:
-    "@react-native-harness/tools": 1.0.0-canary.1766225407244
+    "@react-native-harness/tools": 1.0.0-alpha.25
     tslib: ^2.3.0
     zod: ^3.25.67
-  checksum: 4092714330ddfe54e81cdec29bffa849943331cf8038182aa9afe20f40d63316df1ddcf85155b5d6484dfe1b92fea647b6256b0c983c17be8a746c989160376d
+  checksum: 836ab4d2165a8e88c352ef4ace511c58279d6eba96a0d152f7c3f2bf9ce24eae523f27559a7db4da47f906bd7cb3b77ae225a73e755349e4bc249bd7c53204b2
   languageName: node
   linkType: hard
 
-"@react-native-harness/jest@npm:1.0.0-canary.1766225407244":
-  version: 1.0.0-canary.1766225407244
-  resolution: "@react-native-harness/jest@npm:1.0.0-canary.1766225407244"
+"@react-native-harness/jest@npm:1.0.0-alpha.25":
+  version: 1.0.0-alpha.25
+  resolution: "@react-native-harness/jest@npm:1.0.0-alpha.25"
   dependencies:
     "@jest/test-result": ^30.2.0
-    "@react-native-harness/bridge": 1.0.0-canary.1766225407244
-    "@react-native-harness/bundler-metro": 1.0.0-canary.1766225407244
-    "@react-native-harness/config": 1.0.0-canary.1766225407244
-    "@react-native-harness/platforms": 1.0.0-canary.1766225407244
-    "@react-native-harness/tools": 1.0.0-canary.1766225407244
+    "@react-native-harness/bridge": 1.0.0-alpha.25
+    "@react-native-harness/bundler-metro": 1.0.0-alpha.25
+    "@react-native-harness/config": 1.0.0-alpha.25
+    "@react-native-harness/platforms": 1.0.0-alpha.25
+    "@react-native-harness/tools": 1.0.0-alpha.25
     chalk: ^4.1.2
     jest-message-util: ^30.2.0
     jest-util: ^30.2.0
     p-limit: ^7.1.1
-    p-retry: ^7.1.0
     tslib: ^2.3.0
     yargs: ^17.7.2
-  checksum: 991a5918db5611b34f3f19b314b3872c0c08b037a86e0974135c08ca0bbf7720b8d78b828a48659b89b7b5fb4821f9f575c0b6efb6ccad971cd230c03eada199
+  checksum: 9cb4112857d2a2067f0d8faa5fcc3af93acdf1b09d4dbaa77bcce5cbc6773238316d3b3b87dd769f971da3811cb260f6af9456aba9e851ad605a1cdf5f8eab7b
   languageName: node
   linkType: hard
 
-"@react-native-harness/metro@npm:1.0.0-canary.1766225407244":
-  version: 1.0.0-canary.1766225407244
-  resolution: "@react-native-harness/metro@npm:1.0.0-canary.1766225407244"
+"@react-native-harness/metro@npm:1.0.0-alpha.25":
+  version: 1.0.0-alpha.25
+  resolution: "@react-native-harness/metro@npm:1.0.0-alpha.25"
   dependencies:
-    "@react-native-harness/babel-preset": 1.0.0-canary.1766225407244
-    "@react-native-harness/config": 1.0.0-canary.1766225407244
+    "@react-native-harness/babel-preset": 1.0.0-alpha.25
+    "@react-native-harness/config": 1.0.0-alpha.25
     tslib: ^2.3.0
   peerDependencies:
-    "@react-native-harness/runtime": 1.0.0-canary.1766225407244
+    "@react-native-harness/runtime": 1.0.0-alpha.25
     metro: "*"
-  checksum: 824de8a5c8e23ad73a6af85b2e451298e59415b2a87e491c035a5377b55b1443dd27179a9b46006227cebd03816f63a20f30b1a7e50c7079b0d7c9a98c630fda
+  checksum: 2775ab316974e99f9d468bb0b10f462ab98e56abe5e116be2b6cf082665761d2ef4ce27426af4e752a90378a59417115d72d163605bb4916cee2c91e2c6cf1dd
   languageName: node
   linkType: hard
 
-"@react-native-harness/platform-android@npm:^1.0.0-alpha.25":
-  version: 1.0.0-canary.1766225407244
-  resolution: "@react-native-harness/platform-android@npm:1.0.0-canary.1766225407244"
+"@react-native-harness/platform-android@npm:1.0.0-alpha.25":
+  version: 1.0.0-alpha.25
+  resolution: "@react-native-harness/platform-android@npm:1.0.0-alpha.25"
   dependencies:
-    "@react-native-harness/platforms": 1.0.0-canary.1766225407244
-    "@react-native-harness/tools": 1.0.0-canary.1766225407244
+    "@react-native-harness/config": 1.0.0-alpha.25
+    "@react-native-harness/platforms": 1.0.0-alpha.25
+    "@react-native-harness/tools": 1.0.0-alpha.25
     tslib: ^2.3.0
     zod: ^3.25.67
-  checksum: d4987c0dce466f426f5827cec1a96fd62c0b5b01a17f0e008ecbe8757a7d70fe5d81bb124efe084888e48fdc3363a9148686835c6e2de58ed53d1f1fa409a149
+  checksum: 2cf34bb4ee72e2086231f4092058c4624cdc17399b9ddbe4b3eb9d5dc4bb7c98235bb9ee940534d2d4aa605bd345fdfe96ed63ca420e6689518c2d22967ac9cf
   languageName: node
   linkType: hard
 
-"@react-native-harness/platform-apple@npm:^1.0.0-alpha.25":
-  version: 1.0.0-canary.1766225407244
-  resolution: "@react-native-harness/platform-apple@npm:1.0.0-canary.1766225407244"
+"@react-native-harness/platform-apple@npm:1.0.0-alpha.25":
+  version: 1.0.0-alpha.25
+  resolution: "@react-native-harness/platform-apple@npm:1.0.0-alpha.25"
   dependencies:
-    "@react-native-harness/platforms": 1.0.0-canary.1766225407244
-    "@react-native-harness/tools": 1.0.0-canary.1766225407244
+    "@react-native-harness/platforms": 1.0.0-alpha.25
+    "@react-native-harness/tools": 1.0.0-alpha.25
     tslib: ^2.3.0
     zod: ^3.25.67
-  checksum: 05516e7d21842dabc444c3020b6cf54a517affc497be56a6b42a10c9ca86de17515180327d05a8de9cc9a7a2164e7995a4295ff9c234647134f93a56380ee33f
+  checksum: 1fe4ca85c468c5e4f806fa2c90cdeb5a032808415a4601f8ed16c1d2fc2e7bddad7f27bbdc7077c54babcbbefcd0a41da178cc4a3d4d25910ef84d8c910026f7
   languageName: node
   linkType: hard
 
-"@react-native-harness/platforms@npm:1.0.0-canary.1766225407244":
-  version: 1.0.0-canary.1766225407244
-  resolution: "@react-native-harness/platforms@npm:1.0.0-canary.1766225407244"
+"@react-native-harness/platforms@npm:1.0.0-alpha.25":
+  version: 1.0.0-alpha.25
+  resolution: "@react-native-harness/platforms@npm:1.0.0-alpha.25"
   dependencies:
     tslib: ^2.3.0
-  checksum: 7ccc50972188ead4f1a518b36d691965307e2adcbb1d6ca7cded9f3541bedb1f0c123a5818f1d2a72039c3fdbeb411b26d6afad34448aa8913e614058db92302
+  checksum: bdb33b96e2d13683727ca9a4a1b2dd2f553114ce9a38a16481b45caf03fb14af26b186ce95cb12aa850104ea224705dd6aa4e79f06ae65c66143a16734198ebc
   languageName: node
   linkType: hard
 
-"@react-native-harness/runtime@npm:1.0.0-canary.1766225407244":
-  version: 1.0.0-canary.1766225407244
-  resolution: "@react-native-harness/runtime@npm:1.0.0-canary.1766225407244"
+"@react-native-harness/runtime@npm:1.0.0-alpha.25":
+  version: 1.0.0-alpha.25
+  resolution: "@react-native-harness/runtime@npm:1.0.0-alpha.25"
   dependencies:
-    "@react-native-harness/bridge": 1.0.0-canary.1766225407244
-    "@vitest/expect": 4.0.0-beta.8
-    "@vitest/spy": 4.0.0-beta.8
-    chai: ^5.3.1
+    "@react-native-harness/bridge": 1.0.0-alpha.25
+    "@vitest/expect": 4.0.16
+    "@vitest/spy": 4.0.16
+    chai: ^6.2.2
     event-target-shim: ^6.0.2
     use-sync-external-store: ^1.6.0
     zustand: ^5.0.5
   peerDependencies:
     react: "*"
     react-native: "*"
-  checksum: 1020e4a3278d9dc9baec81bb034e57bf84c58ee516ccc931b7a78814858bbe6e1b348d0af0d7a3140165866c29d06bdef166373f75dd58870dbb71d9db982f0c
+  checksum: 75ee855c2f8e4f1bc8c18f21ee203b7c11f0f10fa2e8f03dea2128bb291e415f8090f889a4f4924874463f607c2f0f1167f9d5440b64cde13bfd1cd02637a32e
   languageName: node
   linkType: hard
 
-"@react-native-harness/tools@npm:1.0.0-canary.1766225407244":
-  version: 1.0.0-canary.1766225407244
-  resolution: "@react-native-harness/tools@npm:1.0.0-canary.1766225407244"
+"@react-native-harness/tools@npm:1.0.0-alpha.25":
+  version: 1.0.0-alpha.25
+  resolution: "@react-native-harness/tools@npm:1.0.0-alpha.25"
   dependencies:
-    "@clack/prompts": 1.0.0-alpha.5
+    "@clack/prompts": 1.0.0-alpha.9
     is-unicode-supported: ^0.1.0
     nano-spawn: ^1.0.2
     picocolors: ^1.1.1
     tslib: ^2.3.0
   peerDependencies:
     react-native: "*"
-  checksum: 41d4d672139d97a961849e63c4b74e4edad90b3b2cfc9b1a80d616d85ec8c9bd6b4315232116a225ff0c4788ed9feb9652609c97fed6eeeeb314f26dcef0be97
+  checksum: 73b9d5b129718a55ddc5661c09478ef7b254ea1e56eafc0d436afd1b3d8c2c7200685ba1849b1d794f23626c6070c8dade146e5b91eef7237bdbbd5f2d7dc10e
   languageName: node
   linkType: hard
 
@@ -4552,6 +4559,13 @@ __metadata:
   dependencies:
     "@sinonjs/commons": ^3.0.0
   checksum: 614d30cb4d5201550c940945d44c9e0b6d64a888ff2cd5b357f95ad6721070d6b8839cd10e15b76bf5e14af0bcc1d8f9ec00d49a46318f1f669a4bec1d7f3148
+  languageName: node
+  linkType: hard
+
+"@standard-schema/spec@npm:^1.0.0":
+  version: 1.1.0
+  resolution: "@standard-schema/spec@npm:1.1.0"
+  checksum: 6245ebef5e698bb04752a22e996a7cc40406a404d9f68a9d4e1a7a10f2422da287247508e7b495a2f32bb38f3d57b4daf2c9ab4bf22d9bca13e20a3dc5ec575e
   languageName: node
   linkType: hard
 
@@ -5341,43 +5355,43 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vitest/expect@npm:4.0.0-beta.8":
-  version: 4.0.0-beta.8
-  resolution: "@vitest/expect@npm:4.0.0-beta.8"
+"@vitest/expect@npm:4.0.16":
+  version: 4.0.16
+  resolution: "@vitest/expect@npm:4.0.16"
   dependencies:
+    "@standard-schema/spec": ^1.0.0
     "@types/chai": ^5.2.2
-    "@vitest/spy": 4.0.0-beta.8
-    "@vitest/utils": 4.0.0-beta.8
-    chai: ^5.2.1
-    tinyrainbow: ^2.0.0
-  checksum: 3bfbf869829934e51cb9d90accf4e477e31fb1e4940187b8f66a226b10d45a84b46196d0fe29a1c4d772972beaf40cfcf60e969646070b1fa5a802939ec6bc19
+    "@vitest/spy": 4.0.16
+    "@vitest/utils": 4.0.16
+    chai: ^6.2.1
+    tinyrainbow: ^3.0.3
+  checksum: cbd3a9e41ea3c8023cd0b02d0950e127f631e46960e84112e2a46984a8c530eb178d12f832e1abdb25854fe21d19770f08c2f4d0044fe9eaf2140ef0744b1972
   languageName: node
   linkType: hard
 
-"@vitest/pretty-format@npm:4.0.0-beta.8":
-  version: 4.0.0-beta.8
-  resolution: "@vitest/pretty-format@npm:4.0.0-beta.8"
+"@vitest/pretty-format@npm:4.0.16":
+  version: 4.0.16
+  resolution: "@vitest/pretty-format@npm:4.0.16"
   dependencies:
-    tinyrainbow: ^2.0.0
-  checksum: 8d2bde8b44933f92d6284e9c53ffa27dab0e7a971b92824a2fd48cee287ee1bf85173d2bd073ad834440e5902a51d15027eb326f53fa7e810774e004aa0f7cd3
+    tinyrainbow: ^3.0.3
+  checksum: cb457b056b1b1ba64d9b2a4d92edda9c7e437b705e048bfee054982e907c9838602193c60f98879d2c9a0f47efc000f5bc4ebda11aa983366bee9677883ad02e
   languageName: node
   linkType: hard
 
-"@vitest/spy@npm:4.0.0-beta.8":
-  version: 4.0.0-beta.8
-  resolution: "@vitest/spy@npm:4.0.0-beta.8"
-  checksum: 5fa366c33253082abffe84cee1be9417405f80d85f89b981e657ea07f2c6739cddfcfa5c1aa7fdef018aa3f64b6ca02a8d3c855f457c2845a4c0ab31dcfa8abf
+"@vitest/spy@npm:4.0.16":
+  version: 4.0.16
+  resolution: "@vitest/spy@npm:4.0.16"
+  checksum: ed729fe478b1fb8663c4d0e42c11a8cb85e49eff54f3b23790ff6d59158b6836c5b0733dcd77e235122d8f9a42ed9415a5a6861681373aacee824f5a73986a8e
   languageName: node
   linkType: hard
 
-"@vitest/utils@npm:4.0.0-beta.8":
-  version: 4.0.0-beta.8
-  resolution: "@vitest/utils@npm:4.0.0-beta.8"
+"@vitest/utils@npm:4.0.16":
+  version: 4.0.16
+  resolution: "@vitest/utils@npm:4.0.16"
   dependencies:
-    "@vitest/pretty-format": 4.0.0-beta.8
-    loupe: ^3.2.0
-    tinyrainbow: ^2.0.0
-  checksum: ed700128f1278204e4070073a0a75a04baa24ccbc9bf0630ee222a2ed5463a0957d9d43ffcaa0b6d3039cb6f262a04b5fe119a40241717a0203bed89575d1206
+    "@vitest/pretty-format": 4.0.16
+    tinyrainbow: ^3.0.3
+  checksum: a7579d85bf7ae8ddec5c826008bfb7f4d702acb29432e20bb498643bafa3baa76c9ad7141de1e6a296092ff6661d3f3756922c31d2131721c7aafe3ad0dc06d8
   languageName: node
   linkType: hard
 
@@ -6443,16 +6457,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chai@npm:^5.2.1, chai@npm:^5.3.1":
-  version: 5.3.3
-  resolution: "chai@npm:5.3.3"
-  dependencies:
-    assertion-error: ^2.0.1
-    check-error: ^2.1.1
-    deep-eql: ^5.0.1
-    loupe: ^3.1.0
-    pathval: ^2.0.0
-  checksum: bc4091f1cccfee63f6a3d02ce477fe847f5c57e747916a11bd72675c9459125084e2e55dc2363ee2b82b088a878039ee7ee27c75d6d90f7de9202bf1b12ce573
+"chai@npm:^6.2.1, chai@npm:^6.2.2":
+  version: 6.2.2
+  resolution: "chai@npm:6.2.2"
+  checksum: c8c94857745b673dae22a7b25053a41a931848e2c20d1acb6838cf99b7d57b0e66b9eb878c6308534b2965c11ae1a66f8c58066f368c91a07797bb8ee881a733
   languageName: node
   linkType: hard
 
@@ -6502,13 +6510,6 @@ __metadata:
   version: 0.7.0
   resolution: "chardet@npm:0.7.0"
   checksum: 6fd5da1f5d18ff5712c1e0aed41da200d7c51c28f11b36ee3c7b483f3696dabc08927fc6b227735eb8f0e1215c9a8abd8154637f3eff8cada5959df7f58b024d
-  languageName: node
-  linkType: hard
-
-"check-error@npm:^2.1.1":
-  version: 2.1.3
-  resolution: "check-error@npm:2.1.3"
-  checksum: f1868d3db60f5a7da92e140ccf33e9152bf6124161fa9b7a4ae8eafdb05e66e1f13570401e56f314f037b0f1b71eaf38ad0c7256310d82c6105e9d85ded0f202
   languageName: node
   linkType: hard
 
@@ -7355,13 +7356,6 @@ __metadata:
     babel-plugin-macros:
       optional: true
   checksum: e07a21b7ae078f2c6502b46e6e9fb3f5592dc48ad8c6142d501d1a85ee04cd3add5d62260a9b20f87674a80edada2032918ca0718597752c5cb90b36ab5066ec
-  languageName: node
-  linkType: hard
-
-"deep-eql@npm:^5.0.1":
-  version: 5.0.2
-  resolution: "deep-eql@npm:5.0.2"
-  checksum: 6aaaadb4c19cbce42e26b2bbe5bd92875f599d2602635dc97f0294bae48da79e89470aedee05f449e0ca8c65e9fd7e7872624d1933a1db02713d99c2ca8d1f24
   languageName: node
   linkType: hard
 
@@ -10397,13 +10391,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"is-network-error@npm:^1.1.0":
-  version: 1.3.0
-  resolution: "is-network-error@npm:1.3.0"
-  checksum: 56dc0b8ed9c0bb72202058f172ad0c3121cf68772e8cbba343d3775f6e2ec7877d423cbcea45f4cedcd345de8693de1b52dfe0c6fc15d652c4aa98c2abf0185a
-  languageName: node
-  linkType: hard
-
 "is-npm@npm:^6.0.0":
   version: 6.1.0
   resolution: "is-npm@npm:6.1.0"
@@ -11880,13 +11867,6 @@ __metadata:
   bin:
     loose-envify: cli.js
   checksum: 6517e24e0cad87ec9888f500c5b5947032cdfe6ef65e1c1936a0c48a524b81e65542c9c3edc91c97d5bddc806ee2a985dbc79be89215d613b1de5db6d1cfe6f4
-  languageName: node
-  linkType: hard
-
-"loupe@npm:^3.1.0, loupe@npm:^3.2.0":
-  version: 3.2.1
-  resolution: "loupe@npm:3.2.1"
-  checksum: 3ce9ecc5b2c56ffc073bf065ad3a4644cccce3eac81e61a8732e9c8ebfe05513ed478592d25f9dba24cfe82766913be045ab384c04711c7c6447deaf800ad94c
   languageName: node
   linkType: hard
 
@@ -13665,15 +13645,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"p-retry@npm:^7.1.0":
-  version: 7.1.1
-  resolution: "p-retry@npm:7.1.1"
-  dependencies:
-    is-network-error: ^1.1.0
-  checksum: ae5ac18118e16fcb968095e6aee4ca9f82398f14b061177e00eaa949f6a0752b73afb41680193b56870475213989ef8bb7eacbacde827383b7f460d2de485ff1
-  languageName: node
-  linkType: hard
-
 "p-try@npm:^2.0.0":
   version: 2.2.0
   resolution: "p-try@npm:2.2.0"
@@ -13875,13 +13846,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pathval@npm:^2.0.0":
-  version: 2.0.1
-  resolution: "pathval@npm:2.0.1"
-  checksum: 280e71cfd86bb5d7ff371fe2752997e5fa82901fcb209abf19d4457b7814f1b4a17845dfb17bd28a596ccdb0ecea178720ce23dacfa9c841f37804b700647810
-  languageName: node
-  linkType: hard
-
 "picocolors@npm:^1.0.0, picocolors@npm:^1.1.1":
   version: 1.1.1
   resolution: "picocolors@npm:1.1.1"
@@ -13917,6 +13881,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"pixelmatch@npm:^7.1.0":
+  version: 7.1.0
+  resolution: "pixelmatch@npm:7.1.0"
+  dependencies:
+    pngjs: ^7.0.0
+  bin:
+    pixelmatch: bin/pixelmatch
+  checksum: 0ad2e863e0e87ae52289c4366860a4040712a30a1e19c606745b9750b3ecda6f587dc959ce452818c50c7753ef6916f23026c14ef4d5f6c3b13c8205d61b923d
+  languageName: node
+  linkType: hard
+
 "pkg-dir@npm:^4.2.0":
   version: 4.2.0
   resolution: "pkg-dir@npm:4.2.0"
@@ -13941,6 +13916,13 @@ __metadata:
   version: 3.4.0
   resolution: "pngjs@npm:3.4.0"
   checksum: 8bd40bd698abd16b72c97b85cb858c80894fbedc76277ce72a784aa441e14795d45d9856e97333ca469b34b67528860ffc8a7317ca6beea349b645366df00bcd
+  languageName: node
+  linkType: hard
+
+"pngjs@npm:^7.0.0":
+  version: 7.0.0
+  resolution: "pngjs@npm:7.0.0"
+  checksum: b19a018930d27de26229c1b3ff250b3a25d09caa22cbb0b0459987d91eb0a560a18ab5d67da45a38ed7514140f26d1db58de83c31159ec101f2bb270a3c707f1
   languageName: node
   linkType: hard
 
@@ -14383,19 +14365,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-harness@npm:^1.0.0-alpha.25":
-  version: 1.0.0-canary.1766225407244
-  resolution: "react-native-harness@npm:1.0.0-canary.1766225407244"
+"react-native-harness@npm:1.0.0-alpha.25":
+  version: 1.0.0-alpha.25
+  resolution: "react-native-harness@npm:1.0.0-alpha.25"
   dependencies:
-    "@react-native-harness/babel-preset": 1.0.0-canary.1766225407244
-    "@react-native-harness/cli": 1.0.0-canary.1766225407244
-    "@react-native-harness/jest": 1.0.0-canary.1766225407244
-    "@react-native-harness/metro": 1.0.0-canary.1766225407244
-    "@react-native-harness/runtime": 1.0.0-canary.1766225407244
+    "@react-native-harness/babel-preset": 1.0.0-alpha.25
+    "@react-native-harness/cli": 1.0.0-alpha.25
+    "@react-native-harness/jest": 1.0.0-alpha.25
+    "@react-native-harness/metro": 1.0.0-alpha.25
+    "@react-native-harness/runtime": 1.0.0-alpha.25
     tslib: ^2.3.0
   bin:
+    harness: bin.js
     react-native-harness: bin.js
-  checksum: bab10491934c9d3ecce978b60f20f9040dadd011250ffa5b10e8180d7a1276f6ecf679146d777971f2818a2483ef05276792cbe9e31f2e7d5e18bd849cb6cae7
+  checksum: 3d0b104b509568a5760f2cb6298a7ca5fb9dadc7411fb7ede964eb18f51e31e3819a2f3ffee3e599764340778154dd05a81ba42b308a893c9d186095c52dafd9
   languageName: node
   linkType: hard
 
@@ -14455,8 +14438,8 @@ __metadata:
     "@react-native-community/cli": 18.0.0
     "@react-native-community/cli-platform-android": 18.0.0
     "@react-native-community/cli-platform-ios": 18.0.0
-    "@react-native-harness/platform-android": ^1.0.0-alpha.25
-    "@react-native-harness/platform-apple": ^1.0.0-alpha.25
+    "@react-native-harness/platform-android": 1.0.0-alpha.25
+    "@react-native-harness/platform-apple": 1.0.0-alpha.25
     "@react-native-picker/picker": ^2.11.4
     "@react-native/babel-preset": 0.79.2
     "@react-native/metro-config": 0.79.2
@@ -14471,7 +14454,7 @@ __metadata:
     react-native: 0.79.2
     react-native-builder-bob: ^0.40.10
     react-native-gesture-handler: 2.29.1
-    react-native-harness: ^1.0.0-alpha.25
+    react-native-harness: 1.0.0-alpha.25
     react-native-nitro-modules: 0.33.2
     react-native-reanimated: 4.1.5
     react-native-safe-area-context: ^5.4.0
@@ -15744,6 +15727,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ssim.js@npm:^3.5.0":
+  version: 3.5.0
+  resolution: "ssim.js@npm:3.5.0"
+  checksum: 3f3a63ac8bec9c45e9f72252b786dcb4c91d7a74316b49c20e7935fd6e3869541e9324233b00eb0ab6bd15701016becd62740a5fb8c98f7b5115a9237efb2d4a
+  languageName: node
+  linkType: hard
+
 "ssri@npm:^12.0.0":
   version: 12.0.0
   resolution: "ssri@npm:12.0.0"
@@ -16269,10 +16259,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tinyrainbow@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "tinyrainbow@npm:2.0.0"
-  checksum: 26360631d97e43955a07cfb70fe40a154ce4e2bcd14fa3d37ce8e2ed8f4fa9e5ba00783e4906bbfefe6dcabef5d3510f5bee207cb693bee4e4e7553f5454bef1
+"tinyrainbow@npm:^3.0.3":
+  version: 3.0.3
+  resolution: "tinyrainbow@npm:3.0.3"
+  checksum: e1de26bd599703a6ee5c69e8b66384fa1ef05b26cbb005ad438169f1858d199c98946fb5ec4b7862313bfcf9affd9fb8aaf8c0a42cc953acba8bbcbe739b016c
   languageName: node
   linkType: hard
 
