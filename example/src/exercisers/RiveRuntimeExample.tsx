@@ -1,4 +1,10 @@
-import { Text, View, StyleSheet, TouchableOpacity, Platform } from 'react-native';
+import {
+  Text,
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Platform,
+} from 'react-native';
 import { RiveRuntime } from '@rive-app/react-native';
 import { useState } from 'react';
 import { type Metadata } from '../shared/metadata';
@@ -32,7 +38,9 @@ export default function RiveRuntimeExample() {
           value={status.isInitialized ? 'Yes' : 'No'}
           color={status.isInitialized ? '#2e7d32' : '#c62828'}
         />
-        {status.error && <Row label="Error" value={status.error} color="#c62828" />}
+        {status.error && (
+          <Row label="Error" value={status.error} color="#c62828" />
+        )}
       </View>
 
       <Text style={styles.hint}>
