@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.2](https://github.com/rive-app/rive-nitro-react-native/compare/v0.2.1...v0.2.2) (2026-02-20)
+
+
+### Bug Fixes
+
+* pin react-native-harness to exact alpha.25 ([#148](https://github.com/rive-app/rive-nitro-react-native/issues/148)) ([0b2c618](https://github.com/rive-app/rive-nitro-react-native/commit/0b2c61884f83602ea2768a47a58e7c363c1b9443))
+* stabilize useRiveEnum options to prevent setValue identity churn ([#145](https://github.com/rive-app/rive-nitro-react-native/issues/145)) ([372d4ae](https://github.com/rive-app/rive-nitro-react-native/commit/372d4ae1f5e06fc2be4f0d9fb3daab1ddb4bcd36))
+
 ## [0.2.1](https://github.com/rive-app/rive-nitro-react-native/compare/v0.2.0...v0.2.1) (2026-01-23)
 
 
