@@ -39,6 +39,7 @@ target_sources(
   ../nitrogen/generated/shared/c++/HybridRiveFileFactorySpec.cpp
   ../nitrogen/generated/shared/c++/HybridRiveImageSpec.cpp
   ../nitrogen/generated/shared/c++/HybridRiveImageFactorySpec.cpp
+  ../nitrogen/generated/shared/c++/HybridRiveRuntimeSpec.cpp
   ../nitrogen/generated/shared/c++/HybridRiveViewSpec.cpp
   ../nitrogen/generated/shared/c++/views/HybridRiveViewComponent.cpp
   ../nitrogen/generated/shared/c++/HybridViewModelSpec.cpp
@@ -60,6 +61,7 @@ target_sources(
   ../nitrogen/generated/android/c++/JHybridRiveFileFactorySpec.cpp
   ../nitrogen/generated/android/c++/JHybridRiveImageSpec.cpp
   ../nitrogen/generated/android/c++/JHybridRiveImageFactorySpec.cpp
+  ../nitrogen/generated/android/c++/JHybridRiveRuntimeSpec.cpp
   ../nitrogen/generated/android/c++/JHybridRiveViewSpec.cpp
   ../nitrogen/generated/android/c++/JVariant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName.cpp
   ../nitrogen/generated/android/c++/JEventPropertiesOutput.cpp

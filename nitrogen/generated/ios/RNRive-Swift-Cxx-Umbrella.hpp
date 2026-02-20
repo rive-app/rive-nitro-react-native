@@ -30,6 +30,8 @@ namespace margelo::nitro::rive { class HybridRiveFileSpec; }
 namespace margelo::nitro::rive { class HybridRiveImageFactorySpec; }
 // Forward declaration of `HybridRiveImageSpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridRiveImageSpec; }
+// Forward declaration of `HybridRiveRuntimeSpec` to properly resolve imports.
+namespace margelo::nitro::rive { class HybridRiveRuntimeSpec; }
 // Forward declaration of `HybridRiveSpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridRiveSpec; }
 // Forward declaration of `HybridRiveViewSpec` to properly resolve imports.
@@ -83,6 +85,7 @@ namespace margelo::nitro::rive { struct UnifiedRiveEvent; }
 #include "HybridRiveFileSpec.hpp"
 #include "HybridRiveImageFactorySpec.hpp"
 #include "HybridRiveImageSpec.hpp"
+#include "HybridRiveRuntimeSpec.hpp"
 #include "HybridRiveSpec.hpp"
 #include "HybridRiveViewSpec.hpp"
 #include "HybridViewModelArtboardPropertySpec.hpp"
@@ -135,6 +138,8 @@ namespace RNRive { class HybridRiveFileSpec_cxx; }
 namespace RNRive { class HybridRiveImageFactorySpec_cxx; }
 // Forward declaration of `HybridRiveImageSpec_cxx` to properly resolve imports.
 namespace RNRive { class HybridRiveImageSpec_cxx; }
+// Forward declaration of `HybridRiveRuntimeSpec_cxx` to properly resolve imports.
+namespace RNRive { class HybridRiveRuntimeSpec_cxx; }
 // Forward declaration of `HybridRiveSpec_cxx` to properly resolve imports.
 namespace RNRive { class HybridRiveSpec_cxx; }
 // Forward declaration of `HybridRiveViewSpec_cxx` to properly resolve imports.

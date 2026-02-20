@@ -85,6 +85,15 @@ android {
         versionCode 1
         versionName "1.0"
         multiDexEnabled true
+
+        // Restrict ABIs to emulate native lib loading failures on mismatched devices.
+        // Set Rive_RiveRuntimeAndroidAbiFilter in gradle.properties (e.g. "x86")
+        // then run on an arm64 device to trigger a Rive init failure.
+        if (project.hasProperty('Rive_RiveRuntimeAndroidAbiFilter')) {
+            ndk {
+                abiFilters project.property('Rive_RiveRuntimeAndroidAbiFilter')
+            }
+        }
     }
     signingConfigs {
         debug {

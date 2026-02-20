@@ -30,6 +30,8 @@ namespace margelo::nitro::rive { class HybridRiveFileSpec; }
 namespace margelo::nitro::rive { class HybridRiveImageFactorySpec; }
 // Forward declaration of `HybridRiveImageSpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridRiveImageSpec; }
+// Forward declaration of `HybridRiveRuntimeSpec` to properly resolve imports.
+namespace margelo::nitro::rive { class HybridRiveRuntimeSpec; }
 // Forward declaration of `HybridRiveSpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridRiveSpec; }
 // Forward declaration of `HybridRiveViewSpec` to properly resolve imports.
@@ -82,6 +84,8 @@ namespace RNRive { class HybridRiveFileSpec_cxx; }
 namespace RNRive { class HybridRiveImageFactorySpec_cxx; }
 // Forward declaration of `HybridRiveImageSpec_cxx` to properly resolve imports.
 namespace RNRive { class HybridRiveImageSpec_cxx; }
+// Forward declaration of `HybridRiveRuntimeSpec_cxx` to properly resolve imports.
+namespace RNRive { class HybridRiveRuntimeSpec_cxx; }
 // Forward declaration of `HybridRiveSpec_cxx` to properly resolve imports.
 namespace RNRive { class HybridRiveSpec_cxx; }
 // Forward declaration of `HybridRiveViewSpec_cxx` to properly resolve imports.
@@ -123,6 +127,7 @@ namespace RNRive { class HybridViewModelTriggerPropertySpec_cxx; }
 #include "HybridRiveFileSpec.hpp"
 #include "HybridRiveImageFactorySpec.hpp"
 #include "HybridRiveImageSpec.hpp"
+#include "HybridRiveRuntimeSpec.hpp"
 #include "HybridRiveSpec.hpp"
 #include "HybridRiveViewSpec.hpp"
 #include "HybridViewModelArtboardPropertySpec.hpp"
@@ -530,6 +535,61 @@ namespace margelo::nitro::rive::bridge::swift {
     return Result<std::shared_ptr<Promise<std::shared_ptr<HybridRiveImageSpec>>>>::withError(error);
   }
   
+  // pragma MARK: std::shared_ptr<Promise<void>>
+  /**
+   * Specialized version of `std::shared_ptr<Promise<void>>`.
+   */
+  using std__shared_ptr_Promise_void__ = std::shared_ptr<Promise<void>>;
+  inline std::shared_ptr<Promise<void>> create_std__shared_ptr_Promise_void__() noexcept {
+    return Promise<void>::create();
+  }
+  inline PromiseHolder<void> wrap_std__shared_ptr_Promise_void__(std::shared_ptr<Promise<void>> promise) noexcept {
+    return PromiseHolder<void>(std::move(promise));
+  }
+  
+  // pragma MARK: std::function<void()>
+  /**
+   * Specialized version of `std::function<void()>`.
+   */
+  using Func_void = std::function<void()>;
+  /**
+   * Wrapper class for a `std::function<void()>`, this can be used from Swift.
+   */
+  class Func_void_Wrapper final {
+  public:
+    explicit Func_void_Wrapper(std::function<void()>&& func): _function(std::make_unique<std::function<void()>>(std::move(func))) {}
+    inline void call() const noexcept {
+      _function->operator()();
+    }
+  private:
+    std::unique_ptr<std::function<void()>> _function;
+  } SWIFT_NONCOPYABLE;
+  Func_void create_Func_void(void* NON_NULL swiftClosureWrapper) noexcept;
+  inline Func_void_Wrapper wrap_Func_void(Func_void value) noexcept {
+    return Func_void_Wrapper(std::move(value));
+  }
+  
+  // pragma MARK: std::shared_ptr<HybridRiveRuntimeSpec>
+  /**
+   * Specialized version of `std::shared_ptr<HybridRiveRuntimeSpec>`.
+   */
+  using std__shared_ptr_HybridRiveRuntimeSpec_ = std::shared_ptr<HybridRiveRuntimeSpec>;
+  std::shared_ptr<HybridRiveRuntimeSpec> create_std__shared_ptr_HybridRiveRuntimeSpec_(void* NON_NULL swiftUnsafePointer) noexcept;
+  void* NON_NULL get_std__shared_ptr_HybridRiveRuntimeSpec_(std__shared_ptr_HybridRiveRuntimeSpec_ cppType);
+  
+  // pragma MARK: std::weak_ptr<HybridRiveRuntimeSpec>
+  using std__weak_ptr_HybridRiveRuntimeSpec_ = std::weak_ptr<HybridRiveRuntimeSpec>;
+  inline std__weak_ptr_HybridRiveRuntimeSpec_ weakify_std__shared_ptr_HybridRiveRuntimeSpec_(const std::shared_ptr<HybridRiveRuntimeSpec>& strong) noexcept { return strong; }
+  
+  // pragma MARK: Result<std::shared_ptr<Promise<void>>>
+  using Result_std__shared_ptr_Promise_void___ = Result<std::shared_ptr<Promise<void>>>;
+  inline Result_std__shared_ptr_Promise_void___ create_Result_std__shared_ptr_Promise_void___(const std::shared_ptr<Promise<void>>& value) noexcept {
+    return Result<std::shared_ptr<Promise<void>>>::withValue(value);
+  }
+  inline Result_std__shared_ptr_Promise_void___ create_Result_std__shared_ptr_Promise_void___(const std::exception_ptr& error) noexcept {
+    return Result<std::shared_ptr<Promise<void>>>::withError(error);
+  }
+  
   // pragma MARK: std::optional<bool>
   /**
    * Specialized version of `std::optional<bool>`.
@@ -708,40 +768,6 @@ namespace margelo::nitro::rive::bridge::swift {
     return *optional;
   }
   
-  // pragma MARK: std::shared_ptr<Promise<void>>
-  /**
-   * Specialized version of `std::shared_ptr<Promise<void>>`.
-   */
-  using std__shared_ptr_Promise_void__ = std::shared_ptr<Promise<void>>;
-  inline std::shared_ptr<Promise<void>> create_std__shared_ptr_Promise_void__() noexcept {
-    return Promise<void>::create();
-  }
-  inline PromiseHolder<void> wrap_std__shared_ptr_Promise_void__(std::shared_ptr<Promise<void>> promise) noexcept {
-    return PromiseHolder<void>(std::move(promise));
-  }
-  
-  // pragma MARK: std::function<void()>
-  /**
-   * Specialized version of `std::function<void()>`.
-   */
-  using Func_void = std::function<void()>;
-  /**
-   * Wrapper class for a `std::function<void()>`, this can be used from Swift.
-   */
-  class Func_void_Wrapper final {
-  public:
-    explicit Func_void_Wrapper(std::function<void()>&& func): _function(std::make_unique<std::function<void()>>(std::move(func))) {}
-    inline void call() const noexcept {
-      _function->operator()();
-    }
-  private:
-    std::unique_ptr<std::function<void()>> _function;
-  } SWIFT_NONCOPYABLE;
-  Func_void create_Func_void(void* NON_NULL swiftClosureWrapper) noexcept;
-  inline Func_void_Wrapper wrap_Func_void(Func_void value) noexcept {
-    return Func_void_Wrapper(std::move(value));
-  }
-  
   // pragma MARK: std::variant<bool, std::string, double>
   /**
    * Wrapper struct for `std::variant<bool, std::string, double>`.
@@ -867,15 +893,6 @@ namespace margelo::nitro::rive::bridge::swift {
   }
   inline Result_std__optional_std__shared_ptr_HybridViewModelInstanceSpec___ create_Result_std__optional_std__shared_ptr_HybridViewModelInstanceSpec___(const std::exception_ptr& error) noexcept {
     return Result<std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>>::withError(error);
-  }
-  
-  // pragma MARK: Result<std::shared_ptr<Promise<void>>>
-  using Result_std__shared_ptr_Promise_void___ = Result<std::shared_ptr<Promise<void>>>;
-  inline Result_std__shared_ptr_Promise_void___ create_Result_std__shared_ptr_Promise_void___(const std::shared_ptr<Promise<void>>& value) noexcept {
-    return Result<std::shared_ptr<Promise<void>>>::withValue(value);
-  }
-  inline Result_std__shared_ptr_Promise_void___ create_Result_std__shared_ptr_Promise_void___(const std::exception_ptr& error) noexcept {
-    return Result<std::shared_ptr<Promise<void>>>::withError(error);
   }
   
   // pragma MARK: Result<bool>

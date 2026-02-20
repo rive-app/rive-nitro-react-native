@@ -55,4 +55,5 @@ export { useViewModelInstance } from './hooks/useViewModelInstance';
 export { useRiveFile } from './hooks/useRiveFile';
 export { type RiveFileInput } from './hooks/useRiveFile';
 export { type SetValueAction } from './types';
+export { RiveRuntime } from './core/RiveRuntime';
 export { DataBindMode };

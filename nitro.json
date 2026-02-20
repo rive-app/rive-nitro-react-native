@@ -28,6 +28,10 @@
     "RiveImageFactory": {
       "swift": "HybridRiveImageFactory",
       "kotlin": "HybridRiveImageFactory"
+    },
+    "RiveRuntime": {
+      "swift": "HybridRiveRuntime",
+      "kotlin": "HybridRiveRuntime"
     }
   },
   "ignorePaths": ["node_modules"]
