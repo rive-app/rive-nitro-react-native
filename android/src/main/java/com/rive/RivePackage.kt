@@ -9,6 +9,7 @@ import com.margelo.nitro.rive.riveOnLoad
 
 class RivePackage : BaseReactPackage() {
   override fun createViewManagers(reactContext: ReactApplicationContext): List<ViewManager<in Nothing, in Nothing>> {
+    RiveInitializer.init(reactContext)
     val viewManagers: MutableList<ViewManager<*, *>> = ArrayList()
     viewManagers.add(RiveViewManager())
     return viewManagers

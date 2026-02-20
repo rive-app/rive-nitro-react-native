@@ -149,7 +149,6 @@ dependencies {
   implementation "com.facebook.react:react-android"
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
   implementation "app.rive:rive-android:${riveAndroidVersion}"
-  implementation "androidx.startup:startup-runtime:1.2.0"
   implementation project(":react-native-nitro-modules")
 }
 
