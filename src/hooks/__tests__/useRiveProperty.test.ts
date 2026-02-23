@@ -83,7 +83,7 @@ describe('useRiveProperty', () => {
     expect(value).toBeUndefined();
   });
 
-  it('should return error when property is not found', () => {
+  it('should return error when property is not found on a valid instance', () => {
     const mockInstance = createMockViewModelInstance({});
 
     const { result } = renderHook(() =>
@@ -95,6 +95,89 @@ describe('useRiveProperty', () => {
     const [, , error] = result.current;
     expect(error).toBeInstanceOf(Error);
     expect(error?.message).toContain('nonexistent/path');
+  });
+
+  it('should not crash when setValue is called on an invalid property', () => {
+    const mockInstance = createMockViewModelInstance({});
+
+    const { result } = renderHook(() =>
+      useRiveProperty<any, string>(mockInstance, 'nonexistent/path', {
+        getProperty: (vmi, path) => (vmi as any).enumProperty(path),
+      })
+    );
+
+    // Error already set by useEffect (property not found on valid instance)
+    expect(result.current[2]).toBeInstanceOf(Error);
+
+    // Calling setValue should be a no-op, not throw
+    act(() => {
+      const [, setValue] = result.current;
+      setValue('Hello');
+    });
+
+    // Error unchanged — still the original "not found" error
+    expect(result.current[2]).toBeInstanceOf(Error);
+    expect(result.current[2]?.message).toContain('nonexistent/path');
+  });
+
+  it('should not error when setValue is called before instance is ready', () => {
+    // Start with undefined instance (simulates async file loading)
+    const { result } = renderHook(
+      (props: { instance: ViewModelInstance | undefined }) =>
+        useRiveProperty<any, string>(props.instance, 'text', {
+          getProperty: (vmi, path) => (vmi as any).stringProperty(path),
+        }),
+      { initialProps: { instance: undefined } }
+    );
+
+    // setValue should be a no-op, not set an error
+    act(() => {
+      const [, setValue] = result.current;
+      setValue('Hello');
+    });
+
+    const [, , error] = result.current;
+    expect(error).toBeNull();
+  });
+
+  it('should apply value after instance becomes available', () => {
+    const mockProperty = createMockProperty('initial');
+    const mockInstance = createMockViewModelInstance({
+      text: mockProperty,
+    });
+
+    // Start with undefined instance
+    const { result, rerender } = renderHook(
+      (props: { instance: ViewModelInstance | undefined }) =>
+        useRiveProperty<any, string>(props.instance, 'text', {
+          getProperty: (vmi, path) => (vmi as any).stringProperty(path),
+        }),
+      { initialProps: { instance: undefined } }
+    );
+
+    const setValueBeforeReady = result.current[1];
+
+    // setValue before ready — should be a no-op
+    act(() => {
+      setValueBeforeReady('Hello');
+    });
+
+    expect(result.current[2]).toBeNull();
+
+    // Instance becomes available
+    rerender({ instance: mockInstance });
+
+    // setValue identity must change so useEffect deps re-fire automatically
+    const setValueAfterReady = result.current[1];
+    expect(setValueAfterReady).not.toBe(setValueBeforeReady);
+
+    // Now setValue should work
+    act(() => {
+      setValueAfterReady('Hello');
+    });
+
+    expect(mockProperty.value).toBe('Hello');
+    expect(result.current[2]).toBeNull();
   });
 
   it('should update value when path changes', () => {
