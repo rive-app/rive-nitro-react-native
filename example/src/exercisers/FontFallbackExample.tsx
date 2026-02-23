@@ -19,6 +19,7 @@ import {
 } from '@rive-app/react-native';
 import { type Metadata } from '../shared/metadata';
 
+// Rive file: https://rive.app/community/files/26480-49641-simple-test-text-property/
 const TEXT_PROPERTY = 'text';
 
 const FONTS: Record<string, { label: string; sublabel: string; source: FontSource }> = {
@@ -231,9 +232,10 @@ function MountedView({ text }: { text: string }) {
   }
 
   useEffect(() => {
+    if (!instance) return;
     setRiveText(text);
     riveViewRef?.playIfNeeded();
-  }, [text, setRiveText, riveViewRef]);
+  }, [text, setRiveText, riveViewRef, instance]);
 
   if (isLoading) {
     return (
