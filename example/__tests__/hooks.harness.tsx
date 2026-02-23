@@ -170,22 +170,12 @@ describe('useViewModelInstance hook', () => {
   });
 });
 
-type UseRiveStringContext = {
-  value: string | undefined;
-  error: Error | null;
-  errorEverSet: boolean;
-  setValue: ((v: string) => void) | null;
-  setValueCalledBeforeReady: boolean;
-};
-
-function createUseRiveStringContext(): UseRiveStringContext {
-  return {
-    value: undefined,
-    error: null,
-    errorEverSet: false,
-    setValue: null,
-    setValueCalledBeforeReady: false,
-  };
+class UseRiveStringContext {
+  value: string | undefined = undefined;
+  error: Error | null = null;
+  errorEverSet = false;
+  setValue: ((v: string) => void) | null = null;
+  setValueCalledBeforeReady = false;
 }
 
 /**
@@ -233,7 +223,7 @@ function UseRiveStringBeforeReadyComponent({
 
 describe('useRiveString setValue before ready (#141)', () => {
   it('does not error when setValue is called before instance loads', async () => {
-    const context = createUseRiveStringContext();
+    const context = new UseRiveStringContext();
     await render(
       <UseRiveStringBeforeReadyComponent
         source={FONT_FALLBACK}
