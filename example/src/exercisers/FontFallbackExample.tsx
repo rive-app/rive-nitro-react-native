@@ -21,7 +21,10 @@ import { type Metadata } from '../shared/metadata';
 
 const TEXT_PROPERTY = 'text';
 
-const FONTS: Record<string, { label: string; sublabel: string; source: FontSource }> = {
+const FONTS: Record<
+  string,
+  { label: string; sublabel: string; source: FontSource }
+> = {
   kanitBundled: {
     label: 'Kanit (Bundled)',
     sublabel: 'From native resources — 173KB',
@@ -141,8 +144,16 @@ export default function FontFallbackExample() {
               <Preset label="Latin" text="Hello World" onPress={setInputText} />
               <Preset label="CJK" text="你好世界" onPress={setInputText} />
               <Preset label="Thai" text="สวัสดี โลก" onPress={setInputText} />
-              <Preset label="Arabic" text="مرحبا بالعالم" onPress={setInputText} />
-              <Preset label="Mixed" text="ABC 你好 สวัสดี" onPress={setInputText} />
+              <Preset
+                label="Arabic"
+                text="مرحبا بالعالم"
+                onPress={setInputText}
+              />
+              <Preset
+                label="Mixed"
+                text="ABC 你好 สวัสดี"
+                onPress={setInputText}
+              />
             </View>
           </>
         )}
