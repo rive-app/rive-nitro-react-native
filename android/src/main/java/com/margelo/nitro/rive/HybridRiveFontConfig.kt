@@ -30,7 +30,12 @@ class HybridRiveFontConfig : HybridRiveFontConfigSpec() {
         }
         val systemFonts = FontHelper.getFallbackFonts(Fonts.FontOpts(weight = weight))
         for (font in systemFonts) {
-          FontHelper.getFontBytes(font)?.let { result.add(it) }
+          try {
+            FontHelper.getFontBytes(font)?.let { result.add(it) }
+          } catch (e: OutOfMemoryError) {
+            Log.w(TAG, "Skipped system font due to memory pressure: ${e.message}")
+            break
+          }
         }
         return result
       }
@@ -112,6 +117,20 @@ class HybridRiveFontConfig : HybridRiveFontConfigSpec() {
       val fontBytes = withContext(Dispatchers.IO) {
         URL(url).readBytes()
       }
+      customFonts.add(fontBytes)
+      resetFontCache()
+    }
+  }
+
+  override fun addFallbackFontByName(name: String): Promise<Unit> {
+    return Promise.async {
+      ensureSystemFallback()
+      val fonts = FontHelper.getFallbackFonts(Fonts.FontOpts(familyName = name))
+      if (fonts.isEmpty()) {
+        throw Error("System font not found: $name")
+      }
+      val fontBytes = FontHelper.getFontBytes(fonts.first())
+        ?: throw Error("Could not read font bytes for: $name")
       customFonts.add(fontBytes)
       resetFontCache()
     }

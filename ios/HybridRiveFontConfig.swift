@@ -52,6 +52,17 @@ class HybridRiveFontConfig: HybridRiveFontConfigSpec {
     }
   }
 
+  func addFallbackFontByName(name: String) throws -> Promise<Void> {
+    return Promise.async {
+      Self.ensureSystemFallback()
+      guard let font = UIFont(name: name, size: UIFont.systemFontSize) else {
+        throw RuntimeError.error(withMessage: "System font not found: \(name)")
+      }
+      Self.customFonts.append(font)
+      Self.updateFallbackFonts()
+    }
+  }
+
   func clearCustomFallbackFonts() throws -> Promise<Void> {
     return Promise.async {
       Self.customFonts.removeAll()

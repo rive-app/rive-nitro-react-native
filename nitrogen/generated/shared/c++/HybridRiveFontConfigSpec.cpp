@@ -18,6 +18,7 @@ namespace margelo::nitro::rive {
       prototype.registerHybridMethod("addFallbackFont", &HybridRiveFontConfigSpec::addFallbackFont);
       prototype.registerHybridMethod("addFallbackFontFromResource", &HybridRiveFontConfigSpec::addFallbackFontFromResource);
       prototype.registerHybridMethod("addFallbackFontFromURL", &HybridRiveFontConfigSpec::addFallbackFontFromURL);
+      prototype.registerHybridMethod("addFallbackFontByName", &HybridRiveFontConfigSpec::addFallbackFontByName);
       prototype.registerHybridMethod("clearCustomFallbackFonts", &HybridRiveFontConfigSpec::clearCustomFallbackFonts);
     });
   }

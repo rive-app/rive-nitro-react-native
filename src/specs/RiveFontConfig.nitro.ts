@@ -27,6 +27,12 @@ export interface RiveFontConfig
   addFallbackFontFromURL(url: string): Promise<void>;
 
   /**
+   * Add a system font as a fallback by its font family name.
+   * On iOS uses UIFont(name:), on Android uses FontHelper to resolve system fonts.
+   */
+  addFallbackFontByName(name: string): Promise<void>;
+
+  /**
    * Clear all custom fallback fonts.
    * System font fallback remains active if previously enabled.
    */

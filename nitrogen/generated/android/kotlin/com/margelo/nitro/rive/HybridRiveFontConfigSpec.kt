@@ -65,6 +65,10 @@ abstract class HybridRiveFontConfigSpec: HybridObject() {
   
   @DoNotStrip
   @Keep
+  abstract fun addFallbackFontByName(name: String): Promise<Unit>
+  
+  @DoNotStrip
+  @Keep
   abstract fun clearCustomFallbackFonts(): Promise<Unit>
 
   private external fun initHybrid(): HybridData

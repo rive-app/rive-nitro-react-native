@@ -102,6 +102,14 @@ namespace margelo::nitro::rive {
       auto __value = std::move(__result.value());
       return __value;
     }
+    inline std::shared_ptr<Promise<void>> addFallbackFontByName(const std::string& name) override {
+      auto __result = _swiftPart.addFallbackFontByName(name);
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
     inline std::shared_ptr<Promise<void>> clearCustomFallbackFonts() override {
       auto __result = _swiftPart.clearCustomFallbackFonts();
       if (__result.hasError()) [[unlikely]] {

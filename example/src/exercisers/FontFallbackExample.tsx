@@ -44,6 +44,16 @@ const FONTS: Record<
       uri: 'https://raw.githubusercontent.com/google/fonts/main/ofl/notoserifthai/NotoSerifThai%5Bwdth%2Cwght%5D.ttf',
     },
   },
+  thonburiSystem: {
+    label: 'Thonburi (System)',
+    sublabel: 'Built-in Thai font — iOS only',
+    source: { name: 'Thonburi' },
+  },
+  serifSystem: {
+    label: 'serif (System)',
+    sublabel: 'Noto Serif — Android only',
+    source: { name: 'serif' },
+  },
 };
 
 type FontKey = keyof typeof FONTS;
@@ -82,7 +92,7 @@ export default function FontFallbackExample() {
 
     setLoadingFont(key);
     try {
-      await RiveFonts.addFallbackFont(font.source);
+      await RiveFonts.addFallbackFonts([font.source]);
       addLog(`Added ${font.label} as fallback font`, 'success');
       setSelectedFonts((prev) => new Set(prev).add(key));
     } catch (err) {
@@ -95,7 +105,15 @@ export default function FontFallbackExample() {
   };
 
   const handleMount = async () => {
-    await RiveFonts.enableSystemFontFallback();
+    try {
+      // addFallbackFonts already enables system fallback internally,
+      // so this is only needed for the "no custom fonts" path
+      if (selectedFonts.size === 0) {
+        await RiveFonts.enableSystemFontFallback();
+      }
+    } catch (err) {
+      console.error('enableSystemFontFallback:', err);
+    }
     setMounted(true);
     addLog(
       `Mounted with: ${selectedFonts.size > 0 ? [...selectedFonts].map((k) => FONTS[k]!.label).join(', ') : 'system defaults only'}`,
@@ -221,6 +239,7 @@ export default function FontFallbackExample() {
 function MountedView({ text }: { text: string }) {
   const { riveViewRef, setHybridRef } = useRive();
   const { riveFile, isLoading, error } = useRiveFile(
+    // https://rive.app/marketplace/26480-49641-simple-test-text-property/
     require('../../assets/rive/font_fallback.riv')
   );
   const viewModel = useMemo(
@@ -372,7 +391,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   setupContainer: {
-    height: 220,
+    height: 120,
     backgroundColor: '#f0f0f0',
     justifyContent: 'center',
     alignItems: 'center',
@@ -390,7 +409,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   riveContainer: {
-    height: 220,
+    height: 120,
     backgroundColor: '#f0f0f0',
     justifyContent: 'center',
     alignItems: 'center',

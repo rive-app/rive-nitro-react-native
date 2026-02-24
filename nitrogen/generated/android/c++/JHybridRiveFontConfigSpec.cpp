@@ -115,6 +115,21 @@ namespace margelo::nitro::rive {
       return __promise;
     }();
   }
+  std::shared_ptr<Promise<void>> JHybridRiveFontConfigSpec::addFallbackFontByName(const std::string& name) {
+    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<jni::JString> /* name */)>("addFallbackFontByName");
+    auto __result = method(_javaPart, jni::make_jstring(name));
+    return [&]() {
+      auto __promise = Promise<void>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& /* unit */) {
+        __promise->resolve();
+      });
+      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
+        jni::JniException __jniError(__throwable);
+        __promise->reject(std::make_exception_ptr(__jniError));
+      });
+      return __promise;
+    }();
+  }
   std::shared_ptr<Promise<void>> JHybridRiveFontConfigSpec::clearCustomFallbackFonts() {
     static const auto method = javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>()>("clearCustomFallbackFonts");
     auto __result = method(_javaPart);
