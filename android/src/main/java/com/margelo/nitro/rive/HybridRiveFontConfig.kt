@@ -100,7 +100,8 @@ class HybridRiveFontConfig : HybridRiveFontConfigSpec() {
           val fontBytes = context.assets.open(assetPath).use { it.readBytes() }
           customFonts.add(fontBytes)
           return@async
-        } catch (_: Exception) {}
+        } catch (_: Exception) {
+        }
       }
 
       throw Error("Font resource not found: $resource (checked res/raw, res/font, assets/fonts)")
