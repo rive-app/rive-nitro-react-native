@@ -25,6 +25,11 @@ export namespace RiveFonts {
     return RiveFontConfigInternal.enableSystemFontFallback();
   }
 
+  /**
+   * Add fallback fonts for missing glyphs in Rive graphics.
+   * Fonts are tried in array order — first font that contains the glyph wins.
+   * These fonts are tried before the default system font fallback.
+   */
   export async function addFallbackFonts(sources: FontSource[]): Promise<void> {
     for (const source of sources) {
       await addSingleFont(source);
