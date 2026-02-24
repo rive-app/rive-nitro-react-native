@@ -12,16 +12,21 @@ const modulesToDeduplicate = ['react', 'react-native'];
  * @returns {import('metro-config').MetroConfig}
  */
 function withSingleReactNative(config, projectDir) {
+  const nodeModulesDir = path.join(projectDir, 'node_modules');
   const modulePaths = Object.fromEntries(
     modulesToDeduplicate.map((mod) => [
       mod,
-      path.join(projectDir, 'node_modules', mod, 'index.js'),
+      path.join(nodeModulesDir, mod, 'index.js'),
     ])
   );
   const originalResolveRequest = config.resolver.resolveRequest;
   const defaultResolve = (context, moduleName, platform) =>
     context.resolveRequest(context, moduleName, platform);
   const resolveRequest = originalResolveRequest ?? defaultResolve;
+
+  // Anchor path inside the project's node_modules so that subpath
+  // imports (e.g. react-native/Libraries/...) resolve from here.
+  const anchorPath = path.join(nodeModulesDir, '_module_anchor');
 
   return {
     ...config,
@@ -30,6 +35,17 @@ function withSingleReactNative(config, projectDir) {
       resolveRequest: (context, moduleName, platform) => {
         if (moduleName in modulePaths) {
           return { type: 'sourceFile', filePath: modulePaths[moduleName] };
+        }
+        // Handle subpath imports (e.g. 'react-native/Libraries/...')
+        // to ensure they resolve from the project's node_modules.
+        for (const mod of modulesToDeduplicate) {
+          if (moduleName.startsWith(mod + '/')) {
+            return resolveRequest(
+              { ...context, originModulePath: anchorPath },
+              moduleName,
+              platform
+            );
+          }
         }
         return resolveRequest(context, moduleName, platform);
       },
