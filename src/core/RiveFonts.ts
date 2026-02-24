@@ -34,6 +34,7 @@ export namespace RiveFonts {
     for (const source of sources) {
       await addSingleFont(source);
     }
+    await RiveFontConfigInternal.applyFallbackFonts();
   }
 
   export async function clearCustomFallbackFonts(): Promise<void> {

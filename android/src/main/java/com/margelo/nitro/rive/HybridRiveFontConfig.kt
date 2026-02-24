@@ -69,7 +69,6 @@ class HybridRiveFontConfig : HybridRiveFontConfigSpec() {
       val byteArray = ByteArray(buffer.remaining())
       buffer.get(byteArray)
       customFonts.add(byteArray)
-      resetFontCache()
     }
   }
 
@@ -85,7 +84,6 @@ class HybridRiveFontConfig : HybridRiveFontConfigSpec() {
       if (rawId != 0) {
         val fontBytes = context.resources.openRawResource(rawId).use { it.readBytes() }
         customFonts.add(fontBytes)
-        resetFontCache()
         return@async
       }
 
@@ -93,7 +91,6 @@ class HybridRiveFontConfig : HybridRiveFontConfigSpec() {
       if (fontId != 0) {
         val fontBytes = context.resources.openRawResource(fontId).use { it.readBytes() }
         customFonts.add(fontBytes)
-        resetFontCache()
         return@async
       }
 
@@ -102,7 +99,6 @@ class HybridRiveFontConfig : HybridRiveFontConfigSpec() {
         try {
           val fontBytes = context.assets.open(assetPath).use { it.readBytes() }
           customFonts.add(fontBytes)
-          resetFontCache()
           return@async
         } catch (_: Exception) {}
       }
@@ -118,7 +114,6 @@ class HybridRiveFontConfig : HybridRiveFontConfigSpec() {
         URL(url).readBytes()
       }
       customFonts.add(fontBytes)
-      resetFontCache()
     }
   }
 
@@ -132,6 +127,11 @@ class HybridRiveFontConfig : HybridRiveFontConfigSpec() {
       val fontBytes = FontHelper.getFontBytes(fonts.first())
         ?: throw Error("Could not read font bytes for: $name")
       customFonts.add(fontBytes)
+    }
+  }
+
+  override fun applyFallbackFonts(): Promise<Unit> {
+    return Promise.async {
       resetFontCache()
     }
   }

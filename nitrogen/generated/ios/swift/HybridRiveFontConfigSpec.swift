@@ -19,6 +19,7 @@ public protocol HybridRiveFontConfigSpec_protocol: HybridObject {
   func addFallbackFontFromResource(resource: String) throws -> Promise<Void>
   func addFallbackFontFromURL(url: String) throws -> Promise<Void>
   func addFallbackFontByName(name: String) throws -> Promise<Void>
+  func applyFallbackFonts() throws -> Promise<Void>
   func clearCustomFallbackFonts() throws -> Promise<Void>
 }
 

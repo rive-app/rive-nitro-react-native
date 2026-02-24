@@ -60,6 +60,7 @@ namespace margelo::nitro::rive {
     std::shared_ptr<Promise<void>> addFallbackFontFromResource(const std::string& resource) override;
     std::shared_ptr<Promise<void>> addFallbackFontFromURL(const std::string& url) override;
     std::shared_ptr<Promise<void>> addFallbackFontByName(const std::string& name) override;
+    std::shared_ptr<Promise<void>> applyFallbackFonts() override;
     std::shared_ptr<Promise<void>> clearCustomFallbackFonts() override;
 
   private:

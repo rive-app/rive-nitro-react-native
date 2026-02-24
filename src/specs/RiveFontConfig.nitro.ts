@@ -33,6 +33,12 @@ export interface RiveFontConfig
   addFallbackFontByName(name: string): Promise<void>;
 
   /**
+   * Apply pending font changes — updates the native fallback font list and resets caches.
+   * Called once after adding fonts, rather than after each individual add.
+   */
+  applyFallbackFonts(): Promise<void>;
+
+  /**
    * Clear all custom fallback fonts.
    * System font fallback remains active if previously enabled.
    */

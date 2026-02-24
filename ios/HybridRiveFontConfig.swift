@@ -18,7 +18,6 @@ class HybridRiveFontConfig: HybridRiveFontConfigSpec {
       let data = bytes.toData(copyIfNeeded: true)
       let font = try Self.createUIFont(from: data)
       Self.customFonts.append(font)
-      Self.updateFallbackFonts()
     }
   }
 
@@ -35,7 +34,6 @@ class HybridRiveFontConfig: HybridRiveFontConfigSpec {
       let data = try Data(contentsOf: URL(fileURLWithPath: path))
       let font = try Self.createUIFont(from: data)
       Self.customFonts.append(font)
-      Self.updateFallbackFonts()
     }
   }
 
@@ -48,7 +46,6 @@ class HybridRiveFontConfig: HybridRiveFontConfigSpec {
       let (data, _) = try await URLSession.shared.data(from: parsedURL)
       let font = try Self.createUIFont(from: data)
       Self.customFonts.append(font)
-      Self.updateFallbackFonts()
     }
   }
 
@@ -59,6 +56,11 @@ class HybridRiveFontConfig: HybridRiveFontConfigSpec {
         throw RuntimeError.error(withMessage: "System font not found: \(name)")
       }
       Self.customFonts.append(font)
+    }
+  }
+
+  func applyFallbackFonts() throws -> Promise<Void> {
+    return Promise.async {
       Self.updateFallbackFonts()
     }
   }
