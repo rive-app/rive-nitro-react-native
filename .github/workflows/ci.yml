@@ -288,9 +288,12 @@ jobs:
 
       - name: Run harness tests on iOS
         working-directory: example
-        timeout-minutes: 15
+        timeout-minutes: 25
         shell: bash --noprofile --norc -o pipefail {0}
         run: |
+          BOOTED_UDID=$(xcrun simctl list devices booted -j | python3 -c "import json,sys; devs=[d for r in json.load(sys.stdin)['devices'].values() for d in r if d['state']=='Booted']; print(devs[0]['udid'] if devs else '')")
+          echo "Booted simulator UDID: $BOOTED_UDID"
+
           # Background monitor: logs port/process state every 10s during an attempt
           start_monitor() {
             (
@@ -300,7 +303,8 @@ jobs:
                 metro=$(lsof -ti:8081 2>/dev/null || echo "no")
                 bridge=$(lsof -ti:3001 2>/dev/null || echo "no")
                 app=$(pgrep -f RiveExample 2>/dev/null || echo "no")
-                echo "[$ts] metro:$metro bridge:$bridge app:$app"
+                sim_running=$(xcrun simctl spawn booted launchctl list 2>/dev/null | grep -c "rive.example" || echo "0")
+                echo "[$ts] metro:$metro bridge:$bridge app:$app sim_app:$sim_running"
               done
             ) &
             MONITOR_PID=$!
@@ -327,13 +331,29 @@ jobs:
           }
 
           nuke_harness() {
-            echo "[$(date +%H:%M:%S)] cleanup: killing all harness/metro/node processes"
+            echo "[$(date +%H:%M:%S)] cleanup: killing all harness/metro/node processes and simulator app"
+            xcrun simctl terminate booted rive.example 2>/dev/null || true
             pkill -9 -f "react-native-harness" 2>/dev/null || true
             pkill -9 -f "jest" 2>/dev/null || true
             lsof -ti:8081 | xargs kill -9 2>/dev/null || true
             lsof -ti:3001 | xargs kill -9 2>/dev/null || true
             wait_for_port_free 8081
             wait_for_port_free 3001
+            sleep 2
+          }
+
+          dump_diagnostics() {
+            local label=$1
+            echo "--- diagnostics ($label) ---"
+            echo "  simulator state: $(xcrun simctl list devices booted -j 2>/dev/null | python3 -c "import json,sys; devs=[d for r in json.load(sys.stdin)['devices'].values() for d in r if d['state']=='Booted']; print(f'{len(devs)} booted')" 2>/dev/null || echo 'unknown')"
+            echo "  app installed: $(xcrun simctl appinfo booted rive.example 2>/dev/null | head -1 || echo 'unknown')"
+            echo "  app running (launchctl): $(xcrun simctl spawn booted launchctl list 2>/dev/null | grep -c 'rive.example' || echo '0')"
+            echo "  app running (pgrep): $(pgrep -f RiveExample 2>/dev/null || echo 'no')"
+            echo "  port 8081: $(lsof -ti:8081 2>/dev/null || echo 'free')"
+            echo "  port 3001: $(lsof -ti:3001 2>/dev/null || echo 'free')"
+            echo "  node procs: $(pgrep -la node 2>/dev/null | head -5 || echo 'none')"
+            echo "  free memory: $(vm_stat 2>/dev/null | head -5 || echo 'unknown')"
+            echo "--- end diagnostics ---"
           }
 
           # Pre-warm Metro: compile the JS bundle once so all test attempts use cached transforms.
@@ -366,10 +386,12 @@ jobs:
           wait_for_port_free 8081
           echo "=== Pre-warm complete ==="
 
-          # Retry up to 5 times — bridgeTimeout (300s) handles connection failures,
-          # testTimeout (120s) handles hung tests, step timeout-minutes (15) is the backstop
+          # bridgeTimeout (90s) wraps entire harness init (metro start + prewarm + app launch).
+          # bundleStartTimeout (45s) per app launch attempt, maxAppRestarts (3) = ~180s worst case.
+          # testTimeout (120s) handles hung tests. step timeout-minutes (25) is the backstop.
           for attempt in 1 2 3 4 5; do
             echo "=== Attempt $attempt of 5 ==="
+            dump_diagnostics "before attempt $attempt"
             start_monitor
             yarn test:harness:ios --verbose --testTimeout 120000
             exit_code=$?
@@ -379,18 +401,46 @@ jobs:
               exit 0
             fi
             echo "Attempt $attempt failed (exit $exit_code), retrying..."
+            dump_diagnostics "after failed attempt $attempt"
             nuke_harness
           done
           echo "All attempts failed"
+          dump_diagnostics "final"
           exit 1
 
       - name: Debug - Check for console logs
         if: failure() || cancelled()
         run: |
-          echo "=== Simulator logs (last 5m) ==="
-          xcrun simctl spawn booted log show --predicate 'processImagePath CONTAINS "RiveExample"' --last 5m --style compact 2>&1 | tail -200 || echo "No logs found"
-          echo "=== System log for Metro/Node ==="
-          xcrun simctl spawn booted log show --predicate 'process CONTAINS "node" OR process CONTAINS "metro"' --last 5m --style compact 2>&1 | tail -50 || true
+          echo "=== Simulator logs for RiveExample (last 10m) ==="
+          xcrun simctl spawn booted log show \
+            --predicate 'processImagePath CONTAINS "RiveExample"' \
+            --last 10m --style compact 2>&1 | tail -300 || echo "No logs found"
+
+          echo ""
+          echo "=== Simulator crash/error logs (last 10m) ==="
+          xcrun simctl spawn booted log show \
+            --predicate '(processImagePath CONTAINS "RiveExample") AND (messageType == error OR messageType == fault)' \
+            --last 10m --style compact 2>&1 | tail -100 || echo "No crash logs"
+
+          echo ""
+          echo "=== Network connection logs from app (last 10m) ==="
+          xcrun simctl spawn booted log show \
+            --predicate '(processImagePath CONTAINS "RiveExample") AND (category == "connection" OR subsystem == "com.apple.network")' \
+            --last 10m --style compact 2>&1 | tail -50 || echo "No network logs"
+
+          echo ""
+          echo "=== System log for Metro/Node (last 10m) ==="
+          xcrun simctl spawn booted log show \
+            --predicate 'process CONTAINS "node" OR process CONTAINS "metro"' \
+            --last 10m --style compact 2>&1 | tail -50 || true
+
+          echo ""
+          echo "=== Crash reports ==="
+          find ~/Library/Logs/DiagnosticReports -name "RiveExample*" -mmin -30 2>/dev/null | head -5 || echo "No crash reports"
+          for f in $(find ~/Library/Logs/DiagnosticReports -name "RiveExample*" -mmin -30 2>/dev/null | head -2); do
+            echo "--- $f ---"
+            head -50 "$f"
+          done
 
   test-harness-android:
     runs-on: ubuntu-latest
