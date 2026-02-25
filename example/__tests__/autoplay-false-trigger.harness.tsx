@@ -22,6 +22,7 @@ import type { ViewModelInstance } from '@rive-app/react-native';
 //   - "gameOver" trigger property
 //   - state machine named "State Machine 1"
 const QUICK_START = require('../assets/rive/quick_start.riv');
+const RATING = require('../assets/rive/rating.riv');
 
 function expectDefined<T>(value: T): asserts value is NonNullable<T> {
   expect(value).toBeDefined();
@@ -78,6 +79,38 @@ async function loadQuickStart() {
   return { file, instance };
 }
 
+function SimpleRiveView({
+  file,
+  context,
+}: {
+  file: RiveFile;
+  context: TestContext;
+}) {
+  useEffect(() => {
+    return () => {
+      context.ref = null;
+    };
+  }, [context]);
+
+  return (
+    <View style={{ width: 200, height: 200 }}>
+      <RiveView
+        hybridRef={{
+          f: (ref: RiveViewRef | null) => {
+            context.ref = ref;
+          },
+        }}
+        style={{ flex: 1 }}
+        file={file}
+        fit={Fit.Contain}
+        onError={(e) => {
+          context.error = e.message;
+        }}
+      />
+    </View>
+  );
+}
+
 describe('autoPlay={false} + dataBind (issue #156)', () => {
   it('VMI is bound to state machine without play()', async () => {
     const { file, instance } = await loadQuickStart();
@@ -110,6 +143,25 @@ describe('autoPlay={false} + dataBind (issue #156)', () => {
     expectDefined(boundHealth);
     expect(boundHealth.value).toBe(25);
 
+    expect(context.error).toBeNull();
+    cleanup();
+  });
+
+  it('file without data binding renders without error', async () => {
+    const file = await RiveFileFactory.fromSource(RATING, undefined);
+    const context: TestContext = { ref: null, error: null };
+
+    await render(<SimpleRiveView file={file} context={context} />);
+
+    await waitFor(
+      () => {
+        expect(context.ref).not.toBeNull();
+      },
+      { timeout: 5000 }
+    );
+
+    // Give it time to render and potentially throw
+    await new Promise((r) => setTimeout(r, 500));
     expect(context.error).toBeNull();
     cleanup();
   });

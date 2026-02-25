@@ -10,6 +10,7 @@ import com.rive.ViewConfiguration
 import app.rive.runtime.kotlin.core.Fit as RiveFit
 import app.rive.runtime.kotlin.core.Alignment as RiveAlignment
 import app.rive.runtime.kotlin.core.errors.*
+import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -268,6 +269,7 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
       val (errorType, errorDescription) = detectErrorType(e)
       val noteString = note?.let { " $it" } ?: ""
       val errorMessage = "[RIVE] $tag$noteString $errorDescription"
+      Log.e(TAG, errorMessage, e)
       val riveError = RiveError(
         type = errorType,
         message = errorMessage
