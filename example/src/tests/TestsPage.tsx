@@ -148,6 +148,7 @@ export default function TestsPage() {
       setTestStates((prev) => new Map(prev).set(key, { status: 'passed' }));
     } catch (e) {
       const errorMessage = e instanceof Error ? e.message : String(e);
+      console.error(`[TEST FAIL] ${suiteName} > ${test.name}:`, errorMessage, e);
       cleanupRenderedElement();
       setTestStates((prev) =>
         new Map(prev).set(key, {

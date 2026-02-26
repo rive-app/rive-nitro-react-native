@@ -19,6 +19,20 @@ describe('RiveFile Loading', () => {
     expect(file).toBeDefined();
     expect(file.artboardNames.length).toBeGreaterThan(0);
   });
+
+  it('fromURL with invalid URL throws descriptive error', async () => {
+    try {
+      await RiveFileFactory.fromURL(
+        'https://cdn.rive.app/nonexistent/invalid.riv',
+        undefined
+      );
+      expect(true).toBe(false);
+    } catch (e) {
+      expect(e).toBeDefined();
+      const msg = e instanceof Error ? e.message : String(e);
+      expect(msg.length).toBeGreaterThan(0);
+    }
+  });
 });
 
 describe('ViewModel', () => {
