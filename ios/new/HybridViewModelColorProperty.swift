@@ -6,10 +6,6 @@ class HybridViewModelColorProperty: HybridViewModelColorPropertySpec {
   private let prop: ColorProperty
   private var listenerTasks: [UUID: Task<Void, Never>] = [:]
 
-  // Note: Color.argbValue is internal in rive-ios, so get value throws.
-  // setValue() works, but reading colors back is not possible.
-  // TODO: File issue with rive-ios to expose Color.argbValue in SPI
-
   init(instance: ViewModelInstance, path: String) {
     self.instance = instance
     self.prop = ColorProperty(path: path)
@@ -18,11 +14,16 @@ class HybridViewModelColorProperty: HybridViewModelColorPropertySpec {
 
   var value: Double {
     get {
-      RCTLogError("[ColorProperty] getValue not supported - rive-ios Color.argbValue is internal")
-      return 0
+      do {
+        let color = try blockingAsync { try await self.instance.value(of: self.prop) }
+        return Double(color.argbValue)
+      } catch {
+        RCTLogError("[ColorProperty] getValue failed: \(error)")
+        return 0
+      }
     }
     set {
-      let color = Color(UInt32(newValue))
+      let color = Color(UInt32(bitPattern: Int32(newValue)))
       let inst = instance
       let p = prop
       Task { @MainActor in
@@ -32,7 +33,27 @@ class HybridViewModelColorProperty: HybridViewModelColorPropertySpec {
   }
 
   func addListener(onChanged: @escaping (Double) -> Void) throws -> () -> Void {
-    throw RuntimeError.error(withMessage: "Color addListener() not supported - rive-ios Color.argbValue is internal")
+    let id = UUID()
+    let task = Task { @MainActor [weak self] in
+      guard let self else { return }
+      while !Task.isCancelled {
+        let stream = self.instance.valueStream(of: self.prop)
+        do {
+          for try await color in stream {
+            onChanged(Double(color.argbValue))
+          }
+          break
+        } catch {
+          RCTLogWarn("[ColorProperty] listener stream interrupted: \(error), restarting")
+          try? await Task.sleep(nanoseconds: 100_000_000)
+        }
+      }
+    }
+    listenerTasks[id] = task
+    return { [weak self] in
+      self?.listenerTasks[id]?.cancel()
+      self?.listenerTasks.removeValue(forKey: id)
+    }
   }
 
   func removeListeners() throws {
