@@ -86,15 +86,11 @@ export function useRiveProperty<P extends ViewModelProperty, T>(
     };
   }, [options, property]);
 
-  // Set the value of the property
+  // Set the value of the property (no-op if property isn't available yet)
   const setPropertyValue = useCallback(
     (valueOrUpdater: T | ((prevValue: T | undefined) => T)) => {
       if (!property) {
-        setError(
-          new Error(
-            `Cannot set value for property "${path}" because it was not found. Your view model instance may be undefined, or the path may be incorrect.`
-          )
-        );
+        return;
       } else {
         const newValue =
           typeof valueOrUpdater === 'function'
@@ -105,7 +101,7 @@ export function useRiveProperty<P extends ViewModelProperty, T>(
         property.value = newValue;
       }
     },
-    [property, path]
+    [property]
   );
 
   return [value, setPropertyValue, error, property as unknown as P];

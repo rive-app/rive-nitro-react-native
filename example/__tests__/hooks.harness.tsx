@@ -10,7 +10,9 @@ import { useEffect, useMemo } from 'react';
 import { Text, View } from 'react-native';
 import {
   RiveFileFactory,
+  useRiveFile,
   useRiveNumber,
+  useRiveString,
   useViewModelInstance,
   type RiveFile,
 } from '@rive-app/react-native';
@@ -18,6 +20,7 @@ import type { ViewModelInstance } from '@rive-app/react-native';
 
 const QUICK_START = require('../assets/rive/quick_start.riv');
 const DATABINDING = require('../assets/rive/databinding.riv');
+const FONT_FALLBACK = require('../assets/rive/font_fallback.riv');
 
 type UseRiveNumberContext = {
   value: number | undefined;
@@ -162,6 +165,85 @@ describe('useViewModelInstance hook', () => {
     );
 
     expect(context.age).toBe(30);
+
+    cleanup();
+  });
+});
+
+class UseRiveStringContext {
+  value: string | undefined = undefined;
+  error: Error | null = null;
+  errorEverSet = false;
+  setValue: ((v: string) => void) | null = null;
+  setValueCalledBeforeReady = false;
+}
+
+/**
+ * Loads a riv file via useRiveFile (async) and immediately calls
+ * setText in a useEffect — exercising the "setValue before ready" path.
+ * See #141 / PR #155 for context.
+ */
+function UseRiveStringBeforeReadyComponent({
+  source,
+  context,
+}: {
+  source: number;
+  context: UseRiveStringContext;
+}) {
+  const { riveFile } = useRiveFile(source);
+  const instance = useMemo(
+    () => riveFile?.defaultArtboardViewModel()?.createDefaultInstance(),
+    [riveFile]
+  );
+
+  const { value, setValue, error } = useRiveString('text', instance);
+
+  // Call setValue immediately — before file has loaded on first render
+  useEffect(() => {
+    if (!instance) {
+      context.setValueCalledBeforeReady = true;
+    }
+    setValue('Harness test');
+  }, [setValue, instance, context]);
+
+  useEffect(() => {
+    context.value = value;
+    context.error = error;
+    if (error) context.errorEverSet = true;
+    context.setValue = setValue;
+  }, [context, value, error, setValue]);
+
+  return (
+    <View>
+      <Text testID="value">{String(value)}</Text>
+      <Text testID="error">{String(error?.message ?? 'none')}</Text>
+    </View>
+  );
+}
+
+describe('useRiveString setValue before ready (#141)', () => {
+  it('does not error when setValue is called before instance loads', async () => {
+    const context = new UseRiveStringContext();
+    await render(
+      <UseRiveStringBeforeReadyComponent
+        source={FONT_FALLBACK}
+        context={context}
+      />
+    );
+
+    // Wait for file to load and property to resolve
+    await waitFor(
+      () => {
+        expect(context.value).toBeDefined();
+      },
+      { timeout: 5000 }
+    );
+
+    // setValue was called before instance was ready (first render)
+    expect(context.setValueCalledBeforeReady).toBe(true);
+
+    // No error should have ever been set — setValue before ready is a silent no-op
+    expect(context.errorEverSet).toBe(false);
 
     cleanup();
   });
