@@ -23,7 +23,13 @@ export type FontSource =
   | string
   | ArrayBuffer;
 
-export type FallbackFontMap = Record<number, FallbackFont[]>;
+export type FontWeight = number | 'default';
+
+export type FallbackFontMap = Partial<Record<FontWeight, FallbackFont[]>>;
+
+function resolveWeight(key: string): number {
+  return key === 'default' ? 0 : Number(key);
+}
 
 export namespace RiveFonts {
   export async function loadFont(source: FontSource): Promise<FallbackFont> {
@@ -62,8 +68,10 @@ export namespace RiveFonts {
   export async function setFallbackFonts(
     fontsByWeight: FallbackFontMap
   ): Promise<void> {
-    for (const [weight, fonts] of Object.entries(fontsByWeight)) {
-      RiveFontConfigInternal.setFontsForWeight(Number(weight), fonts);
+    for (const [key, fonts] of Object.entries(fontsByWeight)) {
+      if (fonts) {
+        RiveFontConfigInternal.setFontsForWeight(resolveWeight(key), fonts);
+      }
     }
     await RiveFontConfigInternal.applyFallbackFonts();
   }

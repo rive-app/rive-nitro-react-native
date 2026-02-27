@@ -117,7 +117,7 @@ export default function FontFallbackExample() {
   const handleMount = async () => {
     try {
       const handles = [...loadedFonts.values()];
-      await RiveFonts.setFallbackFonts({ 0: handles });
+      await RiveFonts.setFallbackFonts({ default: handles });
     } catch (err) {
       console.error('setFallbackFonts:', err);
     }
