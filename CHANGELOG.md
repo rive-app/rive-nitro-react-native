@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.4](https://github.com/rive-app/rive-nitro-react-native/compare/v0.2.3...v0.2.4) (2026-02-27)
+
+
+### Features
+
+* add RiveRuntime API for Android init failure handling ([#153](https://github.com/rive-app/rive-nitro-react-native/issues/153)) ([634724e](https://github.com/rive-app/rive-nitro-react-native/commit/634724eb7db2282f47beed791930c3df2bdfd6e6))
+
 ## [0.2.3](https://github.com/rive-app/rive-nitro-react-native/compare/v0.2.2...v0.2.3) (2026-02-20)
 
 
