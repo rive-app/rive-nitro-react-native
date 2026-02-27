@@ -12,13 +12,18 @@
 // Forward declaration of `HybridRiveFontConfigSpec_cxx` to properly resolve imports.
 namespace RNRive { class HybridRiveFontConfigSpec_cxx; }
 
+// Forward declaration of `HybridFallbackFontSpec` to properly resolve imports.
+namespace margelo::nitro::rive { class HybridFallbackFontSpec; }
 // Forward declaration of `ArrayBufferHolder` to properly resolve imports.
 namespace NitroModules { class ArrayBufferHolder; }
 
+#include <memory>
+#include "HybridFallbackFontSpec.hpp"
 #include <NitroModules/Promise.hpp>
+#include <string>
 #include <NitroModules/ArrayBuffer.hpp>
 #include <NitroModules/ArrayBufferHolder.hpp>
-#include <string>
+#include <vector>
 
 #include "RNRive-Swift-Cxx-Umbrella.hpp"
 
@@ -70,45 +75,43 @@ namespace margelo::nitro::rive {
 
   public:
     // Methods
-    inline std::shared_ptr<Promise<void>> enableSystemFontFallback() override {
-      auto __result = _swiftPart.enableSystemFontFallback();
+    inline std::shared_ptr<Promise<std::shared_ptr<HybridFallbackFontSpec>>> loadFontFromURL(const std::string& url) override {
+      auto __result = _swiftPart.loadFontFromURL(url);
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }
       auto __value = std::move(__result.value());
       return __value;
     }
-    inline std::shared_ptr<Promise<void>> addFallbackFont(const std::shared_ptr<ArrayBuffer>& bytes) override {
-      auto __result = _swiftPart.addFallbackFont(ArrayBufferHolder(bytes));
+    inline std::shared_ptr<HybridFallbackFontSpec> loadFontFromResource(const std::string& resource) override {
+      auto __result = _swiftPart.loadFontFromResource(resource);
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }
       auto __value = std::move(__result.value());
       return __value;
     }
-    inline std::shared_ptr<Promise<void>> addFallbackFontFromResource(const std::string& resource) override {
-      auto __result = _swiftPart.addFallbackFontFromResource(resource);
+    inline std::shared_ptr<HybridFallbackFontSpec> loadFontFromBytes(const std::shared_ptr<ArrayBuffer>& bytes) override {
+      auto __result = _swiftPart.loadFontFromBytes(ArrayBufferHolder(bytes));
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }
       auto __value = std::move(__result.value());
       return __value;
     }
-    inline std::shared_ptr<Promise<void>> addFallbackFontFromURL(const std::string& url) override {
-      auto __result = _swiftPart.addFallbackFontFromURL(url);
+    inline std::shared_ptr<HybridFallbackFontSpec> loadFontByName(const std::string& name) override {
+      auto __result = _swiftPart.loadFontByName(name);
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }
       auto __value = std::move(__result.value());
       return __value;
     }
-    inline std::shared_ptr<Promise<void>> addFallbackFontByName(const std::string& name) override {
-      auto __result = _swiftPart.addFallbackFontByName(name);
+    inline void setFontsForWeight(double weight, const std::vector<std::shared_ptr<HybridFallbackFontSpec>>& fonts) override {
+      auto __result = _swiftPart.setFontsForWeight(std::forward<decltype(weight)>(weight), fonts);
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }
-      auto __value = std::move(__result.value());
-      return __value;
     }
     inline std::shared_ptr<Promise<void>> applyFallbackFonts() override {
       auto __result = _swiftPart.applyFallbackFonts();
@@ -118,8 +121,8 @@ namespace margelo::nitro::rive {
       auto __value = std::move(__result.value());
       return __value;
     }
-    inline std::shared_ptr<Promise<void>> clearCustomFallbackFonts() override {
-      auto __result = _swiftPart.clearCustomFallbackFonts();
+    inline std::shared_ptr<Promise<void>> clearFallbackFonts() override {
+      auto __result = _swiftPart.clearFallbackFonts();
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }

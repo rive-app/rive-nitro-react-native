@@ -14,13 +14,13 @@ public protocol HybridRiveFontConfigSpec_protocol: HybridObject {
   
 
   // Methods
-  func enableSystemFontFallback() throws -> Promise<Void>
-  func addFallbackFont(bytes: ArrayBuffer) throws -> Promise<Void>
-  func addFallbackFontFromResource(resource: String) throws -> Promise<Void>
-  func addFallbackFontFromURL(url: String) throws -> Promise<Void>
-  func addFallbackFontByName(name: String) throws -> Promise<Void>
+  func loadFontFromURL(url: String) throws -> Promise<(any HybridFallbackFontSpec)>
+  func loadFontFromResource(resource: String) throws -> (any HybridFallbackFontSpec)
+  func loadFontFromBytes(bytes: ArrayBuffer) throws -> (any HybridFallbackFontSpec)
+  func loadFontByName(name: String) throws -> (any HybridFallbackFontSpec)
+  func setFontsForWeight(weight: Double, fonts: [(any HybridFallbackFontSpec)]) throws -> Void
   func applyFallbackFonts() throws -> Promise<Void>
-  func clearCustomFallbackFonts() throws -> Promise<Void>
+  func clearFallbackFonts() throws -> Promise<Void>
 }
 
 public extension HybridRiveFontConfigSpec_protocol {

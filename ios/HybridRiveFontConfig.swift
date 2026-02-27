@@ -3,79 +3,70 @@ import NitroModules
 import RiveRuntime
 
 class HybridRiveFontConfig: HybridRiveFontConfigSpec {
-  private static var systemFallbackEnabled = false
-  private static var customFonts: [UIFont] = []
+  private static var fontsByWeight: [Int: [UIFont]] = [:]
 
-  func enableSystemFontFallback() throws -> Promise<Void> {
+  func loadFontFromURL(url: String) throws -> Promise<(any HybridFallbackFontSpec)> {
     return Promise.async {
-      Self.ensureSystemFallback()
-    }
-  }
-
-  func addFallbackFont(bytes: ArrayBuffer) throws -> Promise<Void> {
-    return Promise.async {
-      Self.ensureSystemFallback()
-      let data = bytes.toData(copyIfNeeded: true)
-      let font = try Self.createUIFont(from: data)
-      Self.customFonts.append(font)
-    }
-  }
-
-  func addFallbackFontFromResource(resource: String) throws -> Promise<Void> {
-    return Promise.async {
-      Self.ensureSystemFallback()
-      let nsResource = resource as NSString
-      let name = nsResource.deletingPathExtension
-      let ext = nsResource.pathExtension.isEmpty ? nil : nsResource.pathExtension
-
-      guard let path = Bundle.main.path(forResource: name, ofType: ext) else {
-        throw RuntimeError.error(withMessage: "Font resource not found: \(resource)")
-      }
-      let data = try Data(contentsOf: URL(fileURLWithPath: path))
-      let font = try Self.createUIFont(from: data)
-      Self.customFonts.append(font)
-    }
-  }
-
-  func addFallbackFontFromURL(url: String) throws -> Promise<Void> {
-    return Promise.async {
-      Self.ensureSystemFallback()
       guard let parsedURL = URL(string: url) else {
         throw RuntimeError.error(withMessage: "Invalid font URL: \(url)")
       }
       let (data, _) = try await URLSession.shared.data(from: parsedURL)
       let font = try Self.createUIFont(from: data)
-      Self.customFonts.append(font)
+      return HybridFallbackFont(font: font)
     }
   }
 
-  func addFallbackFontByName(name: String) throws -> Promise<Void> {
-    return Promise.async {
-      Self.ensureSystemFallback()
-      guard let font = UIFont(name: name, size: UIFont.systemFontSize) else {
-        throw RuntimeError.error(withMessage: "System font not found: \(name)")
-      }
-      Self.customFonts.append(font)
+  func loadFontFromResource(resource: String) throws -> (any HybridFallbackFontSpec) {
+    let nsResource = resource as NSString
+    let name = nsResource.deletingPathExtension
+    let ext = nsResource.pathExtension.isEmpty ? nil : nsResource.pathExtension
+
+    guard let path = Bundle.main.path(forResource: name, ofType: ext) else {
+      throw RuntimeError.error(withMessage: "Font resource not found: \(resource)")
     }
+    let data = try Data(contentsOf: URL(fileURLWithPath: path))
+    let font = try Self.createUIFont(from: data)
+    return HybridFallbackFont(font: font)
+  }
+
+  func loadFontFromBytes(bytes: ArrayBuffer) throws -> (any HybridFallbackFontSpec) {
+    let data = bytes.toData(copyIfNeeded: true)
+    let font = try Self.createUIFont(from: data)
+    return HybridFallbackFont(font: font)
+  }
+
+  func loadFontByName(name: String) throws -> (any HybridFallbackFontSpec) {
+    guard let font = UIFont(name: name, size: UIFont.systemFontSize) else {
+      throw RuntimeError.error(withMessage: "System font not found: \(name)")
+    }
+    return HybridFallbackFont(font: font)
+  }
+
+  func setFontsForWeight(weight: Double, fonts: [(any HybridFallbackFontSpec)]) throws {
+    let key = Int(weight)
+    let uiFonts = fonts.compactMap { ($0 as? HybridFallbackFont)?.font }
+    Self.fontsByWeight[key] = uiFonts
   }
 
   func applyFallbackFonts() throws -> Promise<Void> {
     return Promise.async {
-      Self.updateFallbackFonts()
+      _ = RiveFont.self
+      RiveFont.fallbackFontsCallback = { weight in
+        let requestedWeight = Int(weight.rawWeight)
+        let fonts = Self.fontsByWeight[requestedWeight] ?? Self.fontsByWeight[0] ?? []
+        var providers: [RiveFallbackFontProvider] = fonts
+        providers.append(RiveFallbackFontDescriptor())
+        return providers
+      }
     }
   }
 
-  func clearCustomFallbackFonts() throws -> Promise<Void> {
+  func clearFallbackFonts() throws -> Promise<Void> {
     return Promise.async {
-      Self.customFonts.removeAll()
-      Self.updateFallbackFonts()
+      Self.fontsByWeight.removeAll()
+      RiveFont.fallbackFontsCallback = { _ in [RiveFallbackFontDescriptor()] }
+      RiveFont.fallbackFonts = [RiveFallbackFontDescriptor()]
     }
-  }
-
-  private static func ensureSystemFallback() {
-    guard !systemFallbackEnabled else { return }
-    _ = RiveFont.self
-    systemFallbackEnabled = true
   }
 
   private static func createUIFont(from data: Data) throws -> UIFont {
@@ -89,7 +80,6 @@ class HybridRiveFontConfig: HybridRiveFontConfigSpec {
     if !CTFontManagerRegisterGraphicsFont(cgFont, &error) {
       let cfError = error?.takeRetainedValue()
       let domain = cfError.map { CFErrorGetDomain($0) as String } ?? ""
-      // Ignore "already registered" errors
       if domain != kCTFontManagerErrorDomain as String {
         throw RuntimeError.error(
           withMessage: "Failed to register font: \(cfError?.localizedDescription ?? "unknown error")"
@@ -104,11 +94,5 @@ class HybridRiveFontConfig: HybridRiveFontConfigSpec {
       throw RuntimeError.error(withMessage: "Failed to create UIFont for: \(fontName)")
     }
     return font
-  }
-
-  private static func updateFallbackFonts() {
-    var providers: [RiveFallbackFontProvider] = customFonts
-    providers.append(RiveFallbackFontDescriptor())
-    RiveFont.fallbackFonts = providers
   }
 }

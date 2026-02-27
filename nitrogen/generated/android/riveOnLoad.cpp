@@ -18,6 +18,7 @@
 #include "JHybridBindableArtboardSpec.hpp"
 #include "JHybridRiveFileSpec.hpp"
 #include "JHybridRiveFileFactorySpec.hpp"
+#include "JHybridFallbackFontSpec.hpp"
 #include "JHybridRiveFontConfigSpec.hpp"
 #include "JHybridRiveImageSpec.hpp"
 #include "JHybridRiveImageFactorySpec.hpp"
@@ -56,6 +57,7 @@ int initialize(JavaVM* vm) {
     margelo::nitro::rive::JHybridBindableArtboardSpec::registerNatives();
     margelo::nitro::rive::JHybridRiveFileSpec::registerNatives();
     margelo::nitro::rive::JHybridRiveFileFactorySpec::registerNatives();
+    margelo::nitro::rive::JHybridFallbackFontSpec::registerNatives();
     margelo::nitro::rive::JHybridRiveFontConfigSpec::registerNatives();
     margelo::nitro::rive::JHybridRiveImageSpec::registerNatives();
     margelo::nitro::rive::JHybridRiveImageFactorySpec::registerNatives();

@@ -13,11 +13,15 @@
 #error NitroModules cannot be found! Are you sure you installed NitroModules properly?
 #endif
 
+// Forward declaration of `HybridFallbackFontSpec` to properly resolve imports.
+namespace margelo::nitro::rive { class HybridFallbackFontSpec; }
 
-
+#include <memory>
+#include "HybridFallbackFontSpec.hpp"
 #include <NitroModules/Promise.hpp>
-#include <NitroModules/ArrayBuffer.hpp>
 #include <string>
+#include <NitroModules/ArrayBuffer.hpp>
+#include <vector>
 
 namespace margelo::nitro::rive {
 
@@ -50,13 +54,13 @@ namespace margelo::nitro::rive {
 
     public:
       // Methods
-      virtual std::shared_ptr<Promise<void>> enableSystemFontFallback() = 0;
-      virtual std::shared_ptr<Promise<void>> addFallbackFont(const std::shared_ptr<ArrayBuffer>& bytes) = 0;
-      virtual std::shared_ptr<Promise<void>> addFallbackFontFromResource(const std::string& resource) = 0;
-      virtual std::shared_ptr<Promise<void>> addFallbackFontFromURL(const std::string& url) = 0;
-      virtual std::shared_ptr<Promise<void>> addFallbackFontByName(const std::string& name) = 0;
+      virtual std::shared_ptr<Promise<std::shared_ptr<HybridFallbackFontSpec>>> loadFontFromURL(const std::string& url) = 0;
+      virtual std::shared_ptr<HybridFallbackFontSpec> loadFontFromResource(const std::string& resource) = 0;
+      virtual std::shared_ptr<HybridFallbackFontSpec> loadFontFromBytes(const std::shared_ptr<ArrayBuffer>& bytes) = 0;
+      virtual std::shared_ptr<HybridFallbackFontSpec> loadFontByName(const std::string& name) = 0;
+      virtual void setFontsForWeight(double weight, const std::vector<std::shared_ptr<HybridFallbackFontSpec>>& fonts) = 0;
       virtual std::shared_ptr<Promise<void>> applyFallbackFonts() = 0;
-      virtual std::shared_ptr<Promise<void>> clearCustomFallbackFonts() = 0;
+      virtual std::shared_ptr<Promise<void>> clearFallbackFonts() = 0;
 
     protected:
       // Hybrid Setup

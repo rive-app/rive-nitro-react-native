@@ -49,23 +49,23 @@ abstract class HybridRiveFontConfigSpec: HybridObject() {
   // Methods
   @DoNotStrip
   @Keep
-  abstract fun enableSystemFontFallback(): Promise<Unit>
+  abstract fun loadFontFromURL(url: String): Promise<HybridFallbackFontSpec>
   
   @DoNotStrip
   @Keep
-  abstract fun addFallbackFont(bytes: ArrayBuffer): Promise<Unit>
+  abstract fun loadFontFromResource(resource: String): HybridFallbackFontSpec
   
   @DoNotStrip
   @Keep
-  abstract fun addFallbackFontFromResource(resource: String): Promise<Unit>
+  abstract fun loadFontFromBytes(bytes: ArrayBuffer): HybridFallbackFontSpec
   
   @DoNotStrip
   @Keep
-  abstract fun addFallbackFontFromURL(url: String): Promise<Unit>
+  abstract fun loadFontByName(name: String): HybridFallbackFontSpec
   
   @DoNotStrip
   @Keep
-  abstract fun addFallbackFontByName(name: String): Promise<Unit>
+  abstract fun setFontsForWeight(weight: Double, fonts: Array<HybridFallbackFontSpec>): Unit
   
   @DoNotStrip
   @Keep
@@ -73,7 +73,7 @@ abstract class HybridRiveFontConfigSpec: HybridObject() {
   
   @DoNotStrip
   @Keep
-  abstract fun clearCustomFallbackFonts(): Promise<Unit>
+  abstract fun clearFallbackFonts(): Promise<Unit>
 
   private external fun initHybrid(): HybridData
 

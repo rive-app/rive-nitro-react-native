@@ -16,6 +16,7 @@ import {
   useRiveFile,
   useRiveString,
   type FontSource,
+  type FallbackFont,
 } from '@rive-app/react-native';
 import { type Metadata } from '../shared/metadata';
 
@@ -67,6 +68,9 @@ type LogEntry = {
 export default function FontFallbackExample() {
   const [mounted, setMounted] = useState(false);
   const [selectedFonts, setSelectedFonts] = useState<Set<FontKey>>(new Set());
+  const [loadedFonts, setLoadedFonts] = useState<Map<FontKey, FallbackFont>>(
+    new Map()
+  );
   const [loadingFont, setLoadingFont] = useState<string | null>(null);
   const [log, setLog] = useState<LogEntry[]>([]);
   const [inputText, setInputText] = useState('ABC 你好 สวัสดี');
@@ -86,15 +90,21 @@ export default function FontFallbackExample() {
         next.delete(key);
         return next;
       });
+      setLoadedFonts((prev) => {
+        const next = new Map(prev);
+        next.delete(key);
+        return next;
+      });
       addLog(`Removed ${font.label} from selection`, 'info');
       return;
     }
 
     setLoadingFont(key);
     try {
-      await RiveFonts.addFallbackFonts([font.source]);
-      addLog(`Added ${font.label} as fallback font`, 'success');
+      const handle = await RiveFonts.loadFont(font.source);
+      addLog(`Loaded ${font.label}`, 'success');
       setSelectedFonts((prev) => new Set(prev).add(key));
+      setLoadedFonts((prev) => new Map(prev).set(key, handle));
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
       addLog(`${font.label}: ${msg}`, 'error');
@@ -106,13 +116,10 @@ export default function FontFallbackExample() {
 
   const handleMount = async () => {
     try {
-      // addFallbackFonts already enables system fallback internally,
-      // so this is only needed for the "no custom fonts" path
-      if (selectedFonts.size === 0) {
-        await RiveFonts.enableSystemFontFallback();
-      }
+      const handles = [...loadedFonts.values()];
+      await RiveFonts.setFallbackFonts({ 0: handles });
     } catch (err) {
-      console.error('enableSystemFontFallback:', err);
+      console.error('setFallbackFonts:', err);
     }
     setMounted(true);
     addLog(
@@ -122,8 +129,9 @@ export default function FontFallbackExample() {
   };
 
   const handleReset = async () => {
-    await RiveFonts.clearCustomFallbackFonts();
+    await RiveFonts.clearFallbackFonts();
     setSelectedFonts(new Set());
+    setLoadedFonts(new Map());
     setMounted(false);
     addLog('Cleared fonts & unmounted view', 'info');
   };

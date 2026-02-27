@@ -7,14 +7,19 @@
 
 #include "JHybridRiveFontConfigSpec.hpp"
 
+// Forward declaration of `HybridFallbackFontSpec` to properly resolve imports.
+namespace margelo::nitro::rive { class HybridFallbackFontSpec; }
 
-
+#include <memory>
+#include "HybridFallbackFontSpec.hpp"
 #include <NitroModules/Promise.hpp>
 #include <NitroModules/JPromise.hpp>
+#include "JHybridFallbackFontSpec.hpp"
 #include <NitroModules/JUnit.hpp>
+#include <string>
 #include <NitroModules/ArrayBuffer.hpp>
 #include <NitroModules/JArrayBuffer.hpp>
-#include <string>
+#include <vector>
 
 namespace margelo::nitro::rive {
 
@@ -55,58 +60,14 @@ namespace margelo::nitro::rive {
   
 
   // Methods
-  std::shared_ptr<Promise<void>> JHybridRiveFontConfigSpec::enableSystemFontFallback() {
-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>()>("enableSystemFontFallback");
-    auto __result = method(_javaPart);
-    return [&]() {
-      auto __promise = Promise<void>::create();
-      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& /* unit */) {
-        __promise->resolve();
-      });
-      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
-        jni::JniException __jniError(__throwable);
-        __promise->reject(std::make_exception_ptr(__jniError));
-      });
-      return __promise;
-    }();
-  }
-  std::shared_ptr<Promise<void>> JHybridRiveFontConfigSpec::addFallbackFont(const std::shared_ptr<ArrayBuffer>& bytes) {
-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<JArrayBuffer::javaobject> /* bytes */)>("addFallbackFont");
-    auto __result = method(_javaPart, JArrayBuffer::wrap(bytes));
-    return [&]() {
-      auto __promise = Promise<void>::create();
-      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& /* unit */) {
-        __promise->resolve();
-      });
-      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
-        jni::JniException __jniError(__throwable);
-        __promise->reject(std::make_exception_ptr(__jniError));
-      });
-      return __promise;
-    }();
-  }
-  std::shared_ptr<Promise<void>> JHybridRiveFontConfigSpec::addFallbackFontFromResource(const std::string& resource) {
-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<jni::JString> /* resource */)>("addFallbackFontFromResource");
-    auto __result = method(_javaPart, jni::make_jstring(resource));
-    return [&]() {
-      auto __promise = Promise<void>::create();
-      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& /* unit */) {
-        __promise->resolve();
-      });
-      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
-        jni::JniException __jniError(__throwable);
-        __promise->reject(std::make_exception_ptr(__jniError));
-      });
-      return __promise;
-    }();
-  }
-  std::shared_ptr<Promise<void>> JHybridRiveFontConfigSpec::addFallbackFontFromURL(const std::string& url) {
-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<jni::JString> /* url */)>("addFallbackFontFromURL");
+  std::shared_ptr<Promise<std::shared_ptr<HybridFallbackFontSpec>>> JHybridRiveFontConfigSpec::loadFontFromURL(const std::string& url) {
+    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<jni::JString> /* url */)>("loadFontFromURL");
     auto __result = method(_javaPart, jni::make_jstring(url));
     return [&]() {
-      auto __promise = Promise<void>::create();
-      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& /* unit */) {
-        __promise->resolve();
+      auto __promise = Promise<std::shared_ptr<HybridFallbackFontSpec>>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& __boxedResult) {
+        auto __result = jni::static_ref_cast<JHybridFallbackFontSpec::javaobject>(__boxedResult);
+        __promise->resolve(__result->cthis()->shared_cast<JHybridFallbackFontSpec>());
       });
       __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
         jni::JniException __jniError(__throwable);
@@ -115,20 +76,33 @@ namespace margelo::nitro::rive {
       return __promise;
     }();
   }
-  std::shared_ptr<Promise<void>> JHybridRiveFontConfigSpec::addFallbackFontByName(const std::string& name) {
-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<jni::JString> /* name */)>("addFallbackFontByName");
+  std::shared_ptr<HybridFallbackFontSpec> JHybridRiveFontConfigSpec::loadFontFromResource(const std::string& resource) {
+    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JHybridFallbackFontSpec::javaobject>(jni::alias_ref<jni::JString> /* resource */)>("loadFontFromResource");
+    auto __result = method(_javaPart, jni::make_jstring(resource));
+    return __result->cthis()->shared_cast<JHybridFallbackFontSpec>();
+  }
+  std::shared_ptr<HybridFallbackFontSpec> JHybridRiveFontConfigSpec::loadFontFromBytes(const std::shared_ptr<ArrayBuffer>& bytes) {
+    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JHybridFallbackFontSpec::javaobject>(jni::alias_ref<JArrayBuffer::javaobject> /* bytes */)>("loadFontFromBytes");
+    auto __result = method(_javaPart, JArrayBuffer::wrap(bytes));
+    return __result->cthis()->shared_cast<JHybridFallbackFontSpec>();
+  }
+  std::shared_ptr<HybridFallbackFontSpec> JHybridRiveFontConfigSpec::loadFontByName(const std::string& name) {
+    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JHybridFallbackFontSpec::javaobject>(jni::alias_ref<jni::JString> /* name */)>("loadFontByName");
     auto __result = method(_javaPart, jni::make_jstring(name));
-    return [&]() {
-      auto __promise = Promise<void>::create();
-      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& /* unit */) {
-        __promise->resolve();
-      });
-      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
-        jni::JniException __jniError(__throwable);
-        __promise->reject(std::make_exception_ptr(__jniError));
-      });
-      return __promise;
-    }();
+    return __result->cthis()->shared_cast<JHybridFallbackFontSpec>();
+  }
+  void JHybridRiveFontConfigSpec::setFontsForWeight(double weight, const std::vector<std::shared_ptr<HybridFallbackFontSpec>>& fonts) {
+    static const auto method = javaClassStatic()->getMethod<void(double /* weight */, jni::alias_ref<jni::JArrayClass<JHybridFallbackFontSpec::javaobject>> /* fonts */)>("setFontsForWeight");
+    method(_javaPart, weight, [&]() {
+      size_t __size = fonts.size();
+      jni::local_ref<jni::JArrayClass<JHybridFallbackFontSpec::javaobject>> __array = jni::JArrayClass<JHybridFallbackFontSpec::javaobject>::newArray(__size);
+      for (size_t __i = 0; __i < __size; __i++) {
+        const auto& __element = fonts[__i];
+        auto __elementJni = std::dynamic_pointer_cast<JHybridFallbackFontSpec>(__element)->getJavaPart();
+        __array->setElement(__i, __elementJni.get());
+      }
+      return __array;
+    }());
   }
   std::shared_ptr<Promise<void>> JHybridRiveFontConfigSpec::applyFallbackFonts() {
     static const auto method = javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>()>("applyFallbackFonts");
@@ -145,8 +119,8 @@ namespace margelo::nitro::rive {
       return __promise;
     }();
   }
-  std::shared_ptr<Promise<void>> JHybridRiveFontConfigSpec::clearCustomFallbackFonts() {
-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>()>("clearCustomFallbackFonts");
+  std::shared_ptr<Promise<void>> JHybridRiveFontConfigSpec::clearFallbackFonts() {
+    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>()>("clearFallbackFonts");
     auto __result = method(_javaPart);
     return [&]() {
       auto __promise = Promise<void>::create();

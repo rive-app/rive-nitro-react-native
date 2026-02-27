@@ -55,13 +55,13 @@ namespace margelo::nitro::rive {
 
   public:
     // Methods
-    std::shared_ptr<Promise<void>> enableSystemFontFallback() override;
-    std::shared_ptr<Promise<void>> addFallbackFont(const std::shared_ptr<ArrayBuffer>& bytes) override;
-    std::shared_ptr<Promise<void>> addFallbackFontFromResource(const std::string& resource) override;
-    std::shared_ptr<Promise<void>> addFallbackFontFromURL(const std::string& url) override;
-    std::shared_ptr<Promise<void>> addFallbackFontByName(const std::string& name) override;
+    std::shared_ptr<Promise<std::shared_ptr<HybridFallbackFontSpec>>> loadFontFromURL(const std::string& url) override;
+    std::shared_ptr<HybridFallbackFontSpec> loadFontFromResource(const std::string& resource) override;
+    std::shared_ptr<HybridFallbackFontSpec> loadFontFromBytes(const std::shared_ptr<ArrayBuffer>& bytes) override;
+    std::shared_ptr<HybridFallbackFontSpec> loadFontByName(const std::string& name) override;
+    void setFontsForWeight(double weight, const std::vector<std::shared_ptr<HybridFallbackFontSpec>>& fonts) override;
     std::shared_ptr<Promise<void>> applyFallbackFonts() override;
-    std::shared_ptr<Promise<void>> clearCustomFallbackFonts() override;
+    std::shared_ptr<Promise<void>> clearFallbackFonts() override;
 
   private:
     friend HybridBase;

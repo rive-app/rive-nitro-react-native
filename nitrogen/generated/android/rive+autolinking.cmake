@@ -36,6 +36,7 @@ target_sources(
   ../nitrogen/generated/shared/c++/HybridBindableArtboardSpec.cpp
   ../nitrogen/generated/shared/c++/HybridRiveFileSpec.cpp
   ../nitrogen/generated/shared/c++/HybridRiveFileFactorySpec.cpp
+  ../nitrogen/generated/shared/c++/HybridFallbackFontSpec.cpp
   ../nitrogen/generated/shared/c++/HybridRiveFontConfigSpec.cpp
   ../nitrogen/generated/shared/c++/HybridRiveImageSpec.cpp
   ../nitrogen/generated/shared/c++/HybridRiveImageFactorySpec.cpp
@@ -58,6 +59,7 @@ target_sources(
   ../nitrogen/generated/android/c++/JHybridBindableArtboardSpec.cpp
   ../nitrogen/generated/android/c++/JHybridRiveFileSpec.cpp
   ../nitrogen/generated/android/c++/JHybridRiveFileFactorySpec.cpp
+  ../nitrogen/generated/android/c++/JHybridFallbackFontSpec.cpp
   ../nitrogen/generated/android/c++/JHybridRiveFontConfigSpec.cpp
   ../nitrogen/generated/android/c++/JHybridRiveImageSpec.cpp
   ../nitrogen/generated/android/c++/JHybridRiveImageFactorySpec.cpp

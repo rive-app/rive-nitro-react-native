@@ -39,7 +39,12 @@ export { Alignment } from './core/Alignment';
 export { RiveFileFactory } from './core/RiveFile';
 export { RiveImages } from './core/RiveImages';
 export type { RiveImage } from './specs/RiveImage.nitro';
-export { RiveFonts, type FontSource } from './core/RiveFonts';
+export {
+  RiveFonts,
+  type FontSource,
+  type FallbackFontMap,
+} from './core/RiveFonts';
+export type { FallbackFont } from './specs/RiveFontConfig.nitro';
 export { RiveColor } from './core/RiveColor';
 export { type RiveEvent, RiveEventType } from './core/Events';
 export { type RiveError, RiveErrorType } from './core/Errors';

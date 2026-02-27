@@ -126,97 +126,84 @@ open class HybridRiveFontConfigSpec_cxx {
 
   // Methods
   @inline(__always)
-  public final func enableSystemFontFallback() -> bridge.Result_std__shared_ptr_Promise_void___ {
+  public final func loadFontFromURL(url: std.string) -> bridge.Result_std__shared_ptr_Promise_std__shared_ptr_HybridFallbackFontSpec____ {
     do {
-      let __result = try self.__implementation.enableSystemFontFallback()
-      let __resultCpp = { () -> bridge.std__shared_ptr_Promise_void__ in
-        let __promise = bridge.create_std__shared_ptr_Promise_void__()
-        let __promiseHolder = bridge.wrap_std__shared_ptr_Promise_void__(__promise)
+      let __result = try self.__implementation.loadFontFromURL(url: String(url))
+      let __resultCpp = { () -> bridge.std__shared_ptr_Promise_std__shared_ptr_HybridFallbackFontSpec___ in
+        let __promise = bridge.create_std__shared_ptr_Promise_std__shared_ptr_HybridFallbackFontSpec___()
+        let __promiseHolder = bridge.wrap_std__shared_ptr_Promise_std__shared_ptr_HybridFallbackFontSpec___(__promise)
         __result
-          .then({ __result in __promiseHolder.resolve() })
+          .then({ __result in __promiseHolder.resolve({ () -> bridge.std__shared_ptr_HybridFallbackFontSpec_ in
+              let __cxxWrapped = __result.getCxxWrapper()
+              return __cxxWrapped.getCxxPart()
+            }()) })
           .catch({ __error in __promiseHolder.reject(__error.toCpp()) })
         return __promise
       }()
-      return bridge.create_Result_std__shared_ptr_Promise_void___(__resultCpp)
+      return bridge.create_Result_std__shared_ptr_Promise_std__shared_ptr_HybridFallbackFontSpec____(__resultCpp)
     } catch (let __error) {
       let __exceptionPtr = __error.toCpp()
-      return bridge.create_Result_std__shared_ptr_Promise_void___(__exceptionPtr)
+      return bridge.create_Result_std__shared_ptr_Promise_std__shared_ptr_HybridFallbackFontSpec____(__exceptionPtr)
     }
   }
   
   @inline(__always)
-  public final func addFallbackFont(bytes: ArrayBuffer) -> bridge.Result_std__shared_ptr_Promise_void___ {
+  public final func loadFontFromResource(resource: std.string) -> bridge.Result_std__shared_ptr_HybridFallbackFontSpec__ {
     do {
-      let __result = try self.__implementation.addFallbackFont(bytes: bytes)
-      let __resultCpp = { () -> bridge.std__shared_ptr_Promise_void__ in
-        let __promise = bridge.create_std__shared_ptr_Promise_void__()
-        let __promiseHolder = bridge.wrap_std__shared_ptr_Promise_void__(__promise)
-        __result
-          .then({ __result in __promiseHolder.resolve() })
-          .catch({ __error in __promiseHolder.reject(__error.toCpp()) })
-        return __promise
+      let __result = try self.__implementation.loadFontFromResource(resource: String(resource))
+      let __resultCpp = { () -> bridge.std__shared_ptr_HybridFallbackFontSpec_ in
+        let __cxxWrapped = __result.getCxxWrapper()
+        return __cxxWrapped.getCxxPart()
       }()
-      return bridge.create_Result_std__shared_ptr_Promise_void___(__resultCpp)
+      return bridge.create_Result_std__shared_ptr_HybridFallbackFontSpec__(__resultCpp)
     } catch (let __error) {
       let __exceptionPtr = __error.toCpp()
-      return bridge.create_Result_std__shared_ptr_Promise_void___(__exceptionPtr)
+      return bridge.create_Result_std__shared_ptr_HybridFallbackFontSpec__(__exceptionPtr)
     }
   }
   
   @inline(__always)
-  public final func addFallbackFontFromResource(resource: std.string) -> bridge.Result_std__shared_ptr_Promise_void___ {
+  public final func loadFontFromBytes(bytes: ArrayBuffer) -> bridge.Result_std__shared_ptr_HybridFallbackFontSpec__ {
     do {
-      let __result = try self.__implementation.addFallbackFontFromResource(resource: String(resource))
-      let __resultCpp = { () -> bridge.std__shared_ptr_Promise_void__ in
-        let __promise = bridge.create_std__shared_ptr_Promise_void__()
-        let __promiseHolder = bridge.wrap_std__shared_ptr_Promise_void__(__promise)
-        __result
-          .then({ __result in __promiseHolder.resolve() })
-          .catch({ __error in __promiseHolder.reject(__error.toCpp()) })
-        return __promise
+      let __result = try self.__implementation.loadFontFromBytes(bytes: bytes)
+      let __resultCpp = { () -> bridge.std__shared_ptr_HybridFallbackFontSpec_ in
+        let __cxxWrapped = __result.getCxxWrapper()
+        return __cxxWrapped.getCxxPart()
       }()
-      return bridge.create_Result_std__shared_ptr_Promise_void___(__resultCpp)
+      return bridge.create_Result_std__shared_ptr_HybridFallbackFontSpec__(__resultCpp)
     } catch (let __error) {
       let __exceptionPtr = __error.toCpp()
-      return bridge.create_Result_std__shared_ptr_Promise_void___(__exceptionPtr)
+      return bridge.create_Result_std__shared_ptr_HybridFallbackFontSpec__(__exceptionPtr)
     }
   }
   
   @inline(__always)
-  public final func addFallbackFontFromURL(url: std.string) -> bridge.Result_std__shared_ptr_Promise_void___ {
+  public final func loadFontByName(name: std.string) -> bridge.Result_std__shared_ptr_HybridFallbackFontSpec__ {
     do {
-      let __result = try self.__implementation.addFallbackFontFromURL(url: String(url))
-      let __resultCpp = { () -> bridge.std__shared_ptr_Promise_void__ in
-        let __promise = bridge.create_std__shared_ptr_Promise_void__()
-        let __promiseHolder = bridge.wrap_std__shared_ptr_Promise_void__(__promise)
-        __result
-          .then({ __result in __promiseHolder.resolve() })
-          .catch({ __error in __promiseHolder.reject(__error.toCpp()) })
-        return __promise
+      let __result = try self.__implementation.loadFontByName(name: String(name))
+      let __resultCpp = { () -> bridge.std__shared_ptr_HybridFallbackFontSpec_ in
+        let __cxxWrapped = __result.getCxxWrapper()
+        return __cxxWrapped.getCxxPart()
       }()
-      return bridge.create_Result_std__shared_ptr_Promise_void___(__resultCpp)
+      return bridge.create_Result_std__shared_ptr_HybridFallbackFontSpec__(__resultCpp)
     } catch (let __error) {
       let __exceptionPtr = __error.toCpp()
-      return bridge.create_Result_std__shared_ptr_Promise_void___(__exceptionPtr)
+      return bridge.create_Result_std__shared_ptr_HybridFallbackFontSpec__(__exceptionPtr)
     }
   }
   
   @inline(__always)
-  public final func addFallbackFontByName(name: std.string) -> bridge.Result_std__shared_ptr_Promise_void___ {
+  public final func setFontsForWeight(weight: Double, fonts: bridge.std__vector_std__shared_ptr_HybridFallbackFontSpec__) -> bridge.Result_void_ {
     do {
-      let __result = try self.__implementation.addFallbackFontByName(name: String(name))
-      let __resultCpp = { () -> bridge.std__shared_ptr_Promise_void__ in
-        let __promise = bridge.create_std__shared_ptr_Promise_void__()
-        let __promiseHolder = bridge.wrap_std__shared_ptr_Promise_void__(__promise)
-        __result
-          .then({ __result in __promiseHolder.resolve() })
-          .catch({ __error in __promiseHolder.reject(__error.toCpp()) })
-        return __promise
-      }()
-      return bridge.create_Result_std__shared_ptr_Promise_void___(__resultCpp)
+      try self.__implementation.setFontsForWeight(weight: weight, fonts: fonts.map({ __item in { () -> any HybridFallbackFontSpec in
+        let __unsafePointer = bridge.get_std__shared_ptr_HybridFallbackFontSpec_(__item)
+        let __instance = HybridFallbackFontSpec_cxx.fromUnsafe(__unsafePointer)
+        return __instance.getHybridFallbackFontSpec()
+      }() }))
+      return bridge.create_Result_void_()
     } catch (let __error) {
       let __exceptionPtr = __error.toCpp()
-      return bridge.create_Result_std__shared_ptr_Promise_void___(__exceptionPtr)
+      return bridge.create_Result_void_(__exceptionPtr)
     }
   }
   
@@ -240,9 +227,9 @@ open class HybridRiveFontConfigSpec_cxx {
   }
   
   @inline(__always)
-  public final func clearCustomFallbackFonts() -> bridge.Result_std__shared_ptr_Promise_void___ {
+  public final func clearFallbackFonts() -> bridge.Result_std__shared_ptr_Promise_void___ {
     do {
-      let __result = try self.__implementation.clearCustomFallbackFonts()
+      let __result = try self.__implementation.clearFallbackFonts()
       let __resultCpp = { () -> bridge.std__shared_ptr_Promise_void__ in
         let __promise = bridge.create_std__shared_ptr_Promise_void__()
         let __promiseHolder = bridge.wrap_std__shared_ptr_Promise_void__(__promise)

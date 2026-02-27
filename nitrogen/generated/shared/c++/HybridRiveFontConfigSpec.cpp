@@ -14,13 +14,13 @@ namespace margelo::nitro::rive {
     HybridObject::loadHybridMethods();
     // load custom methods/properties
     registerHybrids(this, [](Prototype& prototype) {
-      prototype.registerHybridMethod("enableSystemFontFallback", &HybridRiveFontConfigSpec::enableSystemFontFallback);
-      prototype.registerHybridMethod("addFallbackFont", &HybridRiveFontConfigSpec::addFallbackFont);
-      prototype.registerHybridMethod("addFallbackFontFromResource", &HybridRiveFontConfigSpec::addFallbackFontFromResource);
-      prototype.registerHybridMethod("addFallbackFontFromURL", &HybridRiveFontConfigSpec::addFallbackFontFromURL);
-      prototype.registerHybridMethod("addFallbackFontByName", &HybridRiveFontConfigSpec::addFallbackFontByName);
+      prototype.registerHybridMethod("loadFontFromURL", &HybridRiveFontConfigSpec::loadFontFromURL);
+      prototype.registerHybridMethod("loadFontFromResource", &HybridRiveFontConfigSpec::loadFontFromResource);
+      prototype.registerHybridMethod("loadFontFromBytes", &HybridRiveFontConfigSpec::loadFontFromBytes);
+      prototype.registerHybridMethod("loadFontByName", &HybridRiveFontConfigSpec::loadFontByName);
+      prototype.registerHybridMethod("setFontsForWeight", &HybridRiveFontConfigSpec::setFontsForWeight);
       prototype.registerHybridMethod("applyFallbackFonts", &HybridRiveFontConfigSpec::applyFallbackFonts);
-      prototype.registerHybridMethod("clearCustomFallbackFonts", &HybridRiveFontConfigSpec::clearCustomFallbackFonts);
+      prototype.registerHybridMethod("clearFallbackFonts", &HybridRiveFontConfigSpec::clearFallbackFonts);
     });
   }
 
