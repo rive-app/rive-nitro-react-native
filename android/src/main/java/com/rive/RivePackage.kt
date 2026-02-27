@@ -9,21 +9,28 @@ import com.margelo.nitro.rive.riveOnLoad
 
 class RivePackage : BaseReactPackage() {
   override fun createViewManagers(reactContext: ReactApplicationContext): List<ViewManager<in Nothing, in Nothing>> {
+    if (BuildConfig.RIVE_SKIP_SETUP) {
+      RiveInitializer.storeContext(reactContext)
+    } else {
+      RiveInitializer.autoInitialize(reactContext)
+    }
+
     val viewManagers: MutableList<ViewManager<*, *>> = ArrayList()
     viewManagers.add(RiveViewManager())
     return viewManagers
   }
-    override fun getModule(name: String, reactContext: ReactApplicationContext): NativeModule? {
-        return null
-    }
 
-    override fun getReactModuleInfoProvider(): ReactModuleInfoProvider {
-        return ReactModuleInfoProvider { HashMap() }
-    }
+  override fun getModule(name: String, reactContext: ReactApplicationContext): NativeModule? {
+    return null
+  }
 
-    companion object {
-        init {
-            riveOnLoad.initializeNative()
-        }
+  override fun getReactModuleInfoProvider(): ReactModuleInfoProvider {
+    return ReactModuleInfoProvider { HashMap() }
+  }
+
+  companion object {
+    init {
+      riveOnLoad.initializeNative()
     }
+  }
 }

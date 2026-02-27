@@ -15,6 +15,7 @@
 #include "HybridRiveFileSpecSwift.hpp"
 #include "HybridRiveViewSpecSwift.hpp"
 #include "HybridRiveImageFactorySpecSwift.hpp"
+#include "HybridRiveRuntimeSpecSwift.hpp"
 
 @interface RNRiveAutolinking : NSObject
 @end
@@ -57,6 +58,13 @@
     "RiveImageFactory",
     []() -> std::shared_ptr<HybridObject> {
       std::shared_ptr<HybridRiveImageFactorySpec> hybridObject = RNRive::RNRiveAutolinking::createRiveImageFactory();
+      return hybridObject;
+    }
+  );
+  HybridObjectRegistry::registerHybridObjectConstructor(
+    "RiveRuntime",
+    []() -> std::shared_ptr<HybridObject> {
+      std::shared_ptr<HybridRiveRuntimeSpec> hybridObject = RNRive::RNRiveAutolinking::createRiveRuntime();
       return hybridObject;
     }
   );

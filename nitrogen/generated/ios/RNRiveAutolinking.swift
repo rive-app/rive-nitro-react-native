@@ -71,4 +71,16 @@ public final class RNRiveAutolinking {
   public static func isRiveImageFactoryRecyclable() -> Bool {
     return HybridRiveImageFactory.self is any RecyclableView.Type
   }
+  
+  public static func createRiveRuntime() -> bridge.std__shared_ptr_HybridRiveRuntimeSpec_ {
+    let hybridObject = HybridRiveRuntime()
+    return { () -> bridge.std__shared_ptr_HybridRiveRuntimeSpec_ in
+      let __cxxWrapped = hybridObject.getCxxWrapper()
+      return __cxxWrapped.getCxxPart()
+    }()
+  }
+  
+  public static func isRiveRuntimeRecyclable() -> Bool {
+    return HybridRiveRuntime.self is any RecyclableView.Type
+  }
 }

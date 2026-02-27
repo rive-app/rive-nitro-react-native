@@ -40,9 +40,13 @@ android {
 
   compileSdkVersion getExtOrIntegerDefault("compileSdkVersion")
 
+  def skipSetup = project.hasProperty('Rive_RiveRuntimeAndroidSkipSetup') ?
+    project.property('Rive_RiveRuntimeAndroidSkipSetup').toBoolean() : false
+
   defaultConfig {
     minSdkVersion getExtOrIntegerDefault("minSdkVersion")
     targetSdkVersion getExtOrIntegerDefault("targetSdkVersion")
+    buildConfigField "boolean", "RIVE_SKIP_SETUP", "$skipSetup"
 
     externalNativeBuild {
       cmake {
@@ -149,7 +153,6 @@ dependencies {
   implementation "com.facebook.react:react-android"
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
   implementation "app.rive:rive-android:${riveAndroidVersion}"
-  implementation "androidx.startup:startup-runtime:1.2.0"
   implementation project(":react-native-nitro-modules")
 }
 

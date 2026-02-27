@@ -21,6 +21,7 @@
 #include "JHybridRiveFileFactorySpec.hpp"
 #include "JHybridRiveImageSpec.hpp"
 #include "JHybridRiveImageFactorySpec.hpp"
+#include "JHybridRiveRuntimeSpec.hpp"
 #include "JHybridRiveViewSpec.hpp"
 #include "JFunc_void_RiveError.hpp"
 #include "JFunc_void_UnifiedRiveEvent.hpp"
@@ -58,6 +59,7 @@ int initialize(JavaVM* vm) {
     margelo::nitro::rive::JHybridRiveFileFactorySpec::registerNatives();
     margelo::nitro::rive::JHybridRiveImageSpec::registerNatives();
     margelo::nitro::rive::JHybridRiveImageFactorySpec::registerNatives();
+    margelo::nitro::rive::JHybridRiveRuntimeSpec::registerNatives();
     margelo::nitro::rive::JHybridRiveViewSpec::registerNatives();
     margelo::nitro::rive::JFunc_void_RiveError_cxx::registerNatives();
     margelo::nitro::rive::JFunc_void_UnifiedRiveEvent_cxx::registerNatives();
@@ -116,6 +118,14 @@ int initialize(JavaVM* vm) {
       "RiveImageFactory",
       []() -> std::shared_ptr<HybridObject> {
         static DefaultConstructableObject<JHybridRiveImageFactorySpec::javaobject> object("com/margelo/nitro/rive/HybridRiveImageFactory");
+        auto instance = object.create();
+        return instance->cthis()->shared();
+      }
+    );
+    HybridObjectRegistry::registerHybridObjectConstructor(
+      "RiveRuntime",
+      []() -> std::shared_ptr<HybridObject> {
+        static DefaultConstructableObject<JHybridRiveRuntimeSpec::javaobject> object("com/margelo/nitro/rive/HybridRiveRuntime");
         auto instance = object.create();
         return instance->cthis()->shared();
       }
