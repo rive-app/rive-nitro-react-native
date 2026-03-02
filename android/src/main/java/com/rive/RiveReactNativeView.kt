@@ -77,7 +77,6 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
   private var eventListeners: MutableList<RiveFileController.RiveEventListener> = mutableListOf()
   private val viewReadyDeferred = CompletableDeferred<Boolean>()
   private var _activeStateMachineName: String? = null
-  private var _pendingBindData: BindData? = null
   private var willDispose = false
 
   init {
@@ -104,11 +103,17 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
 
   fun configure(config: ViewConfiguration, dataBindingChanged: Boolean, reload: Boolean = false, initialUpdate: Boolean = false) {
     if (reload) {
+      val hasDataBinding = when (config.bindData) {
+        is BindData.None -> false
+        is BindData.Auto -> config.riveFile.viewModelCount > 0
+        is BindData.Instance, is BindData.ByName -> true
+      }
       riveAnimationView?.setRiveFile(
         config.riveFile,
         artboardName = config.artboardName,
         stateMachineName = config.stateMachineName,
         autoplay = config.autoPlay,
+        autoBind = hasDataBinding,
         alignment = config.alignment,
         fit = config.fit
       )
@@ -121,7 +126,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
     }
 
     if (dataBindingChanged || initialUpdate || reload) {
-      applyDataBinding(config.bindData, config.autoPlay)
+      applyDataBinding(config.bindData)
     }
 
     viewReadyDeferred.complete(true)
@@ -143,20 +148,8 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
     }
   }
 
-  fun applyDataBinding(bindData: BindData, autoPlay: Boolean) {
-    val stateMachines = riveAnimationView?.controller?.stateMachines
-    if (stateMachines.isNullOrEmpty()) {
-      _pendingBindData = bindData
-      return
-    }
-
+  fun applyDataBinding(bindData: BindData) {
     bindToStateMachine(bindData)
-
-    if (autoPlay) {
-      stateMachines.first().name.let { smName ->
-        riveAnimationView?.play(smName, isStateMachine = true)
-      }
-    }
   }
 
   fun play() {
@@ -164,14 +157,6 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
       _activeStateMachineName = getSafeStateMachineName()
     }
     riveAnimationView?.play()
-    applyPendingBindData()
-  }
-
-  private fun applyPendingBindData() {
-    _pendingBindData?.let { bindData ->
-      _pendingBindData = null
-      bindToStateMachine(bindData)
-    }
   }
 
   fun pause() = riveAnimationView?.pause()
