@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.5](https://github.com/rive-app/rive-nitro-react-native/compare/v0.2.4...v0.2.5) (2026-03-02)
+
+
+### Bug Fixes
+
+* **android:** pass autoBind to SDK when dataBind is set ([#156](https://github.com/rive-app/rive-nitro-react-native/issues/156)) ([#157](https://github.com/rive-app/rive-nitro-react-native/issues/157)) ([3d8e5a4](https://github.com/rive-app/rive-nitro-react-native/commit/3d8e5a4b16b97b1314e39dc61ad645a20e74d814))
+* **ios:** restart render loop after setting state machine inputs ([#162](https://github.com/rive-app/rive-nitro-react-native/issues/162)) ([1349bd8](https://github.com/rive-app/rive-nitro-react-native/commit/1349bd8858e52d015480aaf863293d99645d7f5c)), closes [#161](https://github.com/rive-app/rive-nitro-react-native/issues/161)
+
 ## [0.2.4](https://github.com/rive-app/rive-nitro-react-native/compare/v0.2.3...v0.2.4) (2026-02-27)
 
 
