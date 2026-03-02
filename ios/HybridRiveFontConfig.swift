@@ -3,6 +3,7 @@ import NitroModules
 import RiveRuntime
 
 class HybridRiveFontConfig: HybridRiveFontConfigSpec {
+  private static let defaultWeight = 0
   private static var fontsByWeight: [Int: [UIFont]] = [:]
 
   func loadFontFromURL(url: String) throws -> Promise<(any HybridFallbackFontSpec)> {
@@ -53,7 +54,7 @@ class HybridRiveFontConfig: HybridRiveFontConfigSpec {
       _ = RiveFont.self
       RiveFont.fallbackFontsCallback = { weight in
         let requestedWeight = Int(weight.rawWeight)
-        let fonts = Self.fontsByWeight[requestedWeight] ?? Self.fontsByWeight[0] ?? []
+        let fonts = Self.fontsByWeight[requestedWeight] ?? Self.fontsByWeight[Self.defaultWeight] ?? []
         var providers: [RiveFallbackFontProvider] = fonts
         providers.append(RiveFallbackFontDescriptor())
         return providers

@@ -27,8 +27,10 @@ export type FontWeight = number | 'default';
 
 export type FallbackFontMap = Partial<Record<FontWeight, FallbackFont[]>>;
 
+const DEFAULT_WEIGHT = 0;
+
 function resolveWeight(key: string): number {
-  return key === 'default' ? 0 : Number(key);
+  return key === 'default' ? DEFAULT_WEIGHT : Number(key);
 }
 
 export namespace RiveFonts {

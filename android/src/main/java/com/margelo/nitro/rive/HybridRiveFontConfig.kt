@@ -18,6 +18,7 @@ import kotlinx.coroutines.withContext
 class HybridRiveFontConfig : HybridRiveFontConfigSpec() {
   companion object {
     private const val TAG = "RiveFonts"
+    private const val DEFAULT_WEIGHT = 0
     private val fontsByWeight: MutableMap<Int, List<ByteArray>> =
       java.util.Collections.synchronizedMap(mutableMapOf())
 
@@ -100,7 +101,7 @@ class HybridRiveFontConfig : HybridRiveFontConfigSpec() {
         override fun getFont(weight: Fonts.Weight): List<ByteArray> {
           val requestedWeight = weight.weight
           val fonts = synchronized(fontsByWeight) {
-            fontsByWeight[requestedWeight] ?: fontsByWeight[0] ?: emptyList()
+            fontsByWeight[requestedWeight] ?: fontsByWeight[DEFAULT_WEIGHT] ?: emptyList()
           }
           val result = fonts.toMutableList()
           // Append first matching system font as last resort, matching rive-android default behavior:
