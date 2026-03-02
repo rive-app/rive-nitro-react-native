@@ -166,6 +166,7 @@ class RiveReactNativeView: UIView, RiveStateMachineDelegate {
     try handleInput(name: name, path: path, type: .number) { (input: RiveRuntime.RiveSMINumber) in
       input.setValue(value)
     }
+    playIfNeeded()
   }
 
   func getNumberInputValue(name: String, path: String?) throws -> Float {
@@ -178,6 +179,7 @@ class RiveReactNativeView: UIView, RiveStateMachineDelegate {
     try handleInput(name: name, path: path, type: .boolean) { (input: RiveRuntime.RiveSMIBool) in
       input.setValue(value)
     }
+    playIfNeeded()
   }
 
   func getBooleanInputValue(name: String, path: String?) throws -> Bool {
@@ -190,6 +192,7 @@ class RiveReactNativeView: UIView, RiveStateMachineDelegate {
     try handleInput(name: name, path: path, type: .trigger) { (input: RiveRuntime.RiveSMITrigger) in
       input.fire()
     }
+    playIfNeeded()
   }
 
   func setTextRunValue(name: String, value: String, path: String?) throws {
