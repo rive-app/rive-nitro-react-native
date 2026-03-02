@@ -103,15 +103,9 @@ class HybridRiveFontConfig : HybridRiveFontConfigSpec() {
             fontsByWeight[requestedWeight] ?: fontsByWeight[0] ?: emptyList()
           }
           val result = fonts.toMutableList()
-          val systemFonts = FontHelper.getFallbackFonts(Fonts.FontOpts(weight = weight))
-          for (font in systemFonts) {
-            try {
-              FontHelper.getFontBytes(font)?.let { result.add(it) }
-            } catch (e: OutOfMemoryError) {
-              Log.w(TAG, "Skipped system font due to memory pressure: ${e.message}")
-              break
-            }
-          }
+          // Append first matching system font as last resort, matching rive-android default behavior:
+          // https://github.com/rive-app/rive-android/blob/602343c/kotlin/src/main/java/app/rive/runtime/kotlin/fonts/FontHelpers.kt#L484-L486
+          FontHelper.getFallbackFontBytes(Fonts.FontOpts(weight = weight))?.let { result.add(it) }
           return result
         }
       }
