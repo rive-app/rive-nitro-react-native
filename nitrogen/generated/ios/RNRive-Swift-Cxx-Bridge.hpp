@@ -34,8 +34,6 @@ namespace margelo::nitro::rive { class HybridRiveFontConfigSpec; }
 namespace margelo::nitro::rive { class HybridRiveImageFactorySpec; }
 // Forward declaration of `HybridRiveImageSpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridRiveImageSpec; }
-// Forward declaration of `HybridRiveInternalSpec` to properly resolve imports.
-namespace margelo::nitro::rive { class HybridRiveInternalSpec; }
 // Forward declaration of `HybridRiveRuntimeSpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridRiveRuntimeSpec; }
 // Forward declaration of `HybridRiveViewSpec` to properly resolve imports.
@@ -64,8 +62,6 @@ namespace margelo::nitro::rive { class HybridViewModelSpec; }
 namespace margelo::nitro::rive { class HybridViewModelStringPropertySpec; }
 // Forward declaration of `HybridViewModelTriggerPropertySpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridViewModelTriggerPropertySpec; }
-// Forward declaration of `MemoryUsage` to properly resolve imports.
-namespace margelo::nitro::rive { struct MemoryUsage; }
 // Forward declaration of `ReferencedAssetsType` to properly resolve imports.
 namespace margelo::nitro::rive { struct ReferencedAssetsType; }
 // Forward declaration of `ResolvedReferencedAsset` to properly resolve imports.
@@ -94,8 +90,6 @@ namespace RNRive { class HybridRiveFontConfigSpec_cxx; }
 namespace RNRive { class HybridRiveImageFactorySpec_cxx; }
 // Forward declaration of `HybridRiveImageSpec_cxx` to properly resolve imports.
 namespace RNRive { class HybridRiveImageSpec_cxx; }
-// Forward declaration of `HybridRiveInternalSpec_cxx` to properly resolve imports.
-namespace RNRive { class HybridRiveInternalSpec_cxx; }
 // Forward declaration of `HybridRiveRuntimeSpec_cxx` to properly resolve imports.
 namespace RNRive { class HybridRiveRuntimeSpec_cxx; }
 // Forward declaration of `HybridRiveViewSpec_cxx` to properly resolve imports.
@@ -139,7 +133,6 @@ namespace RNRive { class HybridViewModelTriggerPropertySpec_cxx; }
 #include "HybridRiveFontConfigSpec.hpp"
 #include "HybridRiveImageFactorySpec.hpp"
 #include "HybridRiveImageSpec.hpp"
-#include "HybridRiveInternalSpec.hpp"
 #include "HybridRiveRuntimeSpec.hpp"
 #include "HybridRiveViewSpec.hpp"
 #include "HybridViewModelArtboardPropertySpec.hpp"
@@ -154,7 +147,6 @@ namespace RNRive { class HybridViewModelTriggerPropertySpec_cxx; }
 #include "HybridViewModelSpec.hpp"
 #include "HybridViewModelStringPropertySpec.hpp"
 #include "HybridViewModelTriggerPropertySpec.hpp"
-#include "MemoryUsage.hpp"
 #include "ReferencedAssetsType.hpp"
 #include "ResolvedReferencedAsset.hpp"
 #include "RiveError.hpp"
@@ -655,27 +647,6 @@ namespace margelo::nitro::rive::bridge::swift {
   }
   inline Result_std__shared_ptr_Promise_std__shared_ptr_HybridRiveImageSpec____ create_Result_std__shared_ptr_Promise_std__shared_ptr_HybridRiveImageSpec____(const std::exception_ptr& error) noexcept {
     return Result<std::shared_ptr<Promise<std::shared_ptr<HybridRiveImageSpec>>>>::withError(error);
-  }
-  
-  // pragma MARK: std::shared_ptr<HybridRiveInternalSpec>
-  /**
-   * Specialized version of `std::shared_ptr<HybridRiveInternalSpec>`.
-   */
-  using std__shared_ptr_HybridRiveInternalSpec_ = std::shared_ptr<HybridRiveInternalSpec>;
-  std::shared_ptr<HybridRiveInternalSpec> create_std__shared_ptr_HybridRiveInternalSpec_(void* NON_NULL swiftUnsafePointer) noexcept;
-  void* NON_NULL get_std__shared_ptr_HybridRiveInternalSpec_(std__shared_ptr_HybridRiveInternalSpec_ cppType);
-  
-  // pragma MARK: std::weak_ptr<HybridRiveInternalSpec>
-  using std__weak_ptr_HybridRiveInternalSpec_ = std::weak_ptr<HybridRiveInternalSpec>;
-  inline std__weak_ptr_HybridRiveInternalSpec_ weakify_std__shared_ptr_HybridRiveInternalSpec_(const std::shared_ptr<HybridRiveInternalSpec>& strong) noexcept { return strong; }
-  
-  // pragma MARK: Result<MemoryUsage>
-  using Result_MemoryUsage_ = Result<MemoryUsage>;
-  inline Result_MemoryUsage_ create_Result_MemoryUsage_(const MemoryUsage& value) noexcept {
-    return Result<MemoryUsage>::withValue(value);
-  }
-  inline Result_MemoryUsage_ create_Result_MemoryUsage_(const std::exception_ptr& error) noexcept {
-    return Result<MemoryUsage>::withError(error);
   }
   
   // pragma MARK: std::shared_ptr<HybridRiveRuntimeSpec>
