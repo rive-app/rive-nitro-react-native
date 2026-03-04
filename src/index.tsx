@@ -64,6 +64,4 @@ export { useRiveFile } from './hooks/useRiveFile';
 export { type RiveFileInput } from './hooks/useRiveFile';
 export { type SetValueAction } from './types';
 export { RiveRuntime } from './core/RiveRuntime';
-export { RiveInternal } from './core/RiveInternal';
-export type { MemoryUsage } from './specs/RiveInternal.nitro';
 export { DataBindMode };
