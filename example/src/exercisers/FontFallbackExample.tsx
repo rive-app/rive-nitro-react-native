@@ -67,10 +67,11 @@ type LogEntry = {
 
 export default function FontFallbackExample() {
   const [mounted, setMounted] = useState(false);
-  const [selectedFonts, setSelectedFonts] = useState<Set<FontKey>>(new Set());
+  const [selectedFonts, setSelectedFonts] = useState<FontKey[]>([]);
   const [loadedFonts, setLoadedFonts] = useState<Map<FontKey, FallbackFont>>(
     new Map()
   );
+  const [systemFallback, setSystemFallback] = useState(false);
   const [loadingFont, setLoadingFont] = useState<string | null>(null);
   const [log, setLog] = useState<LogEntry[]>([]);
   const [inputText, setInputText] = useState('ABC 你好 สวัสดี');
@@ -82,14 +83,10 @@ export default function FontFallbackExample() {
   const toggleFont = async (key: FontKey) => {
     if (mounted) return;
     const font = FONTS[key]!;
-    const isSelected = selectedFonts.has(key);
+    const isSelected = selectedFonts.includes(key);
 
     if (isSelected) {
-      setSelectedFonts((prev) => {
-        const next = new Set(prev);
-        next.delete(key);
-        return next;
-      });
+      setSelectedFonts((prev) => prev.filter((k) => k !== key));
       setLoadedFonts((prev) => {
         const next = new Map(prev);
         next.delete(key);
@@ -103,7 +100,7 @@ export default function FontFallbackExample() {
     try {
       const handle = await RiveFonts.loadFont(font.source);
       addLog(`Loaded ${font.label}`, 'success');
-      setSelectedFonts((prev) => new Set(prev).add(key));
+      setSelectedFonts((prev) => [...prev, key]);
       setLoadedFonts((prev) => new Map(prev).set(key, handle));
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
@@ -116,22 +113,30 @@ export default function FontFallbackExample() {
 
   const handleMount = async () => {
     try {
-      const handles = [...loadedFonts.values()];
-      await RiveFonts.setFallbackFonts({ default: handles });
+      const entries: (FallbackFont | 'default')[] = selectedFonts
+        .map((key) => loadedFonts.get(key))
+        .filter((f): f is FallbackFont => f != null);
+      if (systemFallback) {
+        entries.push('default');
+      }
+      await RiveFonts.setFallbackFonts({ default: entries });
     } catch (err) {
       console.error('setFallbackFonts:', err);
     }
     setMounted(true);
+    const parts = selectedFonts.map((k) => FONTS[k]!.label);
+    if (systemFallback) parts.push('System Fallback');
     addLog(
-      `Mounted with: ${selectedFonts.size > 0 ? [...selectedFonts].map((k) => FONTS[k]!.label).join(', ') : 'system defaults only'}`,
+      `Mounted with: ${parts.length > 0 ? parts.join(', ') : 'no fonts configured'}`,
       'info'
     );
   };
 
   const handleReset = async () => {
     await RiveFonts.clearFallbackFonts();
-    setSelectedFonts(new Set());
+    setSelectedFonts([]);
     setLoadedFonts(new Map());
+    setSystemFallback(false);
     setMounted(false);
     addLog('Cleared fonts & unmounted view', 'info');
   };
@@ -193,12 +198,21 @@ export default function FontFallbackExample() {
             key={key}
             label={FONTS[key]!.label}
             sublabel={FONTS[key]!.sublabel}
-            selected={selectedFonts.has(key)}
+            order={selectedFonts.indexOf(key) + 1 || undefined}
             disabled={mounted}
             loading={loadingFont === key}
             onPress={() => toggleFont(key)}
           />
         ))}
+
+        <FontToggle
+          label="System Fallback"
+          sublabel="Platform default font — opt-in via 'default' sentinel"
+          order={systemFallback ? selectedFonts.length + 1 : undefined}
+          disabled={mounted}
+          loading={false}
+          onPress={() => setSystemFallback((prev) => !prev)}
+        />
 
         {mounted ? (
           <ActionButton
@@ -207,14 +221,7 @@ export default function FontFallbackExample() {
             destructive
           />
         ) : (
-          <ActionButton
-            label={
-              selectedFonts.size > 0
-                ? `Mount View with ${selectedFonts.size} Custom Font${selectedFonts.size > 1 ? 's' : ''}`
-                : 'Mount View (System Defaults Only)'
-            }
-            onPress={handleMount}
-          />
+          <ActionButton label="Mount View" onPress={handleMount} />
         )}
 
         {log.length > 0 && (
@@ -308,18 +315,19 @@ function MountedView({ text }: { text: string }) {
 function FontToggle({
   label,
   sublabel,
-  selected,
+  order,
   disabled,
   loading,
   onPress,
 }: {
   label: string;
   sublabel: string;
-  selected: boolean;
+  order?: number;
   disabled: boolean;
   loading: boolean;
   onPress: () => void;
 }) {
+  const selected = order != null;
   return (
     <TouchableOpacity
       style={[
@@ -345,7 +353,9 @@ function FontToggle({
             </Text>
             <Text style={styles.fontToggleSublabel}>{sublabel}</Text>
           </View>
-          <Text style={styles.fontToggleCheck}>{selected ? '✓' : ''}</Text>
+          <Text style={styles.fontToggleCheck}>
+            {selected ? `${order}` : ''}
+          </Text>
         </>
       )}
     </TouchableOpacity>

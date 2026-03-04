@@ -9,6 +9,7 @@ export interface RiveFontConfig
   loadFontFromResource(resource: string): FallbackFont;
   loadFontFromBytes(bytes: ArrayBuffer): FallbackFont;
   loadFontByName(name: string): FallbackFont;
+  getSystemDefaultFont(): FallbackFont;
   setFontsForWeight(weight: number, fonts: FallbackFont[]): void;
   applyFallbackFonts(): Promise<void>;
   clearFallbackFonts(): Promise<void>;

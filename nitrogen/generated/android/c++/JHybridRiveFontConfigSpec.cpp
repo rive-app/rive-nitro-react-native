@@ -91,6 +91,11 @@ namespace margelo::nitro::rive {
     auto __result = method(_javaPart, jni::make_jstring(name));
     return __result->cthis()->shared_cast<JHybridFallbackFontSpec>();
   }
+  std::shared_ptr<HybridFallbackFontSpec> JHybridRiveFontConfigSpec::getSystemDefaultFont() {
+    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JHybridFallbackFontSpec::javaobject>()>("getSystemDefaultFont");
+    auto __result = method(_javaPart);
+    return __result->cthis()->shared_cast<JHybridFallbackFontSpec>();
+  }
   void JHybridRiveFontConfigSpec::setFontsForWeight(double weight, const std::vector<std::shared_ptr<HybridFallbackFontSpec>>& fonts) {
     static const auto method = javaClassStatic()->getMethod<void(double /* weight */, jni::alias_ref<jni::JArrayClass<JHybridFallbackFontSpec::javaobject>> /* fonts */)>("setFontsForWeight");
     method(_javaPart, weight, [&]() {

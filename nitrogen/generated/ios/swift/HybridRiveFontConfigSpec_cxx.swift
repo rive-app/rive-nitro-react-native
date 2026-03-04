@@ -193,6 +193,21 @@ open class HybridRiveFontConfigSpec_cxx {
   }
   
   @inline(__always)
+  public final func getSystemDefaultFont() -> bridge.Result_std__shared_ptr_HybridFallbackFontSpec__ {
+    do {
+      let __result = try self.__implementation.getSystemDefaultFont()
+      let __resultCpp = { () -> bridge.std__shared_ptr_HybridFallbackFontSpec_ in
+        let __cxxWrapped = __result.getCxxWrapper()
+        return __cxxWrapped.getCxxPart()
+      }()
+      return bridge.create_Result_std__shared_ptr_HybridFallbackFontSpec__(__resultCpp)
+    } catch (let __error) {
+      let __exceptionPtr = __error.toCpp()
+      return bridge.create_Result_std__shared_ptr_HybridFallbackFontSpec__(__exceptionPtr)
+    }
+  }
+  
+  @inline(__always)
   public final func setFontsForWeight(weight: Double, fonts: bridge.std__vector_std__shared_ptr_HybridFallbackFontSpec__) -> bridge.Result_void_ {
     do {
       try self.__implementation.setFontsForWeight(weight: weight, fonts: fonts.map({ __item in { () -> any HybridFallbackFontSpec in

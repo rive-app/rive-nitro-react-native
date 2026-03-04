@@ -19,7 +19,7 @@ class HybridRiveFontConfig : HybridRiveFontConfigSpec() {
   companion object {
     private const val TAG = "RiveFonts"
     private const val DEFAULT_WEIGHT = 0
-    private val fontsByWeight: MutableMap<Int, List<ByteArray>> =
+    private val fontsByWeight: MutableMap<Int, List<HybridFallbackFontSpec>> =
       java.util.Collections.synchronizedMap(mutableMapOf())
 
     private fun resetFontCache() {
@@ -87,11 +87,14 @@ class HybridRiveFontConfig : HybridRiveFontConfigSpec() {
     return HybridFallbackFont(fontBytes)
   }
 
+  override fun getSystemDefaultFont(): HybridFallbackFontSpec {
+    return HybridDefaultFallbackFont()
+  }
+
   override fun setFontsForWeight(weight: Double, fonts: Array<HybridFallbackFontSpec>) {
     val key = weight.toInt()
-    val byteArrays = fonts.mapNotNull { (it as? HybridFallbackFont)?.fontBytes }
     synchronized(fontsByWeight) {
-      fontsByWeight[key] = byteArrays
+      fontsByWeight[key] = fonts.toList()
     }
   }
 
@@ -100,14 +103,21 @@ class HybridRiveFontConfig : HybridRiveFontConfigSpec() {
       FontFallbackStrategy.stylePicker = object : FontFallbackStrategy {
         override fun getFont(weight: Fonts.Weight): List<ByteArray> {
           val requestedWeight = weight.weight
-          val fonts = synchronized(fontsByWeight) {
+          val specs = synchronized(fontsByWeight) {
             fontsByWeight[requestedWeight] ?: fontsByWeight[DEFAULT_WEIGHT] ?: emptyList()
           }
-          val result = fonts.toMutableList()
-          // Append first matching system font as last resort, matching rive-android default behavior:
-          // https://github.com/rive-app/rive-android/blob/602343c/kotlin/src/main/java/app/rive/runtime/kotlin/fonts/FontHelpers.kt#L484-L486
-          FontHelper.getFallbackFontBytes(Fonts.FontOpts(weight = weight))?.let { result.add(it) }
-          return result
+          return specs.mapNotNull { spec ->
+            when (spec) {
+              is HybridDefaultFallbackFont ->
+                FontHelper.getFallbackFontBytes(Fonts.FontOpts(weight = weight))
+              is HybridFallbackFont ->
+                spec.fontBytes
+              else -> {
+                Log.e(TAG, "Unknown fallback font spec type: ${spec::class.simpleName}")
+                null
+              }
+            }
+          }
         }
       }
       resetFontCache()

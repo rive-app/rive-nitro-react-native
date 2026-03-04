@@ -59,6 +59,7 @@ namespace margelo::nitro::rive {
     std::shared_ptr<HybridFallbackFontSpec> loadFontFromResource(const std::string& resource) override;
     std::shared_ptr<HybridFallbackFontSpec> loadFontFromBytes(const std::shared_ptr<ArrayBuffer>& bytes) override;
     std::shared_ptr<HybridFallbackFontSpec> loadFontByName(const std::string& name) override;
+    std::shared_ptr<HybridFallbackFontSpec> getSystemDefaultFont() override;
     void setFontsForWeight(double weight, const std::vector<std::shared_ptr<HybridFallbackFontSpec>>& fonts) override;
     std::shared_ptr<Promise<void>> applyFallbackFonts() override;
     std::shared_ptr<Promise<void>> clearFallbackFonts() override;

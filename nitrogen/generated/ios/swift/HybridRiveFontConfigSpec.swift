@@ -18,6 +18,7 @@ public protocol HybridRiveFontConfigSpec_protocol: HybridObject {
   func loadFontFromResource(resource: String) throws -> (any HybridFallbackFontSpec)
   func loadFontFromBytes(bytes: ArrayBuffer) throws -> (any HybridFallbackFontSpec)
   func loadFontByName(name: String) throws -> (any HybridFallbackFontSpec)
+  func getSystemDefaultFont() throws -> (any HybridFallbackFontSpec)
   func setFontsForWeight(weight: Double, fonts: [(any HybridFallbackFontSpec)]) throws -> Void
   func applyFallbackFonts() throws -> Promise<Void>
   func clearFallbackFonts() throws -> Promise<Void>

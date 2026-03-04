@@ -15,6 +15,7 @@
 #include "HybridRiveFontConfigSpecSwift.hpp"
 #include "HybridRiveImageFactorySpecSwift.hpp"
 #include "HybridRiveImageSpecSwift.hpp"
+#include "HybridRiveInternalSpecSwift.hpp"
 #include "HybridRiveRuntimeSpecSwift.hpp"
 #include "HybridRiveViewSpecSwift.hpp"
 #include "HybridViewModelArtboardPropertySpecSwift.hpp"
@@ -199,6 +200,22 @@ namespace margelo::nitro::rive::bridge::swift {
     }
     #endif
     RNRive::HybridRiveImageFactorySpec_cxx& swiftPart = swiftWrapper->getSwiftPart();
+    return swiftPart.toUnsafe();
+  }
+  
+  // pragma MARK: std::shared_ptr<HybridRiveInternalSpec>
+  std::shared_ptr<HybridRiveInternalSpec> create_std__shared_ptr_HybridRiveInternalSpec_(void* NON_NULL swiftUnsafePointer) noexcept {
+    RNRive::HybridRiveInternalSpec_cxx swiftPart = RNRive::HybridRiveInternalSpec_cxx::fromUnsafe(swiftUnsafePointer);
+    return std::make_shared<margelo::nitro::rive::HybridRiveInternalSpecSwift>(swiftPart);
+  }
+  void* NON_NULL get_std__shared_ptr_HybridRiveInternalSpec_(std__shared_ptr_HybridRiveInternalSpec_ cppType) {
+    std::shared_ptr<margelo::nitro::rive::HybridRiveInternalSpecSwift> swiftWrapper = std::dynamic_pointer_cast<margelo::nitro::rive::HybridRiveInternalSpecSwift>(cppType);
+    #ifdef NITRO_DEBUG
+    if (swiftWrapper == nullptr) [[unlikely]] {
+      throw std::runtime_error("Class \"HybridRiveInternalSpec\" is not implemented in Swift!");
+    }
+    #endif
+    RNRive::HybridRiveInternalSpec_cxx& swiftPart = swiftWrapper->getSwiftPart();
     return swiftPart.toUnsafe();
   }
   

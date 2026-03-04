@@ -18,6 +18,7 @@ namespace margelo::nitro::rive {
       prototype.registerHybridMethod("loadFontFromResource", &HybridRiveFontConfigSpec::loadFontFromResource);
       prototype.registerHybridMethod("loadFontFromBytes", &HybridRiveFontConfigSpec::loadFontFromBytes);
       prototype.registerHybridMethod("loadFontByName", &HybridRiveFontConfigSpec::loadFontByName);
+      prototype.registerHybridMethod("getSystemDefaultFont", &HybridRiveFontConfigSpec::getSystemDefaultFont);
       prototype.registerHybridMethod("setFontsForWeight", &HybridRiveFontConfigSpec::setFontsForWeight);
       prototype.registerHybridMethod("applyFallbackFonts", &HybridRiveFontConfigSpec::applyFallbackFonts);
       prototype.registerHybridMethod("clearFallbackFonts", &HybridRiveFontConfigSpec::clearFallbackFonts);

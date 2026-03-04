@@ -4,7 +4,7 @@ import RiveRuntime
 
 class HybridRiveFontConfig: HybridRiveFontConfigSpec {
   private static let defaultWeight = 0
-  private static var fontsByWeight: [Int: [UIFont]] = [:]
+  private static var fontsByWeight: [Int: [any HybridFallbackFontSpec]] = [:]
 
   func loadFontFromURL(url: String) throws -> Promise<(any HybridFallbackFontSpec)> {
     return Promise.async {
@@ -43,10 +43,13 @@ class HybridRiveFontConfig: HybridRiveFontConfigSpec {
     return HybridFallbackFont(font: font)
   }
 
+  func getSystemDefaultFont() throws -> (any HybridFallbackFontSpec) {
+    return HybridDefaultFallbackFont()
+  }
+
   func setFontsForWeight(weight: Double, fonts: [(any HybridFallbackFontSpec)]) throws {
     let key = Int(weight)
-    let uiFonts = fonts.compactMap { ($0 as? HybridFallbackFont)?.font }
-    Self.fontsByWeight[key] = uiFonts
+    Self.fontsByWeight[key] = fonts
   }
 
   func applyFallbackFonts() throws -> Promise<Void> {
@@ -54,10 +57,17 @@ class HybridRiveFontConfig: HybridRiveFontConfigSpec {
       _ = RiveFont.self
       RiveFont.fallbackFontsCallback = { weight in
         let requestedWeight = Int(weight.rawWeight)
-        let fonts = Self.fontsByWeight[requestedWeight] ?? Self.fontsByWeight[Self.defaultWeight] ?? []
-        var providers: [RiveFallbackFontProvider] = fonts
-        providers.append(RiveFallbackFontDescriptor())
-        return providers
+        let specs = Self.fontsByWeight[requestedWeight] ?? Self.fontsByWeight[Self.defaultWeight] ?? []
+        return specs.compactMap { spec in
+          if spec is HybridDefaultFallbackFont {
+            return RiveFallbackFontDescriptor()
+          } else if let fallbackFont = spec as? HybridFallbackFont {
+            return fallbackFont.font
+          } else {
+            print("[RiveFonts] Unknown fallback font spec type: \(type(of: spec))")
+            return nil
+          }
+        }
       }
     }
   }

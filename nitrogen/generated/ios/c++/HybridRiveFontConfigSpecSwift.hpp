@@ -107,6 +107,14 @@ namespace margelo::nitro::rive {
       auto __value = std::move(__result.value());
       return __value;
     }
+    inline std::shared_ptr<HybridFallbackFontSpec> getSystemDefaultFont() override {
+      auto __result = _swiftPart.getSystemDefaultFont();
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
     inline void setFontsForWeight(double weight, const std::vector<std::shared_ptr<HybridFallbackFontSpec>>& fonts) override {
       auto __result = _swiftPart.setFontsForWeight(std::forward<decltype(weight)>(weight), fonts);
       if (__result.hasError()) [[unlikely]] {

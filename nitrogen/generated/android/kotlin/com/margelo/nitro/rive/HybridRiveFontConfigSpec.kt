@@ -65,6 +65,10 @@ abstract class HybridRiveFontConfigSpec: HybridObject() {
   
   @DoNotStrip
   @Keep
+  abstract fun getSystemDefaultFont(): HybridFallbackFontSpec
+  
+  @DoNotStrip
+  @Keep
   abstract fun setFontsForWeight(weight: Double, fonts: Array<HybridFallbackFontSpec>): Unit
   
   @DoNotStrip
