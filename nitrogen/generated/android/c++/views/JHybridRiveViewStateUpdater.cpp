@@ -15,9 +15,9 @@ using namespace facebook;
 using ConcreteStateData = react::ConcreteState<HybridRiveViewState>;
 
 void JHybridRiveViewStateUpdater::updateViewProps(jni::alias_ref<jni::JClass> /* class */,
-                                           jni::alias_ref<JHybridRiveViewSpec::javaobject> javaView,
+                                           jni::alias_ref<JHybridRiveViewSpec::JavaPart> javaView,
                                            jni::alias_ref<JStateWrapper::javaobject> stateWrapperInterface) {
-  JHybridRiveViewSpec* view = javaView->cthis();
+  auto view = javaView->getJHybridRiveViewSpec();
 
   // Get concrete StateWrapperImpl from passed StateWrapper interface object
   jobject rawStateWrapper = stateWrapperInterface.get();
@@ -78,7 +78,7 @@ void JHybridRiveViewStateUpdater::updateViewProps(jni::alias_ref<jni::JClass> /*
     // hybridRef changed - call it with new this
     const auto& maybeFunc = props.hybridRef.value;
     if (maybeFunc.has_value()) {
-      std::shared_ptr<JHybridRiveViewSpec> shared = javaView->cthis()->shared_cast<JHybridRiveViewSpec>();
+      std::shared_ptr<JHybridRiveViewSpec> shared = javaView->getJHybridRiveViewSpec();
       maybeFunc.value()(shared);
     }
     // TODO: Set isDirty = false

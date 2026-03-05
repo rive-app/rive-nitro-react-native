@@ -13,42 +13,36 @@
 
 namespace margelo::nitro::rive {
 
-  jni::local_ref<JHybridRiveImageSpec::jhybriddata> JHybridRiveImageSpec::initHybrid(jni::alias_ref<jhybridobject> jThis) {
+  std::shared_ptr<JHybridRiveImageSpec> JHybridRiveImageSpec::JavaPart::getJHybridRiveImageSpec() {
+    auto hybridObject = JHybridObject::JavaPart::getJHybridObject();
+    auto castHybridObject = std::dynamic_pointer_cast<JHybridRiveImageSpec>(hybridObject);
+    if (castHybridObject == nullptr) [[unlikely]] {
+      throw std::runtime_error("Failed to downcast JHybridObject to JHybridRiveImageSpec!");
+    }
+    return castHybridObject;
+  }
+
+  jni::local_ref<JHybridRiveImageSpec::CxxPart::jhybriddata> JHybridRiveImageSpec::CxxPart::initHybrid(jni::alias_ref<jhybridobject> jThis) {
     return makeCxxInstance(jThis);
   }
 
-  void JHybridRiveImageSpec::registerNatives() {
-    registerHybrid({
-      makeNativeMethod("initHybrid", JHybridRiveImageSpec::initHybrid),
-    });
-  }
-
-  size_t JHybridRiveImageSpec::getExternalMemorySize() noexcept {
-    static const auto method = javaClassStatic()->getMethod<jlong()>("getMemorySize");
-    return method(_javaPart);
-  }
-
-  bool JHybridRiveImageSpec::equals(const std::shared_ptr<HybridObject>& other) {
-    if (auto otherCast = std::dynamic_pointer_cast<JHybridRiveImageSpec>(other)) {
-      return _javaPart == otherCast->_javaPart;
+  std::shared_ptr<JHybridObject> JHybridRiveImageSpec::CxxPart::createHybridObject(const jni::local_ref<JHybridObject::JavaPart>& javaPart) {
+    auto castJavaPart = jni::dynamic_ref_cast<JHybridRiveImageSpec::JavaPart>(javaPart);
+    if (castJavaPart == nullptr) [[unlikely]] {
+      throw std::runtime_error("Failed to cast JHybridObject::JavaPart to JHybridRiveImageSpec::JavaPart!");
     }
-    return false;
+    return std::make_shared<JHybridRiveImageSpec>(castJavaPart);
   }
 
-  void JHybridRiveImageSpec::dispose() noexcept {
-    static const auto method = javaClassStatic()->getMethod<void()>("dispose");
-    method(_javaPart);
-  }
-
-  std::string JHybridRiveImageSpec::toString() {
-    static const auto method = javaClassStatic()->getMethod<jni::JString()>("toString");
-    auto javaString = method(_javaPart);
-    return javaString->toStdString();
+  void JHybridRiveImageSpec::CxxPart::registerNatives() {
+    registerHybrid({
+      makeNativeMethod("initHybrid", JHybridRiveImageSpec::CxxPart::initHybrid),
+    });
   }
 
   // Properties
   double JHybridRiveImageSpec::getByteSize() {
-    static const auto method = javaClassStatic()->getMethod<double()>("getByteSize");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<double()>("getByteSize");
     auto __result = method(_javaPart);
     return __result;
   }

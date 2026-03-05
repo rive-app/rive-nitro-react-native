@@ -21,51 +21,45 @@ namespace margelo::nitro::rive { class HybridRiveImageSpec; }
 
 namespace margelo::nitro::rive {
 
-  jni::local_ref<JHybridRiveImageFactorySpec::jhybriddata> JHybridRiveImageFactorySpec::initHybrid(jni::alias_ref<jhybridobject> jThis) {
+  std::shared_ptr<JHybridRiveImageFactorySpec> JHybridRiveImageFactorySpec::JavaPart::getJHybridRiveImageFactorySpec() {
+    auto hybridObject = JHybridObject::JavaPart::getJHybridObject();
+    auto castHybridObject = std::dynamic_pointer_cast<JHybridRiveImageFactorySpec>(hybridObject);
+    if (castHybridObject == nullptr) [[unlikely]] {
+      throw std::runtime_error("Failed to downcast JHybridObject to JHybridRiveImageFactorySpec!");
+    }
+    return castHybridObject;
+  }
+
+  jni::local_ref<JHybridRiveImageFactorySpec::CxxPart::jhybriddata> JHybridRiveImageFactorySpec::CxxPart::initHybrid(jni::alias_ref<jhybridobject> jThis) {
     return makeCxxInstance(jThis);
   }
 
-  void JHybridRiveImageFactorySpec::registerNatives() {
+  std::shared_ptr<JHybridObject> JHybridRiveImageFactorySpec::CxxPart::createHybridObject(const jni::local_ref<JHybridObject::JavaPart>& javaPart) {
+    auto castJavaPart = jni::dynamic_ref_cast<JHybridRiveImageFactorySpec::JavaPart>(javaPart);
+    if (castJavaPart == nullptr) [[unlikely]] {
+      throw std::runtime_error("Failed to cast JHybridObject::JavaPart to JHybridRiveImageFactorySpec::JavaPart!");
+    }
+    return std::make_shared<JHybridRiveImageFactorySpec>(castJavaPart);
+  }
+
+  void JHybridRiveImageFactorySpec::CxxPart::registerNatives() {
     registerHybrid({
-      makeNativeMethod("initHybrid", JHybridRiveImageFactorySpec::initHybrid),
+      makeNativeMethod("initHybrid", JHybridRiveImageFactorySpec::CxxPart::initHybrid),
     });
   }
 
-  size_t JHybridRiveImageFactorySpec::getExternalMemorySize() noexcept {
-    static const auto method = javaClassStatic()->getMethod<jlong()>("getMemorySize");
-    return method(_javaPart);
-  }
-
-  bool JHybridRiveImageFactorySpec::equals(const std::shared_ptr<HybridObject>& other) {
-    if (auto otherCast = std::dynamic_pointer_cast<JHybridRiveImageFactorySpec>(other)) {
-      return _javaPart == otherCast->_javaPart;
-    }
-    return false;
-  }
-
-  void JHybridRiveImageFactorySpec::dispose() noexcept {
-    static const auto method = javaClassStatic()->getMethod<void()>("dispose");
-    method(_javaPart);
-  }
-
-  std::string JHybridRiveImageFactorySpec::toString() {
-    static const auto method = javaClassStatic()->getMethod<jni::JString()>("toString");
-    auto javaString = method(_javaPart);
-    return javaString->toStdString();
-  }
-
   // Properties
-  
+
 
   // Methods
   std::shared_ptr<Promise<std::shared_ptr<HybridRiveImageSpec>>> JHybridRiveImageFactorySpec::loadFromURLAsync(const std::string& url) {
-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<jni::JString> /* url */)>("loadFromURLAsync");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<jni::JString> /* url */)>("loadFromURLAsync");
     auto __result = method(_javaPart, jni::make_jstring(url));
     return [&]() {
       auto __promise = Promise<std::shared_ptr<HybridRiveImageSpec>>::create();
       __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& __boxedResult) {
-        auto __result = jni::static_ref_cast<JHybridRiveImageSpec::javaobject>(__boxedResult);
-        __promise->resolve(__result->cthis()->shared_cast<JHybridRiveImageSpec>());
+        auto __result = jni::static_ref_cast<JHybridRiveImageSpec::JavaPart>(__boxedResult);
+        __promise->resolve(__result->getJHybridRiveImageSpec());
       });
       __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
         jni::JniException __jniError(__throwable);
@@ -75,13 +69,13 @@ namespace margelo::nitro::rive {
     }();
   }
   std::shared_ptr<Promise<std::shared_ptr<HybridRiveImageSpec>>> JHybridRiveImageFactorySpec::loadFromResourceAsync(const std::string& resource) {
-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<jni::JString> /* resource */)>("loadFromResourceAsync");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<jni::JString> /* resource */)>("loadFromResourceAsync");
     auto __result = method(_javaPart, jni::make_jstring(resource));
     return [&]() {
       auto __promise = Promise<std::shared_ptr<HybridRiveImageSpec>>::create();
       __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& __boxedResult) {
-        auto __result = jni::static_ref_cast<JHybridRiveImageSpec::javaobject>(__boxedResult);
-        __promise->resolve(__result->cthis()->shared_cast<JHybridRiveImageSpec>());
+        auto __result = jni::static_ref_cast<JHybridRiveImageSpec::JavaPart>(__boxedResult);
+        __promise->resolve(__result->getJHybridRiveImageSpec());
       });
       __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
         jni::JniException __jniError(__throwable);
@@ -91,13 +85,13 @@ namespace margelo::nitro::rive {
     }();
   }
   std::shared_ptr<Promise<std::shared_ptr<HybridRiveImageSpec>>> JHybridRiveImageFactorySpec::loadFromBytesAsync(const std::shared_ptr<ArrayBuffer>& bytes) {
-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<JArrayBuffer::javaobject> /* bytes */)>("loadFromBytesAsync");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<JArrayBuffer::javaobject> /* bytes */)>("loadFromBytesAsync");
     auto __result = method(_javaPart, JArrayBuffer::wrap(bytes));
     return [&]() {
       auto __promise = Promise<std::shared_ptr<HybridRiveImageSpec>>::create();
       __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& __boxedResult) {
-        auto __result = jni::static_ref_cast<JHybridRiveImageSpec::javaobject>(__boxedResult);
-        __promise->resolve(__result->cthis()->shared_cast<JHybridRiveImageSpec>());
+        auto __result = jni::static_ref_cast<JHybridRiveImageSpec::JavaPart>(__boxedResult);
+        __promise->resolve(__result->getJHybridRiveImageSpec());
       });
       __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
         jni::JniException __jniError(__throwable);

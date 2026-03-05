@@ -40,13 +40,7 @@ namespace margelo::nitro::rive {
     }
 
   public:
-    size_t getExternalMemorySize() noexcept override;
-    bool equals(const std::shared_ptr<HybridObject>& other) override;
-    void dispose() noexcept override;
-    std::string toString() override;
-
-  public:
-    inline const jni::global_ref<JHybridViewModelListPropertySpec::javaobject>& getJavaPart() const noexcept {
+    inline const jni::global_ref<JHybridViewModelListPropertySpec::JavaPart>& getJavaPart() const noexcept {
       return _javaPart;
     }
 
@@ -68,7 +62,7 @@ namespace margelo::nitro::rive {
   private:
     friend HybridBase;
     using HybridBase::HybridBase;
-    jni::global_ref<JHybridViewModelListPropertySpec::javaobject> _javaPart;
+    jni::global_ref<JHybridViewModelListPropertySpec::JavaPart> _javaPart;
   };
 
 } // namespace margelo::nitro::rive

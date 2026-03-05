@@ -15,45 +15,39 @@
 
 namespace margelo::nitro::rive {
 
-  jni::local_ref<JHybridViewModelTriggerPropertySpec::jhybriddata> JHybridViewModelTriggerPropertySpec::initHybrid(jni::alias_ref<jhybridobject> jThis) {
+  std::shared_ptr<JHybridViewModelTriggerPropertySpec> JHybridViewModelTriggerPropertySpec::JavaPart::getJHybridViewModelTriggerPropertySpec() {
+    auto hybridObject = JHybridObject::JavaPart::getJHybridObject();
+    auto castHybridObject = std::dynamic_pointer_cast<JHybridViewModelTriggerPropertySpec>(hybridObject);
+    if (castHybridObject == nullptr) [[unlikely]] {
+      throw std::runtime_error("Failed to downcast JHybridObject to JHybridViewModelTriggerPropertySpec!");
+    }
+    return castHybridObject;
+  }
+
+  jni::local_ref<JHybridViewModelTriggerPropertySpec::CxxPart::jhybriddata> JHybridViewModelTriggerPropertySpec::CxxPart::initHybrid(jni::alias_ref<jhybridobject> jThis) {
     return makeCxxInstance(jThis);
   }
 
-  void JHybridViewModelTriggerPropertySpec::registerNatives() {
+  std::shared_ptr<JHybridObject> JHybridViewModelTriggerPropertySpec::CxxPart::createHybridObject(const jni::local_ref<JHybridObject::JavaPart>& javaPart) {
+    auto castJavaPart = jni::dynamic_ref_cast<JHybridViewModelTriggerPropertySpec::JavaPart>(javaPart);
+    if (castJavaPart == nullptr) [[unlikely]] {
+      throw std::runtime_error("Failed to cast JHybridObject::JavaPart to JHybridViewModelTriggerPropertySpec::JavaPart!");
+    }
+    return std::make_shared<JHybridViewModelTriggerPropertySpec>(castJavaPart);
+  }
+
+  void JHybridViewModelTriggerPropertySpec::CxxPart::registerNatives() {
     registerHybrid({
-      makeNativeMethod("initHybrid", JHybridViewModelTriggerPropertySpec::initHybrid),
+      makeNativeMethod("initHybrid", JHybridViewModelTriggerPropertySpec::CxxPart::initHybrid),
     });
   }
 
-  size_t JHybridViewModelTriggerPropertySpec::getExternalMemorySize() noexcept {
-    static const auto method = javaClassStatic()->getMethod<jlong()>("getMemorySize");
-    return method(_javaPart);
-  }
-
-  bool JHybridViewModelTriggerPropertySpec::equals(const std::shared_ptr<HybridObject>& other) {
-    if (auto otherCast = std::dynamic_pointer_cast<JHybridViewModelTriggerPropertySpec>(other)) {
-      return _javaPart == otherCast->_javaPart;
-    }
-    return false;
-  }
-
-  void JHybridViewModelTriggerPropertySpec::dispose() noexcept {
-    static const auto method = javaClassStatic()->getMethod<void()>("dispose");
-    method(_javaPart);
-  }
-
-  std::string JHybridViewModelTriggerPropertySpec::toString() {
-    static const auto method = javaClassStatic()->getMethod<jni::JString()>("toString");
-    auto javaString = method(_javaPart);
-    return javaString->toStdString();
-  }
-
   // Properties
-  
+
 
   // Methods
   std::function<void()> JHybridViewModelTriggerPropertySpec::addListener(const std::function<void()>& onChanged) {
-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JFunc_void::javaobject>(jni::alias_ref<JFunc_void::javaobject> /* onChanged */)>("addListener_cxx");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JFunc_void::javaobject>(jni::alias_ref<JFunc_void::javaobject> /* onChanged */)>("addListener_cxx");
     auto __result = method(_javaPart, JFunc_void_cxx::fromCpp(onChanged));
     return [&]() -> std::function<void()> {
       if (__result->isInstanceOf(JFunc_void_cxx::javaClassStatic())) [[likely]] {
@@ -66,11 +60,11 @@ namespace margelo::nitro::rive {
     }();
   }
   void JHybridViewModelTriggerPropertySpec::trigger() {
-    static const auto method = javaClassStatic()->getMethod<void()>("trigger");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void()>("trigger");
     method(_javaPart);
   }
   void JHybridViewModelTriggerPropertySpec::removeListeners() {
-    static const auto method = javaClassStatic()->getMethod<void()>("removeListeners");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void()>("removeListeners");
     method(_javaPart);
   }
 

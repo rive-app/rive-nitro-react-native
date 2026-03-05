@@ -25,23 +25,6 @@ import com.margelo.nitro.views.HybridView
   "LocalVariableName", "PropertyName", "PrivatePropertyName", "FunctionName"
 )
 abstract class HybridRiveViewSpec: HybridView() {
-  @DoNotStrip
-  private var mHybridData: HybridData = initHybrid()
-
-  init {
-    super.updateNative(mHybridData)
-  }
-
-  override fun updateNative(hybridData: HybridData) {
-    mHybridData = hybridData
-    super.updateNative(hybridData)
-  }
-
-  // Default implementation of `HybridObject.toString()`
-  override fun toString(): String {
-    return "[HybridObject RiveView]"
-  }
-
   // Properties
   @get:DoNotStrip
   @get:Keep
@@ -175,7 +158,21 @@ abstract class HybridRiveViewSpec: HybridView() {
   @Keep
   abstract fun getTextRunValue(name: String, path: String?): String
 
-  private external fun initHybrid(): HybridData
+
+  // Default implementation of `HybridObject.toString()`
+  override fun toString(): String {
+    return "[HybridObject RiveView]"
+  }
+
+  // C++ backing class
+  @DoNotStrip
+  @Keep
+  protected open class CxxPart(javaPart: HybridRiveViewSpec): HybridObject.CxxPart(javaPart) {
+    external override fun initHybrid(): HybridData
+  }
+  override fun createCxxPart(): CxxPart {
+    return CxxPart(this)
+  }
 
   companion object {
     protected const val TAG = "HybridRiveViewSpec"

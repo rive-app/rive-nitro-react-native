@@ -24,25 +24,7 @@ import com.margelo.nitro.core.HybridObject
   "LocalVariableName", "PropertyName", "PrivatePropertyName", "FunctionName"
 )
 abstract class HybridViewModelTriggerPropertySpec: HybridViewModelPropertySpec() {
-  @DoNotStrip
-  private var mHybridData: HybridData = initHybrid()
-
-  init {
-    super.updateNative(mHybridData)
-  }
-
-  override fun updateNative(hybridData: HybridData) {
-    mHybridData = hybridData
-    super.updateNative(hybridData)
-  }
-
-  // Default implementation of `HybridObject.toString()`
-  override fun toString(): String {
-    return "[HybridObject ViewModelTriggerProperty]"
-  }
-
   // Properties
-  
 
   // Methods
   abstract fun addListener(onChanged: () -> Unit): () -> Unit
@@ -62,7 +44,21 @@ abstract class HybridViewModelTriggerPropertySpec: HybridViewModelPropertySpec()
   @Keep
   abstract fun removeListeners(): Unit
 
-  private external fun initHybrid(): HybridData
+
+  // Default implementation of `HybridObject.toString()`
+  override fun toString(): String {
+    return "[HybridObject ViewModelTriggerProperty]"
+  }
+
+  // C++ backing class
+  @DoNotStrip
+  @Keep
+  protected open class CxxPart(javaPart: HybridViewModelTriggerPropertySpec): HybridObject.CxxPart(javaPart) {
+    external override fun initHybrid(): HybridData
+  }
+  override fun createCxxPart(): CxxPart {
+    return CxxPart(this)
+  }
 
   companion object {
     protected const val TAG = "HybridViewModelTriggerPropertySpec"
