@@ -10,7 +10,7 @@
 #import "RNRive-Swift-Cxx-Umbrella.hpp"
 #import <type_traits>
 
-#include "HybridRiveSpecSwift.hpp"
+#include "HybridRiveFontConfigSpecSwift.hpp"
 #include "HybridRiveFileFactorySpecSwift.hpp"
 #include "HybridRiveFileSpecSwift.hpp"
 #include "HybridRiveViewSpecSwift.hpp"
@@ -27,9 +27,9 @@
   using namespace margelo::nitro::rive;
 
   HybridObjectRegistry::registerHybridObjectConstructor(
-    "Rive",
+    "RiveFontConfig",
     []() -> std::shared_ptr<HybridObject> {
-      std::shared_ptr<HybridRiveSpec> hybridObject = RNRive::RNRiveAutolinking::createRive();
+      std::shared_ptr<HybridRiveFontConfigSpec> hybridObject = RNRive::RNRiveAutolinking::createRiveFontConfig();
       return hybridObject;
     }
   );

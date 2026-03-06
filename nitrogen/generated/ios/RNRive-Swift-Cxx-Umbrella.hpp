@@ -22,18 +22,20 @@ namespace margelo::nitro::rive { enum class DataBindMode; }
 namespace margelo::nitro::rive { enum class Fit; }
 // Forward declaration of `HybridBindableArtboardSpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridBindableArtboardSpec; }
+// Forward declaration of `HybridFallbackFontSpec` to properly resolve imports.
+namespace margelo::nitro::rive { class HybridFallbackFontSpec; }
 // Forward declaration of `HybridRiveFileFactorySpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridRiveFileFactorySpec; }
 // Forward declaration of `HybridRiveFileSpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridRiveFileSpec; }
+// Forward declaration of `HybridRiveFontConfigSpec` to properly resolve imports.
+namespace margelo::nitro::rive { class HybridRiveFontConfigSpec; }
 // Forward declaration of `HybridRiveImageFactorySpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridRiveImageFactorySpec; }
 // Forward declaration of `HybridRiveImageSpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridRiveImageSpec; }
 // Forward declaration of `HybridRiveRuntimeSpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridRiveRuntimeSpec; }
-// Forward declaration of `HybridRiveSpec` to properly resolve imports.
-namespace margelo::nitro::rive { class HybridRiveSpec; }
 // Forward declaration of `HybridRiveViewSpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridRiveViewSpec; }
 // Forward declaration of `HybridViewModelArtboardPropertySpec` to properly resolve imports.
@@ -81,12 +83,13 @@ namespace margelo::nitro::rive { struct UnifiedRiveEvent; }
 #include "DataBindMode.hpp"
 #include "Fit.hpp"
 #include "HybridBindableArtboardSpec.hpp"
+#include "HybridFallbackFontSpec.hpp"
 #include "HybridRiveFileFactorySpec.hpp"
 #include "HybridRiveFileSpec.hpp"
+#include "HybridRiveFontConfigSpec.hpp"
 #include "HybridRiveImageFactorySpec.hpp"
 #include "HybridRiveImageSpec.hpp"
 #include "HybridRiveRuntimeSpec.hpp"
-#include "HybridRiveSpec.hpp"
 #include "HybridRiveViewSpec.hpp"
 #include "HybridViewModelArtboardPropertySpec.hpp"
 #include "HybridViewModelBooleanPropertySpec.hpp"
@@ -130,18 +133,20 @@ namespace margelo::nitro::rive { struct UnifiedRiveEvent; }
 // Forward declarations of Swift defined types
 // Forward declaration of `HybridBindableArtboardSpec_cxx` to properly resolve imports.
 namespace RNRive { class HybridBindableArtboardSpec_cxx; }
+// Forward declaration of `HybridFallbackFontSpec_cxx` to properly resolve imports.
+namespace RNRive { class HybridFallbackFontSpec_cxx; }
 // Forward declaration of `HybridRiveFileFactorySpec_cxx` to properly resolve imports.
 namespace RNRive { class HybridRiveFileFactorySpec_cxx; }
 // Forward declaration of `HybridRiveFileSpec_cxx` to properly resolve imports.
 namespace RNRive { class HybridRiveFileSpec_cxx; }
+// Forward declaration of `HybridRiveFontConfigSpec_cxx` to properly resolve imports.
+namespace RNRive { class HybridRiveFontConfigSpec_cxx; }
 // Forward declaration of `HybridRiveImageFactorySpec_cxx` to properly resolve imports.
 namespace RNRive { class HybridRiveImageFactorySpec_cxx; }
 // Forward declaration of `HybridRiveImageSpec_cxx` to properly resolve imports.
 namespace RNRive { class HybridRiveImageSpec_cxx; }
 // Forward declaration of `HybridRiveRuntimeSpec_cxx` to properly resolve imports.
 namespace RNRive { class HybridRiveRuntimeSpec_cxx; }
-// Forward declaration of `HybridRiveSpec_cxx` to properly resolve imports.
-namespace RNRive { class HybridRiveSpec_cxx; }
 // Forward declaration of `HybridRiveViewSpec_cxx` to properly resolve imports.
 namespace RNRive { class HybridRiveViewSpec_cxx; }
 // Forward declaration of `HybridViewModelArtboardPropertySpec_cxx` to properly resolve imports.

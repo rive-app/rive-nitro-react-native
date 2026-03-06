@@ -22,18 +22,20 @@ namespace margelo::nitro::rive { enum class DataBindMode; }
 namespace margelo::nitro::rive { enum class Fit; }
 // Forward declaration of `HybridBindableArtboardSpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridBindableArtboardSpec; }
+// Forward declaration of `HybridFallbackFontSpec` to properly resolve imports.
+namespace margelo::nitro::rive { class HybridFallbackFontSpec; }
 // Forward declaration of `HybridRiveFileFactorySpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridRiveFileFactorySpec; }
 // Forward declaration of `HybridRiveFileSpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridRiveFileSpec; }
+// Forward declaration of `HybridRiveFontConfigSpec` to properly resolve imports.
+namespace margelo::nitro::rive { class HybridRiveFontConfigSpec; }
 // Forward declaration of `HybridRiveImageFactorySpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridRiveImageFactorySpec; }
 // Forward declaration of `HybridRiveImageSpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridRiveImageSpec; }
 // Forward declaration of `HybridRiveRuntimeSpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridRiveRuntimeSpec; }
-// Forward declaration of `HybridRiveSpec` to properly resolve imports.
-namespace margelo::nitro::rive { class HybridRiveSpec; }
 // Forward declaration of `HybridRiveViewSpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridRiveViewSpec; }
 // Forward declaration of `HybridViewModelArtboardPropertySpec` to properly resolve imports.
@@ -76,18 +78,20 @@ namespace margelo::nitro::rive { struct UnifiedRiveEvent; }
 // Forward declarations of Swift defined types
 // Forward declaration of `HybridBindableArtboardSpec_cxx` to properly resolve imports.
 namespace RNRive { class HybridBindableArtboardSpec_cxx; }
+// Forward declaration of `HybridFallbackFontSpec_cxx` to properly resolve imports.
+namespace RNRive { class HybridFallbackFontSpec_cxx; }
 // Forward declaration of `HybridRiveFileFactorySpec_cxx` to properly resolve imports.
 namespace RNRive { class HybridRiveFileFactorySpec_cxx; }
 // Forward declaration of `HybridRiveFileSpec_cxx` to properly resolve imports.
 namespace RNRive { class HybridRiveFileSpec_cxx; }
+// Forward declaration of `HybridRiveFontConfigSpec_cxx` to properly resolve imports.
+namespace RNRive { class HybridRiveFontConfigSpec_cxx; }
 // Forward declaration of `HybridRiveImageFactorySpec_cxx` to properly resolve imports.
 namespace RNRive { class HybridRiveImageFactorySpec_cxx; }
 // Forward declaration of `HybridRiveImageSpec_cxx` to properly resolve imports.
 namespace RNRive { class HybridRiveImageSpec_cxx; }
 // Forward declaration of `HybridRiveRuntimeSpec_cxx` to properly resolve imports.
 namespace RNRive { class HybridRiveRuntimeSpec_cxx; }
-// Forward declaration of `HybridRiveSpec_cxx` to properly resolve imports.
-namespace RNRive { class HybridRiveSpec_cxx; }
 // Forward declaration of `HybridRiveViewSpec_cxx` to properly resolve imports.
 namespace RNRive { class HybridRiveViewSpec_cxx; }
 // Forward declaration of `HybridViewModelArtboardPropertySpec_cxx` to properly resolve imports.
@@ -123,12 +127,13 @@ namespace RNRive { class HybridViewModelTriggerPropertySpec_cxx; }
 #include "DataBindMode.hpp"
 #include "Fit.hpp"
 #include "HybridBindableArtboardSpec.hpp"
+#include "HybridFallbackFontSpec.hpp"
 #include "HybridRiveFileFactorySpec.hpp"
 #include "HybridRiveFileSpec.hpp"
+#include "HybridRiveFontConfigSpec.hpp"
 #include "HybridRiveImageFactorySpec.hpp"
 #include "HybridRiveImageSpec.hpp"
 #include "HybridRiveRuntimeSpec.hpp"
-#include "HybridRiveSpec.hpp"
 #include "HybridRiveViewSpec.hpp"
 #include "HybridViewModelArtboardPropertySpec.hpp"
 #include "HybridViewModelBooleanPropertySpec.hpp"
@@ -177,27 +182,6 @@ namespace margelo::nitro::rive::bridge::swift {
   // pragma MARK: std::weak_ptr<HybridBindableArtboardSpec>
   using std__weak_ptr_HybridBindableArtboardSpec_ = std::weak_ptr<HybridBindableArtboardSpec>;
   inline std__weak_ptr_HybridBindableArtboardSpec_ weakify_std__shared_ptr_HybridBindableArtboardSpec_(const std::shared_ptr<HybridBindableArtboardSpec>& strong) noexcept { return strong; }
-  
-  // pragma MARK: std::shared_ptr<HybridRiveSpec>
-  /**
-   * Specialized version of `std::shared_ptr<HybridRiveSpec>`.
-   */
-  using std__shared_ptr_HybridRiveSpec_ = std::shared_ptr<HybridRiveSpec>;
-  std::shared_ptr<HybridRiveSpec> create_std__shared_ptr_HybridRiveSpec_(void* NON_NULL swiftUnsafePointer) noexcept;
-  void* NON_NULL get_std__shared_ptr_HybridRiveSpec_(std__shared_ptr_HybridRiveSpec_ cppType);
-  
-  // pragma MARK: std::weak_ptr<HybridRiveSpec>
-  using std__weak_ptr_HybridRiveSpec_ = std::weak_ptr<HybridRiveSpec>;
-  inline std__weak_ptr_HybridRiveSpec_ weakify_std__shared_ptr_HybridRiveSpec_(const std::shared_ptr<HybridRiveSpec>& strong) noexcept { return strong; }
-  
-  // pragma MARK: Result<double>
-  using Result_double_ = Result<double>;
-  inline Result_double_ create_Result_double_(double value) noexcept {
-    return Result<double>::withValue(std::move(value));
-  }
-  inline Result_double_ create_Result_double_(const std::exception_ptr& error) noexcept {
-    return Result<double>::withError(error);
-  }
   
   // pragma MARK: std::optional<double>
   /**
@@ -480,6 +464,136 @@ namespace margelo::nitro::rive::bridge::swift {
     return Result<std::shared_ptr<Promise<std::shared_ptr<HybridRiveFileSpec>>>>::withError(error);
   }
   
+  // pragma MARK: std::shared_ptr<HybridFallbackFontSpec>
+  /**
+   * Specialized version of `std::shared_ptr<HybridFallbackFontSpec>`.
+   */
+  using std__shared_ptr_HybridFallbackFontSpec_ = std::shared_ptr<HybridFallbackFontSpec>;
+  std::shared_ptr<HybridFallbackFontSpec> create_std__shared_ptr_HybridFallbackFontSpec_(void* NON_NULL swiftUnsafePointer) noexcept;
+  void* NON_NULL get_std__shared_ptr_HybridFallbackFontSpec_(std__shared_ptr_HybridFallbackFontSpec_ cppType);
+  
+  // pragma MARK: std::weak_ptr<HybridFallbackFontSpec>
+  using std__weak_ptr_HybridFallbackFontSpec_ = std::weak_ptr<HybridFallbackFontSpec>;
+  inline std__weak_ptr_HybridFallbackFontSpec_ weakify_std__shared_ptr_HybridFallbackFontSpec_(const std::shared_ptr<HybridFallbackFontSpec>& strong) noexcept { return strong; }
+  
+  // pragma MARK: std::shared_ptr<Promise<std::shared_ptr<HybridFallbackFontSpec>>>
+  /**
+   * Specialized version of `std::shared_ptr<Promise<std::shared_ptr<HybridFallbackFontSpec>>>`.
+   */
+  using std__shared_ptr_Promise_std__shared_ptr_HybridFallbackFontSpec___ = std::shared_ptr<Promise<std::shared_ptr<HybridFallbackFontSpec>>>;
+  inline std::shared_ptr<Promise<std::shared_ptr<HybridFallbackFontSpec>>> create_std__shared_ptr_Promise_std__shared_ptr_HybridFallbackFontSpec___() noexcept {
+    return Promise<std::shared_ptr<HybridFallbackFontSpec>>::create();
+  }
+  inline PromiseHolder<std::shared_ptr<HybridFallbackFontSpec>> wrap_std__shared_ptr_Promise_std__shared_ptr_HybridFallbackFontSpec___(std::shared_ptr<Promise<std::shared_ptr<HybridFallbackFontSpec>>> promise) noexcept {
+    return PromiseHolder<std::shared_ptr<HybridFallbackFontSpec>>(std::move(promise));
+  }
+  
+  // pragma MARK: std::function<void(const std::shared_ptr<HybridFallbackFontSpec>& /* result */)>
+  /**
+   * Specialized version of `std::function<void(const std::shared_ptr<HybridFallbackFontSpec>&)>`.
+   */
+  using Func_void_std__shared_ptr_HybridFallbackFontSpec_ = std::function<void(const std::shared_ptr<HybridFallbackFontSpec>& /* result */)>;
+  /**
+   * Wrapper class for a `std::function<void(const std::shared_ptr<HybridFallbackFontSpec>& / * result * /)>`, this can be used from Swift.
+   */
+  class Func_void_std__shared_ptr_HybridFallbackFontSpec__Wrapper final {
+  public:
+    explicit Func_void_std__shared_ptr_HybridFallbackFontSpec__Wrapper(std::function<void(const std::shared_ptr<HybridFallbackFontSpec>& /* result */)>&& func): _function(std::make_unique<std::function<void(const std::shared_ptr<HybridFallbackFontSpec>& /* result */)>>(std::move(func))) {}
+    inline void call(std::shared_ptr<HybridFallbackFontSpec> result) const noexcept {
+      _function->operator()(result);
+    }
+  private:
+    std::unique_ptr<std::function<void(const std::shared_ptr<HybridFallbackFontSpec>& /* result */)>> _function;
+  } SWIFT_NONCOPYABLE;
+  Func_void_std__shared_ptr_HybridFallbackFontSpec_ create_Func_void_std__shared_ptr_HybridFallbackFontSpec_(void* NON_NULL swiftClosureWrapper) noexcept;
+  inline Func_void_std__shared_ptr_HybridFallbackFontSpec__Wrapper wrap_Func_void_std__shared_ptr_HybridFallbackFontSpec_(Func_void_std__shared_ptr_HybridFallbackFontSpec_ value) noexcept {
+    return Func_void_std__shared_ptr_HybridFallbackFontSpec__Wrapper(std::move(value));
+  }
+  
+  // pragma MARK: std::vector<std::shared_ptr<HybridFallbackFontSpec>>
+  /**
+   * Specialized version of `std::vector<std::shared_ptr<HybridFallbackFontSpec>>`.
+   */
+  using std__vector_std__shared_ptr_HybridFallbackFontSpec__ = std::vector<std::shared_ptr<HybridFallbackFontSpec>>;
+  inline std::vector<std::shared_ptr<HybridFallbackFontSpec>> create_std__vector_std__shared_ptr_HybridFallbackFontSpec__(size_t size) noexcept {
+    std::vector<std::shared_ptr<HybridFallbackFontSpec>> vector;
+    vector.reserve(size);
+    return vector;
+  }
+  
+  // pragma MARK: std::shared_ptr<Promise<void>>
+  /**
+   * Specialized version of `std::shared_ptr<Promise<void>>`.
+   */
+  using std__shared_ptr_Promise_void__ = std::shared_ptr<Promise<void>>;
+  inline std::shared_ptr<Promise<void>> create_std__shared_ptr_Promise_void__() noexcept {
+    return Promise<void>::create();
+  }
+  inline PromiseHolder<void> wrap_std__shared_ptr_Promise_void__(std::shared_ptr<Promise<void>> promise) noexcept {
+    return PromiseHolder<void>(std::move(promise));
+  }
+  
+  // pragma MARK: std::function<void()>
+  /**
+   * Specialized version of `std::function<void()>`.
+   */
+  using Func_void = std::function<void()>;
+  /**
+   * Wrapper class for a `std::function<void()>`, this can be used from Swift.
+   */
+  class Func_void_Wrapper final {
+  public:
+    explicit Func_void_Wrapper(std::function<void()>&& func): _function(std::make_unique<std::function<void()>>(std::move(func))) {}
+    inline void call() const noexcept {
+      _function->operator()();
+    }
+  private:
+    std::unique_ptr<std::function<void()>> _function;
+  } SWIFT_NONCOPYABLE;
+  Func_void create_Func_void(void* NON_NULL swiftClosureWrapper) noexcept;
+  inline Func_void_Wrapper wrap_Func_void(Func_void value) noexcept {
+    return Func_void_Wrapper(std::move(value));
+  }
+  
+  // pragma MARK: std::shared_ptr<HybridRiveFontConfigSpec>
+  /**
+   * Specialized version of `std::shared_ptr<HybridRiveFontConfigSpec>`.
+   */
+  using std__shared_ptr_HybridRiveFontConfigSpec_ = std::shared_ptr<HybridRiveFontConfigSpec>;
+  std::shared_ptr<HybridRiveFontConfigSpec> create_std__shared_ptr_HybridRiveFontConfigSpec_(void* NON_NULL swiftUnsafePointer) noexcept;
+  void* NON_NULL get_std__shared_ptr_HybridRiveFontConfigSpec_(std__shared_ptr_HybridRiveFontConfigSpec_ cppType);
+  
+  // pragma MARK: std::weak_ptr<HybridRiveFontConfigSpec>
+  using std__weak_ptr_HybridRiveFontConfigSpec_ = std::weak_ptr<HybridRiveFontConfigSpec>;
+  inline std__weak_ptr_HybridRiveFontConfigSpec_ weakify_std__shared_ptr_HybridRiveFontConfigSpec_(const std::shared_ptr<HybridRiveFontConfigSpec>& strong) noexcept { return strong; }
+  
+  // pragma MARK: Result<std::shared_ptr<Promise<std::shared_ptr<HybridFallbackFontSpec>>>>
+  using Result_std__shared_ptr_Promise_std__shared_ptr_HybridFallbackFontSpec____ = Result<std::shared_ptr<Promise<std::shared_ptr<HybridFallbackFontSpec>>>>;
+  inline Result_std__shared_ptr_Promise_std__shared_ptr_HybridFallbackFontSpec____ create_Result_std__shared_ptr_Promise_std__shared_ptr_HybridFallbackFontSpec____(const std::shared_ptr<Promise<std::shared_ptr<HybridFallbackFontSpec>>>& value) noexcept {
+    return Result<std::shared_ptr<Promise<std::shared_ptr<HybridFallbackFontSpec>>>>::withValue(value);
+  }
+  inline Result_std__shared_ptr_Promise_std__shared_ptr_HybridFallbackFontSpec____ create_Result_std__shared_ptr_Promise_std__shared_ptr_HybridFallbackFontSpec____(const std::exception_ptr& error) noexcept {
+    return Result<std::shared_ptr<Promise<std::shared_ptr<HybridFallbackFontSpec>>>>::withError(error);
+  }
+  
+  // pragma MARK: Result<std::shared_ptr<HybridFallbackFontSpec>>
+  using Result_std__shared_ptr_HybridFallbackFontSpec__ = Result<std::shared_ptr<HybridFallbackFontSpec>>;
+  inline Result_std__shared_ptr_HybridFallbackFontSpec__ create_Result_std__shared_ptr_HybridFallbackFontSpec__(const std::shared_ptr<HybridFallbackFontSpec>& value) noexcept {
+    return Result<std::shared_ptr<HybridFallbackFontSpec>>::withValue(value);
+  }
+  inline Result_std__shared_ptr_HybridFallbackFontSpec__ create_Result_std__shared_ptr_HybridFallbackFontSpec__(const std::exception_ptr& error) noexcept {
+    return Result<std::shared_ptr<HybridFallbackFontSpec>>::withError(error);
+  }
+  
+  // pragma MARK: Result<std::shared_ptr<Promise<void>>>
+  using Result_std__shared_ptr_Promise_void___ = Result<std::shared_ptr<Promise<void>>>;
+  inline Result_std__shared_ptr_Promise_void___ create_Result_std__shared_ptr_Promise_void___(const std::shared_ptr<Promise<void>>& value) noexcept {
+    return Result<std::shared_ptr<Promise<void>>>::withValue(value);
+  }
+  inline Result_std__shared_ptr_Promise_void___ create_Result_std__shared_ptr_Promise_void___(const std::exception_ptr& error) noexcept {
+    return Result<std::shared_ptr<Promise<void>>>::withError(error);
+  }
+  
   // pragma MARK: std::shared_ptr<Promise<std::shared_ptr<HybridRiveImageSpec>>>
   /**
    * Specialized version of `std::shared_ptr<Promise<std::shared_ptr<HybridRiveImageSpec>>>`.
@@ -535,40 +649,6 @@ namespace margelo::nitro::rive::bridge::swift {
     return Result<std::shared_ptr<Promise<std::shared_ptr<HybridRiveImageSpec>>>>::withError(error);
   }
   
-  // pragma MARK: std::shared_ptr<Promise<void>>
-  /**
-   * Specialized version of `std::shared_ptr<Promise<void>>`.
-   */
-  using std__shared_ptr_Promise_void__ = std::shared_ptr<Promise<void>>;
-  inline std::shared_ptr<Promise<void>> create_std__shared_ptr_Promise_void__() noexcept {
-    return Promise<void>::create();
-  }
-  inline PromiseHolder<void> wrap_std__shared_ptr_Promise_void__(std::shared_ptr<Promise<void>> promise) noexcept {
-    return PromiseHolder<void>(std::move(promise));
-  }
-  
-  // pragma MARK: std::function<void()>
-  /**
-   * Specialized version of `std::function<void()>`.
-   */
-  using Func_void = std::function<void()>;
-  /**
-   * Wrapper class for a `std::function<void()>`, this can be used from Swift.
-   */
-  class Func_void_Wrapper final {
-  public:
-    explicit Func_void_Wrapper(std::function<void()>&& func): _function(std::make_unique<std::function<void()>>(std::move(func))) {}
-    inline void call() const noexcept {
-      _function->operator()();
-    }
-  private:
-    std::unique_ptr<std::function<void()>> _function;
-  } SWIFT_NONCOPYABLE;
-  Func_void create_Func_void(void* NON_NULL swiftClosureWrapper) noexcept;
-  inline Func_void_Wrapper wrap_Func_void(Func_void value) noexcept {
-    return Func_void_Wrapper(std::move(value));
-  }
-  
   // pragma MARK: std::shared_ptr<HybridRiveRuntimeSpec>
   /**
    * Specialized version of `std::shared_ptr<HybridRiveRuntimeSpec>`.
@@ -580,15 +660,6 @@ namespace margelo::nitro::rive::bridge::swift {
   // pragma MARK: std::weak_ptr<HybridRiveRuntimeSpec>
   using std__weak_ptr_HybridRiveRuntimeSpec_ = std::weak_ptr<HybridRiveRuntimeSpec>;
   inline std__weak_ptr_HybridRiveRuntimeSpec_ weakify_std__shared_ptr_HybridRiveRuntimeSpec_(const std::shared_ptr<HybridRiveRuntimeSpec>& strong) noexcept { return strong; }
-  
-  // pragma MARK: Result<std::shared_ptr<Promise<void>>>
-  using Result_std__shared_ptr_Promise_void___ = Result<std::shared_ptr<Promise<void>>>;
-  inline Result_std__shared_ptr_Promise_void___ create_Result_std__shared_ptr_Promise_void___(const std::shared_ptr<Promise<void>>& value) noexcept {
-    return Result<std::shared_ptr<Promise<void>>>::withValue(value);
-  }
-  inline Result_std__shared_ptr_Promise_void___ create_Result_std__shared_ptr_Promise_void___(const std::exception_ptr& error) noexcept {
-    return Result<std::shared_ptr<Promise<void>>>::withError(error);
-  }
   
   // pragma MARK: std::optional<bool>
   /**
@@ -893,6 +964,15 @@ namespace margelo::nitro::rive::bridge::swift {
   }
   inline Result_std__optional_std__shared_ptr_HybridViewModelInstanceSpec___ create_Result_std__optional_std__shared_ptr_HybridViewModelInstanceSpec___(const std::exception_ptr& error) noexcept {
     return Result<std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>>::withError(error);
+  }
+  
+  // pragma MARK: Result<double>
+  using Result_double_ = Result<double>;
+  inline Result_double_ create_Result_double_(double value) noexcept {
+    return Result<double>::withValue(std::move(value));
+  }
+  inline Result_double_ create_Result_double_(const std::exception_ptr& error) noexcept {
+    return Result<double>::withError(error);
   }
   
   // pragma MARK: Result<bool>
