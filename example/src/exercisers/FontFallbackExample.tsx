@@ -113,11 +113,11 @@ export default function FontFallbackExample() {
 
   const handleMount = async () => {
     try {
-      const entries: (FallbackFont | 'default')[] = selectedFonts
+      const entries: FallbackFont[] = selectedFonts
         .map((key) => loadedFonts.get(key))
         .filter((f): f is FallbackFont => f != null);
       if (systemFallback) {
-        entries.push('default');
+        entries.push(RiveFonts.systemFallback());
       }
       await RiveFonts.setFallbackFonts({ default: entries });
     } catch (err) {
@@ -207,7 +207,7 @@ export default function FontFallbackExample() {
 
         <FontToggle
           label="System Fallback"
-          sublabel="Platform default font — opt-in via 'default' sentinel"
+          sublabel="Platform default font — opt-in via RiveFonts.systemFallback()"
           order={systemFallback ? selectedFonts.length + 1 : undefined}
           disabled={mounted}
           loading={false}

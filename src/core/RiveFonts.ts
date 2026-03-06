@@ -25,9 +25,7 @@ export type FontSource =
 
 export type FontWeight = number | 'default';
 
-export type FallbackFontEntry = FallbackFont | 'default';
-
-export type FallbackFontMap = Partial<Record<FontWeight, FallbackFontEntry[]>>;
+export type FallbackFontMap = Partial<Record<FontWeight, FallbackFont[]>>;
 
 const DEFAULT_WEIGHT = 0;
 
@@ -69,16 +67,15 @@ export namespace RiveFonts {
     throw new Error(`Invalid font source: ${String(source)}`);
   }
 
+  export function systemFallback(): FallbackFont {
+    return RiveFontConfigInternal.getSystemDefaultFont();
+  }
+
   export async function setFallbackFonts(
     fontsByWeight: FallbackFontMap
   ): Promise<void> {
-    for (const [key, entries] of Object.entries(fontsByWeight)) {
-      if (entries) {
-        const fonts = entries.map((entry) =>
-          entry === 'default'
-            ? RiveFontConfigInternal.getSystemDefaultFont()
-            : entry
-        );
+    for (const [key, fonts] of Object.entries(fontsByWeight)) {
+      if (fonts) {
         RiveFontConfigInternal.setFontsForWeight(resolveWeight(key), fonts);
       }
     }

@@ -43,7 +43,6 @@ export {
   RiveFonts,
   type FontSource,
   type FontWeight,
-  type FallbackFontEntry,
   type FallbackFontMap,
 } from './core/RiveFonts';
 export type { FallbackFont } from './specs/RiveFontConfig.nitro';
