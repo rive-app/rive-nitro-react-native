@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.6](https://github.com/rive-app/rive-nitro-react-native/compare/v0.2.5...v0.2.6) (2026-03-05)
+
+
+### Bug Fixes
+
+* restrict nitro to &lt;0.35, as we are not compatible with 0.35 ([#170](https://github.com/rive-app/rive-nitro-react-native/issues/170)) ([b304000](https://github.com/rive-app/rive-nitro-react-native/commit/b304000e542d524ce112fbe07e8dc575eb69fa70))
+
 ## [0.2.5](https://github.com/rive-app/rive-nitro-react-native/compare/v0.2.4...v0.2.5) (2026-03-02)
 
 
