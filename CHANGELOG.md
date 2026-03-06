@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.7](https://github.com/rive-app/rive-nitro-react-native/compare/v0.2.6...v0.2.7) (2026-03-06)
+
+
+### Features
+
+* setting fallback fonts ([#152](https://github.com/rive-app/rive-nitro-react-native/issues/152)) ([e2c64ea](https://github.com/rive-app/rive-nitro-react-native/commit/e2c64eaf513085e52e543908a05c6598b2316d81))
+
 ## [0.2.6](https://github.com/rive-app/rive-nitro-react-native/compare/v0.2.5...v0.2.6) (2026-03-05)
 
 
