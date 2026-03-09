@@ -49,7 +49,7 @@ Pod::Spec.new do |s|
 
   spm_dependency(s,
     url: 'https://github.com/rive-app/rive-ios.git',
-    requirement: { kind: 'upToNextMajorVersion', minimumVersion: rive_ios_version },
+    requirement: { kind: 'exactVersion', version: rive_ios_version },
     products: ['RiveRuntime']
   )
 
