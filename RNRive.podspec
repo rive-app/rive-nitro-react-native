@@ -47,7 +47,11 @@ Pod::Spec.new do |s|
   load 'nitrogen/generated/ios/RNRive+autolinking.rb'
   add_nitrogen_files(s)
 
-  s.dependency "RiveRuntime", rive_ios_version
+  spm_dependency(s,
+    url: 'https://github.com/rive-app/rive-ios.git',
+    requirement: { kind: 'upToNextMajorVersion', minimumVersion: rive_ios_version },
+    products: ['RiveRuntime']
+  )
 
  install_modules_dependencies(s)
 end
