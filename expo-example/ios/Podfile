@@ -56,26 +56,5 @@ target 'expoexample' do
       :mac_catalyst_enabled => false,
       :ccache_enabled => ccache_enabled?(podfile_properties),
     )
-
-    # SPM-resolved dynamic frameworks aren't embedded by CocoaPods automatically.
-    # Append RiveRuntime to each target's embed frameworks script phase.
-    installer.aggregate_targets.each do |target|
-      embed_script = File.join(
-        installer.sandbox.root,
-        'Target Support Files',
-        target.name,
-        "#{target.name}-frameworks.sh"
-      )
-      next unless File.exist?(embed_script)
-      content = File.read(embed_script)
-      next if content.include?('RiveRuntime')
-      content.sub!(
-        /if \[ "\$\{COCOAPODS_PARALLEL_CODE_SIGN\}" == "true" \]; then\s+wait\s+fi/,
-        "install_framework \"${PODS_XCFRAMEWORKS_BUILD_DIR}/RiveRuntime/RiveRuntime.framework\"\n" \
-        "if [ \"${COCOAPODS_PARALLEL_CODE_SIGN}\" == \"true\" ]; then\n  wait\nfi"
-      )
-      File.write(embed_script, content)
-      Pod::UI.puts "[RNRive] Added RiveRuntime.framework to embed script for #{target.name}"
-    end
   end
 end

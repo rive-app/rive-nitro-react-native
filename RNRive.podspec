@@ -30,6 +30,37 @@ end
 
 Pod::UI.puts "@rive-app/react-native: Rive iOS SDK #{rive_ios_version}"
 
+# SPM-resolved dynamic frameworks aren't embedded by CocoaPods automatically.
+# Hook into post_install to append RiveRuntime to every target's embed script
+# so consumers don't need to add anything to their own Podfiles.
+if defined?(Pod::Installer)
+  module RiveSPMEmbedFix
+    def run_podfile_post_install_hooks
+      super
+      aggregate_targets.each do |target|
+        embed_script = File.join(
+          sandbox.root,
+          'Target Support Files',
+          target.name,
+          "#{target.name}-frameworks.sh"
+        )
+        next unless File.exist?(embed_script)
+        content = File.read(embed_script)
+        next if content.include?('RiveRuntime')
+        content.sub!(
+          /if \[ "\$\{COCOAPODS_PARALLEL_CODE_SIGN\}" == "true" \]; then\s+wait\s+fi/,
+          "install_framework \"${PODS_XCFRAMEWORKS_BUILD_DIR}/RiveRuntime/RiveRuntime.framework\"\n" \
+          "if [ \"${COCOAPODS_PARALLEL_CODE_SIGN}\" == \"true\" ]; then\n  wait\nfi"
+        )
+        File.write(embed_script, content)
+        Pod::UI.puts "[RNRive] Added RiveRuntime.framework to embed script for #{target.name}"
+      end
+    end
+  end
+
+  Pod::Installer.prepend(RiveSPMEmbedFix)
+end
+
 Pod::Spec.new do |s|
   s.name         = "RNRive"
   s.version      = package["version"]
