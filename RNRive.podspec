@@ -24,16 +24,49 @@ if !rive_ios_version && package['runtimeVersions'] && package['runtimeVersions']
   rive_ios_version = package['runtimeVersions']['ios']
 end
 
-use_rive_spm = ENV['USE_RIVE_SPM'] == '1' || (defined?($UseRiveSPM) && $UseRiveSPM)
-
-if !use_rive_spm && !rive_ios_version
+if !rive_ios_version
   raise "Internal Error: Failed to determine Rive iOS SDK version. Please ensure package.json contains 'runtimeVersions.ios'"
 end
 
-if use_rive_spm
-  Pod::UI.puts "@rive-app/react-native: Using RiveRuntime via Swift Package Manager"
+# Set to '1' (or set $UseRiveExperimentalRuntime = true in Podfile) to enable the
+# experimental Rive runtime backend. When disabled, the legacy backend is used.
+use_rive_experimental_runtime = ENV['USE_RIVE_EXPERIMENTAL_RUNTIME'] == '1' || (defined?($UseRiveExperimentalRuntime) && $UseRiveExperimentalRuntime)
+
+if use_rive_experimental_runtime
+  Pod::UI.puts "@rive-app/react-native: Using experimental Rive runtime backend"
 else
-  Pod::UI.puts "@rive-app/react-native: Rive iOS SDK #{rive_ios_version}"
+  Pod::UI.puts "@rive-app/react-native: Using legacy Rive runtime backend (iOS SDK #{rive_ios_version})"
+end
+
+# SPM-resolved dynamic frameworks aren't embedded by CocoaPods automatically.
+# Hook into post_install to append RiveRuntime to every target's embed script
+# so consumers don't need to add anything to their own Podfiles.
+if defined?(Pod::Installer)
+  module RiveSPMEmbedFix
+    def run_podfile_post_install_hooks
+      super
+      aggregate_targets.each do |target|
+        embed_script = File.join(
+          sandbox.root,
+          'Target Support Files',
+          target.name,
+          "#{target.name}-frameworks.sh"
+        )
+        next unless File.exist?(embed_script)
+        content = File.read(embed_script)
+        next if content.include?('RiveRuntime')
+        content.sub!(
+          /if \[ "\$\{COCOAPODS_PARALLEL_CODE_SIGN\}" == "true" \]; then\s+wait\s+fi/,
+          "install_framework \"${PODS_XCFRAMEWORKS_BUILD_DIR}/RiveRuntime/RiveRuntime.framework\"\n" \
+          "if [ \"${COCOAPODS_PARALLEL_CODE_SIGN}\" == \"true\" ]; then\n  wait\nfi"
+        )
+        File.write(embed_script, content)
+        Pod::UI.puts "[RNRive] Added RiveRuntime.framework to embed script for #{target.name}"
+      end
+    end
+  end
+
+  Pod::Installer.prepend(RiveSPMEmbedFix)
 end
 
 # Xcode 26 workaround: strip .Swift Clang submodule from RiveRuntime's prebuilt
@@ -71,7 +104,7 @@ Pod::Spec.new do |s|
 
   s.source_files = "ios/**/*.{h,m,mm,swift}"
 
-  if use_rive_spm
+  if use_rive_experimental_runtime
     s.exclude_files = ["ios/legacy/**"]
   else
     s.exclude_files = ["ios/new/**"]
@@ -81,19 +114,15 @@ Pod::Spec.new do |s|
   load 'nitrogen/generated/ios/RNRive+autolinking.rb'
   add_nitrogen_files(s)
 
-  if use_rive_spm
-    spm_dependency(s,
-      url: 'https://github.com/rive-app/rive-ios.git',
-      requirement: {kind: 'upToNextMajorVersion', minimumVersion: '6.15.0'},
-      products: ['RiveRuntime']
-    )
-  else
-    s.dependency "RiveRuntime", rive_ios_version
-  end
+  spm_dependency(s,
+    url: 'https://github.com/rive-app/rive-ios.git',
+    requirement: { kind: 'exactVersion', version: rive_ios_version },
+    products: ['RiveRuntime']
+  )
 
  install_modules_dependencies(s)
 
-  if use_rive_spm
+  if use_rive_experimental_runtime
     s.xcconfig = { 'OTHER_SWIFT_FLAGS' => '$(inherited) -DRIVE_EXPERIMENTAL_API' }
   end
 end
