@@ -1,7 +1,5 @@
 ENV['RCT_NEW_ARCH_ENABLED'] = '1'
 
-$UseRiveSPM = ENV['USE_RIVE_SPM'] == '1'
-
 # Resolve react_native_pods.rb with node to allow for hoisting
 require Pod::Executable.execute_command('node', ['-p',
   'require.resolve(
@@ -36,28 +34,5 @@ target 'RiveExample' do
       # :ccache_enabled => true
     )
 
-    # SPM-resolved dynamic frameworks aren't embedded by CocoaPods automatically.
-    # Append RiveRuntime to the "[CP] Embed Pods Frameworks" script phase.
-    if $UseRiveSPM
-      embed_script = File.join(
-        installer.sandbox.root,
-        'Target Support Files',
-        'Pods-RiveExample',
-        'Pods-RiveExample-frameworks.sh'
-      )
-      if File.exist?(embed_script)
-        content = File.read(embed_script)
-        rive_embed = 'install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/RiveRuntime/RiveRuntime.framework"'
-        unless content.include?('RiveRuntime')
-          content.sub!(
-            /if \[ "\$\{COCOAPODS_PARALLEL_CODE_SIGN\}" == "true" \]; then\s+wait\s+fi/,
-            "install_framework \"${PODS_XCFRAMEWORKS_BUILD_DIR}/RiveRuntime/RiveRuntime.framework\"\n" \
-            "if [ \"${COCOAPODS_PARALLEL_CODE_SIGN}\" == \"true\" ]; then\n  wait\nfi"
-          )
-          File.write(embed_script, content)
-          Pod::UI.puts "[RNRive] Added RiveRuntime.framework to embed script"
-        end
-      end
-    end
   end
 end

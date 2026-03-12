@@ -36,7 +36,6 @@ async function loadDatabinding() {
 type VMICtx = {
   instance: ViewModelInstance | null;
   instanceName: string | undefined;
-  id: string | undefined;
   renderCount: number;
 };
 
@@ -44,7 +43,6 @@ function createCtx(): VMICtx {
   return {
     instance: null,
     instanceName: undefined,
-    id: undefined,
     renderCount: 0,
   };
 }
@@ -69,7 +67,6 @@ function VMIFromViewModel({
   useEffect(() => {
     ctx.instance = instance;
     ctx.instanceName = instance?.instanceName;
-    ctx.id = instance?.stringProperty('_id')?.value;
     ctx.renderCount++;
   }, [ctx, instance]);
   return (
@@ -179,8 +176,8 @@ describe('useViewModelInstance from ViewModel source', () => {
     const ctx = createCtx();
     await render(<VMIFromViewModel viewModel={vm} ctx={ctx} />);
     await waitFor(() => expect(ctx.instance).not.toBeNull(), { timeout: 5000 });
-    expectDefined(ctx.id);
-    expect(ctx.id).toBe('vm1.vmi.id');
+    expectDefined(ctx.instance);
+    expect(ctx.instance.stringProperty('_id')?.value).toBe('vm1.vmi.id');
     cleanup();
   });
 
@@ -193,7 +190,8 @@ describe('useViewModelInstance from ViewModel source', () => {
     await render(<VMIFromViewModel viewModel={vm} name="vmi2" ctx={ctx} />);
     await waitFor(() => expect(ctx.instance).not.toBeNull(), { timeout: 5000 });
     expect(ctx.instanceName).toBe('vmi2');
-    expect(ctx.id).toBe('vm1.vmi2.id');
+    expectDefined(ctx.instance);
+    expect(ctx.instance.stringProperty('_id')?.value).toBe('vm1.vmi2.id');
     cleanup();
   });
 
