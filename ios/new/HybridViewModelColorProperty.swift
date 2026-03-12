@@ -36,6 +36,10 @@ class HybridViewModelColorProperty: HybridViewModelColorPropertySpec {
     let id = UUID()
     let task = Task { @MainActor [weak self] in
       guard let self else { return }
+      let current = try? await self.instance.value(of: self.prop)
+      if let current, !Task.isCancelled {
+        onChanged(Double(current.argbValue))
+      }
       while !Task.isCancelled {
         let stream = self.instance.valueStream(of: self.prop)
         do {

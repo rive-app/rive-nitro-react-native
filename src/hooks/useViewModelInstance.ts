@@ -144,9 +144,16 @@ function createInstance(
         return { instance: null, needsDispose: false };
       }
     }
-    const vmi = instanceName
-      ? viewModel.createInstanceByName(instanceName)
-      : viewModel.createDefaultInstance();
+    let vmi: ViewModelInstance | undefined;
+    if (instanceName) {
+      try {
+        vmi = viewModel.createInstanceByName(instanceName);
+      } catch {
+        // experimental backend throws for non-existent names
+      }
+    } else {
+      vmi = viewModel.createDefaultInstance();
+    }
     if (!vmi && instanceName) {
       return {
         instance: null,
@@ -160,7 +167,11 @@ function createInstance(
   // ViewModel source
   let vmi: ViewModelInstance | undefined;
   if (instanceName) {
-    vmi = source.createInstanceByName(instanceName);
+    try {
+      vmi = source.createInstanceByName(instanceName);
+    } catch {
+      // experimental backend throws for non-existent names
+    }
     if (!vmi) {
       return {
         instance: null,
