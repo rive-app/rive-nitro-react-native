@@ -7,7 +7,7 @@ import {
   cleanup,
 } from 'react-native-harness';
 import { useEffect } from 'react';
-import { Platform, View } from 'react-native';
+import { View } from 'react-native';
 import {
   RiveView,
   RiveFileFactory,
