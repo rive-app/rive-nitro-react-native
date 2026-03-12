@@ -35,6 +35,11 @@ class HybridViewModelNumberProperty: HybridViewModelNumberPropertySpec {
     let id = UUID()
     let task = Task { @MainActor [weak self] in
       guard let self else { return }
+      // Emit current value immediately so the first subscription receives it
+      let current = try? await self.instance.value(of: self.prop)
+      if let current, !Task.isCancelled {
+        onChanged(Double(current))
+      }
       while !Task.isCancelled {
         let stream = self.instance.valueStream(of: self.prop)
         do {

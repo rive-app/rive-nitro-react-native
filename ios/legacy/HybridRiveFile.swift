@@ -178,7 +178,7 @@ class HybridRiveFile: HybridRiveFileSpec, RiveViewSource {
       throw NSError(
         domain: "RiveError",
         code: 1,
-        userInfo: [NSLocalizedDescriptionKey: "getEnums requires the experimental iOS backend. Use USE_RIVE_SPM=1 with pod install."]
+        userInfo: [NSLocalizedDescriptionKey: "getEnums requires the experimental iOS backend."]
       )
     }
   }
