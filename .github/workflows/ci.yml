@@ -500,12 +500,12 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-experimental-cocoapods-
 
-      - name: Install cocoapods (experimental SPM)
+      - name: Install cocoapods
         if: steps.cocoapods-cache.outputs.cache-hit != 'true'
         run: |
           cd example
           bundle install
-          USE_RIVE_SPM=1 bundle exec pod install --project-directory=ios
+          USE_RIVE_NEW_API=1 bundle exec pod install --project-directory=ios
 
       - name: Save cocoapods cache
         if: steps.cocoapods-cache.outputs.cache-hit != 'true'
