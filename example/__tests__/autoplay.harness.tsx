@@ -17,8 +17,7 @@ import {
 } from '@rive-app/react-native';
 import type { ViewModelInstance } from '@rive-app/react-native';
 
-const isExperimentalIOS =
-  Platform.OS === 'ios' && RiveFileFactory.getBackend() === 'experimental';
+const isExperimental = RiveFileFactory.getBackend() === 'experimental';
 
 // Bouncing ball .riv with a "ypos" ViewModel number property that changes during playback
 // Source: https://rive.app/community/files/25997-48571-demo-for-tracking-rive-property-in-react-native/
@@ -187,8 +186,8 @@ describe('autoPlay prop (issue #138)', () => {
   });
 
   it('autoPlay={false} does not change ypos property', async () => {
-    if (isExperimentalIOS) {
-      return; // experimental SDK has no pause API — RiveUIView always advances
+    if (isExperimental) {
+      return; // experimental SDK has no pause API — always advances
     }
     const { file, instance } = await loadBouncingBall();
 
