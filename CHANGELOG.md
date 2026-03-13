@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.8](https://github.com/rive-app/rive-nitro-react-native/compare/v0.2.7...v0.2.8) (2026-03-13)
+
+
+### Bug Fixes
+
+* Xcode 26 compatibility — strip .Swift submodule from RiveRuntime modulemaps ([#174](https://github.com/rive-app/rive-nitro-react-native/issues/174)) ([e82c4be](https://github.com/rive-app/rive-nitro-react-native/commit/e82c4bee46f50db8f440911f36417c9fae46d463))
+
 ## [0.2.7](https://github.com/rive-app/rive-nitro-react-native/compare/v0.2.6...v0.2.7) (2026-03-06)
 
 
