@@ -5,7 +5,6 @@
 /// Copyright © Marc Rousavy @ Margelo
 ///
 
-import Foundation
 import NitroModules
 
 /**
@@ -42,7 +41,14 @@ public extension ArtboardBy {
   
   @inline(__always)
   var index: Double? {
-    return self.__index.value
+    return { () -> Double? in
+      if bridge.has_value_std__optional_double_(self.__index) {
+        let __unwrapped = bridge.get_std__optional_double_(self.__index)
+        return __unwrapped
+      } else {
+        return nil
+      }
+    }()
   }
   
   @inline(__always)

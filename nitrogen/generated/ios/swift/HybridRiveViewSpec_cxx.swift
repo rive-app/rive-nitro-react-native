@@ -5,7 +5,6 @@
 /// Copyright © Marc Rousavy @ Margelo
 ///
 
-import Foundation
 import NitroModules
 
 /**
@@ -259,7 +258,14 @@ open class HybridRiveViewSpec_cxx {
     }
     @inline(__always)
     set {
-      self.__implementation.layoutScaleFactor = newValue.value
+      self.__implementation.layoutScaleFactor = { () -> Double? in
+        if bridge.has_value_std__optional_double_(newValue) {
+          let __unwrapped = bridge.get_std__optional_double_(newValue)
+          return __unwrapped
+        } else {
+          return nil
+        }
+      }()
     }
   }
   
@@ -630,7 +636,7 @@ open class HybridRiveViewSpec_cxx {
   }
   
   public final func maybePrepareForRecycle() {
-    guard let recyclable = __implementation as? RecyclableView else { return }
+    guard let recyclable = __implementation as? any RecyclableView else { return }
     recyclable.prepareForRecycle()
   }
 }

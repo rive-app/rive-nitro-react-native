@@ -2,7 +2,10 @@
 const { getDefaultConfig } = require('expo/metro-config');
 const { getConfig } = require('react-native-builder-bob/metro-config');
 const path = require('path');
-const { withSingleReactNative } = require('../example/metro.helpers');
+const {
+  withSingleReactNative,
+  withBlockedSiblingDeps,
+} = require('../example/metro.helpers');
 
 const root = path.resolve(__dirname, '..');
 
@@ -60,4 +63,8 @@ const configWithAlias = {
   },
 };
 
-module.exports = withSingleReactNative(configWithAlias, __dirname);
+const exampleDir = path.resolve(root, 'example');
+module.exports = withSingleReactNative(
+  withBlockedSiblingDeps(configWithAlias, __dirname, exampleDir),
+  __dirname
+);

@@ -24,7 +24,7 @@ enum DataSource {
     return .bundle(resource: name, extension: ext.isEmpty ? nil : ext)
   }
 
-  static func bytes(from buffer: ArrayBufferHolder) -> DataSource {
+  static func bytes(from buffer: ArrayBuffer) -> DataSource {
     return .bytes(data: buffer.toData(copyIfNeeded: false))
   }
 

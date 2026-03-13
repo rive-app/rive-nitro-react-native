@@ -19,7 +19,7 @@ import com.margelo.nitro.rive.*
 /**
  * Represents the React Native `ViewManager` for the "RiveView" Nitro HybridView.
  */
-open class HybridRiveViewManager: SimpleViewManager<View>() {
+public open class HybridRiveViewManager: SimpleViewManager<View>() {
   init {
     if (RecyclableView::class.java.isAssignableFrom(HybridRiveView::class.java)) {
       // Enable view recycling

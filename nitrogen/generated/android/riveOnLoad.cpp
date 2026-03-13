@@ -48,91 +48,131 @@
 namespace margelo::nitro::rive {
 
 int initialize(JavaVM* vm) {
+  return facebook::jni::initialize(vm, []() {
+    ::margelo::nitro::rive::registerAllNatives();
+  });
+}
+
+struct JHybridRiveFontConfigSpecImpl: public jni::JavaClass<JHybridRiveFontConfigSpecImpl, JHybridRiveFontConfigSpec::JavaPart> {
+  static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/rive/HybridRiveFontConfig;";
+  static std::shared_ptr<JHybridRiveFontConfigSpec> create() {
+    static auto constructorFn = javaClassStatic()->getConstructor<JHybridRiveFontConfigSpecImpl::javaobject()>();
+    jni::local_ref<JHybridRiveFontConfigSpec::JavaPart> javaPart = javaClassStatic()->newObject(constructorFn);
+    return javaPart->getJHybridRiveFontConfigSpec();
+  }
+};
+struct JHybridRiveFileFactorySpecImpl: public jni::JavaClass<JHybridRiveFileFactorySpecImpl, JHybridRiveFileFactorySpec::JavaPart> {
+  static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/rive/HybridRiveFileFactory;";
+  static std::shared_ptr<JHybridRiveFileFactorySpec> create() {
+    static auto constructorFn = javaClassStatic()->getConstructor<JHybridRiveFileFactorySpecImpl::javaobject()>();
+    jni::local_ref<JHybridRiveFileFactorySpec::JavaPart> javaPart = javaClassStatic()->newObject(constructorFn);
+    return javaPart->getJHybridRiveFileFactorySpec();
+  }
+};
+struct JHybridRiveFileSpecImpl: public jni::JavaClass<JHybridRiveFileSpecImpl, JHybridRiveFileSpec::JavaPart> {
+  static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/rive/HybridRiveFile;";
+  static std::shared_ptr<JHybridRiveFileSpec> create() {
+    static auto constructorFn = javaClassStatic()->getConstructor<JHybridRiveFileSpecImpl::javaobject()>();
+    jni::local_ref<JHybridRiveFileSpec::JavaPart> javaPart = javaClassStatic()->newObject(constructorFn);
+    return javaPart->getJHybridRiveFileSpec();
+  }
+};
+struct JHybridRiveViewSpecImpl: public jni::JavaClass<JHybridRiveViewSpecImpl, JHybridRiveViewSpec::JavaPart> {
+  static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/rive/HybridRiveView;";
+  static std::shared_ptr<JHybridRiveViewSpec> create() {
+    static auto constructorFn = javaClassStatic()->getConstructor<JHybridRiveViewSpecImpl::javaobject()>();
+    jni::local_ref<JHybridRiveViewSpec::JavaPart> javaPart = javaClassStatic()->newObject(constructorFn);
+    return javaPart->getJHybridRiveViewSpec();
+  }
+};
+struct JHybridRiveImageFactorySpecImpl: public jni::JavaClass<JHybridRiveImageFactorySpecImpl, JHybridRiveImageFactorySpec::JavaPart> {
+  static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/rive/HybridRiveImageFactory;";
+  static std::shared_ptr<JHybridRiveImageFactorySpec> create() {
+    static auto constructorFn = javaClassStatic()->getConstructor<JHybridRiveImageFactorySpecImpl::javaobject()>();
+    jni::local_ref<JHybridRiveImageFactorySpec::JavaPart> javaPart = javaClassStatic()->newObject(constructorFn);
+    return javaPart->getJHybridRiveImageFactorySpec();
+  }
+};
+struct JHybridRiveRuntimeSpecImpl: public jni::JavaClass<JHybridRiveRuntimeSpecImpl, JHybridRiveRuntimeSpec::JavaPart> {
+  static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/rive/HybridRiveRuntime;";
+  static std::shared_ptr<JHybridRiveRuntimeSpec> create() {
+    static auto constructorFn = javaClassStatic()->getConstructor<JHybridRiveRuntimeSpecImpl::javaobject()>();
+    jni::local_ref<JHybridRiveRuntimeSpec::JavaPart> javaPart = javaClassStatic()->newObject(constructorFn);
+    return javaPart->getJHybridRiveRuntimeSpec();
+  }
+};
+
+void registerAllNatives() {
   using namespace margelo::nitro;
   using namespace margelo::nitro::rive;
-  using namespace facebook;
 
-  return facebook::jni::initialize(vm, [] {
-    // Register native JNI methods
-    margelo::nitro::rive::JHybridBindableArtboardSpec::registerNatives();
-    margelo::nitro::rive::JHybridRiveFileSpec::registerNatives();
-    margelo::nitro::rive::JHybridRiveFileFactorySpec::registerNatives();
-    margelo::nitro::rive::JHybridFallbackFontSpec::registerNatives();
-    margelo::nitro::rive::JHybridRiveFontConfigSpec::registerNatives();
-    margelo::nitro::rive::JHybridRiveImageSpec::registerNatives();
-    margelo::nitro::rive::JHybridRiveImageFactorySpec::registerNatives();
-    margelo::nitro::rive::JHybridRiveRuntimeSpec::registerNatives();
-    margelo::nitro::rive::JHybridRiveViewSpec::registerNatives();
-    margelo::nitro::rive::JFunc_void_RiveError_cxx::registerNatives();
-    margelo::nitro::rive::JFunc_void_UnifiedRiveEvent_cxx::registerNatives();
-    margelo::nitro::rive::views::JHybridRiveViewStateUpdater::registerNatives();
-    margelo::nitro::rive::JHybridViewModelSpec::registerNatives();
-    margelo::nitro::rive::JHybridViewModelInstanceSpec::registerNatives();
-    margelo::nitro::rive::JHybridViewModelPropertySpec::registerNatives();
-    margelo::nitro::rive::JHybridViewModelNumberPropertySpec::registerNatives();
-    margelo::nitro::rive::JFunc_void_cxx::registerNatives();
-    margelo::nitro::rive::JFunc_void_double_cxx::registerNatives();
-    margelo::nitro::rive::JHybridViewModelStringPropertySpec::registerNatives();
-    margelo::nitro::rive::JFunc_void_std__string_cxx::registerNatives();
-    margelo::nitro::rive::JHybridViewModelBooleanPropertySpec::registerNatives();
-    margelo::nitro::rive::JFunc_void_bool_cxx::registerNatives();
-    margelo::nitro::rive::JHybridViewModelColorPropertySpec::registerNatives();
-    margelo::nitro::rive::JHybridViewModelEnumPropertySpec::registerNatives();
-    margelo::nitro::rive::JHybridViewModelTriggerPropertySpec::registerNatives();
-    margelo::nitro::rive::JHybridViewModelImagePropertySpec::registerNatives();
-    margelo::nitro::rive::JHybridViewModelListPropertySpec::registerNatives();
-    margelo::nitro::rive::JHybridViewModelArtboardPropertySpec::registerNatives();
+  // Register native JNI methods
+  margelo::nitro::rive::JHybridBindableArtboardSpec::CxxPart::registerNatives();
+  margelo::nitro::rive::JHybridRiveFileSpec::CxxPart::registerNatives();
+  margelo::nitro::rive::JHybridRiveFileFactorySpec::CxxPart::registerNatives();
+  margelo::nitro::rive::JHybridFallbackFontSpec::CxxPart::registerNatives();
+  margelo::nitro::rive::JHybridRiveFontConfigSpec::CxxPart::registerNatives();
+  margelo::nitro::rive::JHybridRiveImageSpec::CxxPart::registerNatives();
+  margelo::nitro::rive::JHybridRiveImageFactorySpec::CxxPart::registerNatives();
+  margelo::nitro::rive::JHybridRiveRuntimeSpec::CxxPart::registerNatives();
+  margelo::nitro::rive::JHybridRiveViewSpec::CxxPart::registerNatives();
+  margelo::nitro::rive::JFunc_void_RiveError_cxx::registerNatives();
+  margelo::nitro::rive::JFunc_void_UnifiedRiveEvent_cxx::registerNatives();
+  margelo::nitro::rive::views::JHybridRiveViewStateUpdater::registerNatives();
+  margelo::nitro::rive::JHybridViewModelSpec::CxxPart::registerNatives();
+  margelo::nitro::rive::JHybridViewModelInstanceSpec::CxxPart::registerNatives();
+  margelo::nitro::rive::JHybridViewModelPropertySpec::CxxPart::registerNatives();
+  margelo::nitro::rive::JHybridViewModelNumberPropertySpec::CxxPart::registerNatives();
+  margelo::nitro::rive::JFunc_void_cxx::registerNatives();
+  margelo::nitro::rive::JFunc_void_double_cxx::registerNatives();
+  margelo::nitro::rive::JHybridViewModelStringPropertySpec::CxxPart::registerNatives();
+  margelo::nitro::rive::JFunc_void_std__string_cxx::registerNatives();
+  margelo::nitro::rive::JHybridViewModelBooleanPropertySpec::CxxPart::registerNatives();
+  margelo::nitro::rive::JFunc_void_bool_cxx::registerNatives();
+  margelo::nitro::rive::JHybridViewModelColorPropertySpec::CxxPart::registerNatives();
+  margelo::nitro::rive::JHybridViewModelEnumPropertySpec::CxxPart::registerNatives();
+  margelo::nitro::rive::JHybridViewModelTriggerPropertySpec::CxxPart::registerNatives();
+  margelo::nitro::rive::JHybridViewModelImagePropertySpec::CxxPart::registerNatives();
+  margelo::nitro::rive::JHybridViewModelListPropertySpec::CxxPart::registerNatives();
+  margelo::nitro::rive::JHybridViewModelArtboardPropertySpec::CxxPart::registerNatives();
 
-    // Register Nitro Hybrid Objects
-    HybridObjectRegistry::registerHybridObjectConstructor(
-      "RiveFontConfig",
-      []() -> std::shared_ptr<HybridObject> {
-        static DefaultConstructableObject<JHybridRiveFontConfigSpec::javaobject> object("com/margelo/nitro/rive/HybridRiveFontConfig");
-        auto instance = object.create();
-        return instance->cthis()->shared();
-      }
-    );
-    HybridObjectRegistry::registerHybridObjectConstructor(
-      "RiveFileFactory",
-      []() -> std::shared_ptr<HybridObject> {
-        static DefaultConstructableObject<JHybridRiveFileFactorySpec::javaobject> object("com/margelo/nitro/rive/HybridRiveFileFactory");
-        auto instance = object.create();
-        return instance->cthis()->shared();
-      }
-    );
-    HybridObjectRegistry::registerHybridObjectConstructor(
-      "RiveFile",
-      []() -> std::shared_ptr<HybridObject> {
-        static DefaultConstructableObject<JHybridRiveFileSpec::javaobject> object("com/margelo/nitro/rive/HybridRiveFile");
-        auto instance = object.create();
-        return instance->cthis()->shared();
-      }
-    );
-    HybridObjectRegistry::registerHybridObjectConstructor(
-      "RiveView",
-      []() -> std::shared_ptr<HybridObject> {
-        static DefaultConstructableObject<JHybridRiveViewSpec::javaobject> object("com/margelo/nitro/rive/HybridRiveView");
-        auto instance = object.create();
-        return instance->cthis()->shared();
-      }
-    );
-    HybridObjectRegistry::registerHybridObjectConstructor(
-      "RiveImageFactory",
-      []() -> std::shared_ptr<HybridObject> {
-        static DefaultConstructableObject<JHybridRiveImageFactorySpec::javaobject> object("com/margelo/nitro/rive/HybridRiveImageFactory");
-        auto instance = object.create();
-        return instance->cthis()->shared();
-      }
-    );
-    HybridObjectRegistry::registerHybridObjectConstructor(
-      "RiveRuntime",
-      []() -> std::shared_ptr<HybridObject> {
-        static DefaultConstructableObject<JHybridRiveRuntimeSpec::javaobject> object("com/margelo/nitro/rive/HybridRiveRuntime");
-        auto instance = object.create();
-        return instance->cthis()->shared();
-      }
-    );
-  });
+  // Register Nitro Hybrid Objects
+  HybridObjectRegistry::registerHybridObjectConstructor(
+    "RiveFontConfig",
+    []() -> std::shared_ptr<HybridObject> {
+      return JHybridRiveFontConfigSpecImpl::create();
+    }
+  );
+  HybridObjectRegistry::registerHybridObjectConstructor(
+    "RiveFileFactory",
+    []() -> std::shared_ptr<HybridObject> {
+      return JHybridRiveFileFactorySpecImpl::create();
+    }
+  );
+  HybridObjectRegistry::registerHybridObjectConstructor(
+    "RiveFile",
+    []() -> std::shared_ptr<HybridObject> {
+      return JHybridRiveFileSpecImpl::create();
+    }
+  );
+  HybridObjectRegistry::registerHybridObjectConstructor(
+    "RiveView",
+    []() -> std::shared_ptr<HybridObject> {
+      return JHybridRiveViewSpecImpl::create();
+    }
+  );
+  HybridObjectRegistry::registerHybridObjectConstructor(
+    "RiveImageFactory",
+    []() -> std::shared_ptr<HybridObject> {
+      return JHybridRiveImageFactorySpecImpl::create();
+    }
+  );
+  HybridObjectRegistry::registerHybridObjectConstructor(
+    "RiveRuntime",
+    []() -> std::shared_ptr<HybridObject> {
+      return JHybridRiveRuntimeSpecImpl::create();
+    }
+  );
 }
 
 } // namespace margelo::nitro::rive

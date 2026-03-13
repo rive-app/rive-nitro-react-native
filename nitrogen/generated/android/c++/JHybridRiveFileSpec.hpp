@@ -18,34 +18,33 @@ namespace margelo::nitro::rive {
 
   using namespace facebook;
 
-  class JHybridRiveFileSpec: public jni::HybridClass<JHybridRiveFileSpec, JHybridObject>,
-                             public virtual HybridRiveFileSpec {
+  class JHybridRiveFileSpec: public virtual HybridRiveFileSpec, public virtual JHybridObject {
   public:
-    static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/rive/HybridRiveFileSpec;";
-    static jni::local_ref<jhybriddata> initHybrid(jni::alias_ref<jhybridobject> jThis);
-    static void registerNatives();
+    struct JavaPart: public jni::JavaClass<JavaPart, JHybridObject::JavaPart> {
+      static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/rive/HybridRiveFileSpec;";
+      std::shared_ptr<JHybridRiveFileSpec> getJHybridRiveFileSpec();
+    };
+    struct CxxPart: public jni::HybridClass<CxxPart, JHybridObject::CxxPart> {
+      static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/rive/HybridRiveFileSpec$CxxPart;";
+      static jni::local_ref<jhybriddata> initHybrid(jni::alias_ref<jhybridobject> jThis);
+      static void registerNatives();
+      using HybridBase::HybridBase;
+    protected:
+      std::shared_ptr<JHybridObject> createHybridObject(const jni::local_ref<JHybridObject::JavaPart>& javaPart) override;
+    };
 
-  protected:
-    // C++ constructor (called from Java via `initHybrid()`)
-    explicit JHybridRiveFileSpec(jni::alias_ref<jhybridobject> jThis) :
+  public:
+    explicit JHybridRiveFileSpec(const jni::local_ref<JHybridRiveFileSpec::JavaPart>& javaPart):
       HybridObject(HybridRiveFileSpec::TAG),
-      HybridBase(jThis),
-      _javaPart(jni::make_global(jThis)) {}
-
-  public:
+      JHybridObject(javaPart),
+      _javaPart(jni::make_global(javaPart)) {}
     ~JHybridRiveFileSpec() override {
       // Hermes GC can destroy JS objects on a non-JNI Thread.
       jni::ThreadScope::WithClassLoader([&] { _javaPart.reset(); });
     }
 
   public:
-    size_t getExternalMemorySize() noexcept override;
-    bool equals(const std::shared_ptr<HybridObject>& other) override;
-    void dispose() noexcept override;
-    std::string toString() override;
-
-  public:
-    inline const jni::global_ref<JHybridRiveFileSpec::javaobject>& getJavaPart() const noexcept {
+    inline const jni::global_ref<JHybridRiveFileSpec::JavaPart>& getJavaPart() const noexcept {
       return _javaPart;
     }
 
@@ -64,9 +63,7 @@ namespace margelo::nitro::rive {
     std::shared_ptr<HybridBindableArtboardSpec> getBindableArtboard(const std::string& name) override;
 
   private:
-    friend HybridBase;
-    using HybridBase::HybridBase;
-    jni::global_ref<JHybridRiveFileSpec::javaobject> _javaPart;
+    jni::global_ref<JHybridRiveFileSpec::JavaPart> _javaPart;
   };
 
 } // namespace margelo::nitro::rive

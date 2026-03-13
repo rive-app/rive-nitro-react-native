@@ -1,3 +1,4 @@
+import '@example/polyfills';
 import {
   DarkTheme,
   DefaultTheme,

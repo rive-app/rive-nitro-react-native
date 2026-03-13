@@ -20,76 +20,70 @@ namespace margelo::nitro::rive { class HybridViewModelInstanceSpec; }
 
 namespace margelo::nitro::rive {
 
-  jni::local_ref<JHybridViewModelListPropertySpec::jhybriddata> JHybridViewModelListPropertySpec::initHybrid(jni::alias_ref<jhybridobject> jThis) {
+  std::shared_ptr<JHybridViewModelListPropertySpec> JHybridViewModelListPropertySpec::JavaPart::getJHybridViewModelListPropertySpec() {
+    auto hybridObject = JHybridObject::JavaPart::getJHybridObject();
+    auto castHybridObject = std::dynamic_pointer_cast<JHybridViewModelListPropertySpec>(hybridObject);
+    if (castHybridObject == nullptr) [[unlikely]] {
+      throw std::runtime_error("Failed to downcast JHybridObject to JHybridViewModelListPropertySpec!");
+    }
+    return castHybridObject;
+  }
+
+  jni::local_ref<JHybridViewModelListPropertySpec::CxxPart::jhybriddata> JHybridViewModelListPropertySpec::CxxPart::initHybrid(jni::alias_ref<jhybridobject> jThis) {
     return makeCxxInstance(jThis);
   }
 
-  void JHybridViewModelListPropertySpec::registerNatives() {
-    registerHybrid({
-      makeNativeMethod("initHybrid", JHybridViewModelListPropertySpec::initHybrid),
-    });
-  }
-
-  size_t JHybridViewModelListPropertySpec::getExternalMemorySize() noexcept {
-    static const auto method = javaClassStatic()->getMethod<jlong()>("getMemorySize");
-    return method(_javaPart);
-  }
-
-  bool JHybridViewModelListPropertySpec::equals(const std::shared_ptr<HybridObject>& other) {
-    if (auto otherCast = std::dynamic_pointer_cast<JHybridViewModelListPropertySpec>(other)) {
-      return _javaPart == otherCast->_javaPart;
+  std::shared_ptr<JHybridObject> JHybridViewModelListPropertySpec::CxxPart::createHybridObject(const jni::local_ref<JHybridObject::JavaPart>& javaPart) {
+    auto castJavaPart = jni::dynamic_ref_cast<JHybridViewModelListPropertySpec::JavaPart>(javaPart);
+    if (castJavaPart == nullptr) [[unlikely]] {
+      throw std::runtime_error("Failed to cast JHybridObject::JavaPart to JHybridViewModelListPropertySpec::JavaPart!");
     }
-    return false;
+    return std::make_shared<JHybridViewModelListPropertySpec>(castJavaPart);
   }
 
-  void JHybridViewModelListPropertySpec::dispose() noexcept {
-    static const auto method = javaClassStatic()->getMethod<void()>("dispose");
-    method(_javaPart);
-  }
-
-  std::string JHybridViewModelListPropertySpec::toString() {
-    static const auto method = javaClassStatic()->getMethod<jni::JString()>("toString");
-    auto javaString = method(_javaPart);
-    return javaString->toStdString();
+  void JHybridViewModelListPropertySpec::CxxPart::registerNatives() {
+    registerHybrid({
+      makeNativeMethod("initHybrid", JHybridViewModelListPropertySpec::CxxPart::initHybrid),
+    });
   }
 
   // Properties
   double JHybridViewModelListPropertySpec::getLength() {
-    static const auto method = javaClassStatic()->getMethod<double()>("getLength");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<double()>("getLength");
     auto __result = method(_javaPart);
     return __result;
   }
 
   // Methods
   std::optional<std::shared_ptr<HybridViewModelInstanceSpec>> JHybridViewModelListPropertySpec::getInstanceAt(double index) {
-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JHybridViewModelInstanceSpec::javaobject>(double /* index */)>("getInstanceAt");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JHybridViewModelInstanceSpec::JavaPart>(double /* index */)>("getInstanceAt");
     auto __result = method(_javaPart, index);
-    return __result != nullptr ? std::make_optional(__result->cthis()->shared_cast<JHybridViewModelInstanceSpec>()) : std::nullopt;
+    return __result != nullptr ? std::make_optional(__result->getJHybridViewModelInstanceSpec()) : std::nullopt;
   }
   void JHybridViewModelListPropertySpec::addInstance(const std::shared_ptr<HybridViewModelInstanceSpec>& instance) {
-    static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<JHybridViewModelInstanceSpec::javaobject> /* instance */)>("addInstance");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<JHybridViewModelInstanceSpec::JavaPart> /* instance */)>("addInstance");
     method(_javaPart, std::dynamic_pointer_cast<JHybridViewModelInstanceSpec>(instance)->getJavaPart());
   }
   bool JHybridViewModelListPropertySpec::addInstanceAt(const std::shared_ptr<HybridViewModelInstanceSpec>& instance, double index) {
-    static const auto method = javaClassStatic()->getMethod<jboolean(jni::alias_ref<JHybridViewModelInstanceSpec::javaobject> /* instance */, double /* index */)>("addInstanceAt");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jboolean(jni::alias_ref<JHybridViewModelInstanceSpec::JavaPart> /* instance */, double /* index */)>("addInstanceAt");
     auto __result = method(_javaPart, std::dynamic_pointer_cast<JHybridViewModelInstanceSpec>(instance)->getJavaPart(), index);
     return static_cast<bool>(__result);
   }
   void JHybridViewModelListPropertySpec::removeInstance(const std::shared_ptr<HybridViewModelInstanceSpec>& instance) {
-    static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<JHybridViewModelInstanceSpec::javaobject> /* instance */)>("removeInstance");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<JHybridViewModelInstanceSpec::JavaPart> /* instance */)>("removeInstance");
     method(_javaPart, std::dynamic_pointer_cast<JHybridViewModelInstanceSpec>(instance)->getJavaPart());
   }
   void JHybridViewModelListPropertySpec::removeInstanceAt(double index) {
-    static const auto method = javaClassStatic()->getMethod<void(double /* index */)>("removeInstanceAt");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void(double /* index */)>("removeInstanceAt");
     method(_javaPart, index);
   }
   bool JHybridViewModelListPropertySpec::swap(double index1, double index2) {
-    static const auto method = javaClassStatic()->getMethod<jboolean(double /* index1 */, double /* index2 */)>("swap");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jboolean(double /* index1 */, double /* index2 */)>("swap");
     auto __result = method(_javaPart, index1, index2);
     return static_cast<bool>(__result);
   }
   std::function<void()> JHybridViewModelListPropertySpec::addListener(const std::function<void()>& onChanged) {
-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JFunc_void::javaobject>(jni::alias_ref<JFunc_void::javaobject> /* onChanged */)>("addListener_cxx");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JFunc_void::javaobject>(jni::alias_ref<JFunc_void::javaobject> /* onChanged */)>("addListener_cxx");
     auto __result = method(_javaPart, JFunc_void_cxx::fromCpp(onChanged));
     return [&]() -> std::function<void()> {
       if (__result->isInstanceOf(JFunc_void_cxx::javaClassStatic())) [[likely]] {
@@ -102,7 +96,7 @@ namespace margelo::nitro::rive {
     }();
   }
   void JHybridViewModelListPropertySpec::removeListeners() {
-    static const auto method = javaClassStatic()->getMethod<void()>("removeListeners");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void()>("removeListeners");
     method(_javaPart);
   }
 

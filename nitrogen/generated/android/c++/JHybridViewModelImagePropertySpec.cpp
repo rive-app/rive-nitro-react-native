@@ -20,37 +20,31 @@ namespace margelo::nitro::rive { class HybridRiveImageSpec; }
 
 namespace margelo::nitro::rive {
 
-  jni::local_ref<JHybridViewModelImagePropertySpec::jhybriddata> JHybridViewModelImagePropertySpec::initHybrid(jni::alias_ref<jhybridobject> jThis) {
+  std::shared_ptr<JHybridViewModelImagePropertySpec> JHybridViewModelImagePropertySpec::JavaPart::getJHybridViewModelImagePropertySpec() {
+    auto hybridObject = JHybridObject::JavaPart::getJHybridObject();
+    auto castHybridObject = std::dynamic_pointer_cast<JHybridViewModelImagePropertySpec>(hybridObject);
+    if (castHybridObject == nullptr) [[unlikely]] {
+      throw std::runtime_error("Failed to downcast JHybridObject to JHybridViewModelImagePropertySpec!");
+    }
+    return castHybridObject;
+  }
+
+  jni::local_ref<JHybridViewModelImagePropertySpec::CxxPart::jhybriddata> JHybridViewModelImagePropertySpec::CxxPart::initHybrid(jni::alias_ref<jhybridobject> jThis) {
     return makeCxxInstance(jThis);
   }
 
-  void JHybridViewModelImagePropertySpec::registerNatives() {
-    registerHybrid({
-      makeNativeMethod("initHybrid", JHybridViewModelImagePropertySpec::initHybrid),
-    });
-  }
-
-  size_t JHybridViewModelImagePropertySpec::getExternalMemorySize() noexcept {
-    static const auto method = javaClassStatic()->getMethod<jlong()>("getMemorySize");
-    return method(_javaPart);
-  }
-
-  bool JHybridViewModelImagePropertySpec::equals(const std::shared_ptr<HybridObject>& other) {
-    if (auto otherCast = std::dynamic_pointer_cast<JHybridViewModelImagePropertySpec>(other)) {
-      return _javaPart == otherCast->_javaPart;
+  std::shared_ptr<JHybridObject> JHybridViewModelImagePropertySpec::CxxPart::createHybridObject(const jni::local_ref<JHybridObject::JavaPart>& javaPart) {
+    auto castJavaPart = jni::dynamic_ref_cast<JHybridViewModelImagePropertySpec::JavaPart>(javaPart);
+    if (castJavaPart == nullptr) [[unlikely]] {
+      throw std::runtime_error("Failed to cast JHybridObject::JavaPart to JHybridViewModelImagePropertySpec::JavaPart!");
     }
-    return false;
+    return std::make_shared<JHybridViewModelImagePropertySpec>(castJavaPart);
   }
 
-  void JHybridViewModelImagePropertySpec::dispose() noexcept {
-    static const auto method = javaClassStatic()->getMethod<void()>("dispose");
-    method(_javaPart);
-  }
-
-  std::string JHybridViewModelImagePropertySpec::toString() {
-    static const auto method = javaClassStatic()->getMethod<jni::JString()>("toString");
-    auto javaString = method(_javaPart);
-    return javaString->toStdString();
+  void JHybridViewModelImagePropertySpec::CxxPart::registerNatives() {
+    registerHybrid({
+      makeNativeMethod("initHybrid", JHybridViewModelImagePropertySpec::CxxPart::initHybrid),
+    });
   }
 
   // Properties
@@ -58,11 +52,11 @@ namespace margelo::nitro::rive {
 
   // Methods
   void JHybridViewModelImagePropertySpec::set(const std::optional<std::shared_ptr<HybridRiveImageSpec>>& image) {
-    static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<JHybridRiveImageSpec::javaobject> /* image */)>("set");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<JHybridRiveImageSpec::JavaPart> /* image */)>("set");
     method(_javaPart, image.has_value() ? std::dynamic_pointer_cast<JHybridRiveImageSpec>(image.value())->getJavaPart() : nullptr);
   }
   std::function<void()> JHybridViewModelImagePropertySpec::addListener(const std::function<void()>& onChanged) {
-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JFunc_void::javaobject>(jni::alias_ref<JFunc_void::javaobject> /* onChanged */)>("addListener_cxx");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JFunc_void::javaobject>(jni::alias_ref<JFunc_void::javaobject> /* onChanged */)>("addListener_cxx");
     auto __result = method(_javaPart, JFunc_void_cxx::fromCpp(onChanged));
     return [&]() -> std::function<void()> {
       if (__result->isInstanceOf(JFunc_void_cxx::javaClassStatic())) [[likely]] {
@@ -75,7 +69,7 @@ namespace margelo::nitro::rive {
     }();
   }
   void JHybridViewModelImagePropertySpec::removeListeners() {
-    static const auto method = javaClassStatic()->getMethod<void()>("removeListeners");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void()>("removeListeners");
     method(_javaPart);
   }
 

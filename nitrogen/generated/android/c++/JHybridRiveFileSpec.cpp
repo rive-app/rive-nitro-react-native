@@ -44,52 +44,46 @@ namespace margelo::nitro::rive { class HybridRiveImageSpec; }
 
 namespace margelo::nitro::rive {
 
-  jni::local_ref<JHybridRiveFileSpec::jhybriddata> JHybridRiveFileSpec::initHybrid(jni::alias_ref<jhybridobject> jThis) {
+  std::shared_ptr<JHybridRiveFileSpec> JHybridRiveFileSpec::JavaPart::getJHybridRiveFileSpec() {
+    auto hybridObject = JHybridObject::JavaPart::getJHybridObject();
+    auto castHybridObject = std::dynamic_pointer_cast<JHybridRiveFileSpec>(hybridObject);
+    if (castHybridObject == nullptr) [[unlikely]] {
+      throw std::runtime_error("Failed to downcast JHybridObject to JHybridRiveFileSpec!");
+    }
+    return castHybridObject;
+  }
+
+  jni::local_ref<JHybridRiveFileSpec::CxxPart::jhybriddata> JHybridRiveFileSpec::CxxPart::initHybrid(jni::alias_ref<jhybridobject> jThis) {
     return makeCxxInstance(jThis);
   }
 
-  void JHybridRiveFileSpec::registerNatives() {
-    registerHybrid({
-      makeNativeMethod("initHybrid", JHybridRiveFileSpec::initHybrid),
-    });
-  }
-
-  size_t JHybridRiveFileSpec::getExternalMemorySize() noexcept {
-    static const auto method = javaClassStatic()->getMethod<jlong()>("getMemorySize");
-    return method(_javaPart);
-  }
-
-  bool JHybridRiveFileSpec::equals(const std::shared_ptr<HybridObject>& other) {
-    if (auto otherCast = std::dynamic_pointer_cast<JHybridRiveFileSpec>(other)) {
-      return _javaPart == otherCast->_javaPart;
+  std::shared_ptr<JHybridObject> JHybridRiveFileSpec::CxxPart::createHybridObject(const jni::local_ref<JHybridObject::JavaPart>& javaPart) {
+    auto castJavaPart = jni::dynamic_ref_cast<JHybridRiveFileSpec::JavaPart>(javaPart);
+    if (castJavaPart == nullptr) [[unlikely]] {
+      throw std::runtime_error("Failed to cast JHybridObject::JavaPart to JHybridRiveFileSpec::JavaPart!");
     }
-    return false;
+    return std::make_shared<JHybridRiveFileSpec>(castJavaPart);
   }
 
-  void JHybridRiveFileSpec::dispose() noexcept {
-    static const auto method = javaClassStatic()->getMethod<void()>("dispose");
-    method(_javaPart);
-  }
-
-  std::string JHybridRiveFileSpec::toString() {
-    static const auto method = javaClassStatic()->getMethod<jni::JString()>("toString");
-    auto javaString = method(_javaPart);
-    return javaString->toStdString();
+  void JHybridRiveFileSpec::CxxPart::registerNatives() {
+    registerHybrid({
+      makeNativeMethod("initHybrid", JHybridRiveFileSpec::CxxPart::initHybrid),
+    });
   }
 
   // Properties
   std::optional<double> JHybridRiveFileSpec::getViewModelCount() {
-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<jni::JDouble>()>("getViewModelCount");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<jni::JDouble>()>("getViewModelCount");
     auto __result = method(_javaPart);
     return __result != nullptr ? std::make_optional(__result->value()) : std::nullopt;
   }
   double JHybridRiveFileSpec::getArtboardCount() {
-    static const auto method = javaClassStatic()->getMethod<double()>("getArtboardCount");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<double()>("getArtboardCount");
     auto __result = method(_javaPart);
     return __result;
   }
   std::vector<std::string> JHybridRiveFileSpec::getArtboardNames() {
-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<jni::JArrayClass<jni::JString>>()>("getArtboardNames");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<jni::JArrayClass<jni::JString>>()>("getArtboardNames");
     auto __result = method(_javaPart);
     return [&]() {
       size_t __size = __result->size();
@@ -105,28 +99,28 @@ namespace margelo::nitro::rive {
 
   // Methods
   std::optional<std::shared_ptr<HybridViewModelSpec>> JHybridRiveFileSpec::viewModelByIndex(double index) {
-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JHybridViewModelSpec::javaobject>(double /* index */)>("viewModelByIndex");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JHybridViewModelSpec::JavaPart>(double /* index */)>("viewModelByIndex");
     auto __result = method(_javaPart, index);
-    return __result != nullptr ? std::make_optional(__result->cthis()->shared_cast<JHybridViewModelSpec>()) : std::nullopt;
+    return __result != nullptr ? std::make_optional(__result->getJHybridViewModelSpec()) : std::nullopt;
   }
   std::optional<std::shared_ptr<HybridViewModelSpec>> JHybridRiveFileSpec::viewModelByName(const std::string& name) {
-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JHybridViewModelSpec::javaobject>(jni::alias_ref<jni::JString> /* name */)>("viewModelByName");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JHybridViewModelSpec::JavaPart>(jni::alias_ref<jni::JString> /* name */)>("viewModelByName");
     auto __result = method(_javaPart, jni::make_jstring(name));
-    return __result != nullptr ? std::make_optional(__result->cthis()->shared_cast<JHybridViewModelSpec>()) : std::nullopt;
+    return __result != nullptr ? std::make_optional(__result->getJHybridViewModelSpec()) : std::nullopt;
   }
   std::optional<std::shared_ptr<HybridViewModelSpec>> JHybridRiveFileSpec::defaultArtboardViewModel(const std::optional<ArtboardBy>& artboardBy) {
-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JHybridViewModelSpec::javaobject>(jni::alias_ref<JArtboardBy> /* artboardBy */)>("defaultArtboardViewModel");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JHybridViewModelSpec::JavaPart>(jni::alias_ref<JArtboardBy> /* artboardBy */)>("defaultArtboardViewModel");
     auto __result = method(_javaPart, artboardBy.has_value() ? JArtboardBy::fromCpp(artboardBy.value()) : nullptr);
-    return __result != nullptr ? std::make_optional(__result->cthis()->shared_cast<JHybridViewModelSpec>()) : std::nullopt;
+    return __result != nullptr ? std::make_optional(__result->getJHybridViewModelSpec()) : std::nullopt;
   }
   void JHybridRiveFileSpec::updateReferencedAssets(const ReferencedAssetsType& referencedAssets) {
-    static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<JReferencedAssetsType> /* referencedAssets */)>("updateReferencedAssets");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<JReferencedAssetsType> /* referencedAssets */)>("updateReferencedAssets");
     method(_javaPart, JReferencedAssetsType::fromCpp(referencedAssets));
   }
   std::shared_ptr<HybridBindableArtboardSpec> JHybridRiveFileSpec::getBindableArtboard(const std::string& name) {
-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JHybridBindableArtboardSpec::javaobject>(jni::alias_ref<jni::JString> /* name */)>("getBindableArtboard");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JHybridBindableArtboardSpec::JavaPart>(jni::alias_ref<jni::JString> /* name */)>("getBindableArtboard");
     auto __result = method(_javaPart, jni::make_jstring(name));
-    return __result->cthis()->shared_cast<JHybridBindableArtboardSpec>();
+    return __result->getJHybridBindableArtboardSpec();
   }
 
 } // namespace margelo::nitro::rive

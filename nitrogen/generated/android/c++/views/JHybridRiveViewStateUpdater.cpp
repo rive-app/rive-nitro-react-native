@@ -8,6 +8,7 @@
 #include "JHybridRiveViewStateUpdater.hpp"
 #include "views/HybridRiveViewComponent.hpp"
 #include <NitroModules/NitroDefines.hpp>
+#include <react/fabric/StateWrapperImpl.h>
 
 namespace margelo::nitro::rive::views {
 
@@ -15,73 +16,72 @@ using namespace facebook;
 using ConcreteStateData = react::ConcreteState<HybridRiveViewState>;
 
 void JHybridRiveViewStateUpdater::updateViewProps(jni::alias_ref<jni::JClass> /* class */,
-                                           jni::alias_ref<JHybridRiveViewSpec::javaobject> javaView,
+                                           jni::alias_ref<JHybridRiveViewSpec::JavaPart> javaView,
                                            jni::alias_ref<JStateWrapper::javaobject> stateWrapperInterface) {
-  JHybridRiveViewSpec* view = javaView->cthis();
+  std::shared_ptr<JHybridRiveViewSpec> hybridView = javaView->getJHybridRiveViewSpec();
 
   // Get concrete StateWrapperImpl from passed StateWrapper interface object
   jobject rawStateWrapper = stateWrapperInterface.get();
-  if (!stateWrapperInterface->isInstanceOf(react::StateWrapperImpl::javaClassStatic())) {
+  if (!stateWrapperInterface->isInstanceOf(react::StateWrapperImpl::javaClassStatic())) [[unlikely]] {
       throw std::runtime_error("StateWrapper is not a StateWrapperImpl");
   }
   auto stateWrapper = jni::alias_ref<react::StateWrapperImpl::javaobject>{
             static_cast<react::StateWrapperImpl::javaobject>(rawStateWrapper)};
-
   std::shared_ptr<const react::State> state = stateWrapper->cthis()->getState();
-  auto concreteState = std::dynamic_pointer_cast<const ConcreteStateData>(state);
+  auto concreteState = std::static_pointer_cast<const ConcreteStateData>(state);
   const HybridRiveViewState& data = concreteState->getData();
-  const std::optional<HybridRiveViewProps>& maybeProps = data.getProps();
-  if (!maybeProps.has_value()) {
+  const std::shared_ptr<HybridRiveViewProps>& props = data.getProps();
+  if (props == nullptr) [[unlikely]] {
     // Props aren't set yet!
     throw std::runtime_error("HybridRiveViewState's data doesn't contain any props!");
   }
-  const HybridRiveViewProps& props = maybeProps.value();
-  if (props.artboardName.isDirty) {
-    view->setArtboardName(props.artboardName.value);
-    // TODO: Set isDirty = false
+
+  // Update all props if they are dirty
+  if (props->artboardName.isDirty) {
+    hybridView->setArtboardName(props->artboardName.value);
+    props->artboardName.isDirty = false;
   }
-  if (props.stateMachineName.isDirty) {
-    view->setStateMachineName(props.stateMachineName.value);
-    // TODO: Set isDirty = false
+  if (props->stateMachineName.isDirty) {
+    hybridView->setStateMachineName(props->stateMachineName.value);
+    props->stateMachineName.isDirty = false;
   }
-  if (props.autoPlay.isDirty) {
-    view->setAutoPlay(props.autoPlay.value);
-    // TODO: Set isDirty = false
+  if (props->autoPlay.isDirty) {
+    hybridView->setAutoPlay(props->autoPlay.value);
+    props->autoPlay.isDirty = false;
   }
-  if (props.file.isDirty) {
-    view->setFile(props.file.value);
-    // TODO: Set isDirty = false
+  if (props->file.isDirty) {
+    hybridView->setFile(props->file.value);
+    props->file.isDirty = false;
   }
-  if (props.alignment.isDirty) {
-    view->setAlignment(props.alignment.value);
-    // TODO: Set isDirty = false
+  if (props->alignment.isDirty) {
+    hybridView->setAlignment(props->alignment.value);
+    props->alignment.isDirty = false;
   }
-  if (props.fit.isDirty) {
-    view->setFit(props.fit.value);
-    // TODO: Set isDirty = false
+  if (props->fit.isDirty) {
+    hybridView->setFit(props->fit.value);
+    props->fit.isDirty = false;
   }
-  if (props.layoutScaleFactor.isDirty) {
-    view->setLayoutScaleFactor(props.layoutScaleFactor.value);
-    // TODO: Set isDirty = false
+  if (props->layoutScaleFactor.isDirty) {
+    hybridView->setLayoutScaleFactor(props->layoutScaleFactor.value);
+    props->layoutScaleFactor.isDirty = false;
   }
-  if (props.dataBind.isDirty) {
-    view->setDataBind(props.dataBind.value);
-    // TODO: Set isDirty = false
+  if (props->dataBind.isDirty) {
+    hybridView->setDataBind(props->dataBind.value);
+    props->dataBind.isDirty = false;
   }
-  if (props.onError.isDirty) {
-    view->setOnError(props.onError.value);
-    // TODO: Set isDirty = false
+  if (props->onError.isDirty) {
+    hybridView->setOnError(props->onError.value);
+    props->onError.isDirty = false;
   }
 
   // Update hybridRef if it changed
-  if (props.hybridRef.isDirty) {
+  if (props->hybridRef.isDirty) {
     // hybridRef changed - call it with new this
-    const auto& maybeFunc = props.hybridRef.value;
+    const auto& maybeFunc = props->hybridRef.value;
     if (maybeFunc.has_value()) {
-      std::shared_ptr<JHybridRiveViewSpec> shared = javaView->cthis()->shared_cast<JHybridRiveViewSpec>();
-      maybeFunc.value()(shared);
+      maybeFunc.value()(hybridView);
     }
-    // TODO: Set isDirty = false
+    props->hybridRef.isDirty = false;
   }
 }
 

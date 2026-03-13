@@ -24,23 +24,6 @@ import com.margelo.nitro.core.HybridObject
   "LocalVariableName", "PropertyName", "PrivatePropertyName", "FunctionName"
 )
 abstract class HybridViewModelImagePropertySpec: HybridViewModelPropertySpec() {
-  @DoNotStrip
-  private var mHybridData: HybridData = initHybrid()
-
-  init {
-    super.updateNative(mHybridData)
-  }
-
-  override fun updateNative(hybridData: HybridData) {
-    mHybridData = hybridData
-    super.updateNative(hybridData)
-  }
-
-  // Default implementation of `HybridObject.toString()`
-  override fun toString(): String {
-    return "[HybridObject ViewModelImageProperty]"
-  }
-
   // Properties
   
 
@@ -62,7 +45,21 @@ abstract class HybridViewModelImagePropertySpec: HybridViewModelPropertySpec() {
   @Keep
   abstract fun removeListeners(): Unit
 
-  private external fun initHybrid(): HybridData
+  // Default implementation of `HybridObject.toString()`
+  override fun toString(): String {
+    return "[HybridObject ViewModelImageProperty]"
+  }
+
+  // C++ backing class
+  @DoNotStrip
+  @Keep
+  protected open class CxxPart(javaPart: HybridViewModelImagePropertySpec): HybridViewModelPropertySpec.CxxPart(javaPart) {
+    // C++ JHybridViewModelImagePropertySpec::CxxPart::initHybrid(...)
+    external override fun initHybrid(): HybridData
+  }
+  override fun createCxxPart(): CxxPart {
+    return CxxPart(this)
+  }
 
   companion object {
     protected const val TAG = "HybridViewModelImagePropertySpec"

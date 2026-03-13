@@ -23,13 +23,6 @@ sealed class Variant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName {
   @DoNotStrip
   data class Third(@DoNotStrip val value: DataBindByName): Variant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName()
 
-  @Deprecated("getAs() is not type-safe. Use fold/asFirstOrNull/asSecondOrNull instead.", level = DeprecationLevel.ERROR)
-  inline fun <reified T> getAs(): T? = when (this) {
-    is First -> value as? T
-    is Second -> value as? T
-    is Third -> value as? T
-  }
-
   val isFirst: Boolean
     get() = this is First
   val isSecond: Boolean

@@ -17,37 +17,31 @@ namespace margelo::nitro::rive { class HybridBindableArtboardSpec; }
 
 namespace margelo::nitro::rive {
 
-  jni::local_ref<JHybridViewModelArtboardPropertySpec::jhybriddata> JHybridViewModelArtboardPropertySpec::initHybrid(jni::alias_ref<jhybridobject> jThis) {
+  std::shared_ptr<JHybridViewModelArtboardPropertySpec> JHybridViewModelArtboardPropertySpec::JavaPart::getJHybridViewModelArtboardPropertySpec() {
+    auto hybridObject = JHybridObject::JavaPart::getJHybridObject();
+    auto castHybridObject = std::dynamic_pointer_cast<JHybridViewModelArtboardPropertySpec>(hybridObject);
+    if (castHybridObject == nullptr) [[unlikely]] {
+      throw std::runtime_error("Failed to downcast JHybridObject to JHybridViewModelArtboardPropertySpec!");
+    }
+    return castHybridObject;
+  }
+
+  jni::local_ref<JHybridViewModelArtboardPropertySpec::CxxPart::jhybriddata> JHybridViewModelArtboardPropertySpec::CxxPart::initHybrid(jni::alias_ref<jhybridobject> jThis) {
     return makeCxxInstance(jThis);
   }
 
-  void JHybridViewModelArtboardPropertySpec::registerNatives() {
-    registerHybrid({
-      makeNativeMethod("initHybrid", JHybridViewModelArtboardPropertySpec::initHybrid),
-    });
-  }
-
-  size_t JHybridViewModelArtboardPropertySpec::getExternalMemorySize() noexcept {
-    static const auto method = javaClassStatic()->getMethod<jlong()>("getMemorySize");
-    return method(_javaPart);
-  }
-
-  bool JHybridViewModelArtboardPropertySpec::equals(const std::shared_ptr<HybridObject>& other) {
-    if (auto otherCast = std::dynamic_pointer_cast<JHybridViewModelArtboardPropertySpec>(other)) {
-      return _javaPart == otherCast->_javaPart;
+  std::shared_ptr<JHybridObject> JHybridViewModelArtboardPropertySpec::CxxPart::createHybridObject(const jni::local_ref<JHybridObject::JavaPart>& javaPart) {
+    auto castJavaPart = jni::dynamic_ref_cast<JHybridViewModelArtboardPropertySpec::JavaPart>(javaPart);
+    if (castJavaPart == nullptr) [[unlikely]] {
+      throw std::runtime_error("Failed to cast JHybridObject::JavaPart to JHybridViewModelArtboardPropertySpec::JavaPart!");
     }
-    return false;
+    return std::make_shared<JHybridViewModelArtboardPropertySpec>(castJavaPart);
   }
 
-  void JHybridViewModelArtboardPropertySpec::dispose() noexcept {
-    static const auto method = javaClassStatic()->getMethod<void()>("dispose");
-    method(_javaPart);
-  }
-
-  std::string JHybridViewModelArtboardPropertySpec::toString() {
-    static const auto method = javaClassStatic()->getMethod<jni::JString()>("toString");
-    auto javaString = method(_javaPart);
-    return javaString->toStdString();
+  void JHybridViewModelArtboardPropertySpec::CxxPart::registerNatives() {
+    registerHybrid({
+      makeNativeMethod("initHybrid", JHybridViewModelArtboardPropertySpec::CxxPart::initHybrid),
+    });
   }
 
   // Properties
@@ -55,7 +49,7 @@ namespace margelo::nitro::rive {
 
   // Methods
   void JHybridViewModelArtboardPropertySpec::set(const std::optional<std::shared_ptr<HybridBindableArtboardSpec>>& artboard) {
-    static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<JHybridBindableArtboardSpec::javaobject> /* artboard */)>("set");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<JHybridBindableArtboardSpec::JavaPart> /* artboard */)>("set");
     method(_javaPart, artboard.has_value() ? std::dynamic_pointer_cast<JHybridBindableArtboardSpec>(artboard.value())->getJavaPart() : nullptr);
   }
 

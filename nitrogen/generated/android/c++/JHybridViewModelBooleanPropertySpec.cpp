@@ -16,53 +16,47 @@
 
 namespace margelo::nitro::rive {
 
-  jni::local_ref<JHybridViewModelBooleanPropertySpec::jhybriddata> JHybridViewModelBooleanPropertySpec::initHybrid(jni::alias_ref<jhybridobject> jThis) {
+  std::shared_ptr<JHybridViewModelBooleanPropertySpec> JHybridViewModelBooleanPropertySpec::JavaPart::getJHybridViewModelBooleanPropertySpec() {
+    auto hybridObject = JHybridObject::JavaPart::getJHybridObject();
+    auto castHybridObject = std::dynamic_pointer_cast<JHybridViewModelBooleanPropertySpec>(hybridObject);
+    if (castHybridObject == nullptr) [[unlikely]] {
+      throw std::runtime_error("Failed to downcast JHybridObject to JHybridViewModelBooleanPropertySpec!");
+    }
+    return castHybridObject;
+  }
+
+  jni::local_ref<JHybridViewModelBooleanPropertySpec::CxxPart::jhybriddata> JHybridViewModelBooleanPropertySpec::CxxPart::initHybrid(jni::alias_ref<jhybridobject> jThis) {
     return makeCxxInstance(jThis);
   }
 
-  void JHybridViewModelBooleanPropertySpec::registerNatives() {
-    registerHybrid({
-      makeNativeMethod("initHybrid", JHybridViewModelBooleanPropertySpec::initHybrid),
-    });
-  }
-
-  size_t JHybridViewModelBooleanPropertySpec::getExternalMemorySize() noexcept {
-    static const auto method = javaClassStatic()->getMethod<jlong()>("getMemorySize");
-    return method(_javaPart);
-  }
-
-  bool JHybridViewModelBooleanPropertySpec::equals(const std::shared_ptr<HybridObject>& other) {
-    if (auto otherCast = std::dynamic_pointer_cast<JHybridViewModelBooleanPropertySpec>(other)) {
-      return _javaPart == otherCast->_javaPart;
+  std::shared_ptr<JHybridObject> JHybridViewModelBooleanPropertySpec::CxxPart::createHybridObject(const jni::local_ref<JHybridObject::JavaPart>& javaPart) {
+    auto castJavaPart = jni::dynamic_ref_cast<JHybridViewModelBooleanPropertySpec::JavaPart>(javaPart);
+    if (castJavaPart == nullptr) [[unlikely]] {
+      throw std::runtime_error("Failed to cast JHybridObject::JavaPart to JHybridViewModelBooleanPropertySpec::JavaPart!");
     }
-    return false;
+    return std::make_shared<JHybridViewModelBooleanPropertySpec>(castJavaPart);
   }
 
-  void JHybridViewModelBooleanPropertySpec::dispose() noexcept {
-    static const auto method = javaClassStatic()->getMethod<void()>("dispose");
-    method(_javaPart);
-  }
-
-  std::string JHybridViewModelBooleanPropertySpec::toString() {
-    static const auto method = javaClassStatic()->getMethod<jni::JString()>("toString");
-    auto javaString = method(_javaPart);
-    return javaString->toStdString();
+  void JHybridViewModelBooleanPropertySpec::CxxPart::registerNatives() {
+    registerHybrid({
+      makeNativeMethod("initHybrid", JHybridViewModelBooleanPropertySpec::CxxPart::initHybrid),
+    });
   }
 
   // Properties
   bool JHybridViewModelBooleanPropertySpec::getValue() {
-    static const auto method = javaClassStatic()->getMethod<jboolean()>("getValue");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jboolean()>("getValue");
     auto __result = method(_javaPart);
     return static_cast<bool>(__result);
   }
   void JHybridViewModelBooleanPropertySpec::setValue(bool value) {
-    static const auto method = javaClassStatic()->getMethod<void(jboolean /* value */)>("setValue");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jboolean /* value */)>("setValue");
     method(_javaPart, value);
   }
 
   // Methods
   std::function<void()> JHybridViewModelBooleanPropertySpec::addListener(const std::function<void(bool /* value */)>& onChanged) {
-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JFunc_void::javaobject>(jni::alias_ref<JFunc_void_bool::javaobject> /* onChanged */)>("addListener_cxx");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JFunc_void::javaobject>(jni::alias_ref<JFunc_void_bool::javaobject> /* onChanged */)>("addListener_cxx");
     auto __result = method(_javaPart, JFunc_void_bool_cxx::fromCpp(onChanged));
     return [&]() -> std::function<void()> {
       if (__result->isInstanceOf(JFunc_void_cxx::javaClassStatic())) [[likely]] {
@@ -75,7 +69,7 @@ namespace margelo::nitro::rive {
     }();
   }
   void JHybridViewModelBooleanPropertySpec::removeListeners() {
-    static const auto method = javaClassStatic()->getMethod<void()>("removeListeners");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void()>("removeListeners");
     method(_javaPart);
   }
 

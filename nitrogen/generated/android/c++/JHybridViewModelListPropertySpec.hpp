@@ -19,34 +19,34 @@ namespace margelo::nitro::rive {
 
   using namespace facebook;
 
-  class JHybridViewModelListPropertySpec: public jni::HybridClass<JHybridViewModelListPropertySpec, JHybridViewModelPropertySpec>,
-                                          public virtual HybridViewModelListPropertySpec {
+  class JHybridViewModelListPropertySpec: public virtual HybridViewModelListPropertySpec, public virtual JHybridViewModelPropertySpec {
   public:
-    static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/rive/HybridViewModelListPropertySpec;";
-    static jni::local_ref<jhybriddata> initHybrid(jni::alias_ref<jhybridobject> jThis);
-    static void registerNatives();
+    struct JavaPart: public jni::JavaClass<JavaPart, JHybridViewModelPropertySpec::JavaPart> {
+      static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/rive/HybridViewModelListPropertySpec;";
+      std::shared_ptr<JHybridViewModelListPropertySpec> getJHybridViewModelListPropertySpec();
+    };
+    struct CxxPart: public jni::HybridClass<CxxPart, JHybridViewModelPropertySpec::CxxPart> {
+      static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/rive/HybridViewModelListPropertySpec$CxxPart;";
+      static jni::local_ref<jhybriddata> initHybrid(jni::alias_ref<jhybridobject> jThis);
+      static void registerNatives();
+      using HybridBase::HybridBase;
+    protected:
+      std::shared_ptr<JHybridObject> createHybridObject(const jni::local_ref<JHybridObject::JavaPart>& javaPart) override;
+    };
 
-  protected:
-    // C++ constructor (called from Java via `initHybrid()`)
-    explicit JHybridViewModelListPropertySpec(jni::alias_ref<jhybridobject> jThis) :
+  public:
+    explicit JHybridViewModelListPropertySpec(const jni::local_ref<JHybridViewModelListPropertySpec::JavaPart>& javaPart):
       HybridObject(HybridViewModelListPropertySpec::TAG),
-      HybridBase(jThis),
-      _javaPart(jni::make_global(jThis)) {}
-
-  public:
+      JHybridObject(javaPart),
+      JHybridViewModelPropertySpec(javaPart),
+      _javaPart(jni::make_global(javaPart)) {}
     ~JHybridViewModelListPropertySpec() override {
       // Hermes GC can destroy JS objects on a non-JNI Thread.
       jni::ThreadScope::WithClassLoader([&] { _javaPart.reset(); });
     }
 
   public:
-    size_t getExternalMemorySize() noexcept override;
-    bool equals(const std::shared_ptr<HybridObject>& other) override;
-    void dispose() noexcept override;
-    std::string toString() override;
-
-  public:
-    inline const jni::global_ref<JHybridViewModelListPropertySpec::javaobject>& getJavaPart() const noexcept {
+    inline const jni::global_ref<JHybridViewModelListPropertySpec::JavaPart>& getJavaPart() const noexcept {
       return _javaPart;
     }
 
@@ -66,9 +66,7 @@ namespace margelo::nitro::rive {
     void removeListeners() override;
 
   private:
-    friend HybridBase;
-    using HybridBase::HybridBase;
-    jni::global_ref<JHybridViewModelListPropertySpec::javaobject> _javaPart;
+    jni::global_ref<JHybridViewModelListPropertySpec::JavaPart> _javaPart;
   };
 
 } // namespace margelo::nitro::rive

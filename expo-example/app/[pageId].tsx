@@ -1,3 +1,4 @@
+import '@example/polyfills';
 import { useLocalSearchParams, Stack } from 'expo-router';
 import { PagesList, type PageItem } from '@example/PagesList';
 import { View, Text, StyleSheet } from 'react-native';

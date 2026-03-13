@@ -45,7 +45,6 @@ namespace margelo::nitro::rive::views {
   class HybridRiveViewProps final: public react::ViewProps {
   public:
     HybridRiveViewProps() = default;
-    HybridRiveViewProps(const HybridRiveViewProps&);
     HybridRiveViewProps(const react::PropsParserContext& context,
                         const HybridRiveViewProps& sourceProps,
                         const react::RawProps& rawProps);
@@ -72,10 +71,14 @@ namespace margelo::nitro::rive::views {
   class HybridRiveViewState final {
   public:
     HybridRiveViewState() = default;
+    explicit HybridRiveViewState(const std::shared_ptr<HybridRiveViewProps>& props):
+      _props(props) {}
 
   public:
-    void setProps(const HybridRiveViewProps& props) { _props.emplace(props); }
-    const std::optional<HybridRiveViewProps>& getProps() const { return _props; }
+    [[nodiscard]]
+    const std::shared_ptr<HybridRiveViewProps>& getProps() const {
+      return _props;
+    }
 
   public:
 #ifdef ANDROID
@@ -89,7 +92,7 @@ namespace margelo::nitro::rive::views {
 #endif
 
   private:
-    std::optional<HybridRiveViewProps> _props;
+    std::shared_ptr<HybridRiveViewProps> _props;
   };
 
   /**
@@ -105,7 +108,7 @@ namespace margelo::nitro::rive::views {
    */
   class HybridRiveViewComponentDescriptor final: public react::ConcreteComponentDescriptor<HybridRiveViewShadowNode> {
   public:
-    HybridRiveViewComponentDescriptor(const react::ComponentDescriptorParameters& parameters);
+    explicit HybridRiveViewComponentDescriptor(const react::ComponentDescriptorParameters& parameters);
 
   public:
     /**

@@ -127,19 +127,6 @@ namespace margelo::nitro::rive::views {
       }
     }()) { }
 
-  HybridRiveViewProps::HybridRiveViewProps(const HybridRiveViewProps& other):
-    react::ViewProps(),
-    artboardName(other.artboardName),
-    stateMachineName(other.stateMachineName),
-    autoPlay(other.autoPlay),
-    file(other.file),
-    alignment(other.alignment),
-    fit(other.fit),
-    layoutScaleFactor(other.layoutScaleFactor),
-    dataBind(other.dataBind),
-    onError(other.onError),
-    hybridRef(other.hybridRef) { }
-
   bool HybridRiveViewProps::filterObjectKeys(const std::string& propName) {
     switch (hashString(propName)) {
       case hashString("artboardName"): return true;
@@ -173,10 +160,10 @@ namespace margelo::nitro::rive::views {
   void HybridRiveViewComponentDescriptor::adopt(react::ShadowNode& shadowNode) const {
     // This is called immediately after `ShadowNode` is created, cloned or in progress.
     // On Android, we need to wrap props in our state, which gets routed through Java and later unwrapped in JNI/C++.
-    auto& concreteShadowNode = dynamic_cast<HybridRiveViewShadowNode&>(shadowNode);
-    const HybridRiveViewProps& props = concreteShadowNode.getConcreteProps();
-    HybridRiveViewState state;
-    state.setProps(props);
+    auto& concreteShadowNode = static_cast<HybridRiveViewShadowNode&>(shadowNode);
+    const std::shared_ptr<const HybridRiveViewProps>& constProps = concreteShadowNode.getConcreteSharedProps();
+    const std::shared_ptr<HybridRiveViewProps>& props = std::const_pointer_cast<HybridRiveViewProps>(constProps);
+    HybridRiveViewState state{props};
     concreteShadowNode.setStateData(std::move(state));
   }
 #endif

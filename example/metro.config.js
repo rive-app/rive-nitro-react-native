@@ -2,7 +2,10 @@ const path = require('path');
 const { getDefaultConfig } = require('@react-native/metro-config');
 const { getConfig } = require('react-native-builder-bob/metro-config');
 const { withRnHarness } = require('react-native-harness/metro');
-const { withSingleReactNative } = require('./metro.helpers');
+const {
+  withSingleReactNative,
+  withBlockedSiblingDeps,
+} = require('./metro.helpers');
 
 const root = path.resolve(__dirname, '..');
 
@@ -21,4 +24,10 @@ const finalConfig = getConfig(config, {
   project: __dirname,
 });
 
-module.exports = withRnHarness(withSingleReactNative(finalConfig, __dirname));
+const expoExampleDir = path.resolve(root, 'expo-example');
+module.exports = withRnHarness(
+  withSingleReactNative(
+    withBlockedSiblingDeps(finalConfig, __dirname, expoExampleDir),
+    __dirname
+  )
+);
