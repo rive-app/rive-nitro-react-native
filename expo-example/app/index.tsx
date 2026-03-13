@@ -1,3 +1,4 @@
+import '@example/polyfills';
 import { useEffect, useState } from 'react';
 import { StyleSheet, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';

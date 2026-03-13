@@ -39,7 +39,7 @@
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
     "clean": "del-cli android/build example/android/build example/android/app/build example/ios/build lib",
     "prepare": "npx react-native-builder-bob@^0.40.0 build",
-    "nitrogen": "nitrogen",
+    "nitrogen": "nitrogen && npx tsx scripts/nitrogen-postprocess.ts",
     "release": "release-it",
     "dev:ios": "cd example && xed ios",
     "dev:android": "cd example && open -a \"/Applications/Android Studio.app\" ./android",
