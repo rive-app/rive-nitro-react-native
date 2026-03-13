@@ -30,6 +30,28 @@ end
 
 Pod::UI.puts "@rive-app/react-native: Rive iOS SDK #{rive_ios_version}"
 
+# Xcode 26 workaround: strip .Swift Clang submodule from RiveRuntime's prebuilt
+# modulemaps to prevent ODR conflicts with locally-compiled Swift C++ interop.
+# See: https://github.com/rive-app/rive-nitro-react-native/issues/173
+if defined?(Pod::Installer)
+  module RiveXcode26SwiftModuleFix
+    def run_podfile_pre_install_hooks
+      rive_dir = File.join(sandbox.root.to_s, 'RiveRuntime')
+      if Dir.exist?(rive_dir)
+        Dir.glob(File.join(rive_dir, '**', 'module.modulemap')).each do |path|
+          content = File.read(path)
+          next unless content.include?('RiveRuntime.Swift')
+          cleaned = content.gsub(/\nmodule RiveRuntime\.Swift \{[^}]*\}\n?/m, "\n")
+          File.write(path, cleaned)
+        end
+      end
+      super
+    end
+  end
+
+  Pod::Installer.prepend(RiveXcode26SwiftModuleFix)
+end
+
 Pod::Spec.new do |s|
   s.name         = "RNRive"
   s.version      = package["version"]
