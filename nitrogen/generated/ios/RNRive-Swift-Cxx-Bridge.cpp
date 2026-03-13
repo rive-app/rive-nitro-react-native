@@ -9,12 +9,13 @@
 
 // Include C++ implementation defined types
 #include "HybridBindableArtboardSpecSwift.hpp"
+#include "HybridFallbackFontSpecSwift.hpp"
 #include "HybridRiveFileFactorySpecSwift.hpp"
 #include "HybridRiveFileSpecSwift.hpp"
+#include "HybridRiveFontConfigSpecSwift.hpp"
 #include "HybridRiveImageFactorySpecSwift.hpp"
 #include "HybridRiveImageSpecSwift.hpp"
 #include "HybridRiveRuntimeSpecSwift.hpp"
-#include "HybridRiveSpecSwift.hpp"
 #include "HybridRiveViewSpecSwift.hpp"
 #include "HybridViewModelArtboardPropertySpecSwift.hpp"
 #include "HybridViewModelBooleanPropertySpecSwift.hpp"
@@ -46,22 +47,6 @@ namespace margelo::nitro::rive::bridge::swift {
     }
     #endif
     RNRive::HybridBindableArtboardSpec_cxx& swiftPart = swiftWrapper->getSwiftPart();
-    return swiftPart.toUnsafe();
-  }
-  
-  // pragma MARK: std::shared_ptr<HybridRiveSpec>
-  std::shared_ptr<HybridRiveSpec> create_std__shared_ptr_HybridRiveSpec_(void* NON_NULL swiftUnsafePointer) noexcept {
-    RNRive::HybridRiveSpec_cxx swiftPart = RNRive::HybridRiveSpec_cxx::fromUnsafe(swiftUnsafePointer);
-    return std::make_shared<margelo::nitro::rive::HybridRiveSpecSwift>(swiftPart);
-  }
-  void* NON_NULL get_std__shared_ptr_HybridRiveSpec_(std__shared_ptr_HybridRiveSpec_ cppType) {
-    std::shared_ptr<margelo::nitro::rive::HybridRiveSpecSwift> swiftWrapper = std::dynamic_pointer_cast<margelo::nitro::rive::HybridRiveSpecSwift>(cppType);
-    #ifdef NITRO_DEBUG
-    if (swiftWrapper == nullptr) [[unlikely]] {
-      throw std::runtime_error("Class \"HybridRiveSpec\" is not implemented in Swift!");
-    }
-    #endif
-    RNRive::HybridRiveSpec_cxx& swiftPart = swiftWrapper->getSwiftPart();
     return swiftPart.toUnsafe();
   }
   
@@ -145,6 +130,54 @@ namespace margelo::nitro::rive::bridge::swift {
     return swiftPart.toUnsafe();
   }
   
+  // pragma MARK: std::shared_ptr<HybridFallbackFontSpec>
+  std::shared_ptr<HybridFallbackFontSpec> create_std__shared_ptr_HybridFallbackFontSpec_(void* NON_NULL swiftUnsafePointer) noexcept {
+    RNRive::HybridFallbackFontSpec_cxx swiftPart = RNRive::HybridFallbackFontSpec_cxx::fromUnsafe(swiftUnsafePointer);
+    return std::make_shared<margelo::nitro::rive::HybridFallbackFontSpecSwift>(swiftPart);
+  }
+  void* NON_NULL get_std__shared_ptr_HybridFallbackFontSpec_(std__shared_ptr_HybridFallbackFontSpec_ cppType) {
+    std::shared_ptr<margelo::nitro::rive::HybridFallbackFontSpecSwift> swiftWrapper = std::dynamic_pointer_cast<margelo::nitro::rive::HybridFallbackFontSpecSwift>(cppType);
+    #ifdef NITRO_DEBUG
+    if (swiftWrapper == nullptr) [[unlikely]] {
+      throw std::runtime_error("Class \"HybridFallbackFontSpec\" is not implemented in Swift!");
+    }
+    #endif
+    RNRive::HybridFallbackFontSpec_cxx& swiftPart = swiftWrapper->getSwiftPart();
+    return swiftPart.toUnsafe();
+  }
+  
+  // pragma MARK: std::function<void(const std::shared_ptr<HybridFallbackFontSpec>& /* result */)>
+  Func_void_std__shared_ptr_HybridFallbackFontSpec_ create_Func_void_std__shared_ptr_HybridFallbackFontSpec_(void* NON_NULL swiftClosureWrapper) noexcept {
+    auto swiftClosure = RNRive::Func_void_std__shared_ptr_HybridFallbackFontSpec_::fromUnsafe(swiftClosureWrapper);
+    return [swiftClosure = std::move(swiftClosure)](const std::shared_ptr<HybridFallbackFontSpec>& result) mutable -> void {
+      swiftClosure.call(result);
+    };
+  }
+  
+  // pragma MARK: std::function<void()>
+  Func_void create_Func_void(void* NON_NULL swiftClosureWrapper) noexcept {
+    auto swiftClosure = RNRive::Func_void::fromUnsafe(swiftClosureWrapper);
+    return [swiftClosure = std::move(swiftClosure)]() mutable -> void {
+      swiftClosure.call();
+    };
+  }
+  
+  // pragma MARK: std::shared_ptr<HybridRiveFontConfigSpec>
+  std::shared_ptr<HybridRiveFontConfigSpec> create_std__shared_ptr_HybridRiveFontConfigSpec_(void* NON_NULL swiftUnsafePointer) noexcept {
+    RNRive::HybridRiveFontConfigSpec_cxx swiftPart = RNRive::HybridRiveFontConfigSpec_cxx::fromUnsafe(swiftUnsafePointer);
+    return std::make_shared<margelo::nitro::rive::HybridRiveFontConfigSpecSwift>(swiftPart);
+  }
+  void* NON_NULL get_std__shared_ptr_HybridRiveFontConfigSpec_(std__shared_ptr_HybridRiveFontConfigSpec_ cppType) {
+    std::shared_ptr<margelo::nitro::rive::HybridRiveFontConfigSpecSwift> swiftWrapper = std::dynamic_pointer_cast<margelo::nitro::rive::HybridRiveFontConfigSpecSwift>(cppType);
+    #ifdef NITRO_DEBUG
+    if (swiftWrapper == nullptr) [[unlikely]] {
+      throw std::runtime_error("Class \"HybridRiveFontConfigSpec\" is not implemented in Swift!");
+    }
+    #endif
+    RNRive::HybridRiveFontConfigSpec_cxx& swiftPart = swiftWrapper->getSwiftPart();
+    return swiftPart.toUnsafe();
+  }
+  
   // pragma MARK: std::function<void(const std::shared_ptr<HybridRiveImageSpec>& /* result */)>
   Func_void_std__shared_ptr_HybridRiveImageSpec_ create_Func_void_std__shared_ptr_HybridRiveImageSpec_(void* NON_NULL swiftClosureWrapper) noexcept {
     auto swiftClosure = RNRive::Func_void_std__shared_ptr_HybridRiveImageSpec_::fromUnsafe(swiftClosureWrapper);
@@ -167,14 +200,6 @@ namespace margelo::nitro::rive::bridge::swift {
     #endif
     RNRive::HybridRiveImageFactorySpec_cxx& swiftPart = swiftWrapper->getSwiftPart();
     return swiftPart.toUnsafe();
-  }
-  
-  // pragma MARK: std::function<void()>
-  Func_void create_Func_void(void* NON_NULL swiftClosureWrapper) noexcept {
-    auto swiftClosure = RNRive::Func_void::fromUnsafe(swiftClosureWrapper);
-    return [swiftClosure = std::move(swiftClosure)]() mutable -> void {
-      swiftClosure.call();
-    };
   }
   
   // pragma MARK: std::shared_ptr<HybridRiveRuntimeSpec>

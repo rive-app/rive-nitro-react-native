@@ -1,0 +1,95 @@
+import { NitroModules } from 'react-native-nitro-modules';
+import { Image } from 'react-native';
+import type {
+  RiveFontConfig,
+  FallbackFont,
+} from '../specs/RiveFontConfig.nitro';
+
+const RiveFontConfigInternal =
+  NitroModules.createHybridObject<RiveFontConfig>('RiveFontConfig');
+
+/**
+ * A font source that can be:
+ * - `number` — a Metro `require('./Font.ttf')` asset ID
+ * - `{ uri: string }` — a URI object (http/https URL, file:// path, or resource name)
+ * - `string` — a native resource name (e.g. "kanit_regular.ttf") or URL
+ * - `{ name: string }` — a system font name (e.g. "Arial", "sans-serif")
+ * - `ArrayBuffer` — raw font bytes (TTF/OTF)
+ */
+export type FontSource =
+  | number
+  | { uri: string }
+  | { name: string }
+  | string
+  | ArrayBuffer;
+
+export type FontWeight = number | 'default';
+
+export type FallbackFontMap = Partial<Record<FontWeight, FallbackFont[]>>;
+
+const DEFAULT_WEIGHT = 0;
+
+function resolveWeight(key: string): number {
+  return key === 'default' ? DEFAULT_WEIGHT : Number(key);
+}
+
+export namespace RiveFonts {
+  export async function loadFont(source: FontSource): Promise<FallbackFont> {
+    if (source instanceof ArrayBuffer) {
+      return RiveFontConfigInternal.loadFontFromBytes(source);
+    }
+
+    if (typeof source === 'number') {
+      const resolved = Image.resolveAssetSource(source);
+      if (!resolved?.uri) {
+        throw new Error(
+          `Invalid font asset: could not resolve require() ID ${source}. Ensure 'ttf' is in metro.config.js assetExts.`
+        );
+      }
+      return loadFontByURI(resolved.uri);
+    }
+
+    if (typeof source === 'object' && 'name' in source) {
+      return RiveFontConfigInternal.loadFontByName(source.name);
+    }
+
+    if (typeof source === 'object' && 'uri' in source) {
+      return loadFontByURI(source.uri);
+    }
+
+    if (typeof source === 'string') {
+      if (/^https?:\/\//.test(source) || /^file:\/\//.test(source)) {
+        return RiveFontConfigInternal.loadFontFromURL(source);
+      }
+      return RiveFontConfigInternal.loadFontFromResource(source);
+    }
+
+    throw new Error(`Invalid font source: ${String(source)}`);
+  }
+
+  export function systemFallback(): FallbackFont {
+    return RiveFontConfigInternal.getSystemDefaultFont();
+  }
+
+  export async function setFallbackFonts(
+    fontsByWeight: FallbackFontMap
+  ): Promise<void> {
+    for (const [key, fonts] of Object.entries(fontsByWeight)) {
+      if (fonts) {
+        RiveFontConfigInternal.setFontsForWeight(resolveWeight(key), fonts);
+      }
+    }
+    await RiveFontConfigInternal.applyFallbackFonts();
+  }
+
+  export async function clearFallbackFonts(): Promise<void> {
+    return RiveFontConfigInternal.clearFallbackFonts();
+  }
+}
+
+function loadFontByURI(uri: string): Promise<FallbackFont> | FallbackFont {
+  if (/^https?:\/\//.test(uri) || /^file:\/\//.test(uri)) {
+    return RiveFontConfigInternal.loadFontFromURL(uri);
+  }
+  return RiveFontConfigInternal.loadFontFromResource(uri);
+}

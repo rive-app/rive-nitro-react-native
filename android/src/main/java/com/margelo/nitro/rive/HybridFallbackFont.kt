@@ -5,8 +5,6 @@ import com.facebook.proguard.annotations.DoNotStrip
 
 @Keep
 @DoNotStrip
-class Rive : HybridRiveSpec() {
-  override fun multiply(a: Double, b: Double): Double {
-    return a * b
-  }
-}
+class HybridFallbackFont(
+  val fontBytes: ByteArray
+) : HybridFallbackFontSpec()
