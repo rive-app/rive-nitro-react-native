@@ -17,54 +17,48 @@
 
 namespace margelo::nitro::rive {
 
-  jni::local_ref<JHybridRiveRuntimeSpec::jhybriddata> JHybridRiveRuntimeSpec::initHybrid(jni::alias_ref<jhybridobject> jThis) {
+  std::shared_ptr<JHybridRiveRuntimeSpec> JHybridRiveRuntimeSpec::JavaPart::getJHybridRiveRuntimeSpec() {
+    auto hybridObject = JHybridObject::JavaPart::getJHybridObject();
+    auto castHybridObject = std::dynamic_pointer_cast<JHybridRiveRuntimeSpec>(hybridObject);
+    if (castHybridObject == nullptr) [[unlikely]] {
+      throw std::runtime_error("Failed to downcast JHybridObject to JHybridRiveRuntimeSpec!");
+    }
+    return castHybridObject;
+  }
+
+  jni::local_ref<JHybridRiveRuntimeSpec::CxxPart::jhybriddata> JHybridRiveRuntimeSpec::CxxPart::initHybrid(jni::alias_ref<jhybridobject> jThis) {
     return makeCxxInstance(jThis);
   }
 
-  void JHybridRiveRuntimeSpec::registerNatives() {
-    registerHybrid({
-      makeNativeMethod("initHybrid", JHybridRiveRuntimeSpec::initHybrid),
-    });
-  }
-
-  size_t JHybridRiveRuntimeSpec::getExternalMemorySize() noexcept {
-    static const auto method = javaClassStatic()->getMethod<jlong()>("getMemorySize");
-    return method(_javaPart);
-  }
-
-  bool JHybridRiveRuntimeSpec::equals(const std::shared_ptr<HybridObject>& other) {
-    if (auto otherCast = std::dynamic_pointer_cast<JHybridRiveRuntimeSpec>(other)) {
-      return _javaPart == otherCast->_javaPart;
+  std::shared_ptr<JHybridObject> JHybridRiveRuntimeSpec::CxxPart::createHybridObject(const jni::local_ref<JHybridObject::JavaPart>& javaPart) {
+    auto castJavaPart = jni::dynamic_ref_cast<JHybridRiveRuntimeSpec::JavaPart>(javaPart);
+    if (castJavaPart == nullptr) [[unlikely]] {
+      throw std::runtime_error("Failed to cast JHybridObject::JavaPart to JHybridRiveRuntimeSpec::JavaPart!");
     }
-    return false;
+    return std::make_shared<JHybridRiveRuntimeSpec>(castJavaPart);
   }
 
-  void JHybridRiveRuntimeSpec::dispose() noexcept {
-    static const auto method = javaClassStatic()->getMethod<void()>("dispose");
-    method(_javaPart);
-  }
-
-  std::string JHybridRiveRuntimeSpec::toString() {
-    static const auto method = javaClassStatic()->getMethod<jni::JString()>("toString");
-    auto javaString = method(_javaPart);
-    return javaString->toStdString();
+  void JHybridRiveRuntimeSpec::CxxPart::registerNatives() {
+    registerHybrid({
+      makeNativeMethod("initHybrid", JHybridRiveRuntimeSpec::CxxPart::initHybrid),
+    });
   }
 
   // Properties
   bool JHybridRiveRuntimeSpec::getIsInitialized() {
-    static const auto method = javaClassStatic()->getMethod<jboolean()>("isInitialized");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jboolean()>("isInitialized");
     auto __result = method(_javaPart);
     return static_cast<bool>(__result);
   }
   std::optional<std::string> JHybridRiveRuntimeSpec::getInitError() {
-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<jni::JString>()>("getInitError");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<jni::JString>()>("getInitError");
     auto __result = method(_javaPart);
     return __result != nullptr ? std::make_optional(__result->toStdString()) : std::nullopt;
   }
 
   // Methods
   std::shared_ptr<Promise<void>> JHybridRiveRuntimeSpec::initialize() {
-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>()>("initialize");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>()>("initialize");
     auto __result = method(_javaPart);
     return [&]() {
       auto __promise = Promise<void>::create();

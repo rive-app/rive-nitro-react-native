@@ -5,7 +5,6 @@
 /// Copyright © Marc Rousavy @ Margelo
 ///
 
-import Foundation
 import NitroModules
 
 /**
@@ -74,7 +73,14 @@ public extension UnifiedRiveEvent {
   
   @inline(__always)
   var delay: Double? {
-    return self.__delay.value
+    return { () -> Double? in
+      if bridge.has_value_std__optional_double_(self.__delay) {
+        let __unwrapped = bridge.get_std__optional_double_(self.__delay)
+        return __unwrapped
+      } else {
+        return nil
+      }
+    }()
   }
   
   @inline(__always)

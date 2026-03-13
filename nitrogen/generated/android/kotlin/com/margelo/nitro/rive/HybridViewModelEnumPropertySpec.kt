@@ -24,23 +24,6 @@ import com.margelo.nitro.core.HybridObject
   "LocalVariableName", "PropertyName", "PrivatePropertyName", "FunctionName"
 )
 abstract class HybridViewModelEnumPropertySpec: HybridViewModelPropertySpec() {
-  @DoNotStrip
-  private var mHybridData: HybridData = initHybrid()
-
-  init {
-    super.updateNative(mHybridData)
-  }
-
-  override fun updateNative(hybridData: HybridData) {
-    mHybridData = hybridData
-    super.updateNative(hybridData)
-  }
-
-  // Default implementation of `HybridObject.toString()`
-  override fun toString(): String {
-    return "[HybridObject ViewModelEnumProperty]"
-  }
-
   // Properties
   @get:DoNotStrip
   @get:Keep
@@ -62,7 +45,21 @@ abstract class HybridViewModelEnumPropertySpec: HybridViewModelPropertySpec() {
   @Keep
   abstract fun removeListeners(): Unit
 
-  private external fun initHybrid(): HybridData
+  // Default implementation of `HybridObject.toString()`
+  override fun toString(): String {
+    return "[HybridObject ViewModelEnumProperty]"
+  }
+
+  // C++ backing class
+  @DoNotStrip
+  @Keep
+  protected open class CxxPart(javaPart: HybridViewModelEnumPropertySpec): HybridViewModelPropertySpec.CxxPart(javaPart) {
+    // C++ JHybridViewModelEnumPropertySpec::CxxPart::initHybrid(...)
+    external override fun initHybrid(): HybridData
+  }
+  override fun createCxxPart(): CxxPart {
+    return CxxPart(this)
+  }
 
   companion object {
     protected const val TAG = "HybridViewModelEnumPropertySpec"

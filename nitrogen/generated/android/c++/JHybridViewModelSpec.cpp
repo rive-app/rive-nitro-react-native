@@ -18,76 +18,70 @@ namespace margelo::nitro::rive { class HybridViewModelInstanceSpec; }
 
 namespace margelo::nitro::rive {
 
-  jni::local_ref<JHybridViewModelSpec::jhybriddata> JHybridViewModelSpec::initHybrid(jni::alias_ref<jhybridobject> jThis) {
+  std::shared_ptr<JHybridViewModelSpec> JHybridViewModelSpec::JavaPart::getJHybridViewModelSpec() {
+    auto hybridObject = JHybridObject::JavaPart::getJHybridObject();
+    auto castHybridObject = std::dynamic_pointer_cast<JHybridViewModelSpec>(hybridObject);
+    if (castHybridObject == nullptr) [[unlikely]] {
+      throw std::runtime_error("Failed to downcast JHybridObject to JHybridViewModelSpec!");
+    }
+    return castHybridObject;
+  }
+
+  jni::local_ref<JHybridViewModelSpec::CxxPart::jhybriddata> JHybridViewModelSpec::CxxPart::initHybrid(jni::alias_ref<jhybridobject> jThis) {
     return makeCxxInstance(jThis);
   }
 
-  void JHybridViewModelSpec::registerNatives() {
-    registerHybrid({
-      makeNativeMethod("initHybrid", JHybridViewModelSpec::initHybrid),
-    });
-  }
-
-  size_t JHybridViewModelSpec::getExternalMemorySize() noexcept {
-    static const auto method = javaClassStatic()->getMethod<jlong()>("getMemorySize");
-    return method(_javaPart);
-  }
-
-  bool JHybridViewModelSpec::equals(const std::shared_ptr<HybridObject>& other) {
-    if (auto otherCast = std::dynamic_pointer_cast<JHybridViewModelSpec>(other)) {
-      return _javaPart == otherCast->_javaPart;
+  std::shared_ptr<JHybridObject> JHybridViewModelSpec::CxxPart::createHybridObject(const jni::local_ref<JHybridObject::JavaPart>& javaPart) {
+    auto castJavaPart = jni::dynamic_ref_cast<JHybridViewModelSpec::JavaPart>(javaPart);
+    if (castJavaPart == nullptr) [[unlikely]] {
+      throw std::runtime_error("Failed to cast JHybridObject::JavaPart to JHybridViewModelSpec::JavaPart!");
     }
-    return false;
+    return std::make_shared<JHybridViewModelSpec>(castJavaPart);
   }
 
-  void JHybridViewModelSpec::dispose() noexcept {
-    static const auto method = javaClassStatic()->getMethod<void()>("dispose");
-    method(_javaPart);
-  }
-
-  std::string JHybridViewModelSpec::toString() {
-    static const auto method = javaClassStatic()->getMethod<jni::JString()>("toString");
-    auto javaString = method(_javaPart);
-    return javaString->toStdString();
+  void JHybridViewModelSpec::CxxPart::registerNatives() {
+    registerHybrid({
+      makeNativeMethod("initHybrid", JHybridViewModelSpec::CxxPart::initHybrid),
+    });
   }
 
   // Properties
   double JHybridViewModelSpec::getPropertyCount() {
-    static const auto method = javaClassStatic()->getMethod<double()>("getPropertyCount");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<double()>("getPropertyCount");
     auto __result = method(_javaPart);
     return __result;
   }
   double JHybridViewModelSpec::getInstanceCount() {
-    static const auto method = javaClassStatic()->getMethod<double()>("getInstanceCount");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<double()>("getInstanceCount");
     auto __result = method(_javaPart);
     return __result;
   }
   std::string JHybridViewModelSpec::getModelName() {
-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<jni::JString>()>("getModelName");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<jni::JString>()>("getModelName");
     auto __result = method(_javaPart);
     return __result->toStdString();
   }
 
   // Methods
   std::optional<std::shared_ptr<HybridViewModelInstanceSpec>> JHybridViewModelSpec::createInstanceByIndex(double index) {
-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JHybridViewModelInstanceSpec::javaobject>(double /* index */)>("createInstanceByIndex");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JHybridViewModelInstanceSpec::JavaPart>(double /* index */)>("createInstanceByIndex");
     auto __result = method(_javaPart, index);
-    return __result != nullptr ? std::make_optional(__result->cthis()->shared_cast<JHybridViewModelInstanceSpec>()) : std::nullopt;
+    return __result != nullptr ? std::make_optional(__result->getJHybridViewModelInstanceSpec()) : std::nullopt;
   }
   std::optional<std::shared_ptr<HybridViewModelInstanceSpec>> JHybridViewModelSpec::createInstanceByName(const std::string& name) {
-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JHybridViewModelInstanceSpec::javaobject>(jni::alias_ref<jni::JString> /* name */)>("createInstanceByName");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JHybridViewModelInstanceSpec::JavaPart>(jni::alias_ref<jni::JString> /* name */)>("createInstanceByName");
     auto __result = method(_javaPart, jni::make_jstring(name));
-    return __result != nullptr ? std::make_optional(__result->cthis()->shared_cast<JHybridViewModelInstanceSpec>()) : std::nullopt;
+    return __result != nullptr ? std::make_optional(__result->getJHybridViewModelInstanceSpec()) : std::nullopt;
   }
   std::optional<std::shared_ptr<HybridViewModelInstanceSpec>> JHybridViewModelSpec::createDefaultInstance() {
-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JHybridViewModelInstanceSpec::javaobject>()>("createDefaultInstance");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JHybridViewModelInstanceSpec::JavaPart>()>("createDefaultInstance");
     auto __result = method(_javaPart);
-    return __result != nullptr ? std::make_optional(__result->cthis()->shared_cast<JHybridViewModelInstanceSpec>()) : std::nullopt;
+    return __result != nullptr ? std::make_optional(__result->getJHybridViewModelInstanceSpec()) : std::nullopt;
   }
   std::optional<std::shared_ptr<HybridViewModelInstanceSpec>> JHybridViewModelSpec::createInstance() {
-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JHybridViewModelInstanceSpec::javaobject>()>("createInstance");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JHybridViewModelInstanceSpec::JavaPart>()>("createInstance");
     auto __result = method(_javaPart);
-    return __result != nullptr ? std::make_optional(__result->cthis()->shared_cast<JHybridViewModelInstanceSpec>()) : std::nullopt;
+    return __result != nullptr ? std::make_optional(__result->getJHybridViewModelInstanceSpec()) : std::nullopt;
   }
 
 } // namespace margelo::nitro::rive

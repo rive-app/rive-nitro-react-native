@@ -195,7 +195,7 @@ namespace margelo::nitro::rive::bridge::swift {
     return optional.has_value();
   }
   inline double get_std__optional_double_(const std::optional<double>& optional) noexcept {
-    return *optional;
+    return optional.value();
   }
   
   // pragma MARK: std::shared_ptr<HybridViewModelSpec>
@@ -222,7 +222,7 @@ namespace margelo::nitro::rive::bridge::swift {
     return optional.has_value();
   }
   inline std::shared_ptr<HybridViewModelSpec> get_std__optional_std__shared_ptr_HybridViewModelSpec__(const std::optional<std::shared_ptr<HybridViewModelSpec>>& optional) noexcept {
-    return *optional;
+    return optional.value();
   }
   
   // pragma MARK: std::optional<std::string>
@@ -237,7 +237,7 @@ namespace margelo::nitro::rive::bridge::swift {
     return optional.has_value();
   }
   inline std::string get_std__optional_std__string_(const std::optional<std::string>& optional) noexcept {
-    return *optional;
+    return optional.value();
   }
   
   // pragma MARK: std::optional<ArtboardBy>
@@ -252,7 +252,7 @@ namespace margelo::nitro::rive::bridge::swift {
     return optional.has_value();
   }
   inline ArtboardBy get_std__optional_ArtboardBy_(const std::optional<ArtboardBy>& optional) noexcept {
-    return *optional;
+    return optional.value();
   }
   
   // pragma MARK: std::shared_ptr<HybridRiveImageSpec>
@@ -279,7 +279,7 @@ namespace margelo::nitro::rive::bridge::swift {
     return optional.has_value();
   }
   inline std::shared_ptr<HybridRiveImageSpec> get_std__optional_std__shared_ptr_HybridRiveImageSpec__(const std::optional<std::shared_ptr<HybridRiveImageSpec>>& optional) noexcept {
-    return *optional;
+    return optional.value();
   }
   
   // pragma MARK: std::unordered_map<std::string, ResolvedReferencedAsset>
@@ -319,7 +319,7 @@ namespace margelo::nitro::rive::bridge::swift {
     return optional.has_value();
   }
   inline std::unordered_map<std::string, ResolvedReferencedAsset> get_std__optional_std__unordered_map_std__string__ResolvedReferencedAsset__(const std::optional<std::unordered_map<std::string, ResolvedReferencedAsset>>& optional) noexcept {
-    return *optional;
+    return optional.value();
   }
   
   // pragma MARK: std::vector<std::string>
@@ -440,7 +440,7 @@ namespace margelo::nitro::rive::bridge::swift {
     return optional.has_value();
   }
   inline ReferencedAssetsType get_std__optional_ReferencedAssetsType_(const std::optional<ReferencedAssetsType>& optional) noexcept {
-    return *optional;
+    return optional.value();
   }
   
   // pragma MARK: std::shared_ptr<HybridRiveFileFactorySpec>
@@ -673,7 +673,7 @@ namespace margelo::nitro::rive::bridge::swift {
     return optional.has_value();
   }
   inline bool get_std__optional_bool_(const std::optional<bool>& optional) noexcept {
-    return *optional;
+    return optional.value();
   }
   
   // pragma MARK: std::optional<Alignment>
@@ -688,7 +688,7 @@ namespace margelo::nitro::rive::bridge::swift {
     return optional.has_value();
   }
   inline Alignment get_std__optional_Alignment_(const std::optional<Alignment>& optional) noexcept {
-    return *optional;
+    return optional.value();
   }
   
   // pragma MARK: std::optional<Fit>
@@ -703,7 +703,7 @@ namespace margelo::nitro::rive::bridge::swift {
     return optional.has_value();
   }
   inline Fit get_std__optional_Fit_(const std::optional<Fit>& optional) noexcept {
-    return *optional;
+    return optional.value();
   }
   
   // pragma MARK: std::shared_ptr<HybridViewModelInstanceSpec>
@@ -765,7 +765,7 @@ namespace margelo::nitro::rive::bridge::swift {
     return optional.has_value();
   }
   inline std::variant<std::shared_ptr<HybridViewModelInstanceSpec>, DataBindMode, DataBindByName> get_std__optional_std__variant_std__shared_ptr_HybridViewModelInstanceSpec___DataBindMode__DataBindByName__(const std::optional<std::variant<std::shared_ptr<HybridViewModelInstanceSpec>, DataBindMode, DataBindByName>>& optional) noexcept {
-    return *optional;
+    return optional.value();
   }
   
   // pragma MARK: std::function<void(const RiveError& /* error */)>
@@ -836,7 +836,7 @@ namespace margelo::nitro::rive::bridge::swift {
     return optional.has_value();
   }
   inline std::shared_ptr<HybridViewModelInstanceSpec> get_std__optional_std__shared_ptr_HybridViewModelInstanceSpec__(const std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>& optional) noexcept {
-    return *optional;
+    return optional.value();
   }
   
   // pragma MARK: std::variant<bool, std::string, double>
@@ -911,7 +911,7 @@ namespace margelo::nitro::rive::bridge::swift {
     return optional.has_value();
   }
   inline std::unordered_map<std::string, std::variant<bool, std::string, double>> get_std__optional_std__unordered_map_std__string__std__variant_bool__std__string__double___(const std::optional<std::unordered_map<std::string, std::variant<bool, std::string, double>>>& optional) noexcept {
-    return *optional;
+    return optional.value();
   }
   
   // pragma MARK: std::function<void(const UnifiedRiveEvent& /* event */)>
@@ -1032,7 +1032,7 @@ namespace margelo::nitro::rive::bridge::swift {
     return optional.has_value();
   }
   inline std::shared_ptr<HybridViewModelNumberPropertySpec> get_std__optional_std__shared_ptr_HybridViewModelNumberPropertySpec__(const std::optional<std::shared_ptr<HybridViewModelNumberPropertySpec>>& optional) noexcept {
-    return *optional;
+    return optional.value();
   }
   
   // pragma MARK: std::shared_ptr<HybridViewModelStringPropertySpec>
@@ -1062,7 +1062,7 @@ namespace margelo::nitro::rive::bridge::swift {
     return optional.has_value();
   }
   inline std::shared_ptr<HybridViewModelStringPropertySpec> get_std__optional_std__shared_ptr_HybridViewModelStringPropertySpec__(const std::optional<std::shared_ptr<HybridViewModelStringPropertySpec>>& optional) noexcept {
-    return *optional;
+    return optional.value();
   }
   
   // pragma MARK: std::shared_ptr<HybridViewModelBooleanPropertySpec>
@@ -1092,7 +1092,7 @@ namespace margelo::nitro::rive::bridge::swift {
     return optional.has_value();
   }
   inline std::shared_ptr<HybridViewModelBooleanPropertySpec> get_std__optional_std__shared_ptr_HybridViewModelBooleanPropertySpec__(const std::optional<std::shared_ptr<HybridViewModelBooleanPropertySpec>>& optional) noexcept {
-    return *optional;
+    return optional.value();
   }
   
   // pragma MARK: std::shared_ptr<HybridViewModelColorPropertySpec>
@@ -1122,7 +1122,7 @@ namespace margelo::nitro::rive::bridge::swift {
     return optional.has_value();
   }
   inline std::shared_ptr<HybridViewModelColorPropertySpec> get_std__optional_std__shared_ptr_HybridViewModelColorPropertySpec__(const std::optional<std::shared_ptr<HybridViewModelColorPropertySpec>>& optional) noexcept {
-    return *optional;
+    return optional.value();
   }
   
   // pragma MARK: std::shared_ptr<HybridViewModelEnumPropertySpec>
@@ -1152,7 +1152,7 @@ namespace margelo::nitro::rive::bridge::swift {
     return optional.has_value();
   }
   inline std::shared_ptr<HybridViewModelEnumPropertySpec> get_std__optional_std__shared_ptr_HybridViewModelEnumPropertySpec__(const std::optional<std::shared_ptr<HybridViewModelEnumPropertySpec>>& optional) noexcept {
-    return *optional;
+    return optional.value();
   }
   
   // pragma MARK: std::shared_ptr<HybridViewModelTriggerPropertySpec>
@@ -1182,7 +1182,7 @@ namespace margelo::nitro::rive::bridge::swift {
     return optional.has_value();
   }
   inline std::shared_ptr<HybridViewModelTriggerPropertySpec> get_std__optional_std__shared_ptr_HybridViewModelTriggerPropertySpec__(const std::optional<std::shared_ptr<HybridViewModelTriggerPropertySpec>>& optional) noexcept {
-    return *optional;
+    return optional.value();
   }
   
   // pragma MARK: std::shared_ptr<HybridViewModelImagePropertySpec>
@@ -1212,7 +1212,7 @@ namespace margelo::nitro::rive::bridge::swift {
     return optional.has_value();
   }
   inline std::shared_ptr<HybridViewModelImagePropertySpec> get_std__optional_std__shared_ptr_HybridViewModelImagePropertySpec__(const std::optional<std::shared_ptr<HybridViewModelImagePropertySpec>>& optional) noexcept {
-    return *optional;
+    return optional.value();
   }
   
   // pragma MARK: std::shared_ptr<HybridViewModelListPropertySpec>
@@ -1242,7 +1242,7 @@ namespace margelo::nitro::rive::bridge::swift {
     return optional.has_value();
   }
   inline std::shared_ptr<HybridViewModelListPropertySpec> get_std__optional_std__shared_ptr_HybridViewModelListPropertySpec__(const std::optional<std::shared_ptr<HybridViewModelListPropertySpec>>& optional) noexcept {
-    return *optional;
+    return optional.value();
   }
   
   // pragma MARK: std::shared_ptr<HybridViewModelArtboardPropertySpec>
@@ -1272,7 +1272,7 @@ namespace margelo::nitro::rive::bridge::swift {
     return optional.has_value();
   }
   inline std::shared_ptr<HybridViewModelArtboardPropertySpec> get_std__optional_std__shared_ptr_HybridViewModelArtboardPropertySpec__(const std::optional<std::shared_ptr<HybridViewModelArtboardPropertySpec>>& optional) noexcept {
-    return *optional;
+    return optional.value();
   }
   
   // pragma MARK: Result<std::optional<std::shared_ptr<HybridViewModelNumberPropertySpec>>>
@@ -1421,7 +1421,7 @@ namespace margelo::nitro::rive::bridge::swift {
     return optional.has_value();
   }
   inline std::shared_ptr<HybridBindableArtboardSpec> get_std__optional_std__shared_ptr_HybridBindableArtboardSpec__(const std::optional<std::shared_ptr<HybridBindableArtboardSpec>>& optional) noexcept {
-    return *optional;
+    return optional.value();
   }
 
 } // namespace margelo::nitro::rive::bridge::swift

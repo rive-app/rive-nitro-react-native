@@ -20,7 +20,7 @@ final class HybridRiveImageFactory: HybridRiveImageFactorySpec {
     return loadFromDataSource(.bundle(nameWithExtension: resource))
   }
 
-  func loadFromBytesAsync(bytes: ArrayBufferHolder) throws -> Promise<(any HybridRiveImageSpec)> {
+  func loadFromBytesAsync(bytes: ArrayBuffer) throws -> Promise<(any HybridRiveImageSpec)> {
     return loadFromDataSource(.bytes(from: bytes))
   }
 }

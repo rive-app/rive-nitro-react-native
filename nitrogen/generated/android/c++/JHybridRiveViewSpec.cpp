@@ -65,114 +65,108 @@ namespace margelo::nitro::rive { enum class RiveEventType; }
 
 namespace margelo::nitro::rive {
 
-  jni::local_ref<JHybridRiveViewSpec::jhybriddata> JHybridRiveViewSpec::initHybrid(jni::alias_ref<jhybridobject> jThis) {
+  std::shared_ptr<JHybridRiveViewSpec> JHybridRiveViewSpec::JavaPart::getJHybridRiveViewSpec() {
+    auto hybridObject = JHybridObject::JavaPart::getJHybridObject();
+    auto castHybridObject = std::dynamic_pointer_cast<JHybridRiveViewSpec>(hybridObject);
+    if (castHybridObject == nullptr) [[unlikely]] {
+      throw std::runtime_error("Failed to downcast JHybridObject to JHybridRiveViewSpec!");
+    }
+    return castHybridObject;
+  }
+
+  jni::local_ref<JHybridRiveViewSpec::CxxPart::jhybriddata> JHybridRiveViewSpec::CxxPart::initHybrid(jni::alias_ref<jhybridobject> jThis) {
     return makeCxxInstance(jThis);
   }
 
-  void JHybridRiveViewSpec::registerNatives() {
-    registerHybrid({
-      makeNativeMethod("initHybrid", JHybridRiveViewSpec::initHybrid),
-    });
-  }
-
-  size_t JHybridRiveViewSpec::getExternalMemorySize() noexcept {
-    static const auto method = javaClassStatic()->getMethod<jlong()>("getMemorySize");
-    return method(_javaPart);
-  }
-
-  bool JHybridRiveViewSpec::equals(const std::shared_ptr<HybridObject>& other) {
-    if (auto otherCast = std::dynamic_pointer_cast<JHybridRiveViewSpec>(other)) {
-      return _javaPart == otherCast->_javaPart;
+  std::shared_ptr<JHybridObject> JHybridRiveViewSpec::CxxPart::createHybridObject(const jni::local_ref<JHybridObject::JavaPart>& javaPart) {
+    auto castJavaPart = jni::dynamic_ref_cast<JHybridRiveViewSpec::JavaPart>(javaPart);
+    if (castJavaPart == nullptr) [[unlikely]] {
+      throw std::runtime_error("Failed to cast JHybridObject::JavaPart to JHybridRiveViewSpec::JavaPart!");
     }
-    return false;
+    return std::make_shared<JHybridRiveViewSpec>(castJavaPart);
   }
 
-  void JHybridRiveViewSpec::dispose() noexcept {
-    static const auto method = javaClassStatic()->getMethod<void()>("dispose");
-    method(_javaPart);
-  }
-
-  std::string JHybridRiveViewSpec::toString() {
-    static const auto method = javaClassStatic()->getMethod<jni::JString()>("toString");
-    auto javaString = method(_javaPart);
-    return javaString->toStdString();
+  void JHybridRiveViewSpec::CxxPart::registerNatives() {
+    registerHybrid({
+      makeNativeMethod("initHybrid", JHybridRiveViewSpec::CxxPart::initHybrid),
+    });
   }
 
   // Properties
   std::optional<std::string> JHybridRiveViewSpec::getArtboardName() {
-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<jni::JString>()>("getArtboardName");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<jni::JString>()>("getArtboardName");
     auto __result = method(_javaPart);
     return __result != nullptr ? std::make_optional(__result->toStdString()) : std::nullopt;
   }
   void JHybridRiveViewSpec::setArtboardName(const std::optional<std::string>& artboardName) {
-    static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<jni::JString> /* artboardName */)>("setArtboardName");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<jni::JString> /* artboardName */)>("setArtboardName");
     method(_javaPart, artboardName.has_value() ? jni::make_jstring(artboardName.value()) : nullptr);
   }
   std::optional<std::string> JHybridRiveViewSpec::getStateMachineName() {
-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<jni::JString>()>("getStateMachineName");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<jni::JString>()>("getStateMachineName");
     auto __result = method(_javaPart);
     return __result != nullptr ? std::make_optional(__result->toStdString()) : std::nullopt;
   }
   void JHybridRiveViewSpec::setStateMachineName(const std::optional<std::string>& stateMachineName) {
-    static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<jni::JString> /* stateMachineName */)>("setStateMachineName");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<jni::JString> /* stateMachineName */)>("setStateMachineName");
     method(_javaPart, stateMachineName.has_value() ? jni::make_jstring(stateMachineName.value()) : nullptr);
   }
   std::optional<bool> JHybridRiveViewSpec::getAutoPlay() {
-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<jni::JBoolean>()>("getAutoPlay");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<jni::JBoolean>()>("getAutoPlay");
     auto __result = method(_javaPart);
     return __result != nullptr ? std::make_optional(static_cast<bool>(__result->value())) : std::nullopt;
   }
   void JHybridRiveViewSpec::setAutoPlay(std::optional<bool> autoPlay) {
-    static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<jni::JBoolean> /* autoPlay */)>("setAutoPlay");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<jni::JBoolean> /* autoPlay */)>("setAutoPlay");
     method(_javaPart, autoPlay.has_value() ? jni::JBoolean::valueOf(autoPlay.value()) : nullptr);
   }
   std::shared_ptr<HybridRiveFileSpec> JHybridRiveViewSpec::getFile() {
-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JHybridRiveFileSpec::javaobject>()>("getFile");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JHybridRiveFileSpec::JavaPart>()>("getFile");
     auto __result = method(_javaPart);
-    return __result->cthis()->shared_cast<JHybridRiveFileSpec>();
+    return __result->getJHybridRiveFileSpec();
   }
   void JHybridRiveViewSpec::setFile(const std::shared_ptr<HybridRiveFileSpec>& file) {
-    static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<JHybridRiveFileSpec::javaobject> /* file */)>("setFile");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<JHybridRiveFileSpec::JavaPart> /* file */)>("setFile");
     method(_javaPart, std::dynamic_pointer_cast<JHybridRiveFileSpec>(file)->getJavaPart());
   }
   std::optional<Alignment> JHybridRiveViewSpec::getAlignment() {
-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JAlignment>()>("getAlignment");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JAlignment>()>("getAlignment");
     auto __result = method(_javaPart);
     return __result != nullptr ? std::make_optional(__result->toCpp()) : std::nullopt;
   }
   void JHybridRiveViewSpec::setAlignment(std::optional<Alignment> alignment) {
-    static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<JAlignment> /* alignment */)>("setAlignment");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<JAlignment> /* alignment */)>("setAlignment");
     method(_javaPart, alignment.has_value() ? JAlignment::fromCpp(alignment.value()) : nullptr);
   }
   std::optional<Fit> JHybridRiveViewSpec::getFit() {
-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JFit>()>("getFit");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JFit>()>("getFit");
     auto __result = method(_javaPart);
     return __result != nullptr ? std::make_optional(__result->toCpp()) : std::nullopt;
   }
   void JHybridRiveViewSpec::setFit(std::optional<Fit> fit) {
-    static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<JFit> /* fit */)>("setFit");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<JFit> /* fit */)>("setFit");
     method(_javaPart, fit.has_value() ? JFit::fromCpp(fit.value()) : nullptr);
   }
   std::optional<double> JHybridRiveViewSpec::getLayoutScaleFactor() {
-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<jni::JDouble>()>("getLayoutScaleFactor");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<jni::JDouble>()>("getLayoutScaleFactor");
     auto __result = method(_javaPart);
     return __result != nullptr ? std::make_optional(__result->value()) : std::nullopt;
   }
   void JHybridRiveViewSpec::setLayoutScaleFactor(std::optional<double> layoutScaleFactor) {
-    static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<jni::JDouble> /* layoutScaleFactor */)>("setLayoutScaleFactor");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<jni::JDouble> /* layoutScaleFactor */)>("setLayoutScaleFactor");
     method(_javaPart, layoutScaleFactor.has_value() ? jni::JDouble::valueOf(layoutScaleFactor.value()) : nullptr);
   }
   std::optional<std::variant<std::shared_ptr<HybridViewModelInstanceSpec>, DataBindMode, DataBindByName>> JHybridRiveViewSpec::getDataBind() {
-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JVariant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName>()>("getDataBind");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JVariant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName>()>("getDataBind");
     auto __result = method(_javaPart);
     return __result != nullptr ? std::make_optional(__result->toCpp()) : std::nullopt;
   }
   void JHybridRiveViewSpec::setDataBind(const std::optional<std::variant<std::shared_ptr<HybridViewModelInstanceSpec>, DataBindMode, DataBindByName>>& dataBind) {
-    static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<JVariant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName> /* dataBind */)>("setDataBind");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<JVariant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName> /* dataBind */)>("setDataBind");
     method(_javaPart, dataBind.has_value() ? JVariant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName::fromCpp(dataBind.value()) : nullptr);
   }
   std::function<void(const RiveError& /* error */)> JHybridRiveViewSpec::getOnError() {
-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JFunc_void_RiveError::javaobject>()>("getOnError_cxx");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JFunc_void_RiveError::javaobject>()>("getOnError_cxx");
     auto __result = method(_javaPart);
     return [&]() -> std::function<void(const RiveError& /* error */)> {
       if (__result->isInstanceOf(JFunc_void_RiveError_cxx::javaClassStatic())) [[likely]] {
@@ -185,13 +179,13 @@ namespace margelo::nitro::rive {
     }();
   }
   void JHybridRiveViewSpec::setOnError(const std::function<void(const RiveError& /* error */)>& onError) {
-    static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<JFunc_void_RiveError::javaobject> /* onError */)>("setOnError_cxx");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<JFunc_void_RiveError::javaobject> /* onError */)>("setOnError_cxx");
     method(_javaPart, JFunc_void_RiveError_cxx::fromCpp(onError));
   }
 
   // Methods
   std::shared_ptr<Promise<bool>> JHybridRiveViewSpec::awaitViewReady() {
-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>()>("awaitViewReady");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>()>("awaitViewReady");
     auto __result = method(_javaPart);
     return [&]() {
       auto __promise = Promise<bool>::create();
@@ -207,16 +201,16 @@ namespace margelo::nitro::rive {
     }();
   }
   void JHybridRiveViewSpec::bindViewModelInstance(const std::shared_ptr<HybridViewModelInstanceSpec>& viewModelInstance) {
-    static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<JHybridViewModelInstanceSpec::javaobject> /* viewModelInstance */)>("bindViewModelInstance");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<JHybridViewModelInstanceSpec::JavaPart> /* viewModelInstance */)>("bindViewModelInstance");
     method(_javaPart, std::dynamic_pointer_cast<JHybridViewModelInstanceSpec>(viewModelInstance)->getJavaPart());
   }
   std::optional<std::shared_ptr<HybridViewModelInstanceSpec>> JHybridRiveViewSpec::getViewModelInstance() {
-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JHybridViewModelInstanceSpec::javaobject>()>("getViewModelInstance");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JHybridViewModelInstanceSpec::JavaPart>()>("getViewModelInstance");
     auto __result = method(_javaPart);
-    return __result != nullptr ? std::make_optional(__result->cthis()->shared_cast<JHybridViewModelInstanceSpec>()) : std::nullopt;
+    return __result != nullptr ? std::make_optional(__result->getJHybridViewModelInstanceSpec()) : std::nullopt;
   }
   std::shared_ptr<Promise<void>> JHybridRiveViewSpec::play() {
-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>()>("play");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>()>("play");
     auto __result = method(_javaPart);
     return [&]() {
       auto __promise = Promise<void>::create();
@@ -231,7 +225,7 @@ namespace margelo::nitro::rive {
     }();
   }
   std::shared_ptr<Promise<void>> JHybridRiveViewSpec::pause() {
-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>()>("pause");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>()>("pause");
     auto __result = method(_javaPart);
     return [&]() {
       auto __promise = Promise<void>::create();
@@ -246,7 +240,7 @@ namespace margelo::nitro::rive {
     }();
   }
   std::shared_ptr<Promise<void>> JHybridRiveViewSpec::reset() {
-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>()>("reset");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>()>("reset");
     auto __result = method(_javaPart);
     return [&]() {
       auto __promise = Promise<void>::create();
@@ -261,45 +255,45 @@ namespace margelo::nitro::rive {
     }();
   }
   void JHybridRiveViewSpec::playIfNeeded() {
-    static const auto method = javaClassStatic()->getMethod<void()>("playIfNeeded");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void()>("playIfNeeded");
     method(_javaPart);
   }
   void JHybridRiveViewSpec::onEventListener(const std::function<void(const UnifiedRiveEvent& /* event */)>& onEvent) {
-    static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<JFunc_void_UnifiedRiveEvent::javaobject> /* onEvent */)>("onEventListener_cxx");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<JFunc_void_UnifiedRiveEvent::javaobject> /* onEvent */)>("onEventListener_cxx");
     method(_javaPart, JFunc_void_UnifiedRiveEvent_cxx::fromCpp(onEvent));
   }
   void JHybridRiveViewSpec::removeEventListeners() {
-    static const auto method = javaClassStatic()->getMethod<void()>("removeEventListeners");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void()>("removeEventListeners");
     method(_javaPart);
   }
   void JHybridRiveViewSpec::setNumberInputValue(const std::string& name, double value, const std::optional<std::string>& path) {
-    static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<jni::JString> /* name */, double /* value */, jni::alias_ref<jni::JString> /* path */)>("setNumberInputValue");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<jni::JString> /* name */, double /* value */, jni::alias_ref<jni::JString> /* path */)>("setNumberInputValue");
     method(_javaPart, jni::make_jstring(name), value, path.has_value() ? jni::make_jstring(path.value()) : nullptr);
   }
   double JHybridRiveViewSpec::getNumberInputValue(const std::string& name, const std::optional<std::string>& path) {
-    static const auto method = javaClassStatic()->getMethod<double(jni::alias_ref<jni::JString> /* name */, jni::alias_ref<jni::JString> /* path */)>("getNumberInputValue");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<double(jni::alias_ref<jni::JString> /* name */, jni::alias_ref<jni::JString> /* path */)>("getNumberInputValue");
     auto __result = method(_javaPart, jni::make_jstring(name), path.has_value() ? jni::make_jstring(path.value()) : nullptr);
     return __result;
   }
   void JHybridRiveViewSpec::setBooleanInputValue(const std::string& name, bool value, const std::optional<std::string>& path) {
-    static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<jni::JString> /* name */, jboolean /* value */, jni::alias_ref<jni::JString> /* path */)>("setBooleanInputValue");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<jni::JString> /* name */, jboolean /* value */, jni::alias_ref<jni::JString> /* path */)>("setBooleanInputValue");
     method(_javaPart, jni::make_jstring(name), value, path.has_value() ? jni::make_jstring(path.value()) : nullptr);
   }
   bool JHybridRiveViewSpec::getBooleanInputValue(const std::string& name, const std::optional<std::string>& path) {
-    static const auto method = javaClassStatic()->getMethod<jboolean(jni::alias_ref<jni::JString> /* name */, jni::alias_ref<jni::JString> /* path */)>("getBooleanInputValue");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jboolean(jni::alias_ref<jni::JString> /* name */, jni::alias_ref<jni::JString> /* path */)>("getBooleanInputValue");
     auto __result = method(_javaPart, jni::make_jstring(name), path.has_value() ? jni::make_jstring(path.value()) : nullptr);
     return static_cast<bool>(__result);
   }
   void JHybridRiveViewSpec::triggerInput(const std::string& name, const std::optional<std::string>& path) {
-    static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<jni::JString> /* name */, jni::alias_ref<jni::JString> /* path */)>("triggerInput");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<jni::JString> /* name */, jni::alias_ref<jni::JString> /* path */)>("triggerInput");
     method(_javaPart, jni::make_jstring(name), path.has_value() ? jni::make_jstring(path.value()) : nullptr);
   }
   void JHybridRiveViewSpec::setTextRunValue(const std::string& name, const std::string& value, const std::optional<std::string>& path) {
-    static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<jni::JString> /* name */, jni::alias_ref<jni::JString> /* value */, jni::alias_ref<jni::JString> /* path */)>("setTextRunValue");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<jni::JString> /* name */, jni::alias_ref<jni::JString> /* value */, jni::alias_ref<jni::JString> /* path */)>("setTextRunValue");
     method(_javaPart, jni::make_jstring(name), jni::make_jstring(value), path.has_value() ? jni::make_jstring(path.value()) : nullptr);
   }
   std::string JHybridRiveViewSpec::getTextRunValue(const std::string& name, const std::optional<std::string>& path) {
-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<jni::JString>(jni::alias_ref<jni::JString> /* name */, jni::alias_ref<jni::JString> /* path */)>("getTextRunValue");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<jni::JString>(jni::alias_ref<jni::JString> /* name */, jni::alias_ref<jni::JString> /* path */)>("getTextRunValue");
     auto __result = method(_javaPart, jni::make_jstring(name), path.has_value() ? jni::make_jstring(path.value()) : nullptr);
     return __result->toStdString();
   }

@@ -13,37 +13,31 @@
 
 namespace margelo::nitro::rive {
 
-  jni::local_ref<JHybridFallbackFontSpec::jhybriddata> JHybridFallbackFontSpec::initHybrid(jni::alias_ref<jhybridobject> jThis) {
+  std::shared_ptr<JHybridFallbackFontSpec> JHybridFallbackFontSpec::JavaPart::getJHybridFallbackFontSpec() {
+    auto hybridObject = JHybridObject::JavaPart::getJHybridObject();
+    auto castHybridObject = std::dynamic_pointer_cast<JHybridFallbackFontSpec>(hybridObject);
+    if (castHybridObject == nullptr) [[unlikely]] {
+      throw std::runtime_error("Failed to downcast JHybridObject to JHybridFallbackFontSpec!");
+    }
+    return castHybridObject;
+  }
+
+  jni::local_ref<JHybridFallbackFontSpec::CxxPart::jhybriddata> JHybridFallbackFontSpec::CxxPart::initHybrid(jni::alias_ref<jhybridobject> jThis) {
     return makeCxxInstance(jThis);
   }
 
-  void JHybridFallbackFontSpec::registerNatives() {
-    registerHybrid({
-      makeNativeMethod("initHybrid", JHybridFallbackFontSpec::initHybrid),
-    });
-  }
-
-  size_t JHybridFallbackFontSpec::getExternalMemorySize() noexcept {
-    static const auto method = javaClassStatic()->getMethod<jlong()>("getMemorySize");
-    return method(_javaPart);
-  }
-
-  bool JHybridFallbackFontSpec::equals(const std::shared_ptr<HybridObject>& other) {
-    if (auto otherCast = std::dynamic_pointer_cast<JHybridFallbackFontSpec>(other)) {
-      return _javaPart == otherCast->_javaPart;
+  std::shared_ptr<JHybridObject> JHybridFallbackFontSpec::CxxPart::createHybridObject(const jni::local_ref<JHybridObject::JavaPart>& javaPart) {
+    auto castJavaPart = jni::dynamic_ref_cast<JHybridFallbackFontSpec::JavaPart>(javaPart);
+    if (castJavaPart == nullptr) [[unlikely]] {
+      throw std::runtime_error("Failed to cast JHybridObject::JavaPart to JHybridFallbackFontSpec::JavaPart!");
     }
-    return false;
+    return std::make_shared<JHybridFallbackFontSpec>(castJavaPart);
   }
 
-  void JHybridFallbackFontSpec::dispose() noexcept {
-    static const auto method = javaClassStatic()->getMethod<void()>("dispose");
-    method(_javaPart);
-  }
-
-  std::string JHybridFallbackFontSpec::toString() {
-    static const auto method = javaClassStatic()->getMethod<jni::JString()>("toString");
-    auto javaString = method(_javaPart);
-    return javaString->toStdString();
+  void JHybridFallbackFontSpec::CxxPart::registerNatives() {
+    registerHybrid({
+      makeNativeMethod("initHybrid", JHybridFallbackFontSpec::CxxPart::initHybrid),
+    });
   }
 
   // Properties

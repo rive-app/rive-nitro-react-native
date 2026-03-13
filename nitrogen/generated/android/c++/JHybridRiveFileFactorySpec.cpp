@@ -35,37 +35,31 @@ namespace margelo::nitro::rive { class HybridRiveImageSpec; }
 
 namespace margelo::nitro::rive {
 
-  jni::local_ref<JHybridRiveFileFactorySpec::jhybriddata> JHybridRiveFileFactorySpec::initHybrid(jni::alias_ref<jhybridobject> jThis) {
+  std::shared_ptr<JHybridRiveFileFactorySpec> JHybridRiveFileFactorySpec::JavaPart::getJHybridRiveFileFactorySpec() {
+    auto hybridObject = JHybridObject::JavaPart::getJHybridObject();
+    auto castHybridObject = std::dynamic_pointer_cast<JHybridRiveFileFactorySpec>(hybridObject);
+    if (castHybridObject == nullptr) [[unlikely]] {
+      throw std::runtime_error("Failed to downcast JHybridObject to JHybridRiveFileFactorySpec!");
+    }
+    return castHybridObject;
+  }
+
+  jni::local_ref<JHybridRiveFileFactorySpec::CxxPart::jhybriddata> JHybridRiveFileFactorySpec::CxxPart::initHybrid(jni::alias_ref<jhybridobject> jThis) {
     return makeCxxInstance(jThis);
   }
 
-  void JHybridRiveFileFactorySpec::registerNatives() {
-    registerHybrid({
-      makeNativeMethod("initHybrid", JHybridRiveFileFactorySpec::initHybrid),
-    });
-  }
-
-  size_t JHybridRiveFileFactorySpec::getExternalMemorySize() noexcept {
-    static const auto method = javaClassStatic()->getMethod<jlong()>("getMemorySize");
-    return method(_javaPart);
-  }
-
-  bool JHybridRiveFileFactorySpec::equals(const std::shared_ptr<HybridObject>& other) {
-    if (auto otherCast = std::dynamic_pointer_cast<JHybridRiveFileFactorySpec>(other)) {
-      return _javaPart == otherCast->_javaPart;
+  std::shared_ptr<JHybridObject> JHybridRiveFileFactorySpec::CxxPart::createHybridObject(const jni::local_ref<JHybridObject::JavaPart>& javaPart) {
+    auto castJavaPart = jni::dynamic_ref_cast<JHybridRiveFileFactorySpec::JavaPart>(javaPart);
+    if (castJavaPart == nullptr) [[unlikely]] {
+      throw std::runtime_error("Failed to cast JHybridObject::JavaPart to JHybridRiveFileFactorySpec::JavaPart!");
     }
-    return false;
+    return std::make_shared<JHybridRiveFileFactorySpec>(castJavaPart);
   }
 
-  void JHybridRiveFileFactorySpec::dispose() noexcept {
-    static const auto method = javaClassStatic()->getMethod<void()>("dispose");
-    method(_javaPart);
-  }
-
-  std::string JHybridRiveFileFactorySpec::toString() {
-    static const auto method = javaClassStatic()->getMethod<jni::JString()>("toString");
-    auto javaString = method(_javaPart);
-    return javaString->toStdString();
+  void JHybridRiveFileFactorySpec::CxxPart::registerNatives() {
+    registerHybrid({
+      makeNativeMethod("initHybrid", JHybridRiveFileFactorySpec::CxxPart::initHybrid),
+    });
   }
 
   // Properties
@@ -73,13 +67,13 @@ namespace margelo::nitro::rive {
 
   // Methods
   std::shared_ptr<Promise<std::shared_ptr<HybridRiveFileSpec>>> JHybridRiveFileFactorySpec::fromURL(const std::string& url, bool loadCdn, const std::optional<ReferencedAssetsType>& referencedAssets) {
-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<jni::JString> /* url */, jboolean /* loadCdn */, jni::alias_ref<JReferencedAssetsType> /* referencedAssets */)>("fromURL");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<jni::JString> /* url */, jboolean /* loadCdn */, jni::alias_ref<JReferencedAssetsType> /* referencedAssets */)>("fromURL");
     auto __result = method(_javaPart, jni::make_jstring(url), loadCdn, referencedAssets.has_value() ? JReferencedAssetsType::fromCpp(referencedAssets.value()) : nullptr);
     return [&]() {
       auto __promise = Promise<std::shared_ptr<HybridRiveFileSpec>>::create();
       __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& __boxedResult) {
-        auto __result = jni::static_ref_cast<JHybridRiveFileSpec::javaobject>(__boxedResult);
-        __promise->resolve(__result->cthis()->shared_cast<JHybridRiveFileSpec>());
+        auto __result = jni::static_ref_cast<JHybridRiveFileSpec::JavaPart>(__boxedResult);
+        __promise->resolve(__result->getJHybridRiveFileSpec());
       });
       __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
         jni::JniException __jniError(__throwable);
@@ -89,13 +83,13 @@ namespace margelo::nitro::rive {
     }();
   }
   std::shared_ptr<Promise<std::shared_ptr<HybridRiveFileSpec>>> JHybridRiveFileFactorySpec::fromFileURL(const std::string& fileURL, bool loadCdn, const std::optional<ReferencedAssetsType>& referencedAssets) {
-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<jni::JString> /* fileURL */, jboolean /* loadCdn */, jni::alias_ref<JReferencedAssetsType> /* referencedAssets */)>("fromFileURL");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<jni::JString> /* fileURL */, jboolean /* loadCdn */, jni::alias_ref<JReferencedAssetsType> /* referencedAssets */)>("fromFileURL");
     auto __result = method(_javaPart, jni::make_jstring(fileURL), loadCdn, referencedAssets.has_value() ? JReferencedAssetsType::fromCpp(referencedAssets.value()) : nullptr);
     return [&]() {
       auto __promise = Promise<std::shared_ptr<HybridRiveFileSpec>>::create();
       __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& __boxedResult) {
-        auto __result = jni::static_ref_cast<JHybridRiveFileSpec::javaobject>(__boxedResult);
-        __promise->resolve(__result->cthis()->shared_cast<JHybridRiveFileSpec>());
+        auto __result = jni::static_ref_cast<JHybridRiveFileSpec::JavaPart>(__boxedResult);
+        __promise->resolve(__result->getJHybridRiveFileSpec());
       });
       __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
         jni::JniException __jniError(__throwable);
@@ -105,13 +99,13 @@ namespace margelo::nitro::rive {
     }();
   }
   std::shared_ptr<Promise<std::shared_ptr<HybridRiveFileSpec>>> JHybridRiveFileFactorySpec::fromResource(const std::string& resource, bool loadCdn, const std::optional<ReferencedAssetsType>& referencedAssets) {
-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<jni::JString> /* resource */, jboolean /* loadCdn */, jni::alias_ref<JReferencedAssetsType> /* referencedAssets */)>("fromResource");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<jni::JString> /* resource */, jboolean /* loadCdn */, jni::alias_ref<JReferencedAssetsType> /* referencedAssets */)>("fromResource");
     auto __result = method(_javaPart, jni::make_jstring(resource), loadCdn, referencedAssets.has_value() ? JReferencedAssetsType::fromCpp(referencedAssets.value()) : nullptr);
     return [&]() {
       auto __promise = Promise<std::shared_ptr<HybridRiveFileSpec>>::create();
       __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& __boxedResult) {
-        auto __result = jni::static_ref_cast<JHybridRiveFileSpec::javaobject>(__boxedResult);
-        __promise->resolve(__result->cthis()->shared_cast<JHybridRiveFileSpec>());
+        auto __result = jni::static_ref_cast<JHybridRiveFileSpec::JavaPart>(__boxedResult);
+        __promise->resolve(__result->getJHybridRiveFileSpec());
       });
       __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
         jni::JniException __jniError(__throwable);
@@ -121,13 +115,13 @@ namespace margelo::nitro::rive {
     }();
   }
   std::shared_ptr<Promise<std::shared_ptr<HybridRiveFileSpec>>> JHybridRiveFileFactorySpec::fromBytes(const std::shared_ptr<ArrayBuffer>& bytes, bool loadCdn, const std::optional<ReferencedAssetsType>& referencedAssets) {
-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<JArrayBuffer::javaobject> /* bytes */, jboolean /* loadCdn */, jni::alias_ref<JReferencedAssetsType> /* referencedAssets */)>("fromBytes");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<JArrayBuffer::javaobject> /* bytes */, jboolean /* loadCdn */, jni::alias_ref<JReferencedAssetsType> /* referencedAssets */)>("fromBytes");
     auto __result = method(_javaPart, JArrayBuffer::wrap(bytes), loadCdn, referencedAssets.has_value() ? JReferencedAssetsType::fromCpp(referencedAssets.value()) : nullptr);
     return [&]() {
       auto __promise = Promise<std::shared_ptr<HybridRiveFileSpec>>::create();
       __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& __boxedResult) {
-        auto __result = jni::static_ref_cast<JHybridRiveFileSpec::javaobject>(__boxedResult);
-        __promise->resolve(__result->cthis()->shared_cast<JHybridRiveFileSpec>());
+        auto __result = jni::static_ref_cast<JHybridRiveFileSpec::JavaPart>(__boxedResult);
+        __promise->resolve(__result->getJHybridRiveFileSpec());
       });
       __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
         jni::JniException __jniError(__throwable);

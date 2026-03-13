@@ -15,7 +15,7 @@ namespace margelo::nitro::rive {
     if (isInstanceOf(JVariant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName_impl::First::javaClassStatic())) {
       // It's a `std::shared_ptr<HybridViewModelInstanceSpec>`
       auto jniValue = static_cast<const JVariant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName_impl::First*>(this)->getValue();
-      return jniValue->cthis()->shared_cast<JHybridViewModelInstanceSpec>();
+      return jniValue->getJHybridViewModelInstanceSpec();
     } else if (isInstanceOf(JVariant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName_impl::Second::javaClassStatic())) {
       // It's a `DataBindMode`
       auto jniValue = static_cast<const JVariant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName_impl::Second*>(this)->getValue();

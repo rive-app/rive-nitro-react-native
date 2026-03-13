@@ -43,14 +43,14 @@ namespace margelo::nitro::rive {
       jni::local_ref<jni::JString> sourceAssetId = this->getFieldValue(fieldSourceAssetId);
       static const auto fieldPath = clazz->getField<jni::JString>("path");
       jni::local_ref<jni::JString> path = this->getFieldValue(fieldPath);
-      static const auto fieldImage = clazz->getField<JHybridRiveImageSpec::javaobject>("image");
-      jni::local_ref<JHybridRiveImageSpec::javaobject> image = this->getFieldValue(fieldImage);
+      static const auto fieldImage = clazz->getField<JHybridRiveImageSpec::JavaPart>("image");
+      jni::local_ref<JHybridRiveImageSpec::JavaPart> image = this->getFieldValue(fieldImage);
       return ResolvedReferencedAsset(
         sourceUrl != nullptr ? std::make_optional(sourceUrl->toStdString()) : std::nullopt,
         sourceAsset != nullptr ? std::make_optional(sourceAsset->toStdString()) : std::nullopt,
         sourceAssetId != nullptr ? std::make_optional(sourceAssetId->toStdString()) : std::nullopt,
         path != nullptr ? std::make_optional(path->toStdString()) : std::nullopt,
-        image != nullptr ? std::make_optional(image->cthis()->shared_cast<JHybridRiveImageSpec>()) : std::nullopt
+        image != nullptr ? std::make_optional(image->getJHybridRiveImageSpec()) : std::nullopt
       );
     }
 
@@ -60,7 +60,7 @@ namespace margelo::nitro::rive {
      */
     [[maybe_unused]]
     static jni::local_ref<JResolvedReferencedAsset::javaobject> fromCpp(const ResolvedReferencedAsset& value) {
-      using JSignature = JResolvedReferencedAsset(jni::alias_ref<jni::JString>, jni::alias_ref<jni::JString>, jni::alias_ref<jni::JString>, jni::alias_ref<jni::JString>, jni::alias_ref<JHybridRiveImageSpec::javaobject>);
+      using JSignature = JResolvedReferencedAsset(jni::alias_ref<jni::JString>, jni::alias_ref<jni::JString>, jni::alias_ref<jni::JString>, jni::alias_ref<jni::JString>, jni::alias_ref<JHybridRiveImageSpec::JavaPart>);
       static const auto clazz = javaClassStatic();
       static const auto create = clazz->getStaticMethod<JSignature>("fromCpp");
       return create(

@@ -16,53 +16,47 @@
 
 namespace margelo::nitro::rive {
 
-  jni::local_ref<JHybridViewModelColorPropertySpec::jhybriddata> JHybridViewModelColorPropertySpec::initHybrid(jni::alias_ref<jhybridobject> jThis) {
+  std::shared_ptr<JHybridViewModelColorPropertySpec> JHybridViewModelColorPropertySpec::JavaPart::getJHybridViewModelColorPropertySpec() {
+    auto hybridObject = JHybridObject::JavaPart::getJHybridObject();
+    auto castHybridObject = std::dynamic_pointer_cast<JHybridViewModelColorPropertySpec>(hybridObject);
+    if (castHybridObject == nullptr) [[unlikely]] {
+      throw std::runtime_error("Failed to downcast JHybridObject to JHybridViewModelColorPropertySpec!");
+    }
+    return castHybridObject;
+  }
+
+  jni::local_ref<JHybridViewModelColorPropertySpec::CxxPart::jhybriddata> JHybridViewModelColorPropertySpec::CxxPart::initHybrid(jni::alias_ref<jhybridobject> jThis) {
     return makeCxxInstance(jThis);
   }
 
-  void JHybridViewModelColorPropertySpec::registerNatives() {
-    registerHybrid({
-      makeNativeMethod("initHybrid", JHybridViewModelColorPropertySpec::initHybrid),
-    });
-  }
-
-  size_t JHybridViewModelColorPropertySpec::getExternalMemorySize() noexcept {
-    static const auto method = javaClassStatic()->getMethod<jlong()>("getMemorySize");
-    return method(_javaPart);
-  }
-
-  bool JHybridViewModelColorPropertySpec::equals(const std::shared_ptr<HybridObject>& other) {
-    if (auto otherCast = std::dynamic_pointer_cast<JHybridViewModelColorPropertySpec>(other)) {
-      return _javaPart == otherCast->_javaPart;
+  std::shared_ptr<JHybridObject> JHybridViewModelColorPropertySpec::CxxPart::createHybridObject(const jni::local_ref<JHybridObject::JavaPart>& javaPart) {
+    auto castJavaPart = jni::dynamic_ref_cast<JHybridViewModelColorPropertySpec::JavaPart>(javaPart);
+    if (castJavaPart == nullptr) [[unlikely]] {
+      throw std::runtime_error("Failed to cast JHybridObject::JavaPart to JHybridViewModelColorPropertySpec::JavaPart!");
     }
-    return false;
+    return std::make_shared<JHybridViewModelColorPropertySpec>(castJavaPart);
   }
 
-  void JHybridViewModelColorPropertySpec::dispose() noexcept {
-    static const auto method = javaClassStatic()->getMethod<void()>("dispose");
-    method(_javaPart);
-  }
-
-  std::string JHybridViewModelColorPropertySpec::toString() {
-    static const auto method = javaClassStatic()->getMethod<jni::JString()>("toString");
-    auto javaString = method(_javaPart);
-    return javaString->toStdString();
+  void JHybridViewModelColorPropertySpec::CxxPart::registerNatives() {
+    registerHybrid({
+      makeNativeMethod("initHybrid", JHybridViewModelColorPropertySpec::CxxPart::initHybrid),
+    });
   }
 
   // Properties
   double JHybridViewModelColorPropertySpec::getValue() {
-    static const auto method = javaClassStatic()->getMethod<double()>("getValue");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<double()>("getValue");
     auto __result = method(_javaPart);
     return __result;
   }
   void JHybridViewModelColorPropertySpec::setValue(double value) {
-    static const auto method = javaClassStatic()->getMethod<void(double /* value */)>("setValue");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void(double /* value */)>("setValue");
     method(_javaPart, value);
   }
 
   // Methods
   std::function<void()> JHybridViewModelColorPropertySpec::addListener(const std::function<void(double /* value */)>& onChanged) {
-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JFunc_void::javaobject>(jni::alias_ref<JFunc_void_double::javaobject> /* onChanged */)>("addListener_cxx");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JFunc_void::javaobject>(jni::alias_ref<JFunc_void_double::javaobject> /* onChanged */)>("addListener_cxx");
     auto __result = method(_javaPart, JFunc_void_double_cxx::fromCpp(onChanged));
     return [&]() -> std::function<void()> {
       if (__result->isInstanceOf(JFunc_void_cxx::javaClassStatic())) [[likely]] {
@@ -75,7 +69,7 @@ namespace margelo::nitro::rive {
     }();
   }
   void JHybridViewModelColorPropertySpec::removeListeners() {
-    static const auto method = javaClassStatic()->getMethod<void()>("removeListeners");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void()>("removeListeners");
     method(_javaPart);
   }
 
