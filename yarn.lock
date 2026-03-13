@@ -14458,6 +14458,7 @@ __metadata:
     react-native-nitro-modules: 0.35.0
     react-native-reanimated: 4.1.5
     react-native-safe-area-context: ^5.4.0
+    react-native-screens: ~4.18.0
     react-native-worklets: 0.6.1
   languageName: unknown
   linkType: soft
@@ -14483,6 +14484,19 @@ __metadata:
     react: "*"
     react-native: "*"
   checksum: 71bebbead1d8f886b80b70cf9d69b0179e035fb425fae84fbcbb2930167220cb90c2ee70b26d3fd94f940fa3e6ce325b0ec2e283d039d5abb29bf6898c58e485
+  languageName: node
+  linkType: hard
+
+"react-native-screens@npm:~4.18.0":
+  version: 4.18.0
+  resolution: "react-native-screens@npm:4.18.0"
+  dependencies:
+    react-freeze: ^1.0.0
+    warn-once: ^0.1.0
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: b7942efe7bf316ad66aabf6e3b8b999268d3b88b3d23affb0f90f627d8dd980172f79b48abf476d10c3466ba5123240ee3f18f8d0ff7db5b79b9772cb520afa0
   languageName: node
   linkType: hard
 

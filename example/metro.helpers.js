@@ -53,4 +53,51 @@ function withSingleReactNative(config, projectDir) {
   };
 }
 
-module.exports = { withSingleReactNative };
+/**
+ * Blocks a sibling workspace's node_modules for any dependencies shared between the two.
+ * Prevents duplicate native module registration when builder-bob watches the monorepo root.
+ *
+ * @param {import('metro-config').MetroConfig} config - Metro configuration
+ * @param {string} projectDir - This project's directory
+ * @param {string} siblingDir - The sibling workspace's directory
+ * @returns {import('metro-config').MetroConfig}
+ */
+function withBlockedSiblingDeps(config, projectDir, siblingDir) {
+  const myPkg = require(path.resolve(projectDir, 'package.json'));
+  const siblingPkg = require(path.resolve(siblingDir, 'package.json'));
+
+  const myDeps = new Set([
+    ...Object.keys(myPkg.dependencies || {}),
+    ...Object.keys(myPkg.devDependencies || {}),
+  ]);
+  const siblingDeps = [
+    ...Object.keys(siblingPkg.dependencies || {}),
+    ...Object.keys(siblingPkg.devDependencies || {}),
+  ];
+
+  const shared = siblingDeps.filter((dep) => myDeps.has(dep));
+  if (shared.length === 0) return config;
+
+  const patterns = shared.map((dep) => {
+    const escaped = path
+      .resolve(siblingDir, 'node_modules', dep)
+      .replace(/[/\\]/g, '[/\\\\]');
+    return new RegExp(escaped + '[/\\\\].*$');
+  });
+
+  const existing = config.resolver?.blockList;
+  const blockList = [
+    ...(existing ? (Array.isArray(existing) ? existing : [existing]) : []),
+    ...patterns,
+  ];
+
+  return {
+    ...config,
+    resolver: {
+      ...config.resolver,
+      blockList,
+    },
+  };
+}
+
+module.exports = { withSingleReactNative, withBlockedSiblingDeps };
