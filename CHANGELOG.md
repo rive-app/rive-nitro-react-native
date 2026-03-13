@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.3.0](https://github.com/rive-app/rive-nitro-react-native/compare/v0.2.8...v0.3.0) (2026-03-13)
+
+
+### ⚠ BREAKING CHANGES
+
+* minimum nitro-modules version is now 0.35.0
+
+### Bug Fixes
+
+* upgrade nitro-modules to 0.35.0 ([#172](https://github.com/rive-app/rive-nitro-react-native/issues/172)) ([c989fa5](https://github.com/rive-app/rive-nitro-react-native/commit/c989fa595036ace3110c4bbe0142f2a8f8a268f6)), closes [#169](https://github.com/rive-app/rive-nitro-react-native/issues/169)
+
 ## [0.2.8](https://github.com/rive-app/rive-nitro-react-native/compare/v0.2.7...v0.2.8) (2026-03-13)
 
 
