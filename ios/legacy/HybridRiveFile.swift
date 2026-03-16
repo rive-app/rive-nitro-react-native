@@ -31,11 +31,19 @@ class HybridRiveFile: HybridRiveFileSpec, RiveViewSource {
     }
   }
   
+  // Deprecated: Use getViewModelCountAsync instead
   var viewModelCount: Double? {
     guard let count = riveFile?.viewModelCount else { return nil }
     return Double(count)
   }
-  
+
+  func getViewModelCountAsync() throws -> Promise<Double?> {
+    return Promise.async {
+      guard let count = self.riveFile?.viewModelCount else { return nil }
+      return Double(count)
+    }
+  }
+
   // Deprecated: Use viewModelByIndexAsync instead
   func viewModelByIndex(index: Double) throws -> (any HybridViewModelSpec)? {
     guard index >= 0, let vm = riveFile?.viewModel(at: UInt(index)) else { return nil }
@@ -93,12 +101,26 @@ class HybridRiveFile: HybridRiveFileSpec, RiveViewSource {
     }
   }
 
+  // Deprecated: Use getArtboardCountAsync instead
   var artboardCount: Double {
     Double(riveFile?.artboardNames().count ?? 0)
   }
 
+  func getArtboardCountAsync() throws -> Promise<Double> {
+    return Promise.async {
+      Double(self.riveFile?.artboardNames().count ?? 0)
+    }
+  }
+
+  // Deprecated: Use getArtboardNamesAsync instead
   var artboardNames: [String] {
     riveFile?.artboardNames() ?? []
+  }
+
+  func getArtboardNamesAsync() throws -> Promise<[String]> {
+    return Promise.async {
+      self.riveFile?.artboardNames() ?? []
+    }
   }
 
   func getBindableArtboard(name: String) throws -> any HybridBindableArtboardSpec {

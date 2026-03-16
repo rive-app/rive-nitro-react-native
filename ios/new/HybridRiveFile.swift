@@ -14,6 +14,7 @@ class HybridRiveFile: HybridRiveFileSpec {
     self.worker = worker
   }
 
+  // Deprecated: Use getViewModelCountAsync instead
   var viewModelCount: Double? {
     guard let file = file else { return nil }
     do {
@@ -22,6 +23,14 @@ class HybridRiveFile: HybridRiveFileSpec {
     } catch {
       RCTLogError("[RiveFile] viewModelCount failed: \(error)")
       return nil
+    }
+  }
+
+  func getViewModelCountAsync() throws -> Promise<Double?> {
+    guard let file = file else { return Promise.resolved(withResult: nil) }
+    return Promise.async {
+      let names = try await file.getViewModelNames()
+      return Double(names.count)
     }
   }
 
@@ -92,6 +101,7 @@ class HybridRiveFile: HybridRiveFileSpec {
     return Promise.async { try await self.defaultArtboardViewModelImpl(artboardBy: artboardBy) }
   }
 
+  // Deprecated: Use getArtboardCountAsync instead
   var artboardCount: Double {
     guard let file = file else { return 0 }
     do {
@@ -103,6 +113,15 @@ class HybridRiveFile: HybridRiveFileSpec {
     }
   }
 
+  func getArtboardCountAsync() throws -> Promise<Double> {
+    guard let file = file else { return Promise.resolved(withResult: 0) }
+    return Promise.async {
+      let names = try await file.getArtboardNames()
+      return Double(names.count)
+    }
+  }
+
+  // Deprecated: Use getArtboardNamesAsync instead
   var artboardNames: [String] {
     guard let file = file else { return [] }
     do {
@@ -110,6 +129,13 @@ class HybridRiveFile: HybridRiveFileSpec {
     } catch {
       RCTLogError("[RiveFile] artboardNames failed: \(error)")
       return []
+    }
+  }
+
+  func getArtboardNamesAsync() throws -> Promise<[String]> {
+    guard let file = file else { return Promise.resolved(withResult: []) }
+    return Promise.async {
+      try await file.getArtboardNames()
     }
   }
 
