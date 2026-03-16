@@ -59,7 +59,7 @@ final class HybridRiveFileFactory: HybridRiveFileFactorySpec, @unchecked Sendabl
     }
   }
 
-  func fromBytes(bytes: ArrayBufferHolder, loadCdn: Bool, referencedAssets: ReferencedAssetsType?)
+  func fromBytes(bytes: ArrayBuffer, loadCdn: Bool, referencedAssets: ReferencedAssetsType?)
     throws -> Promise<(any HybridRiveFileSpec)>
   {
     let data = bytes.toData(copyIfNeeded: true)
