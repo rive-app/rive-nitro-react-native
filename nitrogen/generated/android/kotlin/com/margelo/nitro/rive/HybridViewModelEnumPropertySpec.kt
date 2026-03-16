@@ -37,10 +37,6 @@ abstract class HybridViewModelEnumPropertySpec: HybridViewModelPropertySpec() {
   @Keep
   abstract fun getValueAsync(): Promise<String>
   
-  @DoNotStrip
-  @Keep
-  abstract fun set(value: String): Unit
-  
   abstract fun addListener(onChanged: (value: String) -> Unit): () -> Unit
   
   @DoNotStrip

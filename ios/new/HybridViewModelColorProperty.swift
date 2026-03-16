@@ -12,6 +12,7 @@ class HybridViewModelColorProperty: HybridViewModelColorPropertySpec {
     super.init()
   }
 
+  // Deprecated: Use getValueAsync instead (for reading)
   var value: Double {
     get {
       do {
@@ -29,6 +30,15 @@ class HybridViewModelColorProperty: HybridViewModelColorPropertySpec {
       Task { @MainActor in
         inst.setValue(of: p, to: color)
       }
+    }
+  }
+
+  func getValueAsync() throws -> Promise<Double> {
+    let inst = instance
+    let p = prop
+    return Promise.async {
+      let color = try await inst.value(of: p)
+      return Double(color.argbValue)
     }
   }
 

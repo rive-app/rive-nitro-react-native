@@ -18,6 +18,7 @@ class HybridViewModelColorProperty(
     private const val TAG = "HybridViewModelColorProperty"
   }
 
+  // Deprecated: Use getValueAsync instead (for reading)
   override var value: Double
     get() {
       return try {
@@ -30,6 +31,10 @@ class HybridViewModelColorProperty(
     set(value) {
       instance.setColor(path, value.toLong().toInt())
     }
+
+  override fun getValueAsync(): Promise<Double> {
+    return Promise.async { instance.getColorFlow(path).first().toDouble() }
+  }
 
   override fun addListener(onChanged: (value: Double) -> Unit): () -> Unit {
     val remover = addListenerInternal { intValue: Int -> onChanged(intValue.toDouble()) }
