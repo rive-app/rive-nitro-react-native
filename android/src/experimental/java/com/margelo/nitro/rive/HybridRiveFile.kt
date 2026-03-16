@@ -26,6 +26,7 @@ class HybridRiveFile(
 
   private val weakViews = mutableListOf<WeakReference<HybridRiveView>>()
 
+  // Deprecated: Use getViewModelCountAsync instead
   override val viewModelCount: Double?
     get() {
       val file = riveFile ?: return null
@@ -36,6 +37,13 @@ class HybridRiveFile(
         null
       }
     }
+
+  override fun getViewModelCountAsync(): Promise<Double?> {
+    val file = riveFile ?: return Promise.resolved(null)
+    return Promise.async {
+      file.getViewModelNames().size.toDouble()
+    }
+  }
 
   private suspend fun viewModelByIndexImpl(index: Double): HybridViewModelSpec? {
     val file = riveFile ?: return null
@@ -115,6 +123,7 @@ class HybridRiveFile(
     return Promise.async { defaultArtboardViewModelImpl(artboardBy) }
   }
 
+  // Deprecated: Use getArtboardCountAsync instead
   override val artboardCount: Double
     get() {
       val file = riveFile ?: return 0.0
@@ -126,6 +135,14 @@ class HybridRiveFile(
       }
     }
 
+  override fun getArtboardCountAsync(): Promise<Double> {
+    val file = riveFile ?: return Promise.resolved(0.0)
+    return Promise.async {
+      file.getArtboardNames().size.toDouble()
+    }
+  }
+
+  // Deprecated: Use getArtboardNamesAsync instead
   override val artboardNames: Array<String>
     get() {
       val file = riveFile ?: return emptyArray()
@@ -136,6 +153,13 @@ class HybridRiveFile(
         emptyArray()
       }
     }
+
+  override fun getArtboardNamesAsync(): Promise<Array<String>> {
+    val file = riveFile ?: return Promise.resolved(emptyArray())
+    return Promise.async {
+      file.getArtboardNames().toTypedArray()
+    }
+  }
 
   override fun getBindableArtboard(name: String): HybridBindableArtboardSpec {
     return HybridBindableArtboard(name, this)

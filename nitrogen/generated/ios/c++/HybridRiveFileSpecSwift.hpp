@@ -32,16 +32,15 @@ namespace margelo::nitro::rive { struct RiveEnumDefinition; }
 #include <optional>
 #include <string>
 #include <vector>
+#include <NitroModules/Promise.hpp>
 #include <memory>
 #include "HybridViewModelSpec.hpp"
-#include <NitroModules/Promise.hpp>
 #include "ArtboardBy.hpp"
 #include "ArtboardByTypes.hpp"
 #include "ReferencedAssetsType.hpp"
 #include "ResolvedReferencedAsset.hpp"
 #include <unordered_map>
 #include "HybridRiveImageSpec.hpp"
-#include <NitroModules/Promise.hpp>
 #include "HybridBindableArtboardSpec.hpp"
 #include "RiveEnumDefinition.hpp"
 
@@ -105,6 +104,14 @@ namespace margelo::nitro::rive {
 
   public:
     // Methods
+    inline std::shared_ptr<Promise<std::optional<double>>> getViewModelCountAsync() override {
+      auto __result = _swiftPart.getViewModelCountAsync();
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
     inline std::optional<std::shared_ptr<HybridViewModelSpec>> viewModelByIndex(double index) override {
       auto __result = _swiftPart.viewModelByIndex(std::forward<decltype(index)>(index));
       if (__result.hasError()) [[unlikely]] {
@@ -158,30 +165,6 @@ namespace margelo::nitro::rive {
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }
-    }
-    inline std::shared_ptr<Promise<std::vector<std::string>>> getViewModelNamesAsync() override {
-      auto __result = _swiftPart.getViewModelNamesAsync();
-      if (__result.hasError()) [[unlikely]] {
-        std::rethrow_exception(__result.error());
-      }
-      auto __value = std::move(__result.value());
-      return __value;
-    }
-    inline std::shared_ptr<Promise<std::optional<std::shared_ptr<HybridViewModelSpec>>>> viewModelByNameAsync(const std::string& name, std::optional<bool> validate) override {
-      auto __result = _swiftPart.viewModelByNameAsync(name, validate);
-      if (__result.hasError()) [[unlikely]] {
-        std::rethrow_exception(__result.error());
-      }
-      auto __value = std::move(__result.value());
-      return __value;
-    }
-    inline std::shared_ptr<Promise<std::optional<std::shared_ptr<HybridViewModelSpec>>>> defaultArtboardViewModelAsync(const std::optional<ArtboardBy>& artboardBy) override {
-      auto __result = _swiftPart.defaultArtboardViewModelAsync(artboardBy);
-      if (__result.hasError()) [[unlikely]] {
-        std::rethrow_exception(__result.error());
-      }
-      auto __value = std::move(__result.value());
-      return __value;
     }
     inline std::shared_ptr<Promise<double>> getArtboardCountAsync() override {
       auto __result = _swiftPart.getArtboardCountAsync();

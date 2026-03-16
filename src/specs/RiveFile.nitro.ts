@@ -33,8 +33,10 @@ export type ReferencedAssetsType = {
  */
 export interface RiveFile
   extends HybridObject<{ ios: 'swift'; android: 'kotlin' }> {
-  /** @deprecated Use getViewModelNamesAsync instead */
+  /** @deprecated Use getViewModelCountAsync instead */
   readonly viewModelCount?: number;
+  /** Get the number of view models in the Rive file */
+  getViewModelCountAsync(): Promise<number | undefined>;
   /** @deprecated Use viewModelByIndexAsync instead */
   viewModelByIndex(index: number): ViewModel | undefined;
   /** Get a view model by index */
@@ -43,10 +45,6 @@ export interface RiveFile
   viewModelByName(name: string): ViewModel | undefined;
   /** @deprecated Use defaultArtboardViewModelAsync instead */
   defaultArtboardViewModel(artboardBy?: ArtboardBy): ViewModel | undefined;
-  /** Returns the default view model for the provided artboard */
-  defaultArtboardViewModelAsync(
-    artboardBy?: ArtboardBy
-  ): Promise<ViewModel | undefined>;
   updateReferencedAssets(referencedAssets: ReferencedAssetsType): void;
 
   /** @deprecated Use getArtboardCountAsync instead */
