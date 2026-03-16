@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.annotation.Keep
 import app.rive.ViewModelInstance
 import com.facebook.proguard.annotations.DoNotStrip
+import com.margelo.nitro.core.Promise
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 
