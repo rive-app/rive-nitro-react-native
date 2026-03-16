@@ -16,6 +16,7 @@ class HybridViewModelListProperty: HybridViewModelListPropertySpec {
     super.init()
   }
 
+  // Deprecated: Use getLengthAsync instead
   var length: Double {
     do {
       return try blockingAsync {
@@ -27,10 +28,29 @@ class HybridViewModelListProperty: HybridViewModelListPropertySpec {
     }
   }
 
+  func getLengthAsync() throws -> Promise<Double> {
+    let inst = vmiInstance
+    let p = prop
+    return Promise.async {
+      try await Double(inst.size(of: p))
+    }
+  }
+
+  // Deprecated: Use getInstanceAtAsync instead
   func getInstanceAt(index: Double) throws -> (any HybridViewModelInstanceSpec)? {
     return try blockingAsync {
       let vmi = try await self.vmiInstance.value(of: self.prop, at: Int32(index))
       return HybridViewModelInstance(viewModelInstance: vmi, worker: self.worker)
+    }
+  }
+
+  func getInstanceAtAsync(index: Double) throws -> Promise<(any HybridViewModelInstanceSpec)?> {
+    let inst = vmiInstance
+    let p = prop
+    let w = worker
+    return Promise.async {
+      let vmi = try await inst.value(of: p, at: Int32(index))
+      return HybridViewModelInstance(viewModelInstance: vmi, worker: w)
     }
   }
 

@@ -10,13 +10,26 @@ class HybridViewModelListProperty: HybridViewModelListPropertySpec, ValuedProper
     super.init()
   }
 
+  // Deprecated: Use getLengthAsync instead
   var length: Double {
     Double(property.count)
   }
 
+  func getLengthAsync() throws -> Promise<Double> {
+    return Promise.async { Double(self.property.count) }
+  }
+
+  // Deprecated: Use getInstanceAtAsync instead
   func getInstanceAt(index: Double) throws -> (any HybridViewModelInstanceSpec)? {
     guard let instance = property.instance(at: Int32(index)) else { return nil }
     return HybridViewModelInstance(viewModelInstance: instance)
+  }
+
+  func getInstanceAtAsync(index: Double) throws -> Promise<(any HybridViewModelInstanceSpec)?> {
+    return Promise.async {
+      guard let instance = self.property.instance(at: Int32(index)) else { return nil }
+      return HybridViewModelInstance(viewModelInstance: instance)
+    }
   }
 
   private func requireViewModelInstance(_ instance: any HybridViewModelInstanceSpec) throws -> RiveDataBindingViewModel.Instance {

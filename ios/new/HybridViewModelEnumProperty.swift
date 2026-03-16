@@ -12,6 +12,7 @@ class HybridViewModelEnumProperty: HybridViewModelEnumPropertySpec {
     super.init()
   }
 
+  // Deprecated: Use getValueAsync instead (for reading)
   var value: String {
     get {
       do {
@@ -27,6 +28,14 @@ class HybridViewModelEnumProperty: HybridViewModelEnumPropertySpec {
       Task { @MainActor in
         inst.setValue(of: p, to: newValue)
       }
+    }
+  }
+
+  func getValueAsync() throws -> Promise<String> {
+    let inst = instance
+    let p = prop
+    return Promise.async {
+      try await inst.value(of: p)
     }
   }
 

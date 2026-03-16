@@ -12,6 +12,7 @@ class HybridViewModelBooleanProperty: HybridViewModelBooleanPropertySpec {
     super.init()
   }
 
+  // Deprecated: Use getValueAsync instead (for reading)
   var value: Bool {
     get {
       do {
@@ -27,6 +28,14 @@ class HybridViewModelBooleanProperty: HybridViewModelBooleanPropertySpec {
       Task { @MainActor in
         inst.setValue(of: p, to: newValue)
       }
+    }
+  }
+
+  func getValueAsync() throws -> Promise<Bool> {
+    let inst = instance
+    let p = prop
+    return Promise.async {
+      try await inst.value(of: p)
     }
   }
 

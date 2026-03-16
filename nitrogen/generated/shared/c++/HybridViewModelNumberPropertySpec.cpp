@@ -18,7 +18,6 @@ namespace margelo::nitro::rive {
       prototype.registerHybridGetter("value", &HybridViewModelNumberPropertySpec::getValue);
       prototype.registerHybridSetter("value", &HybridViewModelNumberPropertySpec::setValue);
       prototype.registerHybridMethod("getValueAsync", &HybridViewModelNumberPropertySpec::getValueAsync);
-      prototype.registerHybridMethod("set", &HybridViewModelNumberPropertySpec::set);
       prototype.registerHybridMethod("addListener", &HybridViewModelNumberPropertySpec::addListener);
       prototype.registerHybridMethod("removeListeners", &HybridViewModelNumberPropertySpec::removeListeners);
     });
