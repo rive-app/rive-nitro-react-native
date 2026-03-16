@@ -18,6 +18,7 @@ class HybridViewModelEnumProperty(
     private const val TAG = "HybridViewModelEnumProperty"
   }
 
+  // Deprecated: Use getValueAsync instead (for reading)
   override var value: String
     get() {
       return try {
@@ -30,6 +31,10 @@ class HybridViewModelEnumProperty(
     set(value) {
       instance.setEnum(path, value)
     }
+
+  override fun getValueAsync(): Promise<String> {
+    return Promise.async { instance.getEnumFlow(path).first() }
+  }
 
   override fun addListener(onChanged: (value: String) -> Unit): () -> Unit {
     val remover = addListenerInternal(onChanged)

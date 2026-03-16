@@ -13,8 +13,8 @@ public protocol HybridViewModelListPropertySpec_protocol: HybridObject, HybridVi
   var length: Double { get }
 
   // Methods
-  func getInstanceAt(index: Double) throws -> (any HybridViewModelInstanceSpec)?
   func getLengthAsync() throws -> Promise<Double>
+  func getInstanceAt(index: Double) throws -> (any HybridViewModelInstanceSpec)?
   func getInstanceAtAsync(index: Double) throws -> Promise<(any HybridViewModelInstanceSpec)?>
   func addInstance(instance: (any HybridViewModelInstanceSpec)) throws -> Void
   func addInstanceAt(instance: (any HybridViewModelInstanceSpec), index: Double) throws -> Bool

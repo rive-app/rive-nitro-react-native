@@ -11,18 +11,32 @@ import kotlinx.coroutines.flow.map
 class HybridViewModelListProperty(private val listProperty: ViewModelListProperty) :
   HybridViewModelListPropertySpec(),
   BaseHybridViewModelProperty<Unit> by BaseHybridViewModelPropertyImpl() {
+  // Deprecated: Use getLengthAsync instead
   override val length: Double
     get() = listProperty.size.toDouble()
+
+  override fun getLengthAsync(): Promise<Double> {
+    return Promise.async { listProperty.size.toDouble() }
+  }
 
   private fun requireHybridInstance(instance: HybridViewModelInstanceSpec): HybridViewModelInstance {
     return instance as? HybridViewModelInstance
       ?: throw IllegalArgumentException("Expected HybridViewModelInstance but got ${instance::class.simpleName}")
   }
 
+  // Deprecated: Use getInstanceAtAsync instead
   override fun getInstanceAt(index: Double): HybridViewModelInstanceSpec? {
     val idx = index.toInt()
     if (idx < 0 || idx >= listProperty.size) return null
     return HybridViewModelInstance(listProperty.elementAt(idx))
+  }
+
+  override fun getInstanceAtAsync(index: Double): Promise<HybridViewModelInstanceSpec?> {
+    return Promise.async {
+      val idx = index.toInt()
+      if (idx < 0 || idx >= listProperty.size) null
+      else HybridViewModelInstance(listProperty.elementAt(idx))
+    }
   }
 
   override fun addInstance(instance: HybridViewModelInstanceSpec) {
