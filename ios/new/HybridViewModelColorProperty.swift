@@ -12,12 +12,16 @@ class HybridViewModelColorProperty: HybridViewModelColorPropertySpec {
     super.init()
   }
 
+  private func fetchColorValue() async throws -> Double {
+    let color = try await instance.value(of: prop)
+    return Double(color.argbValue)
+  }
+
   // Deprecated: Use getValueAsync instead (for reading)
   var value: Double {
     get {
       do {
-        let color = try blockingAsync { try await self.instance.value(of: self.prop) }
-        return Double(color.argbValue)
+        return try blockingAsync { try await self.fetchColorValue() }
       } catch {
         RCTLogError("[ColorProperty] getValue failed: \(error)")
         return 0
@@ -34,12 +38,7 @@ class HybridViewModelColorProperty: HybridViewModelColorPropertySpec {
   }
 
   func getValueAsync() throws -> Promise<Double> {
-    let inst = instance
-    let p = prop
-    return Promise.async {
-      let color = try await inst.value(of: p)
-      return Double(color.argbValue)
-    }
+    return Promise.async { try await self.fetchColorValue() }
   }
 
   func addListener(onChanged: @escaping (Double) -> Void) throws -> () -> Void {
