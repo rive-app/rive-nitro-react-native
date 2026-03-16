@@ -110,13 +110,13 @@ namespace margelo::nitro::rive {
     return __result != nullptr ? std::make_optional(__result->getJHybridViewModelSpec()) : std::nullopt;
   }
   std::shared_ptr<Promise<std::optional<std::shared_ptr<HybridViewModelSpec>>>> JHybridRiveFileSpec::viewModelByIndexAsync(double index) {
-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(double /* index */)>("viewModelByIndexAsync");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(double /* index */)>("viewModelByIndexAsync");
     auto __result = method(_javaPart, index);
     return [&]() {
       auto __promise = Promise<std::optional<std::shared_ptr<HybridViewModelSpec>>>::create();
       __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& __boxedResult) {
-        auto __result = jni::static_ref_cast<JHybridViewModelSpec::javaobject>(__boxedResult);
-        __promise->resolve(__result != nullptr ? std::make_optional(__result->cthis()->shared_cast<JHybridViewModelSpec>()) : std::nullopt);
+        auto __result = jni::static_ref_cast<JHybridViewModelSpec::JavaPart>(__boxedResult);
+        __promise->resolve(__result != nullptr ? std::make_optional(__result->getJHybridViewModelSpec()) : std::nullopt);
       });
       __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
         jni::JniException __jniError(__throwable);
@@ -131,13 +131,13 @@ namespace margelo::nitro::rive {
     return __result != nullptr ? std::make_optional(__result->getJHybridViewModelSpec()) : std::nullopt;
   }
   std::shared_ptr<Promise<std::optional<std::shared_ptr<HybridViewModelSpec>>>> JHybridRiveFileSpec::viewModelByNameAsync(const std::string& name) {
-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<jni::JString> /* name */)>("viewModelByNameAsync");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<jni::JString> /* name */)>("viewModelByNameAsync");
     auto __result = method(_javaPart, jni::make_jstring(name));
     return [&]() {
       auto __promise = Promise<std::optional<std::shared_ptr<HybridViewModelSpec>>>::create();
       __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& __boxedResult) {
-        auto __result = jni::static_ref_cast<JHybridViewModelSpec::javaobject>(__boxedResult);
-        __promise->resolve(__result != nullptr ? std::make_optional(__result->cthis()->shared_cast<JHybridViewModelSpec>()) : std::nullopt);
+        auto __result = jni::static_ref_cast<JHybridViewModelSpec::JavaPart>(__boxedResult);
+        __promise->resolve(__result != nullptr ? std::make_optional(__result->getJHybridViewModelSpec()) : std::nullopt);
       });
       __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
         jni::JniException __jniError(__throwable);
@@ -152,13 +152,13 @@ namespace margelo::nitro::rive {
     return __result != nullptr ? std::make_optional(__result->getJHybridViewModelSpec()) : std::nullopt;
   }
   std::shared_ptr<Promise<std::optional<std::shared_ptr<HybridViewModelSpec>>>> JHybridRiveFileSpec::defaultArtboardViewModelAsync(const std::optional<ArtboardBy>& artboardBy) {
-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<JArtboardBy> /* artboardBy */)>("defaultArtboardViewModelAsync");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<JArtboardBy> /* artboardBy */)>("defaultArtboardViewModelAsync");
     auto __result = method(_javaPart, artboardBy.has_value() ? JArtboardBy::fromCpp(artboardBy.value()) : nullptr);
     return [&]() {
       auto __promise = Promise<std::optional<std::shared_ptr<HybridViewModelSpec>>>::create();
       __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& __boxedResult) {
-        auto __result = jni::static_ref_cast<JHybridViewModelSpec::javaobject>(__boxedResult);
-        __promise->resolve(__result != nullptr ? std::make_optional(__result->cthis()->shared_cast<JHybridViewModelSpec>()) : std::nullopt);
+        auto __result = jni::static_ref_cast<JHybridViewModelSpec::JavaPart>(__boxedResult);
+        __promise->resolve(__result != nullptr ? std::make_optional(__result->getJHybridViewModelSpec()) : std::nullopt);
       });
       __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
         jni::JniException __jniError(__throwable);
@@ -275,7 +275,7 @@ namespace margelo::nitro::rive {
     return __result->getJHybridBindableArtboardSpec();
   }
   std::shared_ptr<Promise<std::vector<RiveEnumDefinition>>> JHybridRiveFileSpec::getEnums() {
-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>()>("getEnums");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>()>("getEnums");
     auto __result = method(_javaPart);
     return [&]() {
       auto __promise = Promise<std::vector<RiveEnumDefinition>>::create();
