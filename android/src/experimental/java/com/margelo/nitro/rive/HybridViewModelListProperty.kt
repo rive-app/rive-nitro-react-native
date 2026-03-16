@@ -6,6 +6,7 @@ import app.rive.ViewModelInstance
 import app.rive.ViewModelInstanceSource
 import app.rive.core.CommandQueue
 import com.facebook.proguard.annotations.DoNotStrip
+import com.margelo.nitro.core.Promise
 import kotlinx.coroutines.runBlocking
 
 @Keep
@@ -36,13 +37,17 @@ class HybridViewModelListProperty(
     return Promise.async { instance.getListSize(path).toDouble() }
   }
 
+  private suspend fun fetchInstanceAt(index: Double): HybridViewModelInstanceSpec? {
+    val file = parentFile.riveFile ?: return null
+    val source = ViewModelInstanceSource.ReferenceListItem(instance, path, index.toInt())
+    val vmi = ViewModelInstance.fromFile(file, source)
+    return HybridViewModelInstance(vmi, riveWorker, parentFile)
+  }
+
   // Deprecated: Use getInstanceAtAsync instead
   override fun getInstanceAt(index: Double): HybridViewModelInstanceSpec? {
     return try {
-      val file = parentFile.riveFile ?: return null
-      val source = ViewModelInstanceSource.ReferenceListItem(instance, path, index.toInt())
-      val vmi = ViewModelInstance.fromFile(file, source)
-      HybridViewModelInstance(vmi, riveWorker, parentFile)
+      runBlocking { fetchInstanceAt(index) }
     } catch (e: Exception) {
       Log.e(TAG, "getInstanceAt($index) failed for path '$path'", e)
       null
@@ -50,12 +55,7 @@ class HybridViewModelListProperty(
   }
 
   override fun getInstanceAtAsync(index: Double): Promise<HybridViewModelInstanceSpec?> {
-    return Promise.async {
-      val file = parentFile.riveFile ?: return@async null
-      val source = ViewModelInstanceSource.ReferenceListItem(instance, path, index.toInt())
-      val vmi = ViewModelInstance.fromFile(file, source)
-      HybridViewModelInstance(vmi, riveWorker, parentFile)
-    }
+    return Promise.async { fetchInstanceAt(index) }
   }
 
   override fun addInstance(instance: HybridViewModelInstanceSpec) {
