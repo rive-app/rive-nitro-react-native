@@ -64,7 +64,7 @@ namespace margelo::nitro::rive {
 
   // Properties
   std::string JHybridRiveFileFactorySpec::getBackend() {
-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<jni::JString>()>("getBackend");
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<jni::JString>()>("getBackend");
     auto __result = method(_javaPart);
     return __result->toStdString();
   }
