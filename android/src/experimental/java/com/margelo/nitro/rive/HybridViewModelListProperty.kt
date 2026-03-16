@@ -21,6 +21,7 @@ class HybridViewModelListProperty(
     private const val TAG = "HybridViewModelListProperty"
   }
 
+  // Deprecated: Use getLengthAsync instead
   override val length: Double
     get() {
       return try {
@@ -31,6 +32,11 @@ class HybridViewModelListProperty(
       }
     }
 
+  override fun getLengthAsync(): Promise<Double> {
+    return Promise.async { instance.getListSize(path).toDouble() }
+  }
+
+  // Deprecated: Use getInstanceAtAsync instead
   override fun getInstanceAt(index: Double): HybridViewModelInstanceSpec? {
     return try {
       val file = parentFile.riveFile ?: return null
@@ -40,6 +46,15 @@ class HybridViewModelListProperty(
     } catch (e: Exception) {
       Log.e(TAG, "getInstanceAt($index) failed for path '$path'", e)
       null
+    }
+  }
+
+  override fun getInstanceAtAsync(index: Double): Promise<HybridViewModelInstanceSpec?> {
+    return Promise.async {
+      val file = parentFile.riveFile ?: return@async null
+      val source = ViewModelInstanceSource.ReferenceListItem(instance, path, index.toInt())
+      val vmi = ViewModelInstance.fromFile(file, source)
+      HybridViewModelInstance(vmi, riveWorker, parentFile)
     }
   }
 

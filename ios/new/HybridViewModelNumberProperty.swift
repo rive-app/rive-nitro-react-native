@@ -12,6 +12,7 @@ class HybridViewModelNumberProperty: HybridViewModelNumberPropertySpec {
     super.init()
   }
 
+  // Deprecated: Use getValueAsync instead (for reading)
   var value: Double {
     get {
       do {
@@ -28,6 +29,14 @@ class HybridViewModelNumberProperty: HybridViewModelNumberPropertySpec {
       Task { @MainActor in
         inst.setValue(of: p, to: v)
       }
+    }
+  }
+
+  func getValueAsync() throws -> Promise<Double> {
+    let inst = instance
+    let p = prop
+    return Promise.async {
+      try await Double(inst.value(of: p))
     }
   }
 
