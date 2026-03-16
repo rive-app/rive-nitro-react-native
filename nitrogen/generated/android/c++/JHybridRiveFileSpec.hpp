@@ -56,6 +56,7 @@ namespace margelo::nitro::rive {
 
   public:
     // Methods
+    std::shared_ptr<Promise<std::optional<double>>> getViewModelCountAsync() override;
     std::optional<std::shared_ptr<HybridViewModelSpec>> viewModelByIndex(double index) override;
     std::shared_ptr<Promise<std::optional<std::shared_ptr<HybridViewModelSpec>>>> viewModelByIndexAsync(double index) override;
     std::optional<std::shared_ptr<HybridViewModelSpec>> viewModelByName(const std::string& name) override;
@@ -63,9 +64,6 @@ namespace margelo::nitro::rive {
     std::optional<std::shared_ptr<HybridViewModelSpec>> defaultArtboardViewModel(const std::optional<ArtboardBy>& artboardBy) override;
     std::shared_ptr<Promise<std::optional<std::shared_ptr<HybridViewModelSpec>>>> defaultArtboardViewModelAsync(const std::optional<ArtboardBy>& artboardBy) override;
     void updateReferencedAssets(const ReferencedAssetsType& referencedAssets) override;
-    std::shared_ptr<Promise<std::vector<std::string>>> getViewModelNamesAsync() override;
-    std::shared_ptr<Promise<std::optional<std::shared_ptr<HybridViewModelSpec>>>> viewModelByNameAsync(const std::string& name, std::optional<bool> validate) override;
-    std::shared_ptr<Promise<std::optional<std::shared_ptr<HybridViewModelSpec>>>> defaultArtboardViewModelAsync(const std::optional<ArtboardBy>& artboardBy) override;
     std::shared_ptr<Promise<double>> getArtboardCountAsync() override;
     std::shared_ptr<Promise<std::vector<std::string>>> getArtboardNamesAsync() override;
     std::shared_ptr<HybridBindableArtboardSpec> getBindableArtboard(const std::string& name) override;

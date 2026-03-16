@@ -41,6 +41,10 @@ abstract class HybridRiveFileSpec: HybridObject() {
   // Methods
   @DoNotStrip
   @Keep
+  abstract fun getViewModelCountAsync(): Promise<Double?>
+  
+  @DoNotStrip
+  @Keep
   abstract fun viewModelByIndex(index: Double): HybridViewModelSpec?
   
   @DoNotStrip
@@ -66,18 +70,6 @@ abstract class HybridRiveFileSpec: HybridObject() {
   @DoNotStrip
   @Keep
   abstract fun updateReferencedAssets(referencedAssets: ReferencedAssetsType): Unit
-  
-  @DoNotStrip
-  @Keep
-  abstract fun getViewModelNamesAsync(): Promise<Array<String>>
-  
-  @DoNotStrip
-  @Keep
-  abstract fun viewModelByNameAsync(name: String, validate: Boolean?): Promise<HybridViewModelSpec?>
-  
-  @DoNotStrip
-  @Keep
-  abstract fun defaultArtboardViewModelAsync(artboardBy: ArtboardBy?): Promise<HybridViewModelSpec?>
   
   @DoNotStrip
   @Keep
