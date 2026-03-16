@@ -36,22 +36,18 @@ class HybridViewModelListProperty: HybridViewModelListPropertySpec {
     }
   }
 
+  private func fetchInstance(at index: Double) async throws -> (any HybridViewModelInstanceSpec)? {
+    let vmi = try await vmiInstance.value(of: prop, at: Int32(index))
+    return HybridViewModelInstance(viewModelInstance: vmi, worker: worker)
+  }
+
   // Deprecated: Use getInstanceAtAsync instead
   func getInstanceAt(index: Double) throws -> (any HybridViewModelInstanceSpec)? {
-    return try blockingAsync {
-      let vmi = try await self.vmiInstance.value(of: self.prop, at: Int32(index))
-      return HybridViewModelInstance(viewModelInstance: vmi, worker: self.worker)
-    }
+    return try blockingAsync { try await self.fetchInstance(at: index) }
   }
 
   func getInstanceAtAsync(index: Double) throws -> Promise<(any HybridViewModelInstanceSpec)?> {
-    let inst = vmiInstance
-    let p = prop
-    let w = worker
-    return Promise.async {
-      let vmi = try await inst.value(of: p, at: Int32(index))
-      return HybridViewModelInstance(viewModelInstance: vmi, worker: w)
-    }
+    return Promise.async { try await self.fetchInstance(at: index) }
   }
 
   func addInstance(instance: any HybridViewModelInstanceSpec) throws {
