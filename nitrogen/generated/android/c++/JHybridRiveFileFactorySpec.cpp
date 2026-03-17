@@ -15,6 +15,8 @@ namespace margelo::nitro::rive { struct ReferencedAssetsType; }
 namespace margelo::nitro::rive { struct ResolvedReferencedAsset; }
 // Forward declaration of `HybridRiveImageSpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridRiveImageSpec; }
+// Forward declaration of `RiveAssetType` to properly resolve imports.
+namespace margelo::nitro::rive { enum class RiveAssetType; }
 
 #include <string>
 #include <memory>
@@ -30,6 +32,8 @@ namespace margelo::nitro::rive { class HybridRiveImageSpec; }
 #include "JResolvedReferencedAsset.hpp"
 #include "HybridRiveImageSpec.hpp"
 #include "JHybridRiveImageSpec.hpp"
+#include "RiveAssetType.hpp"
+#include "JRiveAssetType.hpp"
 #include <NitroModules/ArrayBuffer.hpp>
 #include <NitroModules/JArrayBuffer.hpp>
 
