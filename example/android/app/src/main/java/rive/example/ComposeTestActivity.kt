@@ -53,7 +53,8 @@ class ComposeTestActivity : ComponentActivity() {
             val bytes = resources.openRawResource(resId).readBytes()
             Log.d("ComposeRiveTest", "[$label] File size: ${bytes.size} bytes")
 
-            val legacyFile = app.rive.runtime.kotlin.core.File(bytes)
+            val legacyFile = app.rive.runtime.kotlin.core
+              .File(bytes)
             val artboard = legacyFile.firstArtboard
             Log.d("ComposeRiveTest", "[$label] artboard: name=${artboard.name} w=${artboard.bounds.width()} h=${artboard.bounds.height()}")
             Log.d("ComposeRiveTest", "[$label] SM count: ${artboard.stateMachineCount}")
@@ -63,7 +64,10 @@ class ComposeTestActivity : ComponentActivity() {
                 Log.d("ComposeRiveTest", "[$label] SM[$i]: inputCount=${smi.inputCount}")
                 for (j in 0 until smi.inputCount) {
                     val input = smi.input(j)
-                    Log.d("ComposeRiveTest", "[$label]   input[$j]: name=${input.name} isBoolean=${input.isBoolean} isTrigger=${input.isTrigger} isNumber=${input.isNumber}")
+                    Log.d(
+                      "ComposeRiveTest",
+                      "[$label]   input[$j]: name=${input.name} isBoolean=${input.isBoolean} isTrigger=${input.isTrigger} isNumber=${input.isNumber}"
+                    )
                 }
             }
             // Skip release — legacy API has lifecycle issues in this context
@@ -99,7 +103,10 @@ fun RiveContent() {
             val stateMachine = rememberStateMachine(artboard)
 
             LaunchedEffect(stateMachine) {
-                Log.d("ComposeRiveTest", "artboard=${artboard.artboardHandle} sm=${stateMachine.stateMachineHandle} name=${artboard.name} smName=${stateMachine.name}")
+                Log.d(
+                  "ComposeRiveTest",
+                  "artboard=${artboard.artboardHandle} sm=${stateMachine.stateMachineHandle} name=${artboard.name} smName=${stateMachine.name}"
+                )
             }
 
             Box(
