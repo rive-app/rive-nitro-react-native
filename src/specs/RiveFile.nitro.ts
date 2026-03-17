@@ -15,6 +15,14 @@ export interface RiveEnumDefinition {
   readonly values: string[];
 }
 
+/**
+ * Explicitly declares the type of a referenced asset.
+ * Providing this is **recommended** — the new Rive runtime no longer exposes
+ * the asset type at load time, so falling back to extension/magic-byte
+ * inference is deprecated and may be removed in a future release.
+ */
+export type RiveAssetType = 'image' | 'font' | 'audio';
+
 export type ResolvedReferencedAsset = {
   sourceUrl?: string;
   sourceAsset?: string;
@@ -22,6 +30,11 @@ export type ResolvedReferencedAsset = {
   sourceAssetId?: string;
   path?: string;
   image?: RiveImage;
+  /**
+   * Explicitly declares the type of this asset.
+   * Recommended — provide this instead of relying on extension/magic-byte inference.
+   */
+  type?: RiveAssetType;
 };
 
 export type ReferencedAssetsType = {

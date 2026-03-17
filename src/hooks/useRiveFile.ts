@@ -40,12 +40,12 @@ function parsePossibleSources(asset: ReferencedAsset): ResolvedReferencedAsset {
     return { image: asset };
   }
 
-  const source = asset.source;
+  const { source, type } = asset;
 
   if (typeof source === 'number') {
     const resolvedAsset = Image.resolveAssetSource(source);
     if (resolvedAsset && resolvedAsset.uri) {
-      return { sourceAssetId: resolvedAsset.uri };
+      return { sourceAssetId: resolvedAsset.uri, type };
     } else {
       throw new Error('Invalid asset source provided.');
     }
@@ -53,14 +53,14 @@ function parsePossibleSources(asset: ReferencedAsset): ResolvedReferencedAsset {
 
   const uri = (source as any).uri;
   if (typeof source === 'object' && uri) {
-    return { sourceUrl: uri };
+    return { sourceUrl: uri, type };
   }
 
   const fileName = (source as any).fileName;
   const path = (source as any).path;
 
   if (typeof source === 'object' && fileName) {
-    const result: ResolvedReferencedAsset = { sourceAsset: fileName };
+    const result: ResolvedReferencedAsset = { sourceAsset: fileName, type };
 
     if (path) {
       result.path = path;
