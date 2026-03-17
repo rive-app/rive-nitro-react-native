@@ -34,7 +34,7 @@ data class ResolvedReferencedAsset(
   val image: HybridRiveImageSpec?,
   @DoNotStrip
   @Keep
-  val type: String?
+  val type: RiveAssetType?
 ) {
   /* primary constructor */
 
@@ -46,7 +46,7 @@ data class ResolvedReferencedAsset(
     @Keep
     @Suppress("unused")
     @JvmStatic
-    private fun fromCpp(sourceUrl: String?, sourceAsset: String?, sourceAssetId: String?, path: String?, image: HybridRiveImageSpec?, type: String?): ResolvedReferencedAsset {
+    private fun fromCpp(sourceUrl: String?, sourceAsset: String?, sourceAssetId: String?, path: String?, image: HybridRiveImageSpec?, type: RiveAssetType?): ResolvedReferencedAsset {
       return ResolvedReferencedAsset(sourceUrl, sourceAsset, sourceAssetId, path, image, type)
     }
   }
