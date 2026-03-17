@@ -169,7 +169,8 @@ class HybridRiveFile(
     val file = riveFile ?: return Promise.resolved(emptyArray())
     return Promise.async {
       val enums = file.getEnums()
-      enums.map { enum ->
+      enums
+        .map { enum ->
         RiveEnumDefinition(
           name = enum.name,
           values = enum.values.toTypedArray()
@@ -206,21 +207,26 @@ class HybridRiveFile(
     try {
       // Find a string property to use as identifier for value comparison
       val testPropName = vmNames.firstNotNullOfOrNull { name ->
-        file.getViewModelProperties(name)
+        file
+          .getViewModelProperties(name)
           .firstOrNull { it.type == PropertyDataType.STRING }
           ?.name
       } ?: return vmNames.first()
 
       val artboardValue = try {
         artboardVmi.getStringFlow(testPropName).first()
-      } catch (_: Exception) { return vmNames.first() }
+      } catch (_: Exception) {
+        return vmNames.first()
+      }
 
       for (name in vmNames) {
         val namedVmi = ViewModelInstance.fromFile(file, ViewModelSource.Named(name).defaultInstance())
         try {
           val namedValue = try {
             namedVmi.getStringFlow(testPropName).first()
-          } catch (_: Exception) { continue }
+          } catch (_: Exception) {
+            continue
+          }
           if (namedValue == artboardValue) return name
         } finally {
           namedVmi.close()

@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.annotation.Keep
 import app.rive.RiveFile
 import app.rive.ViewModelInstance
-import app.rive.ViewModelInstanceSource
 import app.rive.ViewModelSource
 import app.rive.core.CommandQueue
 import com.facebook.proguard.annotations.DoNotStrip

@@ -80,7 +80,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
     layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
     surfaceTextureListener = object : TextureView.SurfaceTextureListener {
       override fun onSurfaceTextureAvailable(st: SurfaceTexture, w: Int, h: Int) {
-        Log.d(TAG, "onSurfaceTextureAvailable: ${w}x${h} worker=${this@RiveReactNativeView.riveWorker != null}")
+        Log.d(TAG, "onSurfaceTextureAvailable: ${w}x$h worker=${this@RiveReactNativeView.riveWorker != null}")
         this@RiveReactNativeView.surfaceTexture = st
         this@RiveReactNativeView.surfaceWidth = w
         this@RiveReactNativeView.surfaceHeight = h
@@ -114,8 +114,11 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
     override fun doFrame(frameTimeNanos: Long) {
       if (!renderLoopRunning) return
 
-      val deltaTime = if (lastFrameTimeNs == 0L) Duration.ZERO
-        else (frameTimeNanos - lastFrameTimeNs).nanoseconds
+      val deltaTime = if (lastFrameTimeNs == 0L) {
+        Duration.ZERO
+      } else {
+        (frameTimeNanos - lastFrameTimeNs).nanoseconds
+      }
       lastFrameTimeNs = frameTimeNanos
 
       val worker = riveWorker
@@ -156,7 +159,10 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
   fun configure(config: ViewConfiguration, dataBindingChanged: Boolean, reload: Boolean = false, initialUpdate: Boolean = false) {
     riveWorker = config.riveWorker
     activeFit = config.fit
-    Log.d(TAG, "configure: reload=$reload initialUpdate=$initialUpdate fit=$activeFit surfaceTexture=${surfaceTexture != null} surfaceW=${surfaceWidth} surfaceH=${surfaceHeight}")
+    Log.d(
+      TAG,
+      "configure: reload=$reload initialUpdate=$initialUpdate fit=$activeFit surfaceTexture=${surfaceTexture != null} surfaceW=$surfaceWidth surfaceH=$surfaceHeight"
+    )
 
     if (reload) {
       RiveErrorLogger.resetReportedErrors()
@@ -215,11 +221,20 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
   }
 
   private fun handlePointerEvent(event: MotionEvent) {
-    val worker = riveWorker ?: run { Log.w(TAG, "touch: no worker"); return }
-    val smHandle = stateMachineHandle ?: run { Log.w(TAG, "touch: no smHandle"); return }
+    val worker = riveWorker ?: run {
+      Log.w(TAG, "touch: no worker")
+      return
+    }
+    val smHandle = stateMachineHandle ?: run {
+      Log.w(TAG, "touch: no smHandle")
+      return
+    }
     val w = surfaceWidth.toFloat()
     val h = surfaceHeight.toFloat()
-    if (w <= 0 || h <= 0) { Log.w(TAG, "touch: invalid surface ${w}x${h}"); return }
+    if (w <= 0 || h <= 0) {
+      Log.w(TAG, "touch: invalid surface ${w}x$h")
+      return
+    }
 
     val fit = activeFit
 
