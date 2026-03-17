@@ -73,6 +73,10 @@ namespace margelo::nitro::rive {
       return __promise;
     }();
   }
+  void JHybridViewModelColorPropertySpec::set(double value) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void(double /* value */)>("set");
+    method(_javaPart, value);
+  }
   std::function<void()> JHybridViewModelColorPropertySpec::addListener(const std::function<void(double /* value */)>& onChanged) {
     static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JFunc_void::javaobject>(jni::alias_ref<JFunc_void_double::javaobject> /* onChanged */)>("addListener_cxx");
     auto __result = method(_javaPart, JFunc_void_double_cxx::fromCpp(onChanged));

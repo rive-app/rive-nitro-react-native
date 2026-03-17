@@ -23,34 +23,33 @@ async function loadFile(source: number) {
 }
 
 describe('RiveFile ViewModel Access', () => {
-  it('viewModelCount returns expected count', async () => {
+  it('getViewModelNamesAsync returns expected count', async () => {
     const file = await loadFile(DATABINDING);
-    expect(file.viewModelCount).toBe(2);
+    const names = await file.getViewModelNamesAsync();
+    expect(names.length).toBe(2);
   });
 
-  it('viewModelByIndex(0) returns a ViewModel', async () => {
+  it('getViewModelNamesAsync returns non-empty names', async () => {
     const file = await loadFile(DATABINDING);
-    const vm = await file.viewModelByIndexAsync(0);
+    const names = await file.getViewModelNamesAsync();
+    expect(names.length).toBeGreaterThan(0);
+    names.forEach((name) => expect(typeof name).toBe('string'));
+  });
+
+  it('viewModelByNameAsync with first name returns a ViewModel', async () => {
+    const file = await loadFile(DATABINDING);
+    const names = await file.getViewModelNamesAsync();
+    const vm = await file.viewModelByNameAsync(names[0]!);
     expect(vm).toBeDefined();
   });
 
-  it('viewModelByIndex(-1) returns undefined or throws', async () => {
+  it('viewModelByNameAsync with non-existent name returns undefined or throws', async () => {
     const file = await loadFile(DATABINDING);
     try {
-      const vm = await file.viewModelByIndexAsync(-1);
+      const vm = await file.viewModelByNameAsync('__DoesNotExist__');
       expect(vm).toBeUndefined();
     } catch {
-      // Android Rive SDK throws a JNI exception for invalid indices
-    }
-  });
-
-  it('viewModelByIndex(100) returns undefined or throws', async () => {
-    const file = await loadFile(DATABINDING);
-    try {
-      const vm = await file.viewModelByIndexAsync(100);
-      expect(vm).toBeUndefined();
-    } catch {
-      // Android Rive SDK throws a JNI exception for out-of-range indices
+      // Some backends throw for non-existent names
     }
   });
 
@@ -132,7 +131,8 @@ describe('ViewModel Creation Variants', () => {
 
   it('createInstanceByIndex(0) works', async () => {
     const file = await loadFile(DATABINDING);
-    const vm = await file.viewModelByIndexAsync(0);
+    const names = await file.getViewModelNamesAsync();
+    const vm = await file.viewModelByNameAsync(names[0]!);
     expectDefined(vm);
 
     const instance = await vm.createInstanceByIndexAsync(0);

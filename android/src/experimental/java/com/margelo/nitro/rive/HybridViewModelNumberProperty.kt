@@ -19,7 +19,7 @@ class HybridViewModelNumberProperty(
     private const val TAG = "HybridViewModelNumberProperty"
   }
 
-  // Deprecated: Use getValueAsync instead (for reading)
+  // Deprecated: Use getValueAsync (read) or set(value) (write) instead
   override var value: Double
     get() {
       return try {
@@ -30,8 +30,12 @@ class HybridViewModelNumberProperty(
       }
     }
     set(value) {
-      instance.setNumber(path, value.toFloat())
+      set(value)
     }
+
+  override fun set(value: Double) {
+    instance.setNumber(path, value.toFloat())
+  }
 
   override fun getValueAsync(): Promise<Double> {
     return Promise.async { instance.getNumberFlow(path).first().toDouble() }

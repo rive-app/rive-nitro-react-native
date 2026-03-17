@@ -19,7 +19,7 @@ class HybridViewModelColorProperty(
     private const val TAG = "HybridViewModelColorProperty"
   }
 
-  // Deprecated: Use getValueAsync instead (for reading)
+  // Deprecated: Use getValueAsync (read) or set(value) (write) instead
   override var value: Double
     get() {
       return try {
@@ -30,8 +30,12 @@ class HybridViewModelColorProperty(
       }
     }
     set(value) {
-      instance.setColor(path, value.toLong().toInt())
+      set(value)
     }
+
+  override fun set(value: Double) {
+    instance.setColor(path, value.toLong().toInt())
+  }
 
   override fun getValueAsync(): Promise<Double> {
     return Promise.async { instance.getColorFlow(path).first().toDouble() }

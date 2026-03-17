@@ -60,12 +60,12 @@ class HybridViewModel: HybridViewModelSpec {
     return HybridViewModelInstance(viewModelInstance: vmi, worker: self.worker)
   }
 
-  // Deprecated: Use createInstanceAsync instead
+  // Deprecated: Use createBlankInstanceAsync instead
   func createInstance() throws -> (any HybridViewModelInstanceSpec)? {
     return try blockingAsync { try await self.createInstanceImpl() }
   }
 
-  func createInstanceAsync() throws -> Promise<(any HybridViewModelInstanceSpec)?> {
+  func createBlankInstanceAsync() throws -> Promise<(any HybridViewModelInstanceSpec)?> {
     return Promise.async { try await self.createInstanceImpl() }
   }
 }
