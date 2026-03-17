@@ -91,12 +91,13 @@ object ExperimentalAssetLoader {
     }
   }
 
-  private fun inferAssetType(name: String, data: ByteArray, explicitType: String?): AssetType {
+  private fun inferAssetType(name: String, data: ByteArray, explicitType: RiveAssetType?): AssetType {
     // Explicit type provided by the caller — always preferred.
-    when (explicitType?.lowercase()) {
-      "image" -> return AssetType.IMAGE
-      "font" -> return AssetType.FONT
-      "audio" -> return AssetType.AUDIO
+    when (explicitType) {
+      RiveAssetType.IMAGE -> return AssetType.IMAGE
+      RiveAssetType.FONT -> return AssetType.FONT
+      RiveAssetType.AUDIO -> return AssetType.AUDIO
+      null -> Unit
     }
     // No explicit type — fall back to extension / magic-byte inference.
     // Deprecated: provide `type` on your asset entry to avoid this.
