@@ -1,4 +1,7 @@
-import type { ResolvedReferencedAsset, RiveAssetType } from '../specs/RiveFile.nitro';
+import type {
+  ResolvedReferencedAsset,
+  RiveAssetType,
+} from '../specs/RiveFile.nitro';
 import type { RiveImage } from '../specs/RiveImage.nitro';
 
 export type ReferencedAssetSource = {
