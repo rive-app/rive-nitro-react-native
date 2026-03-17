@@ -6,14 +6,11 @@ enum AssetType {
   case font
   case audio
 
-  /// Initialise from an explicit caller-provided string ("image" | "font" | "audio").
-  /// This is the preferred path — always use this when the value is available.
-  init?(fromExplicit string: String) {
-    switch string.lowercased() {
-    case "image": self = .image
-    case "font":  self = .font
-    case "audio": self = .audio
-    default:      return nil
+  init(from riveAssetType: RiveAssetType) {
+    switch riveAssetType {
+    case .image: self = .image
+    case .font:  self = .font
+    case .audio: self = .audio
     }
   }
 
@@ -62,8 +59,8 @@ final class ExperimentalAssetLoader {
 
       // Prefer an explicit type provided by the caller.
       let resolvedType: AssetType?
-      if let explicit = asset.type, let explicitType = AssetType(fromExplicit: explicit) {
-        resolvedType = explicitType
+      if let riveType = asset.type {
+        resolvedType = AssetType(from: riveType)
       } else {
         // No explicit type — fall back to extension / magic-byte inference.
         // Deprecated: set type on the asset entry to silence this warning.
