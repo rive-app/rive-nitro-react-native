@@ -19,7 +19,7 @@ class HybridViewModelStringProperty(
     private const val TAG = "HybridViewModelStringProperty"
   }
 
-  // Deprecated: Use getValueAsync instead (for reading)
+  // Deprecated: Use getValueAsync (read) or set(value) (write) instead
   override var value: String
     get() {
       return try {
@@ -30,8 +30,12 @@ class HybridViewModelStringProperty(
       }
     }
     set(value) {
-      instance.setString(path, value)
+      set(value)
     }
+
+  override fun set(value: String) {
+    instance.setString(path, value)
+  }
 
   override fun getValueAsync(): Promise<String> {
     return Promise.async { instance.getStringFlow(path).first() }

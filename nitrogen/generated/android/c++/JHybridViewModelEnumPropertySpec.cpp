@@ -74,6 +74,10 @@ namespace margelo::nitro::rive {
       return __promise;
     }();
   }
+  void JHybridViewModelEnumPropertySpec::set(const std::string& value) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<jni::JString> /* value */)>("set");
+    method(_javaPart, jni::make_jstring(value));
+  }
   std::function<void()> JHybridViewModelEnumPropertySpec::addListener(const std::function<void(const std::string& /* value */)>& onChanged) {
     static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JFunc_void::javaobject>(jni::alias_ref<JFunc_void_std__string::javaobject> /* onChanged */)>("addListener_cxx");
     auto __result = method(_javaPart, JFunc_void_std__string_cxx::fromCpp(onChanged));

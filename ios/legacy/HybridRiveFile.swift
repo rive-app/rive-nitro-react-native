@@ -31,39 +31,33 @@ class HybridRiveFile: HybridRiveFileSpec, RiveViewSource {
     }
   }
   
-  // Deprecated: Use getViewModelCountAsync instead
+  // Deprecated: Use getViewModelNamesAsync instead
   var viewModelCount: Double? {
     guard let count = riveFile?.viewModelCount else { return nil }
     return Double(count)
   }
 
-  func getViewModelCountAsync() throws -> Promise<Double?> {
+  func getViewModelNamesAsync() throws -> Promise<[String]> {
     return Promise.async {
-      guard let count = self.riveFile?.viewModelCount else { return nil }
-      return Double(count)
+      guard let count = self.riveFile?.viewModelCount else { return [] }
+      return (0..<count).compactMap { self.riveFile?.viewModel(at: UInt($0))?.name }
     }
   }
 
-  // Deprecated: Use viewModelByIndexAsync instead
+  // Deprecated: Use getViewModelNamesAsync + viewModelByNameAsync instead
   func viewModelByIndex(index: Double) throws -> (any HybridViewModelSpec)? {
     guard index >= 0, let vm = riveFile?.viewModel(at: UInt(index)) else { return nil }
     return HybridViewModel(viewModel: vm)
   }
 
-  func viewModelByIndexAsync(index: Double) throws -> Promise<(any HybridViewModelSpec)?> {
-    return Promise.async {
-      guard index >= 0, let vm = self.riveFile?.viewModel(at: UInt(index)) else { return nil }
-      return HybridViewModel(viewModel: vm)
-    }
-  }
-  
   // Deprecated: Use viewModelByNameAsync instead
   func viewModelByName(name: String) throws -> (any HybridViewModelSpec)? {
     guard let vm = riveFile?.viewModelNamed(name) else { return nil }
     return HybridViewModel(viewModel: vm)
   }
 
-  func viewModelByNameAsync(name: String) throws -> Promise<(any HybridViewModelSpec)?> {
+  // validate is ignored on legacy backend — native viewModelNamed(name) already returns nil for unknown names
+  func viewModelByNameAsync(name: String, validate: Bool?) throws -> Promise<(any HybridViewModelSpec)?> {
     return Promise.async {
       guard let vm = self.riveFile?.viewModelNamed(name) else { return nil }
       return HybridViewModel(viewModel: vm)

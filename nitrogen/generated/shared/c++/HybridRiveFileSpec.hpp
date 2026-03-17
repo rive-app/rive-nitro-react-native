@@ -27,9 +27,9 @@ namespace margelo::nitro::rive { struct RiveEnumDefinition; }
 #include <optional>
 #include <string>
 #include <vector>
-#include <NitroModules/Promise.hpp>
 #include <memory>
 #include "HybridViewModelSpec.hpp"
+#include <NitroModules/Promise.hpp>
 #include "ArtboardBy.hpp"
 #include "ReferencedAssetsType.hpp"
 #include "HybridBindableArtboardSpec.hpp"
@@ -68,11 +68,10 @@ namespace margelo::nitro::rive {
 
     public:
       // Methods
-      virtual std::shared_ptr<Promise<std::optional<double>>> getViewModelCountAsync() = 0;
       virtual std::optional<std::shared_ptr<HybridViewModelSpec>> viewModelByIndex(double index) = 0;
-      virtual std::shared_ptr<Promise<std::optional<std::shared_ptr<HybridViewModelSpec>>>> viewModelByIndexAsync(double index) = 0;
       virtual std::optional<std::shared_ptr<HybridViewModelSpec>> viewModelByName(const std::string& name) = 0;
-      virtual std::shared_ptr<Promise<std::optional<std::shared_ptr<HybridViewModelSpec>>>> viewModelByNameAsync(const std::string& name) = 0;
+      virtual std::shared_ptr<Promise<std::vector<std::string>>> getViewModelNamesAsync() = 0;
+      virtual std::shared_ptr<Promise<std::optional<std::shared_ptr<HybridViewModelSpec>>>> viewModelByNameAsync(const std::string& name, std::optional<bool> validate) = 0;
       virtual std::optional<std::shared_ptr<HybridViewModelSpec>> defaultArtboardViewModel(const std::optional<ArtboardBy>& artboardBy) = 0;
       virtual std::shared_ptr<Promise<std::optional<std::shared_ptr<HybridViewModelSpec>>>> defaultArtboardViewModelAsync(const std::optional<ArtboardBy>& artboardBy) = 0;
       virtual void updateReferencedAssets(const ReferencedAssetsType& referencedAssets) = 0;

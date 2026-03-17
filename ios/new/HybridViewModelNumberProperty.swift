@@ -12,7 +12,7 @@ class HybridViewModelNumberProperty: HybridViewModelNumberPropertySpec {
     super.init()
   }
 
-  // Deprecated: Use getValueAsync instead (for reading)
+  // Deprecated: Use getValueAsync (read) or set(_:) (write) instead
   var value: Double {
     get {
       do {
@@ -22,13 +22,15 @@ class HybridViewModelNumberProperty: HybridViewModelNumberPropertySpec {
         return 0
       }
     }
-    set {
-      let inst = instance
-      let p = prop
-      let v = Float(newValue)
-      Task { @MainActor in
-        inst.setValue(of: p, to: v)
-      }
+    set { set(newValue) }
+  }
+
+  func set(_ value: Double) throws {
+    let inst = instance
+    let p = prop
+    let v = Float(value)
+    Task { @MainActor in
+      inst.setValue(of: p, to: v)
     }
   }
 

@@ -83,6 +83,12 @@ namespace margelo::nitro::rive {
       auto __value = std::move(__result.value());
       return __value;
     }
+    inline void set(bool value) override {
+      auto __result = _swiftPart.set(std::forward<decltype(value)>(value));
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+    }
     inline std::function<void()> addListener(const std::function<void(bool /* value */)>& onChanged) override {
       auto __result = _swiftPart.addListener(onChanged);
       if (__result.hasError()) [[unlikely]] {

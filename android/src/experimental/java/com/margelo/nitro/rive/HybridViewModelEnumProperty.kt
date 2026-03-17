@@ -19,7 +19,7 @@ class HybridViewModelEnumProperty(
     private const val TAG = "HybridViewModelEnumProperty"
   }
 
-  // Deprecated: Use getValueAsync instead (for reading)
+  // Deprecated: Use getValueAsync (read) or set(value) (write) instead
   override var value: String
     get() {
       return try {
@@ -30,8 +30,12 @@ class HybridViewModelEnumProperty(
       }
     }
     set(value) {
-      instance.setEnum(path, value)
+      set(value)
     }
+
+  override fun set(value: String) {
+    instance.setEnum(path, value)
+  }
 
   override fun getValueAsync(): Promise<String> {
     return Promise.async { instance.getEnumFlow(path).first() }
