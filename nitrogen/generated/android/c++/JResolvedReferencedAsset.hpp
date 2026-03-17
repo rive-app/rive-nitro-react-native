@@ -45,12 +45,15 @@ namespace margelo::nitro::rive {
       jni::local_ref<jni::JString> path = this->getFieldValue(fieldPath);
       static const auto fieldImage = clazz->getField<JHybridRiveImageSpec::JavaPart>("image");
       jni::local_ref<JHybridRiveImageSpec::JavaPart> image = this->getFieldValue(fieldImage);
+      static const auto fieldAssetType = clazz->getField<jni::JString>("type");
+      jni::local_ref<jni::JString> type = this->getFieldValue(fieldAssetType);
       return ResolvedReferencedAsset(
         sourceUrl != nullptr ? std::make_optional(sourceUrl->toStdString()) : std::nullopt,
         sourceAsset != nullptr ? std::make_optional(sourceAsset->toStdString()) : std::nullopt,
         sourceAssetId != nullptr ? std::make_optional(sourceAssetId->toStdString()) : std::nullopt,
         path != nullptr ? std::make_optional(path->toStdString()) : std::nullopt,
-        image != nullptr ? std::make_optional(image->getJHybridRiveImageSpec()) : std::nullopt
+        image != nullptr ? std::make_optional(image->getJHybridRiveImageSpec()) : std::nullopt,
+        type != nullptr ? std::make_optional(type->toStdString()) : std::nullopt
       );
     }
 
@@ -60,7 +63,7 @@ namespace margelo::nitro::rive {
      */
     [[maybe_unused]]
     static jni::local_ref<JResolvedReferencedAsset::javaobject> fromCpp(const ResolvedReferencedAsset& value) {
-      using JSignature = JResolvedReferencedAsset(jni::alias_ref<jni::JString>, jni::alias_ref<jni::JString>, jni::alias_ref<jni::JString>, jni::alias_ref<jni::JString>, jni::alias_ref<JHybridRiveImageSpec::JavaPart>);
+      using JSignature = JResolvedReferencedAsset(jni::alias_ref<jni::JString>, jni::alias_ref<jni::JString>, jni::alias_ref<jni::JString>, jni::alias_ref<jni::JString>, jni::alias_ref<JHybridRiveImageSpec::JavaPart>, jni::alias_ref<jni::JString>);
       static const auto clazz = javaClassStatic();
       static const auto create = clazz->getStaticMethod<JSignature>("fromCpp");
       return create(
@@ -69,7 +72,8 @@ namespace margelo::nitro::rive {
         value.sourceAsset.has_value() ? jni::make_jstring(value.sourceAsset.value()) : nullptr,
         value.sourceAssetId.has_value() ? jni::make_jstring(value.sourceAssetId.value()) : nullptr,
         value.path.has_value() ? jni::make_jstring(value.path.value()) : nullptr,
-        value.image.has_value() ? std::dynamic_pointer_cast<JHybridRiveImageSpec>(value.image.value())->getJavaPart() : nullptr
+        value.image.has_value() ? std::dynamic_pointer_cast<JHybridRiveImageSpec>(value.image.value())->getJavaPart() : nullptr,
+        value.type.has_value() ? jni::make_jstring(value.type.value()) : nullptr
       );
     }
   };
