@@ -18,7 +18,7 @@ public extension ResolvedReferencedAsset {
   /**
    * Create a new instance of `ResolvedReferencedAsset`.
    */
-  init(sourceUrl: String?, sourceAsset: String?, sourceAssetId: String?, path: String?, image: (any HybridRiveImageSpec)?) {
+  init(sourceUrl: String?, sourceAsset: String?, sourceAssetId: String?, path: String?, image: (any HybridRiveImageSpec)?, type: String? = nil) {
     self.init({ () -> bridge.std__optional_std__string_ in
       if let __unwrappedValue = sourceUrl {
         return bridge.create_std__optional_std__string_(std.string(__unwrappedValue))
@@ -49,6 +49,12 @@ public extension ResolvedReferencedAsset {
           let __cxxWrapped = __unwrappedValue.getCxxWrapper()
           return __cxxWrapped.getCxxPart()
         }())
+      } else {
+        return .init()
+      }
+    }(), { () -> bridge.std__optional_std__string_ in
+      if let __unwrappedValue = type {
+        return bridge.create_std__optional_std__string_(std.string(__unwrappedValue))
       } else {
         return .init()
       }
@@ -103,6 +109,18 @@ public extension ResolvedReferencedAsset {
     }()
   }
   
+  @inline(__always)
+  var type: String? {
+    return { () -> String? in
+      if bridge.has_value_std__optional_std__string_(self.__type) {
+        let __unwrapped = bridge.get_std__optional_std__string_(self.__type)
+        return String(__unwrapped)
+      } else {
+        return nil
+      }
+    }()
+  }
+
   @inline(__always)
   var image: (any HybridRiveImageSpec)? {
     return { () -> (any HybridRiveImageSpec)? in

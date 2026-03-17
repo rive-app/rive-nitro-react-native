@@ -6,6 +6,19 @@ enum AssetType {
   case font
   case audio
 
+  /// Initialise from an explicit caller-provided string ("image" | "font" | "audio").
+  /// This is the preferred path — always use this when the value is available.
+  init?(fromExplicit string: String) {
+    switch string.lowercased() {
+    case "image": self = .image
+    case "font":  self = .font
+    case "audio": self = .audio
+    default:      return nil
+    }
+  }
+
+  /// Initialise by guessing from a file-name suffix.
+  /// Deprecated: provide `type` explicitly instead.
   init?(fromName name: String) {
     let lowercased = name.lowercased()
     if lowercased.hasSuffix(".png") || lowercased.hasSuffix(".jpg") || lowercased.hasSuffix(".jpeg") || lowercased.hasSuffix(".webp") {
@@ -47,13 +60,23 @@ final class ExperimentalAssetLoader {
       let data = try await loadAssetData(asset)
       guard !data.isEmpty else { return }
 
-      let assetType = AssetType(fromName: name) ?? inferAssetType(from: asset, data: data)
-      guard let assetType = assetType else {
-        RCTLogWarn("Could not determine asset type for: \(name)")
+      // Prefer an explicit type provided by the caller.
+      let resolvedType: AssetType?
+      if let explicit = asset.type, let explicitType = AssetType(fromExplicit: explicit) {
+        resolvedType = explicitType
+      } else {
+        // No explicit type — fall back to extension / magic-byte inference.
+        // Deprecated: set type on the asset entry to silence this warning.
+        RCTLogWarn("[Rive] No type provided for '\(name)'. Falling back to extension/magic-byte inference — " +
+          "set type: 'image' | 'font' | 'audio' on the asset to silence this warning.")
+        resolvedType = AssetType(fromName: name) ?? inferAssetType(from: asset, data: data)
+      }
+      guard let resolvedType else {
+        RCTLogWarn("[Rive] Could not determine asset type for: \(name)")
         return
       }
 
-      try await registerAsset(data: data, name: name, type: assetType, worker: worker)
+      try await registerAsset(data: data, name: name, type: resolvedType, worker: worker)
     } catch {
       RCTLogError("Failed to load asset '\(name)': \(error)")
     }
