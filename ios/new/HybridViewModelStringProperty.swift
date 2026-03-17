@@ -12,7 +12,7 @@ class HybridViewModelStringProperty: HybridViewModelStringPropertySpec {
     super.init()
   }
 
-  // Deprecated: Use getValueAsync instead (for reading)
+  // Deprecated: Use getValueAsync (read) or set(_:) (write) instead
   var value: String {
     get {
       do {
@@ -22,12 +22,14 @@ class HybridViewModelStringProperty: HybridViewModelStringPropertySpec {
         return ""
       }
     }
-    set {
-      let inst = instance
-      let p = prop
-      Task { @MainActor in
-        inst.setValue(of: p, to: newValue)
-      }
+    set { set(newValue) }
+  }
+
+  func set(_ value: String) throws {
+    let inst = instance
+    let p = prop
+    Task { @MainActor in
+      inst.setValue(of: p, to: value)
     }
   }
 

@@ -14,7 +14,7 @@ class HybridRiveFile: HybridRiveFileSpec {
     self.worker = worker
   }
 
-  // Deprecated: Use getViewModelCountAsync instead
+  // Deprecated: Use getViewModelNamesAsync instead
   var viewModelCount: Double? {
     guard let file = file else { return nil }
     do {
@@ -26,45 +26,41 @@ class HybridRiveFile: HybridRiveFileSpec {
     }
   }
 
-  func getViewModelCountAsync() throws -> Promise<Double?> {
-    guard let file = file else { return Promise.resolved(withResult: nil) }
+  func getViewModelNamesAsync() throws -> Promise<[String]> {
+    guard let file = file else { return Promise.resolved(withResult: []) }
     return Promise.async {
-      let names = try await file.getViewModelNames()
-      return Double(names.count)
+      try await file.getViewModelNames()
     }
   }
 
-  private func viewModelByIndexImpl(index: Double) async throws -> (any HybridViewModelSpec)? {
-    guard let file = file, let worker = worker else { return nil }
-    let names = try await file.getViewModelNames()
-    let idx = Int(index)
-    guard idx >= 0 && idx < names.count else { return nil }
-    return HybridViewModel(file: file, vmName: names[idx], worker: worker)
-  }
-
-  // Deprecated: Use viewModelByIndexAsync instead
+  // Deprecated: Use getViewModelNamesAsync + viewModelByNameAsync instead
   func viewModelByIndex(index: Double) throws -> (any HybridViewModelSpec)? {
-    return try blockingAsync { try await self.viewModelByIndexImpl(index: index) }
-  }
-
-  func viewModelByIndexAsync(index: Double) throws -> Promise<(any HybridViewModelSpec)?> {
-    return Promise.async { try await self.viewModelByIndexImpl(index: index) }
-  }
-
-  private func viewModelByNameImpl(name: String) async throws -> (any HybridViewModelSpec)? {
     guard let file = file, let worker = worker else { return nil }
-    let names = try await file.getViewModelNames()
-    guard names.contains(name) else { return nil }
+    return try blockingAsync {
+      let names = try await file.getViewModelNames()
+      let idx = Int(index)
+      guard idx >= 0 && idx < names.count else { return nil }
+      return HybridViewModel(file: file, vmName: names[idx], worker: worker)
+    }
+  }
+
+  private func viewModelByNameImpl(name: String, validate: Bool) async throws -> (any HybridViewModelSpec)? {
+    guard let file = file, let worker = worker else { return nil }
+    if validate {
+      let names = try await file.getViewModelNames()
+      guard names.contains(name) else { return nil }
+    }
     return HybridViewModel(file: file, vmName: name, worker: worker)
   }
 
   // Deprecated: Use viewModelByNameAsync instead
   func viewModelByName(name: String) throws -> (any HybridViewModelSpec)? {
-    return try blockingAsync { try await self.viewModelByNameImpl(name: name) }
+    return try blockingAsync { try await self.viewModelByNameImpl(name: name, validate: true) }
   }
 
-  func viewModelByNameAsync(name: String) throws -> Promise<(any HybridViewModelSpec)?> {
-    return Promise.async { try await self.viewModelByNameImpl(name: name) }
+  func viewModelByNameAsync(name: String, validate: Bool?) throws -> Promise<(any HybridViewModelSpec)?> {
+    let shouldValidate = validate ?? true
+    return Promise.async { try await self.viewModelByNameImpl(name: name, validate: shouldValidate) }
   }
 
   private func defaultArtboardViewModelImpl(artboardBy: ArtboardBy?) async throws -> (any HybridViewModelSpec)? {

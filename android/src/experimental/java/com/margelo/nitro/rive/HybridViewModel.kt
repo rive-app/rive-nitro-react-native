@@ -97,7 +97,7 @@ class HybridViewModel(
     }
   }
 
-  // Deprecated: Use createInstanceAsync instead
+  // Deprecated: Use createBlankInstanceAsync instead
   override fun createInstance(): HybridViewModelInstanceSpec? {
     return try {
       val source = vmSource.blankInstance()
@@ -109,7 +109,7 @@ class HybridViewModel(
     }
   }
 
-  override fun createInstanceAsync(): Promise<HybridViewModelInstanceSpec?> {
+  override fun createBlankInstanceAsync(): Promise<HybridViewModelInstanceSpec?> {
     return Promise.async {
       val source = vmSource.blankInstance()
       val vmi = ViewModelInstance.fromFile(riveFile, source)

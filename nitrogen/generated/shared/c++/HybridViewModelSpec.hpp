@@ -64,7 +64,7 @@ namespace margelo::nitro::rive {
       virtual std::optional<std::shared_ptr<HybridViewModelInstanceSpec>> createDefaultInstance() = 0;
       virtual std::shared_ptr<Promise<std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>>> createDefaultInstanceAsync() = 0;
       virtual std::optional<std::shared_ptr<HybridViewModelInstanceSpec>> createInstance() = 0;
-      virtual std::shared_ptr<Promise<std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>>> createInstanceAsync() = 0;
+      virtual std::shared_ptr<Promise<std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>>> createBlankInstanceAsync() = 0;
 
     protected:
       // Hybrid Setup
