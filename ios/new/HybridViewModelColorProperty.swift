@@ -17,7 +17,7 @@ class HybridViewModelColorProperty: HybridViewModelColorPropertySpec {
     return Double(color.argbValue)
   }
 
-  // Deprecated: Use getValueAsync (read) or set(_:) (write) instead
+  // Deprecated: Use getValueAsync (read) or set(value:) (write) instead
   var value: Double {
     get {
       do {
@@ -27,10 +27,10 @@ class HybridViewModelColorProperty: HybridViewModelColorPropertySpec {
         return 0
       }
     }
-    set { set(newValue) }
+    set { try? set(value: newValue) }
   }
 
-  func set(_ value: Double) throws {
+  func set(value: Double) throws {
     let color = Color(UInt32(bitPattern: Int32(value)))
     let inst = instance
     let p = prop

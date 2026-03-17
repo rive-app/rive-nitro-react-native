@@ -12,7 +12,7 @@ class HybridViewModelBooleanProperty: HybridViewModelBooleanPropertySpec {
     super.init()
   }
 
-  // Deprecated: Use getValueAsync (read) or set(_:) (write) instead
+  // Deprecated: Use getValueAsync (read) or set(value:) (write) instead
   var value: Bool {
     get {
       do {
@@ -22,10 +22,10 @@ class HybridViewModelBooleanProperty: HybridViewModelBooleanPropertySpec {
         return false
       }
     }
-    set { set(newValue) }
+    set { try? set(value: newValue) }
   }
 
-  func set(_ value: Bool) throws {
+  func set(value: Bool) throws {
     let inst = instance
     let p = prop
     Task { @MainActor in
