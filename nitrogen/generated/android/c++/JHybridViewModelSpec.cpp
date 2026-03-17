@@ -165,8 +165,8 @@ namespace margelo::nitro::rive {
     auto __result = method(_javaPart);
     return __result != nullptr ? std::make_optional(__result->getJHybridViewModelInstanceSpec()) : std::nullopt;
   }
-  std::shared_ptr<Promise<std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>>> JHybridViewModelSpec::createInstanceAsync() {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>()>("createInstanceAsync");
+  std::shared_ptr<Promise<std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>>> JHybridViewModelSpec::createBlankInstanceAsync() {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>()>("createBlankInstanceAsync");
     auto __result = method(_javaPart);
     return [&]() {
       auto __promise = Promise<std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>>::create();

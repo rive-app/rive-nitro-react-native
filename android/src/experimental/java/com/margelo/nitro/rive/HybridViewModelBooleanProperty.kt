@@ -19,7 +19,7 @@ class HybridViewModelBooleanProperty(
     private const val TAG = "HybridViewModelBooleanProperty"
   }
 
-  // Deprecated: Use getValueAsync instead (for reading)
+  // Deprecated: Use getValueAsync (read) or set(value) (write) instead
   override var value: Boolean
     get() {
       return try {
@@ -30,8 +30,12 @@ class HybridViewModelBooleanProperty(
       }
     }
     set(value) {
-      instance.setBoolean(path, value)
+      set(value)
     }
+
+  override fun set(value: Boolean) {
+    instance.setBoolean(path, value)
+  }
 
   override fun getValueAsync(): Promise<Boolean> {
     return Promise.async { instance.getBooleanFlow(path).first() }

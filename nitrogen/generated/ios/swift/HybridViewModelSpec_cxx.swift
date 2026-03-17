@@ -350,9 +350,9 @@ open class HybridViewModelSpec_cxx {
   }
   
   @inline(__always)
-  public final func createInstanceAsync() -> bridge.Result_std__shared_ptr_Promise_std__optional_std__shared_ptr_HybridViewModelInstanceSpec_____ {
+  public final func createBlankInstanceAsync() -> bridge.Result_std__shared_ptr_Promise_std__optional_std__shared_ptr_HybridViewModelInstanceSpec_____ {
     do {
-      let __result = try self.__implementation.createInstanceAsync()
+      let __result = try self.__implementation.createBlankInstanceAsync()
       let __resultCpp = { () -> bridge.std__shared_ptr_Promise_std__optional_std__shared_ptr_HybridViewModelInstanceSpec____ in
         let __promise = bridge.create_std__shared_ptr_Promise_std__optional_std__shared_ptr_HybridViewModelInstanceSpec____()
         let __promiseHolder = bridge.wrap_std__shared_ptr_Promise_std__optional_std__shared_ptr_HybridViewModelInstanceSpec____(__promise)

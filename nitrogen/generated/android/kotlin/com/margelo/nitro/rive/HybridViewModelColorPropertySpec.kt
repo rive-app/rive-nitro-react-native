@@ -37,6 +37,10 @@ abstract class HybridViewModelColorPropertySpec: HybridViewModelPropertySpec() {
   @Keep
   abstract fun getValueAsync(): Promise<Double>
   
+  @DoNotStrip
+  @Keep
+  abstract fun set(value: Double): Unit
+  
   abstract fun addListener(onChanged: (value: Double) -> Unit): () -> Unit
   
   @DoNotStrip
