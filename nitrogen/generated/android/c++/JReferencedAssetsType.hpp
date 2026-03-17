@@ -13,7 +13,9 @@
 #include "HybridRiveImageSpec.hpp"
 #include "JHybridRiveImageSpec.hpp"
 #include "JResolvedReferencedAsset.hpp"
+#include "JRiveAssetType.hpp"
 #include "ResolvedReferencedAsset.hpp"
+#include "RiveAssetType.hpp"
 #include <memory>
 #include <optional>
 #include <string>
