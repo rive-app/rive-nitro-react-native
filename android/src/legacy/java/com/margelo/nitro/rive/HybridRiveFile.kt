@@ -21,17 +21,18 @@ class HybridRiveFile : HybridRiveFileSpec() {
   private val weakViews = mutableListOf<WeakReference<HybridRiveView>>()
   private val scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 
-  // Deprecated: Use getViewModelCountAsync instead
+  // Deprecated: Use getViewModelNamesAsync instead
   override val viewModelCount: Double?
     get() = riveFile?.viewModelCount?.toDouble()
 
-  override fun getViewModelCountAsync(): Promise<Double?> {
+  override fun getViewModelNamesAsync(): Promise<Array<String>> {
     return Promise.async {
-      riveFile?.viewModelCount?.toDouble()
+      val count = riveFile?.viewModelCount ?: return@async emptyArray()
+      (0 until count).mapNotNull { riveFile?.getViewModelByIndex(it)?.name }.toTypedArray()
     }
   }
 
-  // Deprecated: Use viewModelByIndexAsync instead
+  // Deprecated: Use getViewModelNamesAsync + viewModelByNameAsync instead
   override fun viewModelByIndex(index: Double): HybridViewModelSpec? {
     if (index < 0) return null
     return try {
@@ -39,17 +40,6 @@ class HybridRiveFile : HybridRiveFileSpec() {
       HybridViewModel(vm)
     } catch (e: Exception) {
       null
-    }
-  }
-
-  override fun viewModelByIndexAsync(index: Double): Promise<HybridViewModelSpec?> {
-    return Promise.async {
-      try {
-        val vm = riveFile?.getViewModelByIndex(index.toInt()) ?: return@async null
-        HybridViewModel(vm)
-      } catch (e: Exception) {
-        null
-      }
     }
   }
 
@@ -63,7 +53,8 @@ class HybridRiveFile : HybridRiveFileSpec() {
     }
   }
 
-  override fun viewModelByNameAsync(name: String): Promise<HybridViewModelSpec?> {
+  // validate is ignored on legacy backend — native getViewModelByName(name) already returns null for unknown names
+  override fun viewModelByNameAsync(name: String, validate: Boolean?): Promise<HybridViewModelSpec?> {
     return Promise.async {
       val vm = riveFile?.getViewModelByName(name) ?: return@async null
       HybridViewModel(vm)

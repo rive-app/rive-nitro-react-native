@@ -26,7 +26,7 @@ class HybridRiveFile(
 
   private val weakViews = mutableListOf<WeakReference<HybridRiveView>>()
 
-  // Deprecated: Use getViewModelCountAsync instead
+  // Deprecated: Use getViewModelNamesAsync instead
   override val viewModelCount: Double?
     get() {
       val file = riveFile ?: return null
@@ -38,54 +38,49 @@ class HybridRiveFile(
       }
     }
 
-  override fun getViewModelCountAsync(): Promise<Double?> {
-    val file = riveFile ?: return Promise.resolved(null)
+  override fun getViewModelNamesAsync(): Promise<Array<String>> {
+    val file = riveFile ?: return Promise.resolved(emptyArray())
     return Promise.async {
-      file.getViewModelNames().size.toDouble()
+      file.getViewModelNames().toTypedArray()
     }
   }
 
-  private suspend fun viewModelByIndexImpl(index: Double): HybridViewModelSpec? {
-    val file = riveFile ?: return null
-    val names = file.getViewModelNames()
-    val idx = index.toInt()
-    if (idx < 0 || idx >= names.size) return null
-    return HybridViewModel(file, riveWorker, names[idx], this)
-  }
-
-  // Deprecated: Use viewModelByIndexAsync instead
+  // Deprecated: Use getViewModelNamesAsync + viewModelByNameAsync instead
   override fun viewModelByIndex(index: Double): HybridViewModelSpec? {
+    val file = riveFile ?: return null
     return try {
-      runBlocking { viewModelByIndexImpl(index) }
+      val names = runBlocking { file.getViewModelNames() }
+      val idx = index.toInt()
+      if (idx < 0 || idx >= names.size) return null
+      HybridViewModel(file, riveWorker, names[idx], this)
     } catch (e: Exception) {
       Log.e(TAG, "viewModelByIndex($index) failed", e)
       null
     }
   }
 
-  override fun viewModelByIndexAsync(index: Double): Promise<HybridViewModelSpec?> {
-    return Promise.async { viewModelByIndexImpl(index) }
-  }
-
-  private suspend fun viewModelByNameImpl(name: String): HybridViewModelSpec? {
+  private suspend fun viewModelByNameImpl(name: String, validate: Boolean): HybridViewModelSpec? {
     val file = riveFile ?: return null
-    val names = file.getViewModelNames()
-    if (!names.contains(name)) return null
+    if (validate) {
+      val names = file.getViewModelNames()
+      if (!names.contains(name)) return null
+    }
     return HybridViewModel(file, riveWorker, name, this)
   }
 
   // Deprecated: Use viewModelByNameAsync instead
   override fun viewModelByName(name: String): HybridViewModelSpec? {
     return try {
-      runBlocking { viewModelByNameImpl(name) }
+      runBlocking { viewModelByNameImpl(name, validate = true) }
     } catch (e: Exception) {
       Log.e(TAG, "viewModelByName('$name') failed", e)
       null
     }
   }
 
-  override fun viewModelByNameAsync(name: String): Promise<HybridViewModelSpec?> {
-    return Promise.async { viewModelByNameImpl(name) }
+  override fun viewModelByNameAsync(name: String, validate: Boolean?): Promise<HybridViewModelSpec?> {
+    val shouldValidate = validate ?: true
+    return Promise.async { viewModelByNameImpl(name, validate = shouldValidate) }
   }
 
   private suspend fun defaultArtboardViewModelImpl(artboardBy: ArtboardBy?): HybridViewModelSpec? {
