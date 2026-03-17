@@ -34,8 +34,11 @@ class HybridViewModelListProperty(private val listProperty: ViewModelListPropert
   override fun getInstanceAtAsync(index: Double): Promise<HybridViewModelInstanceSpec?> {
     return Promise.async {
       val idx = index.toInt()
-      if (idx < 0 || idx >= listProperty.size) null
-      else HybridViewModelInstance(listProperty.elementAt(idx))
+      if (idx < 0 || idx >= listProperty.size) {
+        null
+      } else {
+        HybridViewModelInstance(listProperty.elementAt(idx))
+      }
     }
   }
 

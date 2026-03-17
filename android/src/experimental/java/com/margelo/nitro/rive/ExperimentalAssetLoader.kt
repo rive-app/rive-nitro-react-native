@@ -25,7 +25,7 @@ object ExperimentalAssetLoader {
         try {
           val loader = source.createLoader()
           val data = loader.load(source)
-          val type = inferAssetType(name, data)
+          val type = inferAssetType(name, data, assetData.type)
           registerAsset(data, name, type, riveWorker)
         } catch (e: Exception) {
           Log.e(TAG, "Failed to load asset '$name'", e)
@@ -47,7 +47,7 @@ object ExperimentalAssetLoader {
         try {
           val loader = source.createLoader()
           val data = loader.load(source)
-          val type = inferAssetType(name, data)
+          val type = inferAssetType(name, data, assetData.type)
           registerAsset(data, name, type, riveWorker)
         } catch (e: Exception) {
           Log.e(TAG, "Failed to update asset '$name'", e)
@@ -91,7 +91,20 @@ object ExperimentalAssetLoader {
     }
   }
 
-  private fun inferAssetType(name: String, data: ByteArray): AssetType {
+  private fun inferAssetType(name: String, data: ByteArray, explicitType: String?): AssetType {
+    // Explicit type provided by the caller — always preferred.
+    when (explicitType?.lowercase()) {
+      "image" -> return AssetType.IMAGE
+      "font" -> return AssetType.FONT
+      "audio" -> return AssetType.AUDIO
+    }
+    // No explicit type — fall back to extension / magic-byte inference.
+    // Deprecated: provide `type` on your asset entry to avoid this.
+    Log.w(
+      TAG,
+      "No type provided for '$name'. Falling back to extension/magic-byte inference — " +
+      "set type: 'image' | 'font' | 'audio' on the asset to silence this warning."
+    )
     val ext = name.substringAfterLast('.', "").lowercase()
     return when (ext) {
       "png", "jpg", "jpeg", "webp", "gif", "bmp", "svg" -> AssetType.IMAGE
@@ -102,33 +115,26 @@ object ExperimentalAssetLoader {
   }
 
   private fun inferFromMagicBytes(data: ByteArray): AssetType {
-    if (data.size < 4) return AssetType.IMAGE
+    fun ByteArray.startsWith(vararg bytes: Int) =
+      bytes.size <= size && bytes.indices.all { this[it] == bytes[it].toByte() }
 
-    // PNG: 89 50 4E 47
-    if (data[0] == 0x89.toByte() && data[1] == 0x50.toByte() &&
-      data[2] == 0x4E.toByte() && data[3] == 0x47.toByte()) return AssetType.IMAGE
-    // JPEG: FF D8 FF
-    if (data[0] == 0xFF.toByte() && data[1] == 0xD8.toByte() &&
-      data[2] == 0xFF.toByte()) return AssetType.IMAGE
-    // RIFF container: WebP (RIFF....WEBP) or WAV (RIFF....WAVE)
-    if (data[0] == 0x52.toByte() && data[1] == 0x49.toByte() &&
-      data[2] == 0x46.toByte() && data[3] == 0x46.toByte()) {
-      if (data.size >= 12 &&
-        data[8] == 0x57.toByte() && data[9] == 0x41.toByte() &&
-        data[10] == 0x56.toByte() && data[11] == 0x45.toByte()) return AssetType.AUDIO // "WAVE"
-      return AssetType.IMAGE // assume WebP for other RIFF
+    fun ByteArray.matchesAt(offset: Int, vararg bytes: Int) =
+      offset + bytes.size <= size && bytes.indices.all { this[offset + it] == bytes[it].toByte() }
+
+    return when {
+      data.startsWith(0x89, 0x50, 0x4E, 0x47) -> AssetType.IMAGE // PNG
+      data.startsWith(0xFF, 0xD8, 0xFF) -> AssetType.IMAGE // JPEG
+      data.startsWith(0x49, 0x44, 0x33) -> AssetType.AUDIO // MP3 (ID3)
+      data.startsWith(0x00, 0x01, 0x00, 0x00) -> AssetType.FONT // TrueType
+      data.startsWith(0x4F, 0x54, 0x54, 0x4F) -> AssetType.FONT // OpenType (OTTO)
+      data.startsWith(0x52, 0x49, 0x46, 0x46) -> // RIFF container
+        if (data.matchesAt(8, 0x57, 0x41, 0x56, 0x45)) {
+          AssetType.AUDIO //   → WAV  (WAVE)
+        } else {
+          AssetType.IMAGE //   → WebP
+        }
+      else -> AssetType.IMAGE
     }
-    // ID3 (MP3): 49 44 33
-    if (data[0] == 0x49.toByte() && data[1] == 0x44.toByte() &&
-      data[2] == 0x33.toByte()) return AssetType.AUDIO
-    // TrueType: 00 01 00 00
-    if (data[0] == 0x00.toByte() && data[1] == 0x01.toByte() &&
-      data[2] == 0x00.toByte() && data[3] == 0x00.toByte()) return AssetType.FONT
-    // OpenType: 4F 54 54 4F ("OTTO")
-    if (data[0] == 0x4F.toByte() && data[1] == 0x54.toByte() &&
-      data[2] == 0x54.toByte() && data[3] == 0x4F.toByte()) return AssetType.FONT
-
-    return AssetType.IMAGE
   }
 
   enum class AssetType { IMAGE, FONT, AUDIO }

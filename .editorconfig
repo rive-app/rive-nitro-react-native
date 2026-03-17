@@ -33,6 +33,8 @@ ktlint_standard_string-template-indent = disabled
 ktlint_standard_backing-property-naming = disabled
 ktlint_standard_no-consecutive-comments = disabled
 ktlint_standard_no-empty-first-line-in-class-body = disabled
+ktlint_standard_condition-wrapping = disabled
+ktlint_standard_if-else-wrapping = disabled
 
 [nitrogen/generated/**/*.kt]
 ktlint = disabled

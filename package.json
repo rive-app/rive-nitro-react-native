@@ -46,6 +46,7 @@
     "copy:nitrogen-config": "mkdir -p lib/nitrogen/generated/shared/json && cp nitrogen/generated/shared/json/RiveViewConfig.json lib/nitrogen/generated/shared/json/",
     "lint:swift": "./scripts/lint-swift.sh",
     "lint:kotlin": "./scripts/lint-kotlin.sh",
+    "lint:fix:kotlin": "./scripts/lint-fix-kotlin.sh",
     "lint:native": "yarn lint:swift && yarn lint:kotlin"
   },
   "keywords": [
