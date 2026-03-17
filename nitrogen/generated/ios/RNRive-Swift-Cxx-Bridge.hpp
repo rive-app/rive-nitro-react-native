@@ -66,6 +66,8 @@ namespace margelo::nitro::rive { class HybridViewModelTriggerPropertySpec; }
 namespace margelo::nitro::rive { struct ReferencedAssetsType; }
 // Forward declaration of `ResolvedReferencedAsset` to properly resolve imports.
 namespace margelo::nitro::rive { struct ResolvedReferencedAsset; }
+// Forward declaration of `RiveAssetType` to properly resolve imports.
+namespace margelo::nitro::rive { enum class RiveAssetType; }
 // Forward declaration of `RiveEnumDefinition` to properly resolve imports.
 namespace margelo::nitro::rive { struct RiveEnumDefinition; }
 // Forward declaration of `RiveErrorType` to properly resolve imports.
@@ -151,6 +153,7 @@ namespace RNRive { class HybridViewModelTriggerPropertySpec_cxx; }
 #include "HybridViewModelTriggerPropertySpec.hpp"
 #include "ReferencedAssetsType.hpp"
 #include "ResolvedReferencedAsset.hpp"
+#include "RiveAssetType.hpp"
 #include "RiveEnumDefinition.hpp"
 #include "RiveError.hpp"
 #include "RiveErrorType.hpp"
@@ -372,6 +375,21 @@ namespace margelo::nitro::rive::bridge::swift {
     return optional.has_value();
   }
   inline std::shared_ptr<HybridRiveImageSpec> get_std__optional_std__shared_ptr_HybridRiveImageSpec__(const std::optional<std::shared_ptr<HybridRiveImageSpec>>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::optional<RiveAssetType>
+  /**
+   * Specialized version of `std::optional<RiveAssetType>`.
+   */
+  using std__optional_RiveAssetType_ = std::optional<RiveAssetType>;
+  inline std::optional<RiveAssetType> create_std__optional_RiveAssetType_(const RiveAssetType& value) noexcept {
+    return std::optional<RiveAssetType>(value);
+  }
+  inline bool has_value_std__optional_RiveAssetType_(const std::optional<RiveAssetType>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline RiveAssetType get_std__optional_RiveAssetType_(const std::optional<RiveAssetType>& optional) noexcept {
     return optional.value();
   }
   
