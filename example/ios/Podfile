@@ -34,5 +34,23 @@ target 'RiveExample' do
       # :ccache_enabled => true
     )
 
+    # Xcode 26 / Swift 6.2 workaround: strip the RiveRuntime.Swift submodule
+    # from RiveRuntime's modulemaps. Without this, Clang sees two conflicting
+    # definitions of swift::Optional / swift::String (one from the pre-built
+    # RiveRuntime XCFramework compiled with Swift 6.1, one from NitroModules
+    # compiled fresh with Swift 6.2) and fails with ODR "different definitions
+    # in different modules" errors.
+    # See: https://github.com/rive-app/rive-nitro-react-native/issues/173
+    rive_dir = File.join(installer.sandbox.root.to_s, 'RiveRuntime')
+    if Dir.exist?(rive_dir)
+      Dir.glob(File.join(rive_dir, '**', 'module.modulemap')).each do |path|
+        content = File.read(path)
+        next unless content.include?('RiveRuntime.Swift')
+        cleaned = content.gsub(/\nmodule RiveRuntime\.Swift \{[^}]*\}\n?/m, "\n")
+        File.write(path, cleaned)
+        puts "[RNRive] Stripped RiveRuntime.Swift submodule from #{path}"
+      end
+    end
+
   end
 end

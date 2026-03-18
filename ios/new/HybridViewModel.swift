@@ -23,13 +23,22 @@ class HybridViewModel: HybridViewModelSpec {
     return HybridViewModelInstance(viewModelInstance: vmi, worker: self.worker)
   }
 
+  private func createInstanceByIndexImpl(index: Double) async throws -> (any HybridViewModelInstanceSpec)? {
+    let names = try await self.file.getInstanceNames(of: self.vmName)
+    let idx = Int(index)
+    guard idx >= 0 && idx < names.count else { return nil }
+    let name = names[idx]
+    let vmi = try await self.file.createViewModelInstance(.name(name, from: .name(self.vmName)))
+    return HybridViewModelInstance(viewModelInstance: vmi, worker: self.worker, instanceName: name)
+  }
+
   // Deprecated: Use createInstanceByIndexAsync instead
   func createInstanceByIndex(index: Double) throws -> (any HybridViewModelInstanceSpec)? {
-    return try createDefaultInstance()
+    return try blockingAsync { try await self.createInstanceByIndexImpl(index: index) }
   }
 
   func createInstanceByIndexAsync(index: Double) throws -> Promise<(any HybridViewModelInstanceSpec)?> {
-    return Promise.async { try await self.createDefaultInstanceImpl() }
+    return Promise.async { try await self.createInstanceByIndexImpl(index: index) }
   }
 
   private func createInstanceByNameImpl(name: String) async throws -> (any HybridViewModelInstanceSpec)? {
