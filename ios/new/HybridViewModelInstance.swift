@@ -60,7 +60,7 @@ class HybridViewModelInstance: HybridViewModelInstanceSpec {
     let prop = ViewModelInstanceProperty(path: path)
     do {
       let vmi = try await self.viewModelInstance.value(of: prop)
-      return HybridViewModelInstance(viewModelInstance: vmi, worker: self.worker, instanceName: path)
+      return HybridViewModelInstance(viewModelInstance: vmi, worker: self.worker)
     } catch {
       RCTLogError("[ViewModelInstance] viewModel(path: '\(path)') failed: \(error)")
       return nil
