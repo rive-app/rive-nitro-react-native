@@ -15,19 +15,11 @@ class HybridViewModel: HybridViewModelSpec {
   
   var modelName: String { viewModel?.name ?? "" }
   
-  // Deprecated: Use createInstanceByIndexAsync instead
+  // Deprecated: Use createInstanceByNameAsync instead
   func createInstanceByIndex(index: Double) throws -> (any HybridViewModelInstanceSpec)? {
     guard index >= 0, let viewModel = viewModel,
           let vmi = viewModel.createInstance(fromIndex: UInt(index)) else { return nil }
     return HybridViewModelInstance(viewModelInstance: vmi)
-  }
-
-  func createInstanceByIndexAsync(index: Double) throws -> Promise<(any HybridViewModelInstanceSpec)?> {
-    return Promise.async {
-      guard index >= 0, let viewModel = self.viewModel,
-            let vmi = viewModel.createInstance(fromIndex: UInt(index)) else { return nil }
-      return HybridViewModelInstance(viewModelInstance: vmi)
-    }
   }
   
   // Deprecated: Use createInstanceByNameAsync instead

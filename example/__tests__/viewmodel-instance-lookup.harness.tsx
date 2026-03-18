@@ -376,34 +376,31 @@ describe('useViewModelInstance default verifies _id', () => {
   });
 });
 
-// ── createInstanceByIndex(Async) ─────────────────────────────────────
+// ── createInstanceByIndex (deprecated sync compat layer) ─────────────
 
-describe('createInstanceByIndexAsync respects the index', () => {
+describe('createInstanceByIndex respects the index', () => {
   it('index 0 and index 1 return different instances (not both the default)', async () => {
     const file = await loadFile();
     const vm = file.viewModelByName('viewmodel1');
     expectDefined(vm);
 
-    const instance0 = await vm.createInstanceByIndexAsync(0);
-    const instance1 = await vm.createInstanceByIndexAsync(1);
+    const instance0 = vm.createInstanceByIndex(0);
+    const instance1 = vm.createInstanceByIndex(1);
     expectDefined(instance0);
     expectDefined(instance1);
 
     const id0 = instance0.stringProperty('_id')?.value;
     const id1 = instance1.stringProperty('_id')?.value;
 
-    // They must be different — index 0 ≠ index 1
     expect(id0).not.toBe(id1);
   });
 
   it('index 0 returns the first named instance ("vmi", _id=vm1.vmi.id)', async () => {
-    // getInstanceNames("viewmodel1") returns ["vmi", "vmi2"].
-    // "vmi" is the first named instance of viewmodel1 (3-char name, its designated default).
     const file = await loadFile();
     const vm = file.viewModelByName('viewmodel1');
     expectDefined(vm);
 
-    const instance = await vm.createInstanceByIndexAsync(0);
+    const instance = vm.createInstanceByIndex(0);
     expectDefined(instance);
 
     expect(instance.instanceName).toBe('vmi');
@@ -415,7 +412,7 @@ describe('createInstanceByIndexAsync respects the index', () => {
     const vm = file.viewModelByName('viewmodel1');
     expectDefined(vm);
 
-    const instance = await vm.createInstanceByIndexAsync(1);
+    const instance = vm.createInstanceByIndex(1);
     expectDefined(instance);
 
     const id = instance.stringProperty('_id')?.value;
@@ -427,7 +424,7 @@ describe('createInstanceByIndexAsync respects the index', () => {
     const vm = file.viewModelByName('viewmodel1');
     expectDefined(vm);
 
-    const instance = await vm.createInstanceByIndexAsync(99);
+    const instance = vm.createInstanceByIndex(99);
     expect(instance).toBeUndefined();
   });
 });
