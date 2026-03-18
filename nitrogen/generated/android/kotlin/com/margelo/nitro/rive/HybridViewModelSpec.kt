@@ -53,10 +53,6 @@ abstract class HybridViewModelSpec: HybridObject() {
   
   @DoNotStrip
   @Keep
-  abstract fun createInstanceByIndexAsync(index: Double): Promise<HybridViewModelInstanceSpec?>
-  
-  @DoNotStrip
-  @Keep
   abstract fun createInstanceByName(name: String): HybridViewModelInstanceSpec?
   
   @DoNotStrip

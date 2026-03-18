@@ -35,8 +35,6 @@ export interface ViewModel
   createDefaultInstanceAsync(): Promise<ViewModelInstance | undefined>;
   /** Create a blank view model instance with default property values */
   createBlankInstanceAsync(): Promise<ViewModelInstance | undefined>;
-  /** Create an empty/new view model instance */
-  createInstanceAsync(): Promise<ViewModelInstance | undefined>;
 }
 
 /**

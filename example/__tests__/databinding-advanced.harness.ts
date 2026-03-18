@@ -135,7 +135,7 @@ describe('ViewModel Creation Variants', () => {
     const vm = await file.viewModelByNameAsync(names[0]!);
     expectDefined(vm);
 
-    const instance = await vm.createInstanceByIndexAsync(0);
+    const instance = vm.createInstanceByIndex(0);
     expectDefined(instance);
   });
 
@@ -145,7 +145,7 @@ describe('ViewModel Creation Variants', () => {
     expectDefined(vm);
 
     // Legacy returns undefined, experimental returns an empty instance
-    await vm.createInstanceByIndexAsync(100);
+    vm.createInstanceByIndex(100);
     expect(true).toBe(true);
   });
 
@@ -379,7 +379,7 @@ describe('Image Properties', () => {
     const file = await loadFile(DATABINDING_IMAGES);
     const vm = file.viewModelByName('MyViewModel');
     expectDefined(vm);
-    const instance = await vm.createInstanceByIndexAsync(0);
+    const instance = vm.createInstanceByIndex(0);
     expectDefined(instance);
 
     const imageProp = instance.imageProperty('bound_image');
