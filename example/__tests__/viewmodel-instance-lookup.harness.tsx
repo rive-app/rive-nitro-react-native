@@ -56,6 +56,14 @@ describe('Multi-artboard file: direct API', () => {
     expect(file.viewModelByName('nope')).toBeUndefined();
   });
 
+  it('viewmodel1 has non-zero propertyCount and instanceCount', async () => {
+    const file = await loadFile();
+    const vm = file.viewModelByName('viewmodel1');
+    expectDefined(vm);
+    expect(vm.propertyCount).toBeGreaterThan(0);
+    expect(vm.instanceCount).toBe(3);
+  });
+
   it('defaultArtboardViewModel maps artboard1 → viewmodel1', async () => {
     const file = await loadFile();
     const vm = file.defaultArtboardViewModel(ArtboardByName('artboard1'));
