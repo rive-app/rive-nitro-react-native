@@ -146,6 +146,37 @@ describe('useRiveNumber Hook', () => {
 
     cleanup();
   });
+
+  it('delivers initial value on first listener emission without any prop update', async () => {
+    const file = await RiveFileFactory.fromSource(QUICK_START, undefined);
+    const vm = file.defaultArtboardViewModel();
+    expectDefined(vm);
+    const instance = vm.createDefaultInstance();
+    expectDefined(instance);
+
+    const context = createUseRiveNumberContext();
+
+    // Value must be undefined before mounting — no sneaky sync reads
+    expect(context.value).toBeUndefined();
+
+    await render(
+      <UseRiveNumberTestComponent instance={instance} context={context} />
+    );
+
+    // The listener fires its first emission on subscribe — no prop change required.
+    // Tight timeout: if this relied on a prop update cycle it would be flaky/fail.
+    await waitFor(
+      () => {
+        expect(typeof context.value).toBe('number');
+      },
+      { timeout: 1000 }
+    );
+
+    // Confirm no error occurred
+    expect(context.error).toBeNull();
+
+    cleanup();
+  });
 });
 
 describe('useViewModelInstance hook', () => {
