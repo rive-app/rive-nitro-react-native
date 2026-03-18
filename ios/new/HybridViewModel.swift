@@ -14,9 +14,23 @@ class HybridViewModel: HybridViewModelSpec {
 
   var modelName: String { vmName }
 
-  var propertyCount: Double { 0 }
+  var propertyCount: Double {
+    do {
+      return Double(try blockingAsync { try await self.file.getProperties(of: self.vmName) }.count)
+    } catch {
+      RCTLogError("[HybridViewModel] propertyCount failed: \(error)")
+      return 0
+    }
+  }
 
-  var instanceCount: Double { 0 }
+  var instanceCount: Double {
+    do {
+      return Double(try blockingAsync { try await self.file.getInstanceNames(of: self.vmName) }.count)
+    } catch {
+      RCTLogError("[HybridViewModel] instanceCount failed: \(error)")
+      return 0
+    }
+  }
 
   private func createDefaultInstanceImpl() async throws -> (any HybridViewModelInstanceSpec)? {
     let vmi = try await self.file.createViewModelInstance(.viewModelDefault(from: .name(self.vmName)))
