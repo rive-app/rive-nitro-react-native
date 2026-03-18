@@ -42,16 +42,17 @@ class HybridViewModel(
   override val modelName: String
     get() = viewModelName
 
-  // Deprecated: Use createInstanceByIndexAsync instead
+  // Deprecated: Use createInstanceByNameAsync instead
   override fun createInstanceByIndex(index: Double): HybridViewModelInstanceSpec? {
-    return createDefaultInstance()
-  }
-
-  override fun createInstanceByIndexAsync(index: Double): Promise<HybridViewModelInstanceSpec?> {
-    return Promise.async {
-      val source = vmSource.defaultInstance()
-      val vmi = ViewModelInstance.fromFile(riveFile, source)
-      HybridViewModelInstance(vmi, riveWorker, parentFile, viewModelName)
+    return try {
+      val idx = index.toInt()
+      val instanceNames = runBlocking { riveFile.getViewModelInstanceNames(viewModelName) }
+      if (idx < 0 || idx >= instanceNames.size) return null
+      val name = instanceNames[idx]
+      runBlocking { createInstanceByNameImpl(name) }
+    } catch (e: Exception) {
+      Log.e(TAG, "createInstanceByIndex($index) failed", e)
+      null
     }
   }
 
