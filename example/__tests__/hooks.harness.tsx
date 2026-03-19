@@ -96,6 +96,34 @@ function expectDefined<T>(value: T): asserts value is NonNullable<T> {
 }
 
 describe('useRiveNumber Hook', () => {
+  it('starts undefined then receives value via listener', async () => {
+    const file = await RiveFileFactory.fromSource(QUICK_START, undefined);
+    const vm = file.defaultArtboardViewModel();
+    expectDefined(vm);
+    const instance = vm.createDefaultInstance();
+    expectDefined(instance);
+
+    const context = createUseRiveNumberContext();
+
+    // Value must start undefined — not synchronously read from property.value
+    expect(context.value).toBeUndefined();
+
+    await render(
+      <UseRiveNumberTestComponent instance={instance} context={context} />
+    );
+
+    // After listener fires, value should be a number
+    await waitFor(
+      () => {
+        expect(context.error).toBeNull();
+        expect(typeof context.value).toBe('number');
+      },
+      { timeout: 5000 }
+    );
+
+    cleanup();
+  });
+
   it('returns value from number property', async () => {
     const file = await RiveFileFactory.fromSource(QUICK_START, undefined);
     const vm = file.defaultArtboardViewModel();
