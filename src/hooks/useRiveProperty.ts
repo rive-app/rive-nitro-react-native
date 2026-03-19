@@ -66,8 +66,14 @@ export function useRiveProperty<P extends ViewModelProperty, T>(
   useEffect(() => {
     if (!property) return;
 
-    // If an override callback is provided, use it.
-    // Otherwise, use the default callback.
+    // Deliver the current value immediately so the hook transitions from
+    // undefined → value without waiting for a property change.
+    // (Legacy addListener does NOT emit on subscribe — only on changes.
+    //  Experimental valueStream emits the current value as its first element.)
+    if (!options.onPropertyEventOverride) {
+      setValue(property.value);
+    }
+
     const removeListener = options.onPropertyEventOverride
       ? property.addListener(options.onPropertyEventOverride)
       : property.addListener((newValue) => {
