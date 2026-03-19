@@ -34,7 +34,6 @@ export function useRiveProperty<P extends ViewModelProperty, T>(
   Error | null,
   P | undefined,
 ] {
-  // Get the property first so we can read its initial value
   const property = useMemo(() => {
     if (!viewModelInstance) return;
     return options.getProperty(
@@ -43,16 +42,11 @@ export function useRiveProperty<P extends ViewModelProperty, T>(
     ) as unknown as ObservableViewModelProperty<T>;
   }, [options, viewModelInstance, path]);
 
-  // Initialize state with property's current value (if available)
-  const [value, setValue] = useState<T | undefined>(() => property?.value);
+  // Always start undefined — the listener delivers the current value as its first emission.
+  // (iOS experimental: via valueStream; iOS/Android legacy: emitted synchronously on subscribe)
+  // This ensures consumers handle the loading state correctly on all backends.
+  const [value, setValue] = useState<T | undefined>(undefined);
   const [error, setError] = useState<Error | null>(null);
-
-  // Sync value when property reference changes (path or instance changed)
-  useEffect(() => {
-    if (property) {
-      setValue(property.value);
-    }
-  }, [property]);
 
   // Clear error when path or instance changes
   useEffect(() => {
@@ -86,7 +80,9 @@ export function useRiveProperty<P extends ViewModelProperty, T>(
     };
   }, [options, property]);
 
-  // Set the value of the property (no-op if property isn't available yet)
+  // Set the value of the property (no-op if property isn't available yet).
+  // Uses tracked `value` from state for updater functions — avoids a synchronous
+  // property.value read and is consistent with how React state works.
   const setPropertyValue = useCallback(
     (valueOrUpdater: T | ((prevValue: T | undefined) => T)) => {
       if (!property) {
@@ -94,14 +90,12 @@ export function useRiveProperty<P extends ViewModelProperty, T>(
       } else {
         const newValue =
           typeof valueOrUpdater === 'function'
-            ? (valueOrUpdater as (prevValue: T | undefined) => T)(
-                property.value
-              )
+            ? (valueOrUpdater as (prevValue: T | undefined) => T)(value)
             : valueOrUpdater;
         property.value = newValue;
       }
     },
-    [property]
+    [property, value]
   );
 
   return [value, setPropertyValue, error, property as unknown as P];
