@@ -21,6 +21,11 @@ namespace margelo::nitro::rive {
       prototype.registerHybridMethod("viewModelByName", &HybridRiveFileSpec::viewModelByName);
       prototype.registerHybridMethod("defaultArtboardViewModel", &HybridRiveFileSpec::defaultArtboardViewModel);
       prototype.registerHybridMethod("updateReferencedAssets", &HybridRiveFileSpec::updateReferencedAssets);
+      prototype.registerHybridMethod("getViewModelNamesAsync", &HybridRiveFileSpec::getViewModelNamesAsync);
+      prototype.registerHybridMethod("viewModelByNameAsync", &HybridRiveFileSpec::viewModelByNameAsync);
+      prototype.registerHybridMethod("defaultArtboardViewModelAsync", &HybridRiveFileSpec::defaultArtboardViewModelAsync);
+      prototype.registerHybridMethod("getArtboardCountAsync", &HybridRiveFileSpec::getArtboardCountAsync);
+      prototype.registerHybridMethod("getArtboardNamesAsync", &HybridRiveFileSpec::getArtboardNamesAsync);
       prototype.registerHybridMethod("getBindableArtboard", &HybridRiveFileSpec::getBindableArtboard);
     });
   }

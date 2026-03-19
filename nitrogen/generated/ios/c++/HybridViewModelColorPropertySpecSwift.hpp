@@ -15,6 +15,7 @@ namespace RNRive { class HybridViewModelColorPropertySpec_cxx; }
 // Forward declaration of `HybridViewModelPropertySpecSwift` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridViewModelPropertySpecSwift; }
 
+#include <NitroModules/Promise.hpp>
 #include <functional>
 #include "HybridViewModelPropertySpecSwift.hpp"
 
@@ -74,6 +75,20 @@ namespace margelo::nitro::rive {
 
   public:
     // Methods
+    inline std::shared_ptr<Promise<double>> getValueAsync() override {
+      auto __result = _swiftPart.getValueAsync();
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline void set(double value) override {
+      auto __result = _swiftPart.set(std::forward<decltype(value)>(value));
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+    }
     inline std::function<void()> addListener(const std::function<void(double /* value */)>& onChanged) override {
       auto __result = _swiftPart.addListener(onChanged);
       if (__result.hasError()) [[unlikely]] {

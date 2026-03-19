@@ -60,6 +60,9 @@ namespace margelo::nitro::rive {
     std::optional<std::shared_ptr<HybridViewModelInstanceSpec>> createInstanceByName(const std::string& name) override;
     std::optional<std::shared_ptr<HybridViewModelInstanceSpec>> createDefaultInstance() override;
     std::optional<std::shared_ptr<HybridViewModelInstanceSpec>> createInstance() override;
+    std::shared_ptr<Promise<std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>>> createInstanceByNameAsync(const std::string& name) override;
+    std::shared_ptr<Promise<std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>>> createDefaultInstanceAsync() override;
+    std::shared_ptr<Promise<std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>>> createBlankInstanceAsync() override;
 
   private:
     jni::global_ref<JHybridViewModelSpec::JavaPart> _javaPart;

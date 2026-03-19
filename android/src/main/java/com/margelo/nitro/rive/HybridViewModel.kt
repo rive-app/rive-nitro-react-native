@@ -4,6 +4,7 @@ import androidx.annotation.Keep
 import app.rive.runtime.kotlin.core.ViewModel
 import app.rive.runtime.kotlin.core.errors.ViewModelException
 import com.facebook.proguard.annotations.DoNotStrip
+import com.margelo.nitro.core.Promise
 
 @Keep
 @DoNotStrip
@@ -50,5 +51,17 @@ class HybridViewModel(private val viewModel: ViewModel) : HybridViewModelSpec() 
     } catch (e: ViewModelException) {
       return null
     }
+  }
+
+  override fun createInstanceByNameAsync(name: String): Promise<HybridViewModelInstanceSpec?> {
+    return Promise.async { createInstanceByName(name) }
+  }
+
+  override fun createDefaultInstanceAsync(): Promise<HybridViewModelInstanceSpec?> {
+    return Promise.async { createDefaultInstance() }
+  }
+
+  override fun createBlankInstanceAsync(): Promise<HybridViewModelInstanceSpec?> {
+    return Promise.async { createInstance() }
   }
 }

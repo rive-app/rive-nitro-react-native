@@ -22,20 +22,31 @@ export type ReferencedAssetsType = {
  */
 export interface RiveFile
   extends HybridObject<{ ios: 'swift'; android: 'kotlin' }> {
-  /** The number of view models in the Rive file */
+  /** @deprecated Use getViewModelNamesAsync instead */
   readonly viewModelCount?: number;
-  /** Get a view model by index */
+  /** @deprecated Use getViewModelNamesAsync + viewModelByNameAsync instead */
   viewModelByIndex(index: number): ViewModel | undefined;
-  /** Get a view model by name */
+  /** @deprecated Use viewModelByNameAsync instead */
   viewModelByName(name: string): ViewModel | undefined;
-  /** Returns the default view model for the provided artboard */
+  /** @deprecated Use defaultArtboardViewModelAsync instead */
   defaultArtboardViewModel(artboardBy?: ArtboardBy): ViewModel | undefined;
   updateReferencedAssets(referencedAssets: ReferencedAssetsType): void;
 
-  /** The number of artboards in the Rive file */
+  /** @deprecated Use getArtboardCountAsync instead */
   readonly artboardCount: number;
-  /** The names of all artboards in the Rive file */
+  /** @deprecated Use getArtboardNamesAsync instead */
   readonly artboardNames: string[];
+
+  getViewModelNamesAsync(): Promise<string[]>;
+  viewModelByNameAsync(
+    name: string,
+    validate?: boolean
+  ): Promise<ViewModel | undefined>;
+  defaultArtboardViewModelAsync(
+    artboardBy?: ArtboardBy
+  ): Promise<ViewModel | undefined>;
+  getArtboardCountAsync(): Promise<number>;
+  getArtboardNamesAsync(): Promise<string[]>;
   /**
    * Get a bindable artboard by name for use with data binding.
    * @throws Error if artboard with the given name is not found

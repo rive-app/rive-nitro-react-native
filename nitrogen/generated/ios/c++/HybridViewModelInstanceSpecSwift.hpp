@@ -46,6 +46,7 @@ namespace margelo::nitro::rive { class HybridViewModelInstanceSpec; }
 #include "HybridViewModelListPropertySpec.hpp"
 #include "HybridViewModelArtboardPropertySpec.hpp"
 #include "HybridViewModelInstanceSpec.hpp"
+#include <NitroModules/Promise.hpp>
 
 #include "RNRive-Swift-Cxx-Umbrella.hpp"
 
@@ -174,6 +175,14 @@ namespace margelo::nitro::rive {
     }
     inline std::optional<std::shared_ptr<HybridViewModelInstanceSpec>> viewModel(const std::string& path) override {
       auto __result = _swiftPart.viewModel(path);
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline std::shared_ptr<Promise<std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>>> viewModelAsync(const std::string& path) override {
+      auto __result = _swiftPart.viewModelAsync(path);
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }

@@ -3,6 +3,7 @@ package com.margelo.nitro.rive
 import androidx.annotation.Keep
 import app.rive.runtime.kotlin.core.ViewModelNumberProperty
 import com.facebook.proguard.annotations.DoNotStrip
+import com.margelo.nitro.core.Promise
 import kotlinx.coroutines.flow.map
 
 @Keep
@@ -15,6 +16,14 @@ class HybridViewModelNumberProperty(private val viewModelNumber: ViewModelNumber
     set(value) {
       viewModelNumber.value = value.toFloat()
     }
+
+  override fun getValueAsync(): Promise<Double> {
+    return Promise.async { value }
+  }
+
+  override fun set(value: Double) {
+    viewModelNumber.value = value.toFloat()
+  }
 
   override fun addListener(onChanged: (value: Double) -> Unit): () -> Unit {
     val remover = addListenerInternal(onChanged)

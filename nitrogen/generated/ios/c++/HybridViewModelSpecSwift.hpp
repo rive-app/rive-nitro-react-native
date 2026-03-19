@@ -19,6 +19,7 @@ namespace margelo::nitro::rive { class HybridViewModelInstanceSpec; }
 #include <memory>
 #include "HybridViewModelInstanceSpec.hpp"
 #include <optional>
+#include <NitroModules/Promise.hpp>
 
 #include "RNRive-Swift-Cxx-Umbrella.hpp"
 
@@ -105,6 +106,30 @@ namespace margelo::nitro::rive {
     }
     inline std::optional<std::shared_ptr<HybridViewModelInstanceSpec>> createInstance() override {
       auto __result = _swiftPart.createInstance();
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline std::shared_ptr<Promise<std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>>> createInstanceByNameAsync(const std::string& name) override {
+      auto __result = _swiftPart.createInstanceByNameAsync(name);
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline std::shared_ptr<Promise<std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>>> createDefaultInstanceAsync() override {
+      auto __result = _swiftPart.createDefaultInstanceAsync();
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline std::shared_ptr<Promise<std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>>> createBlankInstanceAsync() override {
+      auto __result = _swiftPart.createBlankInstanceAsync();
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }

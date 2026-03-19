@@ -1,3 +1,4 @@
+import NitroModules
 import RiveRuntime
 
 class HybridViewModelListProperty: HybridViewModelListPropertySpec, ValuedPropertyProtocol {
@@ -54,6 +55,14 @@ class HybridViewModelListProperty: HybridViewModelListPropertySpec, ValuedProper
     }
     property.swap(at: idx1, with: idx2)
     return true
+  }
+
+  func getLengthAsync() throws -> Promise<Double> {
+    return Promise.async { self.length }
+  }
+
+  func getInstanceAtAsync(index: Double) throws -> Promise<(any HybridViewModelInstanceSpec)?> {
+    return Promise.async { try self.getInstanceAt(index: index) }
   }
 
   func addListener(onChanged: @escaping () -> Void) throws -> () -> Void {

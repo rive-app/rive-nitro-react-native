@@ -14,14 +14,20 @@ export interface ViewModel
   readonly instanceCount: number;
   /** The name of the view model */
   readonly modelName: string;
-  /** Create a new instance of the view model by index */
+  /** @deprecated Use createInstanceByNameAsync instead */
   createInstanceByIndex(index: number): ViewModelInstance | undefined;
-  /** Create a new instance of the view model by name */
+  /** @deprecated Use createInstanceByNameAsync instead */
   createInstanceByName(name: string): ViewModelInstance | undefined;
-  /** Create the default instance of the view model */
+  /** @deprecated Use createDefaultInstanceAsync instead */
   createDefaultInstance(): ViewModelInstance | undefined;
-  /** Create an empty/new view model instance */
+  /** @deprecated Use createBlankInstanceAsync instead */
   createInstance(): ViewModelInstance | undefined;
+
+  createInstanceByNameAsync(
+    name: string
+  ): Promise<ViewModelInstance | undefined>;
+  createDefaultInstanceAsync(): Promise<ViewModelInstance | undefined>;
+  createBlankInstanceAsync(): Promise<ViewModelInstance | undefined>;
 }
 
 /**
@@ -63,8 +69,11 @@ export interface ViewModelInstance
   /**
    * Get a nested ViewModel instance at the given path.
    * Supports path notation with "/" for nested access (e.g., "Parent/Child").
+   * @deprecated Use viewModelAsync instead
    */
   viewModel(path: string): ViewModelInstance | undefined;
+
+  viewModelAsync(path: string): Promise<ViewModelInstance | undefined>;
 
   /**
    * Replace the ViewModel instance at the given path with a new instance.
@@ -85,8 +94,10 @@ export interface ObservableProperty {
 export interface ViewModelNumberProperty
   extends ViewModelProperty,
     ObservableProperty {
-  /** The value of the view model number property */
+  /** @deprecated Use getValueAsync (read) or set(value) (write) instead */
   value: number;
+  getValueAsync(): Promise<number>;
+  set(value: number): void;
   /** Add a listener to the view model number property. Returns a function to remove the listener. */
   addListener(onChanged: (value: number) => void): () => void;
 }
@@ -94,8 +105,10 @@ export interface ViewModelNumberProperty
 export interface ViewModelStringProperty
   extends ViewModelProperty,
     ObservableProperty {
-  /** The value of the view model string property */
+  /** @deprecated Use getValueAsync (read) or set(value) (write) instead */
   value: string;
+  getValueAsync(): Promise<string>;
+  set(value: string): void;
   /** Add a listener to the view model string property. Returns a function to remove the listener. */
   addListener(onChanged: (value: string) => void): () => void;
 }
@@ -103,8 +116,10 @@ export interface ViewModelStringProperty
 export interface ViewModelBooleanProperty
   extends ViewModelProperty,
     ObservableProperty {
-  /** The value of the view model boolean property */
+  /** @deprecated Use getValueAsync (read) or set(value) (write) instead */
   value: boolean;
+  getValueAsync(): Promise<boolean>;
+  set(value: boolean): void;
   /** Add a listener to the view model boolean property. Returns a function to remove the listener. */
   addListener(onChanged: (value: boolean) => void): () => void;
 }
@@ -112,8 +127,10 @@ export interface ViewModelBooleanProperty
 export interface ViewModelColorProperty
   extends ViewModelProperty,
     ObservableProperty {
-  /** The value of the view model color property */
+  /** @deprecated Use getValueAsync (read) or set(value) (write) instead */
   value: number;
+  getValueAsync(): Promise<number>;
+  set(value: number): void;
   /** Add a listener to the view model color property. Returns a function to remove the listener. */
   addListener(onChanged: (value: number) => void): () => void;
 }
@@ -121,8 +138,10 @@ export interface ViewModelColorProperty
 export interface ViewModelEnumProperty
   extends ViewModelProperty,
     ObservableProperty {
-  /** The value of the view model enum property */
+  /** @deprecated Use getValueAsync (read) or set(value) (write) instead */
   value: string;
+  getValueAsync(): Promise<string>;
+  set(value: string): void;
   /** Add a listener to the view model enum property. Returns a function to remove the listener. */
   addListener(onChanged: (value: string) => void): () => void;
 }
@@ -152,10 +171,12 @@ export interface ViewModelImageProperty
 export interface ViewModelListProperty
   extends ViewModelProperty,
     ObservableProperty {
-  /** The number of instances in the list */
+  /** @deprecated Use getLengthAsync instead */
   readonly length: number;
-  /** Get the instance at the given index */
+  /** @deprecated Use getInstanceAtAsync instead */
   getInstanceAt(index: number): ViewModelInstance | undefined;
+  getLengthAsync(): Promise<number>;
+  getInstanceAtAsync(index: number): Promise<ViewModelInstance | undefined>;
   /** Add an instance to the end of the list */
   addInstance(instance: ViewModelInstance): void;
   /** Add an instance at the given index, returns true if successful */

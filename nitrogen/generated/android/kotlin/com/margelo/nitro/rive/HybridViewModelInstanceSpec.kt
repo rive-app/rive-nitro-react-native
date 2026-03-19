@@ -10,6 +10,7 @@ package com.margelo.nitro.rive
 import androidx.annotation.Keep
 import com.facebook.jni.HybridData
 import com.facebook.proguard.annotations.DoNotStrip
+import com.margelo.nitro.core.Promise
 import com.margelo.nitro.core.HybridObject
 
 /**
@@ -69,6 +70,10 @@ abstract class HybridViewModelInstanceSpec: HybridObject() {
   @DoNotStrip
   @Keep
   abstract fun viewModel(path: String): HybridViewModelInstanceSpec?
+  
+  @DoNotStrip
+  @Keep
+  abstract fun viewModelAsync(path: String): Promise<HybridViewModelInstanceSpec?>
   
   @DoNotStrip
   @Keep

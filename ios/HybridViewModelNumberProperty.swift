@@ -1,3 +1,4 @@
+import NitroModules
 import RiveRuntime
 
 class HybridViewModelNumberProperty: HybridViewModelNumberPropertySpec, ValuedPropertyProtocol {
@@ -16,6 +17,14 @@ class HybridViewModelNumberProperty: HybridViewModelNumberPropertySpec, ValuedPr
     set {
       property.value = Float(newValue)
     }
+  }
+
+  func getValueAsync() throws -> Promise<Double> {
+    return Promise.async { Double(self.property.value) }
+  }
+
+  func set(value: Double) throws {
+    property.value = Float(value)
   }
 
   func addListener(onChanged: @escaping (Double) -> Void) throws -> () -> Void {

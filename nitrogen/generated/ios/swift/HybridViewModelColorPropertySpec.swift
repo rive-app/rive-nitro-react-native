@@ -13,6 +13,8 @@ public protocol HybridViewModelColorPropertySpec_protocol: HybridObject, HybridV
   var value: Double { get set }
 
   // Methods
+  func getValueAsync() throws -> Promise<Double>
+  func set(value: Double) throws -> Void
   func addListener(onChanged: @escaping (_ value: Double) -> Void) throws -> () -> Void
   func removeListeners() throws -> Void
 }

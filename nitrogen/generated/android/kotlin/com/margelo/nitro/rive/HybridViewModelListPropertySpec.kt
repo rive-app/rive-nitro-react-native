@@ -10,6 +10,7 @@ package com.margelo.nitro.rive
 import androidx.annotation.Keep
 import com.facebook.jni.HybridData
 import com.facebook.proguard.annotations.DoNotStrip
+import com.margelo.nitro.core.Promise
 import com.margelo.nitro.core.HybridObject
 
 /**
@@ -33,6 +34,14 @@ abstract class HybridViewModelListPropertySpec: HybridViewModelPropertySpec() {
   @DoNotStrip
   @Keep
   abstract fun getInstanceAt(index: Double): HybridViewModelInstanceSpec?
+  
+  @DoNotStrip
+  @Keep
+  abstract fun getLengthAsync(): Promise<Double>
+  
+  @DoNotStrip
+  @Keep
+  abstract fun getInstanceAtAsync(index: Double): Promise<HybridViewModelInstanceSpec?>
   
   @DoNotStrip
   @Keep

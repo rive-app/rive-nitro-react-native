@@ -3,6 +3,7 @@ package com.margelo.nitro.rive
 import androidx.annotation.Keep
 import app.rive.runtime.kotlin.core.File
 import com.facebook.proguard.annotations.DoNotStrip
+import com.margelo.nitro.core.Promise
 import java.lang.ref.WeakReference
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -83,6 +84,38 @@ class HybridRiveFile : HybridRiveFileSpec() {
     for (weakView in weakViews) {
       weakView.get()?.refreshAfterAssetChange()
     }
+  }
+
+  override fun getViewModelNamesAsync(): Promise<Array<String>> {
+    return Promise.async {
+      val file = riveFile ?: return@async emptyArray()
+      val count = file.viewModelCount
+      val names = mutableListOf<String>()
+      for (i in 0 until count) {
+        try {
+          val vm = file.getViewModelByIndex(i)
+          names.add(vm.name)
+        } catch (_: Exception) {
+        }
+      }
+      names.toTypedArray()
+    }
+  }
+
+  override fun viewModelByNameAsync(name: String, validate: Boolean?): Promise<HybridViewModelSpec?> {
+    return Promise.async { viewModelByName(name) }
+  }
+
+  override fun defaultArtboardViewModelAsync(artboardBy: ArtboardBy?): Promise<HybridViewModelSpec?> {
+    return Promise.async { defaultArtboardViewModel(artboardBy) }
+  }
+
+  override fun getArtboardCountAsync(): Promise<Double> {
+    return Promise.async { artboardCount }
+  }
+
+  override fun getArtboardNamesAsync(): Promise<Array<String>> {
+    return Promise.async { artboardNames }
   }
 
   override fun updateReferencedAssets(referencedAssets: ReferencedAssetsType) {

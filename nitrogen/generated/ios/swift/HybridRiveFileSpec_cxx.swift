@@ -230,6 +230,138 @@ open class HybridRiveFileSpec_cxx {
   }
   
   @inline(__always)
+  public final func getViewModelNamesAsync() -> bridge.Result_std__shared_ptr_Promise_std__vector_std__string____ {
+    do {
+      let __result = try self.__implementation.getViewModelNamesAsync()
+      let __resultCpp = { () -> bridge.std__shared_ptr_Promise_std__vector_std__string___ in
+        let __promise = bridge.create_std__shared_ptr_Promise_std__vector_std__string___()
+        let __promiseHolder = bridge.wrap_std__shared_ptr_Promise_std__vector_std__string___(__promise)
+        __result
+          .then({ __result in __promiseHolder.resolve({ () -> bridge.std__vector_std__string_ in
+              var __vector = bridge.create_std__vector_std__string_(__result.count)
+              for __item in __result {
+                __vector.push_back(std.string(__item))
+              }
+              return __vector
+            }()) })
+          .catch({ __error in __promiseHolder.reject(__error.toCpp()) })
+        return __promise
+      }()
+      return bridge.create_Result_std__shared_ptr_Promise_std__vector_std__string____(__resultCpp)
+    } catch (let __error) {
+      let __exceptionPtr = __error.toCpp()
+      return bridge.create_Result_std__shared_ptr_Promise_std__vector_std__string____(__exceptionPtr)
+    }
+  }
+  
+  @inline(__always)
+  public final func viewModelByNameAsync(name: std.string, validate: bridge.std__optional_bool_) -> bridge.Result_std__shared_ptr_Promise_std__optional_std__shared_ptr_HybridViewModelSpec_____ {
+    do {
+      let __result = try self.__implementation.viewModelByNameAsync(name: String(name), validate: { () -> Bool? in
+        if bridge.has_value_std__optional_bool_(validate) {
+          let __unwrapped = bridge.get_std__optional_bool_(validate)
+          return __unwrapped
+        } else {
+          return nil
+        }
+      }())
+      let __resultCpp = { () -> bridge.std__shared_ptr_Promise_std__optional_std__shared_ptr_HybridViewModelSpec____ in
+        let __promise = bridge.create_std__shared_ptr_Promise_std__optional_std__shared_ptr_HybridViewModelSpec____()
+        let __promiseHolder = bridge.wrap_std__shared_ptr_Promise_std__optional_std__shared_ptr_HybridViewModelSpec____(__promise)
+        __result
+          .then({ __result in __promiseHolder.resolve({ () -> bridge.std__optional_std__shared_ptr_HybridViewModelSpec__ in
+              if let __unwrappedValue = __result {
+                return bridge.create_std__optional_std__shared_ptr_HybridViewModelSpec__({ () -> bridge.std__shared_ptr_HybridViewModelSpec_ in
+                  let __cxxWrapped = __unwrappedValue.getCxxWrapper()
+                  return __cxxWrapped.getCxxPart()
+                }())
+              } else {
+                return .init()
+              }
+            }()) })
+          .catch({ __error in __promiseHolder.reject(__error.toCpp()) })
+        return __promise
+      }()
+      return bridge.create_Result_std__shared_ptr_Promise_std__optional_std__shared_ptr_HybridViewModelSpec_____(__resultCpp)
+    } catch (let __error) {
+      let __exceptionPtr = __error.toCpp()
+      return bridge.create_Result_std__shared_ptr_Promise_std__optional_std__shared_ptr_HybridViewModelSpec_____(__exceptionPtr)
+    }
+  }
+  
+  @inline(__always)
+  public final func defaultArtboardViewModelAsync(artboardBy: bridge.std__optional_ArtboardBy_) -> bridge.Result_std__shared_ptr_Promise_std__optional_std__shared_ptr_HybridViewModelSpec_____ {
+    do {
+      let __result = try self.__implementation.defaultArtboardViewModelAsync(artboardBy: artboardBy.value)
+      let __resultCpp = { () -> bridge.std__shared_ptr_Promise_std__optional_std__shared_ptr_HybridViewModelSpec____ in
+        let __promise = bridge.create_std__shared_ptr_Promise_std__optional_std__shared_ptr_HybridViewModelSpec____()
+        let __promiseHolder = bridge.wrap_std__shared_ptr_Promise_std__optional_std__shared_ptr_HybridViewModelSpec____(__promise)
+        __result
+          .then({ __result in __promiseHolder.resolve({ () -> bridge.std__optional_std__shared_ptr_HybridViewModelSpec__ in
+              if let __unwrappedValue = __result {
+                return bridge.create_std__optional_std__shared_ptr_HybridViewModelSpec__({ () -> bridge.std__shared_ptr_HybridViewModelSpec_ in
+                  let __cxxWrapped = __unwrappedValue.getCxxWrapper()
+                  return __cxxWrapped.getCxxPart()
+                }())
+              } else {
+                return .init()
+              }
+            }()) })
+          .catch({ __error in __promiseHolder.reject(__error.toCpp()) })
+        return __promise
+      }()
+      return bridge.create_Result_std__shared_ptr_Promise_std__optional_std__shared_ptr_HybridViewModelSpec_____(__resultCpp)
+    } catch (let __error) {
+      let __exceptionPtr = __error.toCpp()
+      return bridge.create_Result_std__shared_ptr_Promise_std__optional_std__shared_ptr_HybridViewModelSpec_____(__exceptionPtr)
+    }
+  }
+  
+  @inline(__always)
+  public final func getArtboardCountAsync() -> bridge.Result_std__shared_ptr_Promise_double___ {
+    do {
+      let __result = try self.__implementation.getArtboardCountAsync()
+      let __resultCpp = { () -> bridge.std__shared_ptr_Promise_double__ in
+        let __promise = bridge.create_std__shared_ptr_Promise_double__()
+        let __promiseHolder = bridge.wrap_std__shared_ptr_Promise_double__(__promise)
+        __result
+          .then({ __result in __promiseHolder.resolve(__result) })
+          .catch({ __error in __promiseHolder.reject(__error.toCpp()) })
+        return __promise
+      }()
+      return bridge.create_Result_std__shared_ptr_Promise_double___(__resultCpp)
+    } catch (let __error) {
+      let __exceptionPtr = __error.toCpp()
+      return bridge.create_Result_std__shared_ptr_Promise_double___(__exceptionPtr)
+    }
+  }
+  
+  @inline(__always)
+  public final func getArtboardNamesAsync() -> bridge.Result_std__shared_ptr_Promise_std__vector_std__string____ {
+    do {
+      let __result = try self.__implementation.getArtboardNamesAsync()
+      let __resultCpp = { () -> bridge.std__shared_ptr_Promise_std__vector_std__string___ in
+        let __promise = bridge.create_std__shared_ptr_Promise_std__vector_std__string___()
+        let __promiseHolder = bridge.wrap_std__shared_ptr_Promise_std__vector_std__string___(__promise)
+        __result
+          .then({ __result in __promiseHolder.resolve({ () -> bridge.std__vector_std__string_ in
+              var __vector = bridge.create_std__vector_std__string_(__result.count)
+              for __item in __result {
+                __vector.push_back(std.string(__item))
+              }
+              return __vector
+            }()) })
+          .catch({ __error in __promiseHolder.reject(__error.toCpp()) })
+        return __promise
+      }()
+      return bridge.create_Result_std__shared_ptr_Promise_std__vector_std__string____(__resultCpp)
+    } catch (let __error) {
+      let __exceptionPtr = __error.toCpp()
+      return bridge.create_Result_std__shared_ptr_Promise_std__vector_std__string____(__exceptionPtr)
+    }
+  }
+  
+  @inline(__always)
   public final func getBindableArtboard(name: std.string) -> bridge.Result_std__shared_ptr_HybridBindableArtboardSpec__ {
     do {
       let __result = try self.__implementation.getBindableArtboard(name: String(name))

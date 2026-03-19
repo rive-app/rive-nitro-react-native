@@ -10,6 +10,7 @@ package com.margelo.nitro.rive
 import androidx.annotation.Keep
 import com.facebook.jni.HybridData
 import com.facebook.proguard.annotations.DoNotStrip
+import com.margelo.nitro.core.Promise
 import com.margelo.nitro.core.HybridObject
 
 /**
@@ -53,6 +54,26 @@ abstract class HybridRiveFileSpec: HybridObject() {
   @DoNotStrip
   @Keep
   abstract fun updateReferencedAssets(referencedAssets: ReferencedAssetsType): Unit
+  
+  @DoNotStrip
+  @Keep
+  abstract fun getViewModelNamesAsync(): Promise<Array<String>>
+  
+  @DoNotStrip
+  @Keep
+  abstract fun viewModelByNameAsync(name: String, validate: Boolean?): Promise<HybridViewModelSpec?>
+  
+  @DoNotStrip
+  @Keep
+  abstract fun defaultArtboardViewModelAsync(artboardBy: ArtboardBy?): Promise<HybridViewModelSpec?>
+  
+  @DoNotStrip
+  @Keep
+  abstract fun getArtboardCountAsync(): Promise<Double>
+  
+  @DoNotStrip
+  @Keep
+  abstract fun getArtboardNamesAsync(): Promise<Array<String>>
   
   @DoNotStrip
   @Keep

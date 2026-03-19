@@ -19,6 +19,11 @@ public protocol HybridRiveFileSpec_protocol: HybridObject {
   func viewModelByName(name: String) throws -> (any HybridViewModelSpec)?
   func defaultArtboardViewModel(artboardBy: ArtboardBy?) throws -> (any HybridViewModelSpec)?
   func updateReferencedAssets(referencedAssets: ReferencedAssetsType) throws -> Void
+  func getViewModelNamesAsync() throws -> Promise<[String]>
+  func viewModelByNameAsync(name: String, validate: Bool?) throws -> Promise<(any HybridViewModelSpec)?>
+  func defaultArtboardViewModelAsync(artboardBy: ArtboardBy?) throws -> Promise<(any HybridViewModelSpec)?>
+  func getArtboardCountAsync() throws -> Promise<Double>
+  func getArtboardNamesAsync() throws -> Promise<[String]>
   func getBindableArtboard(name: String) throws -> (any HybridBindableArtboardSpec)
 }
 

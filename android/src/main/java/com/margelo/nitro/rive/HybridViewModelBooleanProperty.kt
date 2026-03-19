@@ -3,6 +3,7 @@ package com.margelo.nitro.rive
 import androidx.annotation.Keep
 import app.rive.runtime.kotlin.core.ViewModelBooleanProperty
 import com.facebook.proguard.annotations.DoNotStrip
+import com.margelo.nitro.core.Promise
 
 @Keep
 @DoNotStrip
@@ -14,6 +15,14 @@ class HybridViewModelBooleanProperty(private val viewModelBoolean: ViewModelBool
     set(value) {
       viewModelBoolean.value = value
     }
+
+  override fun getValueAsync(): Promise<Boolean> {
+    return Promise.async { value }
+  }
+
+  override fun set(value: Boolean) {
+    viewModelBoolean.value = value
+  }
 
   override fun addListener(onChanged: (value: Boolean) -> Unit): () -> Unit {
     val remover = addListenerInternal(onChanged)
