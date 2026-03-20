@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.1](https://github.com/rive-app/rive-nitro-react-native/compare/v0.3.0...v0.3.1) (2026-03-19)
+
+
+### Bug Fixes
+
+* bump iOS runtime to 6.17.0 and Android to 11.2.1 ([#182](https://github.com/rive-app/rive-nitro-react-native/issues/182)) ([a7ca079](https://github.com/rive-app/rive-nitro-react-native/commit/a7ca07955628c475d214ea2b5c0af49f1018dfcd)), closes [#164](https://github.com/rive-app/rive-nitro-react-native/issues/164)
+
 ## [0.3.0](https://github.com/rive-app/rive-nitro-react-native/compare/v0.2.8...v0.3.0) (2026-03-13)
 
 
