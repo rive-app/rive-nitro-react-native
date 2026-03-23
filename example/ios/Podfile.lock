@@ -1754,7 +1754,7 @@ PODS:
     - React-logger (= 0.79.2)
     - React-perflogger (= 0.79.2)
     - React-utils (= 0.79.2)
-  - RiveRuntime (6.15.2)
+  - RiveRuntime (6.17.0)
   - RNCAsyncStorage (2.2.0):
     - DoubleConversion
     - glog
@@ -1904,7 +1904,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - RNWorklets
     - Yoga
-  - RNRive (0.3.0):
+  - RNRive (0.2.8):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1928,7 +1928,7 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - RiveRuntime (= 6.15.2)
+    - RiveRuntime (= 6.17.0)
     - Yoga
   - RNScreens (4.18.0):
     - DoubleConversion
@@ -2316,7 +2316,7 @@ SPEC CHECKSUMS:
   glog: 5683914934d5b6e4240e497e0f4a3b42d1854183
   hermes-engine: 314be5250afa5692b57b4dd1705959e1973a8ebe
   NitroModules: b0d4f5ca592f60889181c15f82cca77d62e44a08
-  RCT-Folly: 36fe2295e44b10d831836cc0d1daec5f8abcf809
+  RCT-Folly: e78785aa9ba2ed998ea4151e314036f6c49e6d82
   RCTDeprecation: 83ffb90c23ee5cea353bd32008a7bca100908f8c
   RCTRequired: eb7c0aba998009f47a540bec9e9d69a54f68136e
   RCTTypeSafety: 659ae318c09de0477fd27bbc9e140071c7ea5c93
@@ -2379,17 +2379,17 @@ SPEC CHECKSUMS:
   ReactAppDependencyProvider: 04d5eb15eb46be6720e17a4a7fa92940a776e584
   ReactCodegen: c63eda03ba1d94353fb97b031fc84f75a0d125ba
   ReactCommon: 76d2dc87136d0a667678668b86f0fca0c16fdeb0
-  RiveRuntime: b2c29a7e1fbf2aabd1fffcb7b9cf43c4d515a841
+  RiveRuntime: 1c18823e5fd2b88f09666cf7c7ba14da7b8d52a4
   RNCAsyncStorage: a1c8cc8a99c32de1244a9cf707bf9d83d0de0f71
   RNCPicker: 28c076ae12a1056269ec0305fe35fac3086c477d
   RNGestureHandler: 6b39f4e43e4b3a0fb86de9531d090ff205a011d5
   RNReanimated: 66b68ebe3baf7ec9e716bd059d700726f250d344
-  RNRive: 9fa016519c90c585f02d33030a7d99479a2d6779
+  RNRive: 0a46f94d83acb672b088b2e26a4fce709b8c9ab1
   RNScreens: f38464ec1e83bda5820c3b05ccf4908e3841c5cc
   RNWorklets: b1faafefb82d9f29c4018404a0fb33974b494a7b
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   Yoga: 9f110fc4b7aa538663cba3c14cbb1c335f43c13f
 
-PODFILE CHECKSUM: 9a418da32e324919bb5ad7351e737b8da4b84d2c
+PODFILE CHECKSUM: 6974e58448067deb1048e3b4490e929f624eea3c
 
 COCOAPODS: 1.16.2
