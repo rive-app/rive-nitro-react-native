@@ -4,14 +4,11 @@ import android.util.Log
 import androidx.annotation.Keep
 import app.rive.Artboard
 import app.rive.RiveFile
-import app.rive.ViewModelInstance
 import app.rive.ViewModelSource
 import app.rive.core.CommandQueue
-import app.rive.runtime.kotlin.core.ViewModel.PropertyDataType
 import com.facebook.proguard.annotations.DoNotStrip
 import com.margelo.nitro.core.Promise
 import java.lang.ref.WeakReference
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 
 @Keep
@@ -52,7 +49,7 @@ class HybridRiveFile(
       val names = runBlocking { file.getViewModelNames() }
       val idx = index.toInt()
       if (idx < 0 || idx >= names.size) return null
-      HybridViewModel(file, riveWorker, names[idx], this)
+      HybridViewModel(file, riveWorker, names[idx], this, ViewModelSource.Named(names[idx]))
     } catch (e: Exception) {
       Log.e(TAG, "viewModelByIndex($index) failed", e)
       null
@@ -65,7 +62,7 @@ class HybridRiveFile(
       val names = file.getViewModelNames()
       if (!names.contains(name)) return null
     }
-    return HybridViewModel(file, riveWorker, name, this)
+    return HybridViewModel(file, riveWorker, name, this, ViewModelSource.Named(name))
   }
 
   // Deprecated: Use viewModelByNameAsync instead
@@ -100,8 +97,10 @@ class HybridRiveFile(
       Artboard.fromFile(file)
     }
     val vmSource = ViewModelSource.DefaultForArtboard(artboard)
-    val resolvedName = resolveDefaultVMName(file, vmSource)
-    return HybridViewModel(file, riveWorker, resolvedName, this, vmSource)
+    // Name is null because the Rive Android SDK does not expose the ViewModel name
+    // from a ViewModelInstance — name-dependent operations will throw UnsupportedOperationException.
+    // Track upstream: https://github.com/rive-app/rive-android/issues/XXX
+    return HybridViewModel(file, riveWorker, null, this, vmSource)
   }
 
   // Deprecated: Use defaultArtboardViewModelAsync instead
@@ -184,54 +183,6 @@ class HybridRiveFile(
 
   fun unregisterView(view: HybridRiveView) {
     weakViews.removeAll { it.get() == view }
-  }
-
-  /**
-   * Resolves the actual ViewModel name for a DefaultForArtboard source.
-   * The new Rive SDK doesn't expose VM name from DefaultForArtboard directly,
-   * so we compare property values between the artboard VMI and named VMIs.
-   */
-  private suspend fun resolveDefaultVMName(
-    file: RiveFile,
-    vmSource: ViewModelSource.DefaultForArtboard
-  ): String {
-    val vmNames = file.getViewModelNames()
-    if (vmNames.size <= 1) return vmNames.firstOrNull() ?: "default"
-
-    val artboardVmi = ViewModelInstance.fromFile(file, vmSource.defaultInstance())
-    try {
-      // Find a string property to use as identifier for value comparison
-      val testPropName = vmNames.firstNotNullOfOrNull { name ->
-        file
-          .getViewModelProperties(name)
-          .firstOrNull { it.type == PropertyDataType.STRING }
-          ?.name
-      } ?: return vmNames.first()
-
-      val artboardValue = try {
-        artboardVmi.getStringFlow(testPropName).first()
-      } catch (_: Exception) {
-        return vmNames.first()
-      }
-
-      for (name in vmNames) {
-        val namedVmi = ViewModelInstance.fromFile(file, ViewModelSource.Named(name).defaultInstance())
-        try {
-          val namedValue = try {
-            namedVmi.getStringFlow(testPropName).first()
-          } catch (_: Exception) {
-            continue
-          }
-          if (namedValue == artboardValue) return name
-        } finally {
-          namedVmi.close()
-        }
-      }
-    } finally {
-      artboardVmi.close()
-    }
-
-    return vmNames.firstOrNull() ?: "default"
   }
 
   override fun dispose() {
