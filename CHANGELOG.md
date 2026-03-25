@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.2](https://github.com/rive-app/rive-nitro-react-native/compare/v0.3.1...v0.3.2) (2026-03-25)
+
+
+### Features
+
+* add async API compat layer for experimental migration ([#183](https://github.com/rive-app/rive-nitro-react-native/issues/183)) ([c788ad6](https://github.com/rive-app/rive-nitro-react-native/commit/c788ad6b4ac7496e027ed9507900ecf277d6cce3))
+
 ## [0.3.1](https://github.com/rive-app/rive-nitro-react-native/compare/v0.3.0...v0.3.1) (2026-03-19)
 
 
