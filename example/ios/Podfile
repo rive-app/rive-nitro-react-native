@@ -33,5 +33,16 @@ target 'RiveExample' do
       :mac_catalyst_enabled => false,
       # :ccache_enabled => true
     )
+
+    if ENV['RIVE_SWIFT_COVERAGE'] == '1'
+      app_project = Xcodeproj::Project.open("#{installer.sandbox.root}/../RiveExample.xcodeproj")
+      app_project.targets.each do |target|
+        target.build_configurations.each do |config|
+          config.build_settings['OTHER_LDFLAGS'] = ['$(inherited)', '-fprofile-instr-generate', '-Xlinker', '-u', '-Xlinker', '___llvm_profile_runtime']
+        end
+      end
+      app_project.save
+      Pod::UI.puts "Swift code coverage: added -fprofile-instr-generate to RiveExample linker flags"
+    end
   end
 end
