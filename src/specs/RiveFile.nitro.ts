@@ -22,20 +22,36 @@ export type ReferencedAssetsType = {
  */
 export interface RiveFile
   extends HybridObject<{ ios: 'swift'; android: 'kotlin' }> {
-  /** The number of view models in the Rive file */
+  /** @deprecated Use getViewModelNamesAsync instead */
   readonly viewModelCount?: number;
-  /** Get a view model by index */
+  /** @deprecated Use getViewModelNamesAsync + viewModelByNameAsync instead */
   viewModelByIndex(index: number): ViewModel | undefined;
-  /** Get a view model by name */
+  /** @deprecated Use viewModelByNameAsync instead */
   viewModelByName(name: string): ViewModel | undefined;
-  /** Returns the default view model for the provided artboard */
+  /** @deprecated Use defaultArtboardViewModelAsync instead */
   defaultArtboardViewModel(artboardBy?: ArtboardBy): ViewModel | undefined;
   updateReferencedAssets(referencedAssets: ReferencedAssetsType): void;
 
-  /** The number of artboards in the Rive file */
+  /** @deprecated Use getArtboardCountAsync instead */
   readonly artboardCount: number;
-  /** The names of all artboards in the Rive file */
+  /** @deprecated Use getArtboardNamesAsync instead */
   readonly artboardNames: string[];
+
+  /** The names of all view models in the Rive file */
+  getViewModelNamesAsync(): Promise<string[]>;
+  /** Get a view model by name, optionally validating its properties */
+  viewModelByNameAsync(
+    name: string,
+    validate?: boolean
+  ): Promise<ViewModel | undefined>;
+  /** Get the default view model for the given artboard */
+  defaultArtboardViewModelAsync(
+    artboardBy?: ArtboardBy
+  ): Promise<ViewModel | undefined>;
+  /** The number of artboards in the Rive file */
+  getArtboardCountAsync(): Promise<number>;
+  /** The names of all artboards in the Rive file */
+  getArtboardNamesAsync(): Promise<string[]>;
   /**
    * Get a bindable artboard by name for use with data binding.
    * @throws Error if artboard with the given name is not found

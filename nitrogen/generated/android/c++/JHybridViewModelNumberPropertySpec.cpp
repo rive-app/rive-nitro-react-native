@@ -9,6 +9,8 @@
 
 
 
+#include <NitroModules/Promise.hpp>
+#include <NitroModules/JPromise.hpp>
 #include <functional>
 #include "JFunc_void.hpp"
 #include <NitroModules/JNICallable.hpp>
@@ -55,6 +57,26 @@ namespace margelo::nitro::rive {
   }
 
   // Methods
+  std::shared_ptr<Promise<double>> JHybridViewModelNumberPropertySpec::getValueAsync() {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>()>("getValueAsync");
+    auto __result = method(_javaPart);
+    return [&]() {
+      auto __promise = Promise<double>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& __boxedResult) {
+        auto __result = jni::static_ref_cast<jni::JDouble>(__boxedResult);
+        __promise->resolve(__result->value());
+      });
+      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
+        jni::JniException __jniError(__throwable);
+        __promise->reject(std::make_exception_ptr(__jniError));
+      });
+      return __promise;
+    }();
+  }
+  void JHybridViewModelNumberPropertySpec::set(double value) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void(double /* value */)>("set");
+    method(_javaPart, value);
+  }
   std::function<void()> JHybridViewModelNumberPropertySpec::addListener(const std::function<void(double /* value */)>& onChanged) {
     static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JFunc_void::javaobject>(jni::alias_ref<JFunc_void_double::javaobject> /* onChanged */)>("addListener_cxx");
     auto __result = method(_javaPart, JFunc_void_double_cxx::fromCpp(onChanged));

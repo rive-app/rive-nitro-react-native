@@ -38,6 +38,7 @@ namespace margelo::nitro::rive { class HybridBindableArtboardSpec; }
 #include "ResolvedReferencedAsset.hpp"
 #include <unordered_map>
 #include "HybridRiveImageSpec.hpp"
+#include <NitroModules/Promise.hpp>
 #include "HybridBindableArtboardSpec.hpp"
 
 #include "RNRive-Swift-Cxx-Umbrella.hpp"
@@ -129,6 +130,46 @@ namespace margelo::nitro::rive {
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }
+    }
+    inline std::shared_ptr<Promise<std::vector<std::string>>> getViewModelNamesAsync() override {
+      auto __result = _swiftPart.getViewModelNamesAsync();
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline std::shared_ptr<Promise<std::optional<std::shared_ptr<HybridViewModelSpec>>>> viewModelByNameAsync(const std::string& name, std::optional<bool> validate) override {
+      auto __result = _swiftPart.viewModelByNameAsync(name, validate);
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline std::shared_ptr<Promise<std::optional<std::shared_ptr<HybridViewModelSpec>>>> defaultArtboardViewModelAsync(const std::optional<ArtboardBy>& artboardBy) override {
+      auto __result = _swiftPart.defaultArtboardViewModelAsync(artboardBy);
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline std::shared_ptr<Promise<double>> getArtboardCountAsync() override {
+      auto __result = _swiftPart.getArtboardCountAsync();
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline std::shared_ptr<Promise<std::vector<std::string>>> getArtboardNamesAsync() override {
+      auto __result = _swiftPart.getArtboardNamesAsync();
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
     }
     inline std::shared_ptr<HybridBindableArtboardSpec> getBindableArtboard(const std::string& name) override {
       auto __result = _swiftPart.getBindableArtboard(name);

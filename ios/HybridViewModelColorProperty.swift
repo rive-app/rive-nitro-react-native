@@ -19,6 +19,14 @@ class HybridViewModelColorProperty: HybridViewModelColorPropertySpec, ValuedProp
     }
   }
   
+  func getValueAsync() throws -> Promise<Double> {
+    return Promise.async { self.property.value.toHexDouble() }
+  }
+
+  func set(value: Double) throws {
+    property.value = UIColor(argb: Int(value))
+  }
+
   func addListener(onChanged: @escaping (Double) -> Void) throws -> () -> Void {
     return helper.addListener { (color: UIColor) in
       onChanged(color.toHexDouble())

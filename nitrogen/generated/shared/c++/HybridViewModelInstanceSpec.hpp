@@ -47,6 +47,7 @@ namespace margelo::nitro::rive { class HybridViewModelInstanceSpec; }
 #include "HybridViewModelListPropertySpec.hpp"
 #include "HybridViewModelArtboardPropertySpec.hpp"
 #include "HybridViewModelInstanceSpec.hpp"
+#include <NitroModules/Promise.hpp>
 
 namespace margelo::nitro::rive {
 
@@ -89,6 +90,7 @@ namespace margelo::nitro::rive {
       virtual std::optional<std::shared_ptr<HybridViewModelListPropertySpec>> listProperty(const std::string& path) = 0;
       virtual std::optional<std::shared_ptr<HybridViewModelArtboardPropertySpec>> artboardProperty(const std::string& path) = 0;
       virtual std::optional<std::shared_ptr<HybridViewModelInstanceSpec>> viewModel(const std::string& path) = 0;
+      virtual std::shared_ptr<Promise<std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>>> viewModelAsync(const std::string& path) = 0;
       virtual void replaceViewModel(const std::string& path, const std::shared_ptr<HybridViewModelInstanceSpec>& instance) = 0;
 
     protected:

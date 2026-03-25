@@ -25,6 +25,7 @@ namespace margelo::nitro::rive {
       prototype.registerHybridMethod("listProperty", &HybridViewModelInstanceSpec::listProperty);
       prototype.registerHybridMethod("artboardProperty", &HybridViewModelInstanceSpec::artboardProperty);
       prototype.registerHybridMethod("viewModel", &HybridViewModelInstanceSpec::viewModel);
+      prototype.registerHybridMethod("viewModelAsync", &HybridViewModelInstanceSpec::viewModelAsync);
       prototype.registerHybridMethod("replaceViewModel", &HybridViewModelInstanceSpec::replaceViewModel);
     });
   }

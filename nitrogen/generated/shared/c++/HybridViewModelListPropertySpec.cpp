@@ -17,6 +17,8 @@ namespace margelo::nitro::rive {
     registerHybrids(this, [](Prototype& prototype) {
       prototype.registerHybridGetter("length", &HybridViewModelListPropertySpec::getLength);
       prototype.registerHybridMethod("getInstanceAt", &HybridViewModelListPropertySpec::getInstanceAt);
+      prototype.registerHybridMethod("getLengthAsync", &HybridViewModelListPropertySpec::getLengthAsync);
+      prototype.registerHybridMethod("getInstanceAtAsync", &HybridViewModelListPropertySpec::getInstanceAtAsync);
       prototype.registerHybridMethod("addInstance", &HybridViewModelListPropertySpec::addInstance);
       prototype.registerHybridMethod("addInstanceAt", &HybridViewModelListPropertySpec::addInstanceAt);
       prototype.registerHybridMethod("removeInstance", &HybridViewModelListPropertySpec::removeInstance);

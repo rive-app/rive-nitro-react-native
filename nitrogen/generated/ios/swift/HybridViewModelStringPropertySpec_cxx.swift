@@ -137,6 +137,36 @@ open class HybridViewModelStringPropertySpec_cxx : HybridViewModelPropertySpec_c
 
   // Methods
   @inline(__always)
+  public final func getValueAsync() -> bridge.Result_std__shared_ptr_Promise_std__string___ {
+    do {
+      let __result = try self.__implementation.getValueAsync()
+      let __resultCpp = { () -> bridge.std__shared_ptr_Promise_std__string__ in
+        let __promise = bridge.create_std__shared_ptr_Promise_std__string__()
+        let __promiseHolder = bridge.wrap_std__shared_ptr_Promise_std__string__(__promise)
+        __result
+          .then({ __result in __promiseHolder.resolve(std.string(__result)) })
+          .catch({ __error in __promiseHolder.reject(__error.toCpp()) })
+        return __promise
+      }()
+      return bridge.create_Result_std__shared_ptr_Promise_std__string___(__resultCpp)
+    } catch (let __error) {
+      let __exceptionPtr = __error.toCpp()
+      return bridge.create_Result_std__shared_ptr_Promise_std__string___(__exceptionPtr)
+    }
+  }
+  
+  @inline(__always)
+  public final func set(value: std.string) -> bridge.Result_void_ {
+    do {
+      try self.__implementation.set(value: String(value))
+      return bridge.create_Result_void_()
+    } catch (let __error) {
+      let __exceptionPtr = __error.toCpp()
+      return bridge.create_Result_void_(__exceptionPtr)
+    }
+  }
+  
+  @inline(__always)
   public final func addListener(onChanged: bridge.Func_void_std__string) -> bridge.Result_std__function_void____ {
     do {
       let __result = try self.__implementation.addListener(onChanged: { () -> (String) -> Void in

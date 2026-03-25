@@ -3,6 +3,7 @@ package com.margelo.nitro.rive
 import androidx.annotation.Keep
 import app.rive.runtime.kotlin.core.ViewModelListProperty
 import com.facebook.proguard.annotations.DoNotStrip
+import com.margelo.nitro.core.Promise
 import kotlinx.coroutines.flow.map
 
 @Keep
@@ -54,6 +55,14 @@ class HybridViewModelListProperty(private val listProperty: ViewModelListPropert
     }
     listProperty.swap(idx1, idx2)
     return true
+  }
+
+  override fun getLengthAsync(): Promise<Double> {
+    return Promise.async { length }
+  }
+
+  override fun getInstanceAtAsync(index: Double): Promise<HybridViewModelInstanceSpec?> {
+    return Promise.async { getInstanceAt(index) }
   }
 
   override fun addListener(onChanged: () -> Unit): () -> Unit {

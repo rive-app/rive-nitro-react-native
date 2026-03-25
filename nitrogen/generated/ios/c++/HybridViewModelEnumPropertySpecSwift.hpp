@@ -16,6 +16,7 @@ namespace RNRive { class HybridViewModelEnumPropertySpec_cxx; }
 namespace margelo::nitro::rive { class HybridViewModelPropertySpecSwift; }
 
 #include <string>
+#include <NitroModules/Promise.hpp>
 #include <functional>
 #include "HybridViewModelPropertySpecSwift.hpp"
 
@@ -76,6 +77,20 @@ namespace margelo::nitro::rive {
 
   public:
     // Methods
+    inline std::shared_ptr<Promise<std::string>> getValueAsync() override {
+      auto __result = _swiftPart.getValueAsync();
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline void set(const std::string& value) override {
+      auto __result = _swiftPart.set(value);
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+    }
     inline std::function<void()> addListener(const std::function<void(const std::string& /* value */)>& onChanged) override {
       auto __result = _swiftPart.addListener(onChanged);
       if (__result.hasError()) [[unlikely]] {

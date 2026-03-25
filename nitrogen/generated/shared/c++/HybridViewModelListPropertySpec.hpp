@@ -21,6 +21,7 @@ namespace margelo::nitro::rive { class HybridViewModelPropertySpec; }
 #include <memory>
 #include "HybridViewModelInstanceSpec.hpp"
 #include <optional>
+#include <NitroModules/Promise.hpp>
 #include <functional>
 #include "HybridViewModelPropertySpec.hpp"
 
@@ -56,6 +57,8 @@ namespace margelo::nitro::rive {
     public:
       // Methods
       virtual std::optional<std::shared_ptr<HybridViewModelInstanceSpec>> getInstanceAt(double index) = 0;
+      virtual std::shared_ptr<Promise<double>> getLengthAsync() = 0;
+      virtual std::shared_ptr<Promise<std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>>> getInstanceAtAsync(double index) = 0;
       virtual void addInstance(const std::shared_ptr<HybridViewModelInstanceSpec>& instance) = 0;
       virtual bool addInstanceAt(const std::shared_ptr<HybridViewModelInstanceSpec>& instance, double index) = 0;
       virtual void removeInstance(const std::shared_ptr<HybridViewModelInstanceSpec>& instance) = 0;

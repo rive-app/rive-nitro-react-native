@@ -4,6 +4,7 @@ import androidx.annotation.Keep
 import app.rive.runtime.kotlin.core.ViewModelInstance
 import app.rive.runtime.kotlin.core.errors.ViewModelException
 import com.facebook.proguard.annotations.DoNotStrip
+import com.margelo.nitro.core.Promise
 
 @Keep
 @DoNotStrip
@@ -64,5 +65,9 @@ class HybridViewModelInstance(val viewModelInstance: ViewModelInstance) : Hybrid
   override fun replaceViewModel(path: String, instance: HybridViewModelInstanceSpec) {
     val nativeInstance = (instance as HybridViewModelInstance).viewModelInstance
     viewModelInstance.setInstanceProperty(path, nativeInstance)
+  }
+
+  override fun viewModelAsync(path: String): Promise<HybridViewModelInstanceSpec?> {
+    return Promise.async { viewModel(path) }
   }
 }

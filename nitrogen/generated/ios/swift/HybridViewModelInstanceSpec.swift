@@ -23,6 +23,7 @@ public protocol HybridViewModelInstanceSpec_protocol: HybridObject {
   func listProperty(path: String) throws -> (any HybridViewModelListPropertySpec)?
   func artboardProperty(path: String) throws -> (any HybridViewModelArtboardPropertySpec)?
   func viewModel(path: String) throws -> (any HybridViewModelInstanceSpec)?
+  func viewModelAsync(path: String) throws -> Promise<(any HybridViewModelInstanceSpec)?>
   func replaceViewModel(path: String, instance: (any HybridViewModelInstanceSpec)) throws -> Void
 }
 

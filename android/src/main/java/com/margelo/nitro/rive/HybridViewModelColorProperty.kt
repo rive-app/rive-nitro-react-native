@@ -3,6 +3,7 @@ package com.margelo.nitro.rive
 import androidx.annotation.Keep
 import app.rive.runtime.kotlin.core.ViewModelColorProperty
 import com.facebook.proguard.annotations.DoNotStrip
+import com.margelo.nitro.core.Promise
 
 @Keep
 @DoNotStrip
@@ -14,6 +15,14 @@ class HybridViewModelColorProperty(private val viewModelColor: ViewModelColorPro
     set(value) {
       viewModelColor.value = value.toLong().toInt()
     }
+
+  override fun getValueAsync(): Promise<Double> {
+    return Promise.async { value }
+  }
+
+  override fun set(value: Double) {
+    viewModelColor.value = value.toLong().toInt()
+  }
 
   override fun addListener(onChanged: (value: Double) -> Unit): () -> Unit {
     val remover = addListenerInternal { intValue: Int -> onChanged(intValue.toDouble()) }

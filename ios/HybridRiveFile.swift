@@ -1,3 +1,4 @@
+import NitroModules
 import RiveRuntime
 
 typealias ReferencedAssetCache = [String: RiveFileAsset]
@@ -86,6 +87,36 @@ class HybridRiveFile: HybridRiveFileSpec, RiveViewSource {
       )
     }
     return HybridBindableArtboard(bindableArtboard: bindable)
+  }
+
+  func getViewModelNamesAsync() throws -> Promise<[String]> {
+    return Promise.async {
+      guard let file = self.riveFile else { return [] }
+      let count = file.viewModelCount
+      var names: [String] = []
+      for i in 0..<count {
+        if let vm = file.viewModel(at: UInt(i)) {
+          names.append(vm.name)
+        }
+      }
+      return names
+    }
+  }
+
+  func viewModelByNameAsync(name: String, validate: Bool?) throws -> Promise<(any HybridViewModelSpec)?> {
+    return Promise.async { try self.viewModelByName(name: name) }
+  }
+
+  func defaultArtboardViewModelAsync(artboardBy: ArtboardBy?) throws -> Promise<(any HybridViewModelSpec)?> {
+    return Promise.async { try self.defaultArtboardViewModel(artboardBy: artboardBy) }
+  }
+
+  func getArtboardCountAsync() throws -> Promise<Double> {
+    return Promise.async { self.artboardCount }
+  }
+
+  func getArtboardNamesAsync() throws -> Promise<[String]> {
+    return Promise.async { self.artboardNames }
   }
 
   func updateReferencedAssets(referencedAssets: ReferencedAssetsType) {

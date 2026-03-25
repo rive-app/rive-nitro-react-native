@@ -10,6 +10,7 @@ package com.margelo.nitro.rive
 import androidx.annotation.Keep
 import com.facebook.jni.HybridData
 import com.facebook.proguard.annotations.DoNotStrip
+import com.margelo.nitro.core.Promise
 import com.margelo.nitro.core.HybridObject
 
 /**
@@ -53,6 +54,18 @@ abstract class HybridViewModelSpec: HybridObject() {
   @DoNotStrip
   @Keep
   abstract fun createInstance(): HybridViewModelInstanceSpec?
+  
+  @DoNotStrip
+  @Keep
+  abstract fun createInstanceByNameAsync(name: String): Promise<HybridViewModelInstanceSpec?>
+  
+  @DoNotStrip
+  @Keep
+  abstract fun createDefaultInstanceAsync(): Promise<HybridViewModelInstanceSpec?>
+  
+  @DoNotStrip
+  @Keep
+  abstract fun createBlankInstanceAsync(): Promise<HybridViewModelInstanceSpec?>
 
   // Default implementation of `HybridObject.toString()`
   override fun toString(): String {

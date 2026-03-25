@@ -19,6 +19,9 @@ public protocol HybridViewModelSpec_protocol: HybridObject {
   func createInstanceByName(name: String) throws -> (any HybridViewModelInstanceSpec)?
   func createDefaultInstance() throws -> (any HybridViewModelInstanceSpec)?
   func createInstance() throws -> (any HybridViewModelInstanceSpec)?
+  func createInstanceByNameAsync(name: String) throws -> Promise<(any HybridViewModelInstanceSpec)?>
+  func createDefaultInstanceAsync() throws -> Promise<(any HybridViewModelInstanceSpec)?>
+  func createBlankInstanceAsync() throws -> Promise<(any HybridViewModelInstanceSpec)?>
 }
 
 public extension HybridViewModelSpec_protocol {
