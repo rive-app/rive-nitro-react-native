@@ -37,15 +37,20 @@ export interface RiveFile
   /** @deprecated Use getArtboardNamesAsync instead */
   readonly artboardNames: string[];
 
+  /** The names of all view models in the Rive file */
   getViewModelNamesAsync(): Promise<string[]>;
+  /** Get a view model by name, optionally validating its properties */
   viewModelByNameAsync(
     name: string,
     validate?: boolean
   ): Promise<ViewModel | undefined>;
+  /** Get the default view model for the given artboard */
   defaultArtboardViewModelAsync(
     artboardBy?: ArtboardBy
   ): Promise<ViewModel | undefined>;
+  /** The number of artboards in the Rive file */
   getArtboardCountAsync(): Promise<number>;
+  /** The names of all artboards in the Rive file */
   getArtboardNamesAsync(): Promise<string[]>;
   /**
    * Get a bindable artboard by name for use with data binding.

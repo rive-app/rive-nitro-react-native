@@ -23,10 +23,13 @@ export interface ViewModel
   /** @deprecated Use createBlankInstanceAsync instead */
   createInstance(): ViewModelInstance | undefined;
 
+  /** Create a view model instance by name */
   createInstanceByNameAsync(
     name: string
   ): Promise<ViewModelInstance | undefined>;
+  /** Create the default view model instance */
   createDefaultInstanceAsync(): Promise<ViewModelInstance | undefined>;
+  /** Create a blank view model instance with default property values */
   createBlankInstanceAsync(): Promise<ViewModelInstance | undefined>;
 }
 
@@ -73,6 +76,7 @@ export interface ViewModelInstance
    */
   viewModel(path: string): ViewModelInstance | undefined;
 
+  /** Get a nested ViewModel instance at the given path. Supports "/" for nested access (e.g., "Parent/Child"). */
   viewModelAsync(path: string): Promise<ViewModelInstance | undefined>;
 
   /**
@@ -96,6 +100,7 @@ export interface ViewModelNumberProperty
     ObservableProperty {
   /** @deprecated Use getValueAsync (read) or set(value) (write) instead */
   value: number;
+  /** Get the current value of the number property */
   getValueAsync(): Promise<number>;
   set(value: number): void;
   /** Add a listener to the view model number property. Returns a function to remove the listener. */
@@ -107,6 +112,7 @@ export interface ViewModelStringProperty
     ObservableProperty {
   /** @deprecated Use getValueAsync (read) or set(value) (write) instead */
   value: string;
+  /** Get the current value of the string property */
   getValueAsync(): Promise<string>;
   set(value: string): void;
   /** Add a listener to the view model string property. Returns a function to remove the listener. */
@@ -118,6 +124,7 @@ export interface ViewModelBooleanProperty
     ObservableProperty {
   /** @deprecated Use getValueAsync (read) or set(value) (write) instead */
   value: boolean;
+  /** Get the current value of the boolean property */
   getValueAsync(): Promise<boolean>;
   set(value: boolean): void;
   /** Add a listener to the view model boolean property. Returns a function to remove the listener. */
@@ -129,6 +136,7 @@ export interface ViewModelColorProperty
     ObservableProperty {
   /** @deprecated Use getValueAsync (read) or set(value) (write) instead */
   value: number;
+  /** Get the current value of the color property */
   getValueAsync(): Promise<number>;
   set(value: number): void;
   /** Add a listener to the view model color property. Returns a function to remove the listener. */
@@ -140,6 +148,7 @@ export interface ViewModelEnumProperty
     ObservableProperty {
   /** @deprecated Use getValueAsync (read) or set(value) (write) instead */
   value: string;
+  /** Get the current value of the enum property */
   getValueAsync(): Promise<string>;
   set(value: string): void;
   /** Add a listener to the view model enum property. Returns a function to remove the listener. */
@@ -175,7 +184,9 @@ export interface ViewModelListProperty
   readonly length: number;
   /** @deprecated Use getInstanceAtAsync instead */
   getInstanceAt(index: number): ViewModelInstance | undefined;
+  /** The number of instances in the list */
   getLengthAsync(): Promise<number>;
+  /** Get the instance at the given index */
   getInstanceAtAsync(index: number): Promise<ViewModelInstance | undefined>;
   /** Add an instance to the end of the list */
   addInstance(instance: ViewModelInstance): void;
