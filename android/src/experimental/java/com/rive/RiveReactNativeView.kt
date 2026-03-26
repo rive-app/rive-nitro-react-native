@@ -284,6 +284,12 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
               val art = artboard ?: return@withContext
               val source = ViewModelSource.DefaultForArtboard(art).defaultInstance()
               val instance = ViewModelInstance.fromFile(riveFile, source)
+              // A handle of 1L is the C++ null sentinel — the artboard has ViewModels but
+              // none is set as the default, so binding would fire "instance 0x1 not found".
+              if (instance.instanceHandle.handle == 1L) {
+                Log.d(TAG, "Auto-binding skipped: no default ViewModel for artboard")
+                return@withContext
+              }
               boundInstance = instance
               bindInstanceToStateMachine(instance)
             }
