@@ -78,8 +78,4 @@ class HybridViewModelInstance: HybridViewModelInstanceSpec {
       throw RuntimeError.error(withMessage: "Failed to replace ViewModel at path: \(path)")
     }
   }
-
-  func viewModelAsync(path: String) throws -> Promise<(any HybridViewModelInstanceSpec)?> {
-    return Promise.async { try self.viewModel(path: path) }
-  }
 }

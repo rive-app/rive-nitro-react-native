@@ -70,14 +70,6 @@ class HybridViewModelListProperty: HybridViewModelListPropertySpec, ValuedProper
     return true
   }
 
-  func getLengthAsync() throws -> Promise<Double> {
-    return Promise.async { self.length }
-  }
-
-  func getInstanceAtAsync(index: Double) throws -> Promise<(any HybridViewModelInstanceSpec)?> {
-    return Promise.async { try self.getInstanceAt(index: index) }
-  }
-
   func addListener(onChanged: @escaping () -> Void) throws -> () -> Void {
     helper.addListener({ _ in onChanged() })
   }

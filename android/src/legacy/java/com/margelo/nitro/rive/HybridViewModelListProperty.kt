@@ -74,14 +74,6 @@ class HybridViewModelListProperty(private val listProperty: ViewModelListPropert
     return true
   }
 
-  override fun getLengthAsync(): Promise<Double> {
-    return Promise.async { length }
-  }
-
-  override fun getInstanceAtAsync(index: Double): Promise<HybridViewModelInstanceSpec?> {
-    return Promise.async { getInstanceAt(index) }
-  }
-
   override fun addListener(onChanged: () -> Unit): () -> Unit {
     val remover = addListenerInternal { _ -> onChanged() }
     ensureValueListenerJob(listProperty.valueFlow.map { })
