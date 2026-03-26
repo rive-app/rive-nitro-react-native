@@ -140,7 +140,4 @@ class HybridViewModel(
     }
   }
 
-  override fun createInstanceAsync(): Promise<HybridViewModelInstanceSpec?> {
-    return createBlankInstanceAsync()
-  }
 }

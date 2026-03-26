@@ -69,7 +69,7 @@ class HybridViewModel(private val viewModel: ViewModel) : HybridViewModelSpec() 
     }
   }
 
-  // Deprecated: Use createInstanceAsync instead
+  // Deprecated: Use createBlankInstanceAsync instead
   override fun createInstance(): HybridViewModelInstanceSpec? {
     try {
       val vmi = viewModel.createBlankInstance()
