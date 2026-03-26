@@ -53,7 +53,7 @@ class HybridViewModel: HybridViewModelSpec {
     }
   }
 
-  // Deprecated: Use createInstanceAsync instead
+  // Deprecated: Use createBlankInstanceAsync instead
   func createInstance() throws -> (any HybridViewModelInstanceSpec)? {
     guard let viewModel = viewModel,
           let vmi = viewModel.createInstance() else { return nil }

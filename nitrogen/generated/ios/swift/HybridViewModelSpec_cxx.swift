@@ -348,32 +348,4 @@ open class HybridViewModelSpec_cxx {
       return bridge.create_Result_std__shared_ptr_Promise_std__optional_std__shared_ptr_HybridViewModelInstanceSpec_____(__exceptionPtr)
     }
   }
-  
-  @inline(__always)
-  public final func createInstanceAsync() -> bridge.Result_std__shared_ptr_Promise_std__optional_std__shared_ptr_HybridViewModelInstanceSpec_____ {
-    do {
-      let __result = try self.__implementation.createInstanceAsync()
-      let __resultCpp = { () -> bridge.std__shared_ptr_Promise_std__optional_std__shared_ptr_HybridViewModelInstanceSpec____ in
-        let __promise = bridge.create_std__shared_ptr_Promise_std__optional_std__shared_ptr_HybridViewModelInstanceSpec____()
-        let __promiseHolder = bridge.wrap_std__shared_ptr_Promise_std__optional_std__shared_ptr_HybridViewModelInstanceSpec____(__promise)
-        __result
-          .then({ __result in __promiseHolder.resolve({ () -> bridge.std__optional_std__shared_ptr_HybridViewModelInstanceSpec__ in
-              if let __unwrappedValue = __result {
-                return bridge.create_std__optional_std__shared_ptr_HybridViewModelInstanceSpec__({ () -> bridge.std__shared_ptr_HybridViewModelInstanceSpec_ in
-                  let __cxxWrapped = __unwrappedValue.getCxxWrapper()
-                  return __cxxWrapped.getCxxPart()
-                }())
-              } else {
-                return .init()
-              }
-            }()) })
-          .catch({ __error in __promiseHolder.reject(__error.toCpp()) })
-        return __promise
-      }()
-      return bridge.create_Result_std__shared_ptr_Promise_std__optional_std__shared_ptr_HybridViewModelInstanceSpec_____(__resultCpp)
-    } catch (let __error) {
-      let __exceptionPtr = __error.toCpp()
-      return bridge.create_Result_std__shared_ptr_Promise_std__optional_std__shared_ptr_HybridViewModelInstanceSpec_____(__exceptionPtr)
-    }
-  }
 }

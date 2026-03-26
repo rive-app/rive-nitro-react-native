@@ -87,8 +87,4 @@ class HybridViewModel: HybridViewModelSpec {
   func createBlankInstanceAsync() throws -> Promise<(any HybridViewModelInstanceSpec)?> {
     return Promise.async { try await self.createInstanceImpl() }
   }
-
-  func createInstanceAsync() throws -> Promise<(any HybridViewModelInstanceSpec)?> {
-    return try createBlankInstanceAsync()
-  }
 }
