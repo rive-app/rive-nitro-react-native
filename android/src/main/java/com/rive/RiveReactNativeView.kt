@@ -105,7 +105,9 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
     if (reload) {
       val hasDataBinding = when (config.bindData) {
         is BindData.None -> false
-        is BindData.Auto -> config.riveFile.viewModelCount > 0
+        // Don't use SDK-level autoBind for Auto mode — it throws if the artboard
+        // has no default ViewModel. bindToStateMachine handles this gracefully instead.
+        is BindData.Auto -> false
         is BindData.Instance, is BindData.ByName -> true
       }
       riveAnimationView?.setRiveFile(
