@@ -139,4 +139,8 @@ class HybridViewModel(
       HybridViewModelInstance(vmi, riveWorker, parentFile, viewModelName)
     }
   }
+
+  override fun createInstanceAsync(): Promise<HybridViewModelInstanceSpec?> {
+    return createBlankInstanceAsync()
+  }
 }
