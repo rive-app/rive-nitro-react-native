@@ -98,15 +98,4 @@ class HybridViewModel(private val viewModel: ViewModel) : HybridViewModelSpec() 
   override fun createBlankInstanceAsync(): Promise<HybridViewModelInstanceSpec?> {
     return Promise.async { createInstance() }
   }
-
-  override fun createInstanceAsync(): Promise<HybridViewModelInstanceSpec?> {
-    return Promise.async {
-      try {
-        val vmi = viewModel.createBlankInstance()
-        HybridViewModelInstance(vmi)
-      } catch (e: ViewModelException) {
-        null
-      }
-    }
-  }
 }

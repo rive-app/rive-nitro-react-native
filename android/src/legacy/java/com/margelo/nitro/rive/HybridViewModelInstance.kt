@@ -77,8 +77,4 @@ class HybridViewModelInstance(val viewModelInstance: ViewModelInstance) : Hybrid
     val nativeInstance = (instance as HybridViewModelInstance).viewModelInstance
     viewModelInstance.setInstanceProperty(path, nativeInstance)
   }
-
-  override fun viewModelAsync(path: String): Promise<HybridViewModelInstanceSpec?> {
-    return Promise.async { viewModel(path) }
-  }
 }
