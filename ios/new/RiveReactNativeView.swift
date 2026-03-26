@@ -64,7 +64,14 @@ class RiveReactNativeView: UIView {
           case .none:
             dataBind = .none
           case .auto:
-            dataBind = .auto
+            // Probe for a default ViewModel first. If the artboard has none,
+            // the SDK would fire an error event — skip auto-binding silently instead.
+            do {
+              let _ = try await config.file.getDefaultViewModelInfo(for: artboard)
+              dataBind = .auto
+            } catch {
+              dataBind = .none
+            }
           case .instance(let vmi):
             dataBind = .instance(vmi)
           case .byName(let name):
