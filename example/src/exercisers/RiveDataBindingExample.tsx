@@ -1,9 +1,10 @@
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
-import { useEffect, useMemo } from 'react';
+import { useEffect } from 'react';
 import {
   Fit,
   RiveView,
   useRiveNumber,
+  useViewModelInstance,
   type ViewModelInstance,
   type RiveFile,
   useRiveString,
@@ -34,20 +35,10 @@ export default function WithRiveFile() {
 }
 
 function WithViewModelSetup({ file }: { file: RiveFile }) {
-  const viewModel = useMemo(() => file.defaultArtboardViewModel(), [file]);
-  const instance = useMemo(
-    () => viewModel?.createDefaultInstance(),
-    [viewModel]
-  );
+  const instance = useViewModelInstance(file);
 
-  if (!instance || !viewModel) {
-    return (
-      <Text style={styles.errorText}>
-        {!viewModel
-          ? 'No view model found'
-          : 'Failed to create view model instance'}
-      </Text>
-    );
+  if (!instance) {
+    return <ActivityIndicator size="large" color="#0000ff" />;
   }
 
   return <DataBindingExample instance={instance} file={file} />;

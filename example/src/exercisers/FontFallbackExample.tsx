@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -15,6 +15,7 @@ import {
   useRive,
   useRiveFile,
   useRiveString,
+  useViewModelInstance,
   type FontSource,
   type FallbackFont,
 } from '@rive-app/react-native';
@@ -257,14 +258,7 @@ function MountedView({ text }: { text: string }) {
     // https://rive.app/marketplace/26480-49641-simple-test-text-property/
     require('../../assets/rive/font_fallback.riv')
   );
-  const viewModel = useMemo(
-    () => riveFile?.defaultArtboardViewModel(),
-    [riveFile]
-  );
-  const instance = useMemo(
-    () => viewModel?.createDefaultInstance(),
-    [viewModel]
-  );
+  const instance = useViewModelInstance(riveFile ?? null);
 
   const { setValue: setRiveText, error: textError } = useRiveString(
     TEXT_PROPERTY,
@@ -280,7 +274,7 @@ function MountedView({ text }: { text: string }) {
     riveViewRef?.playIfNeeded();
   }, [text, setRiveText, riveViewRef]);
 
-  if (isLoading) {
+  if (isLoading || !instance) {
     return (
       <View style={styles.riveContainer}>
         <ActivityIndicator size="large" color="#007AFF" />
@@ -288,12 +282,10 @@ function MountedView({ text }: { text: string }) {
     );
   }
 
-  if (error || !riveFile || !instance) {
+  if (error || !riveFile) {
     return (
       <View style={styles.riveContainer}>
-        <Text style={styles.errorText}>
-          {error || 'Failed to set up view model'}
-        </Text>
+        <Text style={styles.errorText}>{error || 'Failed to load file'}</Text>
       </View>
     );
   }

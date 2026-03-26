@@ -1,5 +1,5 @@
 import { StyleSheet, View, Text, TouchableOpacity, Button } from 'react-native';
-import { useState, useMemo, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import type { Metadata } from '../shared/metadata';
 import {
   DataBindMode,
@@ -84,17 +84,28 @@ export default function ManyViewModels() {
   const riveViewRef = useRef<RiveViewRef>(undefined);
   const isListening = useRef(false);
 
-  // Create a ViewModelInstance for "green" to demonstrate instance binding
-  const greenInstance = useMemo(() => {
-    if (!riveFile) return undefined;
-    try {
-      const viewModel = riveFile.defaultArtboardViewModel();
-      if (!viewModel) return undefined;
-      return viewModel.createInstanceByName('green');
-    } catch (e) {
-      console.error('Failed to create green instance:', e);
-      return undefined;
+  const [greenInstance, setGreenInstance] = useState<
+    ViewModelInstance | undefined
+  >(undefined);
+
+  useEffect(() => {
+    if (!riveFile) return;
+    let cancelled = false;
+
+    async function setup() {
+      const viewModel = await riveFile!.defaultArtboardViewModelAsync();
+      if (cancelled || !viewModel) return;
+      const instance = await viewModel.createInstanceByNameAsync('green');
+      if (!cancelled) setGreenInstance(instance ?? undefined);
     }
+
+    setup().catch((e) => {
+      if (!cancelled) console.error('Failed to create green instance:', e);
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [riveFile]);
 
   const handleLoadImage = async () => {

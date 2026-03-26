@@ -1,3 +1,5 @@
+// TODO: migrate length/getInstanceAt to async equivalents
+/* eslint-disable @typescript-eslint/no-deprecated */
 import { useCallback, useEffect, useState, useMemo } from 'react';
 import type { ViewModelInstance } from '../specs/ViewModel.nitro';
 import type { UseRiveListResult } from '../types';

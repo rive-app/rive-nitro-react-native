@@ -5,11 +5,12 @@ import {
   ActivityIndicator,
   Pressable,
 } from 'react-native';
-import { useState, useMemo, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   Fit,
   RiveView,
   useRiveFile,
+  useViewModelInstance,
   type RiveFile,
   type BindableArtboard,
 } from '@rive-app/react-native';
@@ -77,16 +78,7 @@ function ArtboardSwapper({
   mainFile: RiveFile;
   assetsFile: RiveFile;
 }) {
-  // Get the view model from the "Main" artboard and create an instance
-  // IMPORTANT: Must memoize to prevent creating new instance on every render
-  const viewModel = useMemo(
-    () => mainFile.defaultArtboardViewModel(),
-    [mainFile]
-  );
-  const instance = useMemo(
-    () => viewModel?.createDefaultInstance(),
-    [viewModel]
-  );
+  const instance = useViewModelInstance(mainFile);
   const [currentArtboard, setCurrentArtboard] = useState<string>('Dragon');
   const initializedRef = useRef(false);
 
@@ -134,14 +126,10 @@ function ArtboardSwapper({
     }
   };
 
-  if (!instance || !viewModel) {
+  if (!instance) {
     return (
       <View style={styles.container}>
-        <Text style={styles.errorText}>
-          {!viewModel
-            ? 'No view model found in main file'
-            : 'Failed to create instance'}
-        </Text>
+        <ActivityIndicator size="large" color="#0000ff" />
       </View>
     );
   }
