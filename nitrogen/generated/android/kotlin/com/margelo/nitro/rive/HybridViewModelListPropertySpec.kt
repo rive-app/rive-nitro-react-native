@@ -33,11 +33,11 @@ abstract class HybridViewModelListPropertySpec: HybridViewModelPropertySpec() {
   // Methods
   @DoNotStrip
   @Keep
-  abstract fun getLengthAsync(): Promise<Double>
+  abstract fun getInstanceAt(index: Double): HybridViewModelInstanceSpec?
   
   @DoNotStrip
   @Keep
-  abstract fun getInstanceAt(index: Double): HybridViewModelInstanceSpec?
+  abstract fun getLengthAsync(): Promise<Double>
   
   @DoNotStrip
   @Keep
