@@ -139,5 +139,4 @@ class HybridViewModel(
       HybridViewModelInstance(vmi, riveWorker, parentFile, viewModelName)
     }
   }
-
 }
