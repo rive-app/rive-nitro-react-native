@@ -198,6 +198,38 @@ open class HybridRiveFileSpec_cxx {
   }
   
   @inline(__always)
+  public final func defaultArtboardViewModel(artboardBy: bridge.std__optional_ArtboardBy_) -> bridge.Result_std__optional_std__shared_ptr_HybridViewModelSpec___ {
+    do {
+      let __result = try self.__implementation.defaultArtboardViewModel(artboardBy: artboardBy.value)
+      let __resultCpp = { () -> bridge.std__optional_std__shared_ptr_HybridViewModelSpec__ in
+        if let __unwrappedValue = __result {
+          return bridge.create_std__optional_std__shared_ptr_HybridViewModelSpec__({ () -> bridge.std__shared_ptr_HybridViewModelSpec_ in
+            let __cxxWrapped = __unwrappedValue.getCxxWrapper()
+            return __cxxWrapped.getCxxPart()
+          }())
+        } else {
+          return .init()
+        }
+      }()
+      return bridge.create_Result_std__optional_std__shared_ptr_HybridViewModelSpec___(__resultCpp)
+    } catch (let __error) {
+      let __exceptionPtr = __error.toCpp()
+      return bridge.create_Result_std__optional_std__shared_ptr_HybridViewModelSpec___(__exceptionPtr)
+    }
+  }
+  
+  @inline(__always)
+  public final func updateReferencedAssets(referencedAssets: ReferencedAssetsType) -> bridge.Result_void_ {
+    do {
+      try self.__implementation.updateReferencedAssets(referencedAssets: referencedAssets)
+      return bridge.create_Result_void_()
+    } catch (let __error) {
+      let __exceptionPtr = __error.toCpp()
+      return bridge.create_Result_void_(__exceptionPtr)
+    }
+  }
+  
+  @inline(__always)
   public final func getViewModelNamesAsync() -> bridge.Result_std__shared_ptr_Promise_std__vector_std__string____ {
     do {
       let __result = try self.__implementation.getViewModelNamesAsync()
@@ -258,27 +290,6 @@ open class HybridRiveFileSpec_cxx {
   }
   
   @inline(__always)
-  public final func defaultArtboardViewModel(artboardBy: bridge.std__optional_ArtboardBy_) -> bridge.Result_std__optional_std__shared_ptr_HybridViewModelSpec___ {
-    do {
-      let __result = try self.__implementation.defaultArtboardViewModel(artboardBy: artboardBy.value)
-      let __resultCpp = { () -> bridge.std__optional_std__shared_ptr_HybridViewModelSpec__ in
-        if let __unwrappedValue = __result {
-          return bridge.create_std__optional_std__shared_ptr_HybridViewModelSpec__({ () -> bridge.std__shared_ptr_HybridViewModelSpec_ in
-            let __cxxWrapped = __unwrappedValue.getCxxWrapper()
-            return __cxxWrapped.getCxxPart()
-          }())
-        } else {
-          return .init()
-        }
-      }()
-      return bridge.create_Result_std__optional_std__shared_ptr_HybridViewModelSpec___(__resultCpp)
-    } catch (let __error) {
-      let __exceptionPtr = __error.toCpp()
-      return bridge.create_Result_std__optional_std__shared_ptr_HybridViewModelSpec___(__exceptionPtr)
-    }
-  }
-  
-  @inline(__always)
   public final func defaultArtboardViewModelAsync(artboardBy: bridge.std__optional_ArtboardBy_) -> bridge.Result_std__shared_ptr_Promise_std__optional_std__shared_ptr_HybridViewModelSpec_____ {
     do {
       let __result = try self.__implementation.defaultArtboardViewModelAsync(artboardBy: artboardBy.value)
@@ -303,17 +314,6 @@ open class HybridRiveFileSpec_cxx {
     } catch (let __error) {
       let __exceptionPtr = __error.toCpp()
       return bridge.create_Result_std__shared_ptr_Promise_std__optional_std__shared_ptr_HybridViewModelSpec_____(__exceptionPtr)
-    }
-  }
-  
-  @inline(__always)
-  public final func updateReferencedAssets(referencedAssets: ReferencedAssetsType) -> bridge.Result_void_ {
-    do {
-      try self.__implementation.updateReferencedAssets(referencedAssets: referencedAssets)
-      return bridge.create_Result_void_()
-    } catch (let __error) {
-      let __exceptionPtr = __error.toCpp()
-      return bridge.create_Result_void_(__exceptionPtr)
     }
   }
   

@@ -57,15 +57,7 @@ abstract class HybridViewModelSpec: HybridObject() {
   
   @DoNotStrip
   @Keep
-  abstract fun createInstanceByNameAsync(name: String): Promise<HybridViewModelInstanceSpec?>
-  
-  @DoNotStrip
-  @Keep
   abstract fun createDefaultInstance(): HybridViewModelInstanceSpec?
-  
-  @DoNotStrip
-  @Keep
-  abstract fun createDefaultInstanceAsync(): Promise<HybridViewModelInstanceSpec?>
   
   @DoNotStrip
   @Keep
@@ -73,7 +65,19 @@ abstract class HybridViewModelSpec: HybridObject() {
   
   @DoNotStrip
   @Keep
+  abstract fun createInstanceByNameAsync(name: String): Promise<HybridViewModelInstanceSpec?>
+  
+  @DoNotStrip
+  @Keep
+  abstract fun createDefaultInstanceAsync(): Promise<HybridViewModelInstanceSpec?>
+  
+  @DoNotStrip
+  @Keep
   abstract fun createBlankInstanceAsync(): Promise<HybridViewModelInstanceSpec?>
+  
+  @DoNotStrip
+  @Keep
+  abstract fun createInstanceAsync(): Promise<HybridViewModelInstanceSpec?>
 
   // Default implementation of `HybridObject.toString()`
   override fun toString(): String {
