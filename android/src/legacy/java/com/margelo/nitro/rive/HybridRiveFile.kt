@@ -123,38 +123,6 @@ class HybridRiveFile : HybridRiveFileSpec() {
     }
   }
 
-  override fun getViewModelNamesAsync(): Promise<Array<String>> {
-    return Promise.async {
-      val file = riveFile ?: return@async emptyArray()
-      val count = file.viewModelCount
-      val names = mutableListOf<String>()
-      for (i in 0 until count) {
-        try {
-          val vm = file.getViewModelByIndex(i)
-          names.add(vm.name)
-        } catch (_: Exception) {
-        }
-      }
-      names.toTypedArray()
-    }
-  }
-
-  override fun viewModelByNameAsync(name: String, validate: Boolean?): Promise<HybridViewModelSpec?> {
-    return Promise.async { viewModelByName(name) }
-  }
-
-  override fun defaultArtboardViewModelAsync(artboardBy: ArtboardBy?): Promise<HybridViewModelSpec?> {
-    return Promise.async { defaultArtboardViewModel(artboardBy) }
-  }
-
-  override fun getArtboardCountAsync(): Promise<Double> {
-    return Promise.async { artboardCount }
-  }
-
-  override fun getArtboardNamesAsync(): Promise<Array<String>> {
-    return Promise.async { artboardNames }
-  }
-
   override fun updateReferencedAssets(referencedAssets: ReferencedAssetsType) {
     val assetsData = referencedAssets.data ?: return
     val cache = referencedAssetCache ?: return
