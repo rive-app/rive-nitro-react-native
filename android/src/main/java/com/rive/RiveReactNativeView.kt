@@ -105,7 +105,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
     if (reload) {
       val hasDataBinding = when (config.bindData) {
         is BindData.None -> false
-        is BindData.Auto -> config.riveFile.viewModelCount > 0
+        is BindData.Auto -> false
         is BindData.Instance, is BindData.ByName -> true
       }
       riveAnimationView?.setRiveFile(
