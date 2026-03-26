@@ -21,6 +21,10 @@ import type { ViewModelInstance } from '@rive-app/react-native';
 // Source: https://rive.app/community/files/25997-48571-demo-for-tracking-rive-property-in-react-native/
 const BOUNCING_BALL = require('../assets/rive/bouncing_ball.riv');
 
+// Simple animation with ViewModels defined but no default ViewModel assigned to the artboard
+// Source: https://rive.app/community/files/27026-50856-no-default-vm-for-artboard/
+const NO_DEFAULT_VM = require('../assets/rive/nodefaultbouncing.riv');
+
 function expectDefined<T>(value: T): asserts value is NonNullable<T> {
   expect(value).toBeDefined();
 }
@@ -259,6 +263,42 @@ describe('autoPlay prop (issue #138)', () => {
 
     const newValue = await waitForPropertyChange(instance, 'ypos');
     expect(newValue).not.toBe(0);
+
+    expect(context.error).toBeNull();
+    cleanup();
+  });
+});
+
+describe('Auto dataBind with no default ViewModel (issue #189)', () => {
+  it('plays without error when file has ViewModels but no artboard default', async () => {
+    const file = await RiveFileFactory.fromSource(NO_DEFAULT_VM, undefined);
+
+    const context: TestContext = { ref: null, error: null };
+    await render(
+      <View style={{ width: 200, height: 200 }}>
+        <RiveView
+          hybridRef={{
+            f: (ref: RiveViewRef | null) => {
+              context.ref = ref;
+            },
+          }}
+          style={{ flex: 1 }}
+          file={file}
+          autoPlay={true}
+          fit={Fit.Contain}
+          onError={(e) => {
+            context.error = e.message;
+          }}
+        />
+      </View>
+    );
+
+    await waitFor(
+      () => {
+        expect(context.ref).not.toBeNull();
+      },
+      { timeout: 5000 }
+    );
 
     expect(context.error).toBeNull();
     cleanup();
