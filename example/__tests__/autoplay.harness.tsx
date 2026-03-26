@@ -270,6 +270,45 @@ describe('autoPlay prop (issue #138)', () => {
 });
 
 describe('Auto dataBind with no default ViewModel (issue #189)', () => {
+  it('auto-binds default ViewModel when one exists', async () => {
+    const file = await RiveFileFactory.fromSource(BOUNCING_BALL, undefined);
+
+    const context: TestContext = { ref: null, error: null };
+    await render(
+      <View style={{ width: 200, height: 200 }}>
+        <RiveView
+          hybridRef={{
+            f: (ref: RiveViewRef | null) => {
+              context.ref = ref;
+            },
+          }}
+          style={{ flex: 1 }}
+          file={file}
+          autoPlay={true}
+          fit={Fit.Contain}
+          onError={(e) => {
+            context.error = e.message;
+          }}
+        />
+      </View>
+    );
+
+    await waitFor(
+      () => {
+        expect(context.ref).not.toBeNull();
+      },
+      { timeout: 5000 }
+    );
+
+    expect(context.error).toBeNull();
+
+    const vmi = context.ref!.getViewModelInstance();
+    expect(vmi).not.toBeNull();
+    expect(vmi!.numberProperty('ypos')).toBeDefined();
+
+    cleanup();
+  });
+
   it('plays without error when file has ViewModels but no artboard default', async () => {
     const file = await RiveFileFactory.fromSource(NO_DEFAULT_VM, undefined);
 
