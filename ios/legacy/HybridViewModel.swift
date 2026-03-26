@@ -1,6 +1,5 @@
 import NitroModules
 import RiveRuntime
-import NitroModules
 
 class HybridViewModel: HybridViewModelSpec {
   let viewModel: RiveDataBindingViewModel?
@@ -79,13 +78,5 @@ class HybridViewModel: HybridViewModelSpec {
 
   func createBlankInstanceAsync() throws -> Promise<(any HybridViewModelInstanceSpec)?> {
     return Promise.async { try self.createInstance() }
-  }
-
-  func createInstanceAsync() throws -> Promise<(any HybridViewModelInstanceSpec)?> {
-    return Promise.async {
-      guard let viewModel = self.viewModel,
-            let vmi = viewModel.createInstance() else { return nil }
-      return HybridViewModelInstance(viewModelInstance: vmi)
-    }
   }
 }
