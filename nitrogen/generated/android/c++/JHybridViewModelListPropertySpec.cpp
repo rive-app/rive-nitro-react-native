@@ -10,12 +10,12 @@
 // Forward declaration of `HybridViewModelInstanceSpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridViewModelInstanceSpec; }
 
-#include <NitroModules/Promise.hpp>
-#include <NitroModules/JPromise.hpp>
 #include <memory>
 #include "HybridViewModelInstanceSpec.hpp"
 #include <optional>
 #include "JHybridViewModelInstanceSpec.hpp"
+#include <NitroModules/Promise.hpp>
+#include <NitroModules/JPromise.hpp>
 #include <functional>
 #include "JFunc_void.hpp"
 #include <NitroModules/JNICallable.hpp>
@@ -57,6 +57,11 @@ namespace margelo::nitro::rive {
   }
 
   // Methods
+  std::optional<std::shared_ptr<HybridViewModelInstanceSpec>> JHybridViewModelListPropertySpec::getInstanceAt(double index) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JHybridViewModelInstanceSpec::JavaPart>(double /* index */)>("getInstanceAt");
+    auto __result = method(_javaPart, index);
+    return __result != nullptr ? std::make_optional(__result->getJHybridViewModelInstanceSpec()) : std::nullopt;
+  }
   std::shared_ptr<Promise<double>> JHybridViewModelListPropertySpec::getLengthAsync() {
     static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>()>("getLengthAsync");
     auto __result = method(_javaPart);
@@ -72,11 +77,6 @@ namespace margelo::nitro::rive {
       });
       return __promise;
     }();
-  }
-  std::optional<std::shared_ptr<HybridViewModelInstanceSpec>> JHybridViewModelListPropertySpec::getInstanceAt(double index) {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JHybridViewModelInstanceSpec::JavaPart>(double /* index */)>("getInstanceAt");
-    auto __result = method(_javaPart, index);
-    return __result != nullptr ? std::make_optional(__result->getJHybridViewModelInstanceSpec()) : std::nullopt;
   }
   std::shared_ptr<Promise<std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>>> JHybridViewModelListPropertySpec::getInstanceAtAsync(double index) {
     static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(double /* index */)>("getInstanceAtAsync");
