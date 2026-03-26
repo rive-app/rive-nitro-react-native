@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.3.3](https://github.com/rive-app/rive-nitro-react-native/compare/v0.3.2...v0.3.3) (2026-03-26)
+
+
+### Features
+
+* bump rive-ios to 6.18.0 and rive-android to 11.3.1 ([#193](https://github.com/rive-app/rive-nitro-react-native/issues/193)) ([bad9c60](https://github.com/rive-app/rive-nitro-react-native/commit/bad9c604cf414a87c25f2fecf1ba36c6191c8409))
+
+
+### Bug Fixes
+
+* **android:** animation freezes when file has ViewModels but no artboard default ([#196](https://github.com/rive-app/rive-nitro-react-native/issues/196)) ([21c71fd](https://github.com/rive-app/rive-nitro-react-native/commit/21c71fd3cd3832bcbc4059d443ab0cfbf642f53b))
+
 ## [0.3.2](https://github.com/rive-app/rive-nitro-react-native/compare/v0.3.1...v0.3.2) (2026-03-25)
 
 
