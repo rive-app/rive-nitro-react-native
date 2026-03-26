@@ -118,6 +118,15 @@ namespace margelo::nitro::rive {
     auto __result = method(_javaPart, jni::make_jstring(name));
     return __result != nullptr ? std::make_optional(__result->getJHybridViewModelSpec()) : std::nullopt;
   }
+  std::optional<std::shared_ptr<HybridViewModelSpec>> JHybridRiveFileSpec::defaultArtboardViewModel(const std::optional<ArtboardBy>& artboardBy) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JHybridViewModelSpec::JavaPart>(jni::alias_ref<JArtboardBy> /* artboardBy */)>("defaultArtboardViewModel");
+    auto __result = method(_javaPart, artboardBy.has_value() ? JArtboardBy::fromCpp(artboardBy.value()) : nullptr);
+    return __result != nullptr ? std::make_optional(__result->getJHybridViewModelSpec()) : std::nullopt;
+  }
+  void JHybridRiveFileSpec::updateReferencedAssets(const ReferencedAssetsType& referencedAssets) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<JReferencedAssetsType> /* referencedAssets */)>("updateReferencedAssets");
+    method(_javaPart, JReferencedAssetsType::fromCpp(referencedAssets));
+  }
   std::shared_ptr<Promise<std::vector<std::string>>> JHybridRiveFileSpec::getViewModelNamesAsync() {
     static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>()>("getViewModelNamesAsync");
     auto __result = method(_javaPart);
@@ -159,11 +168,6 @@ namespace margelo::nitro::rive {
       return __promise;
     }();
   }
-  std::optional<std::shared_ptr<HybridViewModelSpec>> JHybridRiveFileSpec::defaultArtboardViewModel(const std::optional<ArtboardBy>& artboardBy) {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JHybridViewModelSpec::JavaPart>(jni::alias_ref<JArtboardBy> /* artboardBy */)>("defaultArtboardViewModel");
-    auto __result = method(_javaPart, artboardBy.has_value() ? JArtboardBy::fromCpp(artboardBy.value()) : nullptr);
-    return __result != nullptr ? std::make_optional(__result->getJHybridViewModelSpec()) : std::nullopt;
-  }
   std::shared_ptr<Promise<std::optional<std::shared_ptr<HybridViewModelSpec>>>> JHybridRiveFileSpec::defaultArtboardViewModelAsync(const std::optional<ArtboardBy>& artboardBy) {
     static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<JArtboardBy> /* artboardBy */)>("defaultArtboardViewModelAsync");
     auto __result = method(_javaPart, artboardBy.has_value() ? JArtboardBy::fromCpp(artboardBy.value()) : nullptr);
@@ -179,10 +183,6 @@ namespace margelo::nitro::rive {
       });
       return __promise;
     }();
-  }
-  void JHybridRiveFileSpec::updateReferencedAssets(const ReferencedAssetsType& referencedAssets) {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<JReferencedAssetsType> /* referencedAssets */)>("updateReferencedAssets");
-    method(_javaPart, JReferencedAssetsType::fromCpp(referencedAssets));
   }
   std::shared_ptr<Promise<double>> JHybridRiveFileSpec::getArtboardCountAsync() {
     static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>()>("getArtboardCountAsync");

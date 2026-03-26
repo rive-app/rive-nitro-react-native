@@ -17,10 +17,10 @@ namespace margelo::nitro::rive { class HybridViewModelInstanceSpec; }
 // Forward declaration of `HybridViewModelPropertySpecSwift` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridViewModelPropertySpecSwift; }
 
-#include <NitroModules/Promise.hpp>
 #include <memory>
 #include "HybridViewModelInstanceSpec.hpp"
 #include <optional>
+#include <NitroModules/Promise.hpp>
 #include <functional>
 #include "HybridViewModelPropertySpecSwift.hpp"
 
@@ -77,16 +77,16 @@ namespace margelo::nitro::rive {
 
   public:
     // Methods
-    inline std::shared_ptr<Promise<double>> getLengthAsync() override {
-      auto __result = _swiftPart.getLengthAsync();
+    inline std::optional<std::shared_ptr<HybridViewModelInstanceSpec>> getInstanceAt(double index) override {
+      auto __result = _swiftPart.getInstanceAt(std::forward<decltype(index)>(index));
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }
       auto __value = std::move(__result.value());
       return __value;
     }
-    inline std::optional<std::shared_ptr<HybridViewModelInstanceSpec>> getInstanceAt(double index) override {
-      auto __result = _swiftPart.getInstanceAt(std::forward<decltype(index)>(index));
+    inline std::shared_ptr<Promise<double>> getLengthAsync() override {
+      auto __result = _swiftPart.getLengthAsync();
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }

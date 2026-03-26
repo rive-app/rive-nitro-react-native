@@ -231,6 +231,118 @@ namespace margelo::nitro::rive::bridge::swift {
     return optional.value();
   }
   
+  // pragma MARK: std::optional<std::string>
+  /**
+   * Specialized version of `std::optional<std::string>`.
+   */
+  using std__optional_std__string_ = std::optional<std::string>;
+  inline std::optional<std::string> create_std__optional_std__string_(const std::string& value) noexcept {
+    return std::optional<std::string>(value);
+  }
+  inline bool has_value_std__optional_std__string_(const std::optional<std::string>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline std::string get_std__optional_std__string_(const std::optional<std::string>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::optional<ArtboardBy>
+  /**
+   * Specialized version of `std::optional<ArtboardBy>`.
+   */
+  using std__optional_ArtboardBy_ = std::optional<ArtboardBy>;
+  inline std::optional<ArtboardBy> create_std__optional_ArtboardBy_(const ArtboardBy& value) noexcept {
+    return std::optional<ArtboardBy>(value);
+  }
+  inline bool has_value_std__optional_ArtboardBy_(const std::optional<ArtboardBy>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline ArtboardBy get_std__optional_ArtboardBy_(const std::optional<ArtboardBy>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::shared_ptr<HybridRiveImageSpec>
+  /**
+   * Specialized version of `std::shared_ptr<HybridRiveImageSpec>`.
+   */
+  using std__shared_ptr_HybridRiveImageSpec_ = std::shared_ptr<HybridRiveImageSpec>;
+  std::shared_ptr<HybridRiveImageSpec> create_std__shared_ptr_HybridRiveImageSpec_(void* NON_NULL swiftUnsafePointer) noexcept;
+  void* NON_NULL get_std__shared_ptr_HybridRiveImageSpec_(std__shared_ptr_HybridRiveImageSpec_ cppType);
+  
+  // pragma MARK: std::weak_ptr<HybridRiveImageSpec>
+  using std__weak_ptr_HybridRiveImageSpec_ = std::weak_ptr<HybridRiveImageSpec>;
+  inline std__weak_ptr_HybridRiveImageSpec_ weakify_std__shared_ptr_HybridRiveImageSpec_(const std::shared_ptr<HybridRiveImageSpec>& strong) noexcept { return strong; }
+  
+  // pragma MARK: std::optional<std::shared_ptr<HybridRiveImageSpec>>
+  /**
+   * Specialized version of `std::optional<std::shared_ptr<HybridRiveImageSpec>>`.
+   */
+  using std__optional_std__shared_ptr_HybridRiveImageSpec__ = std::optional<std::shared_ptr<HybridRiveImageSpec>>;
+  inline std::optional<std::shared_ptr<HybridRiveImageSpec>> create_std__optional_std__shared_ptr_HybridRiveImageSpec__(const std::shared_ptr<HybridRiveImageSpec>& value) noexcept {
+    return std::optional<std::shared_ptr<HybridRiveImageSpec>>(value);
+  }
+  inline bool has_value_std__optional_std__shared_ptr_HybridRiveImageSpec__(const std::optional<std::shared_ptr<HybridRiveImageSpec>>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline std::shared_ptr<HybridRiveImageSpec> get_std__optional_std__shared_ptr_HybridRiveImageSpec__(const std::optional<std::shared_ptr<HybridRiveImageSpec>>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::optional<RiveAssetType>
+  /**
+   * Specialized version of `std::optional<RiveAssetType>`.
+   */
+  using std__optional_RiveAssetType_ = std::optional<RiveAssetType>;
+  inline std::optional<RiveAssetType> create_std__optional_RiveAssetType_(const RiveAssetType& value) noexcept {
+    return std::optional<RiveAssetType>(value);
+  }
+  inline bool has_value_std__optional_RiveAssetType_(const std::optional<RiveAssetType>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline RiveAssetType get_std__optional_RiveAssetType_(const std::optional<RiveAssetType>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::unordered_map<std::string, ResolvedReferencedAsset>
+  /**
+   * Specialized version of `std::unordered_map<std::string, ResolvedReferencedAsset>`.
+   */
+  using std__unordered_map_std__string__ResolvedReferencedAsset_ = std::unordered_map<std::string, ResolvedReferencedAsset>;
+  inline std::unordered_map<std::string, ResolvedReferencedAsset> create_std__unordered_map_std__string__ResolvedReferencedAsset_(size_t size) noexcept {
+    std::unordered_map<std::string, ResolvedReferencedAsset> map;
+    map.reserve(size);
+    return map;
+  }
+  inline std::vector<std::string> get_std__unordered_map_std__string__ResolvedReferencedAsset__keys(const std__unordered_map_std__string__ResolvedReferencedAsset_& map) noexcept {
+    std::vector<std::string> keys;
+    keys.reserve(map.size());
+    for (const auto& entry : map) {
+      keys.push_back(entry.first);
+    }
+    return keys;
+  }
+  inline ResolvedReferencedAsset get_std__unordered_map_std__string__ResolvedReferencedAsset__value(const std__unordered_map_std__string__ResolvedReferencedAsset_& map, const std::string& key) noexcept {
+    return map.find(key)->second;
+  }
+  inline void emplace_std__unordered_map_std__string__ResolvedReferencedAsset_(std__unordered_map_std__string__ResolvedReferencedAsset_& map, const std::string& key, const ResolvedReferencedAsset& value) noexcept {
+    map.emplace(key, value);
+  }
+  
+  // pragma MARK: std::optional<std::unordered_map<std::string, ResolvedReferencedAsset>>
+  /**
+   * Specialized version of `std::optional<std::unordered_map<std::string, ResolvedReferencedAsset>>`.
+   */
+  using std__optional_std__unordered_map_std__string__ResolvedReferencedAsset__ = std::optional<std::unordered_map<std::string, ResolvedReferencedAsset>>;
+  inline std::optional<std::unordered_map<std::string, ResolvedReferencedAsset>> create_std__optional_std__unordered_map_std__string__ResolvedReferencedAsset__(const std::unordered_map<std::string, ResolvedReferencedAsset>& value) noexcept {
+    return std::optional<std::unordered_map<std::string, ResolvedReferencedAsset>>(value);
+  }
+  inline bool has_value_std__optional_std__unordered_map_std__string__ResolvedReferencedAsset__(const std::optional<std::unordered_map<std::string, ResolvedReferencedAsset>>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline std::unordered_map<std::string, ResolvedReferencedAsset> get_std__optional_std__unordered_map_std__string__ResolvedReferencedAsset__(const std::optional<std::unordered_map<std::string, ResolvedReferencedAsset>>& optional) noexcept {
+    return optional.value();
+  }
+  
   // pragma MARK: std::vector<std::string>
   /**
    * Specialized version of `std::vector<std::string>`.
@@ -347,118 +459,6 @@ namespace margelo::nitro::rive::bridge::swift {
     return optional.value();
   }
   
-  // pragma MARK: std::optional<std::string>
-  /**
-   * Specialized version of `std::optional<std::string>`.
-   */
-  using std__optional_std__string_ = std::optional<std::string>;
-  inline std::optional<std::string> create_std__optional_std__string_(const std::string& value) noexcept {
-    return std::optional<std::string>(value);
-  }
-  inline bool has_value_std__optional_std__string_(const std::optional<std::string>& optional) noexcept {
-    return optional.has_value();
-  }
-  inline std::string get_std__optional_std__string_(const std::optional<std::string>& optional) noexcept {
-    return optional.value();
-  }
-  
-  // pragma MARK: std::optional<ArtboardBy>
-  /**
-   * Specialized version of `std::optional<ArtboardBy>`.
-   */
-  using std__optional_ArtboardBy_ = std::optional<ArtboardBy>;
-  inline std::optional<ArtboardBy> create_std__optional_ArtboardBy_(const ArtboardBy& value) noexcept {
-    return std::optional<ArtboardBy>(value);
-  }
-  inline bool has_value_std__optional_ArtboardBy_(const std::optional<ArtboardBy>& optional) noexcept {
-    return optional.has_value();
-  }
-  inline ArtboardBy get_std__optional_ArtboardBy_(const std::optional<ArtboardBy>& optional) noexcept {
-    return optional.value();
-  }
-  
-  // pragma MARK: std::shared_ptr<HybridRiveImageSpec>
-  /**
-   * Specialized version of `std::shared_ptr<HybridRiveImageSpec>`.
-   */
-  using std__shared_ptr_HybridRiveImageSpec_ = std::shared_ptr<HybridRiveImageSpec>;
-  std::shared_ptr<HybridRiveImageSpec> create_std__shared_ptr_HybridRiveImageSpec_(void* NON_NULL swiftUnsafePointer) noexcept;
-  void* NON_NULL get_std__shared_ptr_HybridRiveImageSpec_(std__shared_ptr_HybridRiveImageSpec_ cppType);
-  
-  // pragma MARK: std::weak_ptr<HybridRiveImageSpec>
-  using std__weak_ptr_HybridRiveImageSpec_ = std::weak_ptr<HybridRiveImageSpec>;
-  inline std__weak_ptr_HybridRiveImageSpec_ weakify_std__shared_ptr_HybridRiveImageSpec_(const std::shared_ptr<HybridRiveImageSpec>& strong) noexcept { return strong; }
-  
-  // pragma MARK: std::optional<std::shared_ptr<HybridRiveImageSpec>>
-  /**
-   * Specialized version of `std::optional<std::shared_ptr<HybridRiveImageSpec>>`.
-   */
-  using std__optional_std__shared_ptr_HybridRiveImageSpec__ = std::optional<std::shared_ptr<HybridRiveImageSpec>>;
-  inline std::optional<std::shared_ptr<HybridRiveImageSpec>> create_std__optional_std__shared_ptr_HybridRiveImageSpec__(const std::shared_ptr<HybridRiveImageSpec>& value) noexcept {
-    return std::optional<std::shared_ptr<HybridRiveImageSpec>>(value);
-  }
-  inline bool has_value_std__optional_std__shared_ptr_HybridRiveImageSpec__(const std::optional<std::shared_ptr<HybridRiveImageSpec>>& optional) noexcept {
-    return optional.has_value();
-  }
-  inline std::shared_ptr<HybridRiveImageSpec> get_std__optional_std__shared_ptr_HybridRiveImageSpec__(const std::optional<std::shared_ptr<HybridRiveImageSpec>>& optional) noexcept {
-    return optional.value();
-  }
-  
-  // pragma MARK: std::optional<RiveAssetType>
-  /**
-   * Specialized version of `std::optional<RiveAssetType>`.
-   */
-  using std__optional_RiveAssetType_ = std::optional<RiveAssetType>;
-  inline std::optional<RiveAssetType> create_std__optional_RiveAssetType_(const RiveAssetType& value) noexcept {
-    return std::optional<RiveAssetType>(value);
-  }
-  inline bool has_value_std__optional_RiveAssetType_(const std::optional<RiveAssetType>& optional) noexcept {
-    return optional.has_value();
-  }
-  inline RiveAssetType get_std__optional_RiveAssetType_(const std::optional<RiveAssetType>& optional) noexcept {
-    return optional.value();
-  }
-  
-  // pragma MARK: std::unordered_map<std::string, ResolvedReferencedAsset>
-  /**
-   * Specialized version of `std::unordered_map<std::string, ResolvedReferencedAsset>`.
-   */
-  using std__unordered_map_std__string__ResolvedReferencedAsset_ = std::unordered_map<std::string, ResolvedReferencedAsset>;
-  inline std::unordered_map<std::string, ResolvedReferencedAsset> create_std__unordered_map_std__string__ResolvedReferencedAsset_(size_t size) noexcept {
-    std::unordered_map<std::string, ResolvedReferencedAsset> map;
-    map.reserve(size);
-    return map;
-  }
-  inline std::vector<std::string> get_std__unordered_map_std__string__ResolvedReferencedAsset__keys(const std__unordered_map_std__string__ResolvedReferencedAsset_& map) noexcept {
-    std::vector<std::string> keys;
-    keys.reserve(map.size());
-    for (const auto& entry : map) {
-      keys.push_back(entry.first);
-    }
-    return keys;
-  }
-  inline ResolvedReferencedAsset get_std__unordered_map_std__string__ResolvedReferencedAsset__value(const std__unordered_map_std__string__ResolvedReferencedAsset_& map, const std::string& key) noexcept {
-    return map.find(key)->second;
-  }
-  inline void emplace_std__unordered_map_std__string__ResolvedReferencedAsset_(std__unordered_map_std__string__ResolvedReferencedAsset_& map, const std::string& key, const ResolvedReferencedAsset& value) noexcept {
-    map.emplace(key, value);
-  }
-  
-  // pragma MARK: std::optional<std::unordered_map<std::string, ResolvedReferencedAsset>>
-  /**
-   * Specialized version of `std::optional<std::unordered_map<std::string, ResolvedReferencedAsset>>`.
-   */
-  using std__optional_std__unordered_map_std__string__ResolvedReferencedAsset__ = std::optional<std::unordered_map<std::string, ResolvedReferencedAsset>>;
-  inline std::optional<std::unordered_map<std::string, ResolvedReferencedAsset>> create_std__optional_std__unordered_map_std__string__ResolvedReferencedAsset__(const std::unordered_map<std::string, ResolvedReferencedAsset>& value) noexcept {
-    return std::optional<std::unordered_map<std::string, ResolvedReferencedAsset>>(value);
-  }
-  inline bool has_value_std__optional_std__unordered_map_std__string__ResolvedReferencedAsset__(const std::optional<std::unordered_map<std::string, ResolvedReferencedAsset>>& optional) noexcept {
-    return optional.has_value();
-  }
-  inline std::unordered_map<std::string, ResolvedReferencedAsset> get_std__optional_std__unordered_map_std__string__ResolvedReferencedAsset__(const std::optional<std::unordered_map<std::string, ResolvedReferencedAsset>>& optional) noexcept {
-    return optional.value();
-  }
-  
   // pragma MARK: std::shared_ptr<Promise<double>>
   /**
    * Specialized version of `std::shared_ptr<Promise<double>>`.
@@ -559,6 +559,15 @@ namespace margelo::nitro::rive::bridge::swift {
     return Result<std::optional<std::shared_ptr<HybridViewModelSpec>>>::withError(error);
   }
   
+  // pragma MARK: Result<void>
+  using Result_void_ = Result<void>;
+  inline Result_void_ create_Result_void_() noexcept {
+    return Result<void>::withValue();
+  }
+  inline Result_void_ create_Result_void_(const std::exception_ptr& error) noexcept {
+    return Result<void>::withError(error);
+  }
+  
   // pragma MARK: Result<std::shared_ptr<Promise<std::vector<std::string>>>>
   using Result_std__shared_ptr_Promise_std__vector_std__string____ = Result<std::shared_ptr<Promise<std::vector<std::string>>>>;
   inline Result_std__shared_ptr_Promise_std__vector_std__string____ create_Result_std__shared_ptr_Promise_std__vector_std__string____(const std::shared_ptr<Promise<std::vector<std::string>>>& value) noexcept {
@@ -575,15 +584,6 @@ namespace margelo::nitro::rive::bridge::swift {
   }
   inline Result_std__shared_ptr_Promise_std__optional_std__shared_ptr_HybridViewModelSpec_____ create_Result_std__shared_ptr_Promise_std__optional_std__shared_ptr_HybridViewModelSpec_____(const std::exception_ptr& error) noexcept {
     return Result<std::shared_ptr<Promise<std::optional<std::shared_ptr<HybridViewModelSpec>>>>>::withError(error);
-  }
-  
-  // pragma MARK: Result<void>
-  using Result_void_ = Result<void>;
-  inline Result_void_ create_Result_void_() noexcept {
-    return Result<void>::withValue();
-  }
-  inline Result_void_ create_Result_void_(const std::exception_ptr& error) noexcept {
-    return Result<void>::withError(error);
   }
   
   // pragma MARK: Result<std::shared_ptr<Promise<double>>>

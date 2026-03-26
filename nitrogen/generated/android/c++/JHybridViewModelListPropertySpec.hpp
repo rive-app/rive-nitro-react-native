@@ -56,8 +56,8 @@ namespace margelo::nitro::rive {
 
   public:
     // Methods
-    std::shared_ptr<Promise<double>> getLengthAsync() override;
     std::optional<std::shared_ptr<HybridViewModelInstanceSpec>> getInstanceAt(double index) override;
+    std::shared_ptr<Promise<double>> getLengthAsync() override;
     std::shared_ptr<Promise<std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>>> getInstanceAtAsync(double index) override;
     void addInstance(const std::shared_ptr<HybridViewModelInstanceSpec>& instance) override;
     bool addInstanceAt(const std::shared_ptr<HybridViewModelInstanceSpec>& instance, double index) override;

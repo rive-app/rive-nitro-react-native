@@ -60,11 +60,12 @@ namespace margelo::nitro::rive {
     std::shared_ptr<Promise<double>> getInstanceCountAsync() override;
     std::optional<std::shared_ptr<HybridViewModelInstanceSpec>> createInstanceByIndex(double index) override;
     std::optional<std::shared_ptr<HybridViewModelInstanceSpec>> createInstanceByName(const std::string& name) override;
-    std::shared_ptr<Promise<std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>>> createInstanceByNameAsync(const std::string& name) override;
     std::optional<std::shared_ptr<HybridViewModelInstanceSpec>> createDefaultInstance() override;
-    std::shared_ptr<Promise<std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>>> createDefaultInstanceAsync() override;
     std::optional<std::shared_ptr<HybridViewModelInstanceSpec>> createInstance() override;
+    std::shared_ptr<Promise<std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>>> createInstanceByNameAsync(const std::string& name) override;
+    std::shared_ptr<Promise<std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>>> createDefaultInstanceAsync() override;
     std::shared_ptr<Promise<std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>>> createBlankInstanceAsync() override;
+    std::shared_ptr<Promise<std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>>> createInstanceAsync() override;
 
   private:
     jni::global_ref<JHybridViewModelSpec::JavaPart> _javaPart;

@@ -133,25 +133,6 @@ open class HybridViewModelListPropertySpec_cxx : HybridViewModelPropertySpec_cxx
 
   // Methods
   @inline(__always)
-  public final func getLengthAsync() -> bridge.Result_std__shared_ptr_Promise_double___ {
-    do {
-      let __result = try self.__implementation.getLengthAsync()
-      let __resultCpp = { () -> bridge.std__shared_ptr_Promise_double__ in
-        let __promise = bridge.create_std__shared_ptr_Promise_double__()
-        let __promiseHolder = bridge.wrap_std__shared_ptr_Promise_double__(__promise)
-        __result
-          .then({ __result in __promiseHolder.resolve(__result) })
-          .catch({ __error in __promiseHolder.reject(__error.toCpp()) })
-        return __promise
-      }()
-      return bridge.create_Result_std__shared_ptr_Promise_double___(__resultCpp)
-    } catch (let __error) {
-      let __exceptionPtr = __error.toCpp()
-      return bridge.create_Result_std__shared_ptr_Promise_double___(__exceptionPtr)
-    }
-  }
-  
-  @inline(__always)
   public final func getInstanceAt(index: Double) -> bridge.Result_std__optional_std__shared_ptr_HybridViewModelInstanceSpec___ {
     do {
       let __result = try self.__implementation.getInstanceAt(index: index)
@@ -169,6 +150,25 @@ open class HybridViewModelListPropertySpec_cxx : HybridViewModelPropertySpec_cxx
     } catch (let __error) {
       let __exceptionPtr = __error.toCpp()
       return bridge.create_Result_std__optional_std__shared_ptr_HybridViewModelInstanceSpec___(__exceptionPtr)
+    }
+  }
+  
+  @inline(__always)
+  public final func getLengthAsync() -> bridge.Result_std__shared_ptr_Promise_double___ {
+    do {
+      let __result = try self.__implementation.getLengthAsync()
+      let __resultCpp = { () -> bridge.std__shared_ptr_Promise_double__ in
+        let __promise = bridge.create_std__shared_ptr_Promise_double__()
+        let __promiseHolder = bridge.wrap_std__shared_ptr_Promise_double__(__promise)
+        __result
+          .then({ __result in __promiseHolder.resolve(__result) })
+          .catch({ __error in __promiseHolder.reject(__error.toCpp()) })
+        return __promise
+      }()
+      return bridge.create_Result_std__shared_ptr_Promise_double___(__resultCpp)
+    } catch (let __error) {
+      let __exceptionPtr = __error.toCpp()
+      return bridge.create_Result_std__shared_ptr_Promise_double___(__exceptionPtr)
     }
   }
   
