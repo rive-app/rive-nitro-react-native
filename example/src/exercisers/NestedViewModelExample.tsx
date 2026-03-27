@@ -38,7 +38,12 @@ export default function NestedViewModelExample() {
 }
 
 function WithViewModelSetup({ file }: { file: RiveFile }) {
-  const instance = useViewModelInstance(file);
+  const { instance, error } = useViewModelInstance(file);
+
+  if (error) {
+    console.error(error.message);
+    return <Text style={{ color: 'red' }}>{error.message}</Text>;
+  }
 
   if (!instance) {
     return <ActivityIndicator size="large" color="#0000ff" />;

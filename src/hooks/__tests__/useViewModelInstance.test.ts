@@ -86,7 +86,8 @@ describe('useViewModelInstance - RiveFile with instanceName parameter', () => {
       'PersonInstance'
     );
     expect(defaultViewModel.createDefaultInstance).not.toHaveBeenCalled();
-    expect(result.current).toBe(personInstance);
+    expect(result.current.instance).toBe(personInstance);
+    expect(result.current.error).toBeNull();
   });
 
   it('should use defaultArtboardViewModel and createDefaultInstance when no instanceName provided', () => {
@@ -102,10 +103,11 @@ describe('useViewModelInstance - RiveFile with instanceName parameter', () => {
     );
     expect(defaultViewModel.createDefaultInstance).toHaveBeenCalled();
     expect(defaultViewModel.createInstanceByName).not.toHaveBeenCalled();
-    expect(result.current).toBe(defaultInstance);
+    expect(result.current.instance).toBe(defaultInstance);
+    expect(result.current.error).toBeNull();
   });
 
-  it('should return null when instance name not found and required is false', () => {
+  it('should return error when instance name not found and required is false', () => {
     const defaultViewModel = createMockViewModel({
       namedInstances: {},
     });
@@ -116,7 +118,9 @@ describe('useViewModelInstance - RiveFile with instanceName parameter', () => {
       useViewModelInstance(mockRiveFile, { instanceName: 'NonExistent' })
     );
 
-    expect(result.current).toBeNull();
+    expect(result.current.instance).toBeNull();
+    expect(result.current.error).toBeInstanceOf(Error);
+    expect(result.current.error?.message).toContain('NonExistent');
   });
 
   it('should throw when instance name not found and required is true', () => {
@@ -136,7 +140,7 @@ describe('useViewModelInstance - RiveFile with instanceName parameter', () => {
     ).toThrow("ViewModel instance 'NonExistent' not found");
   });
 
-  it('should return null when artboardName not found and required is false', () => {
+  it('should return error when artboardName not found and required is false', () => {
     const mockRiveFile = createMockRiveFile({
       artboardViewModels: {},
     });
@@ -145,7 +149,9 @@ describe('useViewModelInstance - RiveFile with instanceName parameter', () => {
       useViewModelInstance(mockRiveFile, { artboardName: 'MissingArtboard' })
     );
 
-    expect(result.current).toBeNull();
+    expect(result.current.instance).toBeNull();
+    expect(result.current.error).toBeInstanceOf(Error);
+    expect(result.current.error?.message).toContain('MissingArtboard');
   });
 
   it('should throw when artboardName not found and required is true', () => {
@@ -203,7 +209,8 @@ describe('useViewModelInstance - RiveFile with artboardName parameter', () => {
       name: 'MainArtboard',
     });
     expect(mainArtboardViewModel.createDefaultInstance).toHaveBeenCalled();
-    expect(result.current).toBe(mainInstance);
+    expect(result.current.instance).toBe(mainInstance);
+    expect(result.current.error).toBeNull();
   });
 
   it('should combine artboardName and instanceName to get specific instance from specific artboard', () => {
@@ -230,7 +237,8 @@ describe('useViewModelInstance - RiveFile with artboardName parameter', () => {
     expect(mainArtboardViewModel.createInstanceByName).toHaveBeenCalledWith(
       'SpecificInstance'
     );
-    expect(result.current).toBe(specificInstance);
+    expect(result.current.instance).toBe(specificInstance);
+    expect(result.current.error).toBeNull();
   });
 });
 
@@ -252,10 +260,11 @@ describe('useViewModelInstance - RiveFile with viewModelName parameter', () => {
     expect(mockRiveFile.viewModelByName).toHaveBeenCalledWith('Settings');
     expect(mockRiveFile.defaultArtboardViewModel).not.toHaveBeenCalled();
     expect(settingsViewModel.createDefaultInstance).toHaveBeenCalled();
-    expect(result.current).toBe(settingsInstance);
+    expect(result.current.instance).toBe(settingsInstance);
+    expect(result.current.error).toBeNull();
   });
 
-  it('should return null when viewModelName not found and required is false', () => {
+  it('should return error when viewModelName not found and required is false', () => {
     const mockRiveFile = createMockRiveFile({
       namedViewModels: {},
     });
@@ -264,7 +273,9 @@ describe('useViewModelInstance - RiveFile with viewModelName parameter', () => {
       useViewModelInstance(mockRiveFile, { viewModelName: 'NonExistent' })
     );
 
-    expect(result.current).toBeNull();
+    expect(result.current.instance).toBeNull();
+    expect(result.current.error).toBeInstanceOf(Error);
+    expect(result.current.error?.message).toContain('NonExistent');
   });
 
   it('should throw when viewModelName not found and required is true', () => {
@@ -303,7 +314,8 @@ describe('useViewModelInstance - RiveFile with viewModelName parameter', () => {
     expect(settingsViewModel.createInstanceByName).toHaveBeenCalledWith(
       'UserSettings'
     );
-    expect(result.current).toBe(specificInstance);
+    expect(result.current.instance).toBe(specificInstance);
+    expect(result.current.error).toBeNull();
   });
 });
 
@@ -320,7 +332,8 @@ describe('useViewModelInstance - ViewModel source', () => {
 
     expect(mockViewModel.createInstanceByName).toHaveBeenCalledWith('Gordon');
     expect(mockViewModel.createDefaultInstance).not.toHaveBeenCalled();
-    expect(result.current).toBe(namedInstance);
+    expect(result.current.instance).toBe(namedInstance);
+    expect(result.current.error).toBeNull();
   });
 
   it('should use createInstance when useNew is true', () => {
@@ -334,7 +347,8 @@ describe('useViewModelInstance - ViewModel source', () => {
 
     expect(mockViewModel.createInstance).toHaveBeenCalled();
     expect(mockViewModel.createDefaultInstance).not.toHaveBeenCalled();
-    expect(result.current).toBe(newInstance);
+    expect(result.current.instance).toBe(newInstance);
+    expect(result.current.error).toBeNull();
   });
 
   it('should use createDefaultInstance when no params provided', () => {
@@ -344,6 +358,16 @@ describe('useViewModelInstance - ViewModel source', () => {
     const { result } = renderHook(() => useViewModelInstance(mockViewModel));
 
     expect(mockViewModel.createDefaultInstance).toHaveBeenCalled();
-    expect(result.current).toBe(defaultInstance);
+    expect(result.current.instance).toBe(defaultInstance);
+    expect(result.current.error).toBeNull();
+  });
+});
+
+describe('useViewModelInstance - null source', () => {
+  it('should return undefined instance when source is null', () => {
+    const { result } = renderHook(() => useViewModelInstance(null));
+
+    expect(result.current.instance).toBeUndefined();
+    expect(result.current.error).toBeNull();
   });
 });

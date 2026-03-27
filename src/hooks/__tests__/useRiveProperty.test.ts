@@ -17,6 +17,9 @@ describe('useRiveProperty', () => {
       },
       addListener: jest.fn((callback: (value: string) => void) => {
         listener = callback;
+        // Emit the current value immediately on subscribe, matching native behaviour:
+        // iOS legacy emits synchronously; experimental backend emits via valueStream.
+        callback(currentValue);
         return () => {
           listener = null;
         };
@@ -36,7 +39,9 @@ describe('useRiveProperty', () => {
     } as unknown as ViewModelInstance;
   };
 
-  it('should return initial value from property on first render', () => {
+  it('should return initial value delivered via listener (not from a sync read)', () => {
+    // Hooks always start undefined; the listener emits the current value immediately
+    // on subscribe (synchronously for legacy, via stream for experimental).
     const mockProperty = createMockProperty('Tea');
     const mockInstance = createMockViewModelInstance({
       'favDrink/type': mockProperty,
@@ -48,6 +53,8 @@ describe('useRiveProperty', () => {
       })
     );
 
+    // The mock's addListener emits 'Tea' synchronously — React batches it with the
+    // effect, so the value is available after renderHook (which wraps in act()).
     const [value] = result.current;
     expect(value).toBe('Tea');
   });

@@ -39,7 +39,12 @@ export default function MenuListExample() {
 }
 
 function MenuList({ file }: { file: RiveFile }) {
-  const instance = useViewModelInstance(file, { required: true });
+  const { instance, error } = useViewModelInstance(file);
+
+  if (error) {
+    console.error(error.message);
+    return <Text style={{ color: 'red' }}>{error.message}</Text>;
+  }
 
   if (!instance) {
     return <ActivityIndicator size="large" color="#007AFF" />;

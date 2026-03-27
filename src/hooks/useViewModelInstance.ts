@@ -97,7 +97,7 @@ function isRiveFile(source: ViewModelSource | null): source is RiveFile {
 }
 
 type CreateInstanceResult = {
-  instance: ViewModelInstance | null;
+  instance: ViewModelInstance | null | undefined;
   needsDispose: boolean;
   error?: string;
 };
@@ -110,7 +110,7 @@ function createInstance(
   useNew: boolean
 ): CreateInstanceResult {
   if (!source) {
-    return { instance: null, needsDispose: false };
+    return { instance: undefined, needsDispose: false };
   }
 
   if (isRiveViewRef(source)) {
@@ -176,110 +176,128 @@ function createInstance(
   return { instance: vmi ?? null, needsDispose: true };
 }
 
+export type UseViewModelInstanceResult =
+  | { instance: ViewModelInstance; error: null }
+  | { instance: null; error: Error }
+  | { instance: null; error: null }
+  | { instance: undefined; error: null };
+
 /**
  * Hook for getting a ViewModelInstance from a RiveFile, ViewModel, or RiveViewRef.
  *
  * @param source - The RiveFile, ViewModel, or RiveViewRef to get an instance from
  * @param params - Configuration for which instance to retrieve
- * @returns The ViewModelInstance or null if not found
+ * @returns An object with `instance` and `error` (discriminated union)
  *
  * @example
  * ```tsx
  * // From RiveFile (get default instance)
  * const { riveFile } = useRiveFile(require('./animation.riv'));
- * const instance = useViewModelInstance(riveFile);
+ * const { instance } = useViewModelInstance(riveFile);
  * ```
  *
  * @example
  * ```tsx
  * // From RiveFile with specific instance name
  * const { riveFile } = useRiveFile(require('./animation.riv'));
- * const instance = useViewModelInstance(riveFile, { instanceName: 'PersonInstance' });
+ * const { instance } = useViewModelInstance(riveFile, { instanceName: 'PersonInstance' });
  * ```
  *
  * @example
  * ```tsx
  * // From RiveFile with specific ViewModel name
  * const { riveFile } = useRiveFile(require('./animation.riv'));
- * const instance = useViewModelInstance(riveFile, { viewModelName: 'Settings' });
+ * const { instance } = useViewModelInstance(riveFile, { viewModelName: 'Settings' });
  * ```
  *
  * @example
  * ```tsx
  * // From RiveFile with specific artboard
  * const { riveFile } = useRiveFile(require('./animation.riv'));
- * const instance = useViewModelInstance(riveFile, { artboardName: 'MainArtboard' });
+ * const { instance } = useViewModelInstance(riveFile, { artboardName: 'MainArtboard' });
  * ```
  *
  * @example
  * ```tsx
  * // From RiveViewRef (get auto-bound instance)
  * const { riveViewRef, setHybridRef } = useRive();
- * const instance = useViewModelInstance(riveViewRef);
+ * const { instance } = useViewModelInstance(riveViewRef);
  * ```
  *
  * @example
  * ```tsx
  * // From ViewModel
  * const viewModel = file.viewModelByName('main');
- * const instance = useViewModelInstance(viewModel);
+ * const { instance } = useViewModelInstance(viewModel);
  * ```
  *
  * @example
  * ```tsx
  * // Create a new blank instance from ViewModel
  * const viewModel = file.viewModelByName('TodoItem');
- * const newInstance = useViewModelInstance(viewModel, { useNew: true });
+ * const { instance } = useViewModelInstance(viewModel, { useNew: true });
  * ```
  *
  * @example
  * ```tsx
  * // With required: true (throws if null, use with Error Boundary)
- * const instance = useViewModelInstance(riveFile, { required: true });
+ * const { instance } = useViewModelInstance(riveFile, { required: true });
  * // instance is guaranteed to be non-null here
  * ```
  *
  * @example
  * ```tsx
  * // With onInit to set initial values synchronously
- * const instance = useViewModelInstance(riveFile, {
+ * const { instance } = useViewModelInstance(riveFile, {
  *   onInit: (vmi) => {
  *     vmi.numberProperty('count').set(initialCount);
  *     vmi.stringProperty('name').set(userName);
  *   }
  * });
- * // Values are already set here
+ * ```
+ *
+ * @example
+ * ```tsx
+ * // Error handling
+ * const { instance, error } = useViewModelInstance(riveFile, { viewModelName: 'Missing' });
+ * if (error) console.error(error.message);
  * ```
  */
 // RiveFile overloads
 export function useViewModelInstance(
   source: RiveFile,
   params: UseViewModelInstanceFileParams & { required: true }
-): ViewModelInstance;
+):
+  | { instance: ViewModelInstance; error: null }
+  | { instance: undefined; error: null };
 export function useViewModelInstance(
   source: RiveFile | null,
   params?: UseViewModelInstanceFileParams
-): ViewModelInstance | null;
+): UseViewModelInstanceResult;
 
 // ViewModel overloads
 export function useViewModelInstance(
   source: ViewModel,
   params: UseViewModelInstanceViewModelParams & { required: true }
-): ViewModelInstance;
+):
+  | { instance: ViewModelInstance; error: null }
+  | { instance: undefined; error: null };
 export function useViewModelInstance(
   source: ViewModel | null,
   params?: UseViewModelInstanceViewModelParams
-): ViewModelInstance | null;
+): UseViewModelInstanceResult;
 
 // RiveViewRef overloads
 export function useViewModelInstance(
   source: RiveViewRef,
   params: UseViewModelInstanceRefParams & { required: true }
-): ViewModelInstance;
+):
+  | { instance: ViewModelInstance; error: null }
+  | { instance: undefined; error: null };
 export function useViewModelInstance(
   source: RiveViewRef | null,
   params?: UseViewModelInstanceRefParams
-): ViewModelInstance | null;
+): UseViewModelInstanceResult;
 
 // Implementation
 export function useViewModelInstance(
@@ -288,7 +306,7 @@ export function useViewModelInstance(
     | UseViewModelInstanceFileParams
     | UseViewModelInstanceViewModelParams
     | UseViewModelInstanceRefParams
-): ViewModelInstance | null {
+): UseViewModelInstanceResult {
   const fileInstanceName = (params as { instanceName?: string } | undefined)
     ?.instanceName;
   const viewModelInstanceName = (params as { name?: string } | undefined)?.name;
@@ -304,7 +322,7 @@ export function useViewModelInstance(
   const onInit = params?.onInit;
 
   const prevInstanceRef = useRef<{
-    instance: ViewModelInstance | null;
+    instance: ViewModelInstance | null | undefined;
     needsDispose: boolean;
   } | null>(null);
 
@@ -347,6 +365,8 @@ export function useViewModelInstance(
     };
   }, []);
 
+  const error = result.error ? new Error(result.error) : null;
+
   if (required && result.instance === null) {
     throw new Error(
       result.error
@@ -356,5 +376,11 @@ export function useViewModelInstance(
     );
   }
 
-  return result.instance;
+  if (result.instance) {
+    return { instance: result.instance, error: null };
+  }
+  if (result.instance === undefined) {
+    return { instance: undefined, error: null };
+  }
+  return { instance: null, error };
 }

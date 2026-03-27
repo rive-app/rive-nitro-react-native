@@ -78,7 +78,7 @@ function ArtboardSwapper({
   mainFile: RiveFile;
   assetsFile: RiveFile;
 }) {
-  const instance = useViewModelInstance(mainFile);
+  const { instance, error } = useViewModelInstance(mainFile);
   const [currentArtboard, setCurrentArtboard] = useState<string>('Dragon');
   const initializedRef = useRef(false);
 
@@ -97,6 +97,11 @@ function ArtboardSwapper({
       }
     }
   }, [instance, assetsFile]);
+
+  if (error) {
+    console.error(error.message);
+    return <Text style={{ color: 'red' }}>{error.message}</Text>;
+  }
 
   // Map display names to actual artboard names
   const artboardOptions = [

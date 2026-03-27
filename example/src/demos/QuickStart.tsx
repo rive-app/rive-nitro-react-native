@@ -23,7 +23,7 @@ export default function QuickStart() {
     require('../../assets/rive/quick_start.riv')
   );
   const { riveViewRef, setHybridRef } = useRive();
-  const viewModelInstance = useViewModelInstance(riveFile, {
+  const { instance: viewModelInstance } = useViewModelInstance(riveFile, {
     onInit: (vmi) => vmi.numberProperty('health')!.set(9),
   });
 

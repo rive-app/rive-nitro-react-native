@@ -26,14 +26,15 @@ type UseRiveNumberContext = {
   value: number | undefined;
   error: Error | null;
   setValue: ((v: number) => void) | null;
+  renderValues: (number | undefined)[];
 };
 
 function createUseRiveNumberContext(): UseRiveNumberContext {
-  return { value: undefined, error: null, setValue: null };
+  return { value: undefined, error: null, setValue: null, renderValues: [] };
 }
 
 type UseViewModelInstanceContext = {
-  instance: ViewModelInstance | null;
+  instance: ViewModelInstance | null | undefined;
   age: number | undefined;
 };
 
@@ -49,6 +50,8 @@ function UseRiveNumberTestComponent({
   context: UseRiveNumberContext;
 }) {
   const { value, setValue, error } = useRiveNumber('health', instance);
+
+  context.renderValues.push(value);
 
   useEffect(() => {
     context.value = value;
@@ -70,7 +73,7 @@ function UseViewModelInstanceTestComponent({
   file: RiveFile;
   context: UseViewModelInstanceContext;
 }) {
-  const instance = useViewModelInstance(file);
+  const { instance } = useViewModelInstance(file);
 
   const age = useMemo(() => {
     if (!instance) return undefined;
@@ -96,6 +99,34 @@ function expectDefined<T>(value: T): asserts value is NonNullable<T> {
 }
 
 describe('useRiveNumber Hook', () => {
+  it('starts undefined then receives value via listener', async () => {
+    const file = await RiveFileFactory.fromSource(QUICK_START, undefined);
+    const vm = file.defaultArtboardViewModel();
+    expectDefined(vm);
+    const instance = vm.createDefaultInstance();
+    expectDefined(instance);
+
+    const context = createUseRiveNumberContext();
+
+    await render(
+      <UseRiveNumberTestComponent instance={instance} context={context} />
+    );
+
+    // First render must produce undefined — not a synchronous read from property.value
+    expect(context.renderValues[0]).toBeUndefined();
+
+    // After listener fires, value should be a number
+    await waitFor(
+      () => {
+        expect(context.error).toBeNull();
+        expect(typeof context.value).toBe('number');
+      },
+      { timeout: 5000 }
+    );
+
+    cleanup();
+  });
+
   it('returns value from number property', async () => {
     const file = await RiveFileFactory.fromSource(QUICK_START, undefined);
     const vm = file.defaultArtboardViewModel();
