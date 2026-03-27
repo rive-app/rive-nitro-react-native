@@ -60,12 +60,12 @@ function VMIFromViewModel({
   useNew?: boolean;
   ctx: VMICtx;
 }) {
-  const instance = useViewModelInstance(viewModel, {
+  const { instance } = useViewModelInstance(viewModel, {
     ...(name != null && { name }),
     ...(useNew != null && { useNew }),
   });
   useEffect(() => {
-    ctx.instance = instance;
+    ctx.instance = instance ?? null;
     ctx.instanceName = instance?.instanceName;
     ctx.renderCount++;
   }, [ctx, instance]);
@@ -98,14 +98,14 @@ function VMIWithParamChange({
   ctx: ParamChangeCtx;
 }) {
   const [vmName, setVmName] = useState(initialViewModelName);
-  const instance = useViewModelInstance(file, { viewModelName: vmName });
+  const { instance } = useViewModelInstance(file, { viewModelName: vmName });
 
   const setViewModelName = useCallback((name: string) => {
     setVmName(name);
   }, []);
 
   useEffect(() => {
-    ctx.instance = instance;
+    ctx.instance = instance ?? null;
     ctx.id = instance?.stringProperty('_id')?.value;
     ctx.setViewModelName = setViewModelName;
   }, [ctx, instance, setViewModelName]);
@@ -139,7 +139,7 @@ function VMIWithOnInitAndChange({
   ctx: OnInitChangeCtx;
 }) {
   const [vmName, setVmName] = useState(initialViewModelName);
-  const instance = useViewModelInstance(file, {
+  const { instance } = useViewModelInstance(file, {
     viewModelName: vmName,
     onInit: (vmi) => {
       ctx.initCalls.push({
@@ -154,7 +154,7 @@ function VMIWithOnInitAndChange({
   }, []);
 
   useEffect(() => {
-    ctx.instance = instance;
+    ctx.instance = instance ?? null;
     ctx.setViewModelName = setViewModelName;
   }, [ctx, instance, setViewModelName]);
 
