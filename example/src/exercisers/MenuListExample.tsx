@@ -7,10 +7,11 @@ import {
   TextInput,
   ScrollView,
 } from 'react-native';
-import { useRef, useMemo } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import {
   Fit,
   RiveView,
+  type ViewModel,
   type ViewModelInstance,
   type RiveFile,
   useRiveFile,
@@ -79,15 +80,27 @@ function MenuListContent({
     error,
   } = useRiveList('menu', instance);
 
-  const listItemViewModel = useMemo(
-    () => file.viewModelByName('listItem'),
-    [file]
-  );
+  const [listItemViewModel, setListItemViewModel] = useState<
+    ViewModel | undefined
+  >(undefined);
 
-  const addNewMenuItem = (label: string) => {
+  useEffect(() => {
+    let cancelled = false;
+    file
+      .viewModelByNameAsync('listItem')
+      .then((vm) => {
+        if (!cancelled) setListItemViewModel(vm ?? undefined);
+      })
+      .catch((e) => console.error('Failed to load listItem view model:', e));
+    return () => {
+      cancelled = true;
+    };
+  }, [file]);
+
+  const addNewMenuItem = async (label: string) => {
     if (!listItemViewModel) return;
 
-    const newMenuItemVmi = listItemViewModel.createInstance();
+    const newMenuItemVmi = await listItemViewModel.createBlankInstanceAsync();
     if (!newMenuItemVmi) return;
 
     const labelProperty = newMenuItemVmi.stringProperty('label');
@@ -96,9 +109,9 @@ function MenuListContent({
 
     if (!labelProperty || !hoverColorProperty || !fontIconProperty) return;
 
-    labelProperty.value = label;
-    hoverColorProperty.value = 0xff323232;
-    fontIconProperty.value = '';
+    labelProperty.set(label);
+    hoverColorProperty.set(0xff323232);
+    fontIconProperty.set('');
 
     lastAdded.current = newMenuItemVmi;
     addInstance(newMenuItemVmi);
@@ -126,7 +139,7 @@ function MenuListContent({
     const menuItemLabel = menuItem.stringProperty('label');
     if (!menuItemLabel) return;
 
-    menuItemLabel.value = label;
+    menuItemLabel.set(label);
   };
 
   return (

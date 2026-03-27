@@ -6,12 +6,13 @@ import {
   Button,
   TextInput,
 } from 'react-native';
-import { useMemo, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import {
   Fit,
   RiveView,
   useRiveFile,
   useRiveString,
+  useViewModelInstance,
   type ViewModelInstance,
   type RiveFile,
   type RiveViewRef,
@@ -37,20 +38,10 @@ export default function NestedViewModelExample() {
 }
 
 function WithViewModelSetup({ file }: { file: RiveFile }) {
-  const viewModel = useMemo(() => file.defaultArtboardViewModel(), [file]);
-  const instance = useMemo(
-    () => viewModel?.createDefaultInstance(),
-    [viewModel]
-  );
+  const instance = useViewModelInstance(file);
 
-  if (!instance || !viewModel) {
-    return (
-      <Text style={styles.errorText}>
-        {!viewModel
-          ? 'No view model found'
-          : 'Failed to create view model instance'}
-      </Text>
-    );
+  if (!instance) {
+    return <ActivityIndicator size="large" color="#0000ff" />;
   }
 
   return <ReplaceViewModelTest instance={instance} file={file} />;
@@ -88,11 +79,10 @@ function ReplaceViewModelTest({
 
   const addLog = (msg: string) => setLog((prev) => [...prev, msg]);
 
-  const handleReplace = () => {
-    // Get vm2's instance
-    const vm2Instance = instance.viewModel('vm2');
+  const handleReplace = async () => {
+    const vm2Instance = await instance.viewModelAsync('vm2');
     if (!vm2Instance) {
-      addLog('❌ viewModel("vm2") returned undefined');
+      addLog('❌ viewModelAsync("vm2") returned undefined');
       return;
     }
     addLog(`✅ Got vm2 instance: ${vm2Instance.instanceName}`);

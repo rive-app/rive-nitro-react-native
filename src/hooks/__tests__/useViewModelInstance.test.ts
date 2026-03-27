@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-deprecated */
 import { renderHook } from '@testing-library/react-native';
 import { useViewModelInstance } from '../useViewModelInstance';
 import type { RiveFile } from '../../specs/RiveFile.nitro';

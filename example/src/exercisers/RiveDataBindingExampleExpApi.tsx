@@ -1,10 +1,9 @@
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Fit,
   RiveView,
   useRiveNumber,
-  useViewModelInstance,
   type ViewModelInstance,
   type RiveFile,
   useRiveString,
@@ -35,7 +34,48 @@ export default function WithRiveFile() {
 }
 
 function WithViewModelSetup({ file }: { file: RiveFile }) {
-  const instance = useViewModelInstance(file);
+  const [instance, setInstance] = useState<ViewModelInstance | undefined>(
+    undefined
+  );
+  const [setupError, setSetupError] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function setup() {
+      const viewModel = await file.defaultArtboardViewModelAsync();
+      if (cancelled) return;
+
+      if (!viewModel) {
+        setSetupError('No view model found');
+        return;
+      }
+
+      const vmi = await viewModel.createDefaultInstanceAsync();
+      if (cancelled) return;
+
+      if (!vmi) {
+        setSetupError('Failed to create view model instance');
+        return;
+      }
+
+      setInstance(vmi);
+    }
+
+    setup().catch((e: unknown) => {
+      if (!cancelled) {
+        setSetupError(String(e));
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [file]);
+
+  if (setupError) {
+    return <Text style={styles.errorText}>{setupError}</Text>;
+  }
 
   if (!instance) {
     return <ActivityIndicator size="large" color="#0000ff" />;
@@ -96,9 +136,9 @@ function DataBindingExample({
 }
 
 WithRiveFile.metadata = {
-  name: 'Data Binding',
+  name: 'Data Binding (expapi)',
   description:
-    'Shows data binding with view models, including number, string, color properties and triggers',
+    'Same as Data Binding but uses the async API (defaultArtboardViewModelAsync / createDefaultInstanceAsync)',
 } satisfies Metadata;
 
 const styles = StyleSheet.create({

@@ -1,3 +1,5 @@
+// TODO: migrate createInstance/createInstanceByName/etc to async equivalents
+/* eslint-disable @typescript-eslint/no-deprecated */
 import { useMemo, useEffect, useRef } from 'react';
 import type { ViewModel, ViewModelInstance } from '../specs/ViewModel.nitro';
 import type { RiveFile } from '../specs/RiveFile.nitro';

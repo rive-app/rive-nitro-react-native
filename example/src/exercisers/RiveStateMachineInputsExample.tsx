@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-deprecated */
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { useEffect } from 'react';
 import { Fit, RiveView, useRive, useRiveFile } from '@rive-app/react-native';

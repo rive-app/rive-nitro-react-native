@@ -24,7 +24,7 @@ export default function QuickStart() {
   );
   const { riveViewRef, setHybridRef } = useRive();
   const viewModelInstance = useViewModelInstance(riveFile, {
-    onInit: (vmi) => (vmi.numberProperty('health')!.value = 9),
+    onInit: (vmi) => vmi.numberProperty('health')!.set(9),
   });
 
   const { setValue: setHealth } = useRiveNumber('health', viewModelInstance);
