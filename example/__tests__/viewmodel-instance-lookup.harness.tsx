@@ -116,12 +116,12 @@ function VMIByViewModelName({
   instanceName?: string;
   ctx: VMIContext;
 }) {
-  const instance = useViewModelInstance(file, {
+  const { instance } = useViewModelInstance(file, {
     viewModelName,
     ...(instanceName != null && { instanceName }),
   });
   useEffect(() => {
-    ctx.instance = instance;
+    ctx.instance = instance ?? null;
     ctx.instanceName = instance?.instanceName;
     ctx.id = instance?.stringProperty('_id')?.value;
   }, [ctx, instance]);
@@ -141,9 +141,9 @@ function VMIByArtboardName({
   artboardName: string;
   ctx: VMIContext;
 }) {
-  const instance = useViewModelInstance(file, { artboardName });
+  const { instance } = useViewModelInstance(file, { artboardName });
   useEffect(() => {
-    ctx.instance = instance;
+    ctx.instance = instance ?? null;
     ctx.instanceName = instance?.instanceName;
     ctx.id = instance?.stringProperty('_id')?.value;
   }, [ctx, instance]);
@@ -155,9 +155,9 @@ function VMIByArtboardName({
 }
 
 function VMIDefault({ file, ctx }: { file: RiveFile; ctx: VMIContext }) {
-  const instance = useViewModelInstance(file);
+  const { instance } = useViewModelInstance(file);
   useEffect(() => {
-    ctx.instance = instance;
+    ctx.instance = instance ?? null;
     ctx.instanceName = instance?.instanceName;
     ctx.id = instance?.stringProperty('_id')?.value;
   }, [ctx, instance]);
@@ -179,7 +179,7 @@ function VMIWithOnInit({
   ctx: VMIContext;
   initResult: { called: boolean; id: string | undefined };
 }) {
-  const instance = useViewModelInstance(file, {
+  const { instance } = useViewModelInstance(file, {
     viewModelName,
     onInit: (vmi) => {
       initResult.called = true;
@@ -187,7 +187,7 @@ function VMIWithOnInit({
     },
   });
   useEffect(() => {
-    ctx.instance = instance;
+    ctx.instance = instance ?? null;
     ctx.instanceName = instance?.instanceName;
     ctx.id = instance?.stringProperty('_id')?.value;
   }, [ctx, instance]);
