@@ -10,7 +10,6 @@ import com.margelo.nitro.core.Promise
 class HybridViewModelStringProperty(private val viewModelString: ViewModelStringProperty) :
   HybridViewModelStringPropertySpec(),
   BaseHybridViewModelProperty<String> by BaseHybridViewModelPropertyImpl() {
-
   override var value: String
     get() = viewModelString.value
     set(value) {
