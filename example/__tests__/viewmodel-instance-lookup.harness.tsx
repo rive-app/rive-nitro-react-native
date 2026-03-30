@@ -17,7 +17,8 @@ import {
 import type { ViewModelInstance } from '@rive-app/react-native';
 
 // rive-android experimental SDK doesn't expose the ViewModel name from
-// DefaultForArtboard yet (pending rive-app/rive-android#443).
+// DefaultForArtboard yet — pending rive-app/rive-android#443 which adds
+// getDefaultViewModelInfo(). Once merged and released, remove these guards.
 const isAndroidExperimental =
   Platform.OS === 'android' && RiveFileFactory.getBackend() === 'experimental';
 
