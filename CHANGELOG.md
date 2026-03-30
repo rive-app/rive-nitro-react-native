@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.4](https://github.com/rive-app/rive-nitro-react-native/compare/v0.3.3...v0.3.4) (2026-03-30)
+
+
+### Features
+
+* add getPropertyCountAsync and getInstanceCountAsync and deprecate propertyCount and instanceCount ([#198](https://github.com/rive-app/rive-nitro-react-native/issues/198)) ([6244b2e](https://github.com/rive-app/rive-nitro-react-native/commit/6244b2ee306875a3608a3cfeacfc65ce405666a7))
+
 ## [0.3.3](https://github.com/rive-app/rive-nitro-react-native/compare/v0.3.2...v0.3.3) (2026-03-26)
 
 
