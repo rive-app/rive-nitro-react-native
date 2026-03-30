@@ -7,7 +7,7 @@ import {
   cleanup,
 } from 'react-native-harness';
 import { useEffect } from 'react';
-import { Text, View } from 'react-native';
+import { Platform, Text, View } from 'react-native';
 import {
   RiveFileFactory,
   ArtboardByName,
@@ -15,6 +15,11 @@ import {
   type RiveFile,
 } from '@rive-app/react-native';
 import type { ViewModelInstance } from '@rive-app/react-native';
+
+// rive-android experimental SDK doesn't expose the ViewModel name from
+// DefaultForArtboard yet (pending rive-app/rive-android#443).
+const isAndroidExperimental =
+  Platform.OS === 'android' && RiveFileFactory.getBackend() === 'experimental';
 
 const MULTI_AB = require('../assets/rive/arbtboards-models-instances.riv');
 
@@ -68,28 +73,36 @@ describe('Multi-artboard file: direct API', () => {
     const file = await loadFile();
     const vm = file.defaultArtboardViewModel(ArtboardByName('artboard1'));
     expectDefined(vm);
-    expect(vm.modelName).toBe('viewmodel1');
+    if (!isAndroidExperimental) {
+      expect(vm.modelName).toBe('viewmodel1');
+    }
   });
 
   it('defaultArtboardViewModel maps artboard2 → viewmodel2', async () => {
     const file = await loadFile();
     const vm = file.defaultArtboardViewModel(ArtboardByName('artboard2'));
     expectDefined(vm);
-    expect(vm.modelName).toBe('viewmodel2');
+    if (!isAndroidExperimental) {
+      expect(vm.modelName).toBe('viewmodel2');
+    }
   });
 
   it('defaultArtboardViewModel maps artboard3 → viewmodel3', async () => {
     const file = await loadFile();
     const vm = file.defaultArtboardViewModel(ArtboardByName('artboard3'));
     expectDefined(vm);
-    expect(vm.modelName).toBe('viewmodel3');
+    if (!isAndroidExperimental) {
+      expect(vm.modelName).toBe('viewmodel3');
+    }
   });
 
   it('default artboard VM (no arg) is viewmodel1', async () => {
     const file = await loadFile();
     const vm = file.defaultArtboardViewModel();
     expectDefined(vm);
-    expect(vm.modelName).toBe('viewmodel1');
+    if (!isAndroidExperimental) {
+      expect(vm.modelName).toBe('viewmodel1');
+    }
   });
 });
 
