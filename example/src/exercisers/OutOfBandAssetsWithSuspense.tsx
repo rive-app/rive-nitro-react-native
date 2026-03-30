@@ -102,10 +102,10 @@ function RiveContent({ imageUrl }: { imageUrl: ImageURLS }) {
 
   if (isLoading) {
     return <ActivityIndicator />;
-  } else if (error != null) {
+  } else if (error) {
     return (
       <View style={styles.safeAreaViewContainer}>
-        <Text>Error loading Rive file: {error}</Text>
+        <Text>Error loading Rive file: {error.message}</Text>
       </View>
     );
   }

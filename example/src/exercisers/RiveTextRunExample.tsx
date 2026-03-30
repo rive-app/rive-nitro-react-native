@@ -35,7 +35,7 @@ export default function TextRunExample() {
         {isLoading ? (
           <ActivityIndicator size="large" color="#0000ff" />
         ) : error ? (
-          <Text style={styles.errorText}>{error}</Text>
+          <Text style={styles.errorText}>{error.message}</Text>
         ) : riveFile ? (
           <RiveView
             style={styles.rive}

@@ -35,7 +35,7 @@ describe('useRiveFile - input stability', () => {
     );
 
     await waitFor(() => {
-      expect((result.current as any).isLoading).toBe(false);
+      expect(result.current.isLoading).toBe(false);
     });
 
     const callCountBefore = (global as any).mockRiveFileFactory.fromURL.mock
@@ -120,7 +120,7 @@ describe('useRiveFile - updateReferencedAssets', () => {
     );
 
     await waitFor(() => {
-      expect((result.current as any).isLoading).toBe(false);
+      expect(result.current.isLoading).toBe(false);
     });
 
     expect(mockRiveFile.updateReferencedAssets).not.toHaveBeenCalled();
@@ -155,7 +155,7 @@ describe('useRiveFile - updateReferencedAssets', () => {
     );
 
     await waitFor(() => {
-      expect((result.current as any).isLoading).toBe(false);
+      expect(result.current.isLoading).toBe(false);
     });
 
     const updatedAssets = {
@@ -189,7 +189,7 @@ describe('useRiveFile - updateReferencedAssets', () => {
     );
 
     await waitFor(() => {
-      expect((result.current as any).isLoading).toBe(false);
+      expect(result.current.isLoading).toBe(false);
     });
 
     rerender({ referencedAssets: assets });

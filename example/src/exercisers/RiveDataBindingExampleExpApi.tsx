@@ -26,7 +26,9 @@ export default function WithRiveFile() {
         ) : riveFile ? (
           <WithViewModelSetup file={riveFile} />
         ) : (
-          <Text style={styles.errorText}>{error || 'Unexpected error'}</Text>
+          <Text style={styles.errorText}>
+            {error?.message || 'Unexpected error'}
+          </Text>
         )}
       </View>
     </View>

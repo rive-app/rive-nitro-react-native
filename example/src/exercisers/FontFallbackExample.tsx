@@ -258,7 +258,7 @@ function MountedView({ text }: { text: string }) {
     // https://rive.app/marketplace/26480-49641-simple-test-text-property/
     require('../../assets/rive/font_fallback.riv')
   );
-  const instance = useViewModelInstance(riveFile ?? null);
+  const { instance } = useViewModelInstance(riveFile);
 
   const { setValue: setRiveText, error: textError } = useRiveString(
     TEXT_PROPERTY,
@@ -285,7 +285,9 @@ function MountedView({ text }: { text: string }) {
   if (error || !riveFile) {
     return (
       <View style={styles.riveContainer}>
-        <Text style={styles.errorText}>{error || 'Failed to load file'}</Text>
+        <Text style={styles.errorText}>
+          {error?.message || 'Failed to load file'}
+        </Text>
       </View>
     );
   }

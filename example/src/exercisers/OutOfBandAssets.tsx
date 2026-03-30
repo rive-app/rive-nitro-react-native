@@ -49,10 +49,10 @@ export default function OutOfBandAssetsExample() {
 
   if (isLoading) {
     return <ActivityIndicator />;
-  } else if (error != null) {
+  } else if (error) {
     return (
       <View style={styles.safeAreaViewContainer}>
-        <Text>Error loading Rive file</Text>
+        <Text>Error loading Rive file: {error.message}</Text>
       </View>
     );
   }

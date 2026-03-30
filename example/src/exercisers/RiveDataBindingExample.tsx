@@ -27,7 +27,9 @@ export default function WithRiveFile() {
         ) : riveFile ? (
           <WithViewModelSetup file={riveFile} />
         ) : (
-          <Text style={styles.errorText}>{error || 'Unexpected error'}</Text>
+          <Text style={styles.errorText}>
+            {error?.message || 'Unexpected error'}
+          </Text>
         )}
       </View>
     </View>
@@ -35,7 +37,12 @@ export default function WithRiveFile() {
 }
 
 function WithViewModelSetup({ file }: { file: RiveFile }) {
-  const instance = useViewModelInstance(file);
+  const { instance, error } = useViewModelInstance(file);
+
+  if (error) {
+    console.error(error.message);
+    return <Text style={{ color: 'red' }}>{error.message}</Text>;
+  }
 
   if (!instance) {
     return <ActivityIndicator size="large" color="#0000ff" />;
