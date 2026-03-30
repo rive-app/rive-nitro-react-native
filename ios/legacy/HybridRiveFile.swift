@@ -30,45 +30,27 @@ class HybridRiveFile: HybridRiveFileSpec, RiveViewSource {
       view.refreshAfterAssetChange()
     }
   }
-  
-  // Deprecated: Use getViewModelNamesAsync instead
+
   var viewModelCount: Double? {
     guard let count = riveFile?.viewModelCount else { return nil }
     return Double(count)
   }
 
-  func getViewModelNamesAsync() throws -> Promise<[String]> {
-    return Promise.async {
-      guard let count = self.riveFile?.viewModelCount else { return [] }
-      return (0..<count).compactMap { self.riveFile?.viewModel(at: UInt($0))?.name }
-    }
-  }
-
-  // Deprecated: Use getViewModelNamesAsync + viewModelByNameAsync instead
   func viewModelByIndex(index: Double) throws -> (any HybridViewModelSpec)? {
-    guard index >= 0, let vm = riveFile?.viewModel(at: UInt(index)) else { return nil }
+    guard index >= 0 else { return nil }
+    guard let vm = riveFile?.viewModel(at: UInt(index)) else { return nil }
     return HybridViewModel(viewModel: vm)
   }
 
-  // Deprecated: Use viewModelByNameAsync instead
   func viewModelByName(name: String) throws -> (any HybridViewModelSpec)? {
     guard let vm = riveFile?.viewModelNamed(name) else { return nil }
     return HybridViewModel(viewModel: vm)
   }
 
-  // validate is ignored on legacy backend — native viewModelNamed(name) already returns nil for unknown names
-  func viewModelByNameAsync(name: String, validate: Bool?) throws -> Promise<(any HybridViewModelSpec)?> {
-    return Promise.async {
-      guard let vm = self.riveFile?.viewModelNamed(name) else { return nil }
-      return HybridViewModel(viewModel: vm)
-    }
-  }
-
-  // Deprecated: Use defaultArtboardViewModelAsync instead
   func defaultArtboardViewModel(artboardBy: ArtboardBy?) throws -> (any HybridViewModelSpec)? {
     guard let file = riveFile else { return nil }
     let artboard: RiveArtboard?
-    
+
     if let artboardBy = artboardBy {
       switch artboardBy.type {
       case .index:
@@ -83,38 +65,18 @@ class HybridRiveFile: HybridRiveFileSpec, RiveViewSource {
     } else {
       artboard = try? file.artboard()
     }
-    
+
     guard let artboard = artboard,
           let vm = file.defaultViewModel(for: artboard) else { return nil }
     return HybridViewModel(viewModel: vm)
   }
 
-  func defaultArtboardViewModelAsync(artboardBy: ArtboardBy?) throws -> Promise<(any HybridViewModelSpec)?> {
-    return Promise.async {
-      try self.defaultArtboardViewModel(artboardBy: artboardBy)
-    }
-  }
-
-  // Deprecated: Use getArtboardCountAsync instead
   var artboardCount: Double {
     Double(riveFile?.artboardNames().count ?? 0)
   }
 
-  func getArtboardCountAsync() throws -> Promise<Double> {
-    return Promise.async {
-      Double(self.riveFile?.artboardNames().count ?? 0)
-    }
-  }
-
-  // Deprecated: Use getArtboardNamesAsync instead
   var artboardNames: [String] {
     riveFile?.artboardNames() ?? []
-  }
-
-  func getArtboardNamesAsync() throws -> Promise<[String]> {
-    return Promise.async {
-      self.riveFile?.artboardNames() ?? []
-    }
   }
 
   func getBindableArtboard(name: String) throws -> any HybridBindableArtboardSpec {
@@ -126,6 +88,36 @@ class HybridRiveFile: HybridRiveFileSpec, RiveViewSource {
       )
     }
     return HybridBindableArtboard(bindableArtboard: bindable)
+  }
+
+  func getViewModelNamesAsync() throws -> Promise<[String]> {
+    return Promise.async {
+      guard let file = self.riveFile else { return [] }
+      let count = file.viewModelCount
+      var names: [String] = []
+      for i in 0..<count {
+        if let vm = file.viewModel(at: UInt(i)) {
+          names.append(vm.name)
+        }
+      }
+      return names
+    }
+  }
+
+  func viewModelByNameAsync(name: String, validate: Bool?) throws -> Promise<(any HybridViewModelSpec)?> {
+    return Promise.async { try self.viewModelByName(name: name) }
+  }
+
+  func defaultArtboardViewModelAsync(artboardBy: ArtboardBy?) throws -> Promise<(any HybridViewModelSpec)?> {
+    return Promise.async { try self.defaultArtboardViewModel(artboardBy: artboardBy) }
+  }
+
+  func getArtboardCountAsync() throws -> Promise<Double> {
+    return Promise.async { self.artboardCount }
+  }
+
+  func getArtboardNamesAsync() throws -> Promise<[String]> {
+    return Promise.async { self.artboardNames }
   }
 
   func updateReferencedAssets(referencedAssets: ReferencedAssetsType) {
