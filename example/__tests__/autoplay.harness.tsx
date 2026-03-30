@@ -274,7 +274,8 @@ describe('autoPlay prop (issue #138)', () => {
 
 describe('Auto dataBind with no default ViewModel (issue #189)', () => {
   it('auto-binds default ViewModel when one exists', async () => {
-    // getViewModelInstance() not yet available on Android experimental
+    // getViewModelInstance() returns null on Android experimental — auto-bind
+    // doesn't expose the VMI handle to JS yet
     const isAndroidExperimental =
       Platform.OS === 'android' &&
       RiveFileFactory.getBackend() === 'experimental';
