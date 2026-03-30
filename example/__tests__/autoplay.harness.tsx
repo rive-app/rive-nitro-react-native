@@ -7,7 +7,7 @@ import {
   cleanup,
 } from 'react-native-harness';
 import { useEffect } from 'react';
-import { View } from 'react-native';
+import { Platform, View } from 'react-native';
 import {
   RiveView,
   RiveFileFactory,
@@ -274,6 +274,12 @@ describe('autoPlay prop (issue #138)', () => {
 
 describe('Auto dataBind with no default ViewModel (issue #189)', () => {
   it('auto-binds default ViewModel when one exists', async () => {
+    // getViewModelInstance() not yet available on Android experimental
+    const isAndroidExperimental =
+      Platform.OS === 'android' &&
+      RiveFileFactory.getBackend() === 'experimental';
+    if (isAndroidExperimental) return;
+
     const file = await RiveFileFactory.fromSource(BOUNCING_BALL, undefined);
 
     const context: TestContext = { ref: null, error: null };
