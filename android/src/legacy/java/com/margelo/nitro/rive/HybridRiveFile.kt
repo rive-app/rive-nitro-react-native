@@ -21,18 +21,9 @@ class HybridRiveFile : HybridRiveFileSpec() {
   private val weakViews = mutableListOf<WeakReference<HybridRiveView>>()
   private val scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 
-  // Deprecated: Use getViewModelNamesAsync instead
   override val viewModelCount: Double?
     get() = riveFile?.viewModelCount?.toDouble()
 
-  override fun getViewModelNamesAsync(): Promise<Array<String>> {
-    return Promise.async {
-      val count = riveFile?.viewModelCount ?: return@async emptyArray()
-      (0 until count).mapNotNull { riveFile?.getViewModelByIndex(it)?.name }.toTypedArray()
-    }
-  }
-
-  // Deprecated: Use getViewModelNamesAsync + viewModelByNameAsync instead
   override fun viewModelByIndex(index: Double): HybridViewModelSpec? {
     if (index < 0) return null
     return try {
@@ -43,7 +34,6 @@ class HybridRiveFile : HybridRiveFileSpec() {
     }
   }
 
-  // Deprecated: Use viewModelByNameAsync instead
   override fun viewModelByName(name: String): HybridViewModelSpec? {
     return try {
       val vm = riveFile?.getViewModelByName(name) ?: return null
@@ -53,15 +43,6 @@ class HybridRiveFile : HybridRiveFileSpec() {
     }
   }
 
-  // validate is ignored on legacy backend — native getViewModelByName(name) already returns null for unknown names
-  override fun viewModelByNameAsync(name: String, validate: Boolean?): Promise<HybridViewModelSpec?> {
-    return Promise.async {
-      val vm = riveFile?.getViewModelByName(name) ?: return@async null
-      HybridViewModel(vm)
-    }
-  }
-
-  // Deprecated: Use defaultArtboardViewModelAsync instead
   override fun defaultArtboardViewModel(artboardBy: ArtboardBy?): HybridViewModelSpec? {
     try {
       val artboard = when (artboardBy?.type) {
@@ -77,29 +58,11 @@ class HybridRiveFile : HybridRiveFileSpec() {
     }
   }
 
-  override fun defaultArtboardViewModelAsync(artboardBy: ArtboardBy?): Promise<HybridViewModelSpec?> {
-    return Promise.async { defaultArtboardViewModel(artboardBy) }
-  }
-
-  // Deprecated: Use getArtboardCountAsync instead
   override val artboardCount: Double
     get() = riveFile?.artboardNames?.size?.toDouble() ?: 0.0
 
-  override fun getArtboardCountAsync(): Promise<Double> {
-    return Promise.async {
-      riveFile?.artboardNames?.size?.toDouble() ?: 0.0
-    }
-  }
-
-  // Deprecated: Use getArtboardNamesAsync instead
   override val artboardNames: Array<String>
     get() = riveFile?.artboardNames?.toTypedArray() ?: emptyArray()
-
-  override fun getArtboardNamesAsync(): Promise<Array<String>> {
-    return Promise.async {
-      riveFile?.artboardNames?.toTypedArray() ?: emptyArray()
-    }
-  }
 
   override fun getBindableArtboard(name: String): HybridBindableArtboardSpec {
     val file = riveFile ?: throw IllegalStateException("RiveFile not loaded")
@@ -121,6 +84,38 @@ class HybridRiveFile : HybridRiveFileSpec() {
     for (weakView in weakViews) {
       weakView.get()?.refreshAfterAssetChange()
     }
+  }
+
+  override fun getViewModelNamesAsync(): Promise<Array<String>> {
+    return Promise.async {
+      val file = riveFile ?: return@async emptyArray()
+      val count = file.viewModelCount
+      val names = mutableListOf<String>()
+      for (i in 0 until count) {
+        try {
+          val vm = file.getViewModelByIndex(i)
+          names.add(vm.name)
+        } catch (_: Exception) {
+        }
+      }
+      names.toTypedArray()
+    }
+  }
+
+  override fun viewModelByNameAsync(name: String, validate: Boolean?): Promise<HybridViewModelSpec?> {
+    return Promise.async { viewModelByName(name) }
+  }
+
+  override fun defaultArtboardViewModelAsync(artboardBy: ArtboardBy?): Promise<HybridViewModelSpec?> {
+    return Promise.async { defaultArtboardViewModel(artboardBy) }
+  }
+
+  override fun getArtboardCountAsync(): Promise<Double> {
+    return Promise.async { artboardCount }
+  }
+
+  override fun getArtboardNamesAsync(): Promise<Array<String>> {
+    return Promise.async { artboardNames }
   }
 
   override fun updateReferencedAssets(referencedAssets: ReferencedAssetsType) {
