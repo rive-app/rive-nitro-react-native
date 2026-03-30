@@ -53,6 +53,14 @@ class HybridViewModel(private val viewModel: ViewModel) : HybridViewModelSpec() 
     }
   }
 
+  override fun getPropertyCountAsync(): Promise<Double> {
+    return Promise.async { propertyCount }
+  }
+
+  override fun getInstanceCountAsync(): Promise<Double> {
+    return Promise.async { instanceCount }
+  }
+
   override fun createInstanceByNameAsync(name: String): Promise<HybridViewModelInstanceSpec?> {
     return Promise.async { createInstanceByName(name) }
   }

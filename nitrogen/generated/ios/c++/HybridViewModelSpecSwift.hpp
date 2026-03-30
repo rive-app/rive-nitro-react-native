@@ -16,10 +16,10 @@ namespace RNRive { class HybridViewModelSpec_cxx; }
 namespace margelo::nitro::rive { class HybridViewModelInstanceSpec; }
 
 #include <string>
+#include <NitroModules/Promise.hpp>
 #include <memory>
 #include "HybridViewModelInstanceSpec.hpp"
 #include <optional>
-#include <NitroModules/Promise.hpp>
 
 #include "RNRive-Swift-Cxx-Umbrella.hpp"
 
@@ -80,6 +80,22 @@ namespace margelo::nitro::rive {
 
   public:
     // Methods
+    inline std::shared_ptr<Promise<double>> getPropertyCountAsync() override {
+      auto __result = _swiftPart.getPropertyCountAsync();
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline std::shared_ptr<Promise<double>> getInstanceCountAsync() override {
+      auto __result = _swiftPart.getInstanceCountAsync();
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
     inline std::optional<std::shared_ptr<HybridViewModelInstanceSpec>> createInstanceByIndex(double index) override {
       auto __result = _swiftPart.createInstanceByIndex(std::forward<decltype(index)>(index));
       if (__result.hasError()) [[unlikely]] {

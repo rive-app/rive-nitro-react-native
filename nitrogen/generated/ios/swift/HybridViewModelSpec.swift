@@ -15,6 +15,8 @@ public protocol HybridViewModelSpec_protocol: HybridObject {
   var modelName: String { get }
 
   // Methods
+  func getPropertyCountAsync() throws -> Promise<Double>
+  func getInstanceCountAsync() throws -> Promise<Double>
   func createInstanceByIndex(index: Double) throws -> (any HybridViewModelInstanceSpec)?
   func createInstanceByName(name: String) throws -> (any HybridViewModelInstanceSpec)?
   func createDefaultInstance() throws -> (any HybridViewModelInstanceSpec)?

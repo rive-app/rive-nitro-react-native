@@ -41,6 +41,14 @@ class HybridViewModel: HybridViewModelSpec {
     return HybridViewModelInstance(viewModelInstance: vmi)
   }
 
+  func getPropertyCountAsync() throws -> Promise<Double> {
+    return Promise.async { self.propertyCount }
+  }
+
+  func getInstanceCountAsync() throws -> Promise<Double> {
+    return Promise.async { self.instanceCount }
+  }
+
   func createInstanceByNameAsync(name: String) throws -> Promise<(any HybridViewModelInstanceSpec)?> {
     return Promise.async { try self.createInstanceByName(name: name) }
   }

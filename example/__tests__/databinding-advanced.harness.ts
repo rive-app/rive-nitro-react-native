@@ -73,9 +73,8 @@ describe('ViewModel Properties Metadata', () => {
     const file = await loadFile(DATABINDING);
     const vm = file.viewModelByName('Person');
     expectDefined(vm);
-    // Legacy returns 8/2, experimental returns 0/0
-    expect(vm.propertyCount).toBeGreaterThanOrEqual(0);
-    expect(vm.instanceCount).toBeGreaterThanOrEqual(0);
+    expect(await vm.getPropertyCountAsync()).toBeGreaterThanOrEqual(0);
+    expect(await vm.getInstanceCountAsync()).toBeGreaterThanOrEqual(0);
   });
 });
 
