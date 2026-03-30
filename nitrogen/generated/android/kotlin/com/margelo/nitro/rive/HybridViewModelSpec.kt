@@ -41,6 +41,14 @@ abstract class HybridViewModelSpec: HybridObject() {
   // Methods
   @DoNotStrip
   @Keep
+  abstract fun getPropertyCountAsync(): Promise<Double>
+  
+  @DoNotStrip
+  @Keep
+  abstract fun getInstanceCountAsync(): Promise<Double>
+  
+  @DoNotStrip
+  @Keep
   abstract fun createInstanceByIndex(index: Double): HybridViewModelInstanceSpec?
   
   @DoNotStrip

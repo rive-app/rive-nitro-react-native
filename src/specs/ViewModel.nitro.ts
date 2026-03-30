@@ -8,12 +8,16 @@ import type { BindableArtboard } from './BindableArtboard.nitro';
  */
 export interface ViewModel
   extends HybridObject<{ ios: 'swift'; android: 'kotlin' }> {
-  /** The number of properties in the view model */
+  /** @deprecated Use getPropertyCountAsync instead */
   readonly propertyCount: number;
-  /** The number of view model instances in the view model */
+  /** @deprecated Use getInstanceCountAsync instead */
   readonly instanceCount: number;
   /** The name of the view model */
   readonly modelName: string;
+  /** The number of properties in the view model */
+  getPropertyCountAsync(): Promise<number>;
+  /** The number of view model instances in the view model */
+  getInstanceCountAsync(): Promise<number>;
   /** @deprecated Use createInstanceByNameAsync instead */
   createInstanceByIndex(index: number): ViewModelInstance | undefined;
   /** @deprecated Use createInstanceByNameAsync instead */
