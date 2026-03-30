@@ -36,6 +36,8 @@ describe('ViewModel', () => {
     expect(vm1).toBeDefined();
     expect(vm2).toBeDefined();
 
+    // Experimental backends don't validate nested VM paths — the SDK returns
+    // a handle even for nonexistent paths instead of null.
     const isExperimental = RiveFileFactory.getBackend() === 'experimental';
     if (!isExperimental) {
       expect(await instance?.viewModelAsync('nonexistent')).toBeUndefined();
@@ -47,7 +49,7 @@ describe('ViewModel', () => {
   });
 
   it('replaceViewModel() replaces and shares state', async () => {
-    // replaceViewModel state propagation not yet working on Android experimental
+    // replaceViewModel is a no-op on Android experimental (not yet implemented)
     const isAndroidExperimental =
       Platform.OS === 'android' &&
       RiveFileFactory.getBackend() === 'experimental';
