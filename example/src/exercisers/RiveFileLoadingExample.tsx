@@ -77,7 +77,7 @@ const CustomRiveView = ({ loadingMethod, title }: CustomRiveViewProps) => {
       {!input || isLoading ? (
         <ActivityIndicator style={styles.rive} size="large" color="#0000ff" />
       ) : error ? (
-        <Text style={styles.errorText}>{error}</Text>
+        <Text style={styles.errorText}>{error.message}</Text>
       ) : riveFile ? (
         <RiveView
           style={styles.rive}

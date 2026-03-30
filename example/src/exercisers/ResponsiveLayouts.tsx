@@ -46,7 +46,7 @@ export default function ResponsiveLayoutsExample() {
       {isLoading ? (
         <ActivityIndicator size="large" color="#0000ff" />
       ) : error ? (
-        <Text style={styles.errorText}>{error}</Text>
+        <Text style={styles.errorText}>{error.message}</Text>
       ) : riveFile ? (
         <RiveView
           hybridRef={{ f: (ref) => (riveRef.current = ref) }}

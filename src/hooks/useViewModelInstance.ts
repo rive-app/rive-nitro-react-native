@@ -88,12 +88,16 @@ export type UseViewModelInstanceRefParams = UseViewModelInstanceBaseParams;
 
 type ViewModelSource = ViewModel | RiveFile | RiveViewRef;
 
-function isRiveViewRef(source: ViewModelSource | null): source is RiveViewRef {
-  return source !== null && 'getViewModelInstance' in source;
+function isRiveViewRef(
+  source: ViewModelSource | null | undefined
+): source is RiveViewRef {
+  return source != null && 'getViewModelInstance' in source;
 }
 
-function isRiveFile(source: ViewModelSource | null): source is RiveFile {
-  return source !== null && 'defaultArtboardViewModel' in source;
+function isRiveFile(
+  source: ViewModelSource | null | undefined
+): source is RiveFile {
+  return source != null && 'defaultArtboardViewModel' in source;
 }
 
 type CreateInstanceResult = {
@@ -103,7 +107,7 @@ type CreateInstanceResult = {
 };
 
 function createInstance(
-  source: ViewModelSource | null,
+  source: ViewModelSource | null | undefined,
   instanceName: string | undefined,
   artboardName: string | undefined,
   viewModelName: string | undefined,
@@ -271,7 +275,7 @@ export function useViewModelInstance(
   | { instance: ViewModelInstance; error: null }
   | { instance: undefined; error: null };
 export function useViewModelInstance(
-  source: RiveFile | null,
+  source: RiveFile | null | undefined,
   params?: UseViewModelInstanceFileParams
 ): UseViewModelInstanceResult;
 
@@ -283,7 +287,7 @@ export function useViewModelInstance(
   | { instance: ViewModelInstance; error: null }
   | { instance: undefined; error: null };
 export function useViewModelInstance(
-  source: ViewModel | null,
+  source: ViewModel | null | undefined,
   params?: UseViewModelInstanceViewModelParams
 ): UseViewModelInstanceResult;
 
@@ -295,13 +299,13 @@ export function useViewModelInstance(
   | { instance: ViewModelInstance; error: null }
   | { instance: undefined; error: null };
 export function useViewModelInstance(
-  source: RiveViewRef | null,
+  source: RiveViewRef | null | undefined,
   params?: UseViewModelInstanceRefParams
 ): UseViewModelInstanceResult;
 
 // Implementation
 export function useViewModelInstance(
-  source: ViewModelSource | null,
+  source: ViewModelSource | null | undefined,
   params?:
     | UseViewModelInstanceFileParams
     | UseViewModelInstanceViewModelParams
@@ -365,7 +369,10 @@ export function useViewModelInstance(
     };
   }, []);
 
-  const error = result.error ? new Error(result.error) : null;
+  const error = useMemo(
+    () => (result.error ? new Error(result.error) : null),
+    [result.error]
+  );
 
   if (required && result.instance === null) {
     throw new Error(

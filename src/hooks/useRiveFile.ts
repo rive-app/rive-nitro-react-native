@@ -87,17 +87,17 @@ function transformFilesHandledMapping(
   return transformedMapping;
 }
 
-type RiveFileHookResult =
+export type UseRiveFileResult =
   | { riveFile: RiveFile; isLoading: false; error: null }
-  | { riveFile: null; isLoading: true; error: null }
-  | { riveFile: null; isLoading: false; error: string };
+  | { riveFile: null; isLoading: false; error: Error }
+  | { riveFile: undefined; isLoading: true; error: null };
 
 export function useRiveFile(
   input: RiveFileInput | undefined,
   options: UseRiveFileOptions = {}
-): RiveFileHookResult {
-  const [result, setResult] = useState<RiveFileHookResult>({
-    riveFile: null,
+): UseRiveFileResult {
+  const [result, setResult] = useState<UseRiveFileResult>({
+    riveFile: undefined,
     isLoading: true,
     error: null,
   });
@@ -124,7 +124,7 @@ export function useRiveFile(
           setResult({
             riveFile: null,
             isLoading: false,
-            error: 'No Rive file input provided.',
+            error: new Error('No Rive file input provided.'),
           });
           return;
         }
@@ -162,9 +162,7 @@ export function useRiveFile(
           riveFile: null,
           isLoading: false,
           error:
-            err instanceof Error
-              ? err.message || 'Unknown error'
-              : 'Failed to load Rive file',
+            err instanceof Error ? err : new Error('Failed to load Rive file'),
         });
       }
     };
@@ -192,5 +190,5 @@ export function useRiveFile(
     riveFile: result.riveFile,
     isLoading: result.isLoading,
     error: result.error,
-  } as RiveFileHookResult;
+  } as UseRiveFileResult;
 }

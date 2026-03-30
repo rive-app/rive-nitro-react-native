@@ -62,7 +62,7 @@ export default function DataBindingArtboardsExample() {
     return (
       <View style={styles.container}>
         <Text style={styles.errorText}>
-          {error || 'Failed to load Rive files'}
+          {error?.message || 'Failed to load Rive files'}
         </Text>
       </View>
     );
