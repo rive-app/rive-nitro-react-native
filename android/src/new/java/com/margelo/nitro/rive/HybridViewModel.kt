@@ -56,6 +56,16 @@ class HybridViewModel(
   override val modelName: String
     get() = viewModelName ?: throw UnsupportedOperationException(NO_NAME_ERROR)
 
+  override fun getPropertyCountAsync(): Promise<Double> {
+    val name = viewModelName ?: return Promise.rejected(UnsupportedOperationException(NO_NAME_ERROR))
+    return Promise.async { riveFile.getViewModelProperties(name).size.toDouble() }
+  }
+
+  override fun getInstanceCountAsync(): Promise<Double> {
+    val name = viewModelName ?: return Promise.rejected(UnsupportedOperationException(NO_NAME_ERROR))
+    return Promise.async { riveFile.getViewModelInstanceNames(name).size.toDouble() }
+  }
+
   // Deprecated: Use createInstanceByNameAsync instead
   override fun createInstanceByIndex(index: Double): HybridViewModelInstanceSpec? {
     val name = viewModelName ?: throw UnsupportedOperationException(NO_NAME_ERROR)
