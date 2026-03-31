@@ -120,7 +120,7 @@ android {
       if (useLegacy) {
         java.srcDirs += ["src/legacy/java"]
       } else {
-        java.srcDirs += ["src/experimental/java"]
+        java.srcDirs += ["src/new/java"]
       }
     }
   }
