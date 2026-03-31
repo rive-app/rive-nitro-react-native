@@ -32,6 +32,18 @@ class HybridViewModel: HybridViewModelSpec {
     }
   }
 
+  func getPropertyCountAsync() throws -> Promise<Double> {
+    return Promise.async {
+      Double(try await self.file.getProperties(of: self.vmName).count)
+    }
+  }
+
+  func getInstanceCountAsync() throws -> Promise<Double> {
+    return Promise.async {
+      Double(try await self.file.getInstanceNames(of: self.vmName).count)
+    }
+  }
+
   private func createDefaultInstanceImpl() async throws -> (any HybridViewModelInstanceSpec)? {
     let vmi = try await self.file.createViewModelInstance(.viewModelDefault(from: .name(self.vmName)))
     return HybridViewModelInstance(viewModelInstance: vmi, worker: self.worker)
