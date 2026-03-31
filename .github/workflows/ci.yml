@@ -475,7 +475,7 @@ jobs:
           echo "=== Checking logcat for errors ==="
           adb logcat -d -s ReactNativeJS:* RiveExample:* RNRive:* | tail -200 || echo "No logs found"
 
-  test-harness-ios-experimental:
+  test-harness-ios-legacy:
     runs-on: macos-latest
     timeout-minutes: 90
     env:
@@ -498,16 +498,16 @@ jobs:
         with:
           path: |
             **/ios/Pods
-          key: ${{ runner.os }}-experimental-cocoapods-${{ hashFiles('example/ios/Podfile', '*.podspec') }}
+          key: ${{ runner.os }}-legacy-cocoapods-${{ hashFiles('example/ios/Podfile', '*.podspec') }}
           restore-keys: |
-            ${{ runner.os }}-experimental-cocoapods-
+            ${{ runner.os }}-legacy-cocoapods-
 
       - name: Install cocoapods
         if: steps.cocoapods-cache.outputs.cache-hit != 'true'
         run: |
           cd example
           bundle install
-          USE_RIVE_NEW_API=1 bundle exec pod install --project-directory=ios
+          USE_RIVE_LEGACY=1 bundle exec pod install --project-directory=ios
 
       - name: Save cocoapods cache
         if: steps.cocoapods-cache.outputs.cache-hit != 'true'
@@ -522,9 +522,9 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: example/ios/build
-          key: ${{ runner.os }}-ios-experimental-build-${{ env.XCODE_VERSION }}-${{ hashFiles('yarn.lock', 'ios/**', 'nitrogen/generated/ios/**', '*.podspec', 'example/ios/Podfile', 'example/ios/RiveExample/**') }}
+          key: ${{ runner.os }}-ios-legacy-build-${{ env.XCODE_VERSION }}-${{ hashFiles('yarn.lock', 'ios/**', 'nitrogen/generated/ios/**', '*.podspec', 'example/ios/Podfile', 'example/ios/RiveExample/**') }}
           restore-keys: |
-            ${{ runner.os }}-ios-experimental-build-${{ env.XCODE_VERSION }}-
+            ${{ runner.os }}-ios-legacy-build-${{ env.XCODE_VERSION }}-
 
       - name: Build iOS app
         if: steps.ios-build-cache.outputs.cache-hit != 'true'
@@ -582,7 +582,7 @@ jobs:
           echo "=== Checking simulator logs for errors ==="
           xcrun simctl spawn booted log show --predicate 'processImagePath CONTAINS "RiveExample"' --last 5m --style compact 2>&1 | tail -200 || echo "No logs found"
 
-  test-harness-android-experimental:
+  test-harness-android-legacy:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
@@ -604,9 +604,9 @@ jobs:
         run: |
           /bin/bash -c "yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses > /dev/null"
 
-      - name: Enable experimental Rive API
+      - name: Enable legacy Rive backend
         run: |
-          sed -i 's/USE_RIVE_NEW_API=false/USE_RIVE_NEW_API=true/' example/android/gradle.properties
+          echo "USE_RIVE_LEGACY=true" >> example/android/gradle.properties
 
       - name: Cache Gradle
         uses: actions/cache@v4
@@ -614,9 +614,9 @@ jobs:
           path: |
             ~/.gradle/wrapper
             ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-harness-experimental-${{ hashFiles('example/android/gradle/wrapper/gradle-wrapper.properties') }}
+          key: ${{ runner.os }}-gradle-harness-legacy-${{ hashFiles('example/android/gradle/wrapper/gradle-wrapper.properties') }}
           restore-keys: |
-            ${{ runner.os }}-gradle-harness-experimental-
+            ${{ runner.os }}-gradle-harness-legacy-
             ${{ runner.os }}-gradle-harness-
             ${{ runner.os }}-gradle-
 
@@ -625,9 +625,9 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: example/android/app/build
-          key: ${{ runner.os }}-android-experimental-build-${{ env.ANDROID_API_LEVEL }}-${{ hashFiles('yarn.lock', 'android/**', 'nitrogen/generated/android/**', 'example/android/app/build.gradle', 'example/android/gradle.properties') }}
+          key: ${{ runner.os }}-android-legacy-build-${{ env.ANDROID_API_LEVEL }}-${{ hashFiles('yarn.lock', 'android/**', 'nitrogen/generated/android/**', 'example/android/app/build.gradle', 'example/android/gradle.properties') }}
           restore-keys: |
-            ${{ runner.os }}-android-experimental-build-${{ env.ANDROID_API_LEVEL }}-
+            ${{ runner.os }}-android-legacy-build-${{ env.ANDROID_API_LEVEL }}-
 
       - name: Build Android app
         if: steps.android-build-cache.outputs.cache-hit != 'true'
