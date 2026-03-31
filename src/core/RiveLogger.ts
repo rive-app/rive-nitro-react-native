@@ -16,7 +16,7 @@ function defaultHandler(level: string, tag: string, message: string) {
 
 _logger.setHandler(defaultHandler);
 
-export namespace RiveLogger {
+export namespace RiveLog {
   export function setHandler(
     handler: (level: string, tag: string, message: string) => void
   ) {
