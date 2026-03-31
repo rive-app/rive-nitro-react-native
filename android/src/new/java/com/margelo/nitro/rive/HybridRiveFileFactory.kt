@@ -46,10 +46,18 @@ object RiveErrorLogger : app.rive.RiveLog.Logger {
     synchronized(reportedErrors) { reportedErrors.clear() }
   }
 
-  override fun v(tag: String, msg: () -> String) { RiveLog.d(tag, msg()) }
-  override fun d(tag: String, msg: () -> String) { RiveLog.d(tag, msg()) }
-  override fun i(tag: String, msg: () -> String) { RiveLog.i(tag, msg()) }
-  override fun w(tag: String, msg: () -> String) { RiveLog.w(tag, msg()) }
+  override fun v(tag: String, msg: () -> String) {
+    RiveLog.d(tag, msg())
+  }
+  override fun d(tag: String, msg: () -> String) {
+    RiveLog.d(tag, msg())
+  }
+  override fun i(tag: String, msg: () -> String) {
+    RiveLog.i(tag, msg())
+  }
+  override fun w(tag: String, msg: () -> String) {
+    RiveLog.w(tag, msg())
+  }
   override fun e(tag: String, t: Throwable?, msg: () -> String) {
     val message = msg()
     RiveLog.e(tag, message)

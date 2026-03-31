@@ -1,6 +1,5 @@
 package com.margelo.nitro.rive
 
-import android.util.Log
 import androidx.annotation.Keep
 import app.rive.Artboard
 import app.rive.RiveFile

@@ -5,8 +5,10 @@ object DeprecationWarning {
 
     fun warn(method: String, replacement: String) {
         if (warned.add(method)) {
-            RiveLog.w("Deprecation",
-                "'$method' is deprecated and blocks the calling thread. Use '$replacement' instead.")
+            RiveLog.w(
+                "Deprecation",
+                "'$method' is deprecated and blocks the calling thread. Use '$replacement' instead.",
+            )
         }
     }
 }

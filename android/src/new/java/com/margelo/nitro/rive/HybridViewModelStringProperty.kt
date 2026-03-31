@@ -1,6 +1,5 @@
 package com.margelo.nitro.rive
 
-import android.util.Log
 import androidx.annotation.Keep
 import app.rive.ViewModelInstance
 import com.facebook.proguard.annotations.DoNotStrip
