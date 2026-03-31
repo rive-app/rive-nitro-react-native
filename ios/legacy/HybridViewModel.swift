@@ -14,29 +14,19 @@ class HybridViewModel: HybridViewModelSpec {
   
   var modelName: String { viewModel?.name ?? "" }
   
-  // Deprecated: Use createInstanceByNameAsync instead
   func createInstanceByIndex(index: Double) throws -> (any HybridViewModelInstanceSpec)? {
-    guard index >= 0, let viewModel = viewModel,
+    guard index >= 0 else { return nil }
+    guard let viewModel = viewModel,
           let vmi = viewModel.createInstance(fromIndex: UInt(index)) else { return nil }
     return HybridViewModelInstance(viewModelInstance: vmi)
   }
   
-  // Deprecated: Use createInstanceByNameAsync instead
   func createInstanceByName(name: String) throws -> (any HybridViewModelInstanceSpec)? {
     guard let viewModel = viewModel,
           let vmi = viewModel.createInstance(fromName: name) else { return nil }
     return HybridViewModelInstance(viewModelInstance: vmi)
   }
-
-  func createInstanceByNameAsync(name: String) throws -> Promise<(any HybridViewModelInstanceSpec)?> {
-    return Promise.async {
-      guard let viewModel = self.viewModel,
-            let vmi = viewModel.createInstance(fromName: name) else { return nil }
-      return HybridViewModelInstance(viewModelInstance: vmi)
-    }
-  }
-
-  // Deprecated: Use createDefaultInstanceAsync instead
+  
   func createDefaultInstance() throws -> (any HybridViewModelInstanceSpec)? {
     guard let viewModel = viewModel,
           let vmi = viewModel.createDefaultInstance() else {
@@ -44,16 +34,7 @@ class HybridViewModel: HybridViewModelSpec {
     }
     return HybridViewModelInstance(viewModelInstance: vmi)
   }
-
-  func createDefaultInstanceAsync() throws -> Promise<(any HybridViewModelInstanceSpec)?> {
-    return Promise.async {
-      guard let viewModel = self.viewModel,
-            let vmi = viewModel.createDefaultInstance() else { return nil }
-      return HybridViewModelInstance(viewModelInstance: vmi)
-    }
-  }
-
-  // Deprecated: Use createBlankInstanceAsync instead
+  
   func createInstance() throws -> (any HybridViewModelInstanceSpec)? {
     guard let viewModel = viewModel,
           let vmi = viewModel.createInstance() else { return nil }
