@@ -32,6 +32,10 @@
     "RiveRuntime": {
       "swift": "HybridRiveRuntime",
       "kotlin": "HybridRiveRuntime"
+    },
+    "RiveLogger": {
+      "swift": "HybridRiveLogger",
+      "kotlin": "HybridRiveLogger"
     }
   },
   "ignorePaths": ["node_modules"]

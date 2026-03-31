@@ -22,6 +22,8 @@
 #include "JHybridRiveFontConfigSpec.hpp"
 #include "JHybridRiveImageSpec.hpp"
 #include "JHybridRiveImageFactorySpec.hpp"
+#include "JHybridRiveLoggerSpec.hpp"
+#include "JFunc_void_std__string_std__string_std__string.hpp"
 #include "JHybridRiveRuntimeSpec.hpp"
 #include "JHybridRiveViewSpec.hpp"
 #include "JFunc_void_RiveError.hpp"
@@ -101,6 +103,14 @@ struct JHybridRiveRuntimeSpecImpl: public jni::JavaClass<JHybridRiveRuntimeSpecI
     return javaPart->getJHybridRiveRuntimeSpec();
   }
 };
+struct JHybridRiveLoggerSpecImpl: public jni::JavaClass<JHybridRiveLoggerSpecImpl, JHybridRiveLoggerSpec::JavaPart> {
+  static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/rive/HybridRiveLogger;";
+  static std::shared_ptr<JHybridRiveLoggerSpec> create() {
+    static auto constructorFn = javaClassStatic()->getConstructor<JHybridRiveLoggerSpecImpl::javaobject()>();
+    jni::local_ref<JHybridRiveLoggerSpec::JavaPart> javaPart = javaClassStatic()->newObject(constructorFn);
+    return javaPart->getJHybridRiveLoggerSpec();
+  }
+};
 
 void registerAllNatives() {
   using namespace margelo::nitro;
@@ -114,6 +124,8 @@ void registerAllNatives() {
   margelo::nitro::rive::JHybridRiveFontConfigSpec::CxxPart::registerNatives();
   margelo::nitro::rive::JHybridRiveImageSpec::CxxPart::registerNatives();
   margelo::nitro::rive::JHybridRiveImageFactorySpec::CxxPart::registerNatives();
+  margelo::nitro::rive::JHybridRiveLoggerSpec::CxxPart::registerNatives();
+  margelo::nitro::rive::JFunc_void_std__string_std__string_std__string_cxx::registerNatives();
   margelo::nitro::rive::JHybridRiveRuntimeSpec::CxxPart::registerNatives();
   margelo::nitro::rive::JHybridRiveViewSpec::CxxPart::registerNatives();
   margelo::nitro::rive::JFunc_void_RiveError_cxx::registerNatives();
@@ -171,6 +183,12 @@ void registerAllNatives() {
     "RiveRuntime",
     []() -> std::shared_ptr<HybridObject> {
       return JHybridRiveRuntimeSpecImpl::create();
+    }
+  );
+  HybridObjectRegistry::registerHybridObjectConstructor(
+    "RiveLogger",
+    []() -> std::shared_ptr<HybridObject> {
+      return JHybridRiveLoggerSpecImpl::create();
     }
   );
 }

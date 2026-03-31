@@ -22,10 +22,11 @@ class HybridViewModelColorProperty(
   // Deprecated: Use getValueAsync (read) or set(value) (write) instead
   override var value: Double
     get() {
+      DeprecationWarning.warn("ColorProperty.value", "getValueAsync")
       return try {
         runBlocking { instance.getColorFlow(path).first() }.toDouble()
       } catch (e: Exception) {
-        Log.e(TAG, "getValue failed for path '$path'", e)
+        RiveLog.e(TAG, "getValue failed for path '$path': ${e.message}")
         0.0
       }
     }

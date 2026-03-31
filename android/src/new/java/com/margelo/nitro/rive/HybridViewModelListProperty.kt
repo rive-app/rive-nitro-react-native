@@ -25,10 +25,11 @@ class HybridViewModelListProperty(
   // Deprecated: Use getLengthAsync instead
   override val length: Double
     get() {
+      DeprecationWarning.warn("ListProperty.length", "getLengthAsync")
       return try {
         runBlocking { instance.getListSize(path) }.toDouble()
       } catch (e: Exception) {
-        Log.e(TAG, "getListSize failed for path '$path'", e)
+        RiveLog.e(TAG, "getListSize failed for path '$path': ${e.message}")
         0.0
       }
     }
@@ -46,10 +47,11 @@ class HybridViewModelListProperty(
 
   // Deprecated: Use getInstanceAtAsync instead
   override fun getInstanceAt(index: Double): HybridViewModelInstanceSpec? {
+    DeprecationWarning.warn("ListProperty.getInstanceAt", "getInstanceAtAsync")
     return try {
       runBlocking { fetchInstanceAt(index) }
     } catch (e: Exception) {
-      Log.e(TAG, "getInstanceAt($index) failed for path '$path'", e)
+      RiveLog.e(TAG, "getInstanceAt($index) failed for path '$path': ${e.message}")
       null
     }
   }

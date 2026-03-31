@@ -22,10 +22,11 @@ class HybridViewModelBooleanProperty(
   // Deprecated: Use getValueAsync (read) or set(value) (write) instead
   override var value: Boolean
     get() {
+      DeprecationWarning.warn("BooleanProperty.value", "getValueAsync")
       return try {
         runBlocking { instance.getBooleanFlow(path).first() }
       } catch (e: Exception) {
-        Log.e(TAG, "getValue failed for path '$path'", e)
+        RiveLog.e(TAG, "getValue failed for path '$path': ${e.message}")
         false
       }
     }

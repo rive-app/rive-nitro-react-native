@@ -22,10 +22,11 @@ class HybridViewModelEnumProperty(
   // Deprecated: Use getValueAsync (read) or set(value) (write) instead
   override var value: String
     get() {
+      DeprecationWarning.warn("EnumProperty.value", "getValueAsync")
       return try {
         runBlocking { instance.getEnumFlow(path).first() }
       } catch (e: Exception) {
-        Log.e(TAG, "getValue failed for path '$path'", e)
+        RiveLog.e(TAG, "getValue failed for path '$path': ${e.message}")
         ""
       }
     }

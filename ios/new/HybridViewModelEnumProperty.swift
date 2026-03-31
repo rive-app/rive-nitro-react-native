@@ -15,10 +15,11 @@ class HybridViewModelEnumProperty: HybridViewModelEnumPropertySpec {
   // Deprecated: Use getValueAsync (read) or set(value:) (write) instead
   var value: String {
     get {
+      DeprecationWarning.warn("EnumProperty.value", replacement: "getValueAsync")
       do {
         return try blockingAsync { try await self.instance.value(of: self.prop) }
       } catch {
-        RCTLogError("[EnumProperty] getValue failed: \(error)")
+        RiveLog.e("EnumProperty", "getValue failed: \(error)")
         return ""
       }
     }
