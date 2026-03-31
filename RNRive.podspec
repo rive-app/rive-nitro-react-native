@@ -28,14 +28,14 @@ if !rive_ios_version
   raise "Internal Error: Failed to determine Rive iOS SDK version. Please ensure package.json contains 'runtimeVersions.ios'"
 end
 
-# Set to '1' (or set $UseRiveNewAPI = true in Podfile) to enable the
-# experimental Rive runtime backend. When disabled, the legacy backend is used.
-use_rive_new_api = ENV['USE_RIVE_NEW_API'] == '1' || (defined?($UseRiveNewAPI) && $UseRiveNewAPI)
+# The experimental runtime backend is used by default. Set USE_RIVE_LEGACY=1
+# (or $UseRiveLegacy = true in Podfile) to fall back to the legacy backend.
+use_legacy = ENV['USE_RIVE_LEGACY'] == '1' || (defined?($UseRiveLegacy) && $UseRiveLegacy)
 
-if use_rive_new_api
-  Pod::UI.puts "@rive-app/react-native: Using experimental Rive runtime backend"
-else
+if use_legacy
   Pod::UI.puts "@rive-app/react-native: Using legacy Rive runtime backend (iOS SDK #{rive_ios_version})"
+else
+  Pod::UI.puts "@rive-app/react-native: Using experimental Rive runtime backend"
 end
 
 Pod::Spec.new do |s|
@@ -51,10 +51,10 @@ Pod::Spec.new do |s|
 
   s.source_files = "ios/**/*.{h,m,mm,swift}"
 
-  if use_rive_new_api
-    s.exclude_files = ["ios/legacy/**"]
-  else
+  if use_legacy
     s.exclude_files = ["ios/new/**"]
+  else
+    s.exclude_files = ["ios/legacy/**"]
   end
 
   s.public_header_files = ['ios/RCTSwiftLog.h']
@@ -65,7 +65,7 @@ Pod::Spec.new do |s|
 
  install_modules_dependencies(s)
 
-  if use_rive_new_api
+  unless use_legacy
     s.xcconfig = { 'OTHER_SWIFT_FLAGS' => '$(inherited) -DRIVE_EXPERIMENTAL_API' }
   end
 end
