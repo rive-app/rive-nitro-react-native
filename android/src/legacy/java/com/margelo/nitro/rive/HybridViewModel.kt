@@ -13,11 +13,9 @@ class HybridViewModel(private val viewModel: ViewModel) : HybridViewModelSpec() 
     get() = viewModel.propertyCount.toDouble()
   override val instanceCount: Double
     get() = viewModel.instanceCount.toDouble()
-
   override val modelName: String
     get() = viewModel.name
 
-  // Deprecated: Use createInstanceByNameAsync instead
   override fun createInstanceByIndex(index: Double): HybridViewModelInstanceSpec? {
     if (index < 0) return null
     try {
@@ -28,7 +26,6 @@ class HybridViewModel(private val viewModel: ViewModel) : HybridViewModelSpec() 
     }
   }
 
-  // Deprecated: Use createInstanceByNameAsync instead
   override fun createInstanceByName(name: String): HybridViewModelInstanceSpec? {
     try {
       val vmi = viewModel.createInstanceFromName(name)
@@ -38,18 +35,6 @@ class HybridViewModel(private val viewModel: ViewModel) : HybridViewModelSpec() 
     }
   }
 
-  override fun createInstanceByNameAsync(name: String): Promise<HybridViewModelInstanceSpec?> {
-    return Promise.async {
-      try {
-        val vmi = viewModel.createInstanceFromName(name)
-        HybridViewModelInstance(vmi)
-      } catch (e: ViewModelException) {
-        null
-      }
-    }
-  }
-
-  // Deprecated: Use createDefaultInstanceAsync instead
   override fun createDefaultInstance(): HybridViewModelInstanceSpec? {
     try {
       val vmi = viewModel.createDefaultInstance()
@@ -59,18 +44,6 @@ class HybridViewModel(private val viewModel: ViewModel) : HybridViewModelSpec() 
     }
   }
 
-  override fun createDefaultInstanceAsync(): Promise<HybridViewModelInstanceSpec?> {
-    return Promise.async {
-      try {
-        val vmi = viewModel.createDefaultInstance()
-        HybridViewModelInstance(vmi)
-      } catch (e: ViewModelException) {
-        null
-      }
-    }
-  }
-
-  // Deprecated: Use createBlankInstanceAsync instead
   override fun createInstance(): HybridViewModelInstanceSpec? {
     try {
       val vmi = viewModel.createBlankInstance()
