@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.4.0](https://github.com/rive-app/rive-nitro-react-native/compare/v0.3.4...v0.4.0) (2026-03-30)
+
+
+### ⚠ BREAKING CHANGES
+
+* hooks start undefined, useViewModelInstance returns {instance, error} ([#184](https://github.com/rive-app/rive-nitro-react-native/issues/184))
+
+### Bug Fixes
+
+* hooks start undefined, useViewModelInstance returns {instance, error} ([#184](https://github.com/rive-app/rive-nitro-react-native/issues/184)) ([059e5f4](https://github.com/rive-app/rive-nitro-react-native/commit/059e5f4865ab8bcc207badc7c2eeff44d47b9985))
+
 ## [0.3.4](https://github.com/rive-app/rive-nitro-react-native/compare/v0.3.3...v0.3.4) (2026-03-30)
 
 
