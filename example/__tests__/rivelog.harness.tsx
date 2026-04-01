@@ -8,57 +8,66 @@ type LogEntry = { level: string; tag: string; message: string };
 
 describe('RiveLog', () => {
   // Deprecation warnings only fire in the experimental backend
-  (isExperimental ? it : it.skip)('captures deprecation warning from sync method', async () => {
-    const logs: LogEntry[] = [];
-    RiveLog.setHandler((level, tag, message) => {
-      logs.push({ level, tag, message });
-    });
+  (isExperimental ? it : it.skip)(
+    'captures deprecation warning from sync method',
+    async () => {
+      const logs: LogEntry[] = [];
+      RiveLog.setHandler((level, tag, message) => {
+        logs.push({ level, tag, message });
+      });
 
-    const file = await RiveFileFactory.fromSource(BOUNCING_BALL, undefined);
+      const file = await RiveFileFactory.fromSource(BOUNCING_BALL, undefined);
 
-    file.defaultArtboardViewModel();
+      file.defaultArtboardViewModel();
 
-    await waitFor(
-      () => {
-        const deprecation = logs.find((l) => l.tag === 'Deprecation');
-        expect(deprecation).toBeDefined();
-        expect(deprecation!.level).toBe('warn');
-        expect(deprecation!.message).toContain('defaultArtboardViewModel');
-        expect(deprecation!.message).toContain('defaultArtboardViewModelAsync');
-      },
-      { timeout: 2000 }
-    );
+      await waitFor(
+        () => {
+          const deprecation = logs.find((l) => l.tag === 'Deprecation');
+          expect(deprecation).toBeDefined();
+          expect(deprecation!.level).toBe('warn');
+          expect(deprecation!.message).toContain('defaultArtboardViewModel');
+          expect(deprecation!.message).toContain(
+            'defaultArtboardViewModelAsync'
+          );
+        },
+        { timeout: 2000 }
+      );
 
-    RiveLog.resetHandler();
-    cleanup();
-  });
+      RiveLog.resetHandler();
+      cleanup();
+    }
+  );
 
-  (isExperimental ? it : it.skip)('emits each deprecation only once', async () => {
-    const logs: LogEntry[] = [];
-    RiveLog.setHandler((level, tag, message) => {
-      logs.push({ level, tag, message });
-    });
+  (isExperimental ? it : it.skip)(
+    'emits each deprecation only once',
+    async () => {
+      const logs: LogEntry[] = [];
+      RiveLog.setHandler((level, tag, message) => {
+        logs.push({ level, tag, message });
+      });
 
-    const file = await RiveFileFactory.fromSource(BOUNCING_BALL, undefined);
+      const file = await RiveFileFactory.fromSource(BOUNCING_BALL, undefined);
 
-    // Use artboardNames — a different deprecated method so the once-per-session
-    // dedup doesn't collide with the previous test.
-    file.artboardNames;
-    file.artboardNames;
+      // Use artboardNames — a different deprecated method so the once-per-session
+      // dedup doesn't collide with the previous test.
+      file.artboardNames;
+      file.artboardNames;
 
-    await waitFor(
-      () => {
-        const deprecations = logs.filter(
-          (l) => l.tag === 'Deprecation' && l.message.includes('artboardNames')
-        );
-        expect(deprecations.length).toBe(1);
-      },
-      { timeout: 2000 }
-    );
+      await waitFor(
+        () => {
+          const deprecations = logs.filter(
+            (l) =>
+              l.tag === 'Deprecation' && l.message.includes('artboardNames')
+          );
+          expect(deprecations.length).toBe(1);
+        },
+        { timeout: 2000 }
+      );
 
-    RiveLog.resetHandler();
-    cleanup();
-  });
+      RiveLog.resetHandler();
+      cleanup();
+    }
+  );
 
   it('suppresses all logs with a no-op handler', async () => {
     const logs: LogEntry[] = [];
