@@ -1,4 +1,4 @@
-import { describe, it, expect, cleanup } from 'react-native-harness';
+import { describe, it, expect, waitFor, cleanup } from 'react-native-harness';
 import { RiveFileFactory, RiveLog } from '@rive-app/react-native';
 
 const BOUNCING_BALL = require('../assets/rive/bouncing_ball.riv');
@@ -16,11 +16,16 @@ describe('RiveLog', () => {
 
     file.defaultArtboardViewModel();
 
-    const deprecation = logs.find((l) => l.tag === 'Deprecation');
-    expect(deprecation).toBeDefined();
-    expect(deprecation!.level).toBe('warn');
-    expect(deprecation!.message).toContain('defaultArtboardViewModel');
-    expect(deprecation!.message).toContain('defaultArtboardViewModelAsync');
+    await waitFor(
+      () => {
+        const deprecation = logs.find((l) => l.tag === 'Deprecation');
+        expect(deprecation).toBeDefined();
+        expect(deprecation!.level).toBe('warn');
+        expect(deprecation!.message).toContain('defaultArtboardViewModel');
+        expect(deprecation!.message).toContain('defaultArtboardViewModelAsync');
+      },
+      { timeout: 2000 }
+    );
 
     RiveLog.resetHandler();
     cleanup();
@@ -39,10 +44,15 @@ describe('RiveLog', () => {
     file.artboardNames;
     file.artboardNames;
 
-    const deprecations = logs.filter(
-      (l) => l.tag === 'Deprecation' && l.message.includes('artboardNames')
+    await waitFor(
+      () => {
+        const deprecations = logs.filter(
+          (l) => l.tag === 'Deprecation' && l.message.includes('artboardNames')
+        );
+        expect(deprecations.length).toBe(1);
+      },
+      { timeout: 2000 }
     );
-    expect(deprecations.length).toBe(1);
 
     RiveLog.resetHandler();
     cleanup();
@@ -70,7 +80,6 @@ describe('RiveLog', () => {
 
     file.viewModelByName('nonexistent');
 
-    // If we got here without throwing, the default handler works.
     expect(true).toBe(true);
 
     cleanup();
