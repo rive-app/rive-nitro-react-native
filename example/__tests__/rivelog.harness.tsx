@@ -2,11 +2,13 @@ import { describe, it, expect, waitFor, cleanup } from 'react-native-harness';
 import { RiveFileFactory, RiveLog } from '@rive-app/react-native';
 
 const BOUNCING_BALL = require('../assets/rive/bouncing_ball.riv');
+const isExperimental = RiveFileFactory.getBackend() === 'experimental';
 
 type LogEntry = { level: string; tag: string; message: string };
 
 describe('RiveLog', () => {
-  it('captures deprecation warning from sync method', async () => {
+  // Deprecation warnings only fire in the experimental backend
+  (isExperimental ? it : it.skip)('captures deprecation warning from sync method', async () => {
     const logs: LogEntry[] = [];
     RiveLog.setHandler((level, tag, message) => {
       logs.push({ level, tag, message });
@@ -31,7 +33,7 @@ describe('RiveLog', () => {
     cleanup();
   });
 
-  it('emits each deprecation only once', async () => {
+  (isExperimental ? it : it.skip)('emits each deprecation only once', async () => {
     const logs: LogEntry[] = [];
     RiveLog.setHandler((level, tag, message) => {
       logs.push({ level, tag, message });
