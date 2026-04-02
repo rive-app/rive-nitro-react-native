@@ -11,6 +11,27 @@ func createAssetFileError(_ assetName: String) -> NitroRiveError {
 }
 
 final class ReferencedAssetLoader {
+  // Keeps the RiveFile alive while asset loads are in flight, without creating a retain cycle
+  // through the LoadAsset closure stored on the file itself.
+  private var activeLoadCount = 0
+  private var activeFileRef: RiveFile?
+
+  func setFileRef(_ file: RiveFile) {
+    activeFileRef = file
+  }
+
+  private func retainFile() {
+    activeLoadCount += 1
+  }
+
+  private func releaseFile() {
+    activeLoadCount -= 1
+    if activeLoadCount <= 0 {
+      activeLoadCount = 0
+      activeFileRef = nil
+    }
+  }
+
   private func handleRiveError(error: Error) {
     RCTLogError("\(error)")
   }
@@ -115,8 +136,7 @@ final class ReferencedAssetLoader {
 
   func createCustomLoader(
     referencedAssets: ReferencedAssetsType?, cache: SendableRef<ReferencedAssetCache>,
-    factory factoryOut: SendableRef<RiveFactory?>,
-    fileRef: SendableRef<RiveFile?>
+    factory factoryOut: SendableRef<RiveFactory?>
   )
     -> LoadAsset?
   {
@@ -124,7 +144,7 @@ final class ReferencedAssetLoader {
     else {
       return nil
     }
-    return { (asset: RiveFileAsset, _: Data, factory: RiveFactory) -> Bool in
+    return { [weak self] (asset: RiveFileAsset, _: Data, factory: RiveFactory) -> Bool in
       let assetByUniqueName = referencedAssets[asset.uniqueName()]
       guard let assetData = assetByUniqueName ?? referencedAssets[asset.name()] else {
         return false
@@ -133,10 +153,11 @@ final class ReferencedAssetLoader {
       cache.value[asset.uniqueName()] = asset
       factoryOut.value = factory
 
-      self.loadAssetInternal(
+      self?.retainFile()
+      self?.loadAssetInternal(
         source: assetData, asset: asset, factory: factory,
-        completion: {
-          withExtendedLifetime(fileRef) {}
+        completion: { [weak self] in
+          self?.releaseFile()
         })
 
       return true

@@ -51,6 +51,12 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
     private const val TAG = "HybridRiveView"
   }
 
+  //region Lifecycle
+  override fun dispose() {
+    view.dispose()
+  }
+  //endregion
+
   //region State
   override val view: RiveReactNativeView = RiveReactNativeView(context)
   private var needsReload = false
