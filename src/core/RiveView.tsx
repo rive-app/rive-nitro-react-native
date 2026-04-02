@@ -12,6 +12,22 @@ export interface RiveViewProps
 const defaultOnError = (error: RiveError) =>
   console.error(`[${RiveErrorType[error.type]}] ${error.message}`);
 
+/**
+ * RiveView is a React Native component that renders Rive graphics.
+ * It provides a seamless way to display and control Rive graphics in your app.
+ *
+ * @example
+ * ```tsx
+ * <RiveView
+ *   file={riveFile}
+ *   artboardName="New Artboard"
+ *   stateMachineName="State Machine 1"
+ *   autoPlay={true}
+ *   fit={Fit.Contain}
+ *   style={styles.riveContainer}
+ * />
+ * ```
+ */
 export function RiveView(props: RiveViewProps) {
   const { onError, hybridRef: userHybridRef, ...rest } = props;
   const wrappedOnError = onError ?? defaultOnError;

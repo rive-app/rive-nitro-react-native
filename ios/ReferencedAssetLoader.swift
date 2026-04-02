@@ -11,8 +11,6 @@ func createAssetFileError(_ assetName: String) -> NitroRiveError {
 }
 
 final class ReferencedAssetLoader {
-  // Keeps the RiveFile alive while asset loads are in flight, without creating a retain cycle
-  // through the LoadAsset closure stored on the file itself.
   private var activeLoadCount = 0
   private var activeFileRef: RiveFile?
 
