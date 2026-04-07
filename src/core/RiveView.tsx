@@ -27,6 +27,20 @@ const defaultOnError = (error: RiveError) =>
  *   style={styles.riveContainer}
  * />
  * ```
+ *
+ * @property {RiveFile} file - The Rive file to be displayed
+ * @property {string} [artboardName] - Name of the artboard to display from the Rive file
+ * @property {string} [stateMachineName] - Name of the state machine to play
+ * @property {ViewModelInstance | DataBindMode | DataBindByName} [dataBind] - Data binding configuration for the state machine, defaults to DataBindMode.Auto
+ * @property {boolean} [autoPlay=true] - Whether to automatically start playing the state machine
+ * @property {Alignment} [alignment] - How the Rive graphic should be aligned within its container
+ * @property {Fit} [fit] - How the Rive graphic should fit within its container
+ * @property {Object} [style] - React Native style object for container customization
+ * @property {(error: RiveError) => void} [onError] - Callback function that is called when an error occurs
+ *
+ * The component also exposes methods for controlling playback:
+ * - play(): Starts playing the Rive graphic
+ * - pause(): Pauses the Rive graphic
  */
 export function RiveView(props: RiveViewProps) {
   const { onError, hybridRef: userHybridRef, ...rest } = props;
