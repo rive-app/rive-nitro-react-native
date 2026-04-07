@@ -23,6 +23,7 @@ final class ReferencedAssetLoader {
   }
 
   private func releaseFile() {
+    dispatchPrecondition(condition: .onQueue(.main))
     activeLoadCount -= 1
     if activeLoadCount <= 0 {
       activeLoadCount = 0
