@@ -11,31 +11,23 @@ func createAssetFileError(_ assetName: String) -> NitroRiveError {
 }
 
 final class ReferencedAssetLoader {
-  private let lock = NSLock()
   private var activeLoadCount = 0
   private var activeFileRef: RiveFile?
 
   func setFileRef(_ file: RiveFile) {
-    lock.lock()
     activeFileRef = file
-    lock.unlock()
   }
 
   private func retainFile() {
-    lock.lock()
     activeLoadCount += 1
-    lock.unlock()
   }
 
   private func releaseFile() {
-    lock.lock()
     activeLoadCount -= 1
-    let shouldRelease = activeLoadCount <= 0
-    if shouldRelease {
+    if activeLoadCount <= 0 {
       activeLoadCount = 0
       activeFileRef = nil
     }
-    lock.unlock()
   }
 
   private func handleRiveError(error: Error) {
