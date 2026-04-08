@@ -120,8 +120,8 @@ class HybridRiveFileFactory : HybridRiveFileFactorySpec() {
 
     val riveFile = when (result) {
       is app.rive.Result.Success -> result.value
-      is app.rive.Result.Error -> throw Error("Failed to load Rive file: ${result.throwable.message}")
-      else -> throw Error("Failed to load Rive file: unexpected result")
+      is app.rive.Result.Error -> throw RuntimeException("Failed to load Rive file: ${result.throwable.message}", result.throwable)
+      else -> throw RuntimeException("Failed to load Rive file: unexpected result")
     }
 
     return HybridRiveFile(riveFile, worker)
@@ -138,12 +138,12 @@ class HybridRiveFileFactory : HybridRiveFileFactorySpec() {
 
   override fun fromFileURL(fileURL: String, loadCdn: Boolean, referencedAssets: ReferencedAssetsType?): Promise<HybridRiveFileSpec> {
     if (!fileURL.startsWith("file://")) {
-      throw Error("fromFileURL: URL must be a file URL: $fileURL")
+      throw IllegalArgumentException("fromFileURL: URL must be a file URL: $fileURL")
     }
 
     return Promise.async {
       val uri = java.net.URI(fileURL)
-      val path = uri.path ?: throw Error("fromFileURL: Invalid URL: $fileURL")
+      val path = uri.path ?: throw IllegalArgumentException("fromFileURL: Invalid URL: $fileURL")
       val data = withContext(Dispatchers.IO) {
         FileDataLoader.loadBytes(path)
       }
