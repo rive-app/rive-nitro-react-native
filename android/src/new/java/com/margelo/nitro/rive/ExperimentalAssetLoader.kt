@@ -128,13 +128,19 @@ object ExperimentalAssetLoader {
       data.startsWith(0x49, 0x44, 0x33) -> AssetType.AUDIO // MP3 (ID3)
       data.startsWith(0x00, 0x01, 0x00, 0x00) -> AssetType.FONT // TrueType
       data.startsWith(0x4F, 0x54, 0x54, 0x4F) -> AssetType.FONT // OpenType (OTTO)
-      data.startsWith(0x52, 0x49, 0x46, 0x46) -> // RIFF container
+      data.startsWith(0x52, 0x49, 0x46, 0x46) ->
         if (data.matchesAt(8, 0x57, 0x41, 0x56, 0x45)) {
-          AssetType.AUDIO //   → WAV  (WAVE)
+          AssetType.AUDIO // WAV (WAVE)
+        } else if (data.matchesAt(8, 0x57, 0x45, 0x42, 0x50)) {
+          AssetType.IMAGE // WebP (WEBP)
         } else {
-          AssetType.IMAGE //   → WebP
+          Log.w(TAG, "Unknown RIFF asset, assuming IMAGE. Declare asset type explicitly to avoid this.")
+          AssetType.IMAGE
         }
-      else -> AssetType.IMAGE
+      else -> {
+        Log.w(TAG, "Could not infer asset type from magic bytes, assuming IMAGE. Declare asset type explicitly to avoid this.")
+        AssetType.IMAGE
+      }
     }
   }
 
