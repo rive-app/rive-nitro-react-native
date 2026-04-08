@@ -204,7 +204,7 @@ class HybridRiveView: HybridRiveViewSpec {
         bindData: try dataBind.toExperimentalBindData()
       )
 
-      MainActor.assumeIsolated {
+      try MainActor.assumeIsolated {
         let riveView = try getRiveView()
         riveView.configure(
           config, dataBindingChanged: dataBindingChanged, reload: needsReload,
