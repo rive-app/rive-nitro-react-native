@@ -75,7 +75,9 @@ class HybridRiveView: HybridRiveViewSpec {
   }
 
   func playIfNeeded() {
-    try? self.getRiveView().playIfNeeded()
+    MainActor.assumeIsolated {
+      try? self.getRiveView().playIfNeeded()
+    }
   }
 
   // MARK: View Props
@@ -107,15 +109,19 @@ class HybridRiveView: HybridRiveViewSpec {
   func bindViewModelInstance(viewModelInstance: (any HybridViewModelInstanceSpec)) throws {
     guard let vmi = (viewModelInstance as? HybridViewModelInstance)?.viewModelInstance
     else { return }
-    try getRiveView().bindViewModelInstance(viewModelInstance: vmi)
+    try MainActor.assumeIsolated {
+      try getRiveView().bindViewModelInstance(viewModelInstance: vmi)
+    }
   }
 
   func getViewModelInstance() throws -> (any HybridViewModelInstanceSpec)? {
-    guard let vmi = try getRiveView().getViewModelInstance() else { return nil }
-    guard let hybridFile = file as? HybridRiveFile, let worker = hybridFile.worker else {
-      throw RuntimeError.error(withMessage: "No worker available from file")
+    return try MainActor.assumeIsolated {
+      guard let vmi = try getRiveView().getViewModelInstance() else { return nil }
+      guard let hybridFile = file as? HybridRiveFile, let worker = hybridFile.worker else {
+        throw RuntimeError.error(withMessage: "No worker available from file")
+      }
+      return HybridViewModelInstance(viewModelInstance: vmi, worker: worker)
     }
-    return HybridViewModelInstance(viewModelInstance: vmi, worker: worker)
   }
 
   func onEventListener(onEvent: @escaping (UnifiedRiveEvent) -> Void) throws {
@@ -127,31 +133,45 @@ class HybridRiveView: HybridRiveViewSpec {
   }
 
   func setNumberInputValue(name: String, value: Double, path: String?) throws {
-    try getRiveView().setNumberInputValue(name: name, value: Float(value), path: path)
+    try MainActor.assumeIsolated {
+      try getRiveView().setNumberInputValue(name: name, value: Float(value), path: path)
+    }
   }
 
   func getNumberInputValue(name: String, path: String?) throws -> Double {
-    return try Double(getRiveView().getNumberInputValue(name: name, path: path))
+    return try MainActor.assumeIsolated {
+      try Double(getRiveView().getNumberInputValue(name: name, path: path))
+    }
   }
 
   func setBooleanInputValue(name: String, value: Bool, path: String?) throws {
-    try getRiveView().setBooleanInputValue(name: name, value: value, path: path)
+    try MainActor.assumeIsolated {
+      try getRiveView().setBooleanInputValue(name: name, value: value, path: path)
+    }
   }
 
   func getBooleanInputValue(name: String, path: String?) throws -> Bool {
-    return try getRiveView().getBooleanInputValue(name: name, path: path)
+    return try MainActor.assumeIsolated {
+      try getRiveView().getBooleanInputValue(name: name, path: path)
+    }
   }
 
   func triggerInput(name: String, path: String?) throws {
-    try getRiveView().triggerInput(name: name, path: path)
+    try MainActor.assumeIsolated {
+      try getRiveView().triggerInput(name: name, path: path)
+    }
   }
 
   func setTextRunValue(name: String, value: String, path: String?) throws {
-    try getRiveView().setTextRunValue(name: name, value: value, path: path)
+    try MainActor.assumeIsolated {
+      try getRiveView().setTextRunValue(name: name, value: value, path: path)
+    }
   }
 
   func getTextRunValue(name: String, path: String?) throws -> String {
-    return try getRiveView().getTextRunValue(name: name, path: path)
+    return try MainActor.assumeIsolated {
+      try getRiveView().getTextRunValue(name: name, path: path)
+    }
   }
 
   // MARK: Views
@@ -184,13 +204,15 @@ class HybridRiveView: HybridRiveViewSpec {
         bindData: try dataBind.toExperimentalBindData()
       )
 
-      let riveView = try getRiveView()
-      riveView.configure(
-        config, dataBindingChanged: dataBindingChanged, reload: needsReload,
-        initialUpdate: initialUpdate)
-      needsReload = false
-      dataBindingChanged = false
-      initialUpdate = false
+      MainActor.assumeIsolated {
+        let riveView = try getRiveView()
+        riveView.configure(
+          config, dataBindingChanged: dataBindingChanged, reload: needsReload,
+          initialUpdate: initialUpdate)
+        needsReload = false
+        dataBindingChanged = false
+        initialUpdate = false
+      }
     }
   }
 
