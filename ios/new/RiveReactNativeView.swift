@@ -18,6 +18,7 @@ struct ExperimentalViewConfiguration {
   let bindData: ExperimentalBindData
 }
 
+@MainActor
 class RiveReactNativeView: UIView {
   private var riveUIView: RiveUIView?
   private var riveInstance: RiveRuntime.Rive?
@@ -39,6 +40,7 @@ class RiveReactNativeView: UIView {
   }
 
   func configure(_ config: ExperimentalViewConfiguration, dataBindingChanged: Bool = false, reload: Bool = false, initialUpdate: Bool = false) {
+    dispatchPrecondition(condition: .onQueue(.main))
     RCTLog("[RiveReactNativeView] configure called - reload: \(reload), dataBindingChanged: \(dataBindingChanged), initialUpdate: \(initialUpdate)")
 
     if reload {
@@ -47,11 +49,8 @@ class RiveReactNativeView: UIView {
 
     if reload || dataBindingChanged || initialUpdate {
       configTask?.cancel()
-      configTask = Task { @MainActor [weak self] in
-        guard let self else {
-          RCTLogError("[RiveReactNativeView] self is nil in config task")
-          return
-        }
+      configTask = Task { [weak self] in
+        guard let self else { return }
         do {
           RCTLog("[RiveReactNativeView] Creating artboard: \(config.artboardName ?? "default")")
           let artboard = try await config.file.createArtboard(config.artboardName)
@@ -79,7 +78,8 @@ class RiveReactNativeView: UIView {
             let vmi = try await config.file.createViewModelInstance(.name(name, from: .name(vmInfo.viewModelName)))
             dataBind = .instance(vmi)
           }
-          RCTLog("[RiveReactNativeView] DataBind set to: \(dataBind)")
+
+          guard !Task.isCancelled else { return }
 
           RCTLog("[RiveReactNativeView] Creating Rive instance...")
           let rive = try await RiveRuntime.Rive(
@@ -88,8 +88,10 @@ class RiveReactNativeView: UIView {
             stateMachine: stateMachine,
             dataBind: dataBind
           )
-          RCTLog("[RiveReactNativeView] Rive instance created successfully")
 
+          guard !Task.isCancelled else { return }
+
+          RCTLog("[RiveReactNativeView] Rive instance created successfully")
           self.riveInstance = rive
           RCTLog("[RiveReactNativeView] Setting up RiveUIView...")
           self.setupRiveUIView(with: rive)
@@ -127,17 +129,14 @@ class RiveReactNativeView: UIView {
     return riveInstance?.viewModelInstance
   }
 
-  @MainActor
   func play() {
     isPaused = false
   }
 
-  @MainActor
   func pause() {
     isPaused = true
   }
 
-  @MainActor
   func reset() {
     isPaused = true
   }
@@ -206,6 +205,7 @@ class RiveReactNativeView: UIView {
   }
 
   private func cleanup() {
+    dispatchPrecondition(condition: .onQueue(.main))
     configTask?.cancel()
     configTask = nil
     riveUIView?.removeFromSuperview()
@@ -214,6 +214,8 @@ class RiveReactNativeView: UIView {
   }
 
   deinit {
-    cleanup()
+    MainActor.assumeIsolated {
+      cleanup()
+    }
   }
 }
