@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.1](https://github.com/rive-app/rive-nitro-react-native/compare/v0.4.0...v0.4.1) (2026-04-08)
+
+
+### Bug Fixes
+
+* **iOS:** eagerly dispose RiveView and break referenced asset retain cycle ([#202](https://github.com/rive-app/rive-nitro-react-native/issues/202)) ([c4b12d6](https://github.com/rive-app/rive-nitro-react-native/commit/c4b12d6b951509e8d9417285b1e90d6551ddc988))
+
 ## [0.4.0](https://github.com/rive-app/rive-nitro-react-native/compare/v0.3.4...v0.4.0) (2026-03-30)
 
 
