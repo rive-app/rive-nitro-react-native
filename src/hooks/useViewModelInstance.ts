@@ -152,8 +152,8 @@ function createInstance(
     if (instanceName) {
       try {
         vmi = viewModel.createInstanceByName(instanceName);
-      } catch {
-        // experimental backend throws for non-existent names
+      } catch (e) {
+        console.warn(`createInstanceByName('${instanceName}') failed:`, e);
       }
     } else {
       vmi = viewModel.createDefaultInstance();
