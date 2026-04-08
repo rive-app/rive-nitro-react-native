@@ -197,6 +197,13 @@ class HybridRiveView: HybridRiveViewSpec {
     }
   }
 
+  func dispose() {
+    let riveView = view as? RiveReactNativeView
+    DispatchQueue.main.async {
+      riveView?.cleanup()
+    }
+  }
+
   // MARK: Internal State
   private var needsReload = false
   private var dataBindingChanged = false

@@ -1,6 +1,8 @@
-import type { ComponentProps } from 'react';
+import { useEffect, useRef, type ComponentProps } from 'react';
 import { NitroRiveView } from './NitroRiveViewComponent';
 import { RiveErrorType, type RiveError } from './Errors';
+import { callDispose } from './callDispose';
+import type { RiveViewRef } from '../index';
 
 export interface RiveViewProps
   extends Omit<ComponentProps<typeof NitroRiveView>, 'onError'> {
@@ -41,8 +43,31 @@ const defaultOnError = (error: RiveError) =>
  * - pause(): Pauses the Rive graphic
  */
 export function RiveView(props: RiveViewProps) {
-  const { onError, ...rest } = props;
+  const { onError, hybridRef: userHybridRef, ...rest } = props;
   const wrappedOnError = onError ?? defaultOnError;
+  const viewRef = useRef<RiveViewRef | null>(null);
 
-  return <NitroRiveView {...rest} onError={{ f: wrappedOnError }} />;
+  useEffect(() => {
+    return () => {
+      if (viewRef.current) {
+        callDispose(viewRef.current);
+        viewRef.current = null;
+      }
+    };
+  }, []);
+
+  const setRef = (ref: RiveViewRef) => {
+    viewRef.current = ref;
+    if (userHybridRef?.f) {
+      userHybridRef.f(ref);
+    }
+  };
+
+  return (
+    <NitroRiveView
+      {...rest}
+      onError={{ f: wrappedOnError }}
+      hybridRef={{ f: setRef }}
+    />
+  );
 }

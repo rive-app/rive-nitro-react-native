@@ -242,7 +242,7 @@ class RiveReactNativeView: UIView, RiveStateMachineDelegate {
     }
   }
 
-  private func cleanup() {
+  func cleanup() {
     riveView?.removeFromSuperview()
     riveView?.stateMachineDelegate = nil
     riveView = nil
