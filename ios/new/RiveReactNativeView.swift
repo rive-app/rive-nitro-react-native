@@ -23,7 +23,7 @@ class RiveReactNativeView: UIView {
   private var riveUIView: RiveUIView?
   private var riveInstance: RiveRuntime.Rive?
   private var eventListeners: [(UnifiedRiveEvent) -> Void] = []
-  private var viewReadyContinuation: CheckedContinuation<Void, Never>?
+  private var viewReadyContinuations: [CheckedContinuation<Void, Never>] = []
   private var isViewReady = false
   private var configTask: Task<Void, Never>?
   private var isPaused = false
@@ -33,7 +33,7 @@ class RiveReactNativeView: UIView {
   func awaitViewReady() async -> Bool {
     if !isViewReady {
       await withCheckedContinuation { continuation in
-        viewReadyContinuation = continuation
+        viewReadyContinuations.append(continuation)
       }
     }
     return true
@@ -108,8 +108,10 @@ class RiveReactNativeView: UIView {
 
           if !self.isViewReady {
             self.isViewReady = true
-            self.viewReadyContinuation?.resume()
-            self.viewReadyContinuation = nil
+            for continuation in self.viewReadyContinuations {
+              continuation.resume()
+            }
+            self.viewReadyContinuations.removeAll()
           }
           RCTLog("[RiveReactNativeView] Configuration complete!")
         } catch {
