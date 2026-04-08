@@ -18,7 +18,7 @@ fun Variant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName?.toBindData(
   return when (this) {
     is Variant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName.First -> {
       val instance = (this.asFirstOrNull() as? HybridViewModelInstance)?.viewModelInstance
-        ?: throw Error("Invalid ViewModelInstance")
+        ?: throw IllegalStateException("Invalid ViewModelInstance")
       BindData.Instance(instance)
     }
     is Variant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName.Second -> {
@@ -29,7 +29,7 @@ fun Variant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName?.toBindData(
       }
     }
     is Variant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName.Third -> {
-      val name = this.asThirdOrNull()?.byName ?: throw Error("Missing byName value")
+      val name = this.asThirdOrNull()?.byName ?: throw IllegalStateException("Missing byName value")
       BindData.ByName(name)
     }
   }
@@ -200,7 +200,7 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
         try {
           action()
         } catch (e: Exception) {
-          throw Error(e.message)
+          throw RuntimeException(e.message, e)
         }
       }
     }
@@ -211,7 +211,7 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
       try {
         action()
       } catch (e: Exception) {
-        throw Error(e.message)
+        throw RuntimeException(e.message, e)
       }
     }
   }
