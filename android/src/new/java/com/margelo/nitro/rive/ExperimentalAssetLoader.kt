@@ -134,11 +134,11 @@ object ExperimentalAssetLoader {
         } else if (data.matchesAt(8, 0x57, 0x45, 0x42, 0x50)) {
           AssetType.IMAGE // WebP (WEBP)
         } else {
-          Log.w(TAG, "Unknown RIFF asset, assuming IMAGE. Declare asset type explicitly to avoid this.")
+          RiveLog.w(TAG, "Unknown RIFF asset, assuming IMAGE. Declare asset type explicitly to avoid this.")
           AssetType.IMAGE
         }
       else -> {
-        Log.w(TAG, "Could not infer asset type from magic bytes, assuming IMAGE. Declare asset type explicitly to avoid this.")
+        RiveLog.w(TAG, "Could not infer asset type from magic bytes, assuming IMAGE. Declare asset type explicitly to avoid this.")
         AssetType.IMAGE
       }
     }
