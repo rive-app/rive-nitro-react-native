@@ -75,7 +75,7 @@ class HybridRiveView: HybridRiveViewSpec {
   }
 
   func playIfNeeded() {
-    MainActor.assumeIsolated {
+    onMainSync {
       try? self.getRiveView().playIfNeeded()
     }
   }
@@ -109,13 +109,13 @@ class HybridRiveView: HybridRiveViewSpec {
   func bindViewModelInstance(viewModelInstance: (any HybridViewModelInstanceSpec)) throws {
     guard let vmi = (viewModelInstance as? HybridViewModelInstance)?.viewModelInstance
     else { return }
-    try MainActor.assumeIsolated {
+    try onMainSync {
       try getRiveView().bindViewModelInstance(viewModelInstance: vmi)
     }
   }
 
   func getViewModelInstance() throws -> (any HybridViewModelInstanceSpec)? {
-    return try MainActor.assumeIsolated {
+    return try onMainSync {
       guard let vmi = try getRiveView().getViewModelInstance() else { return nil }
       guard let hybridFile = file as? HybridRiveFile, let worker = hybridFile.worker else {
         throw RuntimeError.error(withMessage: "No worker available from file")
@@ -133,43 +133,43 @@ class HybridRiveView: HybridRiveViewSpec {
   }
 
   func setNumberInputValue(name: String, value: Double, path: String?) throws {
-    try MainActor.assumeIsolated {
+    try onMainSync {
       try getRiveView().setNumberInputValue(name: name, value: Float(value), path: path)
     }
   }
 
   func getNumberInputValue(name: String, path: String?) throws -> Double {
-    return try MainActor.assumeIsolated {
+    return try onMainSync {
       try Double(getRiveView().getNumberInputValue(name: name, path: path))
     }
   }
 
   func setBooleanInputValue(name: String, value: Bool, path: String?) throws {
-    try MainActor.assumeIsolated {
+    try onMainSync {
       try getRiveView().setBooleanInputValue(name: name, value: value, path: path)
     }
   }
 
   func getBooleanInputValue(name: String, path: String?) throws -> Bool {
-    return try MainActor.assumeIsolated {
+    return try onMainSync {
       try getRiveView().getBooleanInputValue(name: name, path: path)
     }
   }
 
   func triggerInput(name: String, path: String?) throws {
-    try MainActor.assumeIsolated {
+    try onMainSync {
       try getRiveView().triggerInput(name: name, path: path)
     }
   }
 
   func setTextRunValue(name: String, value: String, path: String?) throws {
-    try MainActor.assumeIsolated {
+    try onMainSync {
       try getRiveView().setTextRunValue(name: name, value: value, path: path)
     }
   }
 
   func getTextRunValue(name: String, path: String?) throws -> String {
-    return try MainActor.assumeIsolated {
+    return try onMainSync {
       try getRiveView().getTextRunValue(name: name, path: path)
     }
   }
@@ -263,6 +263,17 @@ class HybridRiveView: HybridRiveViewSpec {
 }
 
 extension HybridRiveView {
+  /// Runs a closure on the main thread. If already on main, executes directly
+  /// to avoid deadlocking with DispatchQueue.main.sync.
+  func onMainSync<T>(_ work: () throws -> T) rethrows -> T {
+    if Thread.isMainThread {
+      return try work()
+    }
+    return try onMainSync {
+      try work()
+    }
+  }
+
   func logged(tag: String, note: String? = nil, _ fn: () throws -> Void) {
     do {
       return try fn()
