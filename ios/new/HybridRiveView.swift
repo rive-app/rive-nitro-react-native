@@ -272,11 +272,13 @@ extension HybridRiveView {
         try work()
       }
     }
-    return try DispatchQueue.main.sync {
-      MainActor.assumeIsolated {
-        try work()
+    var result: Result<T, Error>!
+    DispatchQueue.main.sync {
+      result = MainActor.assumeIsolated {
+        Result { try work() }
       }
     }
+    return try result.get()
   }
 
   func logged(tag: String, note: String? = nil, _ fn: () throws -> Void) {
