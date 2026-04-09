@@ -75,8 +75,8 @@ class HybridRiveView: HybridRiveViewSpec {
   }
 
   func playIfNeeded() {
-    onMainSync {
-      try? self.getRiveView().playIfNeeded()
+    try? onMainSync {
+      try self.getRiveView().playIfNeeded()
     }
   }
 
@@ -263,14 +263,19 @@ class HybridRiveView: HybridRiveViewSpec {
 }
 
 extension HybridRiveView {
-  /// Runs a closure on the main thread. If already on main, executes directly
-  /// to avoid deadlocking with DispatchQueue.main.sync.
-  func onMainSync<T>(_ work: () throws -> T) rethrows -> T {
+  /// Runs a @MainActor-isolated closure on the main thread.
+  /// If already on main, uses assumeIsolated directly.
+  /// If on another thread, dispatches synchronously to main first.
+  func onMainSync<T>(_ work: @MainActor () throws -> T) throws -> T {
     if Thread.isMainThread {
-      return try work()
+      return try MainActor.assumeIsolated {
+        try work()
+      }
     }
-    return try onMainSync {
-      try work()
+    return try DispatchQueue.main.sync {
+      MainActor.assumeIsolated {
+        try work()
+      }
     }
   }
 
