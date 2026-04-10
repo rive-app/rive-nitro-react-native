@@ -102,6 +102,10 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
   }
 
   fun configure(config: ViewConfiguration, dataBindingChanged: Boolean, reload: Boolean = false, initialUpdate: Boolean = false) {
+    // https://github.com/rive-app/rive-nitro-react-native/pull/209
+    riveAnimationView?.layoutScaleFactor = config.layoutScaleFactor
+      ?: resources.displayMetrics.density
+
     if (reload) {
       val hasDataBinding = when (config.bindData) {
         is BindData.None -> false
@@ -121,8 +125,6 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
     } else {
       riveAnimationView?.alignment = config.alignment
       riveAnimationView?.fit = config.fit
-      // TODO: this seems to require a reload for the view to take the new value (bug on Android)
-      riveAnimationView?.layoutScaleFactor = config.layoutScaleFactor
     }
 
     if (dataBindingChanged || initialUpdate || reload) {
