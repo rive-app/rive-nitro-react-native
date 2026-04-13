@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.2](https://github.com/rive-app/rive-nitro-react-native/compare/v0.4.1...v0.4.2) (2026-04-13)
+
+
+### Bug Fixes
+
+* Fit.LAYOUT artboard oversized on Android ([#209](https://github.com/rive-app/rive-nitro-react-native/issues/209)) ([8b4219d](https://github.com/rive-app/rive-nitro-react-native/commit/8b4219d2b5d3e1129579bf57f1a9d02996ebe179))
+
 ## [0.4.1](https://github.com/rive-app/rive-nitro-react-native/compare/v0.4.0...v0.4.1) (2026-04-08)
 
 
