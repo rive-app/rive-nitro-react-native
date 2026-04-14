@@ -19,6 +19,30 @@ function depsEqual(a: DependencyList, b: DependencyList): boolean {
  * - On unmount in production: cleaned up synchronously in effect cleanup.
  * - On unmount in development: cleanup is deferred via `setTimeout(0)` so that
  *   fast refresh and Strict Mode can cancel it when effects re-run.
+ *
+ * Replaces the common `useMemo` + dispose-in-`useEffect`-cleanup pattern that
+ * breaks on fast refresh (HMR re-runs all effect cleanups, disposing the native
+ * object, but `useMemo` returns the same dead reference):
+ *
+ * ```tsx
+ * // BEFORE — breaks on fast refresh
+ * const property = useMemo(() => instance?.getProperty(path), [instance, path]);
+ * useEffect(() => {
+ *   const unsub = property?.addListener(setValue);
+ *   return () => { unsub?.(); property?.dispose(); };
+ * }, [property]);
+ *
+ * // AFTER
+ * const property = useDisposableMemo(
+ *   () => instance?.getProperty(path),
+ *   (p) => p?.dispose(),
+ *   [instance, path]
+ * );
+ * useEffect(() => {
+ *   const unsub = property?.addListener(setValue);
+ *   return () => unsub?.();  // only unsubscribe, no dispose
+ * }, [property]);
+ * ```
  */
 export function useDisposableMemo<T>(
   factory: () => T,
