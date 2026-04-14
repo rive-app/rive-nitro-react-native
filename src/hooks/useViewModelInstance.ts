@@ -1,11 +1,12 @@
 // TODO: migrate createInstance/createInstanceByName/etc to async equivalents
 /* eslint-disable @typescript-eslint/no-deprecated */
-import { useMemo, useEffect, useRef } from 'react';
+import { useMemo, useRef } from 'react';
 import type { ViewModel, ViewModelInstance } from '../specs/ViewModel.nitro';
 import type { RiveFile } from '../specs/RiveFile.nitro';
 import type { RiveViewRef } from '../index';
 import { callDispose } from '../core/callDispose';
 import { ArtboardByName } from '../specs/ArtboardBy';
+import { useDisposableMemo } from './useDisposableMemo';
 
 interface UseViewModelInstanceBaseParams {
   /**
@@ -336,49 +337,30 @@ export function useViewModelInstance(
   const required = params?.required ?? false;
   const onInit = params?.onInit;
 
-  const prevInstanceRef = useRef<{
-    instance: ViewModelInstance | null | undefined;
-    needsDispose: boolean;
-  } | null>(null);
+  const onInitRef = useRef(onInit);
+  onInitRef.current = onInit;
 
-  const result = useMemo(() => {
-    const created = createInstance(
-      source,
-      instanceName,
-      artboardName,
-      viewModelName,
-      useNew
-    );
-    if (created.instance && onInit) {
-      onInit(created.instance);
-    }
-    return created;
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- onInit excluded intentionally
-  }, [source, instanceName, artboardName, viewModelName, useNew]);
-
-  // Dispose previous instance if it changed and needed disposal
-  if (
-    prevInstanceRef.current &&
-    prevInstanceRef.current.instance !== result.instance &&
-    prevInstanceRef.current.needsDispose &&
-    prevInstanceRef.current.instance
-  ) {
-    callDispose(prevInstanceRef.current.instance);
-  }
-  prevInstanceRef.current = result;
-
-  // Cleanup on unmount
-  useEffect(() => {
-    return () => {
-      if (
-        prevInstanceRef.current?.needsDispose &&
-        prevInstanceRef.current.instance
-      ) {
-        callDispose(prevInstanceRef.current.instance);
-        prevInstanceRef.current = null;
+  const result = useDisposableMemo(
+    () => {
+      const created = createInstance(
+        source,
+        instanceName,
+        artboardName,
+        viewModelName,
+        useNew
+      );
+      if (created.instance && onInitRef.current) {
+        onInitRef.current(created.instance);
       }
-    };
-  }, []);
+      return created;
+    },
+    (r) => {
+      if (r.needsDispose && r.instance) {
+        callDispose(r.instance);
+      }
+    },
+    [source, instanceName, artboardName, viewModelName, useNew]
+  );
 
   const error = useMemo(
     () => (result.error ? new Error(result.error) : null),

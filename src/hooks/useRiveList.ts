@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState, useMemo } from 'react';
 import type { ViewModelInstance } from '../specs/ViewModel.nitro';
 import type { UseRiveListResult } from '../types';
+import { useDisposableMemo } from './useDisposableMemo';
 
 /**
  * Hook for interacting with list ViewModel instance properties.
@@ -22,10 +23,14 @@ export function useRiveList(
     setError(null);
   }, [path, viewModelInstance]);
 
-  const property = useMemo(() => {
-    if (!viewModelInstance) return undefined;
-    return viewModelInstance.listProperty(path);
-  }, [viewModelInstance, path]);
+  const property = useDisposableMemo(
+    () => {
+      if (!viewModelInstance) return undefined;
+      return viewModelInstance.listProperty(path);
+    },
+    (p) => p?.dispose(),
+    [viewModelInstance, path]
+  );
 
   useEffect(() => {
     if (viewModelInstance && !property) {
@@ -45,7 +50,6 @@ export function useRiveList(
     return () => {
       removeListener();
       property.removeListeners();
-      property.dispose();
     };
   }, [property]);
 
