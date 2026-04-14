@@ -90,11 +90,19 @@ export function useDisposableMemo<T>(
       if (__DEV__) {
         const val = ref.current.value;
         ref.current.pendingDisposal = setTimeout(() => {
-          cleanupRef.current(val);
+          try {
+            cleanupRef.current(val);
+          } catch {
+            // Swallow — object may already be in a bad state.
+          }
           ref.current.pendingDisposal = null;
         }, 0);
       } else {
-        cleanupRef.current(ref.current.value);
+        try {
+          cleanupRef.current(ref.current.value);
+        } catch {
+          // Swallow — object may already be in a bad state.
+        }
       }
     };
   }, []);
