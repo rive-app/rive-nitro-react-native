@@ -48,8 +48,13 @@ export function useRiveList(
     });
 
     return () => {
-      removeListener();
-      property.removeListeners();
+      try {
+        removeListener();
+        property.removeListeners();
+      } catch {
+        // Property may already be disposed by useDisposableMemo (deps change).
+        // Native dispose() handles listener cleanup, so this is safe to ignore.
+      }
     };
   }, [property]);
 

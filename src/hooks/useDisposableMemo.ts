@@ -70,7 +70,11 @@ export function useDisposableMemo<T>(
       ref.current.pendingDisposal = null;
     }
     if (ref.current.deps !== UNINITIALIZED) {
-      cleanupRef.current(ref.current.value);
+      try {
+        cleanupRef.current(ref.current.value);
+      } catch {
+        // Swallow cleanup errors — the old value is being replaced regardless.
+      }
     }
     ref.current = { value: factory(), deps, pendingDisposal: null };
   }
