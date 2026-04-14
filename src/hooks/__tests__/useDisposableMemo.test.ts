@@ -149,11 +149,9 @@ describe('useDisposableMemo', () => {
 
     const { result, rerender } = renderHook(
       (props: { dep: string }) =>
-        useDisposableMemo(
-          () => undefined as Disposable | undefined,
-          cleanup,
-          [props.dep]
-        ),
+        useDisposableMemo(() => undefined as Disposable | undefined, cleanup, [
+          props.dep,
+        ]),
       { initialProps: { dep: 'A' } }
     );
 
