@@ -241,7 +241,7 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
       Fit.FITHEIGHT -> RiveFit.FitHeight()
       Fit.NONE -> RiveFit.None()
       Fit.SCALEDOWN -> RiveFit.ScaleDown()
-      Fit.LAYOUT -> RiveFit.Layout(scaleFactor = layoutScaleFactor ?: 1f)
+      Fit.LAYOUT -> RiveFit.Layout(scaleFactor = layoutScaleFactor ?: context.resources.displayMetrics.density)
     }
   }
 
