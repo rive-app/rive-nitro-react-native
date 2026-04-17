@@ -27,7 +27,7 @@ namespace margelo::nitro::rive {
    */
   struct JUnifiedRiveEvent final: public jni::JavaClass<JUnifiedRiveEvent> {
   public:
-    static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/rive/UnifiedRiveEvent;";
+    static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/rive/UnifiedRiveEvent;";
 
   public:
     /**

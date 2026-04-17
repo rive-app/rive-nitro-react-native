@@ -22,7 +22,7 @@ namespace margelo::nitro::rive {
    */
   class JEventPropertiesOutput: public jni::JavaClass<JEventPropertiesOutput> {
   public:
-    static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/rive/EventPropertiesOutput;";
+    static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/rive/EventPropertiesOutput;";
 
     static jni::local_ref<JEventPropertiesOutput> create_0(jboolean value) {
       static const auto method = javaClassStatic()->getStaticMethod<JEventPropertiesOutput(jboolean)>("create");
@@ -52,7 +52,7 @@ namespace margelo::nitro::rive {
   namespace JEventPropertiesOutput_impl {
     class First final: public jni::JavaClass<First, JEventPropertiesOutput> {
     public:
-      static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/rive/EventPropertiesOutput$First;";
+      static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/rive/EventPropertiesOutput$First;";
     
       [[nodiscard]] jboolean getValue() const {
         static const auto field = javaClassStatic()->getField<jboolean>("value");
@@ -62,7 +62,7 @@ namespace margelo::nitro::rive {
     
     class Second final: public jni::JavaClass<Second, JEventPropertiesOutput> {
     public:
-      static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/rive/EventPropertiesOutput$Second;";
+      static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/rive/EventPropertiesOutput$Second;";
     
       [[nodiscard]] jni::local_ref<jni::JString> getValue() const {
         static const auto field = javaClassStatic()->getField<jni::JString>("value");
@@ -72,7 +72,7 @@ namespace margelo::nitro::rive {
     
     class Third final: public jni::JavaClass<Third, JEventPropertiesOutput> {
     public:
-      static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/rive/EventPropertiesOutput$Third;";
+      static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/rive/EventPropertiesOutput$Third;";
     
       [[nodiscard]] double getValue() const {
         static const auto field = javaClassStatic()->getField<double>("value");

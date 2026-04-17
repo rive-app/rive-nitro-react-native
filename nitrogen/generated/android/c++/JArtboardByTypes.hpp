@@ -19,7 +19,7 @@ namespace margelo::nitro::rive {
    */
   struct JArtboardByTypes final: public jni::JavaClass<JArtboardByTypes> {
   public:
-    static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/rive/ArtboardByTypes;";
+    static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/rive/ArtboardByTypes;";
 
   public:
     /**

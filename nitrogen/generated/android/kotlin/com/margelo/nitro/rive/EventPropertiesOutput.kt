@@ -23,6 +23,24 @@ sealed class EventPropertiesOutput {
   @DoNotStrip
   data class Third(@DoNotStrip val value: Double): EventPropertiesOutput()
 
+  inline fun <reified T> asType(): T? {
+    return when (this) {
+      is First -> (value) as? T
+      is Second -> (value) as? T
+      is Third -> (value) as? T
+    }
+  }
+  inline fun <reified T> isType(): Boolean {
+    return asType<T>() != null
+  }
+  inline fun <R> match(first: (Boolean) -> R, second: (String) -> R, third: (Double) -> R): R {
+    return when (this) {
+      is First -> first(value)
+      is Second -> second(value)
+      is Third -> third(value)
+    }
+  }
+
   val isFirst: Boolean
     get() = this is First
   val isSecond: Boolean
@@ -41,14 +59,6 @@ sealed class EventPropertiesOutput {
   fun asThirdOrNull(): Double? {
     val value = (this as? Third)?.value ?: return null
     return value
-  }
-
-  inline fun <R> match(first: (Boolean) -> R, second: (String) -> R, third: (Double) -> R): R {
-    return when (this) {
-      is First -> first(value)
-      is Second -> second(value)
-      is Third -> third(value)
-    }
   }
 
   companion object {

@@ -21,7 +21,7 @@ namespace margelo::nitro::rive {
    */
   struct JDataBindByName final: public jni::JavaClass<JDataBindByName> {
   public:
-    static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/rive/DataBindByName;";
+    static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/rive/DataBindByName;";
 
   public:
     /**

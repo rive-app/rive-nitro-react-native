@@ -19,7 +19,7 @@ namespace margelo::nitro::rive {
    */
   struct JFit final: public jni::JavaClass<JFit> {
   public:
-    static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/rive/Fit;";
+    static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/rive/Fit;";
 
   public:
     /**

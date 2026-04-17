@@ -19,7 +19,7 @@ namespace margelo::nitro::rive {
    */
   struct JRiveEventType final: public jni::JavaClass<JRiveEventType> {
   public:
-    static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/rive/RiveEventType;";
+    static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/rive/RiveEventType;";
 
   public:
     /**

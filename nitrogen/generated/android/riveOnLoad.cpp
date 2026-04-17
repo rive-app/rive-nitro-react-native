@@ -54,49 +54,49 @@ int initialize(JavaVM* vm) {
 }
 
 struct JHybridRiveFontConfigSpecImpl: public jni::JavaClass<JHybridRiveFontConfigSpecImpl, JHybridRiveFontConfigSpec::JavaPart> {
-  static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/rive/HybridRiveFontConfig;";
+  static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/rive/HybridRiveFontConfig;";
   static std::shared_ptr<JHybridRiveFontConfigSpec> create() {
-    static auto constructorFn = javaClassStatic()->getConstructor<JHybridRiveFontConfigSpecImpl::javaobject()>();
+    static const auto constructorFn = javaClassStatic()->getConstructor<JHybridRiveFontConfigSpecImpl::javaobject()>();
     jni::local_ref<JHybridRiveFontConfigSpec::JavaPart> javaPart = javaClassStatic()->newObject(constructorFn);
     return javaPart->getJHybridRiveFontConfigSpec();
   }
 };
 struct JHybridRiveFileFactorySpecImpl: public jni::JavaClass<JHybridRiveFileFactorySpecImpl, JHybridRiveFileFactorySpec::JavaPart> {
-  static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/rive/HybridRiveFileFactory;";
+  static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/rive/HybridRiveFileFactory;";
   static std::shared_ptr<JHybridRiveFileFactorySpec> create() {
-    static auto constructorFn = javaClassStatic()->getConstructor<JHybridRiveFileFactorySpecImpl::javaobject()>();
+    static const auto constructorFn = javaClassStatic()->getConstructor<JHybridRiveFileFactorySpecImpl::javaobject()>();
     jni::local_ref<JHybridRiveFileFactorySpec::JavaPart> javaPart = javaClassStatic()->newObject(constructorFn);
     return javaPart->getJHybridRiveFileFactorySpec();
   }
 };
 struct JHybridRiveFileSpecImpl: public jni::JavaClass<JHybridRiveFileSpecImpl, JHybridRiveFileSpec::JavaPart> {
-  static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/rive/HybridRiveFile;";
+  static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/rive/HybridRiveFile;";
   static std::shared_ptr<JHybridRiveFileSpec> create() {
-    static auto constructorFn = javaClassStatic()->getConstructor<JHybridRiveFileSpecImpl::javaobject()>();
+    static const auto constructorFn = javaClassStatic()->getConstructor<JHybridRiveFileSpecImpl::javaobject()>();
     jni::local_ref<JHybridRiveFileSpec::JavaPart> javaPart = javaClassStatic()->newObject(constructorFn);
     return javaPart->getJHybridRiveFileSpec();
   }
 };
 struct JHybridRiveViewSpecImpl: public jni::JavaClass<JHybridRiveViewSpecImpl, JHybridRiveViewSpec::JavaPart> {
-  static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/rive/HybridRiveView;";
+  static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/rive/HybridRiveView;";
   static std::shared_ptr<JHybridRiveViewSpec> create() {
-    static auto constructorFn = javaClassStatic()->getConstructor<JHybridRiveViewSpecImpl::javaobject()>();
+    static const auto constructorFn = javaClassStatic()->getConstructor<JHybridRiveViewSpecImpl::javaobject()>();
     jni::local_ref<JHybridRiveViewSpec::JavaPart> javaPart = javaClassStatic()->newObject(constructorFn);
     return javaPart->getJHybridRiveViewSpec();
   }
 };
 struct JHybridRiveImageFactorySpecImpl: public jni::JavaClass<JHybridRiveImageFactorySpecImpl, JHybridRiveImageFactorySpec::JavaPart> {
-  static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/rive/HybridRiveImageFactory;";
+  static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/rive/HybridRiveImageFactory;";
   static std::shared_ptr<JHybridRiveImageFactorySpec> create() {
-    static auto constructorFn = javaClassStatic()->getConstructor<JHybridRiveImageFactorySpecImpl::javaobject()>();
+    static const auto constructorFn = javaClassStatic()->getConstructor<JHybridRiveImageFactorySpecImpl::javaobject()>();
     jni::local_ref<JHybridRiveImageFactorySpec::JavaPart> javaPart = javaClassStatic()->newObject(constructorFn);
     return javaPart->getJHybridRiveImageFactorySpec();
   }
 };
 struct JHybridRiveRuntimeSpecImpl: public jni::JavaClass<JHybridRiveRuntimeSpecImpl, JHybridRiveRuntimeSpec::JavaPart> {
-  static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/rive/HybridRiveRuntime;";
+  static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/rive/HybridRiveRuntime;";
   static std::shared_ptr<JHybridRiveRuntimeSpec> create() {
-    static auto constructorFn = javaClassStatic()->getConstructor<JHybridRiveRuntimeSpecImpl::javaobject()>();
+    static const auto constructorFn = javaClassStatic()->getConstructor<JHybridRiveRuntimeSpecImpl::javaobject()>();
     jni::local_ref<JHybridRiveRuntimeSpec::JavaPart> javaPart = javaClassStatic()->newObject(constructorFn);
     return javaPart->getJHybridRiveRuntimeSpec();
   }

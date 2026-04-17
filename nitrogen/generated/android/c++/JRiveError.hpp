@@ -23,7 +23,7 @@ namespace margelo::nitro::rive {
    */
   struct JRiveError final: public jni::JavaClass<JRiveError> {
   public:
-    static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/rive/RiveError;";
+    static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/rive/RiveError;";
 
   public:
     /**

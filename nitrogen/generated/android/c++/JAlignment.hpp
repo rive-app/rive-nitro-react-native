@@ -19,7 +19,7 @@ namespace margelo::nitro::rive {
    */
   struct JAlignment final: public jni::JavaClass<JAlignment> {
   public:
-    static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/rive/Alignment;";
+    static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/rive/Alignment;";
 
   public:
     /**

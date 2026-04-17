@@ -28,7 +28,7 @@ namespace margelo::nitro::rive {
    */
   struct JReferencedAssetsType final: public jni::JavaClass<JReferencedAssetsType> {
   public:
-    static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/rive/ReferencedAssetsType;";
+    static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/rive/ReferencedAssetsType;";
 
   public:
     /**

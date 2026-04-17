@@ -28,7 +28,7 @@ namespace margelo::nitro::rive {
    */
   struct JFunc_void_RiveError: public jni::JavaClass<JFunc_void_RiveError> {
   public:
-    static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/rive/Func_void_RiveError;";
+    static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/rive/Func_void_RiveError;";
 
   public:
     /**
@@ -64,7 +64,7 @@ namespace margelo::nitro::rive {
     }
 
   public:
-    static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/rive/Func_void_RiveError_cxx;";
+    static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/rive/Func_void_RiveError_cxx;";
     static void registerNatives() {
       registerHybrid({makeNativeMethod("invoke_cxx", JFunc_void_RiveError_cxx::invoke_cxx)});
     }

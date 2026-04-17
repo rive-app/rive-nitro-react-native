@@ -17,3 +17,16 @@ public enum EventPropertiesOutput {
   case second(String)
   case third(Double)
 }
+
+public extension EventPropertiesOutput {
+  func asType<T>(_ type: T.Type = T.self) -> T? {
+    switch self {
+      case .first(let value): return value as? T
+      case .second(let value): return value as? T
+      case .third(let value): return value as? T
+    }
+  }
+  func isType<T>(_ type: T.Type = T.self) -> Bool {
+    return self.asType(type) != nil
+  }
+}

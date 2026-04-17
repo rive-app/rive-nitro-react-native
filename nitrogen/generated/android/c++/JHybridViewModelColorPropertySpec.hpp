@@ -22,11 +22,11 @@ namespace margelo::nitro::rive {
   class JHybridViewModelColorPropertySpec: public virtual HybridViewModelColorPropertySpec, public virtual JHybridViewModelPropertySpec {
   public:
     struct JavaPart: public jni::JavaClass<JavaPart, JHybridViewModelPropertySpec::JavaPart> {
-      static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/rive/HybridViewModelColorPropertySpec;";
+      static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/rive/HybridViewModelColorPropertySpec;";
       std::shared_ptr<JHybridViewModelColorPropertySpec> getJHybridViewModelColorPropertySpec();
     };
     struct CxxPart: public jni::HybridClass<CxxPart, JHybridViewModelPropertySpec::CxxPart> {
-      static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/rive/HybridViewModelColorPropertySpec$CxxPart;";
+      static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/rive/HybridViewModelColorPropertySpec$CxxPart;";
       static jni::local_ref<jhybriddata> initHybrid(jni::alias_ref<jhybridobject> jThis);
       static void registerNatives();
       using HybridBase::HybridBase;

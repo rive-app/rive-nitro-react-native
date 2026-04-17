@@ -19,7 +19,7 @@ namespace margelo::nitro::rive {
    */
   struct JDataBindMode final: public jni::JavaClass<JDataBindMode> {
   public:
-    static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/rive/DataBindMode;";
+    static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/rive/DataBindMode;";
 
   public:
     /**

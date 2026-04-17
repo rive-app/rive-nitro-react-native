@@ -24,7 +24,7 @@ namespace margelo::nitro::rive {
    */
   struct JArtboardBy final: public jni::JavaClass<JArtboardBy> {
   public:
-    static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/rive/ArtboardBy;";
+    static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/rive/ArtboardBy;";
 
   public:
     /**
