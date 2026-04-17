@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.4](https://github.com/rive-app/rive-nitro-react-native/compare/v0.4.3...v0.4.4) (2026-04-17)
+
+
+### Bug Fixes
+
+* survive fast refresh without disposing native objects ([#213](https://github.com/rive-app/rive-nitro-react-native/issues/213)) ([dea0ae2](https://github.com/rive-app/rive-nitro-react-native/commit/dea0ae28282245e145ce895abd39db648fd3a9f0))
+
 ## [0.4.3](https://github.com/rive-app/rive-nitro-react-native/compare/v0.4.2...v0.4.3) (2026-04-17)
 
 
