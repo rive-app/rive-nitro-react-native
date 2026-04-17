@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.5](https://github.com/rive-app/rive-nitro-react-native/compare/v0.4.4...v0.4.5) (2026-04-17)
+
+
+### Bug Fixes
+
+* **iOS:** use per-call ReferencedAssetLoader to prevent concurrent access crash ([#218](https://github.com/rive-app/rive-nitro-react-native/issues/218)) ([d92574d](https://github.com/rive-app/rive-nitro-react-native/commit/d92574dffbf86ccfd408a40be98621b54edc7cc4))
+
 ## [0.4.4](https://github.com/rive-app/rive-nitro-react-native/compare/v0.4.3...v0.4.4) (2026-04-17)
 
 
