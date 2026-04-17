@@ -2,7 +2,6 @@ import NitroModules
 import RiveRuntime
 
 final class HybridRiveFileFactory: HybridRiveFileFactorySpec, @unchecked Sendable {
-  let assetLoader = ReferencedAssetLoader()
 
   /// Asynchronously creates a `HybridRiveFileSpec` by performing the following steps:
   /// 1. Executes `check()` to validate or fetch initial data.
@@ -34,9 +33,10 @@ final class HybridRiveFileFactory: HybridRiveFileFactorySpec, @unchecked Sendabl
           DispatchQueue.global(qos: .userInitiated).async {
             do {
 
+              let assetLoader = ReferencedAssetLoader()
               let referencedAssetCache = SendableRef(ReferencedAssetCache())
               let factoryCache: SendableRef<RiveFactory?> = .init(nil)
-              let customLoader = self.assetLoader.createCustomLoader(
+              let customLoader = assetLoader.createCustomLoader(
                 referencedAssets: referencedAssets, cache: referencedAssetCache,
                 factory: factoryCache
               )
@@ -47,11 +47,13 @@ final class HybridRiveFileFactory: HybridRiveFileFactorySpec, @unchecked Sendabl
                 } else {
                   try file(prepared)
                 }
-              self.assetLoader.setFileRef(riveFile)
+              if customLoader != nil {
+                assetLoader.setFileRef(riveFile)
+              }
 
               let result = (
                 file: riveFile, cache: referencedAssetCache.value, factory: factoryCache.value,
-                loader: customLoader != nil ? self.assetLoader : nil
+                loader: customLoader != nil ? assetLoader : nil
               )
               DispatchQueue.main.async {
                 continuation.resume(returning: result)
