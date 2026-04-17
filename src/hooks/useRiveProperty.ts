@@ -1,9 +1,10 @@
-import { useCallback, useEffect, useState, useMemo } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   type ObservableProperty,
   type ViewModelInstance,
   type ViewModelProperty,
 } from '../specs/ViewModel.nitro';
+import { useDisposableMemo } from './useDisposableMemo';
 
 /**
  * Base hook for all ViewModelInstance property interactions.
@@ -34,13 +35,17 @@ export function useRiveProperty<P extends ViewModelProperty, T>(
   Error | null,
   P | undefined,
 ] {
-  const property = useMemo(() => {
-    if (!viewModelInstance) return;
-    return options.getProperty(
-      viewModelInstance,
-      path
-    ) as unknown as ObservableViewModelProperty<T>;
-  }, [options, viewModelInstance, path]);
+  const property = useDisposableMemo(
+    () => {
+      if (!viewModelInstance) return undefined;
+      return options.getProperty(
+        viewModelInstance,
+        path
+      ) as unknown as ObservableViewModelProperty<T>;
+    },
+    (p) => p?.dispose(),
+    [options, viewModelInstance, path]
+  );
 
   // Always start undefined — the listener delivers the current value as its first emission.
   // (iOS experimental: via valueStream; iOS/Android legacy: emitted synchronously on subscribe)
@@ -81,8 +86,12 @@ export function useRiveProperty<P extends ViewModelProperty, T>(
         });
 
     return () => {
-      removeListener();
-      property.dispose();
+      try {
+        removeListener();
+      } catch {
+        // Property may already be disposed by useDisposableMemo (deps change).
+        // Native dispose() handles listener cleanup, so this is safe to ignore.
+      }
     };
   }, [options, property]);
 
