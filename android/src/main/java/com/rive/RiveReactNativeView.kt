@@ -107,20 +107,24 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
       ?: resources.displayMetrics.density
 
     if (reload) {
-      val hasDataBinding = when (config.bindData) {
-        is BindData.None -> false
-        is BindData.Auto -> false
-        is BindData.Instance, is BindData.ByName -> true
-      }
+      val hasDataBinding = config.bindData !is BindData.None
       riveAnimationView?.setRiveFile(
         config.riveFile,
         artboardName = config.artboardName,
         stateMachineName = config.stateMachineName,
-        autoplay = config.autoPlay,
-        autoBind = hasDataBinding,
+        autoplay = false,
+        autoBind = false,
         alignment = config.alignment,
         fit = config.fit
       )
+
+      if (config.autoPlay) {
+        // Create the state machine by calling play(). When data binding is needed,
+        // use settleInitialState=false so the SM isn't advanced before we bind the
+        // correct ViewModel — the first Choreographer frame will advance it with
+        // the correct values already bound.
+        riveAnimationView?.play(settleInitialState = !hasDataBinding)
+      }
       _activeStateMachineName = getSafeStateMachineName()
     } else {
       riveAnimationView?.alignment = config.alignment
@@ -129,6 +133,10 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
 
     if (dataBindingChanged || initialUpdate || reload) {
       applyDataBinding(config.bindData)
+    }
+
+    if (config.autoPlay && !reload) {
+      play()
     }
 
     viewReadyDeferred.complete(true)
