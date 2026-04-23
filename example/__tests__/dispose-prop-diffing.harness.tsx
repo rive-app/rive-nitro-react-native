@@ -1,6 +1,6 @@
 import { describe, it, expect, render, cleanup } from 'react-native-harness';
-import { useState, useEffect } from 'react';
-import { View, Text } from 'react-native';
+import { useState } from 'react';
+import { View } from 'react-native';
 import { RiveView, useRiveFile, Fit } from '@rive-app/react-native';
 
 const BOUNCING_BALL = require('../assets/rive/bouncing_ball.riv');
