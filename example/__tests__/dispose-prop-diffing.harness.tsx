@@ -1,17 +1,7 @@
-import {
-  describe,
-  it,
-  expect,
-  render,
-  cleanup,
-} from 'react-native-harness';
+import { describe, it, expect, render, cleanup } from 'react-native-harness';
 import { useState, useEffect } from 'react';
 import { View, Text } from 'react-native';
-import {
-  RiveView,
-  useRiveFile,
-  Fit,
-} from '@rive-app/react-native';
+import { RiveView, useRiveFile, Fit } from '@rive-app/react-native';
 
 const BOUNCING_BALL = require('../assets/rive/bouncing_ball.riv');
 const COUNTER = require('../assets/rive/counter.riv');
@@ -25,17 +15,18 @@ function RiveBox({ source }: { source: number }) {
   return (
     <View style={{ width: 100, height: 100 }}>
       {riveFile && (
-        <RiveView file={riveFile} autoPlay fit={Fit.Contain} style={{ flex: 1 }} />
+        <RiveView
+          file={riveFile}
+          autoPlay
+          fit={Fit.Contain}
+          style={{ flex: 1 }}
+        />
       )}
     </View>
   );
 }
 
-function FileSwitcher({
-  fileIdx,
-}: {
-  fileIdx: number;
-}) {
+function FileSwitcher({ fileIdx }: { fileIdx: number }) {
   const source = FILES[fileIdx % FILES.length]!;
   return <RiveBox source={source} />;
 }

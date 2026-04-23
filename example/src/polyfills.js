@@ -1,4 +1,4 @@
-/* global globalThis */
+/* global globalThis, performance */
 // Polyfill performance.measure and console.timeStamp BEFORE React loads
 // to enable supportsUserTiming in ReactFabric-dev.js (same as Expo environment).
 // Without this, the dispose-during-prop-diffing crash only reproduces on Expo.
