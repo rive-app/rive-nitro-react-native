@@ -81,12 +81,14 @@ final class ReferencedAssetLoader {
     guard let imageAsset = asset as? RiveImageAsset,
       let hybridImage = image as? HybridRiveImage
     else {
-      completion()
+      DispatchQueue.main.async { completion() }
       return
     }
 
-    imageAsset.renderImage(hybridImage.renderImage)
-    completion()
+    DispatchQueue.main.async {
+      imageAsset.renderImage(hybridImage.renderImage)
+      completion()
+    }
   }
 
   private func loadAssetInternal(
