@@ -110,7 +110,8 @@
   },
   "workspaces": [
     "example",
-    "expo-example"
+    "expo-example",
+    "expo55-example"
   ],
   "packageManager": "yarn@3.6.1",
   "jest": {
