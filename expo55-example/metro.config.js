@@ -80,7 +80,7 @@ const configWithAlias = {
             moduleName,
             platform
           );
-        } catch (_) {
+        } catch {
           // fallback to default resolution
         }
       }
