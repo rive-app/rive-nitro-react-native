@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.4.6](https://github.com/rive-app/rive-nitro-react-native/compare/v0.4.5...v0.4.6) (2026-04-23)
+
+
+### Bug Fixes
+
+* **iOS:** dispatch completion to main thread in handlePreloadedImage ([#222](https://github.com/rive-app/rive-nitro-react-native/issues/222)) ([5c043d4](https://github.com/rive-app/rive-nitro-react-native/commit/5c043d4a80112c38da46c9da443d90302d3ec701))
+* prevent crash when React Fabric diffs props on disposed HybridObject ([#227](https://github.com/rive-app/rive-nitro-react-native/issues/227)) ([8286bcf](https://github.com/rive-app/rive-nitro-react-native/commit/8286bcf03fbe759f50f200dfa92eb98b74eb446d))
+
 ## [0.4.5](https://github.com/rive-app/rive-nitro-react-native/compare/v0.4.4...v0.4.5) (2026-04-17)
 
 
