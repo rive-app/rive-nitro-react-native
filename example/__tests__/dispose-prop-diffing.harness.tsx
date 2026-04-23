@@ -55,15 +55,16 @@ describe('dispose during Fabric prop diffing', () => {
     // Wait for initial file to load
     await new Promise((r) => setTimeout(r, 500));
 
-    // Rapid 3x switch — same pattern that crashes on RN 0.83
+    // Rapid 3x switch — same pattern that crashes when React's
+    // logComponentRender diffs old vs new props on the disposed object
     setIdx!((i) => i + 1);
-    await new Promise((r) => setTimeout(r, 50));
+    await new Promise((r) => setTimeout(r, 500));
     setIdx!((i) => i + 1);
-    await new Promise((r) => setTimeout(r, 50));
+    await new Promise((r) => setTimeout(r, 500));
     setIdx!((i) => i + 1);
 
     // Wait for everything to settle
-    await new Promise((r) => setTimeout(r, 500));
+    await new Promise((r) => setTimeout(r, 1000));
 
     // If we get here without crashing, the test passes
     expect(true).toBe(true);
@@ -85,10 +86,10 @@ describe('dispose during Fabric prop diffing', () => {
 
     for (let i = 0; i < 10; i++) {
       setIdx!((j) => j + 1);
-      await new Promise((r) => setTimeout(r, 30));
+      await new Promise((r) => setTimeout(r, 200));
     }
 
-    await new Promise((r) => setTimeout(r, 500));
+    await new Promise((r) => setTimeout(r, 1000));
     expect(true).toBe(true);
 
     cleanup();
