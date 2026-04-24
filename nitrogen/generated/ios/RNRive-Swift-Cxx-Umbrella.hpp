@@ -34,6 +34,8 @@ namespace margelo::nitro::rive { class HybridRiveFontConfigSpec; }
 namespace margelo::nitro::rive { class HybridRiveImageFactorySpec; }
 // Forward declaration of `HybridRiveImageSpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridRiveImageSpec; }
+// Forward declaration of `HybridRiveLoggerSpec` to properly resolve imports.
+namespace margelo::nitro::rive { class HybridRiveLoggerSpec; }
 // Forward declaration of `HybridRiveRuntimeSpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridRiveRuntimeSpec; }
 // Forward declaration of `HybridRiveViewSpec` to properly resolve imports.
@@ -93,6 +95,7 @@ namespace margelo::nitro::rive { struct UnifiedRiveEvent; }
 #include "HybridRiveFontConfigSpec.hpp"
 #include "HybridRiveImageFactorySpec.hpp"
 #include "HybridRiveImageSpec.hpp"
+#include "HybridRiveLoggerSpec.hpp"
 #include "HybridRiveRuntimeSpec.hpp"
 #include "HybridRiveViewSpec.hpp"
 #include "HybridViewModelArtboardPropertySpec.hpp"
@@ -151,6 +154,8 @@ namespace RNRive { class HybridRiveFontConfigSpec_cxx; }
 namespace RNRive { class HybridRiveImageFactorySpec_cxx; }
 // Forward declaration of `HybridRiveImageSpec_cxx` to properly resolve imports.
 namespace RNRive { class HybridRiveImageSpec_cxx; }
+// Forward declaration of `HybridRiveLoggerSpec_cxx` to properly resolve imports.
+namespace RNRive { class HybridRiveLoggerSpec_cxx; }
 // Forward declaration of `HybridRiveRuntimeSpec_cxx` to properly resolve imports.
 namespace RNRive { class HybridRiveRuntimeSpec_cxx; }
 // Forward declaration of `HybridRiveViewSpec_cxx` to properly resolve imports.

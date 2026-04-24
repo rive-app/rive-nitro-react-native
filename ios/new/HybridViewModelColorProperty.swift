@@ -20,10 +20,11 @@ class HybridViewModelColorProperty: HybridViewModelColorPropertySpec {
   // Deprecated: Use getValueAsync (read) or set(value:) (write) instead
   var value: Double {
     get {
+      DeprecationWarning.warn("ColorProperty.value", replacement: "getValueAsync")
       do {
         return try blockingAsync { try await self.fetchColorValue() }
       } catch {
-        RCTLogError("[ColorProperty] getValue failed: \(error)")
+        RiveLog.e("ColorProperty", "getValue failed: \(error)")
         return 0
       }
     }

@@ -15,19 +15,21 @@ class HybridViewModel: HybridViewModelSpec {
   var modelName: String { vmName }
 
   var propertyCount: Double {
+    DeprecationWarning.warn("propertyCount", replacement: "getPropertyCountAsync")
     do {
       return Double(try blockingAsync { try await self.file.getProperties(of: self.vmName) }.count)
     } catch {
-      RCTLogError("[HybridViewModel] propertyCount failed: \(error)")
+      RiveLog.e("ViewModel", "propertyCount failed: \(error)")
       return 0
     }
   }
 
   var instanceCount: Double {
+    DeprecationWarning.warn("instanceCount", replacement: "getInstanceCountAsync")
     do {
       return Double(try blockingAsync { try await self.file.getInstanceNames(of: self.vmName) }.count)
     } catch {
-      RCTLogError("[HybridViewModel] instanceCount failed: \(error)")
+      RiveLog.e("ViewModel", "instanceCount failed: \(error)")
       return 0
     }
   }
@@ -60,6 +62,7 @@ class HybridViewModel: HybridViewModelSpec {
 
   // Deprecated: Use createInstanceByNameAsync instead
   func createInstanceByIndex(index: Double) throws -> (any HybridViewModelInstanceSpec)? {
+    DeprecationWarning.warn("createInstanceByIndex", replacement: "createInstanceByNameAsync")
     return try blockingAsync { try await self.createInstanceByIndexImpl(index: index) }
   }
 
@@ -70,6 +73,7 @@ class HybridViewModel: HybridViewModelSpec {
 
   // Deprecated: Use createInstanceByNameAsync instead
   func createInstanceByName(name: String) throws -> (any HybridViewModelInstanceSpec)? {
+    DeprecationWarning.warn("createInstanceByName", replacement: "createInstanceByNameAsync")
     return try blockingAsync { try await self.createInstanceByNameImpl(name: name) }
   }
 
@@ -79,6 +83,7 @@ class HybridViewModel: HybridViewModelSpec {
 
   // Deprecated: Use createDefaultInstanceAsync instead
   func createDefaultInstance() throws -> (any HybridViewModelInstanceSpec)? {
+    DeprecationWarning.warn("createDefaultInstance", replacement: "createDefaultInstanceAsync")
     return try blockingAsync { try await self.createDefaultInstanceImpl() }
   }
 
@@ -93,6 +98,7 @@ class HybridViewModel: HybridViewModelSpec {
 
   // Deprecated: Use createBlankInstanceAsync instead
   func createInstance() throws -> (any HybridViewModelInstanceSpec)? {
+    DeprecationWarning.warn("createInstance", replacement: "createBlankInstanceAsync")
     return try blockingAsync { try await self.createInstanceImpl() }
   }
 

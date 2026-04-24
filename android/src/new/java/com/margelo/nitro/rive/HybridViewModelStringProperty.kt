@@ -1,6 +1,5 @@
 package com.margelo.nitro.rive
 
-import android.util.Log
 import androidx.annotation.Keep
 import app.rive.ViewModelInstance
 import com.facebook.proguard.annotations.DoNotStrip
@@ -22,10 +21,11 @@ class HybridViewModelStringProperty(
   // Deprecated: Use getValueAsync (read) or set(value) (write) instead
   override var value: String
     get() {
+      DeprecationWarning.warn("StringProperty.value", "getValueAsync")
       return try {
         runBlocking { instance.getStringFlow(path).first() }
       } catch (e: Exception) {
-        Log.e(TAG, "getValue failed for path '$path'", e)
+        RiveLog.e(TAG, "getValue failed for path '$path': ${e.message}")
         ""
       }
     }

@@ -1,6 +1,5 @@
 package com.margelo.nitro.rive
 
-import android.util.Log
 import androidx.annotation.Keep
 import app.rive.Artboard
 import app.rive.RiveFile
@@ -26,11 +25,12 @@ class HybridRiveFile(
   // Deprecated: Use getViewModelNamesAsync instead
   override val viewModelCount: Double?
     get() {
+      DeprecationWarning.warn("viewModelCount", "getViewModelNamesAsync")
       val file = riveFile ?: return null
       return try {
         runBlocking { file.getViewModelNames() }.size.toDouble()
       } catch (e: Exception) {
-        Log.e(TAG, "viewModelCount failed", e)
+        RiveLog.e(TAG, "viewModelCount failed: ${e.message}")
         null
       }
     }
@@ -44,6 +44,7 @@ class HybridRiveFile(
 
   // Deprecated: Use getViewModelNamesAsync + viewModelByNameAsync instead
   override fun viewModelByIndex(index: Double): HybridViewModelSpec? {
+    DeprecationWarning.warn("viewModelByIndex", "getViewModelNamesAsync + viewModelByNameAsync")
     val file = riveFile ?: return null
     return try {
       val names = runBlocking { file.getViewModelNames() }
@@ -51,7 +52,7 @@ class HybridRiveFile(
       if (idx < 0 || idx >= names.size) return null
       HybridViewModel(file, riveWorker, names[idx], this, ViewModelSource.Named(names[idx]))
     } catch (e: Exception) {
-      Log.e(TAG, "viewModelByIndex($index) failed", e)
+      RiveLog.e(TAG, "viewModelByIndex($index) failed: ${e.message}")
       null
     }
   }
@@ -67,10 +68,11 @@ class HybridRiveFile(
 
   // Deprecated: Use viewModelByNameAsync instead
   override fun viewModelByName(name: String): HybridViewModelSpec? {
+    DeprecationWarning.warn("viewModelByName", "viewModelByNameAsync")
     return try {
       runBlocking { viewModelByNameImpl(name, validate = true) }
     } catch (e: Exception) {
-      Log.e(TAG, "viewModelByName('$name') failed", e)
+      RiveLog.e(TAG, "viewModelByName('$name') failed: ${e.message}")
       null
     }
   }
@@ -105,10 +107,11 @@ class HybridRiveFile(
 
   // Deprecated: Use defaultArtboardViewModelAsync instead
   override fun defaultArtboardViewModel(artboardBy: ArtboardBy?): HybridViewModelSpec? {
+    DeprecationWarning.warn("defaultArtboardViewModel", "defaultArtboardViewModelAsync")
     return try {
       runBlocking { defaultArtboardViewModelImpl(artboardBy) }
     } catch (e: Exception) {
-      Log.e(TAG, "defaultArtboardViewModel failed", e)
+      RiveLog.e(TAG, "defaultArtboardViewModel failed: ${e.message}")
       null
     }
   }
@@ -120,11 +123,12 @@ class HybridRiveFile(
   // Deprecated: Use getArtboardCountAsync instead
   override val artboardCount: Double
     get() {
+      DeprecationWarning.warn("artboardCount", "getArtboardCountAsync")
       val file = riveFile ?: return 0.0
       return try {
         runBlocking { file.getArtboardNames() }.size.toDouble()
       } catch (e: Exception) {
-        Log.e(TAG, "artboardCount failed", e)
+        RiveLog.e(TAG, "artboardCount failed: ${e.message}")
         0.0
       }
     }
@@ -139,11 +143,12 @@ class HybridRiveFile(
   // Deprecated: Use getArtboardNamesAsync instead
   override val artboardNames: Array<String>
     get() {
+      DeprecationWarning.warn("artboardNames", "getArtboardNamesAsync")
       val file = riveFile ?: return emptyArray()
       return try {
         runBlocking { file.getArtboardNames() }.toTypedArray()
       } catch (e: Exception) {
-        Log.e(TAG, "artboardNames failed", e)
+        RiveLog.e(TAG, "artboardNames failed: ${e.message}")
         emptyArray()
       }
     }
