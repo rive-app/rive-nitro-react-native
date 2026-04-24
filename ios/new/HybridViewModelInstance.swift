@@ -62,13 +62,14 @@ class HybridViewModelInstance: HybridViewModelInstanceSpec {
       let vmi = try await self.viewModelInstance.value(of: prop)
       return HybridViewModelInstance(viewModelInstance: vmi, worker: self.worker)
     } catch {
-      RCTLogError("[ViewModelInstance] viewModel(path: '\(path)') failed: \(error)")
+      RiveLog.e("ViewModelInstance", "viewModel(path: '\(path)') failed: \(error)")
       return nil
     }
   }
 
   // Deprecated: Use viewModelAsync instead
   func viewModel(path: String) throws -> (any HybridViewModelInstanceSpec)? {
+    DeprecationWarning.warn("viewModel", replacement: "viewModelAsync")
     return try blockingAsync { try await self.viewModelImpl(path: path) }
   }
 

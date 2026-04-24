@@ -34,6 +34,8 @@ namespace margelo::nitro::rive { class HybridRiveFontConfigSpec; }
 namespace margelo::nitro::rive { class HybridRiveImageFactorySpec; }
 // Forward declaration of `HybridRiveImageSpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridRiveImageSpec; }
+// Forward declaration of `HybridRiveLoggerSpec` to properly resolve imports.
+namespace margelo::nitro::rive { class HybridRiveLoggerSpec; }
 // Forward declaration of `HybridRiveRuntimeSpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridRiveRuntimeSpec; }
 // Forward declaration of `HybridRiveViewSpec` to properly resolve imports.
@@ -94,6 +96,8 @@ namespace RNRive { class HybridRiveFontConfigSpec_cxx; }
 namespace RNRive { class HybridRiveImageFactorySpec_cxx; }
 // Forward declaration of `HybridRiveImageSpec_cxx` to properly resolve imports.
 namespace RNRive { class HybridRiveImageSpec_cxx; }
+// Forward declaration of `HybridRiveLoggerSpec_cxx` to properly resolve imports.
+namespace RNRive { class HybridRiveLoggerSpec_cxx; }
 // Forward declaration of `HybridRiveRuntimeSpec_cxx` to properly resolve imports.
 namespace RNRive { class HybridRiveRuntimeSpec_cxx; }
 // Forward declaration of `HybridRiveViewSpec_cxx` to properly resolve imports.
@@ -137,6 +141,7 @@ namespace RNRive { class HybridViewModelTriggerPropertySpec_cxx; }
 #include "HybridRiveFontConfigSpec.hpp"
 #include "HybridRiveImageFactorySpec.hpp"
 #include "HybridRiveImageSpec.hpp"
+#include "HybridRiveLoggerSpec.hpp"
 #include "HybridRiveRuntimeSpec.hpp"
 #include "HybridRiveViewSpec.hpp"
 #include "HybridViewModelArtboardPropertySpec.hpp"
@@ -867,6 +872,40 @@ namespace margelo::nitro::rive::bridge::swift {
   inline Result_std__shared_ptr_Promise_std__shared_ptr_HybridRiveImageSpec____ create_Result_std__shared_ptr_Promise_std__shared_ptr_HybridRiveImageSpec____(const std::exception_ptr& error) noexcept {
     return Result<std::shared_ptr<Promise<std::shared_ptr<HybridRiveImageSpec>>>>::withError(error);
   }
+  
+  // pragma MARK: std::function<void(const std::string& /* level */, const std::string& /* tag */, const std::string& /* message */)>
+  /**
+   * Specialized version of `std::function<void(const std::string&, const std::string&, const std::string&)>`.
+   */
+  using Func_void_std__string_std__string_std__string = std::function<void(const std::string& /* level */, const std::string& /* tag */, const std::string& /* message */)>;
+  /**
+   * Wrapper class for a `std::function<void(const std::string& / * level * /, const std::string& / * tag * /, const std::string& / * message * /)>`, this can be used from Swift.
+   */
+  class Func_void_std__string_std__string_std__string_Wrapper final {
+  public:
+    explicit Func_void_std__string_std__string_std__string_Wrapper(std::function<void(const std::string& /* level */, const std::string& /* tag */, const std::string& /* message */)>&& func): _function(std::make_unique<std::function<void(const std::string& /* level */, const std::string& /* tag */, const std::string& /* message */)>>(std::move(func))) {}
+    inline void call(std::string level, std::string tag, std::string message) const noexcept {
+      _function->operator()(level, tag, message);
+    }
+  private:
+    std::unique_ptr<std::function<void(const std::string& /* level */, const std::string& /* tag */, const std::string& /* message */)>> _function;
+  } SWIFT_NONCOPYABLE;
+  Func_void_std__string_std__string_std__string create_Func_void_std__string_std__string_std__string(void* NON_NULL swiftClosureWrapper) noexcept;
+  inline Func_void_std__string_std__string_std__string_Wrapper wrap_Func_void_std__string_std__string_std__string(Func_void_std__string_std__string_std__string value) noexcept {
+    return Func_void_std__string_std__string_std__string_Wrapper(std::move(value));
+  }
+  
+  // pragma MARK: std::shared_ptr<HybridRiveLoggerSpec>
+  /**
+   * Specialized version of `std::shared_ptr<HybridRiveLoggerSpec>`.
+   */
+  using std__shared_ptr_HybridRiveLoggerSpec_ = std::shared_ptr<HybridRiveLoggerSpec>;
+  std::shared_ptr<HybridRiveLoggerSpec> create_std__shared_ptr_HybridRiveLoggerSpec_(void* NON_NULL swiftUnsafePointer) noexcept;
+  void* NON_NULL get_std__shared_ptr_HybridRiveLoggerSpec_(std__shared_ptr_HybridRiveLoggerSpec_ cppType);
+  
+  // pragma MARK: std::weak_ptr<HybridRiveLoggerSpec>
+  using std__weak_ptr_HybridRiveLoggerSpec_ = std::weak_ptr<HybridRiveLoggerSpec>;
+  inline std__weak_ptr_HybridRiveLoggerSpec_ weakify_std__shared_ptr_HybridRiveLoggerSpec_(const std::shared_ptr<HybridRiveLoggerSpec>& strong) noexcept { return strong; }
   
   // pragma MARK: std::shared_ptr<HybridRiveRuntimeSpec>
   /**

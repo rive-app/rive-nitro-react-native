@@ -1,6 +1,5 @@
 package com.margelo.nitro.rive
 
-import android.util.Log
 import androidx.annotation.Keep
 import app.rive.RiveFile
 import app.rive.ViewModelInstance
@@ -33,22 +32,24 @@ class HybridViewModel(
 
   override val propertyCount: Double
     get() {
+      DeprecationWarning.warn("propertyCount", "getPropertyCountAsync")
       val name = viewModelName ?: throw UnsupportedOperationException(NO_NAME_ERROR)
       return try {
         runBlocking { riveFile.getViewModelProperties(name) }.size.toDouble()
       } catch (e: Exception) {
-        Log.e(TAG, "propertyCount failed", e)
+        RiveLog.e(TAG, "propertyCount failed: ${e.message}")
         0.0
       }
     }
 
   override val instanceCount: Double
     get() {
+      DeprecationWarning.warn("instanceCount", "getInstanceCountAsync")
       val name = viewModelName ?: throw UnsupportedOperationException(NO_NAME_ERROR)
       return try {
         runBlocking { riveFile.getViewModelInstanceNames(name) }.size.toDouble()
       } catch (e: Exception) {
-        Log.e(TAG, "instanceCount failed", e)
+        RiveLog.e(TAG, "instanceCount failed: ${e.message}")
         0.0
       }
     }
@@ -68,6 +69,7 @@ class HybridViewModel(
 
   // Deprecated: Use createInstanceByNameAsync instead
   override fun createInstanceByIndex(index: Double): HybridViewModelInstanceSpec? {
+    DeprecationWarning.warn("createInstanceByIndex", "createInstanceByNameAsync")
     val name = viewModelName ?: throw UnsupportedOperationException(NO_NAME_ERROR)
     return try {
       val idx = index.toInt()
@@ -78,7 +80,7 @@ class HybridViewModel(
     } catch (e: UnsupportedOperationException) {
       throw e
     } catch (e: Exception) {
-      Log.e(TAG, "createInstanceByIndex($index) failed", e)
+      RiveLog.e(TAG, "createInstanceByIndex($index) failed: ${e.message}")
       null
     }
   }
@@ -94,13 +96,14 @@ class HybridViewModel(
 
   // Deprecated: Use createInstanceByNameAsync instead
   override fun createInstanceByName(name: String): HybridViewModelInstanceSpec? {
+    DeprecationWarning.warn("createInstanceByName", "createInstanceByNameAsync")
     if (viewModelName == null) throw UnsupportedOperationException(NO_NAME_ERROR)
     return try {
       runBlocking { createInstanceByNameImpl(name) }
     } catch (e: UnsupportedOperationException) {
       throw e
     } catch (e: Exception) {
-      Log.e(TAG, "createInstanceByName('$name') failed", e)
+      RiveLog.e(TAG, "createInstanceByName('$name') failed: ${e.message}")
       null
     }
   }
@@ -112,12 +115,13 @@ class HybridViewModel(
 
   // Deprecated: Use createDefaultInstanceAsync instead
   override fun createDefaultInstance(): HybridViewModelInstanceSpec? {
+    DeprecationWarning.warn("createDefaultInstance", "createDefaultInstanceAsync")
     return try {
       val source = vmSource.defaultInstance()
       val vmi = ViewModelInstance.fromFile(riveFile, source)
       HybridViewModelInstance(vmi, riveWorker, parentFile, viewModelName)
     } catch (e: Exception) {
-      Log.e(TAG, "createDefaultInstance failed", e)
+      RiveLog.e(TAG, "createDefaultInstance failed: ${e.message}")
       null
     }
   }
@@ -132,12 +136,13 @@ class HybridViewModel(
 
   // Deprecated: Use createBlankInstanceAsync instead
   override fun createInstance(): HybridViewModelInstanceSpec? {
+    DeprecationWarning.warn("createInstance", "createBlankInstanceAsync")
     return try {
       val source = vmSource.blankInstance()
       val vmi = ViewModelInstance.fromFile(riveFile, source)
       HybridViewModelInstance(vmi, riveWorker, parentFile, viewModelName)
     } catch (e: Exception) {
-      Log.e(TAG, "createInstance (blank) failed", e)
+      RiveLog.e(TAG, "createInstance (blank) failed: ${e.message}")
       null
     }
   }

@@ -141,10 +141,11 @@ class HybridViewModelInstance(
 
   // Deprecated: Use viewModelAsync instead
   override fun viewModel(path: String): HybridViewModelInstanceSpec? {
+    DeprecationWarning.warn("viewModel", "viewModelAsync")
     return try {
       viewModelImpl(path)
     } catch (e: Exception) {
-      Log.e(TAG, "viewModel failed for path '$path'", e)
+      RiveLog.e(TAG, "viewModel failed for path '$path': ${e.message}")
       null
     }
   }

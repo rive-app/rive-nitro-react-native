@@ -16,12 +16,13 @@ class HybridRiveFile: HybridRiveFileSpec {
 
   // Deprecated: Use getViewModelNamesAsync instead
   var viewModelCount: Double? {
+    DeprecationWarning.warn("viewModelCount", replacement: "getViewModelNamesAsync")
     guard let file = file else { return nil }
     do {
       let names = try blockingAsync { try await file.getViewModelNames() }
       return Double(names.count)
     } catch {
-      RCTLogError("[RiveFile] viewModelCount failed: \(error)")
+      RiveLog.e("RiveFile", "viewModelCount failed: \(error)")
       return nil
     }
   }
@@ -35,6 +36,7 @@ class HybridRiveFile: HybridRiveFileSpec {
 
   // Deprecated: Use getViewModelNamesAsync + viewModelByNameAsync instead
   func viewModelByIndex(index: Double) throws -> (any HybridViewModelSpec)? {
+    DeprecationWarning.warn("viewModelByIndex", replacement: "getViewModelNamesAsync + viewModelByNameAsync")
     guard let file = file, let worker = worker else { return nil }
     return try blockingAsync {
       let names = try await file.getViewModelNames()
@@ -55,6 +57,7 @@ class HybridRiveFile: HybridRiveFileSpec {
 
   // Deprecated: Use viewModelByNameAsync instead
   func viewModelByName(name: String) throws -> (any HybridViewModelSpec)? {
+    DeprecationWarning.warn("viewModelByName", replacement: "viewModelByNameAsync")
     return try blockingAsync { try await self.viewModelByNameImpl(name: name, validate: true) }
   }
 
@@ -90,6 +93,7 @@ class HybridRiveFile: HybridRiveFileSpec {
 
   // Deprecated: Use defaultArtboardViewModelAsync instead
   func defaultArtboardViewModel(artboardBy: ArtboardBy?) throws -> (any HybridViewModelSpec)? {
+    DeprecationWarning.warn("defaultArtboardViewModel", replacement: "defaultArtboardViewModelAsync")
     return try blockingAsync { try await self.defaultArtboardViewModelImpl(artboardBy: artboardBy) }
   }
 
@@ -99,12 +103,13 @@ class HybridRiveFile: HybridRiveFileSpec {
 
   // Deprecated: Use getArtboardCountAsync instead
   var artboardCount: Double {
+    DeprecationWarning.warn("artboardCount", replacement: "getArtboardCountAsync")
     guard let file = file else { return 0 }
     do {
       let names = try blockingAsync { try await file.getArtboardNames() }
       return Double(names.count)
     } catch {
-      RCTLogError("[RiveFile] artboardCount failed: \(error)")
+      RiveLog.e("RiveFile", "artboardCount failed: \(error)")
       return 0
     }
   }
@@ -119,11 +124,12 @@ class HybridRiveFile: HybridRiveFileSpec {
 
   // Deprecated: Use getArtboardNamesAsync instead
   var artboardNames: [String] {
+    DeprecationWarning.warn("artboardNames", replacement: "getArtboardNamesAsync")
     guard let file = file else { return [] }
     do {
       return try blockingAsync { try await file.getArtboardNames() }
     } catch {
-      RCTLogError("[RiveFile] artboardNames failed: \(error)")
+      RiveLog.e("RiveFile", "artboardNames failed: \(error)")
       return []
     }
   }

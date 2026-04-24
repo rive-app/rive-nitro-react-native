@@ -15,10 +15,11 @@ class HybridViewModelBooleanProperty: HybridViewModelBooleanPropertySpec {
   // Deprecated: Use getValueAsync (read) or set(value:) (write) instead
   var value: Bool {
     get {
+      DeprecationWarning.warn("BooleanProperty.value", replacement: "getValueAsync")
       do {
         return try blockingAsync { try await self.instance.value(of: self.prop) }
       } catch {
-        RCTLogError("[BooleanProperty] getValue failed: \(error)")
+        RiveLog.e("BooleanProperty", "getValue failed: \(error)")
         return false
       }
     }

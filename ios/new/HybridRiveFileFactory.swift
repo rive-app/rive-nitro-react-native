@@ -6,7 +6,12 @@ final class HybridRiveFileFactory: HybridRiveFileFactorySpec, @unchecked Sendabl
 
   // All files must share the same Worker so artboard handles are valid across files
   // (each Worker has its own C++ command server with its own m_artboards map)
-  private static let sharedWorkerTask = Task { @MainActor in try await Worker() }
+  private static let sharedWorkerTask = Task { @MainActor in
+    if !(RiveRuntime.RiveLog.logger is RiveRuntimeLogger) {
+      RiveRuntime.RiveLog.logger = RiveRuntimeLogger()
+    }
+    return try await Worker()
+  }
 
   func fromURL(url: String, loadCdn: Bool, referencedAssets: ReferencedAssetsType?) throws
     -> Promise<(any HybridRiveFileSpec)>
