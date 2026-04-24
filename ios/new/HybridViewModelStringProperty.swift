@@ -15,10 +15,11 @@ class HybridViewModelStringProperty: HybridViewModelStringPropertySpec {
   // Deprecated: Use getValueAsync (read) or set(value:) (write) instead
   var value: String {
     get {
+      DeprecationWarning.warn("StringProperty.value", replacement: "getValueAsync")
       do {
         return try blockingAsync { try await self.instance.value(of: self.prop) }
       } catch {
-        RCTLogError("[StringProperty] getValue failed: \(error)")
+        RiveLog.e("StringProperty", "getValue failed: \(error)")
         return ""
       }
     }

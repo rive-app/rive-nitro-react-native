@@ -15,10 +15,11 @@ class HybridViewModelNumberProperty: HybridViewModelNumberPropertySpec {
   // Deprecated: Use getValueAsync (read) or set(value:) (write) instead
   var value: Double {
     get {
+      DeprecationWarning.warn("NumberProperty.value", replacement: "getValueAsync")
       do {
         return try blockingAsync { try await Double(self.instance.value(of: self.prop)) }
       } catch {
-        RCTLogError("[NumberProperty] getValue failed: \(error)")
+        RiveLog.e("NumberProperty", "getValue failed: \(error)")
         return 0
       }
     }

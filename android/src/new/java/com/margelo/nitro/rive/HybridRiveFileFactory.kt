@@ -16,12 +16,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 /**
- * Custom RiveLog logger that logs to Logcat and broadcasts error messages
- * to registered listeners. This captures C++ errors from the Rive CommandQueue
- * (e.g., "State machine not found", "Draw failed") that are otherwise silent.
+ * Custom RiveLog logger that routes all Rive C++ runtime logs through [RiveLog]
+ * and broadcasts error messages to registered listeners. This captures C++ errors
+ * from the Rive CommandQueue (e.g., "State machine not found", "Draw failed").
  */
 object RiveErrorLogger : app.rive.RiveLog.Logger {
-  private val logcat = app.rive.RiveLog.LogcatLogger()
   private val listeners = mutableListOf<(String) -> Unit>()
   private val reportedErrors = mutableSetOf<String>()
 
@@ -47,13 +46,21 @@ object RiveErrorLogger : app.rive.RiveLog.Logger {
     synchronized(reportedErrors) { reportedErrors.clear() }
   }
 
-  override fun v(tag: String, msg: () -> String) = logcat.v(tag, msg)
-  override fun d(tag: String, msg: () -> String) = logcat.d(tag, msg)
-  override fun i(tag: String, msg: () -> String) = logcat.i(tag, msg)
-  override fun w(tag: String, msg: () -> String) = logcat.w(tag, msg)
+  override fun v(tag: String, msg: () -> String) {
+    RiveLog.d(tag, msg())
+  }
+  override fun d(tag: String, msg: () -> String) {
+    RiveLog.d(tag, msg())
+  }
+  override fun i(tag: String, msg: () -> String) {
+    RiveLog.i(tag, msg())
+  }
+  override fun w(tag: String, msg: () -> String) {
+    RiveLog.w(tag, msg())
+  }
   override fun e(tag: String, t: Throwable?, msg: () -> String) {
     val message = msg()
-    logcat.e(tag, t) { message }
+    RiveLog.e(tag, message)
     broadcastError(tag, message)
   }
 }

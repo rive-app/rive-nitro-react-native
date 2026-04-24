@@ -15,6 +15,7 @@
 #include "HybridRiveFontConfigSpecSwift.hpp"
 #include "HybridRiveImageFactorySpecSwift.hpp"
 #include "HybridRiveImageSpecSwift.hpp"
+#include "HybridRiveLoggerSpecSwift.hpp"
 #include "HybridRiveRuntimeSpecSwift.hpp"
 #include "HybridRiveViewSpecSwift.hpp"
 #include "HybridViewModelArtboardPropertySpecSwift.hpp"
@@ -231,6 +232,30 @@ namespace margelo::nitro::rive::bridge::swift {
     }
     #endif
     RNRive::HybridRiveImageFactorySpec_cxx& swiftPart = swiftWrapper->getSwiftPart();
+    return swiftPart.toUnsafe();
+  }
+  
+  // pragma MARK: std::function<void(const std::string& /* level */, const std::string& /* tag */, const std::string& /* message */)>
+  Func_void_std__string_std__string_std__string create_Func_void_std__string_std__string_std__string(void* NON_NULL swiftClosureWrapper) noexcept {
+    auto swiftClosure = RNRive::Func_void_std__string_std__string_std__string::fromUnsafe(swiftClosureWrapper);
+    return [swiftClosure = std::move(swiftClosure)](const std::string& level, const std::string& tag, const std::string& message) mutable -> void {
+      swiftClosure.call(level, tag, message);
+    };
+  }
+  
+  // pragma MARK: std::shared_ptr<HybridRiveLoggerSpec>
+  std::shared_ptr<HybridRiveLoggerSpec> create_std__shared_ptr_HybridRiveLoggerSpec_(void* NON_NULL swiftUnsafePointer) noexcept {
+    RNRive::HybridRiveLoggerSpec_cxx swiftPart = RNRive::HybridRiveLoggerSpec_cxx::fromUnsafe(swiftUnsafePointer);
+    return std::make_shared<margelo::nitro::rive::HybridRiveLoggerSpecSwift>(swiftPart);
+  }
+  void* NON_NULL get_std__shared_ptr_HybridRiveLoggerSpec_(std__shared_ptr_HybridRiveLoggerSpec_ cppType) {
+    std::shared_ptr<margelo::nitro::rive::HybridRiveLoggerSpecSwift> swiftWrapper = std::dynamic_pointer_cast<margelo::nitro::rive::HybridRiveLoggerSpecSwift>(cppType);
+    #ifdef NITRO_DEBUG
+    if (swiftWrapper == nullptr) [[unlikely]] {
+      throw std::runtime_error("Class \"HybridRiveLoggerSpec\" is not implemented in Swift!");
+    }
+    #endif
+    RNRive::HybridRiveLoggerSpec_cxx& swiftPart = swiftWrapper->getSwiftPart();
     return swiftPart.toUnsafe();
   }
   

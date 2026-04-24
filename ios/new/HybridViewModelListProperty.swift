@@ -18,12 +18,13 @@ class HybridViewModelListProperty: HybridViewModelListPropertySpec {
 
   // Deprecated: Use getLengthAsync instead
   var length: Double {
+    DeprecationWarning.warn("ListProperty.length", replacement: "getLengthAsync")
     do {
       return try blockingAsync {
         try await Double(self.vmiInstance.size(of: self.prop))
       }
     } catch {
-      RCTLogError("[ListProperty] length failed: \(error)")
+      RiveLog.e("ListProperty", "length failed: \(error)")
       return 0
     }
   }
@@ -43,6 +44,7 @@ class HybridViewModelListProperty: HybridViewModelListPropertySpec {
 
   // Deprecated: Use getInstanceAtAsync instead
   func getInstanceAt(index: Double) throws -> (any HybridViewModelInstanceSpec)? {
+    DeprecationWarning.warn("ListProperty.getInstanceAt", replacement: "getInstanceAtAsync")
     return try blockingAsync { try await self.fetchInstance(at: index) }
   }
 
