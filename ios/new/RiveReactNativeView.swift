@@ -1,6 +1,7 @@
-@_spi(RiveExperimental) import RiveRuntime
+import RiveRuntime
 import NitroModules
 import UIKit
+import MetalKit
 
 enum ExperimentalBindData {
   case none
@@ -27,8 +28,22 @@ class RiveReactNativeView: UIView {
   private var isViewReady = false
   private var configTask: Task<Void, Never>?
   private var isPaused = false
+  private var pendingFit: RiveRuntime.Fit?
 
   var autoPlay: Bool = true
+
+  override func layoutSubviews() {
+    super.layoutSubviews()
+    applyPendingFitIfMTKViewReady()
+  }
+
+  // https://github.com/rive-app/rive-nitro-react-native/pull/231
+  private func applyPendingFitIfMTKViewReady() {
+    guard let fit = pendingFit, let rive = riveInstance,
+          riveUIView?.subviews.contains(where: { $0 is MTKView }) == true else { return }
+    rive.fit = fit
+    pendingFit = nil
+  }
 
   func awaitViewReady() async -> Bool {
     if !isViewReady {
@@ -93,14 +108,9 @@ class RiveReactNativeView: UIView {
 
           RCTLog("[RiveReactNativeView] Rive instance created successfully")
           self.riveInstance = rive
-          RCTLog("[RiveReactNativeView] Setting up RiveUIView...")
           self.setupRiveUIView(with: rive)
-          RCTLog("[RiveReactNativeView] RiveUIView setup complete")
 
-          // Set fit after view is in the hierarchy — passing fit to
-          // the Rive() constructor breaks .layout mode because the
-          // MTKView drawable isn't ready yet at construction time.
-          rive.fit = config.fit
+          self.pendingFit = config.fit
 
           if config.autoPlay {
             self.isPaused = false
