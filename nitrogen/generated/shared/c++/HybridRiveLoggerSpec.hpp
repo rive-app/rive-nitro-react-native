@@ -51,6 +51,7 @@ namespace margelo::nitro::rive {
       // Methods
       virtual void setHandler(const std::function<void(const std::string& /* level */, const std::string& /* tag */, const std::string& /* message */)>& handler) = 0;
       virtual void resetHandler() = 0;
+      virtual void setLogLevel(const std::string& level) = 0;
 
     protected:
       // Hybrid Setup

@@ -40,6 +40,10 @@ abstract class HybridRiveLoggerSpec: HybridObject() {
   @DoNotStrip
   @Keep
   abstract fun resetHandler(): Unit
+  
+  @DoNotStrip
+  @Keep
+  abstract fun setLogLevel(level: String): Unit
 
   // Default implementation of `HybridObject.toString()`
   override fun toString(): String {

@@ -79,6 +79,12 @@ namespace margelo::nitro::rive {
         std::rethrow_exception(__result.error());
       }
     }
+    inline void setLogLevel(const std::string& level) override {
+      auto __result = _swiftPart.setLogLevel(level);
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+    }
 
   private:
     RNRive::HybridRiveLoggerSpec_cxx _swiftPart;

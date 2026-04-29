@@ -1,6 +1,8 @@
 import { NitroModules } from 'react-native-nitro-modules';
 import type { RiveLogger as RiveLoggerSpec } from '../specs/RiveLogger.nitro';
 
+export type RiveLogLevel = 'debug' | 'info' | 'warn' | 'error';
+
 const _logger = NitroModules.createHybridObject<RiveLoggerSpec>('RiveLogger');
 
 function defaultHandler(level: string, tag: string, message: string) {
@@ -25,5 +27,9 @@ export namespace RiveLog {
 
   export function resetHandler() {
     _logger.setHandler(defaultHandler);
+  }
+
+  export function setLogLevel(level: RiveLogLevel) {
+    _logger.setLogLevel(level);
   }
 }

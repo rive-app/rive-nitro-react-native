@@ -15,6 +15,7 @@ public protocol HybridRiveLoggerSpec_protocol: HybridObject {
   // Methods
   func setHandler(handler: @escaping (_ level: String, _ tag: String, _ message: String) -> Void) throws -> Void
   func resetHandler() throws -> Void
+  func setLogLevel(level: String) throws -> Void
 }
 
 public extension HybridRiveLoggerSpec_protocol {

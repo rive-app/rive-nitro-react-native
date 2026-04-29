@@ -55,5 +55,9 @@ namespace margelo::nitro::rive {
     static const auto method = _javaPart->javaClassStatic()->getMethod<void()>("resetHandler");
     method(_javaPart);
   }
+  void JHybridRiveLoggerSpec::setLogLevel(const std::string& level) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<jni::JString> /* level */)>("setLogLevel");
+    method(_javaPart, jni::make_jstring(level));
+  }
 
 } // namespace margelo::nitro::rive
