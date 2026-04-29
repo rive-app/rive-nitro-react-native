@@ -1,4 +1,4 @@
-@_spi(RiveExperimental) import RiveRuntime
+import RiveRuntime
 import NitroModules
 
 final class HybridRiveFileFactory: HybridRiveFileFactorySpec, @unchecked Sendable {
@@ -24,8 +24,9 @@ final class HybridRiveFileFactory: HybridRiveFileFactorySpec, @unchecked Sendabl
       let data = try await HTTPDataLoader.shared.downloadData(from: fileURL)
       RCTLog("[HybridRiveFileFactory] fromURL: downloaded \(data.count) bytes")
       let worker = try await HybridRiveFileFactory.sharedWorkerTask.value
-      RCTLog("[HybridRiveFileFactory] fromURL: got shared worker")
+      RCTLog("[HybridRiveFileFactory] fromURL: got shared worker, referencedAssets=\(referencedAssets == nil ? "nil" : "\(referencedAssets!.data?.count ?? -1) assets"), keys=\(referencedAssets?.data?.keys.sorted() ?? [])")
       await ExperimentalAssetLoader.registerAssets(referencedAssets, on: worker)
+      RCTLog("[HybridRiveFileFactory] fromURL: assets registered, creating file...")
       let file = try await File(source: .data(data), worker: worker)
       RCTLog("[HybridRiveFileFactory] fromURL: created file")
       return HybridRiveFile(file: file, worker: worker)
