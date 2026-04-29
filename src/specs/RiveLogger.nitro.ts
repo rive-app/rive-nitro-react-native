@@ -6,4 +6,5 @@ export interface RiveLogger
     handler: (level: string, tag: string, message: string) => void
   ): void;
   resetHandler(): void;
+  setLogLevel(level: string): void;
 }
