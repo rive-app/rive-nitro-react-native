@@ -56,6 +56,7 @@ namespace margelo::nitro::rive {
     // Methods
     void setHandler(const std::function<void(const std::string& /* level */, const std::string& /* tag */, const std::string& /* message */)>& handler) override;
     void resetHandler() override;
+    void setLogLevel(const std::string& level) override;
 
   private:
     jni::global_ref<JHybridRiveLoggerSpec::JavaPart> _javaPart;

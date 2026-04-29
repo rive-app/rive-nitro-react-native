@@ -13,4 +13,10 @@ class HybridRiveLogger : HybridRiveLoggerSpec() {
     override fun resetHandler() {
         RiveLog.handler = null
     }
+
+    override fun setLogLevel(level: String) {
+        val parsed = RiveLogLevel.fromString(level)
+            ?: throw RuntimeException("Invalid log level '$level'. Use: debug, info, warn, error")
+        RiveLog.minLevel = parsed
+    }
 }
