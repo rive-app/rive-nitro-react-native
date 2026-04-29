@@ -1,4 +1,4 @@
-@_spi(RiveExperimental) import RiveRuntime
+import RiveRuntime
 import NitroModules
 
 class HybridViewModelColorProperty: HybridViewModelColorPropertySpec {
@@ -32,7 +32,7 @@ class HybridViewModelColorProperty: HybridViewModelColorPropertySpec {
   }
 
   func set(value: Double) throws {
-    let color = Color(UInt32(bitPattern: Int32(value)))
+    let color = Color(UInt32(truncatingIfNeeded: Int64(value)))
     let inst = instance
     let p = prop
     Task { @MainActor in
