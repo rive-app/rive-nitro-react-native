@@ -2,6 +2,7 @@ import NitroModules
 import RiveRuntime
 
 final class HybridRiveFileFactory: HybridRiveFileFactorySpec, @unchecked Sendable {
+  var backend: String { "legacy" }
 
   /// Asynchronously creates a `HybridRiveFileSpec` by performing the following steps:
   /// 1. Executes `check()` to validate or fetch initial data.
