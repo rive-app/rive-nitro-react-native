@@ -16,6 +16,7 @@ namespace margelo::nitro::rive {
     registerHybrids(this, [](Prototype& prototype) {
       prototype.registerHybridMethod("setHandler", &HybridRiveLoggerSpec::setHandler);
       prototype.registerHybridMethod("resetHandler", &HybridRiveLoggerSpec::resetHandler);
+      prototype.registerHybridMethod("setLogLevel", &HybridRiveLoggerSpec::setLogLevel);
     });
   }
 
