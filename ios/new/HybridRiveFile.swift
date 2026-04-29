@@ -1,4 +1,4 @@
-@_spi(RiveExperimental) import RiveRuntime
+import RiveRuntime
 import NitroModules
 
 class HybridRiveFile: HybridRiveFileSpec {
@@ -149,14 +149,7 @@ class HybridRiveFile: HybridRiveFileSpec {
   }
 
   func updateReferencedAssets(referencedAssets: ReferencedAssetsType) {
-    guard let worker = worker else {
-      RCTLogWarn("HybridRiveFile.updateReferencedAssets: No worker available")
-      return
-    }
-    RCTLogInfo("HybridRiveFile.updateReferencedAssets: Updating \(referencedAssets.data?.count ?? 0) assets (note: existing artboards won't refresh)")
-    Task { @MainActor in
-      await ExperimentalAssetLoader.registerAssets(referencedAssets, on: worker)
-    }
+    RCTLogWarn("[Rive] updateReferencedAssets is not supported with the experimental backend — already-rendered artboards cannot be updated. Use the legacy backend for runtime asset swapping.")
   }
 
   func getEnums() throws -> Promise<[RiveEnumDefinition]> {

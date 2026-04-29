@@ -1,4 +1,4 @@
-@_spi(RiveExperimental) import RiveRuntime
+import RiveRuntime
 import NitroModules
 
 final class HybridRiveFileFactory: HybridRiveFileFactorySpec, @unchecked Sendable {
