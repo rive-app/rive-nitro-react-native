@@ -1,4 +1,4 @@
-@_spi(RiveExperimental) import RiveRuntime
+import RiveRuntime
 
 private func tagName(_ tag: RiveRuntime.RiveLog.Tag) -> String {
     switch tag {
