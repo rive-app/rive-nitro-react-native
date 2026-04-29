@@ -47,6 +47,12 @@ module.exports = {
           assets: ['../example/assets/rive/rewards.riv'],
         },
       ],
+      [
+        'expo-font',
+        {
+          fonts: ['./assets/kanit_regular.ttf'],
+        },
+      ],
     ],
     experiments: {
       typedRoutes: true,
