@@ -16,6 +16,7 @@ namespace margelo::nitro::rive { class HybridViewModelInstanceSpec; }
 #include "JHybridViewModelInstanceSpec.hpp"
 #include <NitroModules/Promise.hpp>
 #include <NitroModules/JPromise.hpp>
+#include <NitroModules/JUnit.hpp>
 #include <functional>
 #include "JFunc_void.hpp"
 #include <NitroModules/JNICallable.hpp>
@@ -115,6 +116,81 @@ namespace margelo::nitro::rive {
     static const auto method = _javaPart->javaClassStatic()->getMethod<jboolean(double /* index1 */, double /* index2 */)>("swap");
     auto __result = method(_javaPart, index1, index2);
     return static_cast<bool>(__result);
+  }
+  std::shared_ptr<Promise<void>> JHybridViewModelListPropertySpec::addInstanceAsync(const std::shared_ptr<HybridViewModelInstanceSpec>& instance) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<JHybridViewModelInstanceSpec::JavaPart> /* instance */)>("addInstanceAsync");
+    auto __result = method(_javaPart, std::dynamic_pointer_cast<JHybridViewModelInstanceSpec>(instance)->getJavaPart());
+    return [&]() {
+      auto __promise = Promise<void>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& /* unit */) {
+        __promise->resolve();
+      });
+      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
+        jni::JniException __jniError(__throwable);
+        __promise->reject(std::make_exception_ptr(__jniError));
+      });
+      return __promise;
+    }();
+  }
+  std::shared_ptr<Promise<void>> JHybridViewModelListPropertySpec::addInstanceAtAsync(const std::shared_ptr<HybridViewModelInstanceSpec>& instance, double index) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<JHybridViewModelInstanceSpec::JavaPart> /* instance */, double /* index */)>("addInstanceAtAsync");
+    auto __result = method(_javaPart, std::dynamic_pointer_cast<JHybridViewModelInstanceSpec>(instance)->getJavaPart(), index);
+    return [&]() {
+      auto __promise = Promise<void>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& /* unit */) {
+        __promise->resolve();
+      });
+      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
+        jni::JniException __jniError(__throwable);
+        __promise->reject(std::make_exception_ptr(__jniError));
+      });
+      return __promise;
+    }();
+  }
+  std::shared_ptr<Promise<void>> JHybridViewModelListPropertySpec::removeInstanceAsync(const std::shared_ptr<HybridViewModelInstanceSpec>& instance) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<JHybridViewModelInstanceSpec::JavaPart> /* instance */)>("removeInstanceAsync");
+    auto __result = method(_javaPart, std::dynamic_pointer_cast<JHybridViewModelInstanceSpec>(instance)->getJavaPart());
+    return [&]() {
+      auto __promise = Promise<void>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& /* unit */) {
+        __promise->resolve();
+      });
+      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
+        jni::JniException __jniError(__throwable);
+        __promise->reject(std::make_exception_ptr(__jniError));
+      });
+      return __promise;
+    }();
+  }
+  std::shared_ptr<Promise<void>> JHybridViewModelListPropertySpec::removeInstanceAtAsync(double index) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(double /* index */)>("removeInstanceAtAsync");
+    auto __result = method(_javaPart, index);
+    return [&]() {
+      auto __promise = Promise<void>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& /* unit */) {
+        __promise->resolve();
+      });
+      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
+        jni::JniException __jniError(__throwable);
+        __promise->reject(std::make_exception_ptr(__jniError));
+      });
+      return __promise;
+    }();
+  }
+  std::shared_ptr<Promise<void>> JHybridViewModelListPropertySpec::swapAsync(double index1, double index2) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(double /* index1 */, double /* index2 */)>("swapAsync");
+    auto __result = method(_javaPart, index1, index2);
+    return [&]() {
+      auto __promise = Promise<void>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& /* unit */) {
+        __promise->resolve();
+      });
+      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
+        jni::JniException __jniError(__throwable);
+        __promise->reject(std::make_exception_ptr(__jniError));
+      });
+      return __promise;
+    }();
   }
   std::function<void()> JHybridViewModelListPropertySpec::addListener(const std::function<void()>& onChanged) {
     static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JFunc_void::javaobject>(jni::alias_ref<JFunc_void::javaobject> /* onChanged */)>("addListener_cxx");

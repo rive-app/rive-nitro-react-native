@@ -21,6 +21,11 @@ public protocol HybridViewModelListPropertySpec_protocol: HybridObject, HybridVi
   func removeInstance(instance: (any HybridViewModelInstanceSpec)) throws -> Void
   func removeInstanceAt(index: Double) throws -> Void
   func swap(index1: Double, index2: Double) throws -> Bool
+  func addInstanceAsync(instance: (any HybridViewModelInstanceSpec)) throws -> Promise<Void>
+  func addInstanceAtAsync(instance: (any HybridViewModelInstanceSpec), index: Double) throws -> Promise<Void>
+  func removeInstanceAsync(instance: (any HybridViewModelInstanceSpec)) throws -> Promise<Void>
+  func removeInstanceAtAsync(index: Double) throws -> Promise<Void>
+  func swapAsync(index1: Double, index2: Double) throws -> Promise<Void>
   func addListener(onChanged: @escaping () -> Void) throws -> () -> Void
   func removeListeners() throws -> Void
 }

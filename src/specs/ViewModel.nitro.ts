@@ -192,16 +192,26 @@ export interface ViewModelListProperty
   getLengthAsync(): Promise<number>;
   /** Get the instance at the given index */
   getInstanceAtAsync(index: number): Promise<ViewModelInstance | undefined>;
-  /** Add an instance to the end of the list */
+  /** @deprecated Use addInstanceAsync instead */
   addInstance(instance: ViewModelInstance): void;
-  /** Add an instance at the given index, returns true if successful */
+  /** @deprecated Use addInstanceAtAsync instead */
   addInstanceAt(instance: ViewModelInstance, index: number): boolean;
-  /** Remove an instance from the list */
+  /** @deprecated Use removeInstanceAsync instead */
   removeInstance(instance: ViewModelInstance): void;
-  /** Remove the instance at the given index */
+  /** @deprecated Use removeInstanceAtAsync instead */
   removeInstanceAt(index: number): void;
-  /** Swap the instances at the given indices, returns true if successful */
+  /** @deprecated Use swapAsync instead */
   swap(index1: number, index2: number): boolean;
+  /** Add an instance to the end of the list */
+  addInstanceAsync(instance: ViewModelInstance): Promise<void>;
+  /** Add an instance at the given index */
+  addInstanceAtAsync(instance: ViewModelInstance, index: number): Promise<void>;
+  /** Remove an instance from the list */
+  removeInstanceAsync(instance: ViewModelInstance): Promise<void>;
+  /** Remove the instance at the given index */
+  removeInstanceAtAsync(index: number): Promise<void>;
+  /** Swap the instances at the given indices */
+  swapAsync(index1: number, index2: number): Promise<void>;
   /** Add a listener to be notified when the list changes. Returns a function to remove the listener. */
   addListener(onChanged: () => void): () => void;
 }
