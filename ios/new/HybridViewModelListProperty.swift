@@ -52,7 +52,9 @@ class HybridViewModelListProperty: HybridViewModelListPropertySpec {
     return Promise.async { try await self.fetchInstance(at: index) }
   }
 
+  // Deprecated: Use addInstanceAsync instead
   func addInstance(instance: any HybridViewModelInstanceSpec) throws {
+    DeprecationWarning.warn("ListProperty.addInstance", replacement: "addInstanceAsync")
     guard let hybridInstance = instance as? HybridViewModelInstance else {
       throw RuntimeError.error(withMessage: "Expected HybridViewModelInstance")
     }
@@ -64,7 +66,9 @@ class HybridViewModelListProperty: HybridViewModelListPropertySpec {
     }
   }
 
+  // Deprecated: Use addInstanceAtAsync instead
   func addInstanceAt(instance: any HybridViewModelInstanceSpec, index: Double) throws -> Bool {
+    DeprecationWarning.warn("ListProperty.addInstanceAt", replacement: "addInstanceAtAsync")
     guard let hybridInstance = instance as? HybridViewModelInstance else {
       throw RuntimeError.error(withMessage: "Expected HybridViewModelInstance")
     }
@@ -78,7 +82,9 @@ class HybridViewModelListProperty: HybridViewModelListPropertySpec {
     return true
   }
 
+  // Deprecated: Use removeInstanceAsync instead
   func removeInstance(instance: any HybridViewModelInstanceSpec) throws {
+    DeprecationWarning.warn("ListProperty.removeInstance", replacement: "removeInstanceAsync")
     guard let hybridInstance = instance as? HybridViewModelInstance else {
       throw RuntimeError.error(withMessage: "Expected HybridViewModelInstance")
     }
@@ -90,7 +96,9 @@ class HybridViewModelListProperty: HybridViewModelListPropertySpec {
     }
   }
 
+  // Deprecated: Use removeInstanceAtAsync instead
   func removeInstanceAt(index: Double) throws {
+    DeprecationWarning.warn("ListProperty.removeInstanceAt", replacement: "removeInstanceAtAsync")
     let inst = vmiInstance
     let p = prop
     let idx = Int32(index)
@@ -99,7 +107,9 @@ class HybridViewModelListProperty: HybridViewModelListPropertySpec {
     }
   }
 
+  // Deprecated: Use swapAsync instead
   func swap(index1: Double, index2: Double) throws -> Bool {
+    DeprecationWarning.warn("ListProperty.swap", replacement: "swapAsync")
     let inst = vmiInstance
     let p = prop
     let idx1 = Int32(index1)
@@ -108,6 +118,62 @@ class HybridViewModelListProperty: HybridViewModelListPropertySpec {
       inst.swapInstance(atIndex: idx1, withIndex: idx2, in: p)
     }
     return true
+  }
+
+  func addInstanceAsync(instance: any HybridViewModelInstanceSpec) throws -> Promise<Void> {
+    guard let hybridInstance = instance as? HybridViewModelInstance else {
+      throw RuntimeError.error(withMessage: "Expected HybridViewModelInstance")
+    }
+    let vmi = hybridInstance.viewModelInstance
+    let inst = vmiInstance
+    let p = prop
+    return Promise.async { @MainActor in
+      inst.appendInstance(vmi, to: p)
+    }
+  }
+
+  func addInstanceAtAsync(instance: any HybridViewModelInstanceSpec, index: Double) throws -> Promise<Void> {
+    guard let hybridInstance = instance as? HybridViewModelInstance else {
+      throw RuntimeError.error(withMessage: "Expected HybridViewModelInstance")
+    }
+    let vmi = hybridInstance.viewModelInstance
+    let inst = vmiInstance
+    let p = prop
+    let idx = Int32(index)
+    return Promise.async { @MainActor in
+      inst.insertInstance(vmi, to: p, at: idx)
+    }
+  }
+
+  func removeInstanceAsync(instance: any HybridViewModelInstanceSpec) throws -> Promise<Void> {
+    guard let hybridInstance = instance as? HybridViewModelInstance else {
+      throw RuntimeError.error(withMessage: "Expected HybridViewModelInstance")
+    }
+    let vmi = hybridInstance.viewModelInstance
+    let inst = vmiInstance
+    let p = prop
+    return Promise.async { @MainActor in
+      inst.removeInstance(vmi, from: p)
+    }
+  }
+
+  func removeInstanceAtAsync(index: Double) throws -> Promise<Void> {
+    let inst = vmiInstance
+    let p = prop
+    let idx = Int32(index)
+    return Promise.async { @MainActor in
+      inst.removeInstance(at: idx, from: p)
+    }
+  }
+
+  func swapAsync(index1: Double, index2: Double) throws -> Promise<Void> {
+    let inst = vmiInstance
+    let p = prop
+    let idx1 = Int32(index1)
+    let idx2 = Int32(index2)
+    return Promise.async { @MainActor in
+      inst.swapInstance(atIndex: idx1, withIndex: idx2, in: p)
+    }
   }
 
   func addListener(onChanged: @escaping () -> Void) throws -> () -> Void {

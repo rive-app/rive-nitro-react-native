@@ -63,6 +63,26 @@ abstract class HybridViewModelListPropertySpec: HybridViewModelPropertySpec() {
   @Keep
   abstract fun swap(index1: Double, index2: Double): Boolean
   
+  @DoNotStrip
+  @Keep
+  abstract fun addInstanceAsync(instance: HybridViewModelInstanceSpec): Promise<Unit>
+  
+  @DoNotStrip
+  @Keep
+  abstract fun addInstanceAtAsync(instance: HybridViewModelInstanceSpec, index: Double): Promise<Unit>
+  
+  @DoNotStrip
+  @Keep
+  abstract fun removeInstanceAsync(instance: HybridViewModelInstanceSpec): Promise<Unit>
+  
+  @DoNotStrip
+  @Keep
+  abstract fun removeInstanceAtAsync(index: Double): Promise<Unit>
+  
+  @DoNotStrip
+  @Keep
+  abstract fun swapAsync(index1: Double, index2: Double): Promise<Unit>
+  
   abstract fun addListener(onChanged: () -> Unit): () -> Unit
   
   @DoNotStrip
