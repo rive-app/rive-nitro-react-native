@@ -5466,7 +5466,7 @@ __metadata:
     react: 19.0.0
     react-native: 0.79.2
     react-native-builder-bob: ^0.40.10
-    react-native-nitro-modules: 0.35.0
+    react-native-nitro-modules: 0.35.6
     react-test-renderer: 19.0.0
     release-it: ^17.10.0
     turbo: ^1.10.7
@@ -16257,6 +16257,16 @@ __metadata:
     react: "*"
     react-native: "*"
   checksum: f006daa1aa58f1a0165a4d6fc087c8d190f2857a7acfd6b47080e5979f05beb20455ed3c66831d489df4eb57d2f430d1610094ed4d6ae3946e17d83362161aa6
+  languageName: node
+  linkType: hard
+
+"react-native-nitro-modules@npm:0.35.6":
+  version: 0.35.6
+  resolution: "react-native-nitro-modules@npm:0.35.6"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: b057dc606c4717bff2447cff3efdeebf5cd7342fa11b3f51cfd420ccce1224d0b4be5999ea63c9856721520f1cbb50fba9372109f49a4c8b14202d7ab4d3b37e
   languageName: node
   linkType: hard
 
