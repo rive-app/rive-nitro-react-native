@@ -61,11 +61,13 @@ class HybridViewModelListProperty(
   }
 
   override fun addInstance(instance: HybridViewModelInstanceSpec) {
+    DeprecationWarning.warn("ListProperty.addInstance", "addInstanceAsync")
     val hybridInstance = instance as? HybridViewModelInstance ?: return
     this.instance.appendToList(path, hybridInstance.viewModelInstance)
   }
 
   override fun addInstanceAt(instance: HybridViewModelInstanceSpec, index: Double): Boolean {
+    DeprecationWarning.warn("ListProperty.addInstanceAt", "addInstanceAtAsync")
     val hybridInstance = instance as? HybridViewModelInstance ?: return false
     return try {
       this.instance.insertToListAtIndex(path, index.toInt(), hybridInstance.viewModelInstance)
@@ -77,21 +79,60 @@ class HybridViewModelListProperty(
   }
 
   override fun removeInstance(instance: HybridViewModelInstanceSpec) {
+    DeprecationWarning.warn("ListProperty.removeInstance", "removeInstanceAsync")
     val hybridInstance = instance as? HybridViewModelInstance ?: return
     this.instance.removeFromList(path, hybridInstance.viewModelInstance)
   }
 
   override fun removeInstanceAt(index: Double) {
+    DeprecationWarning.warn("ListProperty.removeInstanceAt", "removeInstanceAtAsync")
     this.instance.removeFromListAtIndex(path, index.toInt())
   }
 
   override fun swap(index1: Double, index2: Double): Boolean {
+    DeprecationWarning.warn("ListProperty.swap", "swapAsync")
     return try {
       this.instance.swapListItems(path, index1.toInt(), index2.toInt())
       true
     } catch (e: Exception) {
       Log.e(TAG, "swap failed", e)
       false
+    }
+  }
+
+  override fun addInstanceAsync(instance: HybridViewModelInstanceSpec): Promise<Unit> {
+    val hybridInstance = instance as? HybridViewModelInstance
+      ?: return Promise.rejected(RuntimeException("Expected HybridViewModelInstance"))
+    return Promise.async {
+      this.instance.appendToList(path, hybridInstance.viewModelInstance)
+    }
+  }
+
+  override fun addInstanceAtAsync(instance: HybridViewModelInstanceSpec, index: Double): Promise<Unit> {
+    val hybridInstance = instance as? HybridViewModelInstance
+      ?: return Promise.rejected(RuntimeException("Expected HybridViewModelInstance"))
+    return Promise.async {
+      this.instance.insertToListAtIndex(path, index.toInt(), hybridInstance.viewModelInstance)
+    }
+  }
+
+  override fun removeInstanceAsync(instance: HybridViewModelInstanceSpec): Promise<Unit> {
+    val hybridInstance = instance as? HybridViewModelInstance
+      ?: return Promise.rejected(RuntimeException("Expected HybridViewModelInstance"))
+    return Promise.async {
+      this.instance.removeFromList(path, hybridInstance.viewModelInstance)
+    }
+  }
+
+  override fun removeInstanceAtAsync(index: Double): Promise<Unit> {
+    return Promise.async {
+      this.instance.removeFromListAtIndex(path, index.toInt())
+    }
+  }
+
+  override fun swapAsync(index1: Double, index2: Double): Promise<Unit> {
+    return Promise.async {
+      this.instance.swapListItems(path, index1.toInt(), index2.toInt())
     }
   }
 
