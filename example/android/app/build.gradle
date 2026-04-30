@@ -142,5 +142,4 @@ dependencies {
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.foundation:foundation")
     implementation("androidx.compose.runtime:runtime")
-    implementation("app.rive:rive-android:11.1.0")
 }
