@@ -30,7 +30,6 @@ class HybridViewModelImageProperty: HybridViewModelImagePropertySpec {
       do {
         let experimentalImage = try await worker.decodeImage(from: hybridImage.rawData)
         instance.setValue(of: prop, to: experimentalImage)
-        RCTLogInfo("HybridViewModelImageProperty: Set image on path '\(prop.path)'")
       } catch {
         RCTLogError("HybridViewModelImageProperty: Failed to decode/set image: \(error)")
       }
@@ -38,8 +37,7 @@ class HybridViewModelImageProperty: HybridViewModelImagePropertySpec {
   }
 
   func addListener(onChanged: @escaping () -> Void) throws -> () -> Void {
-    // TODO: Experimental API image property listener - API changed, needs update
-    // The triggerStream method may have been removed or renamed
+    // TODO: image property listener not yet available in concurrency API
     return {}
   }
 

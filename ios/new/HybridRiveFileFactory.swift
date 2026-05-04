@@ -20,14 +20,10 @@ final class HybridRiveFileFactory: HybridRiveFileFactorySpec, @unchecked Sendabl
       guard let fileURL = URL(string: url) else {
         throw RuntimeError.error(withMessage: "Invalid URL: \(url)")
       }
-      RCTLog("[HybridRiveFileFactory] fromURL: downloading \(url)")
       let data = try await HTTPDataLoader.shared.downloadData(from: fileURL)
-      RCTLog("[HybridRiveFileFactory] fromURL: downloaded \(data.count) bytes")
       let worker = try await HybridRiveFileFactory.sharedWorkerTask.value
-      RCTLog("[HybridRiveFileFactory] fromURL: got shared worker")
-      await ExperimentalAssetLoader.registerAssets(referencedAssets, on: worker)
+      await AssetLoader.registerAssets(referencedAssets, on: worker)
       let file = try await File(source: .data(data), worker: worker)
-      RCTLog("[HybridRiveFileFactory] fromURL: created file")
       return HybridRiveFile(file: file, worker: worker)
     }
   }
@@ -44,7 +40,7 @@ final class HybridRiveFileFactory: HybridRiveFileFactorySpec, @unchecked Sendabl
       }
       let data = try FileDataLoader().loadData(from: url)
       let worker = try await HybridRiveFileFactory.sharedWorkerTask.value
-      await ExperimentalAssetLoader.registerAssets(referencedAssets, on: worker)
+      await AssetLoader.registerAssets(referencedAssets, on: worker)
       let file = try await File(source: .data(data), worker: worker)
       return HybridRiveFile(file: file, worker: worker)
     }
@@ -58,7 +54,7 @@ final class HybridRiveFileFactory: HybridRiveFileFactorySpec, @unchecked Sendabl
         throw RuntimeError.error(withMessage: "Could not find Rive file: \(resource).riv")
       }
       let worker = try await HybridRiveFileFactory.sharedWorkerTask.value
-      await ExperimentalAssetLoader.registerAssets(referencedAssets, on: worker)
+      await AssetLoader.registerAssets(referencedAssets, on: worker)
       let file = try await File(source: .local(resource, nil), worker: worker)
       return HybridRiveFile(file: file, worker: worker)
     }
@@ -68,13 +64,10 @@ final class HybridRiveFileFactory: HybridRiveFileFactorySpec, @unchecked Sendabl
     throws -> Promise<(any HybridRiveFileSpec)>
   {
     let data = bytes.toData(copyIfNeeded: true)
-    RCTLog("[HybridRiveFileFactory] fromBytes: got \(data.count) bytes")
     return Promise.async {
       let worker = try await HybridRiveFileFactory.sharedWorkerTask.value
-      RCTLog("[HybridRiveFileFactory] fromBytes: got shared worker")
-      await ExperimentalAssetLoader.registerAssets(referencedAssets, on: worker)
+      await AssetLoader.registerAssets(referencedAssets, on: worker)
       let file = try await File(source: .data(data), worker: worker)
-      RCTLog("[HybridRiveFileFactory] fromBytes: created file")
       return HybridRiveFile(file: file, worker: worker)
     }
   }

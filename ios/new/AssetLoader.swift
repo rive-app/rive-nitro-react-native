@@ -31,7 +31,7 @@ enum AssetType {
 }
 
 @MainActor
-final class ExperimentalAssetLoader {
+final class AssetLoader {
 
   static func registerAssets(
     _ referencedAssets: ReferencedAssetsType?,
@@ -161,25 +161,21 @@ final class ExperimentalAssetLoader {
     type: AssetType,
     worker: Worker
   ) async throws {
-    RCTLogInfo("ExperimentalAssetLoader: Registering \(type) asset '\(name)' (\(data.count) bytes)")
     switch type {
     case .image:
       worker.removeGlobalImageAsset(name: name)
       let image = try await worker.decodeImage(from: data)
       worker.addGlobalImageAsset(image, name: name)
-      RCTLogInfo("ExperimentalAssetLoader: Image '\(name)' registered successfully")
 
     case .font:
       worker.removeGlobalFontAsset(name)
       let font = try await worker.decodeFont(from: data)
       worker.addGlobalFontAsset(font, name: name)
-      RCTLogInfo("ExperimentalAssetLoader: Font '\(name)' registered successfully")
 
     case .audio:
       worker.removeGlobalAudioAsset(name: name)
       let audio = try await worker.decodeAudio(from: data)
       worker.addGlobalAudioAsset(audio, name: name)
-      RCTLogInfo("ExperimentalAssetLoader: Audio '\(name)' registered successfully")
     }
   }
 }
