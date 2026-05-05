@@ -11,7 +11,7 @@ typealias HybridDataBindMode = Variant__any_HybridViewModelInstanceSpec__DataBin
 
 extension Optional
 where Wrapped == HybridDataBindMode {
-  func toExperimentalBindData() throws -> ExperimentalBindData {
+  func toBindData() throws -> BindData {
     guard let value = self else {
       return .auto
     }
@@ -195,13 +195,13 @@ class HybridRiveView: HybridRiveViewSpec {
         return
       }
 
-      let config = ExperimentalViewConfiguration(
+      let config = ViewConfiguration(
         artboardName: artboardName,
         stateMachineName: stateMachineName,
         autoPlay: autoPlay ?? DefaultConfiguration.autoPlay,
         file: riveFile,
-        fit: toExperimentalFit(fit, alignment: alignment, layoutScaleFactor: layoutScaleFactor),
-        bindData: try dataBind.toExperimentalBindData()
+        fit: toRiveFit(fit, alignment: alignment, layoutScaleFactor: layoutScaleFactor),
+        bindData: try dataBind.toBindData()
       )
 
       try MainActor.assumeIsolated {
@@ -222,12 +222,12 @@ class HybridRiveView: HybridRiveViewSpec {
   private var initialUpdate = true
 
   // MARK: Helpers
-  private func toExperimentalFit(
+  private func toRiveFit(
     _ fit: Fit?,
     alignment: Alignment?,
     layoutScaleFactor: Double?
   ) -> RiveRuntime.Fit {
-    let expAlignment = toExperimentalAlignment(alignment) ?? .center
+    let expAlignment = toRiveAlignment(alignment) ?? .center
 
     switch fit ?? .contain {
     case .fill: return .fill(alignment: expAlignment)
@@ -245,7 +245,7 @@ class HybridRiveView: HybridRiveViewSpec {
     }
   }
 
-  private func toExperimentalAlignment(_ alignment: Alignment?) -> RiveRuntime.Alignment? {
+  private func toRiveAlignment(_ alignment: Alignment?) -> RiveRuntime.Alignment? {
     guard let alignment = alignment else { return nil }
 
     switch alignment {

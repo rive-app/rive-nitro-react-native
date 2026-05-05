@@ -2,20 +2,20 @@ import RiveRuntime
 import NitroModules
 import UIKit
 
-enum ExperimentalBindData {
+enum BindData {
   case none
   case auto
   case instance(ViewModelInstance)
   case byName(String)
 }
 
-struct ExperimentalViewConfiguration {
+struct ViewConfiguration {
   let artboardName: String?
   let stateMachineName: String?
   let autoPlay: Bool
   let file: File
   let fit: RiveRuntime.Fit
-  let bindData: ExperimentalBindData
+  let bindData: BindData
 }
 
 @MainActor
@@ -38,9 +38,8 @@ class RiveReactNativeView: UIView {
     return true
   }
 
-  func configure(_ config: ExperimentalViewConfiguration, dataBindingChanged: Bool = false, reload: Bool = false, initialUpdate: Bool = false) {
+  func configure(_ config: ViewConfiguration, dataBindingChanged: Bool = false, reload: Bool = false, initialUpdate: Bool = false) {
     dispatchPrecondition(condition: .onQueue(.main))
-    RCTLog("[RiveReactNativeView] configure called - reload: \(reload), dataBindingChanged: \(dataBindingChanged), initialUpdate: \(initialUpdate)")
 
     if reload {
       cleanup()
@@ -51,10 +50,7 @@ class RiveReactNativeView: UIView {
       configTask = Task { [weak self] in
         guard let self else { return }
         do {
-          RCTLog("[RiveReactNativeView] Creating artboard: \(config.artboardName ?? "default")")
           let artboard = try await config.file.createArtboard(config.artboardName)
-
-          RCTLog("[RiveReactNativeView] Creating state machine: \(config.stateMachineName ?? "default")")
           let stateMachine = try await artboard.createStateMachine(config.stateMachineName)
 
           let dataBind: RiveRuntime.DataBind
@@ -80,7 +76,6 @@ class RiveReactNativeView: UIView {
 
           guard !Task.isCancelled else { return }
 
-          RCTLog("[RiveReactNativeView] Creating Rive instance...")
           let rive = try await RiveRuntime.Rive(
             file: config.file,
             artboard: artboard,
@@ -91,7 +86,6 @@ class RiveReactNativeView: UIView {
 
           guard !Task.isCancelled else { return }
 
-          RCTLog("[RiveReactNativeView] Rive instance created successfully")
           self.riveInstance = rive
           self.setupRiveUIView(with: rive)
 
@@ -106,7 +100,6 @@ class RiveReactNativeView: UIView {
             }
             self.viewReadyContinuations.removeAll()
           }
-          RCTLog("[RiveReactNativeView] Configuration complete!")
         } catch {
           RCTLogError("[RiveReactNativeView] Failed to configure: \(error)")
         }
