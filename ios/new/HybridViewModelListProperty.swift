@@ -7,8 +7,8 @@ class HybridViewModelListProperty: HybridViewModelListPropertySpec {
   private let worker: Worker
   private var listenerTasks: [UUID: Task<Void, Never>] = [:]
 
-  // Note: Experimental API doesn't validate property paths - non-existent properties
-  // return garbage values instead of throwing. This is a known limitation.
+  // Note: the concurrency API doesn't validate property paths — non-existent
+  // properties return garbage values instead of throwing.
   init(instance: ViewModelInstance, path: String, worker: Worker) {
     self.vmiInstance = instance
     self.prop = ListProperty(path: path)
