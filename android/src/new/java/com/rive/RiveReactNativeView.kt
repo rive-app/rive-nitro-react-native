@@ -73,6 +73,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
   private var surfaceHeight = 0
 
   private var renderLoopRunning = false
+  private var disposed = false
   private var lastFrameTimeNs = 0L
   private var frameCount = 0L
 
@@ -112,7 +113,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
 
   private val renderCallback = object : Choreographer.FrameCallback {
     override fun doFrame(frameTimeNanos: Long) {
-      if (!renderLoopRunning) return
+      if (!renderLoopRunning || disposed) return
 
       val deltaTime = if (lastFrameTimeNs == 0L) {
         Duration.ZERO
@@ -136,7 +137,9 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
         }
       }
 
-      Choreographer.getInstance().postFrameCallback(this)
+      if (!disposed) {
+        Choreographer.getInstance().postFrameCallback(this)
+      }
     }
   }
 
@@ -366,13 +369,17 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
   }
 
   fun dispose() {
+    disposed = true
     RiveErrorLogger.removeListener(errorListener)
     stopRenderLoop()
-    boundInstance?.close()
+    // Null handles to prevent any further draw calls.
+    // Don't close artboard/stateMachine/surface here — the command queue
+    // may still have a pending draw command that references them.
+    // Let them be cleaned up by GC instead.
     boundInstance = null
-    artboard?.close()
     artboard = null
-    riveSurface?.close()
+    artboardHandle = null
+    stateMachineHandle = null
     riveSurface = null
   }
 }
