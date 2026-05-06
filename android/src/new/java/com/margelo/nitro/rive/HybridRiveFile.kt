@@ -179,7 +179,10 @@ class HybridRiveFile(
   }
 
   override fun updateReferencedAssets(referencedAssets: ReferencedAssetsType) {
-    ExperimentalAssetLoader.updateAssets(referencedAssets, riveWorker)
+    RiveLog.w(
+      TAG,
+      "updateReferencedAssets is not supported with the experimental backend — already-rendered artboards cannot be updated. Use the legacy backend for runtime asset swapping."
+    )
   }
 
   fun registerView(view: HybridRiveView) {
