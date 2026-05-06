@@ -5,54 +5,59 @@ import app.rive.AudioAsset
 import app.rive.FontAsset
 import app.rive.ImageAsset
 import app.rive.core.CommandQueue
-import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 object ExperimentalAssetLoader {
   private const val TAG = "ExperimentalAssetLoader"
 
-  fun registerAssets(
+  suspend fun registerAssets(
     referencedAssets: ReferencedAssetsType?,
     riveWorker: CommandQueue
   ) {
     val assetsData = referencedAssets?.data ?: return
-    val scope = CoroutineScope(Dispatchers.IO)
 
-    for ((name, assetData) in assetsData) {
-      val source = DataSourceResolver.resolve(assetData) ?: continue
-      scope.launch {
-        try {
-          val loader = source.createLoader()
-          val data = loader.load(source)
-          val type = inferAssetType(name, data, assetData.type)
-          registerAsset(data, name, type, riveWorker)
-        } catch (e: Exception) {
-          Log.e(TAG, "Failed to load asset '$name'", e)
+    coroutineScope {
+      assetsData
+        .map { (name, assetData) ->
+        async(Dispatchers.IO) {
+          try {
+            val source = DataSourceResolver.resolve(assetData) ?: return@async
+            val loader = source.createLoader()
+            val data = loader.load(source)
+            val type = inferAssetType(name, data, assetData.type)
+            registerAsset(data, name, type, riveWorker)
+          } catch (e: Exception) {
+            Log.e(TAG, "Failed to load asset '$name'", e)
+          }
         }
-      }
+      }.awaitAll()
     }
   }
 
-  fun updateAssets(
+  suspend fun updateAssets(
     referencedAssets: ReferencedAssetsType,
     riveWorker: CommandQueue
   ) {
     val assetsData = referencedAssets.data ?: return
-    val scope = CoroutineScope(Dispatchers.IO)
 
-    for ((name, assetData) in assetsData) {
-      val source = DataSourceResolver.resolve(assetData) ?: continue
-      scope.launch {
-        try {
-          val loader = source.createLoader()
-          val data = loader.load(source)
-          val type = inferAssetType(name, data, assetData.type)
-          registerAsset(data, name, type, riveWorker)
-        } catch (e: Exception) {
-          Log.e(TAG, "Failed to update asset '$name'", e)
+    coroutineScope {
+      assetsData
+        .map { (name, assetData) ->
+        async(Dispatchers.IO) {
+          try {
+            val source = DataSourceResolver.resolve(assetData) ?: return@async
+            val loader = source.createLoader()
+            val data = loader.load(source)
+            val type = inferAssetType(name, data, assetData.type)
+            registerAsset(data, name, type, riveWorker)
+          } catch (e: Exception) {
+            Log.e(TAG, "Failed to update asset '$name'", e)
+          }
         }
-      }
+      }.awaitAll()
     }
   }
 
