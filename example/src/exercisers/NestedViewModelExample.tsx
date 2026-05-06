@@ -5,6 +5,7 @@ import {
   ActivityIndicator,
   Button,
   TextInput,
+  ScrollView,
 } from 'react-native';
 import { useRef, useState } from 'react';
 import {
@@ -120,7 +121,7 @@ function ReplaceViewModelTest({
         file={file}
       />
 
-      <View style={styles.info}>
+      <ScrollView style={styles.info}>
         <Text style={styles.title}>replaceViewModel() Test</Text>
         <Text style={styles.description}>
           Replace vm1 with vm2's instance. After replacement, changing vm2.name
@@ -167,7 +168,7 @@ function ReplaceViewModelTest({
             ))}
           </View>
         )}
-      </View>
+      </ScrollView>
     </View>
   );
 }
@@ -187,8 +188,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   rive: {
-    flex: 1,
     width: '100%',
+    height: 300,
   },
   info: {
     padding: 16,
