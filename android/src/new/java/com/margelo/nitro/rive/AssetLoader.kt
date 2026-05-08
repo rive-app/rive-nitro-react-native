@@ -10,8 +10,8 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.Dispatchers
 
-object ExperimentalAssetLoader {
-  private const val TAG = "ExperimentalAssetLoader"
+object AssetLoader {
+  private const val TAG = "AssetLoader"
 
   suspend fun registerAssets(
     referencedAssets: ReferencedAssetsType?,

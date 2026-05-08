@@ -120,7 +120,7 @@ class HybridRiveFileFactory : HybridRiveFileFactorySpec() {
   ): HybridRiveFile {
     val worker = getSharedWorker()
 
-    ExperimentalAssetLoader.registerAssets(referencedAssets, worker)
+    AssetLoader.registerAssets(referencedAssets, worker)
 
     val source = RiveFileSource.Bytes(data)
     val result = RiveFile.fromSource(source, worker)
