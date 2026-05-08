@@ -1,5 +1,4 @@
 import { describe, it, expect } from 'react-native-harness';
-import { Platform } from 'react-native';
 import type {
   ViewModelInstance,
   ViewModelStringProperty,
@@ -10,9 +9,6 @@ const DATABINDING = require('../assets/rive/databinding.riv');
 const DATABINDING_LISTS = require('../assets/rive/databinding_lists.riv');
 const DATABINDING_IMAGES = require('../assets/rive/databinding_images.riv');
 const ARTBOARD_DB_TEST = require('../assets/rive/artboard_db_test.riv');
-
-const isExperimentalIOS =
-  Platform.OS === 'ios' && RiveFileFactory.getBackend() === 'experimental';
 
 function expectDefined<T>(value: T): asserts value is NonNullable<T> {
   expect(value).toBeDefined();
