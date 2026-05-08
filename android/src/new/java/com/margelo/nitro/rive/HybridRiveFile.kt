@@ -99,10 +99,8 @@ class HybridRiveFile(
       Artboard.fromFile(file)
     }
     val vmSource = ViewModelSource.DefaultForArtboard(artboard)
-    // Name is null because the Rive Android SDK does not expose the ViewModel name
-    // from a ViewModelInstance — name-dependent operations will throw UnsupportedOperationException.
-    // Track upstream: https://github.com/rive-app/rive-android/issues/XXX
-    return HybridViewModel(file, riveWorker, null, this, vmSource)
+    val vmInfo = file.getDefaultViewModelInfo(artboard)
+    return HybridViewModel(file, riveWorker, vmInfo.viewModelName, this, vmSource)
   }
 
   // Deprecated: Use defaultArtboardViewModelAsync instead
