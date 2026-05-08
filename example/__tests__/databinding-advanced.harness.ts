@@ -1,5 +1,4 @@
 import { describe, it, expect } from 'react-native-harness';
-import { Platform } from 'react-native';
 import type {
   ViewModelInstance,
   ViewModelStringProperty,
@@ -10,9 +9,6 @@ const DATABINDING = require('../assets/rive/databinding.riv');
 const DATABINDING_LISTS = require('../assets/rive/databinding_lists.riv');
 const DATABINDING_IMAGES = require('../assets/rive/databinding_images.riv');
 const ARTBOARD_DB_TEST = require('../assets/rive/artboard_db_test.riv');
-
-const isExperimentalIOS =
-  Platform.OS === 'ios' && RiveFileFactory.getBackend() === 'experimental';
 
 function expectDefined<T>(value: T): asserts value is NonNullable<T> {
   expect(value).toBeDefined();
@@ -193,9 +189,6 @@ describe('List Properties', () => {
   });
 
   it('getInstanceAt returns ViewModelInstances with correct names', async () => {
-    if (isExperimentalIOS) {
-      return; // getInstanceAt crashes experimental iOS renderer (rive::CommandQueue::processMessages)
-    }
     const file = await loadFile(DATABINDING_LISTS);
     const vm = file.viewModelByName('DevRel');
     expectDefined(vm);
@@ -216,9 +209,6 @@ describe('List Properties', () => {
   });
 
   it('addInstance increases length', async () => {
-    if (isExperimentalIOS) {
-      return; // list mutations crash experimental iOS renderer (rive::CommandQueue::processMessages)
-    }
     const file = await loadFile(DATABINDING_LISTS);
     const devRelVM = file.viewModelByName('DevRel');
     expectDefined(devRelVM);
@@ -248,9 +238,6 @@ describe('List Properties', () => {
   });
 
   it('removeInstanceAt decreases length', async () => {
-    if (isExperimentalIOS) {
-      return; // list mutations crash experimental iOS renderer (rive::CommandQueue::processMessages)
-    }
     const file = await loadFile(DATABINDING_LISTS);
     const vm = file.viewModelByName('DevRel');
     expectDefined(vm);
@@ -266,9 +253,6 @@ describe('List Properties', () => {
   });
 
   it('swap reorders items', async () => {
-    if (isExperimentalIOS) {
-      return; // list mutations crash experimental iOS renderer (rive::CommandQueue::processMessages)
-    }
     const file = await loadFile(DATABINDING_LISTS);
     const vm = file.viewModelByName('DevRel');
     expectDefined(vm);
@@ -292,9 +276,6 @@ describe('List Properties', () => {
   });
 
   it('addInstanceAt inserts at position', async () => {
-    if (isExperimentalIOS) {
-      return; // list mutations crash experimental iOS renderer (rive::CommandQueue::processMessages)
-    }
     const file = await loadFile(DATABINDING_LISTS);
     const devRelVM = file.viewModelByName('DevRel');
     expectDefined(devRelVM);
@@ -322,9 +303,6 @@ describe('List Properties', () => {
 
 describe('Artboard Properties', () => {
   it('artboardProperty returns defined properties', async () => {
-    if (isExperimentalIOS) {
-      return; // artboard_db_test.riv crashes experimental iOS renderer on load
-    }
     const file = await loadFile(ARTBOARD_DB_TEST);
     const vm = file.defaultArtboardViewModel();
     expectDefined(vm);
@@ -339,9 +317,6 @@ describe('Artboard Properties', () => {
   });
 
   it('getBindableArtboard returns a BindableArtboard with correct name', async () => {
-    if (isExperimentalIOS) {
-      return;
-    }
     const file = await loadFile(ARTBOARD_DB_TEST);
     const artboardNames = file.artboardNames;
     expect(artboardNames.length).toBeGreaterThan(0);
@@ -352,9 +327,6 @@ describe('Artboard Properties', () => {
   });
 
   it('artboardProperty.set(bindable) does not throw', async () => {
-    if (isExperimentalIOS) {
-      return;
-    }
     const file = await loadFile(ARTBOARD_DB_TEST);
     const vm = file.defaultArtboardViewModel();
     expectDefined(vm);
@@ -373,9 +345,6 @@ describe('Artboard Properties', () => {
 
 describe('Image Properties', () => {
   it('imageProperty("bound_image") returns defined property', async () => {
-    if (isExperimentalIOS) {
-      return; // databinding_images.riv crashes experimental iOS renderer on load
-    }
     const file = await loadFile(DATABINDING_IMAGES);
     const vm = file.viewModelByName('MyViewModel');
     expectDefined(vm);

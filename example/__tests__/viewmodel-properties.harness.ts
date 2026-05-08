@@ -66,14 +66,6 @@ describe('ViewModel Properties', () => {
   });
 
   it('colorProperty get/set works', async () => {
-    if (
-      Platform.OS === 'ios' &&
-      RiveFileFactory.getBackend() === 'experimental'
-    ) {
-      // rive-ios experimental: Color.argbValue is internal, getter returns 0
-      return;
-    }
-
     const instance = await createGordonInstance();
     const colorProperty = instance.colorProperty('favourite_color');
     expectDefined(colorProperty);
@@ -205,14 +197,6 @@ describe('Property Listeners', () => {
   });
 
   it('colorProperty addListener returns cleanup function', async () => {
-    if (
-      Platform.OS === 'ios' &&
-      RiveFileFactory.getBackend() === 'experimental'
-    ) {
-      // rive-ios experimental: Color.argbValue is internal, addListener not supported
-      return;
-    }
-
     const instance = await createGordonInstance();
     const prop = instance.colorProperty('favourite_color');
     expectDefined(prop);
