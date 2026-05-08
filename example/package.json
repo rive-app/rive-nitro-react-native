@@ -34,6 +34,7 @@
     "@react-native-community/cli": "18.0.0",
     "@react-native-community/cli-platform-android": "18.0.0",
     "@react-native-community/cli-platform-ios": "18.0.0",
+    "@react-native-harness/coverage-ios": "file:/Users/boga/Work/Margelo/react-native-harness/packages/coverage-ios",
     "@react-native-harness/platform-android": "1.0.0",
     "@react-native-harness/platform-apple": "1.0.0",
     "@react-native/babel-preset": "0.79.2",

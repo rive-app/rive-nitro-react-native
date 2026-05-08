@@ -24,4 +24,12 @@ export default {
     }),
   ],
   defaultRunner: 'ios',
+
+  coverage: {
+    native: {
+      ios: {
+        pods: ['RNRive', 'RiveRuntime'],
+      },
+    },
+  },
 };

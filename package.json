@@ -196,6 +196,18 @@
   },
   "resolutions": {
     "core-js-compat": "^3.40.0",
-    "browserslist": "^4.24.4"
+    "browserslist": "^4.24.4",
+    "@react-native-harness/config": "portal:/Users/boga/Work/Margelo/react-native-harness/packages/config",
+    "@react-native-harness/platforms": "portal:/Users/boga/Work/Margelo/react-native-harness/packages/platforms",
+    "@react-native-harness/platform-apple": "portal:/Users/boga/Work/Margelo/react-native-harness/packages/platform-ios",
+    "@react-native-harness/jest": "portal:/Users/boga/Work/Margelo/react-native-harness/packages/jest",
+    "@react-native-harness/tools": "portal:/Users/boga/Work/Margelo/react-native-harness/packages/tools",
+    "@react-native-harness/plugins": "portal:/Users/boga/Work/Margelo/react-native-harness/packages/plugins",
+    "@react-native-harness/bridge": "portal:/Users/boga/Work/Margelo/react-native-harness/packages/bridge",
+    "@react-native-harness/bundler-metro": "portal:/Users/boga/Work/Margelo/react-native-harness/packages/bundler-metro",
+    "@react-native-harness/cli": "portal:/Users/boga/Work/Margelo/react-native-harness/packages/cli",
+    "@react-native-harness/runtime": "portal:/Users/boga/Work/Margelo/react-native-harness/packages/runtime",
+    "@react-native-harness/babel-preset": "portal:/Users/boga/Work/Margelo/react-native-harness/packages/babel-preset",
+    "react-native-harness": "portal:/Users/boga/Work/Margelo/react-native-harness/packages/cli"
   }
 }
