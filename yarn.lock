@@ -4431,6 +4431,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@react-native-harness/coverage-ios@file:/Users/boga/Work/Margelo/react-native-harness/packages/coverage-ios::locator=react-native-rive-example%40workspace%3Aexample":
+  version: 1.0.0
+  resolution: "@react-native-harness/coverage-ios@file:/Users/boga/Work/Margelo/react-native-harness/packages/coverage-ios#/Users/boga/Work/Margelo/react-native-harness/packages/coverage-ios::hash=aee41f&locator=react-native-rive-example%40workspace%3Aexample"
+  dependencies:
+    tslib: ^2.3.0
+  peerDependencies:
+    react-native: "*"
+  checksum: c44138fb2bbeafef88ca9469f2b46901428b7aa51736b903142e4025124d0df11ef720182835178b035a36e3ad843d82dd6ad3cdbe9e1e84640b3dd26195ee05
+  languageName: node
+  linkType: hard
+
 "@react-native-harness/jest@npm:1.0.0":
   version: 1.0.0
   resolution: "@react-native-harness/jest@npm:1.0.0"
@@ -16310,6 +16321,7 @@ __metadata:
     "@react-native-community/cli": 18.0.0
     "@react-native-community/cli-platform-android": 18.0.0
     "@react-native-community/cli-platform-ios": 18.0.0
+    "@react-native-harness/coverage-ios": "file:/Users/boga/Work/Margelo/react-native-harness/packages/coverage-ios"
     "@react-native-harness/platform-android": 1.0.0
     "@react-native-harness/platform-apple": 1.0.0
     "@react-native-picker/picker": ^2.11.4
