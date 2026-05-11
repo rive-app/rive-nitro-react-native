@@ -13,6 +13,7 @@ public protocol HybridViewModelInstanceSpec_protocol: HybridObject {
   var instanceName: String { get }
 
   // Methods
+  func getPropertiesAsync() throws -> Promise<[ViewModelPropertyInfo]>
   func numberProperty(path: String) throws -> (any HybridViewModelNumberPropertySpec)?
   func stringProperty(path: String) throws -> (any HybridViewModelStringPropertySpec)?
   func booleanProperty(path: String) throws -> (any HybridViewModelBooleanPropertySpec)?

@@ -3147,6 +3147,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@jest/console@npm:30.4.1":
+  version: 30.4.1
+  resolution: "@jest/console@npm:30.4.1"
+  dependencies:
+    "@jest/types": 30.4.1
+    "@types/node": "*"
+    chalk: ^4.1.2
+    jest-message-util: 30.4.1
+    jest-util: 30.4.1
+    slash: ^3.0.0
+  checksum: 21d179fb96a17a622b1b15c3d2ced4c83ae9b3912012505e4720701383f8e0e0d32c41b4c6adeeaaadd193b821d5759425cd1a774ba8ab4924213f218bd50125
+  languageName: node
+  linkType: hard
+
 "@jest/console@npm:^29.7.0":
   version: 29.7.0
   resolution: "@jest/console@npm:29.7.0"
@@ -3282,6 +3296,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@jest/pattern@npm:30.4.0":
+  version: 30.4.0
+  resolution: "@jest/pattern@npm:30.4.0"
+  dependencies:
+    "@types/node": "*"
+    jest-regex-util: 30.4.0
+  checksum: d0877dc7034cb59e9eafb8fedd6b977a1cd91191d7ac2574c0c0d046074ef7c895f0952af1586898469dcceb0153230a32b67a45bc4dd1ee2ae66df371b95363
+  languageName: node
+  linkType: hard
+
 "@jest/reporters@npm:^29.7.0":
   version: 29.7.0
   resolution: "@jest/reporters@npm:29.7.0"
@@ -3328,6 +3352,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@jest/schemas@npm:30.4.1":
+  version: 30.4.1
+  resolution: "@jest/schemas@npm:30.4.1"
+  dependencies:
+    "@sinclair/typebox": ^0.34.0
+  checksum: 25d0db478805adff276e02f9e1b5a90d5962e51020503eede22edee432de3958654edddca0e66988c515fa7bc06461f5220826de9f76fcc89c5824e88d624842
+  languageName: node
+  linkType: hard
+
 "@jest/schemas@npm:^29.6.3":
   version: 29.6.3
   resolution: "@jest/schemas@npm:29.6.3"
@@ -3357,6 +3390,18 @@ __metadata:
     "@types/istanbul-lib-coverage": ^2.0.0
     collect-v8-coverage: ^1.0.0
   checksum: 67b6317d526e335212e5da0e768e3b8ab8a53df110361b80761353ad23b6aea4432b7c5665bdeb87658ea373b90fb1afe02ed3611ef6c858c7fba377505057fa
+  languageName: node
+  linkType: hard
+
+"@jest/test-result@npm:^30.2.0":
+  version: 30.4.1
+  resolution: "@jest/test-result@npm:30.4.1"
+  dependencies:
+    "@jest/console": 30.4.1
+    "@jest/types": 30.4.1
+    "@types/istanbul-lib-coverage": ^2.0.6
+    collect-v8-coverage: ^1.0.2
+  checksum: 2db40181451f21b7dcc8295fb132a1172dd7487a1d63bf105263225bec2a0d973f764b0a424f9b5a2db2ceb9d0f507c27261834bb1867d5e3eecd9e6c824243c
   languageName: node
   linkType: hard
 
@@ -3392,6 +3437,21 @@ __metadata:
     slash: ^3.0.0
     write-file-atomic: ^4.0.2
   checksum: 0f8ac9f413903b3cb6d240102db848f2a354f63971ab885833799a9964999dd51c388162106a807f810071f864302cdd8e3f0c241c29ce02d85a36f18f3f40ab
+  languageName: node
+  linkType: hard
+
+"@jest/types@npm:30.4.1":
+  version: 30.4.1
+  resolution: "@jest/types@npm:30.4.1"
+  dependencies:
+    "@jest/pattern": 30.4.0
+    "@jest/schemas": 30.4.1
+    "@types/istanbul-lib-coverage": ^2.0.6
+    "@types/istanbul-reports": ^3.0.4
+    "@types/node": "*"
+    "@types/yargs": ^17.0.33
+    chalk: ^4.1.2
+  checksum: 746fbb96609c8cc2638a59b23e1d0e590527a301909a22728bc6dab35593ec967f45664fbd00b51fb48a53934d9be2f5df625db7a741c5caae734746d7b41046
   languageName: node
   linkType: hard
 
@@ -4308,40 +4368,109 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native-harness/bridge@portal:/Users/boga/Work/Margelo/react-native-harness/packages/bridge::locator=%40rive-app%2Freact-native%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@react-native-harness/bridge@portal:/Users/boga/Work/Margelo/react-native-harness/packages/bridge::locator=%40rive-app%2Freact-native%40workspace%3A."
+"@react-native-harness/babel-preset@npm:1.0.0":
+  version: 1.0.0
+  resolution: "@react-native-harness/babel-preset@npm:1.0.0"
   dependencies:
-    "@react-native-harness/platforms": "workspace:*"
-    "@react-native-harness/tools": "workspace:*"
+    "@babel/plugin-transform-class-static-block": ^7.27.1
+    babel-plugin-istanbul: ^7.0.1
+  peerDependencies:
+    "@babel/core": ^7.22.0
+    "@babel/plugin-transform-react-jsx": "*"
+  checksum: 77f95a3adc252d1188ddbd1ed09552b7861052bbfb3c9f03950176f00df31327a8ffa0a63b2b5801852e357e126a6e89133f8a60380d9bc1712d1baa9a6743c3
+  languageName: node
+  linkType: hard
+
+"@react-native-harness/bridge@npm:1.0.0":
+  version: 1.0.0
+  resolution: "@react-native-harness/bridge@npm:1.0.0"
+  dependencies:
+    "@react-native-harness/platforms": 1.0.0
+    "@react-native-harness/tools": 1.0.0
     birpc: ^2.4.0
     pixelmatch: ^7.1.0
     pngjs: ^7.0.0
     ssim.js: ^3.5.0
     tslib: ^2.3.0
     ws: ^8.18.2
+  checksum: 523c65a0e8da19a4d280a50f1d5835ef4a77fe8a069eb41f8a8857bb7ed3f6c0e3c964a30e0a1db9ed6b241f4f61fe0657a63a53ab1db8012a16cda58ee6dda9
   languageName: node
-  linkType: soft
+  linkType: hard
 
-"@react-native-harness/config@portal:/Users/boga/Work/Margelo/react-native-harness/packages/config::locator=%40rive-app%2Freact-native%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@react-native-harness/config@portal:/Users/boga/Work/Margelo/react-native-harness/packages/config::locator=%40rive-app%2Freact-native%40workspace%3A."
-  dependencies:
-    "@react-native-harness/plugins": "workspace:*"
-    "@react-native-harness/tools": "workspace:*"
-    tslib: ^2.3.0
-    zod: ^3.25.67
-  languageName: node
-  linkType: soft
-
-"@react-native-harness/coverage-ios@file:/Users/boga/Work/Margelo/react-native-harness/packages/coverage-ios::locator=react-native-rive-example%40workspace%3Aexample":
+"@react-native-harness/bundler-metro@npm:1.0.0":
   version: 1.0.0
-  resolution: "@react-native-harness/coverage-ios@file:/Users/boga/Work/Margelo/react-native-harness/packages/coverage-ios#/Users/boga/Work/Margelo/react-native-harness/packages/coverage-ios::hash=57b47b&locator=react-native-rive-example%40workspace%3Aexample"
+  resolution: "@react-native-harness/bundler-metro@npm:1.0.0"
   dependencies:
+    "@react-native-harness/config": 1.0.0
+    "@react-native-harness/metro": 1.0.0
+    "@react-native-harness/tools": 1.0.0
+    connect: ^3.7.0
+    nocache: ^4.0.0
     tslib: ^2.3.0
   peerDependencies:
-    react-native: "*"
-  checksum: dd0575341ed3c710b2c6f472a331d95aba0d9d7eb7277178a759836999af2d53dd05beb4e53fcfc240c9e1ccf8f5aa0ca53064ad55dfdfc2187db8b4a9b90bb5
+    metro: "*"
+    metro-config: "*"
+  checksum: 3dc8794bd978a9eb77b710304d54a0e4283fcb522b0a97002a4746d92632b52aad96f936e122f62335dc00183fd9301c37e4c34a8efcd8f3d1e39ada201ed159
+  languageName: node
+  linkType: hard
+
+"@react-native-harness/cli@npm:1.0.0":
+  version: 1.0.0
+  resolution: "@react-native-harness/cli@npm:1.0.0"
+  dependencies:
+    "@react-native-harness/bridge": 1.0.0
+    "@react-native-harness/config": 1.0.0
+    "@react-native-harness/platforms": 1.0.0
+    "@react-native-harness/tools": 1.0.0
+    tslib: ^2.3.0
+  peerDependencies:
+    jest-cli: "*"
+  checksum: e14b1566caea7c4d8c63aed9ca69030a1455f5fe3979ff756c7d17b9db8d058c3b19d501d3eefc33209838879c23fd2d3729da498ee2fc3385d32908089e93fe
+  languageName: node
+  linkType: hard
+
+"@react-native-harness/config@npm:1.0.0":
+  version: 1.0.0
+  resolution: "@react-native-harness/config@npm:1.0.0"
+  dependencies:
+    "@react-native-harness/tools": 1.0.0
+    tslib: ^2.3.0
+    zod: ^3.25.67
+  checksum: c63c3b757a007b6ecb969e90011554e2d092ea103eb87ba83d6b98aa08624b5b602ec897b4e97dae3e7354689ab8e9182d4cbcb278c28420f3038619c233fda2
+  languageName: node
+  linkType: hard
+
+"@react-native-harness/jest@npm:1.0.0":
+  version: 1.0.0
+  resolution: "@react-native-harness/jest@npm:1.0.0"
+  dependencies:
+    "@jest/test-result": ^30.2.0
+    "@react-native-harness/bridge": 1.0.0
+    "@react-native-harness/bundler-metro": 1.0.0
+    "@react-native-harness/config": 1.0.0
+    "@react-native-harness/platforms": 1.0.0
+    "@react-native-harness/tools": 1.0.0
+    chalk: ^4.1.2
+    jest-message-util: ^30.2.0
+    jest-util: ^30.2.0
+    p-limit: ^7.1.1
+    tslib: ^2.3.0
+    yargs: ^17.7.2
+  checksum: 81a1a13eb335d4ae284f4c218ab6616cb192e545e2509735726440012098c585d9e06789fc0c7ee44554905ca65be460b0d02221d0e10e01ea1ba9761f54143f
+  languageName: node
+  linkType: hard
+
+"@react-native-harness/metro@npm:1.0.0":
+  version: 1.0.0
+  resolution: "@react-native-harness/metro@npm:1.0.0"
+  dependencies:
+    "@react-native-harness/babel-preset": 1.0.0
+    "@react-native-harness/config": 1.0.0
+    tslib: ^2.3.0
+  peerDependencies:
+    "@react-native-harness/runtime": 1.0.0
+    metro: "*"
+  checksum: 7eb5f8fb50f25d0ce7f56bcadbab63a01ca40149e4f6b15071f237dd2f4853f89c5a2b3de8b624a76f2a601c1f8a6df7ea70891fb4ca8c6107a95f8e1e00288e
   languageName: node
   linkType: hard
 
@@ -4358,50 +4487,59 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native-harness/platform-apple@portal:/Users/boga/Work/Margelo/react-native-harness/packages/platform-ios::locator=%40rive-app%2Freact-native%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@react-native-harness/platform-apple@portal:/Users/boga/Work/Margelo/react-native-harness/packages/platform-ios::locator=%40rive-app%2Freact-native%40workspace%3A."
+"@react-native-harness/platform-apple@npm:1.0.0":
+  version: 1.0.0
+  resolution: "@react-native-harness/platform-apple@npm:1.0.0"
   dependencies:
-    "@react-native-harness/config": "workspace:*"
-    "@react-native-harness/platforms": "workspace:*"
-    "@react-native-harness/tools": "workspace:*"
+    "@react-native-harness/platforms": 1.0.0
+    "@react-native-harness/tools": 1.0.0
     tslib: ^2.3.0
     zod: ^3.25.67
+  checksum: 30393748eaf9d7ef5aed5e0c9fdd1e758ad901b76387f3b659b2e74cc21dc6bf0a4535b49e397794e34d5f34da1fd230009fba8908dbcc1dce57d9f438a461f1
   languageName: node
-  linkType: soft
+  linkType: hard
 
-"@react-native-harness/platforms@portal:/Users/boga/Work/Margelo/react-native-harness/packages/platforms::locator=%40rive-app%2Freact-native%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@react-native-harness/platforms@portal:/Users/boga/Work/Margelo/react-native-harness/packages/platforms::locator=%40rive-app%2Freact-native%40workspace%3A."
+"@react-native-harness/platforms@npm:1.0.0":
+  version: 1.0.0
+  resolution: "@react-native-harness/platforms@npm:1.0.0"
   dependencies:
     tslib: ^2.3.0
+  checksum: 4bdf3d164481d6192b7bdd2c1436e15a9e9c14a7b05598ab301fc37ac6979153be5ac718dddcdae1ea879b65ddf047267bd4927a5fa758602569d51bd3c401b2
   languageName: node
-  linkType: soft
+  linkType: hard
 
-"@react-native-harness/plugins@portal:/Users/boga/Work/Margelo/react-native-harness/packages/plugins::locator=%40rive-app%2Freact-native%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@react-native-harness/plugins@portal:/Users/boga/Work/Margelo/react-native-harness/packages/plugins::locator=%40rive-app%2Freact-native%40workspace%3A."
+"@react-native-harness/runtime@npm:1.0.0":
+  version: 1.0.0
+  resolution: "@react-native-harness/runtime@npm:1.0.0"
   dependencies:
-    "@react-native-harness/bridge": "workspace:*"
-    "@react-native-harness/platforms": "workspace:*"
-    "@react-native-harness/tools": "workspace:*"
-    hookable: ^6.1.0
-    tslib: ^2.3.0
+    "@react-native-harness/bridge": 1.0.0
+    "@vitest/expect": 4.0.16
+    "@vitest/spy": 4.0.16
+    chai: ^6.2.2
+    event-target-shim: ^6.0.2
+    use-sync-external-store: ^1.6.0
+    zustand: ^5.0.5
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: ab7a15e0581e2d604e2bb3032fbfd8a81dc387c1914ccde3fbd24fb4783e71251916f41aa748782529cd47dd7df9061a0a08db0ff1aef55b859b3fb9a334fb0a
   languageName: node
-  linkType: soft
+  linkType: hard
 
-"@react-native-harness/tools@portal:/Users/boga/Work/Margelo/react-native-harness/packages/tools::locator=%40rive-app%2Freact-native%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@react-native-harness/tools@portal:/Users/boga/Work/Margelo/react-native-harness/packages/tools::locator=%40rive-app%2Freact-native%40workspace%3A."
+"@react-native-harness/tools@npm:1.0.0":
+  version: 1.0.0
+  resolution: "@react-native-harness/tools@npm:1.0.0"
   dependencies:
     "@clack/prompts": 1.0.0-alpha.9
+    is-unicode-supported: ^0.1.0
     nano-spawn: ^1.0.2
     picocolors: ^1.1.1
     tslib: ^2.3.0
   peerDependencies:
     react-native: "*"
+  checksum: 3c897820164918f0fc18b90b8e02507d4006f93c4c3d2934d3bf9d829588a72fa99545be95df5b275648ebf2e871dd04295dbac9b41f64a1913eb37d865dd7de
   languageName: node
-  linkType: soft
+  linkType: hard
 
 "@react-native-picker/picker@npm:^2.11.4":
   version: 2.11.4
@@ -5418,6 +5556,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@standard-schema/spec@npm:^1.0.0":
+  version: 1.1.0
+  resolution: "@standard-schema/spec@npm:1.1.0"
+  checksum: 6245ebef5e698bb04752a22e996a7cc40406a404d9f68a9d4e1a7a10f2422da287247508e7b495a2f32bb38f3d57b4daf2c9ab4bf22d9bca13e20a3dc5ec575e
+  languageName: node
+  linkType: hard
+
 "@testing-library/react-hooks@npm:^8.0.1":
   version: 8.0.1
   resolution: "@testing-library/react-hooks@npm:8.0.1"
@@ -5528,12 +5673,29 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/chai@npm:^5.2.2":
+  version: 5.2.3
+  resolution: "@types/chai@npm:5.2.3"
+  dependencies:
+    "@types/deep-eql": "*"
+    assertion-error: ^2.0.1
+  checksum: eb4c2da9ec38b474a983f39bfb5ec4fbcceb5e5d76d184094d2cbc4c41357973eb5769c8972cedac665a233251b0ed754f1e338fcf408d381968af85cdecc596
+  languageName: node
+  linkType: hard
+
 "@types/conventional-commits-parser@npm:^5.0.0":
   version: 5.0.2
   resolution: "@types/conventional-commits-parser@npm:5.0.2"
   dependencies:
     "@types/node": "*"
   checksum: bd05e0f0619737c6bb7e663e6274adf41f7c7d5742ec297b4b6095b3dcf328f81dab60668ba38cf51aff83c6e8135666b418e533ce4a2724053f40b82a5d4ca9
+  languageName: node
+  linkType: hard
+
+"@types/deep-eql@npm:*":
+  version: 4.0.2
+  resolution: "@types/deep-eql@npm:4.0.2"
+  checksum: 249a27b0bb22f6aa28461db56afa21ec044fa0e303221a62dff81831b20c8530502175f1a49060f7099e7be06181078548ac47c668de79ff9880241968d43d0c
   languageName: node
   linkType: hard
 
@@ -5567,7 +5729,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/istanbul-lib-coverage@npm:*, @types/istanbul-lib-coverage@npm:^2.0.0, @types/istanbul-lib-coverage@npm:^2.0.1":
+"@types/istanbul-lib-coverage@npm:*, @types/istanbul-lib-coverage@npm:^2.0.0, @types/istanbul-lib-coverage@npm:^2.0.1, @types/istanbul-lib-coverage@npm:^2.0.6":
   version: 2.0.6
   resolution: "@types/istanbul-lib-coverage@npm:2.0.6"
   checksum: 3feac423fd3e5449485afac999dcfcb3d44a37c830af898b689fadc65d26526460bedb889db278e0d4d815a670331796494d073a10ee6e3a6526301fe7415778
@@ -5583,7 +5745,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/istanbul-reports@npm:^3.0.0":
+"@types/istanbul-reports@npm:^3.0.0, @types/istanbul-reports@npm:^3.0.4":
   version: 3.0.4
   resolution: "@types/istanbul-reports@npm:3.0.4"
   dependencies:
@@ -5673,7 +5835,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/stack-utils@npm:^2.0.0":
+"@types/stack-utils@npm:^2.0.0, @types/stack-utils@npm:^2.0.3":
   version: 2.0.3
   resolution: "@types/stack-utils@npm:2.0.3"
   checksum: 72576cc1522090fe497337c2b99d9838e320659ac57fa5560fcbdcbafcf5d0216c6b3a0a8a4ee4fdb3b1f5e3420aa4f6223ab57b82fef3578bec3206425c6cf5
@@ -5693,6 +5855,15 @@ __metadata:
   dependencies:
     "@types/yargs-parser": "*"
   checksum: 6a509db36304825674f4f00300323dce2b4d850e75819c3db87e9e9f213ac2c4c6ed3247a3e4eed6e8e45b3f191b133a356d3391dd694d9ea27a0507d914ef4c
+  languageName: node
+  linkType: hard
+
+"@types/yargs@npm:^17.0.33":
+  version: 17.0.35
+  resolution: "@types/yargs@npm:17.0.35"
+  dependencies:
+    "@types/yargs-parser": "*"
+  checksum: ebf1f5373388cfcbf9cfb5e56ce7a77c0ba2450420f26f3701010ca92df48cce7e14e4245ed1f17178a38ff8702467a6f4047742775b8e2fd06dec8f4f3501ce
   languageName: node
   linkType: hard
 
@@ -6187,6 +6358,46 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@vitest/expect@npm:4.0.16":
+  version: 4.0.16
+  resolution: "@vitest/expect@npm:4.0.16"
+  dependencies:
+    "@standard-schema/spec": ^1.0.0
+    "@types/chai": ^5.2.2
+    "@vitest/spy": 4.0.16
+    "@vitest/utils": 4.0.16
+    chai: ^6.2.1
+    tinyrainbow: ^3.0.3
+  checksum: cbd3a9e41ea3c8023cd0b02d0950e127f631e46960e84112e2a46984a8c530eb178d12f832e1abdb25854fe21d19770f08c2f4d0044fe9eaf2140ef0744b1972
+  languageName: node
+  linkType: hard
+
+"@vitest/pretty-format@npm:4.0.16":
+  version: 4.0.16
+  resolution: "@vitest/pretty-format@npm:4.0.16"
+  dependencies:
+    tinyrainbow: ^3.0.3
+  checksum: cb457b056b1b1ba64d9b2a4d92edda9c7e437b705e048bfee054982e907c9838602193c60f98879d2c9a0f47efc000f5bc4ebda11aa983366bee9677883ad02e
+  languageName: node
+  linkType: hard
+
+"@vitest/spy@npm:4.0.16":
+  version: 4.0.16
+  resolution: "@vitest/spy@npm:4.0.16"
+  checksum: ed729fe478b1fb8663c4d0e42c11a8cb85e49eff54f3b23790ff6d59158b6836c5b0733dcd77e235122d8f9a42ed9415a5a6861681373aacee824f5a73986a8e
+  languageName: node
+  linkType: hard
+
+"@vitest/utils@npm:4.0.16":
+  version: 4.0.16
+  resolution: "@vitest/utils@npm:4.0.16"
+  dependencies:
+    "@vitest/pretty-format": 4.0.16
+    tinyrainbow: ^3.0.3
+  checksum: a7579d85bf7ae8ddec5c826008bfb7f4d702acb29432e20bb498643bafa3baa76c9ad7141de1e6a296092ff6661d3f3756922c31d2131721c7aafe3ad0dc06d8
+  languageName: node
+  linkType: hard
+
 "@vscode/sudo-prompt@npm:^9.0.0":
   version: 9.3.1
   resolution: "@vscode/sudo-prompt@npm:9.3.1"
@@ -6625,6 +6836,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"assertion-error@npm:^2.0.1":
+  version: 2.0.1
+  resolution: "assertion-error@npm:2.0.1"
+  checksum: a0789dd882211b87116e81e2648ccb7f60340b34f19877dd020b39ebb4714e475eb943e14ba3e22201c221ef6645b7bfe10297e76b6ac95b48a9898c1211ce66
+  languageName: node
+  linkType: hard
+
 "ast-types@npm:^0.13.4":
   version: 0.13.4
   resolution: "ast-types@npm:0.13.4"
@@ -6717,6 +6935,19 @@ __metadata:
     istanbul-lib-instrument: ^5.0.4
     test-exclude: ^6.0.0
   checksum: cb4fd95738219f232f0aece1116628cccff16db891713c4ccb501cddbbf9272951a5df81f2f2658dfdf4b3e7b236a9d5cbcf04d5d8c07dd5077297339598061a
+  languageName: node
+  linkType: hard
+
+"babel-plugin-istanbul@npm:^7.0.1":
+  version: 7.0.1
+  resolution: "babel-plugin-istanbul@npm:7.0.1"
+  dependencies:
+    "@babel/helper-plugin-utils": ^7.0.0
+    "@istanbuljs/load-nyc-config": ^1.0.0
+    "@istanbuljs/schema": ^0.1.3
+    istanbul-lib-instrument: ^6.0.2
+    test-exclude: ^6.0.0
+  checksum: 06195af9022a1a2dad23bc4f2f9c226d053304889ae2be23a32aa3df821d2e61055a8eb533f204b10ee9899120e4f52bef6f0c4ab84a960cb2211cf638174aa2
   languageName: node
   linkType: hard
 
@@ -7316,6 +7547,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"chai@npm:^6.2.1, chai@npm:^6.2.2":
+  version: 6.2.2
+  resolution: "chai@npm:6.2.2"
+  checksum: c8c94857745b673dae22a7b25053a41a931848e2c20d1acb6838cf99b7d57b0e66b9eb878c6308534b2965c11ae1a66f8c58066f368c91a07797bb8ee881a733
+  languageName: node
+  linkType: hard
+
 "chalk@npm:5.4.1":
   version: 5.4.1
   resolution: "chalk@npm:5.4.1"
@@ -7418,6 +7656,13 @@ __metadata:
   version: 4.3.1
   resolution: "ci-info@npm:4.3.1"
   checksum: 66c159d92648e8a07acab0a3a0681bff6ccc39aa44916263208c4d97bbbeedbbc886d7611fd30c21df1aa624ce3c6fcdfde982e74689e3e014e064e1d0805f94
+  languageName: node
+  linkType: hard
+
+"ci-info@npm:^4.2.0":
+  version: 4.4.0
+  resolution: "ci-info@npm:4.4.0"
+  checksum: 3418954c9ca192d4ab7f88637835f8463a327dfcb1d9fdd2434f0aba2715d8b2b0e79fd1a4297cc4a35efc5728f8fd74f3b31cb741c948469a4c07dfe8df3675
   languageName: node
   linkType: hard
 
@@ -7553,7 +7798,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"collect-v8-coverage@npm:^1.0.0":
+"collect-v8-coverage@npm:^1.0.0, collect-v8-coverage@npm:^1.0.2":
   version: 1.0.3
   resolution: "collect-v8-coverage@npm:1.0.3"
   checksum: ed1d1ebc9c05e7263fffa3ad6440031db6a1fdd9f574435aa689effcdfe9f2b93aba8ec600f9c7b99124cd6ff5d9415c17961d84ae829a72251a4fe668a49b63
@@ -9350,6 +9595,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"event-target-shim@npm:^6.0.2":
+  version: 6.0.2
+  resolution: "event-target-shim@npm:6.0.2"
+  checksum: 9be93437e5b84056a7dc70af8b8962f4ef7f6fd41a988efcd39dfa2853e33242a4058e0dac9cc589cb16ed7409010590ac8cbcc2e3f823100cd337e13be953a0
+  languageName: node
+  linkType: hard
+
 "exec-async@npm:^2.2.0":
   version: 2.2.0
   resolution: "exec-async@npm:2.2.0"
@@ -11104,13 +11356,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"hookable@npm:^6.1.0":
-  version: 6.1.1
-  resolution: "hookable@npm:6.1.1"
-  checksum: 552a61daa49e89767142f52f9a3f82243a9ef5e1e8cf18d92b9b4b4c9facd31fee053b030bed5a221e7f33c69a8f5be96a700c28b0b068ae729c5a31f9e12b3b
-  languageName: node
-  linkType: hard
-
 "hosted-git-info@npm:^4.0.1":
   version: 4.1.0
   resolution: "hosted-git-info@npm:4.1.0"
@@ -12014,7 +12259,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"istanbul-lib-instrument@npm:^6.0.0":
+"istanbul-lib-instrument@npm:^6.0.0, istanbul-lib-instrument@npm:^6.0.2":
   version: 6.0.3
   resolution: "istanbul-lib-instrument@npm:6.0.3"
   dependencies:
@@ -12313,6 +12558,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"jest-message-util@npm:30.4.1, jest-message-util@npm:^30.2.0":
+  version: 30.4.1
+  resolution: "jest-message-util@npm:30.4.1"
+  dependencies:
+    "@babel/code-frame": ^7.27.1
+    "@jest/types": 30.4.1
+    "@types/stack-utils": ^2.0.3
+    chalk: ^4.1.2
+    graceful-fs: ^4.2.11
+    jest-util: 30.4.1
+    picomatch: ^4.0.3
+    pretty-format: 30.4.1
+    slash: ^3.0.0
+    stack-utils: ^2.0.6
+  checksum: 0361571c976e046d19569fa4d4617d1ef5926ed81710212869888059c5dd98ca13e77af2260fad2e756fe7041e1cf10f192cc0c38594b360643075dd42fa61c6
+  languageName: node
+  linkType: hard
+
 "jest-message-util@npm:^29.7.0":
   version: 29.7.0
   resolution: "jest-message-util@npm:29.7.0"
@@ -12350,6 +12613,13 @@ __metadata:
     jest-resolve:
       optional: true
   checksum: db1a8ab2cb97ca19c01b1cfa9a9c8c69a143fde833c14df1fab0766f411b1148ff0df878adea09007ac6a2085ec116ba9a996a6ad104b1e58c20adbf88eed9b2
+  languageName: node
+  linkType: hard
+
+"jest-regex-util@npm:30.4.0":
+  version: 30.4.0
+  resolution: "jest-regex-util@npm:30.4.0"
+  checksum: 8664fcc1d07c8236a3bd012c0f06ae9d14d96e758b32ee340a3a7c4c326d0b5052d8c4ae4f4c4184f08bf78723d905352f22923647df9658ace3604f03bf074f
   languageName: node
   linkType: hard
 
@@ -12471,6 +12741,20 @@ __metadata:
     pretty-format: ^29.7.0
     semver: ^7.5.3
   checksum: 86821c3ad0b6899521ce75ee1ae7b01b17e6dfeff9166f2cf17f012e0c5d8c798f30f9e4f8f7f5bed01ea7b55a6bc159f5eda778311162cbfa48785447c237ad
+  languageName: node
+  linkType: hard
+
+"jest-util@npm:30.4.1, jest-util@npm:^30.2.0":
+  version: 30.4.1
+  resolution: "jest-util@npm:30.4.1"
+  dependencies:
+    "@jest/types": 30.4.1
+    "@types/node": "*"
+    chalk: ^4.1.2
+    ci-info: ^4.2.0
+    graceful-fs: ^4.2.11
+    picomatch: ^4.0.3
+  checksum: 5b1b3e5cca87151f31dc9636a74ef2e78823f0bcd7e636a1bdc3e57645bf5970c01ff476db9156dea198984bd67415520c068bc5b3eddd464a2e6e9696308ecf
   languageName: node
   linkType: hard
 
@@ -14633,6 +14917,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"nocache@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "nocache@npm:4.0.0"
+  checksum: ba317f7a5b837069c3bf8616c9a25f61bd5ec63ad7aa2ce83e8425116df402ab5b4914bbdfb1ba54893c0f859886cb3ad9a375f1c45ba7a72a9712cf31392292
+  languageName: node
+  linkType: hard
+
 "node-fetch@npm:^2.7.0":
   version: 2.7.0
   resolution: "node-fetch@npm:2.7.0"
@@ -15137,6 +15428,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"p-limit@npm:^7.1.1":
+  version: 7.3.0
+  resolution: "p-limit@npm:7.3.0"
+  dependencies:
+    yocto-queue: ^1.2.1
+  checksum: bd3f3487ec84401e2cbf243122eef11813edacb621a27808e60a425646d0e75a79514acc2c01e39c41911550dbae5ef0f0ab01caa61cfc1c541cd17a19e8f01b
+  languageName: node
+  linkType: hard
+
 "p-locate@npm:^4.1.0":
   version: 4.1.0
   resolution: "p-locate@npm:4.1.0"
@@ -15548,6 +15848,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"pretty-format@npm:30.4.1":
+  version: 30.4.1
+  resolution: "pretty-format@npm:30.4.1"
+  dependencies:
+    "@jest/schemas": 30.4.1
+    ansi-styles: ^5.2.0
+    react-is-18: "npm:react-is@^18.3.1"
+    react-is-19: "npm:react-is@^19.2.5"
+  checksum: 9602635027892d7a2f430b0a51972780226d30ce4072643349ad376ccee967539eb8180a656976976c0673d550604847da638b992eefc95c84bab7cebdf9faba
+  languageName: node
+  linkType: hard
+
 "pretty-format@npm:^26.6.2":
   version: 26.6.2
   resolution: "pretty-format@npm:26.6.2"
@@ -15856,6 +16168,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-is-18@npm:react-is@^18.3.1, react-is@npm:^18.0.0, react-is@npm:^18.3.1":
+  version: 18.3.1
+  resolution: "react-is@npm:18.3.1"
+  checksum: e20fe84c86ff172fc8d898251b7cc2c43645d108bf96d0b8edf39b98f9a2cae97b40520ee7ed8ee0085ccc94736c4886294456033304151c3f94978cec03df21
+  languageName: node
+  linkType: hard
+
+"react-is-19@npm:react-is@^19.2.5":
+  version: 19.2.6
+  resolution: "react-is@npm:19.2.6"
+  checksum: aad99621b2e5c47ea715ab719a3caae60b6d2be828374dc5ad663372f4603ab26bde5f0c9f3efd6107ed9152dfff5f8f3df044121967a3280e00796e4c560635
+  languageName: node
+  linkType: hard
+
 "react-is@npm:^16.13.1, react-is@npm:^16.7.0":
   version: 16.13.1
   resolution: "react-is@npm:16.13.1"
@@ -15867,13 +16193,6 @@ __metadata:
   version: 17.0.2
   resolution: "react-is@npm:17.0.2"
   checksum: 9d6d111d8990dc98bc5402c1266a808b0459b5d54830bbea24c12d908b536df7883f268a7868cfaedde3dd9d4e0d574db456f84d2e6df9c4526f99bb4b5344d8
-  languageName: node
-  linkType: hard
-
-"react-is@npm:^18.0.0, react-is@npm:^18.3.1":
-  version: 18.3.1
-  resolution: "react-is@npm:18.3.1"
-  checksum: e20fe84c86ff172fc8d898251b7cc2c43645d108bf96d0b8edf39b98f9a2cae97b40520ee7ed8ee0085ccc94736c4886294456033304151c3f94978cec03df21
   languageName: node
   linkType: hard
 
@@ -15930,19 +16249,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-harness@portal:/Users/boga/Work/Margelo/react-native-harness/packages/cli::locator=%40rive-app%2Freact-native%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "react-native-harness@portal:/Users/boga/Work/Margelo/react-native-harness/packages/cli::locator=%40rive-app%2Freact-native%40workspace%3A."
+"react-native-harness@npm:1.0.0":
+  version: 1.0.0
+  resolution: "react-native-harness@npm:1.0.0"
   dependencies:
-    "@react-native-harness/bridge": "workspace:*"
-    "@react-native-harness/config": "workspace:*"
-    "@react-native-harness/platforms": "workspace:*"
-    "@react-native-harness/tools": "workspace:*"
+    "@react-native-harness/babel-preset": 1.0.0
+    "@react-native-harness/cli": 1.0.0
+    "@react-native-harness/jest": 1.0.0
+    "@react-native-harness/metro": 1.0.0
+    "@react-native-harness/runtime": 1.0.0
     tslib: ^2.3.0
-  peerDependencies:
-    jest-cli: "*"
+  bin:
+    harness: bin.js
+    react-native-harness: bin.js
+  checksum: 737f1a13554cf1dcb199c93584c648703f47d15033b395c266cb611e2d09da7cefb7dbcc1501220eb2891097524d67d083cb197ec3d54e443452dfe56ba8decf
   languageName: node
-  linkType: soft
+  linkType: hard
 
 "react-native-is-edge-to-edge@npm:1.2.1, react-native-is-edge-to-edge@npm:^1.1.6, react-native-is-edge-to-edge@npm:^1.2.1":
   version: 1.2.1
@@ -16024,7 +16346,6 @@ __metadata:
     "@react-native-community/cli": 18.0.0
     "@react-native-community/cli-platform-android": 18.0.0
     "@react-native-community/cli-platform-ios": 18.0.0
-    "@react-native-harness/coverage-ios": "file:/Users/boga/Work/Margelo/react-native-harness/packages/coverage-ios"
     "@react-native-harness/platform-android": 1.0.0
     "@react-native-harness/platform-apple": 1.0.0
     "@react-native-picker/picker": ^2.11.4
@@ -17466,7 +17787,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"stack-utils@npm:^2.0.3":
+"stack-utils@npm:^2.0.3, stack-utils@npm:^2.0.6":
   version: 2.0.6
   resolution: "stack-utils@npm:2.0.6"
   dependencies:
@@ -17965,6 +18286,13 @@ __metadata:
     fdir: ^6.5.0
     picomatch: ^4.0.3
   checksum: 0e33b8babff966c6ab86e9b825a350a6a98a63700fa0bb7ae6cf36a7770a508892383adc272f7f9d17aaf46a9d622b455e775b9949a3f951eaaf5dfb26331d44
+  languageName: node
+  linkType: hard
+
+"tinyrainbow@npm:^3.0.3":
+  version: 3.1.0
+  resolution: "tinyrainbow@npm:3.1.0"
+  checksum: dbb16b4aa5dc7398d2501c6ee216471b01f5f1a3c372233113254625d190b08eb2cfb532f1bb46d2cce7deb1bc3d418945949898b7f95e32e09167f5c797cf0a
   languageName: node
   linkType: hard
 
@@ -18604,7 +18932,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"use-sync-external-store@npm:^1.5.0":
+"use-sync-external-store@npm:^1.5.0, use-sync-external-store@npm:^1.6.0":
   version: 1.6.0
   resolution: "use-sync-external-store@npm:1.6.0"
   peerDependencies:
@@ -19157,7 +19485,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"yargs@npm:^17.0.0, yargs@npm:^17.3.1, yargs@npm:^17.5.1, yargs@npm:^17.6.2":
+"yargs@npm:^17.0.0, yargs@npm:^17.3.1, yargs@npm:^17.5.1, yargs@npm:^17.6.2, yargs@npm:^17.7.2":
   version: 17.7.2
   resolution: "yargs@npm:17.7.2"
   dependencies:
@@ -19200,6 +19528,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"yocto-queue@npm:^1.2.1":
+  version: 1.2.2
+  resolution: "yocto-queue@npm:1.2.2"
+  checksum: 92dd9880c324dbc94ff4b677b7d350ba8d835619062b7102f577add7a59ab4d87f40edc5a03d77d369dfa9d11175b1b2ec4a06a6f8a5d8ce5d1306713f66ee41
+  languageName: node
+  linkType: hard
+
 "yoctocolors-cjs@npm:^2.1.1":
   version: 2.1.3
   resolution: "yoctocolors-cjs@npm:2.1.3"
@@ -19227,5 +19562,26 @@ __metadata:
   version: 4.1.12
   resolution: "zod@npm:4.1.12"
   checksum: 91174acc7d2ca5572ad522643474ddd60640cf6877b5d76e5d583eb25e3c4072c6f5eb92ab94f231ec5ce61c6acdfc3e0166de45fb1005b1ea54986b026b765f
+  languageName: node
+  linkType: hard
+
+"zustand@npm:^5.0.5":
+  version: 5.0.13
+  resolution: "zustand@npm:5.0.13"
+  peerDependencies:
+    "@types/react": ">=18.0.0"
+    immer: ">=9.0.6"
+    react: ">=18.0.0"
+    use-sync-external-store: ">=1.2.0"
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+    immer:
+      optional: true
+    react:
+      optional: true
+    use-sync-external-store:
+      optional: true
+  checksum: 37f9c1eb888fc6c570f80a182a54844752ffe05dca75356273038effad642892df3a839f16733636a2dd4a49f68c02be27a37b9ba767af03515ef1f8d97468de
   languageName: node
   linkType: hard

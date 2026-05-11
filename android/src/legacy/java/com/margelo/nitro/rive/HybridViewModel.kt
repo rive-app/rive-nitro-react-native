@@ -53,6 +53,10 @@ class HybridViewModel(private val viewModel: ViewModel) : HybridViewModelSpec() 
     }
   }
 
+  override fun getPropertiesAsync(): Promise<Array<ViewModelPropertyInfo>> {
+    return Promise.rejected(UnsupportedOperationException("getPropertiesAsync is not supported on the legacy backend"))
+  }
+
   override fun getPropertyCountAsync(): Promise<Double> {
     return Promise.async { propertyCount }
   }
