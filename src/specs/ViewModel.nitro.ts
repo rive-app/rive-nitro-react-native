@@ -2,6 +2,28 @@ import type { HybridObject } from 'react-native-nitro-modules';
 import type { RiveImage } from './RiveImage.nitro';
 import type { BindableArtboard } from './BindableArtboard.nitro';
 
+export type ViewModelPropertyType =
+  | 'none'
+  | 'string'
+  | 'number'
+  | 'boolean'
+  | 'color'
+  | 'list'
+  | 'enum'
+  | 'trigger'
+  | 'viewModel'
+  | 'integer'
+  | 'symbolListIndex'
+  | 'assetImage'
+  | 'artboard'
+  | 'input'
+  | 'any';
+
+export interface ViewModelPropertyInfo {
+  readonly name: string;
+  readonly type: ViewModelPropertyType;
+}
+
 /**
  * A Rive View Model as created in the Rive editor.
  * @see {@link https://rive.app/docs/runtimes/data-binding Rive Data Binding Documentation}
@@ -16,6 +38,8 @@ export interface ViewModel extends HybridObject<{
   readonly instanceCount: number;
   /** The name of the view model */
   readonly modelName: string;
+  /** All properties defined on this view model */
+  getPropertiesAsync(): Promise<ViewModelPropertyInfo[]>;
   /** The number of properties in the view model */
   getPropertyCountAsync(): Promise<number>;
   /** The number of view model instances in the view model */
@@ -50,6 +74,8 @@ export interface ViewModelInstance extends HybridObject<{
 }> {
   /** The name of the view model instance */
   readonly instanceName: string;
+  /** All properties available on this view model instance */
+  getPropertiesAsync(): Promise<ViewModelPropertyInfo[]>;
   /** Get a number property from the view model instance at the given path */
   numberProperty(path: string): ViewModelNumberProperty | undefined;
 

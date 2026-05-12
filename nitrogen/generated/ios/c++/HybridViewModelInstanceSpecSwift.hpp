@@ -12,6 +12,10 @@
 // Forward declaration of `HybridViewModelInstanceSpec_cxx` to properly resolve imports.
 namespace RNRive { class HybridViewModelInstanceSpec_cxx; }
 
+// Forward declaration of `ViewModelPropertyInfo` to properly resolve imports.
+namespace margelo::nitro::rive { struct ViewModelPropertyInfo; }
+// Forward declaration of `ViewModelPropertyType` to properly resolve imports.
+namespace margelo::nitro::rive { enum class ViewModelPropertyType; }
 // Forward declaration of `HybridViewModelNumberPropertySpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridViewModelNumberPropertySpec; }
 // Forward declaration of `HybridViewModelStringPropertySpec` to properly resolve imports.
@@ -34,6 +38,10 @@ namespace margelo::nitro::rive { class HybridViewModelArtboardPropertySpec; }
 namespace margelo::nitro::rive { class HybridViewModelInstanceSpec; }
 
 #include <string>
+#include "ViewModelPropertyInfo.hpp"
+#include <vector>
+#include <NitroModules/Promise.hpp>
+#include "ViewModelPropertyType.hpp"
 #include <memory>
 #include "HybridViewModelNumberPropertySpec.hpp"
 #include <optional>
@@ -46,7 +54,6 @@ namespace margelo::nitro::rive { class HybridViewModelInstanceSpec; }
 #include "HybridViewModelListPropertySpec.hpp"
 #include "HybridViewModelArtboardPropertySpec.hpp"
 #include "HybridViewModelInstanceSpec.hpp"
-#include <NitroModules/Promise.hpp>
 
 #include "RNRive-Swift-Cxx-Umbrella.hpp"
 
@@ -101,6 +108,14 @@ namespace margelo::nitro::rive {
 
   public:
     // Methods
+    inline std::shared_ptr<Promise<std::vector<ViewModelPropertyInfo>>> getPropertiesAsync() override {
+      auto __result = _swiftPart.getPropertiesAsync();
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
     inline std::optional<std::shared_ptr<HybridViewModelNumberPropertySpec>> numberProperty(const std::string& path) override {
       auto __result = _swiftPart.numberProperty(path);
       if (__result.hasError()) [[unlikely]] {

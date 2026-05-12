@@ -5,16 +5,26 @@ class HybridViewModelInstance: HybridViewModelInstanceSpec {
   let viewModelInstance: ViewModelInstance
   let worker: Worker
   private let _instanceName: String
+  private let file: File?
+  private let vmName: String?
 
-  init(viewModelInstance: ViewModelInstance, worker: Worker, instanceName: String = "") {
+  init(viewModelInstance: ViewModelInstance, worker: Worker, instanceName: String = "", file: File? = nil, vmName: String? = nil) {
     self.viewModelInstance = viewModelInstance
     self.worker = worker
     self._instanceName = instanceName
+    self.file = file
+    self.vmName = vmName
   }
 
-  // TODO: Workaround — rive-ios experimental SDK doesn't expose ViewModelInstance.name.
-  // Only works when caller knows the name (createInstanceByName). Falls back to "" otherwise.
   var instanceName: String { _instanceName }
+
+  func getPropertiesAsync() throws -> Promise<[ViewModelPropertyInfo]> {
+    guard let file = file, let vmName = vmName else { return Promise.resolved(withResult: []) }
+    return Promise.async {
+      let props = try await file.getProperties(of: vmName)
+      return props.map { ViewModelPropertyInfo(name: $0.name, type: mapPropertyType($0.type)) }
+    }
+  }
 
   // Note: Unlike legacy API, experimental API can't sync-validate if property exists
   // Non-existent properties return wrapper objects that fail on getValue()

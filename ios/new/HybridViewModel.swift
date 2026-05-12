@@ -34,6 +34,13 @@ class HybridViewModel: HybridViewModelSpec {
     }
   }
 
+  func getPropertiesAsync() throws -> Promise<[ViewModelPropertyInfo]> {
+    return Promise.async {
+      let props = try await self.file.getProperties(of: self.vmName)
+      return props.map { ViewModelPropertyInfo(name: $0.name, type: mapPropertyType($0.type)) }
+    }
+  }
+
   func getPropertyCountAsync() throws -> Promise<Double> {
     return Promise.async {
       Double(try await self.file.getProperties(of: self.vmName).count)
@@ -48,7 +55,7 @@ class HybridViewModel: HybridViewModelSpec {
 
   private func createDefaultInstanceImpl() async throws -> (any HybridViewModelInstanceSpec)? {
     let vmi = try await self.file.createViewModelInstance(.viewModelDefault(from: .name(self.vmName)))
-    return HybridViewModelInstance(viewModelInstance: vmi, worker: self.worker)
+    return HybridViewModelInstance(viewModelInstance: vmi, worker: self.worker, file: self.file, vmName: self.vmName)
   }
 
   private func createInstanceByIndexImpl(index: Double) async throws -> (any HybridViewModelInstanceSpec)? {
@@ -57,7 +64,7 @@ class HybridViewModel: HybridViewModelSpec {
     guard idx >= 0 && idx < names.count else { return nil }
     let name = names[idx]
     let vmi = try await self.file.createViewModelInstance(.name(name, from: .name(self.vmName)))
-    return HybridViewModelInstance(viewModelInstance: vmi, worker: self.worker, instanceName: name)
+    return HybridViewModelInstance(viewModelInstance: vmi, worker: self.worker, instanceName: name, file: self.file, vmName: self.vmName)
   }
 
   // Deprecated: Use createInstanceByNameAsync instead
@@ -68,7 +75,7 @@ class HybridViewModel: HybridViewModelSpec {
 
   private func createInstanceByNameImpl(name: String) async throws -> (any HybridViewModelInstanceSpec)? {
     let vmi = try await self.file.createViewModelInstance(.name(name, from: .name(self.vmName)))
-    return HybridViewModelInstance(viewModelInstance: vmi, worker: self.worker, instanceName: name)
+    return HybridViewModelInstance(viewModelInstance: vmi, worker: self.worker, instanceName: name, file: self.file, vmName: self.vmName)
   }
 
   // Deprecated: Use createInstanceByNameAsync instead
@@ -93,7 +100,7 @@ class HybridViewModel: HybridViewModelSpec {
 
   private func createInstanceImpl() async throws -> (any HybridViewModelInstanceSpec)? {
     let vmi = try await self.file.createViewModelInstance(.blank(from: .name(self.vmName)))
-    return HybridViewModelInstance(viewModelInstance: vmi, worker: self.worker)
+    return HybridViewModelInstance(viewModelInstance: vmi, worker: self.worker, file: self.file, vmName: self.vmName)
   }
 
   // Deprecated: Use createBlankInstanceAsync instead
@@ -104,5 +111,26 @@ class HybridViewModel: HybridViewModelSpec {
 
   func createBlankInstanceAsync() throws -> Promise<(any HybridViewModelInstanceSpec)?> {
     return Promise.async { try await self.createInstanceImpl() }
+  }
+}
+
+func mapPropertyType(_ type: RiveRuntime.ViewModelProperty.DataType) -> ViewModelPropertyType {
+  switch type {
+  case .none: return .none
+  case .string: return .string
+  case .number: return .number
+  case .boolean: return .boolean
+  case .color: return .color
+  case .list: return .list
+  case .enum: return .enum
+  case .trigger: return .trigger
+  case .viewModel: return .viewmodel
+  case .integer: return .integer
+  case .symbolListIndex: return .symbollistindex
+  case .assetImage: return .assetimage
+  case .artboard: return .artboard
+  case .input: return .input
+  case .any: return .any
+  @unknown default: return .none
   }
 }

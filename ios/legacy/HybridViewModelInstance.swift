@@ -10,6 +10,10 @@ class HybridViewModelInstance: HybridViewModelInstanceSpec {
 
   var instanceName: String { viewModelInstance?.name ?? "" }
 
+  func getPropertiesAsync() throws -> Promise<[ViewModelPropertyInfo]> {
+    throw RuntimeError.error(withMessage: "getPropertiesAsync is not supported on the legacy backend")
+  }
+
   func numberProperty(path: String) throws -> (any HybridViewModelNumberPropertySpec)? {
     guard let property = viewModelInstance?.numberProperty(fromPath: path) else { return nil }
     return HybridViewModelNumberProperty(property: property)

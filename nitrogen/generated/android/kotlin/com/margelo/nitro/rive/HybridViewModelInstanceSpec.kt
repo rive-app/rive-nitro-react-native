@@ -33,6 +33,10 @@ abstract class HybridViewModelInstanceSpec: HybridObject() {
   // Methods
   @DoNotStrip
   @Keep
+  abstract fun getPropertiesAsync(): Promise<Array<ViewModelPropertyInfo>>
+  
+  @DoNotStrip
+  @Keep
   abstract fun numberProperty(path: String): HybridViewModelNumberPropertySpec?
   
   @DoNotStrip
