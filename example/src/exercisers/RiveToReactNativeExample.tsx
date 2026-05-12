@@ -7,13 +7,13 @@ import {
   Switch,
 } from 'react-native';
 import { useEffect, useMemo, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import Animated, {
-  runOnUI,
   useSharedValue,
   useAnimatedStyle,
   type SharedValue,
 } from 'react-native-reanimated';
-import { NitroModules } from 'react-native-nitro-modules';
+import { scheduleOnUI } from 'react-native-worklets';
 import {
   Fit,
   RiveView,
@@ -29,7 +29,7 @@ declare global {
   var __callMicrotasks: () => void;
 }
 
-installWorkletDispatcher(runOnUI);
+installWorkletDispatcher(scheduleOnUI);
 
 function useRiveNumberListener(
   property: ViewModelNumberProperty | undefined,
@@ -40,18 +40,16 @@ function useRiveNumberListener(
     if (!property) return;
 
     if (useUIThread) {
-      const boxedProperty = NitroModules.box(property);
       const sv = sharedValue;
 
-      runOnUI(() => {
+      scheduleOnUI(() => {
         'worklet';
-        const prop = boxedProperty.unbox();
-        prop.addListener((value: number) => {
+        property.addListener((value: number) => {
           'worklet';
           sv.value = value;
           global.__callMicrotasks();
         });
-      })();
+      });
 
       return () => {
         property.removeListeners();
@@ -78,30 +76,38 @@ export default function RiveToReactNativeExample() {
       ) : riveFile ? (
         <WithViewModelSetup file={riveFile} />
       ) : (
-        <Text style={styles.errorText}>{error?.message || 'Unexpected error'}</Text>
+        <Text style={styles.errorText}>
+          {error?.message || 'Unexpected error'}
+        </Text>
       )}
     </View>
   );
 }
 
 function WithViewModelSetup({ file }: { file: RiveFile }) {
-  const viewModel = useMemo(() => file.defaultArtboardViewModel(), [file]);
-  const instance = useMemo(
-    () => viewModel?.createDefaultInstance(),
-    [viewModel]
-  );
   const [useUIThread, setUseUIThread] = useState(true);
 
-  if (!instance || !viewModel) {
+  const { data: instance, error } = useQuery({
+    queryKey: ['bouncing-ball-instance', file],
+    queryFn: async () => {
+      const vm = await file.defaultArtboardViewModelAsync();
+      if (!vm) throw new Error('No view model found.');
+      const inst = await vm.createDefaultInstanceAsync();
+      if (!inst) throw new Error('Failed to create view model instance');
+      return inst;
+    },
+  });
+
+  if (error) {
     return (
       <View style={styles.errorContainer}>
-        <Text style={styles.errorText}>
-          {!viewModel
-            ? 'No view model found.'
-            : 'Failed to create view model instance'}
-        </Text>
+        <Text style={styles.errorText}>{error.message}</Text>
       </View>
     );
+  }
+
+  if (!instance) {
+    return <ActivityIndicator size="large" color="#0000ff" />;
   }
 
   return (

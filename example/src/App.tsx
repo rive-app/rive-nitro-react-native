@@ -11,6 +11,7 @@ import {
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { PagesList, type PageItem } from './PagesList';
 import { HomeMenu } from './shared/HomeMenu';
 
@@ -95,38 +96,42 @@ function HomeScreen({ navigation }: { navigation: any }) {
   );
 }
 
+const queryClient = new QueryClient();
+
 export default function App() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator
-        screenOptions={{
-          headerStyle: {
-            backgroundColor: '#323232',
-          },
-          headerTintColor: '#fff',
-          headerTitleStyle: {
-            fontWeight: 'bold',
-          },
-        }}
-      >
-        <Stack.Screen
-          name="Home"
-          component={HomeScreen}
-          options={{
-            title: 'Rive Examples',
-            headerRight: HeaderMenuButton,
+    <QueryClientProvider client={queryClient}>
+      <NavigationContainer>
+        <Stack.Navigator
+          screenOptions={{
+            headerStyle: {
+              backgroundColor: '#323232',
+            },
+            headerTintColor: '#fff',
+            headerTitleStyle: {
+              fontWeight: 'bold',
+            },
           }}
-        />
-        {PagesList.map(({ id, component, name }) => (
+        >
           <Stack.Screen
-            key={id}
-            name={id}
-            component={component}
-            options={{ title: name }}
+            name="Home"
+            component={HomeScreen}
+            options={{
+              title: 'Rive Examples',
+              headerRight: HeaderMenuButton,
+            }}
           />
-        ))}
-      </Stack.Navigator>
-    </NavigationContainer>
+          {PagesList.map(({ id, component, name }) => (
+            <Stack.Screen
+              key={id}
+              name={id}
+              component={component}
+              options={{ title: name }}
+            />
+          ))}
+        </Stack.Navigator>
+      </NavigationContainer>
+    </QueryClientProvider>
   );
 }
 

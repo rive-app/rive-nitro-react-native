@@ -10,21 +10,24 @@ let isInstalled = false;
  *
  * Call this once at app startup. It will schedule the installation on the UI thread.
  *
- * @param runOnUI - The runOnUI function from react-native-reanimated
+ * Requires react-native-worklets >= 0.7.1 for automatic HybridObject serialization.
+ *
+ * @param scheduleOnUI - The scheduleOnUI function from react-native-worklets
  *
  * @example
  * ```tsx
  * import { installWorkletDispatcher } from '@rive-app/react-native';
- * import { runOnUI } from 'react-native-reanimated';
+ * import { scheduleOnUI } from 'react-native-worklets';
  *
  * // Call once at app startup
- * installWorkletDispatcher(runOnUI);
+ * installWorkletDispatcher(scheduleOnUI);
  * ```
  */
 export function installWorkletDispatcher(
-  runOnUI: <Args extends unknown[], ReturnValue>(
-    worklet: (...args: Args) => ReturnValue
-  ) => (...args: Args) => void
+  scheduleOnUI: <Args extends unknown[], ReturnValue>(
+    worklet: (...args: Args) => ReturnValue,
+    ...args: Args
+  ) => void
 ): void {
   if (isInstalled) {
     return;
@@ -34,11 +37,8 @@ export function installWorkletDispatcher(
   const bridge =
     NitroModules.createHybridObject<RiveWorkletBridge>('RiveWorkletBridge');
 
-  const boxedBridge = NitroModules.box(bridge);
-
-  runOnUI(() => {
+  scheduleOnUI(() => {
     'worklet';
-    const b = boxedBridge.unbox();
-    b.install();
-  })();
+    bridge.install();
+  });
 }

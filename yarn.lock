@@ -5563,6 +5563,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tanstack/query-core@npm:5.100.10":
+  version: 5.100.10
+  resolution: "@tanstack/query-core@npm:5.100.10"
+  checksum: d19351b858bd758ad8a860e9333c9b78c1ec4a564b867f592046a60cf8421580d8aefcb3dfc3c67d59c5f8cf3dee9a3074ac07204e37ec54012fd912246d0dbd
+  languageName: node
+  linkType: hard
+
+"@tanstack/react-query@npm:^5.100.10":
+  version: 5.100.10
+  resolution: "@tanstack/react-query@npm:5.100.10"
+  dependencies:
+    "@tanstack/query-core": 5.100.10
+  peerDependencies:
+    react: ^18 || ^19
+  checksum: 90ceb6cafa573a081bcaf03e727ab99e68c71464dc65cede626c3c10c848d136f33ffb6523a04c477448d46d320b202b5d93fbb6f1cb4bef27fd3af3ff43cbee
+  languageName: node
+  linkType: hard
+
 "@testing-library/react-hooks@npm:^8.0.1":
   version: 8.0.1
   resolution: "@testing-library/react-hooks@npm:8.0.1"
@@ -16321,6 +16339,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-native-reanimated@npm:4.2.0":
+  version: 4.2.0
+  resolution: "react-native-reanimated@npm:4.2.0"
+  dependencies:
+    react-native-is-edge-to-edge: 1.2.1
+    semver: 7.7.3
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+    react-native-worklets: ">=0.7.0"
+  checksum: a8a4c321513cdca93a66b90c284c86eb56b05ac7d8989cd36b3e090055b59b9613870891868432835a13d1ddcaad3b1763bb9c7ed267616d90e138625d15ef23
+  languageName: node
+  linkType: hard
+
 "react-native-reanimated@npm:4.2.1":
   version: 4.2.1
   resolution: "react-native-reanimated@npm:4.2.1"
@@ -16354,6 +16386,7 @@ __metadata:
     "@react-native/typescript-config": 0.79.2
     "@react-navigation/native": ^7.1.9
     "@react-navigation/stack": ^7.3.2
+    "@tanstack/react-query": ^5.100.10
     "@types/deep-equal": ^1.0.4
     "@types/react": ^19.0.0
     babel-plugin-react-compiler: ^1.0.0
@@ -16364,10 +16397,10 @@ __metadata:
     react-native-gesture-handler: 2.29.1
     react-native-harness: 1.0.0
     react-native-nitro-modules: 0.35.0
-    react-native-reanimated: 4.1.5
+    react-native-reanimated: 4.2.0
     react-native-safe-area-context: ^5.4.0
     react-native-screens: ~4.18.0
-    react-native-worklets: 0.6.1
+    react-native-worklets: 0.7.4
   languageName: unknown
   linkType: soft
 
