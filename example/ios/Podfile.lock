@@ -5,30 +5,6 @@ PODS:
   - FBLazyVector (0.79.2)
   - fmt (11.0.2)
   - glog (0.3.5)
-  - HarnessCoverage (1.0.0):
-    - DoubleConversion
-    - glog
-    - hermes-engine
-    - RCT-Folly (= 2024.11.18.00)
-    - RCTRequired
-    - RCTTypeSafety
-    - React-Core
-    - React-debug
-    - React-Fabric
-    - React-featureflags
-    - React-graphics
-    - React-hermes
-    - React-ImageManager
-    - React-jsi
-    - React-NativeModulesApple
-    - React-RCTFabric
-    - React-renderercss
-    - React-rendererdebug
-    - React-utils
-    - ReactCodegen
-    - ReactCommon/turbomodule/bridging
-    - ReactCommon/turbomodule/core
-    - Yoga
   - hermes-engine (0.79.2):
     - hermes-engine/Pre-built (= 0.79.2)
   - hermes-engine/Pre-built (0.79.2)
@@ -1778,7 +1754,7 @@ PODS:
     - React-logger (= 0.79.2)
     - React-perflogger (= 0.79.2)
     - React-utils (= 0.79.2)
-  - RiveRuntime (6.20.0)
+  - RiveRuntime (6.20.2)
   - RNCAsyncStorage (2.2.0):
     - DoubleConversion
     - glog
@@ -1952,7 +1928,7 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - RiveRuntime (= 6.20.0)
+    - RiveRuntime (= 6.20.2)
     - Yoga
   - RNScreens (4.18.0):
     - DoubleConversion
@@ -2089,7 +2065,6 @@ DEPENDENCIES:
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
   - fmt (from `../node_modules/react-native/third-party-podspecs/fmt.podspec`)
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
-  - "HarnessCoverage (from `../node_modules/@react-native-harness/coverage-ios`)"
   - hermes-engine (from `../node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec`)
   - NitroModules (from `../node_modules/react-native-nitro-modules`)
   - RCT-Folly (from `../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec`)
@@ -2184,8 +2159,6 @@ EXTERNAL SOURCES:
     :podspec: "../node_modules/react-native/third-party-podspecs/fmt.podspec"
   glog:
     :podspec: "../node_modules/react-native/third-party-podspecs/glog.podspec"
-  HarnessCoverage:
-    :path: "../node_modules/@react-native-harness/coverage-ios"
   hermes-engine:
     :podspec: "../node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec"
     :tag: hermes-2025-03-03-RNv0.79.0-bc17d964d03743424823d7dd1a9f37633459c5c5
@@ -2341,7 +2314,6 @@ SPEC CHECKSUMS:
   FBLazyVector: 84b955f7b4da8b895faf5946f73748267347c975
   fmt: a40bb5bd0294ea969aaaba240a927bd33d878cdd
   glog: 5683914934d5b6e4240e497e0f4a3b42d1854183
-  HarnessCoverage: d3740d6a473a386e0aee01211139f0fe3f8a2cb0
   hermes-engine: 314be5250afa5692b57b4dd1705959e1973a8ebe
   NitroModules: b0d4f5ca592f60889181c15f82cca77d62e44a08
   RCT-Folly: 36fe2295e44b10d831836cc0d1daec5f8abcf809
@@ -2407,12 +2379,12 @@ SPEC CHECKSUMS:
   ReactAppDependencyProvider: 04d5eb15eb46be6720e17a4a7fa92940a776e584
   ReactCodegen: c63eda03ba1d94353fb97b031fc84f75a0d125ba
   ReactCommon: 76d2dc87136d0a667678668b86f0fca0c16fdeb0
-  RiveRuntime: 12f860505e052a8b48c580f35f1d5d5cad6709b7
+  RiveRuntime: 1ebd6b5f43d53e62639ebb7c4c66f3071630de53
   RNCAsyncStorage: a1c8cc8a99c32de1244a9cf707bf9d83d0de0f71
   RNCPicker: 28c076ae12a1056269ec0305fe35fac3086c477d
   RNGestureHandler: 6b39f4e43e4b3a0fb86de9531d090ff205a011d5
   RNReanimated: 66b68ebe3baf7ec9e716bd059d700726f250d344
-  RNRive: 9da1409806521455260c8b78b6ab401afdd3df3f
+  RNRive: bd6209e790de3978d6aee4e30ded1a9cfacbc1ec
   RNScreens: f38464ec1e83bda5820c3b05ccf4908e3841c5cc
   RNWorklets: b1faafefb82d9f29c4018404a0fb33974b494a7b
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748

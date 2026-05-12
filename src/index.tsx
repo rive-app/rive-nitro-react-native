@@ -70,3 +70,5 @@ export { type SetValueAction } from './types';
 export { RiveRuntime } from './core/RiveRuntime';
 export { RiveLog, type RiveLogLevel } from './core/RiveLogger';
 export { DataBindMode };
+export { installWorkletDispatcher } from './core/WorkletBridge';
+export type { RiveWorkletBridge } from './specs/RiveWorkletBridge.nitro';
