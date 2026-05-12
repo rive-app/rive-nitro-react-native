@@ -34,8 +34,8 @@
     "@react-native-community/cli": "19.1.2",
     "@react-native-community/cli-platform-android": "19.1.2",
     "@react-native-community/cli-platform-ios": "19.1.2",
-    "@react-native-harness/platform-android": "1.0.0",
-    "@react-native-harness/platform-apple": "1.0.0",
+    "@react-native-harness/platform-android": "1.1.0",
+    "@react-native-harness/platform-apple": "1.1.0",
     "@react-native/babel-preset": "0.80.3",
     "@react-native/metro-config": "0.80.3",
     "@react-native/typescript-config": "0.80.3",
@@ -44,7 +44,7 @@
     "babel-plugin-react-compiler": "^1.0.0",
     "deep-equal": "^2.2.3",
     "react-native-builder-bob": "^0.40.10",
-    "react-native-harness": "1.0.0"
+    "react-native-harness": "1.1.0"
   },
   "engines": {
     "node": ">=18"
