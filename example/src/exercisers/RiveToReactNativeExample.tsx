@@ -29,6 +29,7 @@ declare global {
   var __callMicrotasks: () => void;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-deprecated
 installWorkletDispatcher(runOnUI);
 
 function useRiveNumberListener(
@@ -43,6 +44,7 @@ function useRiveNumberListener(
       const boxedProperty = NitroModules.box(property);
       const sv = sharedValue;
 
+      // eslint-disable-next-line @typescript-eslint/no-deprecated
       runOnUI(() => {
         'worklet';
         const prop = boxedProperty.unbox();
@@ -78,15 +80,19 @@ export default function RiveToReactNativeExample() {
       ) : riveFile ? (
         <WithViewModelSetup file={riveFile} />
       ) : (
-        <Text style={styles.errorText}>{error?.message || 'Unexpected error'}</Text>
+        <Text style={styles.errorText}>
+          {error?.message || 'Unexpected error'}
+        </Text>
       )}
     </View>
   );
 }
 
 function WithViewModelSetup({ file }: { file: RiveFile }) {
+  // eslint-disable-next-line @typescript-eslint/no-deprecated -- replaced with async API in next PR
   const viewModel = useMemo(() => file.defaultArtboardViewModel(), [file]);
   const instance = useMemo(
+    // eslint-disable-next-line @typescript-eslint/no-deprecated
     () => viewModel?.createDefaultInstance(),
     [viewModel]
   );
