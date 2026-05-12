@@ -44,6 +44,7 @@ target_sources(
   ../nitrogen/generated/shared/c++/HybridRiveRuntimeSpec.cpp
   ../nitrogen/generated/shared/c++/HybridRiveViewSpec.cpp
   ../nitrogen/generated/shared/c++/views/HybridRiveViewComponent.cpp
+  ../nitrogen/generated/shared/c++/HybridRiveWorkletBridgeSpec.cpp
   ../nitrogen/generated/shared/c++/HybridViewModelSpec.cpp
   ../nitrogen/generated/shared/c++/HybridViewModelInstanceSpec.cpp
   ../nitrogen/generated/shared/c++/HybridViewModelPropertySpec.cpp
@@ -56,7 +57,6 @@ target_sources(
   ../nitrogen/generated/shared/c++/HybridViewModelImagePropertySpec.cpp
   ../nitrogen/generated/shared/c++/HybridViewModelListPropertySpec.cpp
   ../nitrogen/generated/shared/c++/HybridViewModelArtboardPropertySpec.cpp
-  ../nitrogen/generated/shared/c++/HybridRiveWorkletBridgeSpec.cpp
   # Android-specific Nitrogen C++ sources
   ../nitrogen/generated/android/c++/JHybridBindableArtboardSpec.cpp
   ../nitrogen/generated/android/c++/JHybridRiveFileSpec.cpp

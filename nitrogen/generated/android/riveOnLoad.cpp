@@ -45,8 +45,8 @@
 #include "JHybridViewModelImagePropertySpec.hpp"
 #include "JHybridViewModelListPropertySpec.hpp"
 #include "JHybridViewModelArtboardPropertySpec.hpp"
-#include "HybridRiveWorkletBridge.hpp"
 #include <NitroModules/DefaultConstructableObject.hpp>
+#include "HybridRiveWorkletBridge.hpp"
 
 namespace margelo::nitro::rive {
 
