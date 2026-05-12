@@ -56,6 +56,7 @@ namespace margelo::nitro::rive {
 
   public:
     // Methods
+    std::shared_ptr<Promise<std::vector<ViewModelPropertyInfo>>> getPropertiesAsync() override;
     std::shared_ptr<Promise<double>> getPropertyCountAsync() override;
     std::shared_ptr<Promise<double>> getInstanceCountAsync() override;
     std::optional<std::shared_ptr<HybridViewModelInstanceSpec>> createInstanceByIndex(double index) override;

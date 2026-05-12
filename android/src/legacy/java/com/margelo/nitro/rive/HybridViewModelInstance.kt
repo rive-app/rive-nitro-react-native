@@ -12,6 +12,10 @@ class HybridViewModelInstance(val viewModelInstance: ViewModelInstance) : Hybrid
   override val instanceName: String
     get() = viewModelInstance.name
 
+  override fun getPropertiesAsync(): Promise<Array<ViewModelPropertyInfo>> {
+    return Promise.rejected(UnsupportedOperationException("getPropertiesAsync is not supported on the legacy backend"))
+  }
+
   // Returns null if ViewModelException is thrown for iOS parity
   // (iOS SDK returns nil when property not found, Android SDK throws)
   private inline fun <T> getPropertyOrNull(block: () -> T): T? {

@@ -13,7 +13,11 @@ class HybridViewModel: HybridViewModelSpec {
   var instanceCount: Double { Double(viewModel?.instanceCount ?? 0) }
   
   var modelName: String { viewModel?.name ?? "" }
-  
+
+  func getPropertiesAsync() throws -> Promise<[ViewModelPropertyInfo]> {
+    throw RuntimeError.error(withMessage: "getPropertiesAsync is not supported on the legacy backend")
+  }
+
   func createInstanceByIndex(index: Double) throws -> (any HybridViewModelInstanceSpec)? {
     guard index >= 0 else { return nil }
     guard let viewModel = viewModel,

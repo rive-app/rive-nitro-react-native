@@ -32,6 +32,8 @@ export type {
   ViewModelImageProperty,
   ViewModelListProperty,
   ViewModelArtboardProperty,
+  ViewModelPropertyType,
+  ViewModelPropertyInfo,
 } from './specs/ViewModel.nitro';
 export type { BindableArtboard } from './specs/BindableArtboard.nitro';
 export { Fit } from './core/Fit';
