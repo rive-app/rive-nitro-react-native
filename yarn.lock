@@ -5563,6 +5563,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tanstack/query-core@npm:5.100.10":
+  version: 5.100.10
+  resolution: "@tanstack/query-core@npm:5.100.10"
+  checksum: d19351b858bd758ad8a860e9333c9b78c1ec4a564b867f592046a60cf8421580d8aefcb3dfc3c67d59c5f8cf3dee9a3074ac07204e37ec54012fd912246d0dbd
+  languageName: node
+  linkType: hard
+
+"@tanstack/react-query@npm:^5.100.10":
+  version: 5.100.10
+  resolution: "@tanstack/react-query@npm:5.100.10"
+  dependencies:
+    "@tanstack/query-core": 5.100.10
+  peerDependencies:
+    react: ^18 || ^19
+  checksum: 90ceb6cafa573a081bcaf03e727ab99e68c71464dc65cede626c3c10c848d136f33ffb6523a04c477448d46d320b202b5d93fbb6f1cb4bef27fd3af3ff43cbee
+  languageName: node
+  linkType: hard
+
 "@testing-library/react-hooks@npm:^8.0.1":
   version: 8.0.1
   resolution: "@testing-library/react-hooks@npm:8.0.1"
@@ -16354,6 +16372,7 @@ __metadata:
     "@react-native/typescript-config": 0.79.2
     "@react-navigation/native": ^7.1.9
     "@react-navigation/stack": ^7.3.2
+    "@tanstack/react-query": ^5.100.10
     "@types/deep-equal": ^1.0.4
     "@types/react": ^19.0.0
     babel-plugin-react-compiler: ^1.0.0

@@ -7,6 +7,7 @@ import {
   Switch,
 } from 'react-native';
 import { useEffect, useMemo, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import Animated, {
   runOnUI,
   useSharedValue,
@@ -89,25 +90,29 @@ export default function RiveToReactNativeExample() {
 }
 
 function WithViewModelSetup({ file }: { file: RiveFile }) {
-  // eslint-disable-next-line @typescript-eslint/no-deprecated -- replaced with async API in next PR
-  const viewModel = useMemo(() => file.defaultArtboardViewModel(), [file]);
-  const instance = useMemo(
-    // eslint-disable-next-line @typescript-eslint/no-deprecated
-    () => viewModel?.createDefaultInstance(),
-    [viewModel]
-  );
   const [useUIThread, setUseUIThread] = useState(true);
 
-  if (!instance || !viewModel) {
+  const { data: instance, error } = useQuery({
+    queryKey: ['bouncing-ball-instance', file],
+    queryFn: async () => {
+      const vm = await file.defaultArtboardViewModelAsync();
+      if (!vm) throw new Error('No view model found.');
+      const inst = await vm.createDefaultInstanceAsync();
+      if (!inst) throw new Error('Failed to create view model instance');
+      return inst;
+    },
+  });
+
+  if (error) {
     return (
       <View style={styles.errorContainer}>
-        <Text style={styles.errorText}>
-          {!viewModel
-            ? 'No view model found.'
-            : 'Failed to create view model instance'}
-        </Text>
+        <Text style={styles.errorText}>{error.message}</Text>
       </View>
     );
+  }
+
+  if (!instance) {
+    return <ActivityIndicator size="large" color="#0000ff" />;
   }
 
   return (
