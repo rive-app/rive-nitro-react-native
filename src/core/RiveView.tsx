@@ -4,8 +4,10 @@ import { RiveErrorType, type RiveError } from './Errors';
 import { callDispose } from './callDispose';
 import type { RiveViewRef } from '../index';
 
-export interface RiveViewProps
-  extends Omit<ComponentProps<typeof NitroRiveView>, 'onError'> {
+export interface RiveViewProps extends Omit<
+  ComponentProps<typeof NitroRiveView>,
+  'onError'
+> {
   onError?: (error: RiveError) => void;
 }
 

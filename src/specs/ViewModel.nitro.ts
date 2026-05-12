@@ -6,8 +6,10 @@ import type { BindableArtboard } from './BindableArtboard.nitro';
  * A Rive View Model as created in the Rive editor.
  * @see {@link https://rive.app/docs/runtimes/data-binding Rive Data Binding Documentation}
  */
-export interface ViewModel
-  extends HybridObject<{ ios: 'swift'; android: 'kotlin' }> {
+export interface ViewModel extends HybridObject<{
+  ios: 'swift';
+  android: 'kotlin';
+}> {
   /** @deprecated Use getPropertyCountAsync instead */
   readonly propertyCount: number;
   /** @deprecated Use getInstanceCountAsync instead */
@@ -42,8 +44,10 @@ export interface ViewModel
  * in the view model.
  * @see {@link https://rive.app/docs/runtimes/data-binding Rive Data Binding Documentation}
  */
-export interface ViewModelInstance
-  extends HybridObject<{ ios: 'swift'; android: 'kotlin' }> {
+export interface ViewModelInstance extends HybridObject<{
+  ios: 'swift';
+  android: 'kotlin';
+}> {
   /** The name of the view model instance */
   readonly instanceName: string;
   /** Get a number property from the view model instance at the given path */
@@ -91,8 +95,10 @@ export interface ViewModelInstance
   replaceViewModel(path: string, instance: ViewModelInstance): void;
 }
 
-export interface ViewModelProperty
-  extends HybridObject<{ ios: 'swift'; android: 'kotlin' }> {}
+export interface ViewModelProperty extends HybridObject<{
+  ios: 'swift';
+  android: 'kotlin';
+}> {}
 
 export interface ObservableProperty {
   /** Remove all listeners from the property */
@@ -100,8 +106,7 @@ export interface ObservableProperty {
 }
 
 export interface ViewModelNumberProperty
-  extends ViewModelProperty,
-    ObservableProperty {
+  extends ViewModelProperty, ObservableProperty {
   /** @deprecated Use getValueAsync (read) or set(value) (write) instead */
   value: number;
   /** Get the current value of the number property */
@@ -112,8 +117,7 @@ export interface ViewModelNumberProperty
 }
 
 export interface ViewModelStringProperty
-  extends ViewModelProperty,
-    ObservableProperty {
+  extends ViewModelProperty, ObservableProperty {
   /** @deprecated Use getValueAsync (read) or set(value) (write) instead */
   value: string;
   /** Get the current value of the string property */
@@ -124,8 +128,7 @@ export interface ViewModelStringProperty
 }
 
 export interface ViewModelBooleanProperty
-  extends ViewModelProperty,
-    ObservableProperty {
+  extends ViewModelProperty, ObservableProperty {
   /** @deprecated Use getValueAsync (read) or set(value) (write) instead */
   value: boolean;
   /** Get the current value of the boolean property */
@@ -136,8 +139,7 @@ export interface ViewModelBooleanProperty
 }
 
 export interface ViewModelColorProperty
-  extends ViewModelProperty,
-    ObservableProperty {
+  extends ViewModelProperty, ObservableProperty {
   /** @deprecated Use getValueAsync (read) or set(value) (write) instead */
   value: number;
   /** Get the current value of the color property */
@@ -148,8 +150,7 @@ export interface ViewModelColorProperty
 }
 
 export interface ViewModelEnumProperty
-  extends ViewModelProperty,
-    ObservableProperty {
+  extends ViewModelProperty, ObservableProperty {
   /** @deprecated Use getValueAsync (read) or set(value) (write) instead */
   value: string;
   /** Get the current value of the enum property */
@@ -160,8 +161,7 @@ export interface ViewModelEnumProperty
 }
 
 export interface ViewModelTriggerProperty
-  extends ViewModelProperty,
-    ObservableProperty {
+  extends ViewModelProperty, ObservableProperty {
   /** Add a listener to the view model trigger property. Returns a function to remove the listener. */
   addListener(onChanged: () => void): () => void;
   /** Trigger the view model trigger property */
@@ -169,8 +169,7 @@ export interface ViewModelTriggerProperty
 }
 
 export interface ViewModelImageProperty
-  extends ViewModelProperty,
-    ObservableProperty {
+  extends ViewModelProperty, ObservableProperty {
   /** Set the image property value */
   set(image: RiveImage | undefined): void;
   /** Add a listener to the view model image property. Returns a function to remove the listener. */
@@ -182,8 +181,7 @@ export interface ViewModelImageProperty
  * @see {@link https://rive.app/docs/runtimes/data-binding#lists Rive Data Binding Lists}
  */
 export interface ViewModelListProperty
-  extends ViewModelProperty,
-    ObservableProperty {
+  extends ViewModelProperty, ObservableProperty {
   /** @deprecated Use getLengthAsync instead */
   readonly length: number;
   /** @deprecated Use getInstanceAtAsync instead */
