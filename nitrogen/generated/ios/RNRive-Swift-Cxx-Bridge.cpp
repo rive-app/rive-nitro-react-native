@@ -331,6 +331,14 @@ namespace margelo::nitro::rive::bridge::swift {
     return swiftPart.toUnsafe();
   }
   
+  // pragma MARK: std::function<void(const std::vector<ViewModelPropertyInfo>& /* result */)>
+  Func_void_std__vector_ViewModelPropertyInfo_ create_Func_void_std__vector_ViewModelPropertyInfo_(void* NON_NULL swiftClosureWrapper) noexcept {
+    auto swiftClosure = RNRive::Func_void_std__vector_ViewModelPropertyInfo_::fromUnsafe(swiftClosureWrapper);
+    return [swiftClosure = std::move(swiftClosure)](const std::vector<ViewModelPropertyInfo>& result) mutable -> void {
+      swiftClosure.call(result);
+    };
+  }
+  
   // pragma MARK: std::function<void(const std::optional<std::shared_ptr<HybridViewModelInstanceSpec>>& /* result */)>
   Func_void_std__optional_std__shared_ptr_HybridViewModelInstanceSpec__ create_Func_void_std__optional_std__shared_ptr_HybridViewModelInstanceSpec__(void* NON_NULL swiftClosureWrapper) noexcept {
     auto swiftClosure = RNRive::Func_void_std__optional_std__shared_ptr_HybridViewModelInstanceSpec__::fromUnsafe(swiftClosureWrapper);

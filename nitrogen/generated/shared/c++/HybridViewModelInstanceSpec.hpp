@@ -13,6 +13,8 @@
 #error NitroModules cannot be found! Are you sure you installed NitroModules properly?
 #endif
 
+// Forward declaration of `ViewModelPropertyInfo` to properly resolve imports.
+namespace margelo::nitro::rive { struct ViewModelPropertyInfo; }
 // Forward declaration of `HybridViewModelNumberPropertySpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridViewModelNumberPropertySpec; }
 // Forward declaration of `HybridViewModelStringPropertySpec` to properly resolve imports.
@@ -35,6 +37,9 @@ namespace margelo::nitro::rive { class HybridViewModelArtboardPropertySpec; }
 namespace margelo::nitro::rive { class HybridViewModelInstanceSpec; }
 
 #include <string>
+#include "ViewModelPropertyInfo.hpp"
+#include <vector>
+#include <NitroModules/Promise.hpp>
 #include <memory>
 #include "HybridViewModelNumberPropertySpec.hpp"
 #include <optional>
@@ -47,7 +52,6 @@ namespace margelo::nitro::rive { class HybridViewModelInstanceSpec; }
 #include "HybridViewModelListPropertySpec.hpp"
 #include "HybridViewModelArtboardPropertySpec.hpp"
 #include "HybridViewModelInstanceSpec.hpp"
-#include <NitroModules/Promise.hpp>
 
 namespace margelo::nitro::rive {
 
@@ -80,6 +84,7 @@ namespace margelo::nitro::rive {
 
     public:
       // Methods
+      virtual std::shared_ptr<Promise<std::vector<ViewModelPropertyInfo>>> getPropertiesAsync() = 0;
       virtual std::optional<std::shared_ptr<HybridViewModelNumberPropertySpec>> numberProperty(const std::string& path) = 0;
       virtual std::optional<std::shared_ptr<HybridViewModelStringPropertySpec>> stringProperty(const std::string& path) = 0;
       virtual std::optional<std::shared_ptr<HybridViewModelBooleanPropertySpec>> booleanProperty(const std::string& path) = 0;

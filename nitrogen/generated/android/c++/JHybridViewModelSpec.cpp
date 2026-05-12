@@ -7,12 +7,21 @@
 
 #include "JHybridViewModelSpec.hpp"
 
+// Forward declaration of `ViewModelPropertyInfo` to properly resolve imports.
+namespace margelo::nitro::rive { struct ViewModelPropertyInfo; }
+// Forward declaration of `ViewModelPropertyType` to properly resolve imports.
+namespace margelo::nitro::rive { enum class ViewModelPropertyType; }
 // Forward declaration of `HybridViewModelInstanceSpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridViewModelInstanceSpec; }
 
 #include <string>
+#include "ViewModelPropertyInfo.hpp"
+#include <vector>
 #include <NitroModules/Promise.hpp>
 #include <NitroModules/JPromise.hpp>
+#include "JViewModelPropertyInfo.hpp"
+#include "ViewModelPropertyType.hpp"
+#include "JViewModelPropertyType.hpp"
 #include <memory>
 #include "HybridViewModelInstanceSpec.hpp"
 #include <optional>
@@ -65,6 +74,31 @@ namespace margelo::nitro::rive {
   }
 
   // Methods
+  std::shared_ptr<Promise<std::vector<ViewModelPropertyInfo>>> JHybridViewModelSpec::getPropertiesAsync() {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>()>("getPropertiesAsync");
+    auto __result = method(_javaPart);
+    return [&]() {
+      auto __promise = Promise<std::vector<ViewModelPropertyInfo>>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& __boxedResult) {
+        auto __result = jni::static_ref_cast<jni::JArrayClass<JViewModelPropertyInfo>>(__boxedResult);
+        __promise->resolve([&]() {
+          size_t __size = __result->size();
+          std::vector<ViewModelPropertyInfo> __vector;
+          __vector.reserve(__size);
+          for (size_t __i = 0; __i < __size; __i++) {
+            auto __element = __result->getElement(__i);
+            __vector.push_back(__element->toCpp());
+          }
+          return __vector;
+        }());
+      });
+      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
+        jni::JniException __jniError(__throwable);
+        __promise->reject(std::make_exception_ptr(__jniError));
+      });
+      return __promise;
+    }();
+  }
   std::shared_ptr<Promise<double>> JHybridViewModelSpec::getPropertyCountAsync() {
     static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>()>("getPropertyCountAsync");
     auto __result = method(_javaPart);

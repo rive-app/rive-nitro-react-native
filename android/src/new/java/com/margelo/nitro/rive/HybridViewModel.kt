@@ -5,6 +5,7 @@ import app.rive.RiveFile
 import app.rive.ViewModelInstance
 import app.rive.ViewModelSource
 import app.rive.core.CommandQueue
+import app.rive.runtime.kotlin.core.ViewModel
 import com.facebook.proguard.annotations.DoNotStrip
 import com.margelo.nitro.core.Promise
 import kotlinx.coroutines.runBlocking
@@ -20,6 +21,17 @@ class HybridViewModel(
 ) : HybridViewModelSpec() {
   companion object {
     private const val TAG = "HybridViewModel"
+  }
+
+  override fun getPropertiesAsync(): Promise<Array<ViewModelPropertyInfo>> {
+    val name = viewModelName ?: return Promise.resolved(emptyArray())
+    return Promise.async {
+      riveFile
+        .getViewModelProperties(name)
+        .map { prop ->
+        ViewModelPropertyInfo(name = prop.name, type = mapPropertyType(prop.type))
+      }.toTypedArray()
+    }
   }
 
   override val propertyCount: Double
@@ -146,4 +158,20 @@ class HybridViewModel(
       HybridViewModelInstance(vmi, riveWorker, parentFile, viewModelName)
     }
   }
+}
+
+internal fun mapPropertyType(type: ViewModel.PropertyDataType): ViewModelPropertyType = when (type) {
+  ViewModel.PropertyDataType.NONE -> ViewModelPropertyType.NONE
+  ViewModel.PropertyDataType.STRING -> ViewModelPropertyType.STRING
+  ViewModel.PropertyDataType.NUMBER -> ViewModelPropertyType.NUMBER
+  ViewModel.PropertyDataType.BOOLEAN -> ViewModelPropertyType.BOOLEAN
+  ViewModel.PropertyDataType.COLOR -> ViewModelPropertyType.COLOR
+  ViewModel.PropertyDataType.LIST -> ViewModelPropertyType.LIST
+  ViewModel.PropertyDataType.ENUM -> ViewModelPropertyType.ENUM
+  ViewModel.PropertyDataType.TRIGGER -> ViewModelPropertyType.TRIGGER
+  ViewModel.PropertyDataType.VIEW_MODEL -> ViewModelPropertyType.VIEWMODEL
+  ViewModel.PropertyDataType.INTEGER -> ViewModelPropertyType.INTEGER
+  ViewModel.PropertyDataType.SYMBOL_LIST_INDEX -> ViewModelPropertyType.SYMBOLLISTINDEX
+  ViewModel.PropertyDataType.ASSET_IMAGE -> ViewModelPropertyType.ASSETIMAGE
+  ViewModel.PropertyDataType.ARTBOARD -> ViewModelPropertyType.ARTBOARD
 }

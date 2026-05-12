@@ -80,6 +80,10 @@ namespace margelo::nitro::rive { struct RiveError; }
 namespace margelo::nitro::rive { enum class RiveEventType; }
 // Forward declaration of `UnifiedRiveEvent` to properly resolve imports.
 namespace margelo::nitro::rive { struct UnifiedRiveEvent; }
+// Forward declaration of `ViewModelPropertyInfo` to properly resolve imports.
+namespace margelo::nitro::rive { struct ViewModelPropertyInfo; }
+// Forward declaration of `ViewModelPropertyType` to properly resolve imports.
+namespace margelo::nitro::rive { enum class ViewModelPropertyType; }
 
 // Include C++ defined types
 #include "Alignment.hpp"
@@ -118,6 +122,8 @@ namespace margelo::nitro::rive { struct UnifiedRiveEvent; }
 #include "RiveErrorType.hpp"
 #include "RiveEventType.hpp"
 #include "UnifiedRiveEvent.hpp"
+#include "ViewModelPropertyInfo.hpp"
+#include "ViewModelPropertyType.hpp"
 #include <NitroModules/ArrayBuffer.hpp>
 #include <NitroModules/Promise.hpp>
 #include <NitroModules/Result.hpp>

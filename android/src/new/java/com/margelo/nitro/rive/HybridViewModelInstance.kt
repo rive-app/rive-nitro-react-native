@@ -44,6 +44,18 @@ class HybridViewModelInstance(
   override val instanceName: String
     get() = _instanceName ?: ""
 
+  override fun getPropertiesAsync(): Promise<Array<ViewModelPropertyInfo>> {
+    val name = viewModelName ?: return Promise.resolved(emptyArray())
+    val file = parentFile.riveFile ?: return Promise.resolved(emptyArray())
+    return Promise.async {
+      file
+        .getViewModelProperties(name)
+        .map { prop ->
+        ViewModelPropertyInfo(name = prop.name, type = mapPropertyType(prop.type))
+      }.toTypedArray()
+    }
+  }
+
   override fun numberProperty(path: String): HybridViewModelNumberPropertySpec? {
     return try {
       runBlocking { viewModelInstance.getNumberFlow(path).first() }
