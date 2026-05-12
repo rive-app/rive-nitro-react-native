@@ -44,7 +44,7 @@ namespace margelo::nitro::rive {
 
     public:
       // Properties
-
+      
 
     public:
       // Methods
