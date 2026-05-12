@@ -36,6 +36,9 @@
     "RiveLogger": {
       "swift": "HybridRiveLogger",
       "kotlin": "HybridRiveLogger"
+    },
+    "RiveWorkletBridge": {
+      "cpp": "HybridRiveWorkletBridge"
     }
   },
   "ignorePaths": ["node_modules"]
