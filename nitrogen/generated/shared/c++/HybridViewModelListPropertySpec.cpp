@@ -24,6 +24,11 @@ namespace margelo::nitro::rive {
       prototype.registerHybridMethod("removeInstance", &HybridViewModelListPropertySpec::removeInstance);
       prototype.registerHybridMethod("removeInstanceAt", &HybridViewModelListPropertySpec::removeInstanceAt);
       prototype.registerHybridMethod("swap", &HybridViewModelListPropertySpec::swap);
+      prototype.registerHybridMethod("addInstanceAsync", &HybridViewModelListPropertySpec::addInstanceAsync);
+      prototype.registerHybridMethod("addInstanceAtAsync", &HybridViewModelListPropertySpec::addInstanceAtAsync);
+      prototype.registerHybridMethod("removeInstanceAsync", &HybridViewModelListPropertySpec::removeInstanceAsync);
+      prototype.registerHybridMethod("removeInstanceAtAsync", &HybridViewModelListPropertySpec::removeInstanceAtAsync);
+      prototype.registerHybridMethod("swapAsync", &HybridViewModelListPropertySpec::swapAsync);
       prototype.registerHybridMethod("addListener", &HybridViewModelListPropertySpec::addListener);
       prototype.registerHybridMethod("removeListeners", &HybridViewModelListPropertySpec::removeListeners);
     });

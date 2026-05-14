@@ -65,6 +65,26 @@ class HybridViewModelListProperty(private val listProperty: ViewModelListPropert
     return Promise.async { getInstanceAt(index) }
   }
 
+  override fun addInstanceAsync(instance: HybridViewModelInstanceSpec): Promise<Unit> {
+    return Promise.async { addInstance(instance) }
+  }
+
+  override fun addInstanceAtAsync(instance: HybridViewModelInstanceSpec, index: Double): Promise<Unit> {
+    return Promise.async { addInstanceAt(instance, index) }
+  }
+
+  override fun removeInstanceAsync(instance: HybridViewModelInstanceSpec): Promise<Unit> {
+    return Promise.async { removeInstance(instance) }
+  }
+
+  override fun removeInstanceAtAsync(index: Double): Promise<Unit> {
+    return Promise.async { removeInstanceAt(index) }
+  }
+
+  override fun swapAsync(index1: Double, index2: Double): Promise<Unit> {
+    return Promise.async { swap(index1, index2) }
+  }
+
   override fun addListener(onChanged: () -> Unit): () -> Unit {
     val remover = addListenerInternal { _ -> onChanged() }
     ensureValueListenerJob(listProperty.valueFlow.map { })
