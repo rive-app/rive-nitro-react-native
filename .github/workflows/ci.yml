@@ -432,13 +432,32 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-android-build-${{ env.ANDROID_API_LEVEL }}-
 
+      - name: Debug environment before Gradle
+        if: steps.android-build-cache.outputs.cache-hit != 'true'
+        working-directory: example/android
+        run: |
+          echo "=== PATH ==="
+          echo "$PATH" | tr ':' '\n'
+          echo "=== which npx ==="
+          which npx || echo "npx NOT FOUND in PATH"
+          echo "=== which node ==="
+          which node || echo "node NOT FOUND in PATH"
+          echo "=== npx version ==="
+          npx --version || echo "npx failed"
+          echo "=== node_modules/.bin contents ==="
+          ls ../node_modules/.bin/ | head -20 || echo "no node_modules/.bin"
+          echo "=== disk space ==="
+          df -h / | tail -1
+          echo "=== node_modules exists ==="
+          ls -d ../node_modules/ && echo "yes" || echo "NO - node_modules missing!"
+
       - name: Build Android app
         if: steps.android-build-cache.outputs.cache-hit != 'true'
         working-directory: example/android
         env:
           JAVA_OPTS: "-XX:MaxHeapSize=6g"
         run: |
-          ./gradlew assembleDebug --no-daemon --console=plain -PreactNativeArchitectures=x86_64
+          ./gradlew assembleDebug --no-daemon --console=plain --stacktrace -PreactNativeArchitectures=x86_64
 
       - name: Save Android build cache
         if: steps.android-build-cache.outputs.cache-hit != 'true'
@@ -627,13 +646,28 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-android-legacy-build-${{ env.ANDROID_API_LEVEL }}-
 
+      - name: Debug environment before Gradle (legacy)
+        if: steps.android-build-cache.outputs.cache-hit != 'true'
+        working-directory: example/android
+        run: |
+          echo "=== PATH ==="
+          echo "$PATH" | tr ':' '\n'
+          echo "=== which npx ==="
+          which npx || echo "npx NOT FOUND in PATH"
+          echo "=== which node ==="
+          which node || echo "node NOT FOUND in PATH"
+          echo "=== disk space ==="
+          df -h / | tail -1
+          echo "=== node_modules exists ==="
+          ls -d ../node_modules/ && echo "yes" || echo "NO - node_modules missing!"
+
       - name: Build Android app
         if: steps.android-build-cache.outputs.cache-hit != 'true'
         working-directory: example/android
         env:
           JAVA_OPTS: "-XX:MaxHeapSize=6g"
         run: |
-          ./gradlew assembleDebug --no-daemon --console=plain -PreactNativeArchitectures=x86_64
+          ./gradlew assembleDebug --no-daemon --console=plain --stacktrace -PreactNativeArchitectures=x86_64
 
       - name: Save Android build cache
         if: steps.android-build-cache.outputs.cache-hit != 'true'
