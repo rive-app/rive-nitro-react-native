@@ -14,11 +14,12 @@ async function loadFile(source: number) {
   return RiveFileFactory.fromSource(source, undefined);
 }
 
-async function createGordonInstanceAsync(): Promise<ViewModelInstance> {
-  const file = await loadFile(DATABINDING);
-  const vm = await file.viewModelByNameAsync('Person');
+function createGordonInstance(
+  file: Awaited<ReturnType<typeof loadFile>>
+): ViewModelInstance {
+  const vm = file.viewModelByName('Person');
   expectDefined(vm);
-  const instance = await vm.createInstanceByNameAsync('Gordon');
+  const instance = vm.createInstanceByName('Gordon');
   expectDefined(instance);
   return instance;
 }
@@ -36,7 +37,7 @@ function getRGB(color: number): { r: number; g: number; b: number } {
 describe('Async ViewModel Creation', () => {
   it('createDefaultInstanceAsync returns a valid instance', async () => {
     const file = await loadFile(DATABINDING);
-    const vm = await file.viewModelByNameAsync('Person');
+    const vm = file.viewModelByName('Person');
     expectDefined(vm);
 
     const instance = await vm.createDefaultInstanceAsync();
@@ -46,7 +47,7 @@ describe('Async ViewModel Creation', () => {
 
   it('createInstanceByNameAsync("Gordon") returns named instance', async () => {
     const file = await loadFile(DATABINDING);
-    const vm = await file.viewModelByNameAsync('Person');
+    const vm = file.viewModelByName('Person');
     expectDefined(vm);
 
     const instance = await vm.createInstanceByNameAsync('Gordon');
@@ -55,7 +56,7 @@ describe('Async ViewModel Creation', () => {
 
   it('createInstanceByNameAsync with non-existent name returns undefined or throws', async () => {
     const file = await loadFile(DATABINDING);
-    const vm = await file.viewModelByNameAsync('Person');
+    const vm = file.viewModelByName('Person');
     expectDefined(vm);
 
     try {
@@ -68,7 +69,7 @@ describe('Async ViewModel Creation', () => {
 
   it('createBlankInstanceAsync returns an instance', async () => {
     const file = await loadFile(DATABINDING);
-    const vm = await file.viewModelByNameAsync('Person');
+    const vm = file.viewModelByName('Person');
     expectDefined(vm);
 
     const instance = await vm.createBlankInstanceAsync();
@@ -108,7 +109,7 @@ describe('Async RiveFile Methods', () => {
 describe('Async ViewModel Metadata', () => {
   it('getPropertiesAsync on ViewModel returns property info', async () => {
     const file = await loadFile(DATABINDING);
-    const vm = await file.viewModelByNameAsync('Person');
+    const vm = file.viewModelByName('Person');
     expectDefined(vm);
 
     try {
@@ -125,7 +126,7 @@ describe('Async ViewModel Metadata', () => {
 
   it('getPropertyCountAsync matches getPropertiesAsync length', async () => {
     const file = await loadFile(DATABINDING);
-    const vm = await file.viewModelByNameAsync('Person');
+    const vm = file.viewModelByName('Person');
     expectDefined(vm);
 
     try {
@@ -139,7 +140,7 @@ describe('Async ViewModel Metadata', () => {
 
   it('getInstanceCountAsync returns a non-negative number', async () => {
     const file = await loadFile(DATABINDING);
-    const vm = await file.viewModelByNameAsync('Person');
+    const vm = file.viewModelByName('Person');
     expectDefined(vm);
 
     const count = await vm.getInstanceCountAsync();
@@ -149,7 +150,7 @@ describe('Async ViewModel Metadata', () => {
 
 describe('Async Property getValueAsync', () => {
   it('numberProperty getValueAsync returns correct value', async () => {
-    const instance = await createGordonInstanceAsync();
+    const instance = createGordonInstance(await loadFile(DATABINDING));
     const prop = instance.numberProperty('age');
     expectDefined(prop);
 
@@ -158,7 +159,7 @@ describe('Async Property getValueAsync', () => {
   });
 
   it('stringProperty getValueAsync returns correct value', async () => {
-    const instance = await createGordonInstanceAsync();
+    const instance = createGordonInstance(await loadFile(DATABINDING));
     const prop = instance.stringProperty('name');
     expectDefined(prop);
 
@@ -167,7 +168,7 @@ describe('Async Property getValueAsync', () => {
   });
 
   it('booleanProperty getValueAsync returns correct value', async () => {
-    const instance = await createGordonInstanceAsync();
+    const instance = createGordonInstance(await loadFile(DATABINDING));
     const prop = instance.booleanProperty('likes_popcorn');
     expectDefined(prop);
 
@@ -176,7 +177,7 @@ describe('Async Property getValueAsync', () => {
   });
 
   it('colorProperty getValueAsync returns an ARGB number', async () => {
-    const instance = await createGordonInstanceAsync();
+    const instance = createGordonInstance(await loadFile(DATABINDING));
     const prop = instance.colorProperty('favourite_color');
     expectDefined(prop);
 
@@ -187,7 +188,7 @@ describe('Async Property getValueAsync', () => {
   });
 
   it('enumProperty getValueAsync returns correct string', async () => {
-    const instance = await createGordonInstanceAsync();
+    const instance = createGordonInstance(await loadFile(DATABINDING));
     const prop = instance.enumProperty('favourite_pet');
     expectDefined(prop);
 
@@ -196,7 +197,7 @@ describe('Async Property getValueAsync', () => {
   });
 
   it('set() then getValueAsync reflects the change for number', async () => {
-    const instance = await createGordonInstanceAsync();
+    const instance = createGordonInstance(await loadFile(DATABINDING));
     const prop = instance.numberProperty('age');
     expectDefined(prop);
 
@@ -208,7 +209,7 @@ describe('Async Property getValueAsync', () => {
   });
 
   it('set() then getValueAsync reflects the change for string', async () => {
-    const instance = await createGordonInstanceAsync();
+    const instance = createGordonInstance(await loadFile(DATABINDING));
     const prop = instance.stringProperty('name');
     expectDefined(prop);
 
@@ -219,7 +220,7 @@ describe('Async Property getValueAsync', () => {
   });
 
   it('set() then getValueAsync reflects the change for boolean', async () => {
-    const instance = await createGordonInstanceAsync();
+    const instance = createGordonInstance(await loadFile(DATABINDING));
     const prop = instance.booleanProperty('likes_popcorn');
     expectDefined(prop);
 
@@ -230,7 +231,7 @@ describe('Async Property getValueAsync', () => {
   });
 
   it('set() then getValueAsync reflects the change for color', async () => {
-    const instance = await createGordonInstanceAsync();
+    const instance = createGordonInstance(await loadFile(DATABINDING));
     const prop = instance.colorProperty('favourite_color');
     expectDefined(prop);
 
@@ -242,7 +243,7 @@ describe('Async Property getValueAsync', () => {
   });
 
   it('set() then getValueAsync reflects the change for enum', async () => {
-    const instance = await createGordonInstanceAsync();
+    const instance = createGordonInstance(await loadFile(DATABINDING));
     const prop = instance.enumProperty('favourite_pet');
     expectDefined(prop);
 
@@ -255,7 +256,7 @@ describe('Async Property getValueAsync', () => {
 
 describe('Async ViewModelInstance Methods', () => {
   it('viewModelAsync returns nested instance', async () => {
-    const instance = await createGordonInstanceAsync();
+    const instance = createGordonInstance(await loadFile(DATABINDING));
     const petInstance = await instance.viewModelAsync('pet');
     expectDefined(petInstance);
 
@@ -266,7 +267,7 @@ describe('Async ViewModelInstance Methods', () => {
   });
 
   it('viewModelAsync with non-existent path returns undefined or throws', async () => {
-    const instance = await createGordonInstanceAsync();
+    const instance = createGordonInstance(await loadFile(DATABINDING));
     try {
       const result = await instance.viewModelAsync('nonexistent');
       // Legacy returns undefined, experimental may return a wrapper or throw
@@ -280,10 +281,7 @@ describe('Async ViewModelInstance Methods', () => {
 
   it('getPropertiesAsync on ViewModelInstance returns property info', async () => {
     const file = await loadFile(DATABINDING);
-    const vm = await file.viewModelByNameAsync('Person');
-    expectDefined(vm);
-    const instance = await vm.createInstanceByNameAsync('Gordon');
-    expectDefined(instance);
+    const instance = createGordonInstance(file);
 
     try {
       const props = await instance.getPropertiesAsync();
@@ -300,9 +298,9 @@ describe('Async ViewModelInstance Methods', () => {
 describe('Async List Operations', () => {
   async function createDevRelInstance() {
     const file = await loadFile(DATABINDING_LISTS);
-    const vm = await file.viewModelByNameAsync('DevRel');
+    const vm = file.viewModelByName('DevRel');
     expectDefined(vm);
-    const instance = await vm.createDefaultInstanceAsync();
+    const instance = vm.createDefaultInstance();
     expectDefined(instance);
     return { file, instance };
   }
@@ -337,9 +335,9 @@ describe('Async List Operations', () => {
 
     const initialLength = await list.getLengthAsync();
 
-    const personVM = await file.viewModelByNameAsync('Person');
+    const personVM = file.viewModelByName('Person');
     expectDefined(personVM);
-    const newPerson = await personVM.createBlankInstanceAsync();
+    const newPerson = personVM.createInstance();
     expectDefined(newPerson);
     const nameProp = newPerson.stringProperty('name');
     expectDefined(nameProp);
