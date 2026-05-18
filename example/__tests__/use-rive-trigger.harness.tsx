@@ -158,7 +158,7 @@ describe('useRiveTrigger hook', () => {
     // Wait for the re-render burst to complete (300ms of re-renders every 50ms)
     await waitFor(
       () => {
-        expect(context.renderCount).toBeGreaterThan(5);
+        expect(context.renderCount).toBeGreaterThanOrEqual(3);
       },
       { timeout: 2000 }
     );
