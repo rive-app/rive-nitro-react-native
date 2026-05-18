@@ -48,9 +48,11 @@ describe('useRiveProperty', () => {
     });
 
     const { result } = renderHook(() =>
-      useRiveProperty<any, string>(mockInstance, 'favDrink/type', {
-        getProperty: (vmi, path) => (vmi as any).enumProperty(path),
-      })
+      useRiveProperty<any, string>(
+        mockInstance,
+        'favDrink/type',
+        (vmi: any, path: string) => vmi.enumProperty(path)
+      )
     );
 
     // The mock's addListener emits 'Tea' synchronously — React batches it with the
@@ -66,9 +68,11 @@ describe('useRiveProperty', () => {
     });
 
     const { result } = renderHook(() =>
-      useRiveProperty<any, string>(mockInstance, 'favDrink/type', {
-        getProperty: (vmi, path) => (vmi as any).enumProperty(path),
-      })
+      useRiveProperty<any, string>(
+        mockInstance,
+        'favDrink/type',
+        (vmi: any, path: string) => vmi.enumProperty(path)
+      )
     );
 
     act(() => {
@@ -81,9 +85,11 @@ describe('useRiveProperty', () => {
 
   it('should return undefined when viewModelInstance is null', () => {
     const { result } = renderHook(() =>
-      useRiveProperty<any, string>(null, 'favDrink/type', {
-        getProperty: (vmi, path) => (vmi as any).enumProperty(path),
-      })
+      useRiveProperty<any, string>(
+        null,
+        'favDrink/type',
+        (vmi: any, path: string) => vmi.enumProperty(path)
+      )
     );
 
     const [value] = result.current;
@@ -94,9 +100,11 @@ describe('useRiveProperty', () => {
     const mockInstance = createMockViewModelInstance({});
 
     const { result } = renderHook(() =>
-      useRiveProperty<any, string>(mockInstance, 'nonexistent/path', {
-        getProperty: (vmi, path) => (vmi as any).enumProperty(path),
-      })
+      useRiveProperty<any, string>(
+        mockInstance,
+        'nonexistent/path',
+        (vmi: any, path: string) => vmi.enumProperty(path)
+      )
     );
 
     const [, , error] = result.current;
@@ -108,9 +116,11 @@ describe('useRiveProperty', () => {
     const mockInstance = createMockViewModelInstance({});
 
     const { result } = renderHook(() =>
-      useRiveProperty<any, string>(mockInstance, 'nonexistent/path', {
-        getProperty: (vmi, path) => (vmi as any).enumProperty(path),
-      })
+      useRiveProperty<any, string>(
+        mockInstance,
+        'nonexistent/path',
+        (vmi: any, path: string) => vmi.enumProperty(path)
+      )
     );
 
     // Error already set by useEffect (property not found on valid instance)
@@ -131,9 +141,11 @@ describe('useRiveProperty', () => {
     // Start with undefined instance (simulates async file loading)
     const { result } = renderHook(
       (props: { instance: ViewModelInstance | undefined }) =>
-        useRiveProperty<any, string>(props.instance, 'text', {
-          getProperty: (vmi, path) => (vmi as any).stringProperty(path),
-        }),
+        useRiveProperty<any, string>(
+          props.instance,
+          'text',
+          (vmi: any, path: string) => vmi.stringProperty(path)
+        ),
       { initialProps: { instance: undefined } }
     );
 
@@ -156,9 +168,11 @@ describe('useRiveProperty', () => {
     // Start with undefined instance
     const { result, rerender } = renderHook(
       (props: { instance: ViewModelInstance | undefined }) =>
-        useRiveProperty<any, string>(props.instance, 'text', {
-          getProperty: (vmi, path) => (vmi as any).stringProperty(path),
-        }),
+        useRiveProperty<any, string>(
+          props.instance,
+          'text',
+          (vmi: any, path: string) => vmi.stringProperty(path)
+        ),
       { initialProps: { instance: undefined } }
     );
 
@@ -197,9 +211,11 @@ describe('useRiveProperty', () => {
 
     const { result, rerender } = renderHook(
       (props: { path: string }) =>
-        useRiveProperty<any, string>(mockInstance, props.path, {
-          getProperty: (vmi, p) => (vmi as any).enumProperty(p),
-        }),
+        useRiveProperty<any, string>(
+          mockInstance,
+          props.path,
+          (vmi: any, p: string) => vmi.enumProperty(p)
+        ),
       { initialProps: { path: 'drinks/tea' } }
     );
 
@@ -222,9 +238,11 @@ describe('useRiveProperty', () => {
 
     const { result, rerender } = renderHook(
       (props: { instance: ViewModelInstance }) =>
-        useRiveProperty<any, string>(props.instance, 'prop/path', {
-          getProperty: (vmi, p) => (vmi as any).enumProperty(p),
-        }),
+        useRiveProperty<any, string>(
+          props.instance,
+          'prop/path',
+          (vmi: any, p: string) => vmi.enumProperty(p)
+        ),
       { initialProps: { instance: mockInstance1 } }
     );
 

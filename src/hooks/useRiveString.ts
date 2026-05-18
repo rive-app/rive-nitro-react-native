@@ -5,9 +5,8 @@ import {
 import type { UseRivePropertyResult } from '../types';
 import { useRiveProperty } from './useRiveProperty';
 
-const STRING_PROPERTY_OPTIONS = {
-  getProperty: (vmi: ViewModelInstance, p: string) => vmi.stringProperty(p),
-};
+const getStringProperty = (vmi: ViewModelInstance, p: string) =>
+  vmi.stringProperty(p);
 
 /**
  * Hook for interacting with string ViewModel instance properties.
@@ -23,6 +22,6 @@ export function useRiveString(
   const [value, setValue, error] = useRiveProperty<
     ViewModelStringProperty,
     string
-  >(viewModelInstance, path, STRING_PROPERTY_OPTIONS);
+  >(viewModelInstance, path, getStringProperty);
   return { value, setValue, error };
 }

@@ -5,9 +5,8 @@ import {
 import type { UseRivePropertyResult } from '../types';
 import { useRiveProperty } from './useRiveProperty';
 
-const BOOLEAN_PROPERTY_OPTIONS = {
-  getProperty: (vmi: ViewModelInstance, p: string) => vmi.booleanProperty(p),
-};
+const getBooleanProperty = (vmi: ViewModelInstance, p: string) =>
+  vmi.booleanProperty(p);
 
 /**
  * Hook for interacting with boolean ViewModel instance properties.
@@ -23,6 +22,6 @@ export function useRiveBoolean(
   const [value, setValue, error] = useRiveProperty<
     ViewModelBooleanProperty,
     boolean
-  >(viewModelInstance, path, BOOLEAN_PROPERTY_OPTIONS);
+  >(viewModelInstance, path, getBooleanProperty);
   return { value, setValue, error };
 }

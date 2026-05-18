@@ -5,9 +5,8 @@ import {
 import type { UseRivePropertyResult } from '../types';
 import { useRiveProperty } from './useRiveProperty';
 
-const NUMBER_PROPERTY_OPTIONS = {
-  getProperty: (vmi: ViewModelInstance, p: string) => vmi.numberProperty(p),
-};
+const getNumberProperty = (vmi: ViewModelInstance, p: string) =>
+  vmi.numberProperty(p);
 
 /**
  * Hook for interacting with number ViewModel instance properties.
@@ -23,6 +22,6 @@ export function useRiveNumber(
   const [value, setValue, error] = useRiveProperty<
     ViewModelNumberProperty,
     number
-  >(viewModelInstance, path, NUMBER_PROPERTY_OPTIONS);
+  >(viewModelInstance, path, getNumberProperty);
   return { value, setValue, error };
 }
