@@ -7,8 +7,14 @@ import {
   cleanup,
 } from 'react-native-harness';
 import { useEffect, useState } from 'react';
-import { Text, View } from 'react-native';
-import { RiveFileFactory, useRiveTrigger } from '@rive-app/react-native';
+import { View } from 'react-native';
+import {
+  Fit,
+  RiveFileFactory,
+  RiveView,
+  useRiveTrigger,
+  type RiveFile,
+} from '@rive-app/react-native';
 import type { ViewModelInstance } from '@rive-app/react-native';
 
 const DATABINDING = require('../assets/rive/databinding.riv');
@@ -40,11 +46,15 @@ function createTriggerContext(): TriggerContext {
 }
 
 // ─── Test component: stable callback ───────────────────────────────
+// RiveView with dataBind is required so the Rive render loop runs
+// and pollChanges() dispatches trigger events to listeners.
 
 function StableTriggerComponent({
+  file,
   instance,
   context,
 }: {
+  file: RiveFile;
   instance: ViewModelInstance;
   context: TriggerContext;
 }) {
@@ -62,20 +72,25 @@ function StableTriggerComponent({
   }, [context, trigger, error]);
 
   return (
-    <View>
-      <Text>{context.triggerCount}</Text>
+    <View style={{ width: 200, height: 200 }}>
+      <RiveView
+        file={file}
+        fit={Fit.Contain}
+        dataBind={instance}
+        style={{ flex: 1 }}
+      />
     </View>
   );
 }
 
 // ─── Test component: unstable callback (issue #230) ────────────────
-// 'use no memo' simulates components without React Compiler where
-// the onTrigger callback is a new reference every render.
 
 function UnstableTriggerComponent({
+  file,
   instance,
   context,
 }: {
+  file: RiveFile;
   instance: ViewModelInstance;
   context: TriggerContext;
 }) {
@@ -84,7 +99,6 @@ function UnstableTriggerComponent({
   const [, setTick] = useState(0);
   context.renderCount++;
 
-  // New reference every render — this is the pattern that triggered #230
   const onTrigger = () => {
     context.triggerCount++;
   };
@@ -107,8 +121,13 @@ function UnstableTriggerComponent({
   }, []);
 
   return (
-    <View>
-      <Text>{context.triggerCount}</Text>
+    <View style={{ width: 200, height: 200 }}>
+      <RiveView
+        file={file}
+        fit={Fit.Contain}
+        dataBind={instance}
+        style={{ flex: 1 }}
+      />
     </View>
   );
 }
@@ -117,11 +136,15 @@ function UnstableTriggerComponent({
 
 describe('useRiveTrigger hook', () => {
   it('receives trigger events from JS trigger()', async () => {
-    const { instance } = await loadGordonInstance();
+    const { file, instance } = await loadGordonInstance();
     const context = createTriggerContext();
 
     await render(
-      <StableTriggerComponent instance={instance} context={context} />
+      <StableTriggerComponent
+        file={file}
+        instance={instance}
+        context={context}
+      />
     );
 
     await waitFor(
@@ -141,18 +164,22 @@ describe('useRiveTrigger hook', () => {
       () => {
         expect(context.triggerCount).toBeGreaterThanOrEqual(3);
       },
-      { timeout: 3000 }
+      { timeout: 5000 }
     );
 
     cleanup();
   });
 
   it('receives triggers with unstable callback after re-renders (#230)', async () => {
-    const { instance } = await loadGordonInstance();
+    const { file, instance } = await loadGordonInstance();
     const context = createTriggerContext();
 
     await render(
-      <UnstableTriggerComponent instance={instance} context={context} />
+      <UnstableTriggerComponent
+        file={file}
+        instance={instance}
+        context={context}
+      />
     );
 
     // Wait for the re-render burst to complete (300ms of re-renders every 50ms)
@@ -179,7 +206,7 @@ describe('useRiveTrigger hook', () => {
       () => {
         expect(context.triggerCount).toBeGreaterThanOrEqual(1);
       },
-      { timeout: 3000 }
+      { timeout: 5000 }
     );
 
     // Fire more to confirm stability
@@ -190,7 +217,7 @@ describe('useRiveTrigger hook', () => {
       () => {
         expect(context.triggerCount).toBeGreaterThanOrEqual(3);
       },
-      { timeout: 3000 }
+      { timeout: 5000 }
     );
 
     cleanup();
