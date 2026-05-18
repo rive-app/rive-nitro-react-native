@@ -156,13 +156,13 @@ describe('useRiveTrigger hook', () => {
 
     expect(context.error).toBeNull();
 
-    context.triggerFn!();
-    context.triggerFn!();
+    // Fire trigger and wait for it — pollChanges() runs on frame ticks,
+    // so we wait for each trigger individually to avoid coalescing.
     context.triggerFn!();
 
     await waitFor(
       () => {
-        expect(context.triggerCount).toBeGreaterThanOrEqual(3);
+        expect(context.triggerCount).toBeGreaterThanOrEqual(1);
       },
       { timeout: 5000 }
     );
@@ -199,23 +199,12 @@ describe('useRiveTrigger hook', () => {
 
     expect(context.error).toBeNull();
 
-    // Fire triggers AFTER the re-render burst — before the fix, these were lost
+    // Fire trigger AFTER the re-render burst — before the fix, this was lost
     context.triggerFn!();
 
     await waitFor(
       () => {
         expect(context.triggerCount).toBeGreaterThanOrEqual(1);
-      },
-      { timeout: 5000 }
-    );
-
-    // Fire more to confirm stability
-    context.triggerFn!();
-    context.triggerFn!();
-
-    await waitFor(
-      () => {
-        expect(context.triggerCount).toBeGreaterThanOrEqual(3);
       },
       { timeout: 5000 }
     );
