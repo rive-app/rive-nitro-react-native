@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 import {
   type ViewModelInstance,
   type ViewModelTriggerProperty,
@@ -26,18 +26,13 @@ export function useRiveTrigger(
 ): UseRiveTriggerResult {
   const { onTrigger } = params ?? {};
 
-  const triggerOptions = useMemo(
-    () => ({
-      getProperty: getTriggerProperty,
-      onPropertyEventOverride: onTrigger,
-    }),
-    [onTrigger]
-  );
-
   const [_, __, error, property] = useRiveProperty<
     ViewModelTriggerProperty,
     undefined
-  >(viewModelInstance, path, triggerOptions);
+  >(viewModelInstance, path, {
+    getProperty: getTriggerProperty,
+    onPropertyEventOverride: onTrigger,
+  });
 
   const trigger = useCallback(() => {
     if (property) {

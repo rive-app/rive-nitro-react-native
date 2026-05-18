@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   type ObservableProperty,
   type ViewModelInstance,
@@ -35,6 +35,12 @@ export function useRiveProperty<P extends ViewModelProperty, T>(
   Error | null,
   P | undefined,
 ] {
+  // Store the callback in a ref so identity changes don't cause property
+  // disposal/re-creation. The listener always calls through the ref,
+  // ensuring the latest callback is invoked without re-subscribing.
+  const onPropertyEventOverrideRef = useRef(options.onPropertyEventOverride);
+  onPropertyEventOverrideRef.current = options.onPropertyEventOverride;
+
   const property = useDisposableMemo(
     () => {
       if (!viewModelInstance) return undefined;
@@ -44,7 +50,7 @@ export function useRiveProperty<P extends ViewModelProperty, T>(
       ) as unknown as ObservableViewModelProperty<T>;
     },
     (p) => p?.dispose(),
-    [options, viewModelInstance, path]
+    [viewModelInstance, path]
   );
 
   // Always start undefined — the listener delivers the current value as its first emission.
@@ -75,12 +81,14 @@ export function useRiveProperty<P extends ViewModelProperty, T>(
     // undefined → value without waiting for a property change.
     // (Legacy addListener does NOT emit on subscribe — only on changes.
     //  Experimental valueStream emits the current value as its first element.)
-    if (!options.onPropertyEventOverride) {
+    if (!onPropertyEventOverrideRef.current) {
       setValue(property.value);
     }
 
-    const removeListener = options.onPropertyEventOverride
-      ? property.addListener(options.onPropertyEventOverride)
+    const removeListener = onPropertyEventOverrideRef.current
+      ? property.addListener((...args: any[]) => {
+          onPropertyEventOverrideRef.current?.(...args);
+        })
       : property.addListener((newValue) => {
           setValue(newValue);
         });
@@ -93,7 +101,7 @@ export function useRiveProperty<P extends ViewModelProperty, T>(
         // Native dispose() handles listener cleanup, so this is safe to ignore.
       }
     };
-  }, [options, property]);
+  }, [property]);
 
   // Set the value of the property (no-op if property isn't available yet).
   // Uses tracked `value` from state for updater functions — avoids a synchronous
