@@ -26,10 +26,8 @@ EC_DIR="$REPO_ROOT/.jacoco/ec"
 rm -rf "$EC_DIR"
 mkdir -p "$EC_DIR"
 
-adb shell run-as "$APP_ID" find files/ -name "*.ec" 2>/dev/null | while read -r remote; do
-  local_name=$(basename "$remote")
-  adb shell run-as "$APP_ID" cat "$remote" > "$EC_DIR/$local_name"
-done
+# Use tar to reliably pull all .ec files (avoids adb shell + pipe issues)
+adb shell run-as "$APP_ID" sh -c "'cd files && tar cf - *.ec 2>/dev/null'" | tar xf - -C "$EC_DIR" 2>/dev/null || true
 
 EC_COUNT=$(find "$EC_DIR" -name "*.ec" 2>/dev/null | wc -l | tr -d ' ')
 [ "$EC_COUNT" -gt 0 ] || { echo "No .ec files found in $APP_ID internal storage"; exit 1; }
@@ -39,12 +37,13 @@ echo "Found $EC_COUNT .ec file(s)"
 MERGED_EC="$REPO_ROOT/.jacoco/merged.ec"
 java -jar "$JACOCO_CLI" merge "$EC_DIR"/*.ec --destfile "$MERGED_EC"
 
-# Find instrumented class files for the library module
-LIB_CLASSES=$(find "$REPO_ROOT/android/build" -path "*/debug/classes" -type d | head -1)
-if [ -z "$LIB_CLASSES" ]; then
-  LIB_CLASSES=$(find "$REPO_ROOT/android/build" -path "*/tmp/kotlin-classes/debug" -type d | head -1)
+# Use the original (uninstrumented) class files saved during the build
+LIB_CLASSES="$REPO_ROOT/android/build/jacoco-original-classes"
+if [ ! -d "$LIB_CLASSES" ]; then
+  echo "Original class files not found at $LIB_CLASSES"
+  echo "Was the library built with -PRive_KotlinCoverage=true?"
+  exit 1
 fi
-[ -n "$LIB_CLASSES" ] || { echo "Library class files not found — was the library built with coverage?"; exit 1; }
 echo "Using class files: $LIB_CLASSES"
 
 LIB_SOURCES="$REPO_ROOT/android/src/main/java"

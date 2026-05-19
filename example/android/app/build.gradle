@@ -107,13 +107,9 @@ android {
             keyPassword 'android'
         }
     }
-    def kotlinCoverage = project.hasProperty('Rive_KotlinCoverage') ?
-        project.property('Rive_KotlinCoverage').toBoolean() : false
-
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
-            enableAndroidTestCoverage kotlinCoverage
         }
         release {
             // Caution! In production, you need to generate your own keystore file.
