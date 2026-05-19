@@ -43,10 +43,14 @@ android {
   def skipSetup = project.hasProperty('Rive_RiveRuntimeAndroidSkipSetup') ?
     project.property('Rive_RiveRuntimeAndroidSkipSetup').toBoolean() : false
 
+  def kotlinCoverage = project.hasProperty('Rive_KotlinCoverage') ?
+    project.property('Rive_KotlinCoverage').toBoolean() : false
+
   defaultConfig {
     minSdkVersion getExtOrIntegerDefault("minSdkVersion")
     targetSdkVersion getExtOrIntegerDefault("targetSdkVersion")
     buildConfigField "boolean", "RIVE_SKIP_SETUP", "$skipSetup"
+    buildConfigField "boolean", "RIVE_KOTLIN_COVERAGE", "$kotlinCoverage"
 
     externalNativeBuild {
       cmake {
@@ -97,9 +101,16 @@ android {
   }
 
   buildTypes {
+    debug {
+      enableAndroidTestCoverage kotlinCoverage
+    }
     release {
       minifyEnabled false
     }
+  }
+
+  if (kotlinCoverage) {
+    println "@rive-app/react-native: Kotlin code coverage ENABLED"
   }
 
   lintOptions {

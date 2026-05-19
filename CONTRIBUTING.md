@@ -125,6 +125,29 @@ The `package.json` file contains various scripts for common tasks:
 - `yarn example android`: run the example app on Android.
 - `yarn example ios`: run the example app on iOS.
 
+### Kotlin code coverage
+
+You can measure which Kotlin code in `android/` gets exercised by the harness tests. This uses JaCoCo bytecode instrumentation and is opt-in.
+
+```sh
+# 1. Build the example app with coverage enabled
+cd example/android && ./gradlew assembleDebug -PRive_KotlinCoverage=true && cd ../..
+
+# 2. Run harness tests
+yarn test:harness:android
+
+# 3. Extract coverage and print a summary
+bash scripts/android-coverage.sh
+```
+
+This produces `coverage-kotlin.xml` and `coverage-kotlin-html/` in the repo root. To view the HTML report:
+
+```sh
+open coverage-kotlin-html/index.html
+```
+
+To go back to normal (non-coverage) builds, just build without the `-PRive_KotlinCoverage=true` flag.
+
 ### Sending a pull request
 
 When you're sending a pull request:
