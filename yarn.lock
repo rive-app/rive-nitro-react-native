@@ -2008,6 +2008,188 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@esbuild/aix-ppc64@npm:0.27.7":
+  version: 0.27.7
+  resolution: "@esbuild/aix-ppc64@npm:0.27.7"
+  conditions: os=aix & cpu=ppc64
+  languageName: node
+  linkType: hard
+
+"@esbuild/android-arm64@npm:0.27.7":
+  version: 0.27.7
+  resolution: "@esbuild/android-arm64@npm:0.27.7"
+  conditions: os=android & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@esbuild/android-arm@npm:0.27.7":
+  version: 0.27.7
+  resolution: "@esbuild/android-arm@npm:0.27.7"
+  conditions: os=android & cpu=arm
+  languageName: node
+  linkType: hard
+
+"@esbuild/android-x64@npm:0.27.7":
+  version: 0.27.7
+  resolution: "@esbuild/android-x64@npm:0.27.7"
+  conditions: os=android & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@esbuild/darwin-arm64@npm:0.27.7":
+  version: 0.27.7
+  resolution: "@esbuild/darwin-arm64@npm:0.27.7"
+  conditions: os=darwin & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@esbuild/darwin-x64@npm:0.27.7":
+  version: 0.27.7
+  resolution: "@esbuild/darwin-x64@npm:0.27.7"
+  conditions: os=darwin & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@esbuild/freebsd-arm64@npm:0.27.7":
+  version: 0.27.7
+  resolution: "@esbuild/freebsd-arm64@npm:0.27.7"
+  conditions: os=freebsd & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@esbuild/freebsd-x64@npm:0.27.7":
+  version: 0.27.7
+  resolution: "@esbuild/freebsd-x64@npm:0.27.7"
+  conditions: os=freebsd & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@esbuild/linux-arm64@npm:0.27.7":
+  version: 0.27.7
+  resolution: "@esbuild/linux-arm64@npm:0.27.7"
+  conditions: os=linux & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@esbuild/linux-arm@npm:0.27.7":
+  version: 0.27.7
+  resolution: "@esbuild/linux-arm@npm:0.27.7"
+  conditions: os=linux & cpu=arm
+  languageName: node
+  linkType: hard
+
+"@esbuild/linux-ia32@npm:0.27.7":
+  version: 0.27.7
+  resolution: "@esbuild/linux-ia32@npm:0.27.7"
+  conditions: os=linux & cpu=ia32
+  languageName: node
+  linkType: hard
+
+"@esbuild/linux-loong64@npm:0.27.7":
+  version: 0.27.7
+  resolution: "@esbuild/linux-loong64@npm:0.27.7"
+  conditions: os=linux & cpu=loong64
+  languageName: node
+  linkType: hard
+
+"@esbuild/linux-mips64el@npm:0.27.7":
+  version: 0.27.7
+  resolution: "@esbuild/linux-mips64el@npm:0.27.7"
+  conditions: os=linux & cpu=mips64el
+  languageName: node
+  linkType: hard
+
+"@esbuild/linux-ppc64@npm:0.27.7":
+  version: 0.27.7
+  resolution: "@esbuild/linux-ppc64@npm:0.27.7"
+  conditions: os=linux & cpu=ppc64
+  languageName: node
+  linkType: hard
+
+"@esbuild/linux-riscv64@npm:0.27.7":
+  version: 0.27.7
+  resolution: "@esbuild/linux-riscv64@npm:0.27.7"
+  conditions: os=linux & cpu=riscv64
+  languageName: node
+  linkType: hard
+
+"@esbuild/linux-s390x@npm:0.27.7":
+  version: 0.27.7
+  resolution: "@esbuild/linux-s390x@npm:0.27.7"
+  conditions: os=linux & cpu=s390x
+  languageName: node
+  linkType: hard
+
+"@esbuild/linux-x64@npm:0.27.7":
+  version: 0.27.7
+  resolution: "@esbuild/linux-x64@npm:0.27.7"
+  conditions: os=linux & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@esbuild/netbsd-arm64@npm:0.27.7":
+  version: 0.27.7
+  resolution: "@esbuild/netbsd-arm64@npm:0.27.7"
+  conditions: os=netbsd & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@esbuild/netbsd-x64@npm:0.27.7":
+  version: 0.27.7
+  resolution: "@esbuild/netbsd-x64@npm:0.27.7"
+  conditions: os=netbsd & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@esbuild/openbsd-arm64@npm:0.27.7":
+  version: 0.27.7
+  resolution: "@esbuild/openbsd-arm64@npm:0.27.7"
+  conditions: os=openbsd & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@esbuild/openbsd-x64@npm:0.27.7":
+  version: 0.27.7
+  resolution: "@esbuild/openbsd-x64@npm:0.27.7"
+  conditions: os=openbsd & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@esbuild/openharmony-arm64@npm:0.27.7":
+  version: 0.27.7
+  resolution: "@esbuild/openharmony-arm64@npm:0.27.7"
+  conditions: os=openharmony & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@esbuild/sunos-x64@npm:0.27.7":
+  version: 0.27.7
+  resolution: "@esbuild/sunos-x64@npm:0.27.7"
+  conditions: os=sunos & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@esbuild/win32-arm64@npm:0.27.7":
+  version: 0.27.7
+  resolution: "@esbuild/win32-arm64@npm:0.27.7"
+  conditions: os=win32 & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@esbuild/win32-ia32@npm:0.27.7":
+  version: 0.27.7
+  resolution: "@esbuild/win32-ia32@npm:0.27.7"
+  conditions: os=win32 & cpu=ia32
+  languageName: node
+  linkType: hard
+
+"@esbuild/win32-x64@npm:0.27.7":
+  version: 0.27.7
+  resolution: "@esbuild/win32-x64@npm:0.27.7"
+  conditions: os=win32 & cpu=x64
+  languageName: node
+  linkType: hard
+
 "@eslint-community/eslint-utils@npm:^4.2.0, @eslint-community/eslint-utils@npm:^4.4.0, @eslint-community/eslint-utils@npm:^4.7.0, @eslint-community/eslint-utils@npm:^4.8.0":
   version: 4.9.0
   resolution: "@eslint-community/eslint-utils@npm:4.9.0"
@@ -4368,43 +4550,43 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native-harness/babel-preset@npm:1.1.0":
-  version: 1.1.0
-  resolution: "@react-native-harness/babel-preset@npm:1.1.0"
+"@react-native-harness/babel-preset@npm:1.2.0":
+  version: 1.2.0
+  resolution: "@react-native-harness/babel-preset@npm:1.2.0"
   dependencies:
     "@babel/plugin-transform-class-static-block": ^7.27.1
     babel-plugin-istanbul: ^7.0.1
   peerDependencies:
     "@babel/core": ^7.22.0
     "@babel/plugin-transform-react-jsx": "*"
-  checksum: f939dfd75f4ee45e260d7e4e8468befc230d8857522be610abd2c5745aae2ae1ce346f4fa9e7eb17e5493d576f797663fb2dea018576d1c485271a8b9dc8b4cc
+  checksum: f4b4a680289baa5f2f65261a6e6458b37a82b7d49b75b2d3e5c74f577eb34b474376d560b858fb39d3185342fc5e5f8de457f214d34e6cb1d71b07f33b4405ee
   languageName: node
   linkType: hard
 
-"@react-native-harness/bridge@npm:1.1.0":
-  version: 1.1.0
-  resolution: "@react-native-harness/bridge@npm:1.1.0"
+"@react-native-harness/bridge@npm:1.2.0":
+  version: 1.2.0
+  resolution: "@react-native-harness/bridge@npm:1.2.0"
   dependencies:
-    "@react-native-harness/platforms": 1.1.0
-    "@react-native-harness/tools": 1.1.0
+    "@react-native-harness/platforms": 1.2.0
+    "@react-native-harness/tools": 1.2.0
     birpc: ^2.4.0
     pixelmatch: ^7.1.0
     pngjs: ^7.0.0
     ssim.js: ^3.5.0
     tslib: ^2.3.0
     ws: ^8.18.2
-  checksum: 646e4b8fe33fbef9c66b9d8234e487dc5a1c9e681f1433186034cb52bfbdc72363727bc9ffd8d5b89b34edc5cf569549982c29cb4bbdbd9e67172cbf81f05c1e
+  checksum: 0cdf333e99b4362d48a9fe19675c3282308537814b691297221c8a6d65374a2e2e70567f44219ec9aece554deebb12f803d11c5c9a75ca8d22e94599bdac0ff4
   languageName: node
   linkType: hard
 
-"@react-native-harness/bundler-metro@npm:1.1.0":
-  version: 1.1.0
-  resolution: "@react-native-harness/bundler-metro@npm:1.1.0"
+"@react-native-harness/bundler-metro@npm:1.2.0":
+  version: 1.2.0
+  resolution: "@react-native-harness/bundler-metro@npm:1.2.0"
   dependencies:
-    "@react-native-harness/babel-preset": 1.1.0
-    "@react-native-harness/config": 1.1.0
-    "@react-native-harness/runtime": 1.1.0
-    "@react-native-harness/tools": 1.1.0
+    "@react-native-harness/babel-preset": 1.2.0
+    "@react-native-harness/config": 1.2.0
+    "@react-native-harness/runtime": 1.2.0
+    "@react-native-harness/tools": 1.2.0
     "@react-native/metro-config": "*"
     connect: ^3.7.0
     nocache: ^4.0.0
@@ -4414,122 +4596,123 @@ __metadata:
     metro-cache: "*"
     metro-config: "*"
     metro-resolver: "*"
-  checksum: 67fb517b5d7a364d39c063978c78fffd0d658e5bf051d94c62a2ffd396dd6cbddc72043af1d5518ab1edb465a749e8e3a53f8b4aaf9b18dd99ff57c1bdd8d7ea
+  checksum: 12fe18c22e8892885e66d1f17b4fa5ca3059d92ed5c8a1a68971a5b31f5b5a309f0dbbe638b94c48ece870e36fd521bf096eaaeb3dec45d2d68b9f72cd2dcb2e
   languageName: node
   linkType: hard
 
-"@react-native-harness/cli@npm:1.1.0":
-  version: 1.1.0
-  resolution: "@react-native-harness/cli@npm:1.1.0"
+"@react-native-harness/cli@npm:1.2.0":
+  version: 1.2.0
+  resolution: "@react-native-harness/cli@npm:1.2.0"
   dependencies:
-    "@react-native-harness/bridge": 1.1.0
-    "@react-native-harness/config": 1.1.0
-    "@react-native-harness/platforms": 1.1.0
-    "@react-native-harness/tools": 1.1.0
+    "@react-native-harness/bridge": 1.2.0
+    "@react-native-harness/config": 1.2.0
+    "@react-native-harness/platforms": 1.2.0
+    "@react-native-harness/tools": 1.2.0
     tslib: ^2.3.0
   peerDependencies:
     jest-cli: "*"
-  checksum: 0bf10b9094443500ce9f1371844810323f7802f437cbafe4f86c5b75e934ff1431a7e23d4d5ee17d4a0febe2473e37346415982c0a2d1983ab3e0b67273f0bc1
+  checksum: acc922d7d5afa3031d00dadf75c492e8c4caa0f6073a257067b1d11e916c8e5024ef8cfc12557d9d350abb6eea5df0c72c3a12ae34f3b79ad73fd3de2f02cb10
   languageName: node
   linkType: hard
 
-"@react-native-harness/config@npm:1.1.0":
-  version: 1.1.0
-  resolution: "@react-native-harness/config@npm:1.1.0"
+"@react-native-harness/config@npm:1.2.0":
+  version: 1.2.0
+  resolution: "@react-native-harness/config@npm:1.2.0"
   dependencies:
-    "@react-native-harness/plugins": 1.1.0
-    "@react-native-harness/tools": 1.1.0
+    "@react-native-harness/plugins": 1.2.0
+    "@react-native-harness/tools": 1.2.0
     tslib: ^2.3.0
     zod: ^3.25.67
-  checksum: 66cff4ae79cd4f0f2c4158eb576199d2ae5eefed726244e1999255602180488dff6084fea6faa45e173a4157d72354f04d8bcd12cbb90feaaf72dc8ab0b80f2f
+  checksum: b7e1c69d650577ad9c2052af05aa7e52fe4e7ed49ea47b407e2e049459eb046d59843af8068338abf8e361b1b40930053d741a54a12abdf23de1c7caa3019f97
   languageName: node
   linkType: hard
 
-"@react-native-harness/jest@npm:1.1.0":
-  version: 1.1.0
-  resolution: "@react-native-harness/jest@npm:1.1.0"
+"@react-native-harness/jest@npm:1.2.0":
+  version: 1.2.0
+  resolution: "@react-native-harness/jest@npm:1.2.0"
   dependencies:
     "@jest/test-result": ^30.2.0
-    "@react-native-harness/bridge": 1.1.0
-    "@react-native-harness/bundler-metro": 1.1.0
-    "@react-native-harness/config": 1.1.0
-    "@react-native-harness/platforms": 1.1.0
-    "@react-native-harness/plugins": 1.1.0
-    "@react-native-harness/tools": 1.1.0
+    "@react-native-harness/bridge": 1.2.0
+    "@react-native-harness/bundler-metro": 1.2.0
+    "@react-native-harness/config": 1.2.0
+    "@react-native-harness/platforms": 1.2.0
+    "@react-native-harness/plugins": 1.2.0
+    "@react-native-harness/tools": 1.2.0
     chalk: ^4.1.2
     jest-message-util: ^30.2.0
     jest-util: ^30.2.0
-    p-limit: ^7.1.1
     tslib: ^2.3.0
     yargs: ^17.7.2
-  checksum: 0cc0cab2d3a9c27edaeca0b55344505f54aba0975c7be95b5aae3e154940003778860728df09146a3b3219f7fba073ad92ed152c9ac18761e4eda816f4be6e67
+  checksum: c4bc649f7d3a9e7d12b4c4a87d9107998eb859190eba0b175b105e5d1e29f66d8271830f0ead8fe0997e961fea9b97a62bda7498483a703b0532c0b500a06d78
   languageName: node
   linkType: hard
 
-"@react-native-harness/metro@npm:1.1.0":
-  version: 1.1.0
-  resolution: "@react-native-harness/metro@npm:1.1.0"
+"@react-native-harness/metro@npm:1.2.0":
+  version: 1.2.0
+  resolution: "@react-native-harness/metro@npm:1.2.0"
   dependencies:
     tslib: ^2.3.0
   peerDependencies:
     metro: "*"
-  checksum: 67206acebb52e95dc03d2c0139815e5fcf31873ba862fad97a8719b5d07a64c99013ef566e5801915861b414bebcb5794434ed45500d7d5abfd5ecca39c66b9b
+  checksum: ce0be950ac1793325ecb70cb7f0fe65d0c71b6d5aaedfc3d502df6affb2577397d53cc8a95bbf3df4ef629634f0fb4895a9f7dfc304e2001c0a1ece24952952f
   languageName: node
   linkType: hard
 
-"@react-native-harness/platform-android@npm:1.1.0":
-  version: 1.1.0
-  resolution: "@react-native-harness/platform-android@npm:1.1.0"
+"@react-native-harness/platform-android@npm:1.2.0":
+  version: 1.2.0
+  resolution: "@react-native-harness/platform-android@npm:1.2.0"
   dependencies:
-    "@react-native-harness/config": 1.1.0
-    "@react-native-harness/platforms": 1.1.0
-    "@react-native-harness/tools": 1.1.0
+    "@react-native-harness/config": 1.2.0
+    "@react-native-harness/platforms": 1.2.0
+    "@react-native-harness/tools": 1.2.0
     tslib: ^2.3.0
+    vite: ^7.2.2
     zod: ^3.25.67
-  checksum: aea531ee6fb571db2fac65c4a87a11943fe99279f66ada6a88bbac7e7ceb9d12c9941d79a9158b72ccd04f8f0a2d0aa294fdbc01ef2a4e3a7a3fa9e2d6ad51d7
+  checksum: fb2f4d78e200e4c1540787540e3ba27d5c23d8d2d3c545e4731dc95e85fb65bdc58bd74b1e1417577e592d0de3a11d43efc03003c26313a5d315b79af122f09e
   languageName: node
   linkType: hard
 
-"@react-native-harness/platform-apple@npm:1.1.0":
-  version: 1.1.0
-  resolution: "@react-native-harness/platform-apple@npm:1.1.0"
+"@react-native-harness/platform-apple@npm:1.2.0":
+  version: 1.2.0
+  resolution: "@react-native-harness/platform-apple@npm:1.2.0"
   dependencies:
-    "@react-native-harness/config": 1.1.0
-    "@react-native-harness/platforms": 1.1.0
-    "@react-native-harness/tools": 1.1.0
+    "@react-native-harness/config": 1.2.0
+    "@react-native-harness/platforms": 1.2.0
+    "@react-native-harness/tools": 1.2.0
     tslib: ^2.3.0
+    yargs: ^17.7.2
     zod: ^3.25.67
-  checksum: 065ce85cd60fd31ba849b50043993aae47b9a1598754e95f5d5d5ac29802bf1d86cecf5c35793e5b4761d136942afe13c2da9046cd21d57a88084789e59e9186
+  checksum: 4a41a7c6142d3936319e976ceb439ec9f0f39bd5ecb114a22021388de073f9f91d4fdb814fbea04ff43786ee2da5757badec99fbe5307ab2dfc355e474a7133d
   languageName: node
   linkType: hard
 
-"@react-native-harness/platforms@npm:1.1.0":
-  version: 1.1.0
-  resolution: "@react-native-harness/platforms@npm:1.1.0"
+"@react-native-harness/platforms@npm:1.2.0":
+  version: 1.2.0
+  resolution: "@react-native-harness/platforms@npm:1.2.0"
   dependencies:
     tslib: ^2.3.0
-  checksum: 3605c9a976a246f688d0c9bfad7ed6eb699ff313f26f0fbcc1f3e18a21f156de9c77f146c3d0cf509d128dadd5d8db46ea7bc300658c5eee78a6a8f8932c2f52
+  checksum: cbd02b3c818a98c717d9dadd239a931ed49dd9114cbe795431592b01b4315d886ec0d3d46902410bdb6de3c8f331177fdcd53c954a2635c1b2717c9380fe3a92
   languageName: node
   linkType: hard
 
-"@react-native-harness/plugins@npm:1.1.0":
-  version: 1.1.0
-  resolution: "@react-native-harness/plugins@npm:1.1.0"
+"@react-native-harness/plugins@npm:1.2.0":
+  version: 1.2.0
+  resolution: "@react-native-harness/plugins@npm:1.2.0"
   dependencies:
-    "@react-native-harness/bridge": 1.1.0
-    "@react-native-harness/platforms": 1.1.0
-    "@react-native-harness/tools": 1.1.0
+    "@react-native-harness/bridge": 1.2.0
+    "@react-native-harness/platforms": 1.2.0
+    "@react-native-harness/tools": 1.2.0
     hookable: ^6.1.0
     tslib: ^2.3.0
-  checksum: 4b9e116f14b1329ffd31fdde9b1081417633e27984b0e6982e0ce379769b1bb47331795b74f38ddd4f96c7f38fdca78bfc45d104d91d4292a4508fca054a5241
+  checksum: 70bd7a873f8e5a48838a264f8947f02fbddb2f377b7096915238eff10539a753dc3a1a491a2a986ed6f66ec90a939a1b4de8af8d02138cfc602c645add5a8bde
   languageName: node
   linkType: hard
 
-"@react-native-harness/runtime@npm:1.1.0":
-  version: 1.1.0
-  resolution: "@react-native-harness/runtime@npm:1.1.0"
+"@react-native-harness/runtime@npm:1.2.0":
+  version: 1.2.0
+  resolution: "@react-native-harness/runtime@npm:1.2.0"
   dependencies:
-    "@react-native-harness/bridge": 1.1.0
+    "@react-native-harness/bridge": 1.2.0
     "@vitest/expect": 4.0.16
     "@vitest/spy": 4.0.16
     chai: ^6.2.2
@@ -4540,13 +4723,13 @@ __metadata:
   peerDependencies:
     react: "*"
     react-native: "*"
-  checksum: 29162c704a9cd4697995340cd38ff804f136d9b3b5a17e1cfcebb6074e66cd022dff46978520aa4cf4e6bc1a8a6d2bbbfc0a801c118bdd7c2aadd1f4071cfef6
+  checksum: d452ce16a7f7df65dd26ae0482c651388ef5c4f7bf8582686214a6763a85e6e5c61698f5761206a5cf99d5974c57c49bf5e32cc9860a26a8dc8ad837641444a2
   languageName: node
   linkType: hard
 
-"@react-native-harness/tools@npm:1.1.0":
-  version: 1.1.0
-  resolution: "@react-native-harness/tools@npm:1.1.0"
+"@react-native-harness/tools@npm:1.2.0":
+  version: 1.2.0
+  resolution: "@react-native-harness/tools@npm:1.2.0"
   dependencies:
     "@clack/prompts": 1.0.0-alpha.9
     nano-spawn: ^1.0.2
@@ -4554,7 +4737,7 @@ __metadata:
     tslib: ^2.3.0
   peerDependencies:
     react-native: "*"
-  checksum: 23e36fe78f3adf3ca48b5897abd6168a568e27e1182ef72224e0deed9f675a1465ed5ac7d06a5fb5c526e37c9ba606437e6db6b37ceddc0e70fd71e3e0319060
+  checksum: 2050884fdfbd6430fb62e421843881cc189ede7846c9aa8d3768847ed495f656542bf3dd0ccb54d2d4b3c2dfebef0cc9b6076fb8934f3e1537f70839d28e5fd4
   languageName: node
   linkType: hard
 
@@ -5781,6 +5964,181 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@rollup/rollup-android-arm-eabi@npm:4.60.4":
+  version: 4.60.4
+  resolution: "@rollup/rollup-android-arm-eabi@npm:4.60.4"
+  conditions: os=android & cpu=arm
+  languageName: node
+  linkType: hard
+
+"@rollup/rollup-android-arm64@npm:4.60.4":
+  version: 4.60.4
+  resolution: "@rollup/rollup-android-arm64@npm:4.60.4"
+  conditions: os=android & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@rollup/rollup-darwin-arm64@npm:4.60.4":
+  version: 4.60.4
+  resolution: "@rollup/rollup-darwin-arm64@npm:4.60.4"
+  conditions: os=darwin & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@rollup/rollup-darwin-x64@npm:4.60.4":
+  version: 4.60.4
+  resolution: "@rollup/rollup-darwin-x64@npm:4.60.4"
+  conditions: os=darwin & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@rollup/rollup-freebsd-arm64@npm:4.60.4":
+  version: 4.60.4
+  resolution: "@rollup/rollup-freebsd-arm64@npm:4.60.4"
+  conditions: os=freebsd & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@rollup/rollup-freebsd-x64@npm:4.60.4":
+  version: 4.60.4
+  resolution: "@rollup/rollup-freebsd-x64@npm:4.60.4"
+  conditions: os=freebsd & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@rollup/rollup-linux-arm-gnueabihf@npm:4.60.4":
+  version: 4.60.4
+  resolution: "@rollup/rollup-linux-arm-gnueabihf@npm:4.60.4"
+  conditions: os=linux & cpu=arm & libc=glibc
+  languageName: node
+  linkType: hard
+
+"@rollup/rollup-linux-arm-musleabihf@npm:4.60.4":
+  version: 4.60.4
+  resolution: "@rollup/rollup-linux-arm-musleabihf@npm:4.60.4"
+  conditions: os=linux & cpu=arm & libc=musl
+  languageName: node
+  linkType: hard
+
+"@rollup/rollup-linux-arm64-gnu@npm:4.60.4":
+  version: 4.60.4
+  resolution: "@rollup/rollup-linux-arm64-gnu@npm:4.60.4"
+  conditions: os=linux & cpu=arm64 & libc=glibc
+  languageName: node
+  linkType: hard
+
+"@rollup/rollup-linux-arm64-musl@npm:4.60.4":
+  version: 4.60.4
+  resolution: "@rollup/rollup-linux-arm64-musl@npm:4.60.4"
+  conditions: os=linux & cpu=arm64 & libc=musl
+  languageName: node
+  linkType: hard
+
+"@rollup/rollup-linux-loong64-gnu@npm:4.60.4":
+  version: 4.60.4
+  resolution: "@rollup/rollup-linux-loong64-gnu@npm:4.60.4"
+  conditions: os=linux & cpu=loong64 & libc=glibc
+  languageName: node
+  linkType: hard
+
+"@rollup/rollup-linux-loong64-musl@npm:4.60.4":
+  version: 4.60.4
+  resolution: "@rollup/rollup-linux-loong64-musl@npm:4.60.4"
+  conditions: os=linux & cpu=loong64 & libc=musl
+  languageName: node
+  linkType: hard
+
+"@rollup/rollup-linux-ppc64-gnu@npm:4.60.4":
+  version: 4.60.4
+  resolution: "@rollup/rollup-linux-ppc64-gnu@npm:4.60.4"
+  conditions: os=linux & cpu=ppc64 & libc=glibc
+  languageName: node
+  linkType: hard
+
+"@rollup/rollup-linux-ppc64-musl@npm:4.60.4":
+  version: 4.60.4
+  resolution: "@rollup/rollup-linux-ppc64-musl@npm:4.60.4"
+  conditions: os=linux & cpu=ppc64 & libc=musl
+  languageName: node
+  linkType: hard
+
+"@rollup/rollup-linux-riscv64-gnu@npm:4.60.4":
+  version: 4.60.4
+  resolution: "@rollup/rollup-linux-riscv64-gnu@npm:4.60.4"
+  conditions: os=linux & cpu=riscv64 & libc=glibc
+  languageName: node
+  linkType: hard
+
+"@rollup/rollup-linux-riscv64-musl@npm:4.60.4":
+  version: 4.60.4
+  resolution: "@rollup/rollup-linux-riscv64-musl@npm:4.60.4"
+  conditions: os=linux & cpu=riscv64 & libc=musl
+  languageName: node
+  linkType: hard
+
+"@rollup/rollup-linux-s390x-gnu@npm:4.60.4":
+  version: 4.60.4
+  resolution: "@rollup/rollup-linux-s390x-gnu@npm:4.60.4"
+  conditions: os=linux & cpu=s390x & libc=glibc
+  languageName: node
+  linkType: hard
+
+"@rollup/rollup-linux-x64-gnu@npm:4.60.4":
+  version: 4.60.4
+  resolution: "@rollup/rollup-linux-x64-gnu@npm:4.60.4"
+  conditions: os=linux & cpu=x64 & libc=glibc
+  languageName: node
+  linkType: hard
+
+"@rollup/rollup-linux-x64-musl@npm:4.60.4":
+  version: 4.60.4
+  resolution: "@rollup/rollup-linux-x64-musl@npm:4.60.4"
+  conditions: os=linux & cpu=x64 & libc=musl
+  languageName: node
+  linkType: hard
+
+"@rollup/rollup-openbsd-x64@npm:4.60.4":
+  version: 4.60.4
+  resolution: "@rollup/rollup-openbsd-x64@npm:4.60.4"
+  conditions: os=openbsd & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@rollup/rollup-openharmony-arm64@npm:4.60.4":
+  version: 4.60.4
+  resolution: "@rollup/rollup-openharmony-arm64@npm:4.60.4"
+  conditions: os=openharmony & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@rollup/rollup-win32-arm64-msvc@npm:4.60.4":
+  version: 4.60.4
+  resolution: "@rollup/rollup-win32-arm64-msvc@npm:4.60.4"
+  conditions: os=win32 & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@rollup/rollup-win32-ia32-msvc@npm:4.60.4":
+  version: 4.60.4
+  resolution: "@rollup/rollup-win32-ia32-msvc@npm:4.60.4"
+  conditions: os=win32 & cpu=ia32
+  languageName: node
+  linkType: hard
+
+"@rollup/rollup-win32-x64-gnu@npm:4.60.4":
+  version: 4.60.4
+  resolution: "@rollup/rollup-win32-x64-gnu@npm:4.60.4"
+  conditions: os=win32 & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@rollup/rollup-win32-x64-msvc@npm:4.60.4":
+  version: 4.60.4
+  resolution: "@rollup/rollup-win32-x64-msvc@npm:4.60.4"
+  conditions: os=win32 & cpu=x64
+  languageName: node
+  linkType: hard
+
 "@rtsao/scc@npm:^1.1.0":
   version: 1.1.0
   resolution: "@rtsao/scc@npm:1.1.0"
@@ -6000,7 +6358,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/estree@npm:^1.0.6":
+"@types/estree@npm:1.0.8, @types/estree@npm:^1.0.6":
   version: 1.0.8
   resolution: "@types/estree@npm:1.0.8"
   checksum: bd93e2e415b6f182ec4da1074e1f36c480f1d26add3e696d54fb30c09bc470897e41361c8fd957bf0985024f8fbf1e6e2aff977d79352ef7eb93a5c6dcff6c11
@@ -9354,6 +9712,95 @@ __metadata:
   languageName: node
   linkType: hard
 
+"esbuild@npm:^0.27.0":
+  version: 0.27.7
+  resolution: "esbuild@npm:0.27.7"
+  dependencies:
+    "@esbuild/aix-ppc64": 0.27.7
+    "@esbuild/android-arm": 0.27.7
+    "@esbuild/android-arm64": 0.27.7
+    "@esbuild/android-x64": 0.27.7
+    "@esbuild/darwin-arm64": 0.27.7
+    "@esbuild/darwin-x64": 0.27.7
+    "@esbuild/freebsd-arm64": 0.27.7
+    "@esbuild/freebsd-x64": 0.27.7
+    "@esbuild/linux-arm": 0.27.7
+    "@esbuild/linux-arm64": 0.27.7
+    "@esbuild/linux-ia32": 0.27.7
+    "@esbuild/linux-loong64": 0.27.7
+    "@esbuild/linux-mips64el": 0.27.7
+    "@esbuild/linux-ppc64": 0.27.7
+    "@esbuild/linux-riscv64": 0.27.7
+    "@esbuild/linux-s390x": 0.27.7
+    "@esbuild/linux-x64": 0.27.7
+    "@esbuild/netbsd-arm64": 0.27.7
+    "@esbuild/netbsd-x64": 0.27.7
+    "@esbuild/openbsd-arm64": 0.27.7
+    "@esbuild/openbsd-x64": 0.27.7
+    "@esbuild/openharmony-arm64": 0.27.7
+    "@esbuild/sunos-x64": 0.27.7
+    "@esbuild/win32-arm64": 0.27.7
+    "@esbuild/win32-ia32": 0.27.7
+    "@esbuild/win32-x64": 0.27.7
+  dependenciesMeta:
+    "@esbuild/aix-ppc64":
+      optional: true
+    "@esbuild/android-arm":
+      optional: true
+    "@esbuild/android-arm64":
+      optional: true
+    "@esbuild/android-x64":
+      optional: true
+    "@esbuild/darwin-arm64":
+      optional: true
+    "@esbuild/darwin-x64":
+      optional: true
+    "@esbuild/freebsd-arm64":
+      optional: true
+    "@esbuild/freebsd-x64":
+      optional: true
+    "@esbuild/linux-arm":
+      optional: true
+    "@esbuild/linux-arm64":
+      optional: true
+    "@esbuild/linux-ia32":
+      optional: true
+    "@esbuild/linux-loong64":
+      optional: true
+    "@esbuild/linux-mips64el":
+      optional: true
+    "@esbuild/linux-ppc64":
+      optional: true
+    "@esbuild/linux-riscv64":
+      optional: true
+    "@esbuild/linux-s390x":
+      optional: true
+    "@esbuild/linux-x64":
+      optional: true
+    "@esbuild/netbsd-arm64":
+      optional: true
+    "@esbuild/netbsd-x64":
+      optional: true
+    "@esbuild/openbsd-arm64":
+      optional: true
+    "@esbuild/openbsd-x64":
+      optional: true
+    "@esbuild/openharmony-arm64":
+      optional: true
+    "@esbuild/sunos-x64":
+      optional: true
+    "@esbuild/win32-arm64":
+      optional: true
+    "@esbuild/win32-ia32":
+      optional: true
+    "@esbuild/win32-x64":
+      optional: true
+  bin:
+    esbuild: bin/esbuild
+  checksum: ea7ee3c039b83caae1b59bb7ae2db9c6bceb21bccb033dbc4c0c45cb159554ead4289492ad874857bbca7f6e37bf74e04e892544de2b3c5c7888c8ef8beaf2f7
+  languageName: node
+  linkType: hard
+
 "escalade@npm:^3.1.1, escalade@npm:^3.2.0":
   version: 3.2.0
   resolution: "escalade@npm:3.2.0"
@@ -11038,7 +11485,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fsevents@npm:^2.3.2":
+"fsevents@npm:^2.3.2, fsevents@npm:~2.3.2, fsevents@npm:~2.3.3":
   version: 2.3.3
   resolution: "fsevents@npm:2.3.3"
   dependencies:
@@ -11048,7 +11495,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fsevents@patch:fsevents@^2.3.2#~builtin<compat/fsevents>":
+"fsevents@patch:fsevents@^2.3.2#~builtin<compat/fsevents>, fsevents@patch:fsevents@~2.3.2#~builtin<compat/fsevents>, fsevents@patch:fsevents@~2.3.3#~builtin<compat/fsevents>":
   version: 2.3.3
   resolution: "fsevents@patch:fsevents@npm%3A2.3.3#~builtin<compat/fsevents>::version=2.3.3&hash=df0bf1"
   dependencies:
@@ -15987,15 +16434,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"p-limit@npm:^7.1.1":
-  version: 7.3.0
-  resolution: "p-limit@npm:7.3.0"
-  dependencies:
-    yocto-queue: ^1.2.1
-  checksum: bd3f3487ec84401e2cbf243122eef11813edacb621a27808e60a425646d0e75a79514acc2c01e39c41911550dbae5ef0f0ab01caa61cfc1c541cd17a19e8f01b
-  languageName: node
-  linkType: hard
-
 "p-locate@npm:^4.1.0":
   version: 4.1.0
   resolution: "p-locate@npm:4.1.0"
@@ -16357,6 +16795,17 @@ __metadata:
   version: 4.2.0
   resolution: "postcss-value-parser@npm:4.2.0"
   checksum: 819ffab0c9d51cf0acbabf8996dffbfafbafa57afc0e4c98db88b67f2094cb44488758f06e5da95d7036f19556a4a732525e84289a425f4f6fd8e412a9d7442f
+  languageName: node
+  linkType: hard
+
+"postcss@npm:^8.5.6":
+  version: 8.5.14
+  resolution: "postcss@npm:8.5.14"
+  dependencies:
+    nanoid: ^3.3.11
+    picocolors: ^1.1.1
+    source-map-js: ^1.2.1
+  checksum: ec17d1519cd997b43aceb82bfa959f380085591269e286c53d5ba76eb1989525e7cde106a44f1565516fcbb50f206eb1858cc2cd5e5aaea3a8ee793886c8232c
   languageName: node
   linkType: hard
 
@@ -16815,20 +17264,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-harness@npm:1.1.0":
-  version: 1.1.0
-  resolution: "react-native-harness@npm:1.1.0"
+"react-native-harness@npm:1.2.0":
+  version: 1.2.0
+  resolution: "react-native-harness@npm:1.2.0"
   dependencies:
-    "@react-native-harness/babel-preset": 1.1.0
-    "@react-native-harness/cli": 1.1.0
-    "@react-native-harness/jest": 1.1.0
-    "@react-native-harness/metro": 1.1.0
-    "@react-native-harness/runtime": 1.1.0
+    "@react-native-harness/babel-preset": 1.2.0
+    "@react-native-harness/cli": 1.2.0
+    "@react-native-harness/jest": 1.2.0
+    "@react-native-harness/metro": 1.2.0
+    "@react-native-harness/runtime": 1.2.0
     tslib: ^2.3.0
   bin:
     harness: bin.js
     react-native-harness: bin.js
-  checksum: af01b4f1182388f211d5d7b67a5e0179ecd2855d9edc828b1120760c25f723800bec260a34f3d9715f288ddf5d9704dd1a4914fc843dadc4c8ba2bc4f6ebdc26
+  checksum: 21f27f818cb11f88eaf2ce78da1719292cde18e75da209ce85babd654a0a842f8992b9339308482bd923a1a7e5ec39dccda7dfe8d1258d7a6adb11e3b53714b9
   languageName: node
   linkType: hard
 
@@ -16912,8 +17361,8 @@ __metadata:
     "@react-native-community/cli": 19.1.2
     "@react-native-community/cli-platform-android": 19.1.2
     "@react-native-community/cli-platform-ios": 19.1.2
-    "@react-native-harness/platform-android": 1.1.0
-    "@react-native-harness/platform-apple": 1.1.0
+    "@react-native-harness/platform-android": 1.2.0
+    "@react-native-harness/platform-apple": 1.2.0
     "@react-native-picker/picker": ^2.11.4
     "@react-native/babel-preset": 0.80.3
     "@react-native/metro-config": 0.80.3
@@ -16928,7 +17377,7 @@ __metadata:
     react-native: 0.80.3
     react-native-builder-bob: ^0.40.10
     react-native-gesture-handler: 2.29.1
-    react-native-harness: 1.1.0
+    react-native-harness: 1.2.0
     react-native-nitro-modules: 0.35.0
     react-native-reanimated: 4.1.5
     react-native-safe-area-context: ^5.4.0
@@ -17803,6 +18252,96 @@ __metadata:
   bin:
     rimraf: bin.js
   checksum: 87f4164e396f0171b0a3386cc1877a817f572148ee13a7e113b238e48e8a9f2f31d009a92ec38a591ff1567d9662c6b67fd8818a2dbbaed74bc26a87a2a4a9a0
+  languageName: node
+  linkType: hard
+
+"rollup@npm:^4.43.0":
+  version: 4.60.4
+  resolution: "rollup@npm:4.60.4"
+  dependencies:
+    "@rollup/rollup-android-arm-eabi": 4.60.4
+    "@rollup/rollup-android-arm64": 4.60.4
+    "@rollup/rollup-darwin-arm64": 4.60.4
+    "@rollup/rollup-darwin-x64": 4.60.4
+    "@rollup/rollup-freebsd-arm64": 4.60.4
+    "@rollup/rollup-freebsd-x64": 4.60.4
+    "@rollup/rollup-linux-arm-gnueabihf": 4.60.4
+    "@rollup/rollup-linux-arm-musleabihf": 4.60.4
+    "@rollup/rollup-linux-arm64-gnu": 4.60.4
+    "@rollup/rollup-linux-arm64-musl": 4.60.4
+    "@rollup/rollup-linux-loong64-gnu": 4.60.4
+    "@rollup/rollup-linux-loong64-musl": 4.60.4
+    "@rollup/rollup-linux-ppc64-gnu": 4.60.4
+    "@rollup/rollup-linux-ppc64-musl": 4.60.4
+    "@rollup/rollup-linux-riscv64-gnu": 4.60.4
+    "@rollup/rollup-linux-riscv64-musl": 4.60.4
+    "@rollup/rollup-linux-s390x-gnu": 4.60.4
+    "@rollup/rollup-linux-x64-gnu": 4.60.4
+    "@rollup/rollup-linux-x64-musl": 4.60.4
+    "@rollup/rollup-openbsd-x64": 4.60.4
+    "@rollup/rollup-openharmony-arm64": 4.60.4
+    "@rollup/rollup-win32-arm64-msvc": 4.60.4
+    "@rollup/rollup-win32-ia32-msvc": 4.60.4
+    "@rollup/rollup-win32-x64-gnu": 4.60.4
+    "@rollup/rollup-win32-x64-msvc": 4.60.4
+    "@types/estree": 1.0.8
+    fsevents: ~2.3.2
+  dependenciesMeta:
+    "@rollup/rollup-android-arm-eabi":
+      optional: true
+    "@rollup/rollup-android-arm64":
+      optional: true
+    "@rollup/rollup-darwin-arm64":
+      optional: true
+    "@rollup/rollup-darwin-x64":
+      optional: true
+    "@rollup/rollup-freebsd-arm64":
+      optional: true
+    "@rollup/rollup-freebsd-x64":
+      optional: true
+    "@rollup/rollup-linux-arm-gnueabihf":
+      optional: true
+    "@rollup/rollup-linux-arm-musleabihf":
+      optional: true
+    "@rollup/rollup-linux-arm64-gnu":
+      optional: true
+    "@rollup/rollup-linux-arm64-musl":
+      optional: true
+    "@rollup/rollup-linux-loong64-gnu":
+      optional: true
+    "@rollup/rollup-linux-loong64-musl":
+      optional: true
+    "@rollup/rollup-linux-ppc64-gnu":
+      optional: true
+    "@rollup/rollup-linux-ppc64-musl":
+      optional: true
+    "@rollup/rollup-linux-riscv64-gnu":
+      optional: true
+    "@rollup/rollup-linux-riscv64-musl":
+      optional: true
+    "@rollup/rollup-linux-s390x-gnu":
+      optional: true
+    "@rollup/rollup-linux-x64-gnu":
+      optional: true
+    "@rollup/rollup-linux-x64-musl":
+      optional: true
+    "@rollup/rollup-openbsd-x64":
+      optional: true
+    "@rollup/rollup-openharmony-arm64":
+      optional: true
+    "@rollup/rollup-win32-arm64-msvc":
+      optional: true
+    "@rollup/rollup-win32-ia32-msvc":
+      optional: true
+    "@rollup/rollup-win32-x64-gnu":
+      optional: true
+    "@rollup/rollup-win32-x64-msvc":
+      optional: true
+    fsevents:
+      optional: true
+  bin:
+    rollup: dist/bin/rollup
+  checksum: e57bb1510cd71aaa937c5e6e537d683ffe13e7c482f2db62431ae4b8b15e34866b2d416f50ffaaac082d297385f98d50ed429c6ae2ac972c9a91c79102ff8b61
   languageName: node
   linkType: hard
 
@@ -19649,6 +20188,61 @@ __metadata:
   languageName: node
   linkType: hard
 
+"vite@npm:^7.2.2":
+  version: 7.3.3
+  resolution: "vite@npm:7.3.3"
+  dependencies:
+    esbuild: ^0.27.0
+    fdir: ^6.5.0
+    fsevents: ~2.3.3
+    picomatch: ^4.0.3
+    postcss: ^8.5.6
+    rollup: ^4.43.0
+    tinyglobby: ^0.2.15
+  peerDependencies:
+    "@types/node": ^20.19.0 || >=22.12.0
+    jiti: ">=1.21.0"
+    less: ^4.0.0
+    lightningcss: ^1.21.0
+    sass: ^1.70.0
+    sass-embedded: ^1.70.0
+    stylus: ">=0.54.8"
+    sugarss: ^5.0.0
+    terser: ^5.16.0
+    tsx: ^4.8.1
+    yaml: ^2.4.2
+  dependenciesMeta:
+    fsevents:
+      optional: true
+  peerDependenciesMeta:
+    "@types/node":
+      optional: true
+    jiti:
+      optional: true
+    less:
+      optional: true
+    lightningcss:
+      optional: true
+    sass:
+      optional: true
+    sass-embedded:
+      optional: true
+    stylus:
+      optional: true
+    sugarss:
+      optional: true
+    terser:
+      optional: true
+    tsx:
+      optional: true
+    yaml:
+      optional: true
+  bin:
+    vite: bin/vite.js
+  checksum: 165883481b7a3a0fe043b99f1bdf6af300905a33fe363e5168d70456dcfb4b14ddd4804d52b9bc8d97f334f617853d97e193fac70c0bdd9c1cb6ea1a8186e7a0
+  languageName: node
+  linkType: hard
+
 "vlq@npm:^1.0.0":
   version: 1.0.1
   resolution: "vlq@npm:1.0.1"
@@ -20163,13 +20757,6 @@ __metadata:
   version: 1.2.1
   resolution: "yocto-queue@npm:1.2.1"
   checksum: 0843d6c2c0558e5c06e98edf9c17942f25c769e21b519303a5c2adefd5b738c9b2054204dc856ac0cd9d134b1bc27d928ce84fd23c9e2423b7e013d5a6f50577
-  languageName: node
-  linkType: hard
-
-"yocto-queue@npm:^1.2.1":
-  version: 1.2.2
-  resolution: "yocto-queue@npm:1.2.2"
-  checksum: 92dd9880c324dbc94ff4b677b7d350ba8d835619062b7102f577add7a59ab4d87f40edc5a03d77d369dfa9d11175b1b2ec4a06a6f8a5d8ce5d1306713f66ee41
   languageName: node
   linkType: hard
 
