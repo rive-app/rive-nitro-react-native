@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.4.7](https://github.com/rive-app/rive-nitro-react-native/compare/v0.4.6...v0.4.7) (2026-05-14)
+
+
+### Features
+
+* add async variants for ViewModelListProperty mutation methods ([#238](https://github.com/rive-app/rive-nitro-react-native/issues/238)) ([522ad07](https://github.com/rive-app/rive-nitro-react-native/commit/522ad07ac6f77907d61e3bf61cc569a0b78e1495))
+
+
+### Bug Fixes
+
+* **iOS:** resolve double optional type error in defaultArtboardViewModel ([#256](https://github.com/rive-app/rive-nitro-react-native/issues/256)) ([8e5d3ec](https://github.com/rive-app/rive-nitro-react-native/commit/8e5d3ecaa8109b952bfc0fc874e60cadaa5ece74)), closes [#255](https://github.com/rive-app/rive-nitro-react-native/issues/255)
+
 ## [0.4.6](https://github.com/rive-app/rive-nitro-react-native/compare/v0.4.5...v0.4.6) (2026-04-23)
 
 
