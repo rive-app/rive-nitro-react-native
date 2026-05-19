@@ -203,20 +203,69 @@ java -jar jacococli.jar report merged.ec \
 
 ## For react-native-harness implementation
 
-To make this generic in react-native-harness, the harness would need to:
+The harness uses a Gradle init script approach (`harness-coverage-init.gradle`) that injects coverage into any library module without modifying its `build.gradle`. This was tested against rive-nitro-react-native and the following bugs were found and fixed:
 
-1. **Build phase**: Inject the JaCoCo offline instrumentation into the library's (or app's) Gradle build. This could be done via:
-   - A Gradle init script that applies to all projects
-   - A Gradle plugin that the harness adds
-   - Modifying the app's `build.gradle` programmatically (like the iOS approach modifies podspec via env var)
+### Bug 1: `afterEvaluate` inside `projectsEvaluated` crashes
 
-2. **Runtime phase**: The harness already restarts the app per test suite. The coverage helper + ContentProvider need to be in the APK. Options:
-   - Ship a small AAR that contains `CoverageHelper` + `CoverageInitProvider` + `jacoco-agent.properties`, and inject it as a dependency when coverage is enabled
-   - Generate these files into the app project before build
+The init script originally used `gradle.projectsEvaluated { project.afterEvaluate { ... } }`. This crashes because `projectsEvaluated` runs after all projects are evaluated — calling `afterEvaluate` at that point fails with "Cannot run Project.afterEvaluate when the project is already evaluated."
 
-3. **Collection phase**: After all test suites complete, pull `.ec` files via `adb shell run-as ... tar`, merge with `jacococli.jar merge`, and generate the report with `jacococli.jar report`. The harness needs to know the path to the original (uninstrumented) class files — these are saved during the build at `build/jacoco-original-classes/`.
+**Fix**: Restructure to `gradle.allprojects { project.afterEvaluate { ... } }`. The `allprojects` callback registers during configuration, so `afterEvaluate` is still valid at that point.
 
-4. **lcov conversion**: JaCoCo doesn't natively produce lcov. Use `jacoco-to-lcov` or `cover2cover.py` to convert from XML if lcov is needed for consistency with the iOS output.
+### Bug 2: `jacocoCli` configuration resolves to multiple files
+
+`project.configurations.jacocoCli.singleFile` throws "contains more than one file" because the `nodeps` classifier JAR still pulls transitive dependencies.
+
+**Fix**: Set `transitive = false` on the configuration:
+```groovy
+def jacocoCliConf = project.configurations.maybeCreate('jacocoCli')
+jacocoCliConf.transitive = false
+```
+
+### Bug 3: Compile tasks not found — `findByName` returns null
+
+AGP and the React Native Gradle plugin register `compileDebugKotlin` lazily via the task configuration avoidance API. `findByName()` doesn't materialize lazy tasks, so it returns `null` even though the task exists.
+
+**Fix**: Use `tasks.configureEach` with name matching instead — this applies to both already-materialized and not-yet-materialized tasks:
+```groovy
+project.tasks.configureEach { task ->
+    if (task.name == 'compileDebugKotlin') {
+        task.doLast { instrumentClasses(kotlinClasses, 'kotlin') }
+    }
+}
+```
+
+### Bug 4: `BuildConfig.COVERAGE_ENABLED` doesn't compile
+
+`CoverageHelper.kt` is in package `com.harness.coverage`, but `BuildConfig` is generated in the target module's namespace (e.g., `com.rive`). An unqualified `BuildConfig` reference resolves to `com.harness.coverage.BuildConfig` which doesn't exist.
+
+**Fix**: Remove the `BuildConfig` check entirely. Coverage is already opt-in at build time (the init script is only applied when coverage is requested). The JaCoCo agent availability check (`Class.forName("org.jacoco.agent.rt.RT")`) is sufficient as a runtime guard.
+
+### Bug 5: Source sets added too late — coverage helper classes not compiled
+
+Adding `kotlin.srcDirs` to the source set inside `gradle.projectsEvaluated` is too late — the compile task has already resolved its inputs. The coverage helper Kotlin sources are ignored, resulting in `ClassNotFoundException` at runtime for `CoverageInitProvider`.
+
+**Fix**: This was fixed by the same restructure as Bug 1 — moving to `gradle.allprojects` + `afterEvaluate` ensures source sets are configured before compile tasks finalize.
+
+### Summary of init script structure
+
+The correct hook point structure for a Gradle init script that injects sources and instruments classes is:
+
+```
+gradle.allprojects { project ->           // runs during configuration
+    project.afterEvaluate {               // runs after build.gradle is processed
+        // Add dependencies, source sets,   (before compile tasks run)
+        // BuildConfig fields here
+
+        project.tasks.configureEach {     // catches lazily-registered tasks
+            if (task.name == '...') {
+                task.doLast { ... }       // runs after compilation
+            }
+        }
+    }
+}
+```
+
+Do **not** use `gradle.projectsEvaluated` for anything that modifies source sets, dependencies, or BuildConfig — it's too late.
 
 ## Reference implementation
 
