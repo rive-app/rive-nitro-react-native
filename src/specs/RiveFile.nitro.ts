@@ -44,10 +44,11 @@ export type ReferencedAssetsType = {
 /**
  * A Rive file (.riv) as created in the Rive editor.
  */
-export interface RiveFile extends HybridObject<{
-  ios: 'swift';
-  android: 'kotlin';
-}> {
+export interface RiveFile
+  extends HybridObject<{
+    ios: 'swift';
+    android: 'kotlin';
+  }> {
   /** @deprecated Use getViewModelNamesAsync instead */
   readonly viewModelCount?: number;
   /** @deprecated Use getViewModelNamesAsync + viewModelByNameAsync instead */
@@ -93,10 +94,11 @@ export interface RiveFile extends HybridObject<{
   getEnums(): Promise<RiveEnumDefinition[]>;
 }
 
-export interface RiveFileFactory extends HybridObject<{
-  ios: 'swift';
-  android: 'kotlin';
-}> {
+export interface RiveFileFactory
+  extends HybridObject<{
+    ios: 'swift';
+    android: 'kotlin';
+  }> {
   /** Which backend is in use: "legacy" or "experimental" */
   readonly backend: string;
   fromURL(

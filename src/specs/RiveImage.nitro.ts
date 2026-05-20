@@ -7,10 +7,11 @@ import type { HybridObject } from 'react-native-nitro-modules';
  *
  * The image stores the raw encoded bytes and is decoded when assigned to an asset.
  */
-export interface RiveImage extends HybridObject<{
-  ios: 'swift';
-  android: 'kotlin';
-}> {
+export interface RiveImage
+  extends HybridObject<{
+    ios: 'swift';
+    android: 'kotlin';
+  }> {
   /** The size of the image data in bytes */
   readonly byteSize: number;
 }
@@ -19,10 +20,11 @@ export interface RiveImage extends HybridObject<{
  * Factory for creating RiveImage instances from various sources.
  * Exposed as `RiveImages` in the public API.
  */
-export interface RiveImageFactory extends HybridObject<{
-  ios: 'swift';
-  android: 'kotlin';
-}> {
+export interface RiveImageFactory
+  extends HybridObject<{
+    ios: 'swift';
+    android: 'kotlin';
+  }> {
   /**
    * Load an image from a URL (http/https/file://)
    * @param url The URL to load the image from
