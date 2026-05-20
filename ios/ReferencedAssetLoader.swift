@@ -36,41 +36,59 @@ final class ReferencedAssetLoader {
     RCTLogError("\(error)")
   }
 
+  /// Decodes an asset and applies the result on the main thread.
+  ///
+  /// - `onMain: true` — decode + apply run synchronously on the caller's
+  ///   thread (must already be main). Used for `decodeImage` which is not
+  ///   thread-safe.
+  /// - `onMain: false` — decode runs on a serial background queue, then
+  ///   apply + completion dispatch to main. The `[self]` capture keeps the
+  ///   `ReferencedAssetLoader` (and its `activeFileRef`) alive until the
+  ///   main-thread block completes, preventing use-after-free on the factory.
+  private func decodeAndApply<T>(
+    onMain: Bool,
+    decode: @escaping () -> T?,
+    apply: @escaping (T) -> Void,
+    completion: @escaping () -> Void
+  ) {
+    if onMain {
+      if let result = decode() { apply(result) }
+      completion()
+    } else {
+      Self.decodeQueue.async { [self] in
+        let result = decode()
+        DispatchQueue.main.async {
+          if let result { apply(result) }
+          completion()
+          _ = self
+        }
+      }
+    }
+  }
+
   private func processAssetBytes(
     _ data: Data, asset: RiveFileAsset, factory: RiveFactory, completion: @escaping () -> Void
   ) {
-    if data.isEmpty == true {
+    if data.isEmpty {
       completion()
       return
     }
     switch asset {
     case let imageAsset as RiveImageAsset:
-      // decodeImage is not thread-safe — decode on main thread, synchronously
-      // within the current MainActor context (caller is already on main).
-      let decodedImage = factory.decodeImage(data)
-      imageAsset.renderImage(decodedImage)
-      completion()
+      decodeAndApply(onMain: true,
+        decode: { factory.decodeImage(data) },
+        apply: { imageAsset.renderImage($0) },
+        completion: completion)
     case let fontAsset as RiveFontAsset:
-      Self.decodeQueue.async { [self] in
-        let decodedFont = factory.decodeFont(data)
-        DispatchQueue.main.async {
-          fontAsset.font(decodedFont)
-          completion()
-          _ = self
-        }
-      }
+      decodeAndApply(onMain: false,
+        decode: { factory.decodeFont(data) },
+        apply: { fontAsset.font($0) },
+        completion: completion)
     case let audioAsset as RiveAudioAsset:
-      Self.decodeQueue.async { [self] in
-        guard let decodedAudio = factory.decodeAudio(data) else {
-          DispatchQueue.main.async { completion() }
-          return
-        }
-        DispatchQueue.main.async {
-          audioAsset.audio(decodedAudio)
-          completion()
-          _ = self
-        }
-      }
+      decodeAndApply(onMain: false,
+        decode: { factory.decodeAudio(data) },
+        apply: { audioAsset.audio($0) },
+        completion: completion)
     default:
       completion()
     }
