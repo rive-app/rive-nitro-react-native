@@ -131,6 +131,49 @@ export default {
 
 </details>
 
+## Building on Windows (CMake long-path failures)
+
+On Windows, the Android build can fail during the native (CMake/Ninja) step with an error such as:
+
+```
+ninja: error: mkdir(CMakeFiles/rive.dir/.../nitrogen/generated/android): No such file or directory
+```
+
+This is the Windows `MAX_PATH` (260 character) limit: the NDK's default CMake (3.22.1) cannot create the deeply-nested object-file directories used for Rive's generated sources. A newer CMake (3.31.6+) handles long paths correctly.
+
+You can override the CMake version used to build this module without editing `node_modules`. Set either the `CMAKE_VERSION` environment variable or the `Rive_CmakeVersion` Gradle property. Leaving both unset preserves the default behavior.
+
+**Vanilla React Native** - add to `android/gradle.properties`:
+
+```properties
+Rive_CmakeVersion=3.31.6
+```
+
+**Expo** - use an inline config plugin in your `app.config.ts`:
+
+```typescript
+import { withGradleProperties } from '@expo/config-plugins';
+
+export default {
+  expo: {
+    // ... other config
+    plugins: [
+      (config) =>
+        withGradleProperties(config, (config) => {
+          config.modResults.push({
+            type: 'property',
+            key: 'Rive_CmakeVersion',
+            value: '3.31.6',
+          });
+          return config;
+        }),
+    ],
+  },
+};
+```
+
+Make sure the requested CMake version is installed (`sdkmanager "cmake;3.31.6"`), or that SDK licenses are accepted so the Android Gradle plugin can download it. Additional Windows long-path mitigations: enable [long-path support in the Windows registry](https://learn.microsoft.com/windows/win32/fileio/maximum-file-path-limitation#enable-long-paths-in-windows-10-version-1607-and-later), use `subst` to shorten the project path, and ensure Ninja ≥ 1.12.0.
+
 ## Error Handling
 
 All Rive operations can be wrapped in try/catch blocks for error handling, for example, loading a file:

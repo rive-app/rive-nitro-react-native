@@ -69,6 +69,14 @@ android {
   externalNativeBuild {
     cmake {
       path "CMakeLists.txt"
+      // Optional CMake version override. The NDK default (3.22.1) fails on
+      // Windows when object-file paths exceed MAX_PATH (260 chars); a newer
+      // CMake (e.g. 3.31.6) handles long paths correctly.
+      def cmakeVersionOverride = System.getenv("CMAKE_VERSION") ?:
+        (project.hasProperty("Rive_CmakeVersion") ? project.property("Rive_CmakeVersion") : null)
+      if (cmakeVersionOverride) {
+        version cmakeVersionOverride
+      }
     }
   }
 
