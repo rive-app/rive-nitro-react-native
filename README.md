@@ -133,9 +133,7 @@ export default {
 
 ## Building on Windows (CMake long-path failures)
 
-On Windows, the Android build can fail with `ninja: error: mkdir(CMakeFiles/rive.dir/...): No such file or directory` due to the Windows `MAX_PATH` (260 character) limit. This is a [known issue across React Native libraries that use CMake](https://docs.swmansion.com/react-native-reanimated/docs/guides/building-on-windows/) — the Reanimated docs cover the general mitigations (newer CMake, long-path registry key, shorter project paths).
-
-For this library specifically, you can override the CMake version via the `CMAKE_VERSION` environment variable or a `Rive_CmakeVersion` Gradle property (add `Rive_CmakeVersion=3.31.6` to `android/gradle.properties`). Make sure the version is installed: `sdkmanager "cmake;3.31.6"`.
+On Windows, the Android build can fail with `ninja: error: mkdir(CMakeFiles/rive.dir/...): No such file or directory` due to the Windows `MAX_PATH` (260 character) limit. This is a [known issue across React Native libraries that use CMake](https://docs.swmansion.com/react-native-reanimated/docs/guides/building-on-windows/). Set `CMAKE_VERSION=3.31.6` before building — see the Reanimated docs for full setup instructions.
 
 ## Error Handling
 
