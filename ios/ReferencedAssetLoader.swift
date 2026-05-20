@@ -11,6 +11,7 @@ func createAssetFileError(_ assetName: String) -> NitroRiveError {
 }
 
 final class ReferencedAssetLoader {
+  private static let decodeQueue = DispatchQueue(label: "com.rive.asset-decode")
   private var activeLoadCount = 0
   private var activeFileRef: RiveFile?
 
@@ -42,7 +43,7 @@ final class ReferencedAssetLoader {
       completion()
       return
     }
-    DispatchQueue.global(qos: .background).async {
+    Self.decodeQueue.async {
       switch asset {
       case let imageAsset as RiveImageAsset:
         let decodedImage = factory.decodeImage(data)
