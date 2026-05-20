@@ -123,7 +123,8 @@ export function useRiveProperty<P extends ViewModelProperty, T>(
  * @template T - The primitive type of the property value (number, boolean, string)
  */
 interface ObservableViewModelProperty<T>
-  extends ViewModelProperty, ObservableProperty {
+  extends ViewModelProperty,
+    ObservableProperty {
   addListener: (onChanged: (value: T) => void) => () => void;
   value: T;
 }

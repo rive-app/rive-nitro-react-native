@@ -23,7 +23,8 @@ interface UseViewModelInstanceBaseParams {
   onInit?: (instance: ViewModelInstance) => void;
 }
 
-interface UseViewModelInstanceFileBaseParams extends UseViewModelInstanceBaseParams {
+interface UseViewModelInstanceFileBaseParams
+  extends UseViewModelInstanceBaseParams {
   /**
    * The ViewModel instance name (uses `createInstanceByName()`).
    * If not provided, creates the default instance.
@@ -34,7 +35,8 @@ interface UseViewModelInstanceFileBaseParams extends UseViewModelInstanceBasePar
 /**
  * Use the ViewModel assigned to the default artboard.
  */
-interface UseViewModelInstanceFileDefault extends UseViewModelInstanceFileBaseParams {
+interface UseViewModelInstanceFileDefault
+  extends UseViewModelInstanceFileBaseParams {
   artboardName?: never;
   viewModelName?: never;
 }
@@ -42,7 +44,8 @@ interface UseViewModelInstanceFileDefault extends UseViewModelInstanceFileBasePa
 /**
  * Use the ViewModel assigned to a specific artboard.
  */
-interface UseViewModelInstanceFileByArtboard extends UseViewModelInstanceFileBaseParams {
+interface UseViewModelInstanceFileByArtboard
+  extends UseViewModelInstanceFileBaseParams {
   /**
    * Get the ViewModel assigned to this artboard.
    */
@@ -54,7 +57,8 @@ interface UseViewModelInstanceFileByArtboard extends UseViewModelInstanceFileBas
  * Use a ViewModel by name (file-wide lookup).
  * ViewModels are defined at the file level, not per-artboard.
  */
-interface UseViewModelInstanceFileByViewModelName extends UseViewModelInstanceFileBaseParams {
+interface UseViewModelInstanceFileByViewModelName
+  extends UseViewModelInstanceFileBaseParams {
   artboardName?: never;
   /**
    * The name of the ViewModel to use (uses `viewModelByName()`).
@@ -68,7 +72,8 @@ export type UseViewModelInstanceFileParams =
   | UseViewModelInstanceFileByArtboard
   | UseViewModelInstanceFileByViewModelName;
 
-export interface UseViewModelInstanceViewModelParams extends UseViewModelInstanceBaseParams {
+export interface UseViewModelInstanceViewModelParams
+  extends UseViewModelInstanceBaseParams {
   /**
    * The ViewModel instance name (uses `createInstanceByName()`).
    * If not provided, creates the default instance.
@@ -367,7 +372,7 @@ export function useViewModelInstance(
       result.error
         ? `useViewModelInstance: ${result.error}`
         : 'useViewModelInstance: Failed to get ViewModelInstance. ' +
-            'Ensure the source has a valid ViewModel and instance available.'
+          'Ensure the source has a valid ViewModel and instance available.'
     );
   }
 
