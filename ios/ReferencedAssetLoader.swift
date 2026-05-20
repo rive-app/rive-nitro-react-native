@@ -43,36 +43,36 @@ final class ReferencedAssetLoader {
       completion()
       return
     }
-    Self.decodeQueue.async {
-      switch asset {
-      case let imageAsset as RiveImageAsset:
-        let decodedImage = factory.decodeImage(data)
-        DispatchQueue.main.async {
-          imageAsset.renderImage(decodedImage)
-          completion()
-        }
-      case let fontAsset as RiveFontAsset:
+    switch asset {
+    case let imageAsset as RiveImageAsset:
+      // decodeImage is not thread-safe — decode on main thread, synchronously
+      // within the current MainActor context (caller is already on main).
+      let decodedImage = factory.decodeImage(data)
+      imageAsset.renderImage(decodedImage)
+      completion()
+    case let fontAsset as RiveFontAsset:
+      Self.decodeQueue.async { [self] in
         let decodedFont = factory.decodeFont(data)
         DispatchQueue.main.async {
           fontAsset.font(decodedFont)
           completion()
+          _ = self
         }
-      case let audioAsset as RiveAudioAsset:
+      }
+    case let audioAsset as RiveAudioAsset:
+      Self.decodeQueue.async { [self] in
         guard let decodedAudio = factory.decodeAudio(data) else {
-          DispatchQueue.main.async {
-            completion()
-          }
+          DispatchQueue.main.async { completion() }
           return
         }
         DispatchQueue.main.async {
           audioAsset.audio(decodedAudio)
           completion()
-        }
-      default:
-        DispatchQueue.main.async {
-          completion()
+          _ = self
         }
       }
+    default:
+      completion()
     }
   }
 
