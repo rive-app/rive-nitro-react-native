@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.8](https://github.com/rive-app/rive-nitro-react-native/compare/v0.4.7...v0.4.8) (2026-05-21)
+
+
+### Bug Fixes
+
+* separate trigger hook lifecycle to prevent missed events on Android ([#262](https://github.com/rive-app/rive-nitro-react-native/issues/262)) ([2279f90](https://github.com/rive-app/rive-nitro-react-native/commit/2279f9026cc6d2c8c53357a755491d874d9ed637))
+
 ## [0.4.7](https://github.com/rive-app/rive-nitro-react-native/compare/v0.4.6...v0.4.7) (2026-05-14)
 
 
