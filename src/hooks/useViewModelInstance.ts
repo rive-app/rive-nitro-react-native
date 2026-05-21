@@ -1,11 +1,12 @@
 // TODO: migrate createInstance/createInstanceByName/etc to async equivalents
 /* eslint-disable @typescript-eslint/no-deprecated */
-import { useMemo, useEffect, useRef } from 'react';
+import { useMemo, useRef } from 'react';
 import type { ViewModel, ViewModelInstance } from '../specs/ViewModel.nitro';
 import type { RiveFile } from '../specs/RiveFile.nitro';
 import type { RiveViewRef } from '../index';
 import { callDispose } from '../core/callDispose';
 import { ArtboardByName } from '../specs/ArtboardBy';
+import { useDisposableMemo } from './useDisposableMemo';
 
 interface UseViewModelInstanceBaseParams {
   /**
@@ -22,8 +23,7 @@ interface UseViewModelInstanceBaseParams {
   onInit?: (instance: ViewModelInstance) => void;
 }
 
-interface UseViewModelInstanceFileBaseParams
-  extends UseViewModelInstanceBaseParams {
+interface UseViewModelInstanceFileBaseParams extends UseViewModelInstanceBaseParams {
   /**
    * The ViewModel instance name (uses `createInstanceByName()`).
    * If not provided, creates the default instance.
@@ -34,8 +34,7 @@ interface UseViewModelInstanceFileBaseParams
 /**
  * Use the ViewModel assigned to the default artboard.
  */
-interface UseViewModelInstanceFileDefault
-  extends UseViewModelInstanceFileBaseParams {
+interface UseViewModelInstanceFileDefault extends UseViewModelInstanceFileBaseParams {
   artboardName?: never;
   viewModelName?: never;
 }
@@ -43,8 +42,7 @@ interface UseViewModelInstanceFileDefault
 /**
  * Use the ViewModel assigned to a specific artboard.
  */
-interface UseViewModelInstanceFileByArtboard
-  extends UseViewModelInstanceFileBaseParams {
+interface UseViewModelInstanceFileByArtboard extends UseViewModelInstanceFileBaseParams {
   /**
    * Get the ViewModel assigned to this artboard.
    */
@@ -56,8 +54,7 @@ interface UseViewModelInstanceFileByArtboard
  * Use a ViewModel by name (file-wide lookup).
  * ViewModels are defined at the file level, not per-artboard.
  */
-interface UseViewModelInstanceFileByViewModelName
-  extends UseViewModelInstanceFileBaseParams {
+interface UseViewModelInstanceFileByViewModelName extends UseViewModelInstanceFileBaseParams {
   artboardName?: never;
   /**
    * The name of the ViewModel to use (uses `viewModelByName()`).
@@ -71,8 +68,7 @@ export type UseViewModelInstanceFileParams =
   | UseViewModelInstanceFileByArtboard
   | UseViewModelInstanceFileByViewModelName;
 
-export interface UseViewModelInstanceViewModelParams
-  extends UseViewModelInstanceBaseParams {
+export interface UseViewModelInstanceViewModelParams extends UseViewModelInstanceBaseParams {
   /**
    * The ViewModel instance name (uses `createInstanceByName()`).
    * If not provided, creates the default instance.
@@ -325,49 +321,30 @@ export function useViewModelInstance(
   const required = params?.required ?? false;
   const onInit = params?.onInit;
 
-  const prevInstanceRef = useRef<{
-    instance: ViewModelInstance | null | undefined;
-    needsDispose: boolean;
-  } | null>(null);
+  const onInitRef = useRef(onInit);
+  onInitRef.current = onInit;
 
-  const result = useMemo(() => {
-    const created = createInstance(
-      source,
-      instanceName,
-      artboardName,
-      viewModelName,
-      useNew
-    );
-    if (created.instance && onInit) {
-      onInit(created.instance);
-    }
-    return created;
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- onInit excluded intentionally
-  }, [source, instanceName, artboardName, viewModelName, useNew]);
-
-  // Dispose previous instance if it changed and needed disposal
-  if (
-    prevInstanceRef.current &&
-    prevInstanceRef.current.instance !== result.instance &&
-    prevInstanceRef.current.needsDispose &&
-    prevInstanceRef.current.instance
-  ) {
-    callDispose(prevInstanceRef.current.instance);
-  }
-  prevInstanceRef.current = result;
-
-  // Cleanup on unmount
-  useEffect(() => {
-    return () => {
-      if (
-        prevInstanceRef.current?.needsDispose &&
-        prevInstanceRef.current.instance
-      ) {
-        callDispose(prevInstanceRef.current.instance);
-        prevInstanceRef.current = null;
+  const result = useDisposableMemo(
+    () => {
+      const created = createInstance(
+        source,
+        instanceName,
+        artboardName,
+        viewModelName,
+        useNew
+      );
+      if (created.instance && onInitRef.current) {
+        onInitRef.current(created.instance);
       }
-    };
-  }, []);
+      return created;
+    },
+    (r) => {
+      if (r.needsDispose && r.instance) {
+        callDispose(r.instance);
+      }
+    },
+    [source, instanceName, artboardName, viewModelName, useNew]
+  );
 
   const error = useMemo(
     () => (result.error ? new Error(result.error) : null),
@@ -379,7 +356,7 @@ export function useViewModelInstance(
       result.error
         ? `useViewModelInstance: ${result.error}`
         : 'useViewModelInstance: Failed to get ViewModelInstance. ' +
-          'Ensure the source has a valid ViewModel and instance available.'
+            'Ensure the source has a valid ViewModel and instance available.'
     );
   }
 

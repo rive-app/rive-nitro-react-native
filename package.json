@@ -1,6 +1,6 @@
 {
   "name": "@rive-app/react-native",
-  "version": "0.4.3",
+  "version": "0.4.7",
   "description": "Rive React Native",
   "main": "./lib/module/index.js",
   "types": "./lib/typescript/src/index.d.ts",
@@ -110,7 +110,8 @@
   },
   "workspaces": [
     "example",
-    "expo-example"
+    "expo-example",
+    "expo55-example"
   ],
   "packageManager": "yarn@3.6.1",
   "jest": {

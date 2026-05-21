@@ -20,8 +20,10 @@ export type ReferencedAssetsType = {
 /**
  * A Rive file (.riv) as created in the Rive editor.
  */
-export interface RiveFile
-  extends HybridObject<{ ios: 'swift'; android: 'kotlin' }> {
+export interface RiveFile extends HybridObject<{
+  ios: 'swift';
+  android: 'kotlin';
+}> {
   /** @deprecated Use getViewModelNamesAsync instead */
   readonly viewModelCount?: number;
   /** @deprecated Use getViewModelNamesAsync + viewModelByNameAsync instead */
@@ -60,8 +62,10 @@ export interface RiveFile
   getBindableArtboard(name: string): BindableArtboard;
 }
 
-export interface RiveFileFactory
-  extends HybridObject<{ ios: 'swift'; android: 'kotlin' }> {
+export interface RiveFileFactory extends HybridObject<{
+  ios: 'swift';
+  android: 'kotlin';
+}> {
   fromURL(
     url: string,
     loadCdn: boolean,

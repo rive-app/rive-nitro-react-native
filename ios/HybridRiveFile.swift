@@ -48,25 +48,26 @@ class HybridRiveFile: HybridRiveFileSpec, RiveViewSource {
   }
   
   func defaultArtboardViewModel(artboardBy: ArtboardBy?) throws -> (any HybridViewModelSpec)? {
+    guard let file = riveFile else { return nil }
     let artboard: RiveArtboard?
-    
+
     if let artboardBy = artboardBy {
       switch artboardBy.type {
       case .index:
         guard let index = artboardBy.index else { return nil }
-        artboard = try? riveFile?.artboard(from: Int(index))
+        artboard = try? file.artboard(from: Int(index))
       case .name:
         guard let name = artboardBy.name else { return nil }
-        artboard = try? riveFile?.artboard(fromName: name)
+        artboard = try? file.artboard(fromName: name)
       default:
         artboard = nil
       }
     } else {
-      artboard = try? riveFile?.artboard()
+      artboard = try? file.artboard()
     }
     
     guard let artboard = artboard,
-          let vm = riveFile?.defaultViewModel(for: artboard) else { return nil }
+          let vm = file.defaultViewModel(for: artboard) else { return nil }
     return HybridViewModel(viewModel: vm)
   }
   

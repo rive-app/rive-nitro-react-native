@@ -6,9 +6,8 @@ import type {
 import { useRiveProperty } from './useRiveProperty';
 import { RiveColor } from '../core/RiveColor';
 
-const COLOR_PROPERTY_OPTIONS = {
-  getProperty: (vmi: ViewModelInstance, p: string) => vmi.colorProperty(p),
-};
+const getColorProperty = (vmi: ViewModelInstance, p: string) =>
+  vmi.colorProperty(p);
 
 export interface UseRiveColorResult {
   value: RiveColor | undefined;
@@ -30,7 +29,7 @@ export function useRiveColor(
   const [rawValue, setRawValue, error] = useRiveProperty<
     ViewModelColorProperty,
     number
-  >(viewModelInstance, path, COLOR_PROPERTY_OPTIONS);
+  >(viewModelInstance, path, getColorProperty);
 
   const value =
     rawValue !== undefined ? RiveColor.fromInt(rawValue) : undefined;

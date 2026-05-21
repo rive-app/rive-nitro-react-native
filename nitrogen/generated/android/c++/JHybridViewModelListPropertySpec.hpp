@@ -64,6 +64,11 @@ namespace margelo::nitro::rive {
     void removeInstance(const std::shared_ptr<HybridViewModelInstanceSpec>& instance) override;
     void removeInstanceAt(double index) override;
     bool swap(double index1, double index2) override;
+    std::shared_ptr<Promise<void>> addInstanceAsync(const std::shared_ptr<HybridViewModelInstanceSpec>& instance) override;
+    std::shared_ptr<Promise<void>> addInstanceAtAsync(const std::shared_ptr<HybridViewModelInstanceSpec>& instance, double index) override;
+    std::shared_ptr<Promise<void>> removeInstanceAsync(const std::shared_ptr<HybridViewModelInstanceSpec>& instance) override;
+    std::shared_ptr<Promise<void>> removeInstanceAtAsync(double index) override;
+    std::shared_ptr<Promise<void>> swapAsync(double index1, double index2) override;
     std::function<void()> addListener(const std::function<void()>& onChanged) override;
     void removeListeners() override;
 

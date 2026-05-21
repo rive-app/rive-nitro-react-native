@@ -1,5 +1,39 @@
 # Changelog
 
+## [0.4.7](https://github.com/rive-app/rive-nitro-react-native/compare/v0.4.6...v0.4.7) (2026-05-14)
+
+
+### Features
+
+* add async variants for ViewModelListProperty mutation methods ([#238](https://github.com/rive-app/rive-nitro-react-native/issues/238)) ([522ad07](https://github.com/rive-app/rive-nitro-react-native/commit/522ad07ac6f77907d61e3bf61cc569a0b78e1495))
+
+
+### Bug Fixes
+
+* **iOS:** resolve double optional type error in defaultArtboardViewModel ([#256](https://github.com/rive-app/rive-nitro-react-native/issues/256)) ([8e5d3ec](https://github.com/rive-app/rive-nitro-react-native/commit/8e5d3ecaa8109b952bfc0fc874e60cadaa5ece74)), closes [#255](https://github.com/rive-app/rive-nitro-react-native/issues/255)
+
+## [0.4.6](https://github.com/rive-app/rive-nitro-react-native/compare/v0.4.5...v0.4.6) (2026-04-23)
+
+
+### Bug Fixes
+
+* **iOS:** dispatch completion to main thread in handlePreloadedImage ([#222](https://github.com/rive-app/rive-nitro-react-native/issues/222)) ([5c043d4](https://github.com/rive-app/rive-nitro-react-native/commit/5c043d4a80112c38da46c9da443d90302d3ec701))
+* prevent crash when React Fabric diffs props on disposed HybridObject ([#227](https://github.com/rive-app/rive-nitro-react-native/issues/227)) ([8286bcf](https://github.com/rive-app/rive-nitro-react-native/commit/8286bcf03fbe759f50f200dfa92eb98b74eb446d))
+
+## [0.4.5](https://github.com/rive-app/rive-nitro-react-native/compare/v0.4.4...v0.4.5) (2026-04-17)
+
+
+### Bug Fixes
+
+* **iOS:** use per-call ReferencedAssetLoader to prevent concurrent access crash ([#218](https://github.com/rive-app/rive-nitro-react-native/issues/218)) ([d92574d](https://github.com/rive-app/rive-nitro-react-native/commit/d92574dffbf86ccfd408a40be98621b54edc7cc4))
+
+## [0.4.4](https://github.com/rive-app/rive-nitro-react-native/compare/v0.4.3...v0.4.4) (2026-04-17)
+
+
+### Bug Fixes
+
+* survive fast refresh without disposing native objects ([#213](https://github.com/rive-app/rive-nitro-react-native/issues/213)) ([dea0ae2](https://github.com/rive-app/rive-nitro-react-native/commit/dea0ae28282245e145ce895abd39db648fd3a9f0))
+
 ## [0.4.3](https://github.com/rive-app/rive-nitro-react-native/compare/v0.4.2...v0.4.3) (2026-04-17)
 
 

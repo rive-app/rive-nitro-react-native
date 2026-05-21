@@ -1,46 +1,47 @@
-import { useCallback, useEffect, useState, useMemo } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   type ObservableProperty,
   type ViewModelInstance,
   type ViewModelProperty,
 } from '../specs/ViewModel.nitro';
+import { useDisposableMemo } from './useDisposableMemo';
 
 /**
- * Base hook for all ViewModelInstance property interactions.
- * This hook provides a unified interface for working with different types of
- * Rive properties (boolean, number, string, enum, trigger) while maintaining
- * type safety and proper cleanup.
+ * Base hook for all ViewModelInstance value-property interactions
+ * (number, string, boolean, color, enum).
  *
- * @template P - The type of the property (e.g., ViewModelBooleanProperty, ViewModelNumberProperty)
+ * Not used for triggers — see {@link useRiveTrigger} which manages its own
+ * property lifecycle to avoid coupling callback identity to native disposal.
+ *
+ * @template P - The type of the property (e.g., ViewModelBooleanProperty)
  * @template T - The primitive type of the property value (number, boolean, string)
  *
  * @param viewModelInstance - The source ViewModelInstance
  * @param path - Property path in the ViewModelInstance
- * @param options - Configuration for working with the property
+ * @param getProperty - Function to get the property from a ViewModelInstance
  * @returns A tuple containing [value, setter, error, property]
  */
 export function useRiveProperty<P extends ViewModelProperty, T>(
   viewModelInstance: ViewModelInstance | null | undefined,
   path: string,
-  options: {
-    /** Function to get the property from a ViewModelInstance */
-    getProperty: (vm: ViewModelInstance, path: string) => P | undefined;
-    /** Optional override callback for property events (mainly used by triggers) */
-    onPropertyEventOverride?: (...args: any[]) => void;
-  }
+  getProperty: (vm: ViewModelInstance, path: string) => P | undefined
 ): [
   T | undefined,
   (value: T | ((prevValue: T | undefined) => T)) => void,
   Error | null,
   P | undefined,
 ] {
-  const property = useMemo(() => {
-    if (!viewModelInstance) return;
-    return options.getProperty(
-      viewModelInstance,
-      path
-    ) as unknown as ObservableViewModelProperty<T>;
-  }, [options, viewModelInstance, path]);
+  const property = useDisposableMemo(
+    () => {
+      if (!viewModelInstance) return undefined;
+      return getProperty(
+        viewModelInstance,
+        path
+      ) as unknown as ObservableViewModelProperty<T>;
+    },
+    (p) => p?.dispose(),
+    [viewModelInstance, path]
+  );
 
   // Always start undefined — the listener delivers the current value as its first emission.
   // (iOS experimental: via valueStream; iOS/Android legacy: emitted synchronously on subscribe)
@@ -70,21 +71,21 @@ export function useRiveProperty<P extends ViewModelProperty, T>(
     // undefined → value without waiting for a property change.
     // (Legacy addListener does NOT emit on subscribe — only on changes.
     //  Experimental valueStream emits the current value as its first element.)
-    if (!options.onPropertyEventOverride) {
-      setValue(property.value);
-    }
+    setValue(property.value);
 
-    const removeListener = options.onPropertyEventOverride
-      ? property.addListener(options.onPropertyEventOverride)
-      : property.addListener((newValue) => {
-          setValue(newValue);
-        });
+    const removeListener = property.addListener((newValue) => {
+      setValue(newValue);
+    });
 
     return () => {
-      removeListener();
-      property.dispose();
+      try {
+        removeListener();
+      } catch {
+        // Property may already be disposed by useDisposableMemo (deps change).
+        // Native dispose() handles listener cleanup, so this is safe to ignore.
+      }
     };
-  }, [options, property]);
+  }, [property]);
 
   // Set the value of the property (no-op if property isn't available yet).
   // Uses tracked `value` from state for updater functions — avoids a synchronous
@@ -114,8 +115,7 @@ export function useRiveProperty<P extends ViewModelProperty, T>(
  * @template T - The primitive type of the property value (number, boolean, string)
  */
 interface ObservableViewModelProperty<T>
-  extends ViewModelProperty,
-    ObservableProperty {
+  extends ViewModelProperty, ObservableProperty {
   addListener: (onChanged: (value: T) => void) => () => void;
   value: T;
 }

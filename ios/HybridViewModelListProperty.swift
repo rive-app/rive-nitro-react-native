@@ -65,6 +65,26 @@ class HybridViewModelListProperty: HybridViewModelListPropertySpec, ValuedProper
     return Promise.async { try self.getInstanceAt(index: index) }
   }
 
+  func addInstanceAsync(instance: any HybridViewModelInstanceSpec) throws -> Promise<Void> {
+    return Promise.async { try self.addInstance(instance: instance) }
+  }
+
+  func addInstanceAtAsync(instance: any HybridViewModelInstanceSpec, index: Double) throws -> Promise<Void> {
+    return Promise.async { let _ = try self.addInstanceAt(instance: instance, index: index) }
+  }
+
+  func removeInstanceAsync(instance: any HybridViewModelInstanceSpec) throws -> Promise<Void> {
+    return Promise.async { try self.removeInstance(instance: instance) }
+  }
+
+  func removeInstanceAtAsync(index: Double) throws -> Promise<Void> {
+    return Promise.async { try self.removeInstanceAt(index: index) }
+  }
+
+  func swapAsync(index1: Double, index2: Double) throws -> Promise<Void> {
+    return Promise.async { let _ = try self.swap(index1: index1, index2: index2) }
+  }
+
   func addListener(onChanged: @escaping () -> Void) throws -> () -> Void {
     helper.addListener({ _ in onChanged() })
   }

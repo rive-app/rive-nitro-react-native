@@ -135,6 +135,46 @@ namespace margelo::nitro::rive {
       auto __value = std::move(__result.value());
       return __value;
     }
+    inline std::shared_ptr<Promise<void>> addInstanceAsync(const std::shared_ptr<HybridViewModelInstanceSpec>& instance) override {
+      auto __result = _swiftPart.addInstanceAsync(instance);
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline std::shared_ptr<Promise<void>> addInstanceAtAsync(const std::shared_ptr<HybridViewModelInstanceSpec>& instance, double index) override {
+      auto __result = _swiftPart.addInstanceAtAsync(instance, std::forward<decltype(index)>(index));
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline std::shared_ptr<Promise<void>> removeInstanceAsync(const std::shared_ptr<HybridViewModelInstanceSpec>& instance) override {
+      auto __result = _swiftPart.removeInstanceAsync(instance);
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline std::shared_ptr<Promise<void>> removeInstanceAtAsync(double index) override {
+      auto __result = _swiftPart.removeInstanceAtAsync(std::forward<decltype(index)>(index));
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline std::shared_ptr<Promise<void>> swapAsync(double index1, double index2) override {
+      auto __result = _swiftPart.swapAsync(std::forward<decltype(index1)>(index1), std::forward<decltype(index2)>(index2));
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
     inline std::function<void()> addListener(const std::function<void()>& onChanged) override {
       auto __result = _swiftPart.addListener(onChanged);
       if (__result.hasError()) [[unlikely]] {

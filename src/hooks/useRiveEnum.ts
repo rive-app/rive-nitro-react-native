@@ -5,9 +5,8 @@ import {
 import type { UseRivePropertyResult } from '../types';
 import { useRiveProperty } from './useRiveProperty';
 
-const ENUM_PROPERTY_OPTIONS = {
-  getProperty: (vmi: ViewModelInstance, p: string) => vmi.enumProperty(p),
-};
+const getEnumProperty = (vmi: ViewModelInstance, p: string) =>
+  vmi.enumProperty(p);
 
 /**
  * Hook for interacting with enum ViewModel instance properties.
@@ -23,6 +22,6 @@ export function useRiveEnum(
   const [value, setValue, error] = useRiveProperty<
     ViewModelEnumProperty,
     string
-  >(viewModelInstance, path, ENUM_PROPERTY_OPTIONS);
+  >(viewModelInstance, path, getEnumProperty);
   return { value, setValue, error };
 }
