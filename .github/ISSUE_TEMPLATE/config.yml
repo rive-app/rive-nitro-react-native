@@ -1,8 +1,8 @@
 blank_issues_enabled: false
 contact_links:
-  - name: Feature Request 💡
-    url: https://github.com/rive-app/rive-nitro-react-native/discussions/new?category=ideas
-    about: If you have a feature request, please create a new discussion on GitHub.
+  - name: Rive Documentation
+    url: https://rive.app/docs/runtimes/react-native/react-native
+    about: Please refer to the Rive documentation for feature use, supported versions, and troubleshooting steps before submitting an issue.
   - name: Discussions on GitHub 💬
     url: https://github.com/rive-app/rive-nitro-react-native/discussions
     about: If this library works as promised but you need help, please ask questions there.
