@@ -1,23 +1,22 @@
-import { useCallback, useMemo } from 'react';
-import {
-  type ViewModelInstance,
-  type ViewModelTriggerProperty,
-} from '../specs/ViewModel.nitro';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { type ViewModelInstance } from '../specs/ViewModel.nitro';
 import type {
   UseRiveTriggerResult,
   UseViewModelInstanceTriggerParameters,
 } from '../types';
-import { useRiveProperty } from './useRiveProperty';
-
-const getTriggerProperty = (vmi: ViewModelInstance, p: string) =>
-  vmi.triggerProperty(p);
+import { useDisposableMemo } from './useDisposableMemo';
 
 /**
  * Hook for interacting with trigger ViewModel instance properties.
  *
+ * Manages its own property lifecycle (separate from useRiveProperty) because
+ * triggers take a user callback whose identity may change across renders.
+ * Storing the callback in a ref avoids coupling it to native property disposal.
+ *
  * @param path - The path to the trigger property
- * @param viewModelInstance - The ViewModelInstance containing the trigger property to operate on
- * @returns A trigger function that can be called to fire the trigger
+ * @param viewModelInstance - The ViewModelInstance containing the trigger property
+ * @param params - Optional parameters including onTrigger callback
+ * @returns A trigger function and any error
  */
 export function useRiveTrigger(
   path: string,
@@ -26,18 +25,47 @@ export function useRiveTrigger(
 ): UseRiveTriggerResult {
   const { onTrigger } = params ?? {};
 
-  const triggerOptions = useMemo(
-    () => ({
-      getProperty: getTriggerProperty,
-      onPropertyEventOverride: onTrigger,
-    }),
-    [onTrigger]
+  const onTriggerRef = useRef(onTrigger);
+  onTriggerRef.current = onTrigger;
+
+  const property = useDisposableMemo(
+    () => {
+      if (!viewModelInstance) return undefined;
+      return viewModelInstance.triggerProperty(path);
+    },
+    (p) => p?.dispose(),
+    [viewModelInstance, path]
   );
 
-  const [_, __, error, property] = useRiveProperty<
-    ViewModelTriggerProperty,
-    undefined
-  >(viewModelInstance, path, triggerOptions);
+  const [error, setError] = useState<Error | null>(null);
+
+  useEffect(() => {
+    setError(null);
+  }, [path, viewModelInstance]);
+
+  useEffect(() => {
+    if (viewModelInstance && !property) {
+      setError(
+        new Error(`Property "${path}" not found in the ViewModel instance`)
+      );
+    }
+  }, [viewModelInstance, property, path]);
+
+  useEffect(() => {
+    if (!property) return;
+
+    const removeListener = property.addListener(() => {
+      onTriggerRef.current?.();
+    });
+
+    return () => {
+      try {
+        removeListener();
+      } catch {
+        // Property may already be disposed by useDisposableMemo (deps change).
+      }
+    };
+  }, [property]);
 
   const trigger = useCallback(() => {
     if (property) {
