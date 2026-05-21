@@ -1,5 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { type ViewModelInstance } from '../specs/ViewModel.nitro';
+import {
+  type ViewModelInstance,
+  type ViewModelTriggerProperty,
+} from '../specs/ViewModel.nitro';
 import type {
   UseRiveTriggerResult,
   UseViewModelInstanceTriggerParameters,
@@ -24,6 +27,7 @@ export function useRiveTrigger(
   params?: UseViewModelInstanceTriggerParameters
 ): UseRiveTriggerResult {
   const { onTrigger } = params ?? {};
+  const liveRef = useRef<ViewModelTriggerProperty | undefined>(undefined);
 
   const onTriggerRef = useRef(onTrigger);
   onTriggerRef.current = onTrigger;
@@ -34,7 +38,8 @@ export function useRiveTrigger(
       return viewModelInstance.triggerProperty(path);
     },
     (p) => p?.dispose(),
-    [viewModelInstance, path]
+    [viewModelInstance, path],
+    liveRef
   );
 
   const [error, setError] = useState<Error | null>(null);
@@ -68,10 +73,16 @@ export function useRiveTrigger(
   }, [property]);
 
   const trigger = useCallback(() => {
-    if (property) {
-      property.trigger();
+    if (!liveRef.current) {
+      console.warn(
+        `useRiveTrigger: trigger('${path}') called after dispose. ` +
+          'The property has been cleaned up — this is likely a stale closure ' +
+          'from an async callback that fired after unmount.'
+      );
+      return;
     }
-  }, [property]);
+    liveRef.current.trigger();
+  }, [path]);
 
   return { trigger, error };
 }

@@ -1,4 +1,4 @@
-import { useRef, useEffect, type DependencyList } from 'react';
+import { useRef, useEffect, type DependencyList, type RefObject } from 'react';
 
 const UNINITIALIZED = Symbol('UNINITIALIZED');
 
@@ -47,7 +47,8 @@ function depsEqual(a: DependencyList, b: DependencyList): boolean {
 export function useDisposableMemo<T>(
   factory: () => T,
   cleanup: (value: T) => void,
-  deps: DependencyList
+  deps: DependencyList,
+  liveRef?: RefObject<T | undefined>
 ): T {
   const ref = useRef<{
     value: T;
@@ -60,6 +61,8 @@ export function useDisposableMemo<T>(
   });
   const cleanupRef = useRef(cleanup);
   cleanupRef.current = cleanup;
+  const liveRefRef = useRef(liveRef);
+  liveRefRef.current = liveRef;
 
   if (
     ref.current.deps === UNINITIALIZED ||
@@ -70,6 +73,7 @@ export function useDisposableMemo<T>(
       ref.current.pendingDisposal = null;
     }
     if (ref.current.deps !== UNINITIALIZED) {
+      if (liveRefRef.current) liveRefRef.current.current = undefined;
       try {
         cleanupRef.current(ref.current.value);
       } catch {
@@ -77,6 +81,7 @@ export function useDisposableMemo<T>(
       }
     }
     ref.current = { value: factory(), deps, pendingDisposal: null };
+    if (liveRefRef.current) liveRefRef.current.current = ref.current.value;
   }
 
   useEffect(() => {
@@ -90,6 +95,7 @@ export function useDisposableMemo<T>(
       if (__DEV__) {
         const val = ref.current.value;
         ref.current.pendingDisposal = setTimeout(() => {
+          if (liveRefRef.current) liveRefRef.current.current = undefined;
           try {
             cleanupRef.current(val);
           } catch {
@@ -98,6 +104,7 @@ export function useDisposableMemo<T>(
           ref.current.pendingDisposal = null;
         }, 0);
       } else {
+        if (liveRefRef.current) liveRefRef.current.current = undefined;
         try {
           cleanupRef.current(ref.current.value);
         } catch {
