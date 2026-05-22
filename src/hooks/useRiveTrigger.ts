@@ -1,5 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { type ViewModelInstance } from '../specs/ViewModel.nitro';
+import {
+  type ViewModelInstance,
+  type ViewModelTriggerProperty,
+} from '../specs/ViewModel.nitro';
 import type {
   UseRiveTriggerResult,
   UseViewModelInstanceTriggerParameters,
@@ -24,6 +27,8 @@ export function useRiveTrigger(
   params?: UseViewModelInstanceTriggerParameters
 ): UseRiveTriggerResult {
   const { onTrigger } = params ?? {};
+  const liveRef = useRef<ViewModelTriggerProperty | undefined>(undefined);
+  const wasEverLive = useRef(false);
 
   const onTriggerRef = useRef(onTrigger);
   onTriggerRef.current = onTrigger;
@@ -34,8 +39,13 @@ export function useRiveTrigger(
       return viewModelInstance.triggerProperty(path);
     },
     (p) => p?.dispose(),
-    [viewModelInstance, path]
+    [viewModelInstance, path],
+    liveRef
   );
+
+  if (liveRef.current) {
+    wasEverLive.current = true;
+  }
 
   const [error, setError] = useState<Error | null>(null);
 
@@ -68,10 +78,23 @@ export function useRiveTrigger(
   }, [property]);
 
   const trigger = useCallback(() => {
-    if (property) {
-      property.trigger();
+    if (!liveRef.current) {
+      if (wasEverLive.current) {
+        console.warn(
+          `useRiveTrigger: trigger('${path}') called after dispose. ` +
+            'The property has been cleaned up — this is likely a stale closure ' +
+            'from an async callback that fired after unmount.'
+        );
+      } else {
+        console.warn(
+          `useRiveTrigger: trigger('${path}') called but the property is not available yet. ` +
+            'The viewModelInstance may still be loading.'
+        );
+      }
+      return;
     }
-  }, [property]);
+    liveRef.current.trigger();
+  }, [path]);
 
   return { trigger, error };
 }
