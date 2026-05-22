@@ -28,6 +28,7 @@ export function useRiveTrigger(
 ): UseRiveTriggerResult {
   const { onTrigger } = params ?? {};
   const liveRef = useRef<ViewModelTriggerProperty | undefined>(undefined);
+  const wasEverLive = useRef(false);
 
   const onTriggerRef = useRef(onTrigger);
   onTriggerRef.current = onTrigger;
@@ -41,6 +42,10 @@ export function useRiveTrigger(
     [viewModelInstance, path],
     liveRef
   );
+
+  if (liveRef.current) {
+    wasEverLive.current = true;
+  }
 
   const [error, setError] = useState<Error | null>(null);
 
@@ -74,11 +79,18 @@ export function useRiveTrigger(
 
   const trigger = useCallback(() => {
     if (!liveRef.current) {
-      console.warn(
-        `useRiveTrigger: trigger('${path}') called after dispose. ` +
-          'The property has been cleaned up — this is likely a stale closure ' +
-          'from an async callback that fired after unmount.'
-      );
+      if (wasEverLive.current) {
+        console.warn(
+          `useRiveTrigger: trigger('${path}') called after dispose. ` +
+            'The property has been cleaned up — this is likely a stale closure ' +
+            'from an async callback that fired after unmount.'
+        );
+      } else {
+        console.warn(
+          `useRiveTrigger: trigger('${path}') called but the property is not available yet. ` +
+            'The viewModelInstance may still be loading.'
+        );
+      }
       return;
     }
     liveRef.current.trigger();

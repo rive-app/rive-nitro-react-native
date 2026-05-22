@@ -1,4 +1,5 @@
 import { renderHook, act } from '@testing-library/react-native';
+import { type RefObject } from 'react';
 import { useDisposableMemo } from '../useDisposableMemo';
 
 function createDisposable(label: string) {
@@ -238,5 +239,96 @@ describe('useDisposableMemo', () => {
 
     rerender({ dep: -0 });
     expect(factory).toHaveBeenCalledTimes(3);
+  });
+
+  describe('liveRef tracking', () => {
+    it('sets liveRef.current on create', () => {
+      const liveRef: RefObject<Disposable | undefined> = { current: undefined };
+
+      renderHook(() =>
+        useDisposableMemo(
+          () => createDisposable('A'),
+          (d) => d.dispose(),
+          ['dep'],
+          liveRef
+        )
+      );
+
+      expect(liveRef.current).toBeDefined();
+      expect(liveRef.current!.label).toBe('A');
+      expect(liveRef.current!.isAlive).toBe(true);
+    });
+
+    it('clears liveRef on deps change and sets it to the new value', () => {
+      const liveRef: RefObject<Disposable | undefined> = { current: undefined };
+
+      const { rerender } = renderHook(
+        (props: { dep: string }) =>
+          useDisposableMemo(
+            () => createDisposable(props.dep),
+            (d) => d.dispose(),
+            [props.dep],
+            liveRef
+          ),
+        { initialProps: { dep: 'A' } }
+      );
+
+      const first = liveRef.current;
+      expect(first!.label).toBe('A');
+
+      rerender({ dep: 'B' });
+
+      expect(first!.isAlive).toBe(false);
+      expect(liveRef.current!.label).toBe('B');
+      expect(liveRef.current!.isAlive).toBe(true);
+    });
+
+    it('clears liveRef on unmount (deferred in dev)', () => {
+      const liveRef: RefObject<Disposable | undefined> = { current: undefined };
+
+      const { unmount } = renderHook(() =>
+        useDisposableMemo(
+          () => createDisposable('A'),
+          (d) => d.dispose(),
+          ['dep'],
+          liveRef
+        )
+      );
+
+      expect(liveRef.current).toBeDefined();
+
+      unmount();
+
+      // Deferred in dev — still set before timer fires
+      expect(liveRef.current).toBeDefined();
+
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      expect(liveRef.current).toBeUndefined();
+    });
+
+    it('works without liveRef (existing behavior unchanged)', () => {
+      const { result, rerender, unmount } = renderHook(
+        (props: { dep: string }) =>
+          useDisposableMemo(
+            () => createDisposable(props.dep),
+            (d) => d.dispose(),
+            [props.dep]
+          ),
+        { initialProps: { dep: 'A' } }
+      );
+
+      expect(result.current.label).toBe('A');
+
+      rerender({ dep: 'B' });
+      expect(result.current.label).toBe('B');
+
+      unmount();
+      act(() => {
+        jest.runAllTimers();
+      });
+    });
   });
 });
