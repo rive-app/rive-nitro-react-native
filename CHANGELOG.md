@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.9](https://github.com/rive-app/rive-nitro-react-native/compare/v0.4.8...v0.4.9) (2026-05-22)
+
+
+### Bug Fixes
+
+* prevent crash when trigger is called after dispose ([#268](https://github.com/rive-app/rive-nitro-react-native/issues/268)) ([13d9dc1](https://github.com/rive-app/rive-nitro-react-native/commit/13d9dc108f0427a09ba351ca67f9657cbc8e68b6))
+
 ## [0.4.8](https://github.com/rive-app/rive-nitro-react-native/compare/v0.4.7...v0.4.8) (2026-05-21)
 
 
