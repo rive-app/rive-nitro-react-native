@@ -416,9 +416,8 @@ describe('set() + getValueAsync() round-trip', () => {
   });
 });
 
-describe('removeListeners stops callbacks (experimental only)', () => {
+describe('removeListeners stops callbacks', () => {
   it('no callbacks fire after removeListeners', async () => {
-    if (!isExperimental) return;
     const instance = await createGordonInstance();
     const prop = instance.numberProperty('age');
     expectDefined(prop);
