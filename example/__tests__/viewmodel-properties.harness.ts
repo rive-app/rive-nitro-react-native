@@ -250,3 +250,175 @@ describe('Property Listeners', () => {
     expect(() => cleanup2()).not.toThrow();
   });
 });
+
+const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+describe('Listener callback invocation', () => {
+  it('numberProperty listener emits current value', async () => {
+    const instance = await createGordonInstance();
+    const prop = instance.numberProperty('age');
+    expectDefined(prop);
+    const value = await new Promise<number>((resolve) => {
+      const cleanup = prop.addListener((v) => {
+        cleanup();
+        resolve(v);
+      });
+    });
+    expect(value).toBe(30);
+  });
+
+  it('stringProperty listener emits current value', async () => {
+    const instance = await createGordonInstance();
+    const prop = instance.stringProperty('name');
+    expectDefined(prop);
+    const value = await new Promise<string>((resolve) => {
+      const cleanup = prop.addListener((v) => {
+        cleanup();
+        resolve(v);
+      });
+    });
+    expect(value).toBe('Gordon');
+  });
+
+  it('booleanProperty listener emits current value', async () => {
+    const instance = await createGordonInstance();
+    const prop = instance.booleanProperty('likes_popcorn');
+    expectDefined(prop);
+    const value = await new Promise<boolean>((resolve) => {
+      const cleanup = prop.addListener((v) => {
+        cleanup();
+        resolve(v);
+      });
+    });
+    expect(value).toBe(false);
+  });
+
+  it('colorProperty listener emits current value', async () => {
+    const instance = await createGordonInstance();
+    const prop = instance.colorProperty('favourite_color');
+    expectDefined(prop);
+    const value = await new Promise<number>((resolve) => {
+      const cleanup = prop.addListener((v) => {
+        cleanup();
+        resolve(v);
+      });
+    });
+    const rgb = getRGB(value);
+    expect(rgb).toEqual({ r: 255, g: 0, b: 0 });
+  });
+
+  it('enumProperty listener emits current value', async () => {
+    const instance = await createGordonInstance();
+    const prop = instance.enumProperty('favourite_pet');
+    expectDefined(prop);
+    const value = await new Promise<string>((resolve) => {
+      const cleanup = prop.addListener((v) => {
+        cleanup();
+        resolve(v);
+      });
+    });
+    expect(value).toBe('dog');
+  });
+});
+
+describe('set() method works for all property types', () => {
+  it('numberProperty set() updates value', async () => {
+    const instance = await createGordonInstance();
+    const prop = instance.numberProperty('age');
+    expectDefined(prop);
+    prop.set(99);
+    await delay(100);
+    expect(await prop.getValueAsync()).toBe(99);
+  });
+
+  it('stringProperty set() updates value', async () => {
+    const instance = await createGordonInstance();
+    const prop = instance.stringProperty('name');
+    expectDefined(prop);
+    prop.set('Alice');
+    await delay(100);
+    expect(await prop.getValueAsync()).toBe('Alice');
+  });
+
+  it('booleanProperty set() updates value', async () => {
+    const instance = await createGordonInstance();
+    const prop = instance.booleanProperty('likes_popcorn');
+    expectDefined(prop);
+    prop.set(true);
+    await delay(100);
+    expect(await prop.getValueAsync()).toBe(true);
+  });
+
+  it('colorProperty set() updates value', async () => {
+    const instance = await createGordonInstance();
+    const prop = instance.colorProperty('favourite_color');
+    expectDefined(prop);
+    prop.set(0xff00ff00);
+    await delay(100);
+    const rgb = getRGB(await prop.getValueAsync());
+    expect(rgb).toEqual({ r: 0, g: 255, b: 0 });
+  });
+
+  it('enumProperty set() updates value', async () => {
+    const instance = await createGordonInstance();
+    const prop = instance.enumProperty('favourite_pet');
+    expectDefined(prop);
+    prop.set('cat');
+    await delay(100);
+    expect(await prop.getValueAsync()).toBe('cat');
+  });
+
+  it('triggerProperty trigger() does not throw', async () => {
+    const instance = await createGordonInstance();
+    const prop = instance.triggerProperty('jump');
+    expectDefined(prop);
+    prop.trigger();
+    await delay(100);
+  });
+});
+
+describe('set() + getValueAsync() round-trip', () => {
+  it('booleanProperty set + getValueAsync', async () => {
+    const instance = await createGordonInstance();
+    const prop = instance.booleanProperty('likes_popcorn');
+    expectDefined(prop);
+    prop.set(true);
+    await delay(100);
+    expect(await prop.getValueAsync()).toBe(true);
+  });
+
+  it('colorProperty set + getValueAsync', async () => {
+    const instance = await createGordonInstance();
+    const prop = instance.colorProperty('favourite_color');
+    expectDefined(prop);
+    prop.set(0xff0000ff);
+    await delay(100);
+    const rgb = getRGB(await prop.getValueAsync());
+    expect(rgb).toEqual({ r: 0, g: 0, b: 255 });
+  });
+
+  it('enumProperty set + getValueAsync', async () => {
+    const instance = await createGordonInstance();
+    const prop = instance.enumProperty('favourite_pet');
+    expectDefined(prop);
+    prop.set('cat');
+    await delay(100);
+    expect(await prop.getValueAsync()).toBe('cat');
+  });
+});
+
+describe('removeListeners stops callbacks', () => {
+  it('no callbacks fire after removeListeners', async () => {
+    const instance = await createGordonInstance();
+    const prop = instance.numberProperty('age');
+    expectDefined(prop);
+    const values: number[] = [];
+    prop.addListener((v) => values.push(v));
+    await delay(200);
+    const countBefore = values.length;
+    prop.removeListeners();
+    prop.set(999);
+    await delay(300);
+    expect(values.length).toBe(countBefore);
+  });
+});
