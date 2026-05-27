@@ -5,7 +5,9 @@ import { RiveFileFactory } from '@rive-app/react-native';
 
 const DATABINDING = require('../assets/rive/databinding.riv');
 
-const isExperimental = RiveFileFactory.getBackend() === 'experimental';
+function isExperimental() {
+  return RiveFileFactory.getBackend() === 'experimental';
+}
 
 function expectDefined<T>(value: T): asserts value is NonNullable<T> {
   expect(value).toBeDefined();
@@ -259,7 +261,7 @@ describe('Listener callback invocation (experimental only)', () => {
   // The experimental backend emits the current value on addListener;
   // legacy only fires on subsequent changes — these tests would hang.
   it('numberProperty listener emits current value', async () => {
-    if (!isExperimental) return;
+    if (!isExperimental()) return;
     const instance = await createGordonInstance();
     const prop = instance.numberProperty('age');
     expectDefined(prop);
@@ -273,7 +275,7 @@ describe('Listener callback invocation (experimental only)', () => {
   });
 
   it('stringProperty listener emits current value', async () => {
-    if (!isExperimental) return;
+    if (!isExperimental()) return;
     const instance = await createGordonInstance();
     const prop = instance.stringProperty('name');
     expectDefined(prop);
@@ -287,7 +289,7 @@ describe('Listener callback invocation (experimental only)', () => {
   });
 
   it('booleanProperty listener emits current value', async () => {
-    if (!isExperimental) return;
+    if (!isExperimental()) return;
     const instance = await createGordonInstance();
     const prop = instance.booleanProperty('likes_popcorn');
     expectDefined(prop);
@@ -301,7 +303,7 @@ describe('Listener callback invocation (experimental only)', () => {
   });
 
   it('colorProperty listener emits current value', async () => {
-    if (!isExperimental) return;
+    if (!isExperimental()) return;
     const instance = await createGordonInstance();
     const prop = instance.colorProperty('favourite_color');
     expectDefined(prop);
@@ -316,7 +318,7 @@ describe('Listener callback invocation (experimental only)', () => {
   });
 
   it('enumProperty listener emits current value', async () => {
-    if (!isExperimental) return;
+    if (!isExperimental()) return;
     const instance = await createGordonInstance();
     const prop = instance.enumProperty('favourite_pet');
     expectDefined(prop);
