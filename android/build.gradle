@@ -69,6 +69,13 @@ android {
   externalNativeBuild {
     cmake {
       path "CMakeLists.txt"
+      // On Windows the NDK default CMake (3.22.1) fails when object-file
+      // paths exceed MAX_PATH (260 chars). Set CMAKE_VERSION=3.31.6 to fix.
+      // See: https://docs.swmansion.com/react-native-reanimated/docs/guides/building-on-windows/
+      def cmakeVersionOverride = System.getenv("CMAKE_VERSION")
+      if (cmakeVersionOverride) {
+        version cmakeVersionOverride
+      }
     }
   }
 
