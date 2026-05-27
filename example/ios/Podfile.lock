@@ -2242,7 +2242,7 @@ PODS:
     - React-perflogger (= 0.80.3)
     - React-utils (= 0.80.3)
     - SocketRocket
-  - RiveRuntime (6.20.0)
+  - RiveRuntime (6.20.4)
   - RNCAsyncStorage (2.2.0):
     - boost
     - DoubleConversion
@@ -2422,7 +2422,7 @@ PODS:
     - RNWorklets
     - SocketRocket
     - Yoga
-  - RNRive (0.4.6):
+  - RNRive (0.4.7):
     - boost
     - DoubleConversion
     - fast_float
@@ -2450,7 +2450,7 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - RiveRuntime (= 6.20.0)
+    - RiveRuntime (= 6.20.4)
     - SocketRocket
     - Yoga
   - RNScreens (4.18.0):
@@ -2935,12 +2935,12 @@ SPEC CHECKSUMS:
   ReactAppDependencyProvider: bd4d54d31d1a9e2eddff7675bb7628731a42b98c
   ReactCodegen: 8e8c7dc0113d08d218f409fbb2cd3b966b982e11
   ReactCommon: 04362bc6625a80fa21b174f527352db70e5ad06a
-  RiveRuntime: 12f860505e052a8b48c580f35f1d5d5cad6709b7
+  RiveRuntime: f99ddd1d4b6a420dea5943ff52502e8f92ae7a92
   RNCAsyncStorage: 1f04c8d56558e533277beda29187f571cf7eecb2
   RNCPicker: a0b804b489974349cde24b41b654ce9d5eefa504
   RNGestureHandler: 5b17f2ffba1909187924a248aaca7d077673d857
   RNReanimated: d9b3c88b7a722ce8129ca8c96abd06d822ed315e
-  RNRive: 63a8e07c3b2e1ebfdcef7dcba3efdd71e90e93a8
+  RNRive: fc8277cea345e59de9178dddb3b1729fcf8ef695
   RNScreens: f35bcc83b6e3a871635b1c28728e63c9560f159a
   RNWorklets: 7fb44cd32a491df4a4832cce2f3b0aaaf813956d
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
