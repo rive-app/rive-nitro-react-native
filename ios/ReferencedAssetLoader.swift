@@ -11,6 +11,7 @@ func createAssetFileError(_ assetName: String) -> NitroRiveError {
 }
 
 final class ReferencedAssetLoader {
+  private static let decodeQueue = DispatchQueue(label: "com.rive.asset-decode")
   private var activeLoadCount = 0
   private var activeFileRef: RiveFile?
 
@@ -35,43 +36,49 @@ final class ReferencedAssetLoader {
     RCTLogError("\(error)")
   }
 
+  /// Decodes an asset on a background serial queue, then applies the result
+  /// on the main thread. The `[self]` capture keeps `activeFileRef` alive
+  /// until completion, preventing use-after-free on the factory.
+  private func decodeAndApply<T>(
+    decode: @escaping () -> T?,
+    apply: @escaping (T) -> Void,
+    completion: @escaping () -> Void
+  ) {
+    Self.decodeQueue.async { [self] in
+      let result = decode()
+      DispatchQueue.main.async {
+        if let result { apply(result) }
+        completion()
+        _ = self
+      }
+    }
+  }
+
   private func processAssetBytes(
     _ data: Data, asset: RiveFileAsset, factory: RiveFactory, completion: @escaping () -> Void
   ) {
-    if data.isEmpty == true {
+    if data.isEmpty {
       completion()
       return
     }
-    DispatchQueue.global(qos: .background).async {
-      switch asset {
-      case let imageAsset as RiveImageAsset:
-        let decodedImage = factory.decodeImage(data)
-        DispatchQueue.main.async {
-          imageAsset.renderImage(decodedImage)
-          completion()
-        }
-      case let fontAsset as RiveFontAsset:
-        let decodedFont = factory.decodeFont(data)
-        DispatchQueue.main.async {
-          fontAsset.font(decodedFont)
-          completion()
-        }
-      case let audioAsset as RiveAudioAsset:
-        guard let decodedAudio = factory.decodeAudio(data) else {
-          DispatchQueue.main.async {
-            completion()
-          }
-          return
-        }
-        DispatchQueue.main.async {
-          audioAsset.audio(decodedAudio)
-          completion()
-        }
-      default:
-        DispatchQueue.main.async {
-          completion()
-        }
-      }
+    switch asset {
+    case let imageAsset as RiveImageAsset:
+      decodeAndApply(
+        decode: { factory.decodeImage(data) },
+        apply: { imageAsset.renderImage($0) },
+        completion: completion)
+    case let fontAsset as RiveFontAsset:
+      decodeAndApply(
+        decode: { factory.decodeFont(data) },
+        apply: { fontAsset.font($0) },
+        completion: completion)
+    case let audioAsset as RiveAudioAsset:
+      decodeAndApply(
+        decode: { factory.decodeAudio(data) },
+        apply: { audioAsset.audio($0) },
+        completion: completion)
+    default:
+      completion()
     }
   }
 
