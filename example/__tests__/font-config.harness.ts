@@ -1,5 +1,8 @@
 import { describe, it, expect } from 'react-native-harness';
+import { Platform } from 'react-native';
 import { RiveFonts } from '@rive-app/react-native';
+
+const SYSTEM_FONT = Platform.OS === 'ios' ? 'Helvetica' : 'sans-serif';
 
 describe('RiveFonts', () => {
   it('systemFallback() returns a font object', () => {
@@ -8,7 +11,7 @@ describe('RiveFonts', () => {
   });
 
   it('loadFont with system font name', async () => {
-    const font = await RiveFonts.loadFont({ name: 'Helvetica' });
+    const font = await RiveFonts.loadFont({ name: SYSTEM_FONT });
     expect(font).toBeDefined();
   });
 
@@ -21,18 +24,24 @@ describe('RiveFonts', () => {
 
   it('setFallbackFonts + clearFallbackFonts round-trip', async () => {
     const systemFont = RiveFonts.systemFallback();
-    const namedFont = await RiveFonts.loadFont({ name: 'Helvetica' });
+    const urlFont = await RiveFonts.loadFont({
+      uri: 'https://raw.githubusercontent.com/google/fonts/main/ofl/kanit/Kanit-Regular.ttf',
+    });
 
     await RiveFonts.setFallbackFonts({
-      default: [namedFont, systemFont],
+      default: [urlFont, systemFont],
     });
 
     await RiveFonts.clearFallbackFonts();
   });
 
   it('setFallbackFonts with weight-specific fonts', async () => {
-    const regular = await RiveFonts.loadFont({ name: 'Helvetica' });
-    const bold = await RiveFonts.loadFont({ name: 'Helvetica-Bold' });
+    const regular = await RiveFonts.loadFont({
+      uri: 'https://raw.githubusercontent.com/google/fonts/main/ofl/kanit/Kanit-Regular.ttf',
+    });
+    const bold = await RiveFonts.loadFont({
+      uri: 'https://raw.githubusercontent.com/google/fonts/main/ofl/kanit/Kanit-Bold.ttf',
+    });
     const systemFont = RiveFonts.systemFallback();
 
     await RiveFonts.setFallbackFonts({
