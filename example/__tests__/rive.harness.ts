@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'react-native-harness';
 import { Platform } from 'react-native';
-import { RiveFileFactory } from '@rive-app/react-native';
+import { RiveFileFactory, RiveImages, RiveLog } from '@rive-app/react-native';
 
 const QUICK_START = require('../assets/rive/quick_start.riv');
 const VIEWMODEL = require('../assets/rive/viewmodelproperty.riv');
@@ -17,6 +17,18 @@ describe('RiveFile Loading', () => {
       'https://cdn.rive.app/animations/vehicles.riv',
       undefined
     );
+    expect(file).toBeDefined();
+    expect(file.artboardNames.length).toBeGreaterThan(0);
+  });
+
+  it('fromBytes works', async () => {
+    // Load the file first via fromSource, then get the URL and fetch raw bytes
+    // Simpler: use fromURL to get a known .riv, then re-load via fromBytes
+    const response = await fetch(
+      'https://cdn.rive.app/animations/vehicles.riv'
+    );
+    const bytes = await response.arrayBuffer();
+    const file = await RiveFileFactory.fromBytes(bytes, undefined);
     expect(file).toBeDefined();
     expect(file.artboardNames.length).toBeGreaterThan(0);
   });
@@ -74,5 +86,24 @@ describe('ViewModel', () => {
     const vm1NameProp = vm1AfterReplace?.stringProperty('name');
     const val = vm1NameProp?.value;
     expect(val).toBe(testValue);
+  });
+});
+
+describe('RiveImages', () => {
+  it('loadFromURLAsync loads an image', async () => {
+    const image = await RiveImages.loadFromURLAsync(
+      'https://picsum.photos/id/237/100/100'
+    );
+    expect(image).toBeDefined();
+    expect(image.byteSize).toBeGreaterThan(0);
+  });
+});
+
+describe('RiveLog.setLogLevel', () => {
+  it('setLogLevel does not throw for valid levels', () => {
+    expect(() => RiveLog.setLogLevel('debug')).not.toThrow();
+    expect(() => RiveLog.setLogLevel('info')).not.toThrow();
+    expect(() => RiveLog.setLogLevel('warn')).not.toThrow();
+    expect(() => RiveLog.setLogLevel('error')).not.toThrow();
   });
 });
