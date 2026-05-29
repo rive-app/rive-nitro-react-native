@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.4.10](https://github.com/rive-app/rive-nitro-react-native/compare/v0.4.9...v0.4.10) (2026-05-28)
+
+
+### Bug Fixes
+
+* **android:** allow overriding CMake version for Windows long-path builds ([#265](https://github.com/rive-app/rive-nitro-react-native/issues/265)) ([7300001](https://github.com/rive-app/rive-nitro-react-native/commit/7300001fdcfb6b31bec4841537b174d4a897e807))
+* bump iOS runtime to 6.20.4 ([#271](https://github.com/rive-app/rive-nitro-react-native/issues/271)) ([3748643](https://github.com/rive-app/rive-nitro-react-native/commit/3748643a9751ef23684f01af0d7a9330436ac5a2))
+* **ios:** keep RiveFile alive until decode* completes ([#225](https://github.com/rive-app/rive-nitro-react-native/issues/225)) ([#266](https://github.com/rive-app/rive-nitro-react-native/issues/266)) ([e5a5ce4](https://github.com/rive-app/rive-nitro-react-native/commit/e5a5ce43fa3f27a40a7cf30c040f78adafdf7cbc))
+
 ## [0.4.9](https://github.com/rive-app/rive-nitro-react-native/compare/v0.4.8...v0.4.9) (2026-05-22)
 
 
