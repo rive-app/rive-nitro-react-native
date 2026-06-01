@@ -196,6 +196,8 @@
   },
   "resolutions": {
     "core-js-compat": "^3.40.0",
-    "browserslist": "^4.24.4"
+    "browserslist": "^4.24.4",
+    "@react-native-harness/platform-apple@1.3.0": "patch:@react-native-harness/platform-apple@npm%3A1.3.0#./.yarn/patches/@react-native-harness-platform-apple-npm-1.3.0-73562dda66.patch",
+    "@react-native-harness/coverage-ios@1.3.0": "patch:@react-native-harness/coverage-ios@npm%3A1.3.0#./.yarn/patches/@react-native-harness-coverage-ios-npm-1.3.0-38903ba033.patch"
   }
 }

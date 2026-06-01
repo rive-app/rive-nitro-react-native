@@ -34,6 +34,7 @@
     "@react-native-community/cli": "19.1.2",
     "@react-native-community/cli-platform-android": "19.1.2",
     "@react-native-community/cli-platform-ios": "19.1.2",
+    "@react-native-harness/coverage-ios": "1.3.0",
     "@react-native-harness/platform-android": "1.3.0",
     "@react-native-harness/platform-apple": "1.3.0",
     "@react-native/babel-preset": "0.80.3",
