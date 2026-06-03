@@ -144,7 +144,7 @@ export default function TestsPage() {
     setTestStates((prev) => new Map(prev).set(key, { status: 'running' }));
 
     try {
-      await test.fn();
+      await (test.fn as () => void | Promise<void>)();
       setTestStates((prev) => new Map(prev).set(key, { status: 'passed' }));
     } catch (e) {
       const errorMessage = e instanceof Error ? e.message : String(e);
