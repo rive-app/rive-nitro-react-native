@@ -106,21 +106,29 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
     riveAnimationView?.layoutScaleFactor = config.layoutScaleFactor
       ?: resources.displayMetrics.density
 
+    val hasDataBinding = when (config.bindData) {
+      is BindData.None -> false
+      is BindData.Auto -> false
+      is BindData.Instance, is BindData.ByName -> true
+    }
+
     if (reload) {
-      val hasDataBinding = when (config.bindData) {
-        is BindData.None -> false
-        is BindData.Auto -> false
-        is BindData.Instance, is BindData.ByName -> true
-      }
+      val deferAutoPlay = hasDataBinding && config.autoPlay
       riveAnimationView?.setRiveFile(
         config.riveFile,
         artboardName = config.artboardName,
         stateMachineName = config.stateMachineName,
-        autoplay = config.autoPlay,
-        autoBind = hasDataBinding,
+        autoplay = if (deferAutoPlay) false else config.autoPlay,
+        autoBind = if (deferAutoPlay) false else hasDataBinding,
         alignment = config.alignment,
         fit = config.fit
       )
+      if (deferAutoPlay) {
+        // Create the state machine without advancing Entry transitions.
+        // The first Choreographer frame will advance it with the user's
+        // VM instance already bound via applyDataBinding() below.
+        riveAnimationView?.play(settleInitialState = false)
+      }
       _activeStateMachineName = getSafeStateMachineName()
     } else {
       riveAnimationView?.alignment = config.alignment
