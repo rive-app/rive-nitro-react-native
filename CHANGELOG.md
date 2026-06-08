@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.11](https://github.com/rive-app/rive-nitro-react-native/compare/v0.4.10...v0.4.11) (2026-06-08)
+
+
+### Bug Fixes
+
+* **android:** defer autoplay until after VM instance is bound ([#283](https://github.com/rive-app/rive-nitro-react-native/issues/283)) ([f600a47](https://github.com/rive-app/rive-nitro-react-native/commit/f600a471bcb55f4cf3b981794f6560b7ac251e92))
+
 ## [0.4.10](https://github.com/rive-app/rive-nitro-react-native/compare/v0.4.9...v0.4.10) (2026-05-28)
 
 
