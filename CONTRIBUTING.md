@@ -125,6 +125,37 @@ The `package.json` file contains various scripts for common tasks:
 - `yarn example android`: run the example app on Android.
 - `yarn example ios`: run the example app on iOS.
 
+### Swift code coverage
+
+You can measure which Swift code in `ios/` gets exercised by the harness tests. This uses LLVM source-based profiling and is opt-in.
+
+```sh
+# 1. Install pods with coverage enabled
+cd example/ios && RIVE_SWIFT_COVERAGE=1 bundle exec pod install && cd ../..
+
+# 2. Build the example app
+yarn example build:ios
+
+# 3. Run harness tests
+yarn test:harness:ios
+
+# 4. Extract coverage and print a summary
+bash scripts/ios-coverage.sh
+```
+
+This produces `coverage-swift.lcov` (machine-readable) in the repo root. For an HTML report:
+
+```sh
+xcrun llvm-cov show \
+  example/ios/build/Build/Products/Debug-iphonesimulator/RiveExample.app/RiveExample.debug.dylib \
+  -instr-profile=coverage.profdata -arch arm64 -format=html -output-dir=coverage-html \
+  -ignore-filename-regex='.*/(Pods|nitrogen|node_modules|DerivedData)/.*' \
+  -sources "$PWD/ios/"
+open coverage-html/index.html
+```
+
+To go back to normal (non-coverage) builds, just run `pod install` without the env var.
+
 ### Sending a pull request
 
 When you're sending a pull request:

@@ -72,4 +72,13 @@ Pod::Spec.new do |s|
   s.dependency "RiveRuntime", rive_ios_version
 
  install_modules_dependencies(s)
+
+  if ENV['RIVE_SWIFT_COVERAGE'] == '1'
+    existing = s.attributes_hash['pod_target_xcconfig'] || {}
+    s.pod_target_xcconfig = existing.merge({
+      'OTHER_SWIFT_FLAGS' => '$(inherited) -profile-generate -profile-coverage-mapping -DRIVE_COVERAGE',
+      'OTHER_LDFLAGS' => '$(inherited) -fprofile-instr-generate',
+    })
+    Pod::UI.puts "@rive-app/react-native: Swift code coverage ENABLED"
+  end
 end
