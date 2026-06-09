@@ -507,6 +507,9 @@ jobs:
         run: |
           cd example
           bundle install
+          # Drop the experimental-generated lock so the legacy backend resolves
+          # fresh (avoids a stale fast_float podspec checksum mismatch).
+          rm -f ios/Podfile.lock ios/Pods/Manifest.lock
           USE_RIVE_LEGACY=1 bundle exec pod install --project-directory=ios
 
       - name: Save cocoapods cache
