@@ -35,6 +35,9 @@ def getExtOrIntegerDefault(name) {
   return rootProject.ext.has(name) ? rootProject.ext.get(name) : (project.properties["Rive_" + name]).toInteger()
 }
 
+def kotlinCoverage = project.hasProperty('Rive_KotlinCoverage') ?
+  project.property('Rive_KotlinCoverage').toBoolean() : false
+
 android {
   namespace "com.rive"
 
@@ -47,6 +50,7 @@ android {
     minSdkVersion getExtOrIntegerDefault("minSdkVersion")
     targetSdkVersion getExtOrIntegerDefault("targetSdkVersion")
     buildConfigField "boolean", "RIVE_SKIP_SETUP", "$skipSetup"
+    buildConfigField "boolean", "RIVE_KOTLIN_COVERAGE", "$kotlinCoverage"
 
     externalNativeBuild {
       cmake {
@@ -109,6 +113,10 @@ android {
     }
   }
 
+  if (kotlinCoverage) {
+    println "@rive-app/react-native: Kotlin code coverage ENABLED"
+  }
+
   lintOptions {
     disable "GradleCompatible"
   }
@@ -156,10 +164,59 @@ def getRiveAndroidVersion() {
 def riveAndroidVersion = getRiveAndroidVersion()
 println "@rive-app/react-native: Rive Android SDK ${riveAndroidVersion}"
 
+configurations {
+  jacocoAnt
+}
+
 dependencies {
   implementation "com.facebook.react:react-android"
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
   implementation "app.rive:rive-android:${riveAndroidVersion}"
   implementation project(":react-native-nitro-modules")
+
+  if (kotlinCoverage) {
+    implementation "org.jacoco:org.jacoco.agent:0.8.12:runtime"
+    jacocoAnt "org.jacoco:org.jacoco.ant:0.8.12"
+  }
+}
+
+if (kotlinCoverage) {
+  afterEvaluate {
+    def classesDir = file("${buildDir}/tmp/kotlin-classes/debug")
+
+    tasks.named("compileDebugKotlin").configure {
+      doLast {
+        if (!classesDir.exists()) return
+
+        // Save a copy of the original (uninstrumented) classes for report generation
+        def origDir = file("${buildDir}/jacoco-original-classes")
+        if (origDir.exists()) origDir.deleteDir()
+        ant.copy(todir: origDir) {
+          fileset(dir: classesDir)
+        }
+
+        // Offline-instrument class files: write to temp dir, then replace originals
+        def instrumentedDir = file("${buildDir}/tmp/jacoco-instrumented")
+        if (instrumentedDir.exists()) instrumentedDir.deleteDir()
+        instrumentedDir.mkdirs()
+
+        ant.taskdef(
+          name: 'instrument',
+          classname: 'org.jacoco.ant.InstrumentTask',
+          classpath: configurations.jacocoAnt.asPath
+        )
+        ant.instrument(destdir: instrumentedDir) {
+          fileset(dir: classesDir, includes: '**/*.class')
+        }
+
+        // Replace original classes with instrumented ones
+        ant.copy(todir: classesDir, overwrite: true) {
+          fileset(dir: instrumentedDir)
+        }
+
+        println "[Coverage] Instrumented classes in ${classesDir}"
+      }
+    }
+  }
 }
 

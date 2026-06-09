@@ -93,3 +93,9 @@ example/src/reproducers/local/*
 
 # Test coverage
 coverage/
+coverage-swift.lcov
+coverage-kotlin.xml
+coverage-kotlin.csv
+coverage-kotlin-html/
+coverage.profdata
+.jacoco/
