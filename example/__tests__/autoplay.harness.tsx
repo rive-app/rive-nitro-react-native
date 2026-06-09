@@ -17,8 +17,6 @@ import {
 } from '@rive-app/react-native';
 import type { ViewModelInstance } from '@rive-app/react-native';
 
-const isExperimental = RiveFileFactory.getBackend() === 'experimental';
-
 // Bouncing ball .riv with a "ypos" ViewModel number property that changes during playback
 // Source: https://rive.app/community/files/25997-48571-demo-for-tracking-rive-property-in-react-native/
 const BOUNCING_BALL = require('../assets/rive/bouncing_ball.riv');
@@ -34,6 +32,39 @@ function expectDefined<T>(value: T): asserts value is NonNullable<T> {
 function valueChanged(a: number, b: number): boolean {
   if (Number.isNaN(a) || Number.isNaN(b)) return false;
   return Math.abs(a - b) > 0.001;
+}
+
+const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+/**
+ * Returns true if the property value changes within the timeout. Polls
+ * prop.value rather than relying on the listener, because state-machine-driven
+ * changes do not fire addListener on all platforms (e.g. iOS experimental).
+ */
+function pollChangedWithin(
+  instance: ViewModelInstance,
+  propertyName: string,
+  timeout = 800
+): Promise<boolean> {
+  return new Promise((resolve) => {
+    const prop = instance.numberProperty(propertyName);
+    if (!prop) {
+      resolve(false);
+      return;
+    }
+    const initial = prop.value;
+    const timer = setTimeout(() => {
+      clearInterval(poll);
+      resolve(false);
+    }, timeout);
+    const poll = setInterval(() => {
+      if (valueChanged(prop.value, initial)) {
+        clearTimeout(timer);
+        clearInterval(poll);
+        resolve(true);
+      }
+    }, 50);
+  });
 }
 
 async function loadBouncingBall() {
@@ -96,44 +127,6 @@ function waitForPropertyChange(
   });
 }
 
-/**
- * Returns true if the property value changes within the timeout, false otherwise.
- */
-function didPropertyChange(
-  instance: ViewModelInstance,
-  propertyName: string,
-  timeout = 500
-): Promise<boolean> {
-  return new Promise((resolve) => {
-    const prop = instance.numberProperty(propertyName);
-    if (!prop) {
-      resolve(false);
-      return;
-    }
-
-    function done(changed: boolean) {
-      clearTimeout(timer);
-      removeListener();
-      resolve(changed);
-    }
-
-    const timer = setTimeout(() => done(false), timeout);
-
-    let firstEmit = true;
-    let initialValue: number | undefined;
-    const removeListener = prop.addListener((newValue: number) => {
-      if (firstEmit) {
-        initialValue = newValue;
-        firstEmit = false;
-        return;
-      }
-      if (newValue !== initialValue) {
-        done(true);
-      }
-    });
-  });
-}
-
 type TestContext = {
   ref: RiveViewRef | null;
   error: string | null;
@@ -186,9 +179,6 @@ describe('autoPlay prop (issue #138)', () => {
   });
 
   it('autoPlay={false} does not change ypos property', async () => {
-    if (isExperimental) {
-      return; // experimental SDK has no pause API — always advances
-    }
     const { file, instance } = await loadBouncingBall();
 
     const context: TestContext = { ref: null, error: null };
@@ -208,7 +198,7 @@ describe('autoPlay prop (issue #138)', () => {
       { timeout: 5000 }
     );
 
-    const changed = await didPropertyChange(instance, 'ypos');
+    const changed = await pollChangedWithin(instance, 'ypos', 800);
     expect(changed).toBe(false);
     expect(context.error).toBeNull();
 
@@ -268,6 +258,121 @@ describe('autoPlay prop (issue #138)', () => {
     expect(newValue).not.toBe(0);
 
     expect(context.error).toBeNull();
+    cleanup();
+  });
+});
+
+describe('imperative playback control (play/pause/reset)', () => {
+  // These observe the ypos ViewModel property to detect whether the state
+  // machine is advancing, instead of inspecting pixels.
+
+  it('pause() stops ypos from advancing', async () => {
+    const { file, instance } = await loadBouncingBall();
+
+    const context: TestContext = { ref: null, error: null };
+    await render(
+      <RiveTestView
+        file={file}
+        autoPlay={true}
+        instance={instance}
+        context={context}
+      />
+    );
+
+    await waitFor(
+      () => {
+        expect(context.ref).not.toBeNull();
+      },
+      { timeout: 5000 }
+    );
+
+    // Confirm it is actually playing before we pause.
+    await waitForPropertyChange(instance, 'ypos');
+
+    await context.ref!.pause();
+    // Let any in-flight frame settle so we don't catch a trailing advance.
+    await delay(100);
+
+    const changedWhilePaused = await pollChangedWithin(instance, 'ypos', 800);
+    expect(changedWhilePaused).toBe(false);
+    expect(context.error).toBeNull();
+
+    cleanup();
+  });
+
+  it('play() resumes ypos after pause()', async () => {
+    const { file, instance } = await loadBouncingBall();
+
+    const context: TestContext = { ref: null, error: null };
+    await render(
+      <RiveTestView
+        file={file}
+        autoPlay={true}
+        instance={instance}
+        context={context}
+      />
+    );
+
+    await waitFor(
+      () => {
+        expect(context.ref).not.toBeNull();
+      },
+      { timeout: 5000 }
+    );
+
+    await waitForPropertyChange(instance, 'ypos');
+    await context.ref!.pause();
+    await delay(100);
+    expect(await pollChangedWithin(instance, 'ypos', 800)).toBe(false);
+
+    await context.ref!.play();
+    const resumed = await waitForPropertyChange(instance, 'ypos');
+    expect(typeof resumed).toBe('number');
+    expect(context.error).toBeNull();
+
+    cleanup();
+  });
+
+  // TODO: experimental iOS Rive has no reset primitive — "reset to initial
+  // state" needs recreating the artboard/state machine. Enable once implemented.
+  it.skip('reset() returns ypos to its initial state', async () => {
+    const { file, instance } = await loadBouncingBall();
+
+    // Authored default, read before any playback has advanced it.
+    const ypos = instance.numberProperty('ypos');
+    expectDefined(ypos);
+    const initial = ypos.value;
+
+    const context: TestContext = { ref: null, error: null };
+    await render(
+      <RiveTestView
+        file={file}
+        autoPlay={true}
+        instance={instance}
+        context={context}
+      />
+    );
+
+    await waitFor(
+      () => {
+        expect(context.ref).not.toBeNull();
+      },
+      { timeout: 5000 }
+    );
+
+    // Let it advance away from the initial value.
+    const moved = await waitForPropertyChange(instance, 'ypos');
+    expect(valueChanged(moved, initial)).toBe(true);
+
+    // Pause first so reset is observed against a frozen state machine rather
+    // than racing a frame that immediately re-advances ypos.
+    await context.ref!.pause();
+    await context.ref!.reset();
+    await delay(100);
+
+    expect(valueChanged(ypos.value, initial)).toBe(false);
+    expect(context.error).toBeNull();
+
     cleanup();
   });
 });
