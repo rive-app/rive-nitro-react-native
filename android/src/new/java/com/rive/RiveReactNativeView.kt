@@ -132,6 +132,12 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
           worker.advanceStateMachine(sm, deltaTime)
           worker.draw(art, sm, rs, activeFit)
           frameCount++
+          // Signal readiness only once the state machine is actually running
+          // (surface created + first frame drawn), so callers awaiting
+          // awaitViewReady() before firing triggers don't fire too early.
+          if (frameCount == 1L) {
+            viewReadyDeferred.complete(true)
+          }
         } catch (e: Exception) {
           Log.e(TAG, "Render loop error", e)
         }
@@ -203,7 +209,6 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
       applyDataBinding(config.bindData, config.riveFile)
     }
 
-    viewReadyDeferred.complete(true)
   }
 
   private fun resizeArtboardIfLayout() {
