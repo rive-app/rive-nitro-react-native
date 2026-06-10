@@ -315,14 +315,11 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
       }
       is BindData.ByName -> {
         try {
-          val vmNames = kotlinx.coroutines.runBlocking { riveFile.getViewModelNames() }
-          if (vmNames.isNotEmpty()) {
-            val vmSource = ViewModelSource.Named(vmNames.first())
-            val source = vmSource.namedInstance(bindData.name)
-            val instance = ViewModelInstance.fromFile(riveFile, source)
-            boundInstance = instance
-            bindInstanceToStateMachine(instance)
-          }
+          val art = artboard ?: return
+          val source = ViewModelSource.DefaultForArtboard(art).namedInstance(bindData.name)
+          val instance = ViewModelInstance.fromFile(riveFile, source)
+          boundInstance = instance
+          bindInstanceToStateMachine(instance)
         } catch (e: Exception) {
           Log.e(TAG, "Failed to create named instance", e)
         }

@@ -9,10 +9,14 @@ import {
 import { useEffect } from 'react';
 import { Platform, Text, View } from 'react-native';
 import {
+  DataBindByName,
+  Fit,
   RiveFileFactory,
+  RiveView,
   ArtboardByName,
   useViewModelInstance,
   type RiveFile,
+  type RiveViewRef,
 } from '@rive-app/react-native';
 import type { ViewModelInstance } from '@rive-app/react-native';
 
@@ -487,6 +491,60 @@ describe('useViewModelInstance onInit verifies _id', () => {
     await waitFor(() => expect(ctx.instance).not.toBeNull(), { timeout: 5000 });
     expect(initResult.called).toBe(true);
     expect(initResult.id).toBe('vm3.vmi1.id');
+    cleanup();
+  });
+});
+
+// ── dataBind byName uses artboard's default ViewModel ───────────────
+// Regression for Android bug: ByName was always creating the instance from
+// vmNames.first() instead of the artboard's default ViewModel. artboard2's
+// default is viewmodel2 (not viewmodel1), so _id must be "vm2.vmi1.id".
+
+type ByNameCtx = { ref: RiveViewRef | null };
+
+function ByNameView({
+  file,
+  artboardName,
+  instanceName,
+  ctx,
+}: {
+  file: RiveFile;
+  artboardName: string;
+  instanceName: string;
+  ctx: ByNameCtx;
+}) {
+  return (
+    <View style={{ width: 200, height: 200 }}>
+      <RiveView
+        hybridRef={{ f: (r: RiveViewRef | null) => { ctx.ref = r; } }}
+        style={{ flex: 1 }}
+        file={file}
+        artboardName={artboardName}
+        stateMachineName="State Machine 1"
+        dataBind={new DataBindByName(instanceName)}
+        fit={Fit.Contain}
+      />
+    </View>
+  );
+}
+
+describe('dataBind byName uses artboard default ViewModel', () => {
+  it('artboard2 + byName("vmi1") → _id="vm2.vmi1.id" (not vm1)', async () => {
+    const file = await loadFile();
+    const ctx: ByNameCtx = { ref: null };
+    await render(
+      <ByNameView
+        file={file}
+        artboardName="artboard2"
+        instanceName="vmi1"
+        ctx={ctx}
+      />
+    );
+    await waitFor(() => expect(ctx.ref).not.toBeNull(), { timeout: 5000 });
+    await ctx.ref!.awaitViewReady();
+    const instance = ctx.ref!.getViewModelInstance();
+    expect(instance).toBeDefined();
+    expect(instance!.stringProperty('_id')?.value).toBe('vm2.vmi1.id');
     cleanup();
   });
 });
