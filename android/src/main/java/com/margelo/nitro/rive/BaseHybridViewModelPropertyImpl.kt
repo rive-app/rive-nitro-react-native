@@ -35,7 +35,7 @@ class BaseHybridViewModelPropertyImpl<T> : BaseHybridViewModelProperty<T> {
   }
 
   override fun onChanged(value: T) {
-    listeners.values.forEach { listener ->
+    listeners.values.toList().forEach { listener ->
       listener(value)
     }
   }
