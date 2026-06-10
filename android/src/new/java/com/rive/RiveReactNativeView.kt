@@ -18,6 +18,7 @@ import app.rive.core.RiveSurface
 import app.rive.core.StateMachineHandle
 import com.facebook.react.uimanager.ThemedReactContext
 import com.margelo.nitro.rive.RiveErrorLogger
+import com.margelo.nitro.rive.RiveLog
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -77,6 +78,9 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
   private var lastFrameTimeNs = 0L
   private var frameCount = 0L
 
+  @Volatile
+  private var paused = false
+
   private val textureView = TextureView(context).apply {
     layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
     surfaceTextureListener = object : TextureView.SurfaceTextureListener {
@@ -129,13 +133,13 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
 
       if (worker != null && art != null && sm != null && rs != null) {
         try {
-          worker.advanceStateMachine(sm, deltaTime)
+          if (!paused) {
+            worker.advanceStateMachine(sm, deltaTime)
+          }
           worker.draw(art, sm, rs, activeFit)
           frameCount++
-          // Signal readiness only once the state machine is actually running
-          // (surface created + first frame drawn), so callers awaiting
-          // awaitViewReady() before firing triggers don't fire too early.
-          if (frameCount == 1L) {
+          val isFirstFrame = frameCount == 1L
+          if (isFirstFrame) {
             viewReadyDeferred.complete(true)
           }
         } catch (e: Exception) {
@@ -200,6 +204,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
 
       Log.d(TAG, "configure: artboard=${artboardHandle != null} sm=${stateMachineHandle != null} surface=${riveSurface != null}")
 
+      paused = !config.autoPlay
       startRenderLoop()
     }
 
@@ -208,7 +213,6 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
     if (dataBindingChanged || initialUpdate) {
       applyDataBinding(config.bindData, config.riveFile)
     }
-
   }
 
   private fun resizeArtboardIfLayout() {
@@ -312,14 +316,11 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
       }
       is BindData.ByName -> {
         try {
-          val vmNames = kotlinx.coroutines.runBlocking { riveFile.getViewModelNames() }
-          if (vmNames.isNotEmpty()) {
-            val vmSource = ViewModelSource.Named(vmNames.first())
-            val source = vmSource.namedInstance(bindData.name)
-            val instance = ViewModelInstance.fromFile(riveFile, source)
-            boundInstance = instance
-            bindInstanceToStateMachine(instance)
-          }
+          val art = artboard ?: return
+          val source = ViewModelSource.DefaultForArtboard(art).namedInstance(bindData.name)
+          val instance = ViewModelInstance.fromFile(riveFile, source)
+          boundInstance = instance
+          bindInstanceToStateMachine(instance)
         } catch (e: Exception) {
           Log.e(TAG, "Failed to create named instance", e)
         }
@@ -337,13 +338,22 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
     }
   }
 
-  fun play() { /* controlled by render loop */ }
+  fun play() {
+    paused = false
+  }
 
-  fun pause() { /* controlled by render loop */ }
+  fun pause() {
+    paused = true
+  }
 
-  fun reset() { /* controlled by render loop */ }
+  // Deprecated: the experimental Rive runtime has no reset primitive.
+  fun reset() {
+    RiveLog.e(TAG, "reset() is deprecated and not supported on the experimental backend")
+  }
 
-  fun playIfNeeded() { /* controlled by render loop */ }
+  fun playIfNeeded() {
+    paused = false
+  }
 
   fun setNumberInputValue(name: String, value: Double, path: String?) {
     throw UnsupportedOperationException("SMI inputs not supported in experimental API")

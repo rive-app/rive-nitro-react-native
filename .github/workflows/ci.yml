@@ -120,6 +120,11 @@ jobs:
         if: env.turbo_cache_hit != 1
         run: |
           /bin/bash -c "yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses > /dev/null"
+          for i in 1 2 3; do
+            $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "ndk;27.1.12297006" && break
+            echo "NDK install attempt $i failed, retrying..."
+            sleep 10
+          done
 
       - name: Cache Gradle
         if: env.turbo_cache_hit != 1
@@ -387,6 +392,10 @@ jobs:
       - name: Debug - Check for console logs
         if: failure() || cancelled()
         run: |
+          echo "=== Metro health ==="
+          curl -s --max-time 5 http://localhost:8081/status || echo "Metro not responding"
+          echo "=== Metro process ==="
+          lsof -i:8081 | head -5 || echo "Nothing on port 8081"
           echo "=== Simulator logs (last 5m) ==="
           xcrun simctl spawn booted log show --predicate 'processImagePath CONTAINS "RiveExample"' --last 5m --style compact 2>&1 | tail -200 || echo "No logs found"
           echo "=== System log for Metro/Node ==="
@@ -413,6 +422,11 @@ jobs:
       - name: Finalize Android SDK
         run: |
           /bin/bash -c "yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses > /dev/null"
+          for i in 1 2 3; do
+            $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "ndk;27.1.12297006" && break
+            echo "NDK install attempt $i failed, retrying..."
+            sleep 10
+          done
 
       - name: Cache Gradle
         uses: actions/cache@v4
@@ -582,6 +596,10 @@ jobs:
       - name: Debug - Check for console logs
         if: failure()
         run: |
+          echo "=== Metro health ==="
+          curl -s --max-time 5 http://localhost:8081/status || echo "Metro not responding"
+          echo "=== Metro process ==="
+          lsof -i:8081 | head -5 || echo "Nothing on port 8081"
           echo "=== Checking simulator logs for errors ==="
           xcrun simctl spawn booted log show --predicate 'processImagePath CONTAINS "RiveExample"' --last 5m --style compact 2>&1 | tail -200 || echo "No logs found"
 
@@ -606,6 +624,11 @@ jobs:
       - name: Finalize Android SDK
         run: |
           /bin/bash -c "yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses > /dev/null"
+          for i in 1 2 3; do
+            $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "ndk;27.1.12297006" && break
+            echo "NDK install attempt $i failed, retrying..."
+            sleep 10
+          done
 
       - name: Enable legacy Rive backend
         run: |

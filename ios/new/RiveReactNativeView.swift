@@ -87,11 +87,8 @@ class RiveReactNativeView: UIView {
           guard !Task.isCancelled else { return }
 
           self.riveInstance = rive
+          self.isPaused = !config.autoPlay
           self.setupRiveUIView(with: rive)
-
-          if config.autoPlay {
-            self.isPaused = false
-          }
 
           if !self.isViewReady {
             self.isViewReady = true
@@ -119,19 +116,23 @@ class RiveReactNativeView: UIView {
 
   func play() {
     isPaused = false
+    riveUIView?.isPaused = false
   }
 
   func pause() {
     isPaused = true
+    riveUIView?.isPaused = true
   }
 
   func reset() {
-    isPaused = true
+    // Deprecated: the experimental Rive runtime has no reset primitive.
+    RiveLog.e("RiveReactNativeView", "reset() is deprecated and not supported on the experimental backend")
   }
 
   func playIfNeeded() {
     if isPaused {
       isPaused = false
+      riveUIView?.isPaused = false
     }
   }
 
@@ -180,7 +181,7 @@ class RiveReactNativeView: UIView {
     // This is a limitation of the experimental API - RiveUIView.rive is not publicly settable.
     riveUIView?.removeFromSuperview()
 
-    let uiView = RiveUIView(rive: rive)
+    let uiView = RiveUIView(rive: rive, isPaused: isPaused)
     uiView.translatesAutoresizingMaskIntoConstraints = false
     addSubview(uiView)
     NSLayoutConstraint.activate([
