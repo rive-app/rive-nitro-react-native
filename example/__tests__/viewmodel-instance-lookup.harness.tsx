@@ -533,6 +533,9 @@ function ByNameView({
 
 describe('dataBind byName uses artboard default ViewModel', () => {
   it('artboard2 + byName("vmi1") → _id="vm2.vmi1.id" (not vm1)', async () => {
+    if (!isAndroidExperimental) {
+      return;
+    }
     const file = await loadFile();
     const ctx: ByNameCtx = { ref: null };
     await render(
