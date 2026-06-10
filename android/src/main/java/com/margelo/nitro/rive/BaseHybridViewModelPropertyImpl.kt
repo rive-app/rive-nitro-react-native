@@ -11,13 +11,14 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.drop
 import java.lang.ref.WeakReference
 import java.util.UUID
+import java.util.concurrent.ConcurrentHashMap
 
 @Keep
 @DoNotStrip
 class BaseHybridViewModelPropertyImpl<T> : BaseHybridViewModelProperty<T> {
   override var scope: CoroutineScope? = null
   override var job: Job? = null
-  override val listeners = mutableMapOf<String, (T) -> Unit>()
+  override val listeners = ConcurrentHashMap<String, (T) -> Unit>()
 
   override fun ensureValueListenerJob(valueFlow: Flow<T>, drop: Int) {
     if (scope == null) {
