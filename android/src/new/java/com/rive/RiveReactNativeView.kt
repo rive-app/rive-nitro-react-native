@@ -18,6 +18,7 @@ import app.rive.core.RiveSurface
 import app.rive.core.StateMachineHandle
 import com.facebook.react.uimanager.ThemedReactContext
 import com.margelo.nitro.rive.RiveErrorLogger
+import com.margelo.nitro.rive.RiveLog
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -349,10 +350,9 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
     paused = true
   }
 
-  // TODO: experimental Rive has no reset primitive; "reset to initial state"
-  // requires recreating the artboard/state machine. Tracked as a follow-up.
+  // Deprecated: the experimental Rive runtime has no reset primitive.
   fun reset() {
-    paused = true
+    RiveLog.e(TAG, "reset() is deprecated and not supported on the experimental backend")
   }
 
   fun playIfNeeded() {

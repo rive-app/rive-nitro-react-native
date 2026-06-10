@@ -333,15 +333,10 @@ describe('imperative playback control (play/pause/reset)', () => {
     cleanup();
   });
 
-  // TODO: experimental iOS Rive has no reset primitive — "reset to initial
-  // state" needs recreating the artboard/state machine. Enable once implemented.
-  it.skip('reset() returns ypos to its initial state', async () => {
+  // reset() is deprecated and a no-op on the experimental backend (no reset
+  // primitive in the runtime); it logs an error and resolves without throwing.
+  it('reset() resolves without throwing (deprecated no-op)', async () => {
     const { file, instance } = await loadBouncingBall();
-
-    // Authored default, read before any playback has advanced it.
-    const ypos = instance.numberProperty('ypos');
-    expectDefined(ypos);
-    const initial = ypos.value;
 
     const context: TestContext = { ref: null, error: null };
     await render(
@@ -360,18 +355,7 @@ describe('imperative playback control (play/pause/reset)', () => {
       { timeout: 5000 }
     );
 
-    // Let it advance away from the initial value.
-    const moved = await waitForPropertyChange(instance, 'ypos');
-    expect(valueChanged(moved, initial)).toBe(true);
-
-    // Pause first so reset is observed against a frozen state machine rather
-    // than racing a frame that immediately re-advances ypos.
-    await context.ref!.pause();
-    await context.ref!.reset();
-    await delay(100);
-
-    expect(valueChanged(ypos.value, initial)).toBe(false);
-    expect(context.error).toBeNull();
+    await expect(context.ref!.reset()).resolves.toBeUndefined();
 
     cleanup();
   });

@@ -64,7 +64,11 @@ export interface RiveViewMethods extends HybridViewMethods {
   play(): Promise<void>;
   /** Pauses the the Rive graphic */
   pause(): Promise<void>;
-  /** Resets the Rive graphic to its initial state */
+  /**
+   * Resets the Rive graphic to its initial state.
+   * @deprecated Not supported on the experimental backend (logs an error and
+   * does nothing).
+   */
   reset(): Promise<void>;
 
   /** play if needed: low overhead function to make sure the rive graphics is playing. Use after property value update, to make sure graphics is updated */

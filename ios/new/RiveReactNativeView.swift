@@ -125,10 +125,8 @@ class RiveReactNativeView: UIView {
   }
 
   func reset() {
-    // TODO: experimental Rive has no reset primitive; "reset to initial state"
-    // requires recreating the artboard/state machine. Tracked as a follow-up.
-    isPaused = true
-    riveUIView?.isPaused = true
+    // Deprecated: the experimental Rive runtime has no reset primitive.
+    RiveLog.e("RiveReactNativeView", "reset() is deprecated and not supported on the experimental backend")
   }
 
   func playIfNeeded() {
