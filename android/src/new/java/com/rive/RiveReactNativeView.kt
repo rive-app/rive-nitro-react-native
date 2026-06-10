@@ -77,6 +77,8 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
   private var disposed = false
   private var lastFrameTimeNs = 0L
   private var frameCount = 0L
+
+  @Volatile
   private var paused = false
 
   private val textureView = TextureView(context).apply {
@@ -211,7 +213,6 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
     if (dataBindingChanged || initialUpdate) {
       applyDataBinding(config.bindData, config.riveFile)
     }
-
   }
 
   private fun resizeArtboardIfLayout() {
