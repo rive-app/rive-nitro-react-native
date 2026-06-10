@@ -36,11 +36,7 @@ function valueChanged(a: number, b: number): boolean {
 
 const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-/**
- * Returns true if the property value changes within the timeout. Polls
- * prop.value rather than relying on the listener, because state-machine-driven
- * changes do not fire addListener on all platforms (e.g. iOS experimental).
- */
+// Polls prop.value directly: state-machine-driven changes don't fire addListener on all platforms.
 function pollChangedWithin(
   instance: ViewModelInstance,
   propertyName: string,

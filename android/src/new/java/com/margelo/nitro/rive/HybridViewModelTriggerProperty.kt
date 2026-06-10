@@ -18,8 +18,7 @@ class HybridViewModelTriggerProperty(
 
   override fun addListener(onChanged: () -> Unit): () -> Unit {
     val remover = addListenerInternal { _ -> onChanged() }
-    // Triggers use drop=0: getTriggerFlow has replay=0 and emits nothing on
-    // subscription, so there is no initial value to skip.
+    // drop=0: getTriggerFlow (replay=0) emits nothing on subscription, unlike number/boolean flows.
     ensureValueListenerJob(instance.getTriggerFlow(path), 0)
     return remover
   }

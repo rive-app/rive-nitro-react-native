@@ -136,10 +136,8 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
           }
           worker.draw(art, sm, rs, activeFit)
           frameCount++
-          // Signal readiness only once the state machine is actually running
-          // (surface created + first frame drawn), so callers awaiting
-          // awaitViewReady() before firing triggers don't fire too early.
-          if (frameCount == 1L) {
+          val isFirstFrame = frameCount == 1L
+          if (isFirstFrame) {
             viewReadyDeferred.complete(true)
           }
         } catch (e: Exception) {
