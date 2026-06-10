@@ -516,7 +516,11 @@ function ByNameView({
   return (
     <View style={{ width: 200, height: 200 }}>
       <RiveView
-        hybridRef={{ f: (r: RiveViewRef | null) => { ctx.ref = r; } }}
+        hybridRef={{
+          f: (r: RiveViewRef | null) => {
+            ctx.ref = r;
+          },
+        }}
         style={{ flex: 1 }}
         file={file}
         artboardName={artboardName}
