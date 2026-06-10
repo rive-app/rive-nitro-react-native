@@ -194,18 +194,6 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
     }
   }
 
-  private fun asyncExecuteOnUiThread(action: () -> Unit): Promise<Unit> {
-    return Promise.async {
-      context.currentActivity?.runOnUiThread {
-        try {
-          action()
-        } catch (e: Exception) {
-          throw RuntimeException(e.message, e)
-        }
-      }
-    }
-  }
-
   private fun executeOnUiThread(action: () -> Unit) {
     context.currentActivity?.runOnUiThread {
       try {
