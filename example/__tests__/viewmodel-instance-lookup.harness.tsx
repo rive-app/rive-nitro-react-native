@@ -524,7 +524,6 @@ function ByNameView({
         style={{ flex: 1 }}
         file={file}
         artboardName={artboardName}
-        stateMachineName="State Machine 1"
         dataBind={new DataBindByName(instanceName)}
         fit={Fit.Contain}
       />
