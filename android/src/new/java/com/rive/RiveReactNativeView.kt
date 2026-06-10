@@ -77,7 +77,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
   private var disposed = false
   private var lastFrameTimeNs = 0L
   private var frameCount = 0L
-  @Volatile private var paused = false
+  private var paused = false
 
   private val textureView = TextureView(context).apply {
     layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
