@@ -76,6 +76,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
   private var disposed = false
   private var lastFrameTimeNs = 0L
   private var frameCount = 0L
+  private var paused = false
 
   private val textureView = TextureView(context).apply {
     layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
@@ -129,7 +130,9 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
 
       if (worker != null && art != null && sm != null && rs != null) {
         try {
-          worker.advanceStateMachine(sm, deltaTime)
+          if (!paused) {
+            worker.advanceStateMachine(sm, deltaTime)
+          }
           worker.draw(art, sm, rs, activeFit)
           frameCount++
           // Signal readiness only once the state machine is actually running
@@ -200,6 +203,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
 
       Log.d(TAG, "configure: artboard=${artboardHandle != null} sm=${stateMachineHandle != null} surface=${riveSurface != null}")
 
+      paused = !config.autoPlay
       startRenderLoop()
     }
 
@@ -337,13 +341,23 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
     }
   }
 
-  fun play() { /* controlled by render loop */ }
+  fun play() {
+    paused = false
+  }
 
-  fun pause() { /* controlled by render loop */ }
+  fun pause() {
+    paused = true
+  }
 
-  fun reset() { /* controlled by render loop */ }
+  // TODO: experimental Rive has no reset primitive; "reset to initial state"
+  // requires recreating the artboard/state machine. Tracked as a follow-up.
+  fun reset() {
+    paused = true
+  }
 
-  fun playIfNeeded() { /* controlled by render loop */ }
+  fun playIfNeeded() {
+    paused = false
+  }
 
   fun setNumberInputValue(name: String, value: Double, path: String?) {
     throw UnsupportedOperationException("SMI inputs not supported in experimental API")
