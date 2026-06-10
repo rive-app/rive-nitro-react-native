@@ -26,10 +26,6 @@ class BaseHybridViewModelPropertyImpl<T> : BaseHybridViewModelProperty<T> {
       scope = CoroutineScope(Dispatchers.Default)
     }
     if (job == null) {
-      // UNDISPATCHED so the coroutine reaches the collect() suspension point
-      // synchronously on the caller's thread. Without it, the coroutine is
-      // merely queued on Dispatchers.Default, and a trigger fired in the same
-      // frame can arrive before the collector is registered — silently dropping it.
       job = scope?.launch(start = CoroutineStart.UNDISPATCHED) {
         valueFlow.drop(drop).collect { value ->
           onChanged(value)
