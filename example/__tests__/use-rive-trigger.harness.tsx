@@ -14,6 +14,7 @@ import {
   RiveView,
   useRiveTrigger,
   type RiveFile,
+  type RiveViewRef,
 } from '@rive-app/react-native';
 import type { ViewModelInstance } from '@rive-app/react-native';
 
@@ -39,10 +40,33 @@ type TriggerContext = {
   triggerFn: (() => void) | null;
   error: Error | null;
   renderCount: number;
+  ref: RiveViewRef | null;
 };
 
 function createTriggerContext(): TriggerContext {
-  return { triggerCount: 0, triggerFn: null, error: null, renderCount: 0 };
+  return {
+    triggerCount: 0,
+    triggerFn: null,
+    error: null,
+    renderCount: 0,
+    ref: null,
+  };
+}
+
+/**
+ * Waits until the Rive view's state machine is live before firing triggers.
+ * A fireTrigger() issued before the surface/state-machine is advancing is
+ * dropped (the instance's trigger flow never emits it), so tests must wait for
+ * readiness first instead of firing synchronously on mount.
+ */
+async function waitForViewReady(context: TriggerContext): Promise<void> {
+  await waitFor(
+    () => {
+      expect(context.ref).not.toBeNull();
+    },
+    { timeout: 5000 }
+  );
+  await context.ref!.awaitViewReady();
 }
 
 // ─── Test component: stable callback ───────────────────────────────
@@ -74,6 +98,11 @@ function StableTriggerComponent({
   return (
     <View style={{ width: 200, height: 200 }}>
       <RiveView
+        hybridRef={{
+          f: (ref: RiveViewRef | null) => {
+            context.ref = ref;
+          },
+        }}
         file={file}
         fit={Fit.Contain}
         dataBind={instance}
@@ -123,6 +152,11 @@ function UnstableTriggerComponent({
   return (
     <View style={{ width: 200, height: 200 }}>
       <RiveView
+        hybridRef={{
+          f: (ref: RiveViewRef | null) => {
+            context.ref = ref;
+          },
+        }}
         file={file}
         fit={Fit.Contain}
         dataBind={instance}
@@ -156,8 +190,9 @@ describe('useRiveTrigger hook', () => {
 
     expect(context.error).toBeNull();
 
-    // Fire trigger and wait for it — pollChanges() runs on frame ticks,
-    // so we wait for each trigger individually to avoid coalescing.
+    // Wait for the state machine to be live before firing — an early
+    // fireTrigger() (before the surface/state-machine is advancing) is dropped.
+    await waitForViewReady(context);
     context.triggerFn!();
 
     await waitFor(
@@ -200,6 +235,7 @@ describe('useRiveTrigger hook', () => {
     expect(context.error).toBeNull();
 
     // Fire trigger AFTER the re-render burst — before the fix, this was lost
+    await waitForViewReady(context);
     context.triggerFn!();
 
     await waitFor(
