@@ -4,7 +4,7 @@ import NitroModules
 class HybridViewModelNumberProperty: HybridViewModelNumberPropertySpec {
   private let instance: ViewModelInstance
   private let prop: NumberProperty
-  private var listenerTasks: [UUID: Task<Void, Never>] = [:]
+  private let listeners = PropertyListenerStore()
 
   init(instance: ViewModelInstance, path: String) {
     self.instance = instance
@@ -44,8 +44,7 @@ class HybridViewModelNumberProperty: HybridViewModelNumberPropertySpec {
   }
 
   func addListener(onChanged: @escaping (Double) -> Void) throws -> () -> Void {
-    let id = UUID()
-    let task = Task { @MainActor [weak self] in
+    return listeners.register(Task { @MainActor [weak self] in
       guard let self else { return }
       // Emit current value immediately so the first subscription receives it
       let current = try? await self.instance.value(of: self.prop)
@@ -64,24 +63,10 @@ class HybridViewModelNumberProperty: HybridViewModelNumberPropertySpec {
           try? await Task.sleep(nanoseconds: 100_000_000)
         }
       }
-    }
-    listenerTasks[id] = task
-    return { [weak self] in
-      self?.listenerTasks[id]?.cancel()
-      self?.listenerTasks.removeValue(forKey: id)
-    }
+    })
   }
 
-  func removeListeners() throws {
-    listenerTasks.values.forEach { $0.cancel() }
-    listenerTasks.removeAll()
-  }
-
-  func dispose() throws {
-    try removeListeners()
-  }
-
-  deinit {
-    listenerTasks.values.forEach { $0.cancel() }
-  }
+  func removeListeners() throws { listeners.cancelAll() }
+  func dispose() throws { listeners.cancelAll() }
+  deinit { listeners.cancelAll() }
 }
