@@ -17,11 +17,14 @@ import app.rive.core.CommandQueue
 import app.rive.core.RiveSurface
 import app.rive.core.StateMachineHandle
 import com.facebook.react.uimanager.ThemedReactContext
+import com.margelo.nitro.rive.HybridViewModelInstance
 import com.margelo.nitro.rive.RiveErrorLogger
 import com.margelo.nitro.rive.RiveLog
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.time.Duration
@@ -80,6 +83,8 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
 
   @Volatile
   private var paused = false
+
+  private val viewScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
 
   private val textureView = TextureView(context).apply {
     layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
@@ -290,17 +295,16 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
         boundInstance = null
       }
       is BindData.Auto -> {
-        CoroutineScope(Dispatchers.Default).launch {
+        viewScope.launch {
           try {
             val vmNames = riveFile.getViewModelNames()
             if (vmNames.isEmpty()) return@launch
             withContext(Dispatchers.Main) {
+              if (disposed) return@withContext
               val art = artboard ?: return@withContext
               val source = ViewModelSource.DefaultForArtboard(art).defaultInstance()
               val instance = ViewModelInstance.fromFile(riveFile, source)
-              // A handle of 1L is the C++ null sentinel — the artboard has ViewModels but
-              // none is set as the default, so binding would fire "instance 0x1 not found".
-              if (instance.instanceHandle.handle == 1L) {
+              if (instance.instanceHandle.handle == HybridViewModelInstance.NULL_INSTANCE_DEFAULT) {
                 Log.d(TAG, "Auto-binding skipped: no default ViewModel for artboard")
                 return@withContext
               }
@@ -387,6 +391,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
 
   fun dispose() {
     disposed = true
+    viewScope.cancel()
     RiveErrorLogger.removeListener(errorListener)
     stopRenderLoop()
     // Null handles to prevent any further draw calls.
