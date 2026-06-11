@@ -7,8 +7,6 @@ import app.rive.ViewModelInstanceSource
 import app.rive.core.CommandQueue
 import com.facebook.proguard.annotations.DoNotStrip
 import com.margelo.nitro.core.Promise
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
 
 @Keep
 @DoNotStrip
@@ -21,22 +19,6 @@ class HybridViewModelInstance(
 ) : HybridViewModelInstanceSpec() {
   companion object {
     private const val TAG = "HybridViewModelInstance"
-  }
-
-  private val propertyNames: Set<String> by lazy {
-    val name = viewModelName ?: return@lazy emptySet()
-    val file = parentFile.riveFile ?: return@lazy emptySet()
-    try {
-      runBlocking { file.getViewModelProperties(name) }.map { it.name }.toSet()
-    } catch (e: Exception) {
-      Log.e(TAG, "Failed to fetch property names for viewModel '$name'", e)
-      emptySet()
-    }
-  }
-
-  private fun hasProperty(path: String): Boolean {
-    if (propertyNames.isEmpty()) return true
-    return propertyNames.contains(path)
   }
 
   // TODO: Workaround — rive-android experimental SDK doesn't expose ViewModelInstance.name.
@@ -56,65 +38,23 @@ class HybridViewModelInstance(
     }
   }
 
-  override fun numberProperty(path: String): HybridViewModelNumberPropertySpec? {
-    return try {
-      runBlocking { viewModelInstance.getNumberFlow(path).first() }
-      HybridViewModelNumberProperty(viewModelInstance, path)
-    } catch (e: Exception) {
-      Log.e(TAG, "numberProperty failed for path '$path'", e)
-      null
-    }
-  }
+  override fun numberProperty(path: String) =
+    HybridViewModelNumberProperty(viewModelInstance, path)
 
-  override fun stringProperty(path: String): HybridViewModelStringPropertySpec? {
-    return try {
-      runBlocking { viewModelInstance.getStringFlow(path).first() }
-      HybridViewModelStringProperty(viewModelInstance, path)
-    } catch (e: Exception) {
-      Log.e(TAG, "stringProperty failed for path '$path'", e)
-      null
-    }
-  }
+  override fun stringProperty(path: String) =
+    HybridViewModelStringProperty(viewModelInstance, path)
 
-  override fun booleanProperty(path: String): HybridViewModelBooleanPropertySpec? {
-    return try {
-      runBlocking { viewModelInstance.getBooleanFlow(path).first() }
-      HybridViewModelBooleanProperty(viewModelInstance, path)
-    } catch (e: Exception) {
-      Log.e(TAG, "booleanProperty failed for path '$path'", e)
-      null
-    }
-  }
+  override fun booleanProperty(path: String) =
+    HybridViewModelBooleanProperty(viewModelInstance, path)
 
-  override fun colorProperty(path: String): HybridViewModelColorPropertySpec? {
-    return try {
-      runBlocking { viewModelInstance.getColorFlow(path).first() }
-      HybridViewModelColorProperty(viewModelInstance, path)
-    } catch (e: Exception) {
-      Log.e(TAG, "colorProperty failed for path '$path'", e)
-      null
-    }
-  }
+  override fun colorProperty(path: String) =
+    HybridViewModelColorProperty(viewModelInstance, path)
 
-  override fun enumProperty(path: String): HybridViewModelEnumPropertySpec? {
-    return try {
-      runBlocking { viewModelInstance.getEnumFlow(path).first() }
-      HybridViewModelEnumProperty(viewModelInstance, path)
-    } catch (e: Exception) {
-      Log.e(TAG, "enumProperty failed for path '$path'", e)
-      null
-    }
-  }
+  override fun enumProperty(path: String) =
+    HybridViewModelEnumProperty(viewModelInstance, path)
 
-  override fun triggerProperty(path: String): HybridViewModelTriggerPropertySpec? {
-    if (!hasProperty(path)) return null
-    return try {
-      HybridViewModelTriggerProperty(viewModelInstance, path)
-    } catch (e: Exception) {
-      Log.e(TAG, "triggerProperty failed for path '$path'", e)
-      null
-    }
-  }
+  override fun triggerProperty(path: String) =
+    HybridViewModelTriggerProperty(viewModelInstance, path)
 
   override fun imageProperty(path: String): HybridViewModelImagePropertySpec? {
     return try {
@@ -144,7 +84,6 @@ class HybridViewModelInstance(
   }
 
   private fun viewModelImpl(path: String): HybridViewModelInstanceSpec? {
-    if (!hasProperty(path)) return null
     val file = parentFile.riveFile ?: return null
     val source = ViewModelInstanceSource.Reference(viewModelInstance, path)
     val childVmi = ViewModelInstance.fromFile(file, source)
