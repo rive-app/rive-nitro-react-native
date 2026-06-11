@@ -26,4 +26,8 @@ class HybridViewModelStringProperty: HybridViewModelStringPropertySpec, ValuedPr
   func set(value: String) throws {
     property.value = value
   }
+
+  func setValueAsync(value: String) throws -> Promise<Void> {
+    return Promise.async { self.property.value = value }
+  }
 }

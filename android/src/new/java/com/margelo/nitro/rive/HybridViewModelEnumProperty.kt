@@ -37,6 +37,10 @@ class HybridViewModelEnumProperty(
     instance.setEnum(path, value)
   }
 
+  override fun setValueAsync(value: String): Promise<Unit> {
+    return Promise.async { set(value) }
+  }
+
   override fun getValueAsync(): Promise<String> {
     return Promise.async { instance.getEnumFlow(path).first() }
   }

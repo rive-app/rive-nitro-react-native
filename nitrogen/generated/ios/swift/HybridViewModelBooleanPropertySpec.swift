@@ -15,6 +15,7 @@ public protocol HybridViewModelBooleanPropertySpec_protocol: HybridObject, Hybri
   // Methods
   func getValueAsync() throws -> Promise<Bool>
   func set(value: Bool) throws -> Void
+  func setValueAsync(value: Bool) throws -> Promise<Void>
   func addListener(onChanged: @escaping (_ value: Bool) -> Void) throws -> () -> Void
   func removeListeners() throws -> Void
 }

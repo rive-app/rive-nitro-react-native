@@ -25,6 +25,10 @@ class HybridViewModelNumberProperty(private val viewModelNumber: ViewModelNumber
     viewModelNumber.value = value.toFloat()
   }
 
+  override fun setValueAsync(value: Double): Promise<Unit> {
+    return Promise.async { set(value) }
+  }
+
   override fun addListener(onChanged: (value: Double) -> Unit): () -> Unit {
     val remover = addListenerInternal(onChanged)
     ensureValueListenerJob(viewModelNumber.valueFlow.map { it.toDouble() })
