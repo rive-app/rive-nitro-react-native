@@ -149,11 +149,9 @@ describe('ViewModel Properties', () => {
   });
 
   it('non-existent properties return undefined', async () => {
-    if (
-      Platform.OS === 'ios' &&
-      RiveFileFactory.getBackend() === 'experimental'
-    ) {
-      // Experimental API can't sync-validate property paths, returns wrapper objects
+    if (isExperimental()) {
+      // Experimental backends return wrapper objects for any path — validity is
+      // checked lazily when a value is read (getValueAsync throws).
       return;
     }
 
@@ -166,6 +164,34 @@ describe('ViewModel Properties', () => {
     expect(instance.enumProperty('nonexistent')).toBeUndefined();
     expect(instance.triggerProperty('nonexistent')).toBeUndefined();
     expect(await instance.viewModelAsync('nonexistent')).toBeUndefined();
+  });
+
+  it('experimental: getValueAsync throws for non-existent property path', async () => {
+    if (!isExperimental()) {
+      return;
+    }
+
+    const instance = await createGordonInstance();
+
+    await expect(
+      instance.numberProperty('nonexistent')!.getValueAsync()
+    ).rejects.toBeDefined();
+
+    await expect(
+      instance.stringProperty('nonexistent')!.getValueAsync()
+    ).rejects.toBeDefined();
+
+    await expect(
+      instance.booleanProperty('nonexistent')!.getValueAsync()
+    ).rejects.toBeDefined();
+
+    await expect(
+      instance.colorProperty('nonexistent')!.getValueAsync()
+    ).rejects.toBeDefined();
+
+    await expect(
+      instance.enumProperty('nonexistent')!.getValueAsync()
+    ).rejects.toBeDefined();
   });
 });
 
