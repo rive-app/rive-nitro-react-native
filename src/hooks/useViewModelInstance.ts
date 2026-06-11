@@ -174,8 +174,8 @@ function createInstance(
   if (instanceName) {
     try {
       vmi = source.createInstanceByName(instanceName);
-    } catch {
-      // experimental backend throws for non-existent names
+    } catch (e) {
+      console.warn(`createInstanceByName('${instanceName}') failed:`, e);
     }
     if (!vmi) {
       return {
