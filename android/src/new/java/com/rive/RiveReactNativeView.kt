@@ -17,7 +17,6 @@ import app.rive.core.CommandQueue
 import app.rive.core.RiveSurface
 import app.rive.core.StateMachineHandle
 import com.facebook.react.uimanager.ThemedReactContext
-import com.margelo.nitro.rive.HybridViewModelInstance
 import com.margelo.nitro.rive.RiveErrorLogger
 import com.margelo.nitro.rive.RiveLog
 import kotlinx.coroutines.CompletableDeferred
@@ -304,7 +303,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
               val art = artboard ?: return@withContext
               val source = ViewModelSource.DefaultForArtboard(art).defaultInstance()
               val instance = ViewModelInstance.fromFile(riveFile, source)
-              if (instance.instanceHandle.handle == HybridViewModelInstance.NULL_INSTANCE_DEFAULT) {
+              if (instance.instanceHandle.handle == 1L) {
                 Log.d(TAG, "Auto-binding skipped: no default ViewModel for artboard")
                 return@withContext
               }
