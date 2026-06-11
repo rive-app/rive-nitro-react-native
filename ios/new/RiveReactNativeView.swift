@@ -22,7 +22,6 @@ struct ViewConfiguration {
 class RiveReactNativeView: UIView {
   private var riveUIView: RiveUIView?
   private var riveInstance: RiveRuntime.Rive?
-  private var eventListeners: [(UnifiedRiveEvent) -> Void] = []
   private var viewReadyContinuations: [CheckedContinuation<Void, Never>] = []
   private var isViewReady = false
   private var configTask: Task<Void, Never>?
@@ -134,14 +133,6 @@ class RiveReactNativeView: UIView {
       isPaused = false
       riveUIView?.isPaused = false
     }
-  }
-
-  func addEventListener(_ onEvent: @escaping (UnifiedRiveEvent) -> Void) {
-    eventListeners.append(onEvent)
-  }
-
-  func removeEventListeners() {
-    eventListeners.removeAll()
   }
 
   func setNumberInputValue(name: String, value: Float, path: String?) throws {

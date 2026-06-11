@@ -5,8 +5,6 @@ class HybridViewModelImageProperty: HybridViewModelImagePropertySpec {
   private var instance: ViewModelInstance?
   private var prop: ImageProperty?
   private var worker: Worker?
-  private var listenerTasks: [UUID: Task<Void, Never>] = [:]
-
   init(instance: ViewModelInstance, path: String, worker: Worker) {
     self.instance = instance
     self.prop = ImageProperty(path: path)
@@ -41,16 +39,9 @@ class HybridViewModelImageProperty: HybridViewModelImagePropertySpec {
     return {}
   }
 
-  func removeListeners() throws {
-    listenerTasks.values.forEach { $0.cancel() }
-    listenerTasks.removeAll()
-  }
+  func removeListeners() throws {}
 
-  func dispose() throws {
-    try removeListeners()
-  }
+  func dispose() throws {}
 
-  deinit {
-    listenerTasks.values.forEach { $0.cancel() }
-  }
+  deinit {}
 }

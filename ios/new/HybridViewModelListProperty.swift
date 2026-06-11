@@ -5,8 +5,6 @@ class HybridViewModelListProperty: HybridViewModelListPropertySpec {
   private let vmiInstance: ViewModelInstance
   private let prop: ListProperty
   private let worker: Worker
-  private var listenerTasks: [UUID: Task<Void, Never>] = [:]
-
   // Note: the concurrency API doesn't validate property paths — non-existent
   // properties return garbage values instead of throwing.
   init(instance: ViewModelInstance, path: String, worker: Worker) {
@@ -182,16 +180,9 @@ class HybridViewModelListProperty: HybridViewModelListPropertySpec {
     return {}
   }
 
-  func removeListeners() throws {
-    listenerTasks.values.forEach { $0.cancel() }
-    listenerTasks.removeAll()
-  }
+  func removeListeners() throws {}
 
-  func dispose() throws {
-    try removeListeners()
-  }
+  func dispose() throws {}
 
-  deinit {
-    listenerTasks.values.forEach { $0.cancel() }
-  }
+  deinit {}
 }
