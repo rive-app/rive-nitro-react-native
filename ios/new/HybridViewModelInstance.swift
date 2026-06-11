@@ -88,7 +88,6 @@ class HybridViewModelInstance: HybridViewModelInstanceSpec {
   }
 
   func replaceViewModel(path: String, instance: any HybridViewModelInstanceSpec) throws {
-    DeprecationWarning.warn("ViewModelInstance.replaceViewModel", replacement: "replaceViewModelAsync")
     guard let hybridInstance = instance as? HybridViewModelInstance else {
       throw RuntimeError.error(withMessage: "Invalid ViewModelInstance provided to replaceViewModel")
     }

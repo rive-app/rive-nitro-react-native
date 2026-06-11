@@ -27,7 +27,6 @@ class HybridViewModelEnumProperty: HybridViewModelEnumPropertySpec {
   }
 
   func set(value: String) throws {
-    DeprecationWarning.warn("EnumProperty.set(value:)", replacement: "setValueAsync")
     let inst = instance
     let p = prop
     Task { @MainActor in

@@ -27,7 +27,6 @@ class HybridViewModelBooleanProperty: HybridViewModelBooleanPropertySpec {
   }
 
   func set(value: Bool) throws {
-    DeprecationWarning.warn("BooleanProperty.set(value:)", replacement: "setValueAsync")
     let inst = instance
     let p = prop
     Task { @MainActor in

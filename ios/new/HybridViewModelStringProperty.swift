@@ -27,7 +27,6 @@ class HybridViewModelStringProperty: HybridViewModelStringPropertySpec {
   }
 
   func set(value: String) throws {
-    DeprecationWarning.warn("StringProperty.set(value:)", replacement: "setValueAsync")
     let inst = instance
     let p = prop
     Task { @MainActor in
