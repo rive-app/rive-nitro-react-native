@@ -111,9 +111,9 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
     return HybridViewModelInstance(vmi, hybridFile.riveWorker, hybridFile)
   }
 
-  override fun play() = asyncExecuteOnUiThread { view.play() }
-  override fun pause() = asyncExecuteOnUiThread { view.pause() }
-  override fun reset() = asyncExecuteOnUiThread { view.reset() }
+  override fun play(): Promise<Unit> = Promise.async { view.play() }
+  override fun pause(): Promise<Unit> = Promise.async { view.pause() }
+  override fun reset(): Promise<Unit> = Promise.async { view.reset() }
   override fun playIfNeeded() = view.playIfNeeded()
 
   override fun onEventListener(onEvent: (event: UnifiedRiveEvent) -> Unit) {
@@ -191,18 +191,6 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
     if (current != new) {
       setter(new)
       needsReload = true
-    }
-  }
-
-  private fun asyncExecuteOnUiThread(action: () -> Unit): Promise<Unit> {
-    return Promise.async {
-      context.currentActivity?.runOnUiThread {
-        try {
-          action()
-        } catch (e: Exception) {
-          throw RuntimeException(e.message, e)
-        }
-      }
     }
   }
 
