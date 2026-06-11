@@ -27,6 +27,7 @@ class HybridViewModelNumberProperty: HybridViewModelNumberPropertySpec {
   }
 
   func set(value: Double) throws {
+    DeprecationWarning.warn("NumberProperty.set(value:)", replacement: "setValueAsync")
     let inst = instance
     let p = prop
     let v = Float(value)

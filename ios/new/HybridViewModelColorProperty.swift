@@ -32,6 +32,7 @@ class HybridViewModelColorProperty: HybridViewModelColorPropertySpec {
   }
 
   func set(value: Double) throws {
+    DeprecationWarning.warn("ColorProperty.set(value:)", replacement: "setValueAsync")
     let color = Color(UInt32(truncatingIfNeeded: Int64(value)))
     let inst = instance
     let p = prop
