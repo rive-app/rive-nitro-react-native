@@ -173,13 +173,25 @@ describe('ViewModel Properties', () => {
 
     const instance = await createGordonInstance();
 
-    const num = instance.numberProperty('nonexistent');
-    expectDefined(num);
-    await expect(num.getValueAsync()).rejects.toBeDefined();
+    await expect(
+      instance.numberProperty('nonexistent').getValueAsync()
+    ).rejects.toBeDefined();
 
-    const str = instance.stringProperty('nonexistent');
-    expectDefined(str);
-    await expect(str.getValueAsync()).rejects.toBeDefined();
+    await expect(
+      instance.stringProperty('nonexistent').getValueAsync()
+    ).rejects.toBeDefined();
+
+    await expect(
+      instance.booleanProperty('nonexistent').getValueAsync()
+    ).rejects.toBeDefined();
+
+    await expect(
+      instance.colorProperty('nonexistent').getValueAsync()
+    ).rejects.toBeDefined();
+
+    await expect(
+      instance.enumProperty('nonexistent').getValueAsync()
+    ).rejects.toBeDefined();
   });
 });
 
