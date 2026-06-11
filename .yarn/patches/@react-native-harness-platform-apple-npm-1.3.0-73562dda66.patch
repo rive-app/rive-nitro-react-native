@@ -1,0 +1,40 @@
+diff --git a/dist/coverage-collector.js b/dist/coverage-collector.js
+index c50c3147561f112fbf2e1cc34ac2e30442f8132b..c7af0645c3b429f44451044cfde40ce9912c3eee 100644
+--- a/dist/coverage-collector.js
++++ b/dist/coverage-collector.js
+@@ -65,6 +65,21 @@ export const findAppExecutable = async (appBundlePath) => {
+     }
+     return path.join(appBundlePath, executableName);
+ };
++const detectBinaryArch = async (binaryPath) => {
++    try {
++        const { stdout } = await spawn('lipo', ['-archs', binaryPath]);
++        const archs = stdout.trim().split(/\s+/);
++        if (archs.length > 1) {
++            const { stdout: hostArch } = await spawn('uname', ['-m']);
++            const arch = hostArch.trim();
++            logger.debug(`[coverage] Universal binary detected (${archs.join(', ')}), using -arch ${arch}`);
++            return arch;
++        }
++    }
++    catch {
++    }
++    return null;
++};
+ export const generateLcov = async (options) => {
+     const { profdataPath, binaryPath, outputPath, sourceFilters } = options;
+     const args = [
+@@ -72,8 +87,12 @@ export const generateLcov = async (options) => {
+         'export',
+         '-format=lcov',
+         `-instr-profile=${profdataPath}`,
+-        binaryPath,
+     ];
++    const arch = await detectBinaryArch(binaryPath);
++    if (arch) {
++        args.push(`-arch=${arch}`);
++    }
++    args.push(binaryPath);
+     if (sourceFilters) {
+         for (const filter of sourceFilters) {
+             args.push(`--sources=${filter}`);

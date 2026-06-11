@@ -4627,6 +4627,28 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@react-native-harness/coverage-ios@npm:1.3.0":
+  version: 1.3.0
+  resolution: "@react-native-harness/coverage-ios@npm:1.3.0"
+  dependencies:
+    tslib: ^2.3.0
+  peerDependencies:
+    react-native: "*"
+  checksum: 9122359cd8d2efebdcd3cf4abb6e7a825785e2ea7a1d54f8f0a5502a0c81a3a6aa5685940cf0fe8aac83a0bf0bb9078f63aa51ddca2d1a31ff7e05b1a2e226d2
+  languageName: node
+  linkType: hard
+
+"@react-native-harness/coverage-ios@patch:@react-native-harness/coverage-ios@npm%3A1.3.0#./.yarn/patches/@react-native-harness-coverage-ios-npm-1.3.0-38903ba033.patch::locator=%40rive-app%2Freact-native%40workspace%3A.":
+  version: 1.3.0
+  resolution: "@react-native-harness/coverage-ios@patch:@react-native-harness/coverage-ios@npm%3A1.3.0#./.yarn/patches/@react-native-harness-coverage-ios-npm-1.3.0-38903ba033.patch::version=1.3.0&hash=82a9c4&locator=%40rive-app%2Freact-native%40workspace%3A."
+  dependencies:
+    tslib: ^2.3.0
+  peerDependencies:
+    react-native: "*"
+  checksum: b486c7a5c26f0acd7f75322e89f9afd107823b83d06ad3173a6a0406f48cf5811e6847174104e5ee575405b1934e0c0f6c6bfa87555a4406babd54ca31c3dc4b
+  languageName: node
+  linkType: hard
+
 "@react-native-harness/jest@npm:1.3.0":
   version: 1.3.0
   resolution: "@react-native-harness/jest@npm:1.3.0"
@@ -4683,6 +4705,20 @@ __metadata:
     yargs: ^17.7.2
     zod: ^3.25.67
   checksum: 09b9530deb657c89786ab9d612ef2218804a6e1ea98d64b3a6d5e670793feb999be0ed7199e4a57459413c631285fb9c9f1596367d3255702409161388a76690
+  languageName: node
+  linkType: hard
+
+"@react-native-harness/platform-apple@patch:@react-native-harness/platform-apple@npm%3A1.3.0#./.yarn/patches/@react-native-harness-platform-apple-npm-1.3.0-73562dda66.patch::locator=%40rive-app%2Freact-native%40workspace%3A.":
+  version: 1.3.0
+  resolution: "@react-native-harness/platform-apple@patch:@react-native-harness/platform-apple@npm%3A1.3.0#./.yarn/patches/@react-native-harness-platform-apple-npm-1.3.0-73562dda66.patch::version=1.3.0&hash=e90e19&locator=%40rive-app%2Freact-native%40workspace%3A."
+  dependencies:
+    "@react-native-harness/config": 1.3.0
+    "@react-native-harness/platforms": 1.3.0
+    "@react-native-harness/tools": 1.3.0
+    tslib: ^2.3.0
+    yargs: ^17.7.2
+    zod: ^3.25.67
+  checksum: aaef0a4f1e0f6a4fe56004384d766bdbc9efd31ea4d8dc203d7db1c1ef52d170a467f5b6b8be6ec4931afff118868e54bc60b740fa0940eac959dbfd93e31f06
   languageName: node
   linkType: hard
 
@@ -17361,6 +17397,7 @@ __metadata:
     "@react-native-community/cli": 19.1.2
     "@react-native-community/cli-platform-android": 19.1.2
     "@react-native-community/cli-platform-ios": 19.1.2
+    "@react-native-harness/coverage-ios": 1.3.0
     "@react-native-harness/platform-android": 1.3.0
     "@react-native-harness/platform-apple": 1.3.0
     "@react-native-picker/picker": ^2.11.4
