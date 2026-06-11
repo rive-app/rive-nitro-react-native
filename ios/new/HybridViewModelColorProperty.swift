@@ -4,7 +4,7 @@ import NitroModules
 class HybridViewModelColorProperty: HybridViewModelColorPropertySpec {
   private let instance: ViewModelInstance
   private let prop: ColorProperty
-  private var listenerTasks: [UUID: Task<Void, Never>] = [:]
+  private let listeners = PropertyListenerStore()
 
   init(instance: ViewModelInstance, path: String) {
     self.instance = instance
@@ -45,8 +45,7 @@ class HybridViewModelColorProperty: HybridViewModelColorPropertySpec {
   }
 
   func addListener(onChanged: @escaping (Double) -> Void) throws -> () -> Void {
-    let id = UUID()
-    let task = Task { @MainActor [weak self] in
+    return listeners.register(Task { @MainActor [weak self] in
       guard let self else { return }
       let current = try? await self.instance.value(of: self.prop)
       if let current, !Task.isCancelled {
@@ -64,24 +63,10 @@ class HybridViewModelColorProperty: HybridViewModelColorPropertySpec {
           try? await Task.sleep(nanoseconds: 100_000_000)
         }
       }
-    }
-    listenerTasks[id] = task
-    return { [weak self] in
-      self?.listenerTasks[id]?.cancel()
-      self?.listenerTasks.removeValue(forKey: id)
-    }
+    })
   }
 
-  func removeListeners() throws {
-    listenerTasks.values.forEach { $0.cancel() }
-    listenerTasks.removeAll()
-  }
-
-  func dispose() throws {
-    try removeListeners()
-  }
-
-  deinit {
-    listenerTasks.values.forEach { $0.cancel() }
-  }
+  func removeListeners() throws { listeners.cancelAll() }
+  func dispose() throws { listeners.cancelAll() }
+  deinit { listeners.cancelAll() }
 }

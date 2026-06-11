@@ -90,9 +90,11 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
         this@RiveReactNativeView.surfaceWidth = w
         this@RiveReactNativeView.surfaceHeight = h
         this@RiveReactNativeView.riveWorker?.let { worker ->
-          this@RiveReactNativeView.riveSurface = worker.createRiveSurface(st)
-          Log.d(TAG, "onSurfaceTextureAvailable: surface created")
-          resizeArtboardIfLayout()
+          if (this@RiveReactNativeView.riveSurface == null) {
+            this@RiveReactNativeView.riveSurface = worker.createRiveSurface(st)
+            Log.d(TAG, "onSurfaceTextureAvailable: surface created")
+            resizeArtboardIfLayout()
+          }
         }
       }
 

@@ -19,7 +19,11 @@ export { NitroRiveView } from './core/NitroRiveViewComponent';
 export { RiveView, type RiveViewProps } from './core/RiveView';
 export type { RiveViewMethods };
 export type RiveViewRef = HybridView<NativeRiveViewProps, RiveViewTSMethods>;
-export type { RiveFile, RiveEnumDefinition } from './specs/RiveFile.nitro';
+export type {
+  RiveFile,
+  RiveEnumDefinition,
+  RiveAssetType,
+} from './specs/RiveFile.nitro';
 export type {
   ViewModel,
   ViewModelInstance,
