@@ -166,22 +166,24 @@ class RiveReactNativeView: UIView {
   // MARK: - Internal
 
   private func setupRiveUIView(with rive: RiveRuntime.Rive) {
-    // Remove existing view if any
-    // Note: The old RiveUIView's MTKView may still fire a few draw calls after removal,
-    // which can cause "state machine not found" errors if the old state machine is deallocated.
-    // This is a limitation of the experimental API - RiveUIView.rive is not publicly settable.
-    riveUIView?.removeFromSuperview()
-
-    let uiView = RiveUIView(rive: rive, isPaused: isPaused)
-    uiView.translatesAutoresizingMaskIntoConstraints = false
-    addSubview(uiView)
-    NSLayoutConstraint.activate([
-      uiView.leadingAnchor.constraint(equalTo: leadingAnchor),
-      uiView.trailingAnchor.constraint(equalTo: trailingAnchor),
-      uiView.topAnchor.constraint(equalTo: topAnchor),
-      uiView.bottomAnchor.constraint(equalTo: bottomAnchor),
-    ])
-    self.riveUIView = uiView
+    if let existing = riveUIView {
+      // Reuse the existing view — avoids tearing down the MTKView on every
+      // reconfigure, which previously caused orphaned draw calls ("state machine
+      // not found") from the old MTKView after removeFromSuperview.
+      existing.rive = rive
+      existing.isPaused = isPaused
+    } else {
+      let uiView = RiveUIView(rive: rive, isPaused: isPaused)
+      uiView.translatesAutoresizingMaskIntoConstraints = false
+      addSubview(uiView)
+      NSLayoutConstraint.activate([
+        uiView.leadingAnchor.constraint(equalTo: leadingAnchor),
+        uiView.trailingAnchor.constraint(equalTo: trailingAnchor),
+        uiView.topAnchor.constraint(equalTo: topAnchor),
+        uiView.bottomAnchor.constraint(equalTo: bottomAnchor),
+      ])
+      self.riveUIView = uiView
+    }
   }
 
   private func cleanup() {
