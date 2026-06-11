@@ -22,6 +22,7 @@ struct ViewConfiguration {
 class RiveReactNativeView: UIView {
   private var riveUIView: RiveUIView?
   private var riveInstance: RiveRuntime.Rive?
+  private var pendingBindInstance: ViewModelInstance?
   private var viewReadyContinuations: [CheckedContinuation<Void, Never>] = []
   private var isViewReady = false
   private var configTask: Task<Void, Never>?
@@ -87,6 +88,10 @@ class RiveReactNativeView: UIView {
 
           self.riveInstance = rive
           self.isPaused = !config.autoPlay
+          if let pending = self.pendingBindInstance {
+            self.pendingBindInstance = nil
+            rive.stateMachine.bindViewModelInstance(pending)
+          }
           self.setupRiveUIView(with: rive)
 
           if !self.isViewReady {
@@ -106,7 +111,12 @@ class RiveReactNativeView: UIView {
   }
 
   func bindViewModelInstance(viewModelInstance: ViewModelInstance) {
-    riveInstance?.stateMachine.bindViewModelInstance(viewModelInstance)
+    if let rive = riveInstance {
+      rive.stateMachine.bindViewModelInstance(viewModelInstance)
+    } else {
+      // configTask hasn't finished yet — queue it to apply once riveInstance is set
+      pendingBindInstance = viewModelInstance
+    }
   }
 
   func getViewModelInstance() -> ViewModelInstance? {
@@ -193,6 +203,7 @@ class RiveReactNativeView: UIView {
     riveUIView?.removeFromSuperview()
     riveUIView = nil
     riveInstance = nil
+    pendingBindInstance = nil
   }
 
   deinit {
