@@ -448,10 +448,7 @@ describe('setValueAsync() updates value', () => {
   it('numberProperty setValueAsync updates value', async () => {
     // setValueAsync hangs on iOS legacy due to listener notification
     // dispatching back to the JS thread while it's awaiting the promise
-    if (
-      Platform.OS === 'ios' &&
-      RiveFileFactory.getBackend() === 'legacy'
-    ) {
+    if (Platform.OS === 'ios' && RiveFileFactory.getBackend() === 'legacy') {
       return;
     }
     const instance = await createGordonInstance();
