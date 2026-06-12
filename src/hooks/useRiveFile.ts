@@ -12,6 +12,7 @@ import type {
   ReferencedAssets,
   ResolvedReferencedAssets,
 } from '../core/ReferencedAssets';
+import type { RiveAsset, RiveFileSchema, TypedRiveFile } from '../core/TypedRiveFile';
 
 export type { ReferencedAssets, ResolvedReferencedAssets };
 export type RiveFileInput = number | { uri: string } | string | ArrayBuffer;
@@ -92,6 +93,17 @@ export type UseRiveFileResult =
   | { riveFile: null; isLoading: false; error: Error }
   | { riveFile: undefined; isLoading: true; error: null };
 
+export function useRiveFile<T extends RiveFileSchema>(
+  input: RiveAsset<T>,
+  options?: UseRiveFileOptions
+):
+  | { riveFile: TypedRiveFile<T>; isLoading: false; error: null }
+  | { riveFile: null; isLoading: false; error: Error }
+  | { riveFile: undefined; isLoading: true; error: null };
+export function useRiveFile(
+  input: RiveFileInput | undefined,
+  options?: UseRiveFileOptions
+): UseRiveFileResult;
 export function useRiveFile(
   input: RiveFileInput | undefined,
   options: UseRiveFileOptions = {}
