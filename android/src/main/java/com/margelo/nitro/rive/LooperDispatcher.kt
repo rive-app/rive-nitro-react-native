@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 @Suppress("JavaJniMissingFunction")
 @Keep
 @DoNotStrip
-class RiveWorkletDispatcher {
+class LooperDispatcher {
     @DoNotStrip
     @Suppress("unused")
     private val mHybridData: HybridData = initHybrid()

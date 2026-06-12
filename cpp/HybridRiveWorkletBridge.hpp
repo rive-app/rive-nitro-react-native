@@ -7,7 +7,7 @@
 #include <dispatch/dispatch.h>
 #include <pthread.h>
 #elif __ANDROID__
-#include "JRiveWorkletDispatcher.hpp"
+#include "JLooperDispatcher.hpp"
 #endif
 
 namespace margelo::nitro::rive {
@@ -62,7 +62,7 @@ private:
     auto dispatcher = std::make_shared<UIThreadDispatcher>();
     Dispatcher::installRuntimeGlobalDispatcher(runtime, dispatcher);
 #elif __ANDROID__
-    auto javaDispatcher = JRiveWorkletDispatcher::create();
+    auto javaDispatcher = JLooperDispatcher::create();
     auto dispatcher = std::make_shared<AndroidUIThreadDispatcher>(javaDispatcher);
     Dispatcher::installRuntimeGlobalDispatcher(runtime, dispatcher);
 #endif

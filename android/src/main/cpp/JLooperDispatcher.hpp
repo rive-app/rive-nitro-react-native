@@ -10,9 +10,9 @@ namespace margelo::nitro::rive {
 
 using namespace facebook;
 
-class JRiveWorkletDispatcher : public jni::HybridClass<JRiveWorkletDispatcher> {
+class JLooperDispatcher : public jni::HybridClass<JLooperDispatcher> {
 public:
-  static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/rive/RiveWorkletDispatcher;";
+  static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/rive/LooperDispatcher;";
 
   static jni::local_ref<jhybriddata> initHybrid(jni::alias_ref<jhybridobject> jThis);
   static void registerNatives();
@@ -28,22 +28,22 @@ private:
   void trigger();
   void scheduleTrigger();
 
-  jni::global_ref<JRiveWorkletDispatcher::javaobject> _javaPart;
+  jni::global_ref<JLooperDispatcher::javaobject> _javaPart;
   std::queue<std::function<void()>> _jobs;
   std::recursive_mutex _mutex;
 
-  explicit JRiveWorkletDispatcher(jni::alias_ref<JRiveWorkletDispatcher::jhybridobject> jThis);
+  explicit JLooperDispatcher(jni::alias_ref<JLooperDispatcher::jhybridobject> jThis);
 };
 
 class AndroidUIThreadDispatcher : public Dispatcher {
 public:
-  explicit AndroidUIThreadDispatcher(jni::local_ref<JRiveWorkletDispatcher::javaobject> javaDispatcher);
+  explicit AndroidUIThreadDispatcher(jni::local_ref<JLooperDispatcher::javaobject> javaDispatcher);
 
   void runAsync(std::function<void()>&& function) override;
   void runSync(std::function<void()>&& function) override;
 
 private:
-  jni::global_ref<JRiveWorkletDispatcher::javaobject> _javaDispatcher;
+  jni::global_ref<JLooperDispatcher::javaobject> _javaDispatcher;
 };
 
 } // namespace margelo::nitro::rive
