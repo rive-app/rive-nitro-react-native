@@ -54,6 +54,7 @@ export default defineConfig([
       'node_modules/',
       'lib/',
       '**/.expo/',
+      '**/*.test-d.ts',
     ],
   },
 ]);

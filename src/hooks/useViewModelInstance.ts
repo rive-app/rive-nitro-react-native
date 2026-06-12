@@ -3,6 +3,8 @@
 import { useMemo, useRef } from 'react';
 import type { ViewModel, ViewModelInstance } from '../specs/ViewModel.nitro';
 import type { RiveFile } from '../specs/RiveFile.nitro';
+import type { RiveFileSchema, TypedRiveFile } from '../core/TypedRiveFile';
+import type { TypedViewModelInstance } from '../core/TypedViewModelInstance';
 import type { RiveViewRef } from '../index';
 import { callDispose } from '../core/callDispose';
 import { ArtboardByName } from '../specs/ArtboardBy';
@@ -263,6 +265,18 @@ export type UseViewModelInstanceResult =
  * if (error) console.error(error.message);
  * ```
  */
+// Typed overload: TypedRiveFile + literal viewModelName → TypedViewModelInstance
+export function useViewModelInstance<
+  T extends RiveFileSchema,
+  N extends Extract<keyof T['viewModels'], string>,
+>(
+  source: TypedRiveFile<T> | null | undefined,
+  params: UseViewModelInstanceFileParams & { viewModelName: N }
+): {
+  instance: TypedViewModelInstance<T, N> | null | undefined;
+  error: Error | null;
+};
+
 // RiveFile overloads
 export function useViewModelInstance(
   source: RiveFile,
