@@ -14,7 +14,7 @@ namespace margelo::nitro::rive {
 
 #if __APPLE__
 
-class MainThreadDispatcher : public Dispatcher {
+class UIThreadDispatcher : public Dispatcher {
 public:
   void runAsync(std::function<void()>&& function) override {
     __block auto func = std::move(function);
@@ -59,11 +59,11 @@ private:
                         const jsi::Value* args,
                         size_t count) {
 #if __APPLE__
-    auto dispatcher = std::make_shared<MainThreadDispatcher>();
+    auto dispatcher = std::make_shared<UIThreadDispatcher>();
     Dispatcher::installRuntimeGlobalDispatcher(runtime, dispatcher);
 #elif __ANDROID__
     auto javaDispatcher = JRiveWorkletDispatcher::create();
-    auto dispatcher = std::make_shared<AndroidMainThreadDispatcher>(javaDispatcher);
+    auto dispatcher = std::make_shared<AndroidUIThreadDispatcher>(javaDispatcher);
     Dispatcher::installRuntimeGlobalDispatcher(runtime, dispatcher);
 #endif
     return jsi::Value::undefined();

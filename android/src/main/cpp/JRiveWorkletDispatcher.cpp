@@ -66,15 +66,15 @@ void JRiveWorkletDispatcher::registerNatives() {
   });
 }
 
-AndroidMainThreadDispatcher::AndroidMainThreadDispatcher(
+AndroidUIThreadDispatcher::AndroidUIThreadDispatcher(
     jni::local_ref<JRiveWorkletDispatcher::javaobject> javaDispatcher)
     : _javaDispatcher(jni::make_global(javaDispatcher)) {}
 
-void AndroidMainThreadDispatcher::runAsync(std::function<void()>&& function) {
+void AndroidUIThreadDispatcher::runAsync(std::function<void()>&& function) {
   _javaDispatcher->cthis()->runAsync(std::move(function));
 }
 
-void AndroidMainThreadDispatcher::runSync(std::function<void()>&& function) {
+void AndroidUIThreadDispatcher::runSync(std::function<void()>&& function) {
   _javaDispatcher->cthis()->runSync(std::move(function));
 }
 

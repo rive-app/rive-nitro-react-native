@@ -35,9 +35,9 @@ private:
   explicit JRiveWorkletDispatcher(jni::alias_ref<JRiveWorkletDispatcher::jhybridobject> jThis);
 };
 
-class AndroidMainThreadDispatcher : public Dispatcher {
+class AndroidUIThreadDispatcher : public Dispatcher {
 public:
-  explicit AndroidMainThreadDispatcher(jni::local_ref<JRiveWorkletDispatcher::javaobject> javaDispatcher);
+  explicit AndroidUIThreadDispatcher(jni::local_ref<JRiveWorkletDispatcher::javaobject> javaDispatcher);
 
   void runAsync(std::function<void()>&& function) override;
   void runSync(std::function<void()>&& function) override;
