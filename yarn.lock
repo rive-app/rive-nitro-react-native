@@ -4550,43 +4550,42 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native-harness/babel-preset@npm:1.3.0":
-  version: 1.3.0
-  resolution: "@react-native-harness/babel-preset@npm:1.3.0"
+"@react-native-harness/babel-preset@npm:1.4.0-rc.1":
+  version: 1.4.0-rc.1
+  resolution: "@react-native-harness/babel-preset@npm:1.4.0-rc.1"
   dependencies:
     "@babel/plugin-transform-class-static-block": ^7.27.1
     babel-plugin-istanbul: ^7.0.1
   peerDependencies:
     "@babel/core": ^7.22.0
     "@babel/plugin-transform-react-jsx": "*"
-  checksum: 96d39143a3b16d3e63324fb30498f9b4e308e4785b57c957e65a14ef78d11c745430df553429585de3a247a7d44560d42ce470e1a8307b63250c7a16bca8339c
+  checksum: 3d1bbc403196a9a139cfb1b16e5fe310626d93e31ce991c8cf8d5111246d6d0cb8df4755d7b2340fa0d5bc1a9d0eead7b844b58211bd13220456fa5199b7f2e2
   languageName: node
   linkType: hard
 
-"@react-native-harness/bridge@npm:1.3.0":
-  version: 1.3.0
-  resolution: "@react-native-harness/bridge@npm:1.3.0"
+"@react-native-harness/bridge@npm:1.4.0-rc.1":
+  version: 1.4.0-rc.1
+  resolution: "@react-native-harness/bridge@npm:1.4.0-rc.1"
   dependencies:
-    "@react-native-harness/platforms": 1.3.0
-    "@react-native-harness/tools": 1.3.0
-    birpc: ^2.4.0
+    "@react-native-harness/platforms": 1.4.0-rc.1
+    "@react-native-harness/tools": 1.4.0-rc.1
     pixelmatch: ^7.1.0
     pngjs: ^7.0.0
     ssim.js: ^3.5.0
     tslib: ^2.3.0
     ws: ^8.18.2
-  checksum: 5da8c2912de3d425b3f14109b1be2f6ec04cb223b866504525d11dd6c272fbda1760b82c29b09f7fb7580110653bd74a46b9db5989e5b625fe38f6ba060524d5
+  checksum: e1e294a94c01312f0a65e0c3f0a83ca60e4e2b30335e763694caf64d1c558e8027edcb00ecf0c88c8ebe73e4ae1f533905546930f0e48b18fae8db5dece88820
   languageName: node
   linkType: hard
 
-"@react-native-harness/bundler-metro@npm:1.3.0":
-  version: 1.3.0
-  resolution: "@react-native-harness/bundler-metro@npm:1.3.0"
+"@react-native-harness/bundler-metro@npm:1.4.0-rc.1":
+  version: 1.4.0-rc.1
+  resolution: "@react-native-harness/bundler-metro@npm:1.4.0-rc.1"
   dependencies:
-    "@react-native-harness/babel-preset": 1.3.0
-    "@react-native-harness/config": 1.3.0
-    "@react-native-harness/runtime": 1.3.0
-    "@react-native-harness/tools": 1.3.0
+    "@react-native-harness/babel-preset": 1.4.0-rc.1
+    "@react-native-harness/config": 1.4.0-rc.1
+    "@react-native-harness/runtime": 1.4.0-rc.1
+    "@react-native-harness/tools": 1.4.0-rc.1
     "@react-native/metro-config": "*"
     connect: ^3.7.0
     nocache: ^4.0.0
@@ -4596,123 +4595,123 @@ __metadata:
     metro-cache: "*"
     metro-config: "*"
     metro-resolver: "*"
-  checksum: b3ca0b702c2caa0b5b24592defe077f5a2f028cf3c3f65ecf62c684403daf7f84d15e239851e363cc607446c078c9b608f33b505b404d513522da9166df7e9ee
+  checksum: 236bb0b73a43c2900324a0d917250fc56d0b09c18c26bd975cc8e6fde1e3a0b68bd4c9242a294257fe80e21317c2b9544f3b398909afd69e33c099d3aff3acb7
   languageName: node
   linkType: hard
 
-"@react-native-harness/cli@npm:1.3.0":
-  version: 1.3.0
-  resolution: "@react-native-harness/cli@npm:1.3.0"
+"@react-native-harness/cli@npm:1.4.0-rc.1":
+  version: 1.4.0-rc.1
+  resolution: "@react-native-harness/cli@npm:1.4.0-rc.1"
   dependencies:
-    "@react-native-harness/bridge": 1.3.0
-    "@react-native-harness/config": 1.3.0
-    "@react-native-harness/platforms": 1.3.0
-    "@react-native-harness/tools": 1.3.0
+    "@react-native-harness/bridge": 1.4.0-rc.1
+    "@react-native-harness/config": 1.4.0-rc.1
+    "@react-native-harness/platforms": 1.4.0-rc.1
+    "@react-native-harness/tools": 1.4.0-rc.1
     tslib: ^2.3.0
   peerDependencies:
     jest-cli: "*"
-  checksum: 41a90548da0c59be2ad7272e6d8f2686c43e253aaaf74fdc715a0403c4ec8e34e2ed88caf00336bc7ccfd956aa49a8087002c37d1f082f540044134677d464d9
+  checksum: 85435c61f044b4bfe772b26d29a8dfcc1630626ffc8408a6a4266df4f3c1f10144f96d3ef36f5920cdf529ab2038f6fc1cb9354d5d85669f5b1bc8ccec9995ca
   languageName: node
   linkType: hard
 
-"@react-native-harness/config@npm:1.3.0":
-  version: 1.3.0
-  resolution: "@react-native-harness/config@npm:1.3.0"
+"@react-native-harness/config@npm:1.4.0-rc.1":
+  version: 1.4.0-rc.1
+  resolution: "@react-native-harness/config@npm:1.4.0-rc.1"
   dependencies:
-    "@react-native-harness/plugins": 1.3.0
-    "@react-native-harness/tools": 1.3.0
+    "@react-native-harness/plugins": 1.4.0-rc.1
+    "@react-native-harness/tools": 1.4.0-rc.1
     tslib: ^2.3.0
     zod: ^3.25.67
-  checksum: 1f9c7db451fc7d8426af56a9c5cd4cc547890b4cf8c2bd73858324631a6f355254bb0c27c1bc4106f47692f75746ce33914194076dea219e97d492e069bb4bb8
+  checksum: e2a7667e77a148c8d663d82473f6515afc778df9632453fcb17be1d4ab0df3ab8e7b8273fe521fc0ab62fb7f742f6f0bc06ad65062576c48f4548090e2cc0e62
   languageName: node
   linkType: hard
 
-"@react-native-harness/jest@npm:1.3.0":
-  version: 1.3.0
-  resolution: "@react-native-harness/jest@npm:1.3.0"
+"@react-native-harness/jest@npm:1.4.0-rc.1":
+  version: 1.4.0-rc.1
+  resolution: "@react-native-harness/jest@npm:1.4.0-rc.1"
   dependencies:
     "@jest/test-result": ^30.2.0
-    "@react-native-harness/bridge": 1.3.0
-    "@react-native-harness/bundler-metro": 1.3.0
-    "@react-native-harness/config": 1.3.0
-    "@react-native-harness/platforms": 1.3.0
-    "@react-native-harness/plugins": 1.3.0
-    "@react-native-harness/tools": 1.3.0
+    "@react-native-harness/bridge": 1.4.0-rc.1
+    "@react-native-harness/bundler-metro": 1.4.0-rc.1
+    "@react-native-harness/config": 1.4.0-rc.1
+    "@react-native-harness/platforms": 1.4.0-rc.1
+    "@react-native-harness/plugins": 1.4.0-rc.1
+    "@react-native-harness/tools": 1.4.0-rc.1
     chalk: ^4.1.2
     jest-message-util: ^30.2.0
     jest-util: ^30.2.0
     tslib: ^2.3.0
     yargs: ^17.7.2
-  checksum: f8fd90f2784a326cf7b339236883ae55c05c58c2ad85cc1a8ae52b3985e1ab34f1f82114ad57cd605d235c44f7c7077ba940466a47555f8abd2d6cde8904bc9f
+  checksum: 7790b19fd5ba2d084b5fa9a6a2cf1ea984dd3546dfcda2830905582aeac7b0b5e40b6fdcf2bb9ebceda55fe781ebc562a7b5c6e4ce99067711df157b50c43479
   languageName: node
   linkType: hard
 
-"@react-native-harness/metro@npm:1.3.0":
-  version: 1.3.0
-  resolution: "@react-native-harness/metro@npm:1.3.0"
+"@react-native-harness/metro@npm:1.4.0-rc.1":
+  version: 1.4.0-rc.1
+  resolution: "@react-native-harness/metro@npm:1.4.0-rc.1"
   dependencies:
     tslib: ^2.3.0
   peerDependencies:
     metro: "*"
-  checksum: f3a92fef8a89ac1cc99465b86da7ab2f581c095b2fc3d9a636558f36815829601415b1cd96f1a533307a556d09fe238a7e54acd7bfeff317b032a5640c242f22
+  checksum: 43dbdc4df5c372abbcf5193c85ec2a829223697570b0539d7cbb159304cc7892e1a74c6ec4b637c1d1bbfc53d56d0ecd353ae1627842d9f60d312d7158e219ff
   languageName: node
   linkType: hard
 
-"@react-native-harness/platform-android@npm:1.3.0":
-  version: 1.3.0
-  resolution: "@react-native-harness/platform-android@npm:1.3.0"
+"@react-native-harness/platform-android@npm:1.4.0-rc.1":
+  version: 1.4.0-rc.1
+  resolution: "@react-native-harness/platform-android@npm:1.4.0-rc.1"
   dependencies:
-    "@react-native-harness/config": 1.3.0
-    "@react-native-harness/platforms": 1.3.0
-    "@react-native-harness/tools": 1.3.0
+    "@react-native-harness/config": 1.4.0-rc.1
+    "@react-native-harness/platforms": 1.4.0-rc.1
+    "@react-native-harness/tools": 1.4.0-rc.1
     tslib: ^2.3.0
     vite: ^7.2.2
     zod: ^3.25.67
-  checksum: 75dd5ebf7a726a612a1c35eba92f702a2d6b65cbf5b4f218f417da946c93e215df9a16b0083ad2515d7bea7b04a82e3b92b4a4b6321b2c94b56c38c08e648305
+  checksum: 28b69cbb3a74a4b22ca1be1f2e151985284f1769eb18d1e6856d099d171782a479cc00da5f5cb4040c12e6d613e747e027d899b42af44861313728c1d6378736
   languageName: node
   linkType: hard
 
-"@react-native-harness/platform-apple@npm:1.3.0":
-  version: 1.3.0
-  resolution: "@react-native-harness/platform-apple@npm:1.3.0"
+"@react-native-harness/platform-apple@npm:1.4.0-rc.1":
+  version: 1.4.0-rc.1
+  resolution: "@react-native-harness/platform-apple@npm:1.4.0-rc.1"
   dependencies:
-    "@react-native-harness/config": 1.3.0
-    "@react-native-harness/platforms": 1.3.0
-    "@react-native-harness/tools": 1.3.0
+    "@react-native-harness/config": 1.4.0-rc.1
+    "@react-native-harness/platforms": 1.4.0-rc.1
+    "@react-native-harness/tools": 1.4.0-rc.1
     tslib: ^2.3.0
     yargs: ^17.7.2
     zod: ^3.25.67
-  checksum: 09b9530deb657c89786ab9d612ef2218804a6e1ea98d64b3a6d5e670793feb999be0ed7199e4a57459413c631285fb9c9f1596367d3255702409161388a76690
+  checksum: bc560e0e3b5cf6d3b7621911ddf81f827253f438068c7bcd7b00803b409443c48414dd84827e1cf9b2a00e34d0ebe051a0d84e37a9c14c137b6711bf455b63b2
   languageName: node
   linkType: hard
 
-"@react-native-harness/platforms@npm:1.3.0":
-  version: 1.3.0
-  resolution: "@react-native-harness/platforms@npm:1.3.0"
+"@react-native-harness/platforms@npm:1.4.0-rc.1":
+  version: 1.4.0-rc.1
+  resolution: "@react-native-harness/platforms@npm:1.4.0-rc.1"
   dependencies:
     tslib: ^2.3.0
-  checksum: 58e469a425d2b58fa9b2c5aeb814b4a8a59ae05f08ebfea00200601f96a6e501db8b77b5f5ce5227eeeaad017aaf9aa335c77714df866813a02d9681c29df823
+  checksum: 4dfc6646219bab987f30f8ce1a8d2bbdd4c6d0df4072bb975de06ce5281feb9f995b312a56116fad4408b38bad0b1c56dd95a6f7beba61fc755d50c5a7416b52
   languageName: node
   linkType: hard
 
-"@react-native-harness/plugins@npm:1.3.0":
-  version: 1.3.0
-  resolution: "@react-native-harness/plugins@npm:1.3.0"
+"@react-native-harness/plugins@npm:1.4.0-rc.1":
+  version: 1.4.0-rc.1
+  resolution: "@react-native-harness/plugins@npm:1.4.0-rc.1"
   dependencies:
-    "@react-native-harness/bridge": 1.3.0
-    "@react-native-harness/platforms": 1.3.0
-    "@react-native-harness/tools": 1.3.0
+    "@react-native-harness/bridge": 1.4.0-rc.1
+    "@react-native-harness/platforms": 1.4.0-rc.1
+    "@react-native-harness/tools": 1.4.0-rc.1
     hookable: ^6.1.0
     tslib: ^2.3.0
-  checksum: 5cdfbe3e6254eea9fcdc77ad238c07f65b5b8ad637732d486a8f82585a7cbbba5ef5333072783560e710ded748a21fdcc25179239524c72e691521298b8f66ce
+  checksum: aa346d26f778b960834600f9e90414e682caad725c9dbcdb50f398ef525d0c2247c37f9d56fe81ecc6ea18c4dbdc4f1e4efda14647eeda5c1d97e0bd33895b56
   languageName: node
   linkType: hard
 
-"@react-native-harness/runtime@npm:1.3.0":
-  version: 1.3.0
-  resolution: "@react-native-harness/runtime@npm:1.3.0"
+"@react-native-harness/runtime@npm:1.4.0-rc.1":
+  version: 1.4.0-rc.1
+  resolution: "@react-native-harness/runtime@npm:1.4.0-rc.1"
   dependencies:
-    "@react-native-harness/bridge": 1.3.0
+    "@react-native-harness/bridge": 1.4.0-rc.1
     "@vitest/expect": 4.0.16
     "@vitest/spy": 4.0.16
     chai: ^6.2.2
@@ -4723,13 +4722,13 @@ __metadata:
   peerDependencies:
     react: "*"
     react-native: "*"
-  checksum: 4e35a461066597b471a9f18250b21d9df3617037b67e632402213ec59ccb0aa7f617bc10aedf0f70b57e1551435dadac3b90f026d366bff4777323e710f7724e
+  checksum: 98124bb058bc59f0d5dc6827ddce57e5942991073880338cdb7f24259fcac0806309d719bc4fc9dc6761510ed18cfc226df2642fed131060b02048d48c11bf4d
   languageName: node
   linkType: hard
 
-"@react-native-harness/tools@npm:1.3.0":
-  version: 1.3.0
-  resolution: "@react-native-harness/tools@npm:1.3.0"
+"@react-native-harness/tools@npm:1.4.0-rc.1":
+  version: 1.4.0-rc.1
+  resolution: "@react-native-harness/tools@npm:1.4.0-rc.1"
   dependencies:
     "@clack/prompts": 1.0.0-alpha.9
     nano-spawn: ^1.0.2
@@ -4737,7 +4736,7 @@ __metadata:
     tslib: ^2.3.0
   peerDependencies:
     react-native: "*"
-  checksum: 1fdfa442988949d04787270c2f9d65d4cdf6811f5b717cc6ac38d8e64c16c629f1156c71c4996dd77aa8bb02e8b151d373d1f8fd65d3729dbcdb22e057254153
+  checksum: c41374d4da1d0ae060fb6326f64e5c6d75c6a95967202d48eb6fd3a273de3b1571f76cc6709c420e1bd682e021f27483fec33e592ca9e698d3d38f60ff2389fe
   languageName: node
   linkType: hard
 
@@ -7906,13 +7905,6 @@ __metadata:
   version: 1.6.52
   resolution: "big-integer@npm:1.6.52"
   checksum: 6e86885787a20fed96521958ae9086960e4e4b5e74d04f3ef7513d4d0ad631a9f3bde2730fc8aaa4b00419fc865f6ec573e5320234531ef37505da7da192c40b
-  languageName: node
-  linkType: hard
-
-"birpc@npm:^2.4.0":
-  version: 2.9.0
-  resolution: "birpc@npm:2.9.0"
-  checksum: 499cba9d33ae6749c199b4dc1fc30faeb72aabd41d5c75d73d1d415691f65f0b613d787f21aa2369607a555a5e09c55e437e02b14bc6bad67bb657f8ae58f3dd
   languageName: node
   linkType: hard
 
@@ -17264,20 +17256,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-harness@npm:1.3.0":
-  version: 1.3.0
-  resolution: "react-native-harness@npm:1.3.0"
+"react-native-harness@npm:1.4.0-rc.1":
+  version: 1.4.0-rc.1
+  resolution: "react-native-harness@npm:1.4.0-rc.1"
   dependencies:
-    "@react-native-harness/babel-preset": 1.3.0
-    "@react-native-harness/cli": 1.3.0
-    "@react-native-harness/jest": 1.3.0
-    "@react-native-harness/metro": 1.3.0
-    "@react-native-harness/runtime": 1.3.0
+    "@react-native-harness/babel-preset": 1.4.0-rc.1
+    "@react-native-harness/cli": 1.4.0-rc.1
+    "@react-native-harness/jest": 1.4.0-rc.1
+    "@react-native-harness/metro": 1.4.0-rc.1
+    "@react-native-harness/runtime": 1.4.0-rc.1
     tslib: ^2.3.0
   bin:
     harness: bin.js
     react-native-harness: bin.js
-  checksum: de27ab8ecd4049b0c93cd6bdd6d106a4053df5cbf3586ac5533f8077593669c97af6f73aa7de84ac1731ace8a5ae2401c7149499b8326a804b15f49c3172eadb
+  checksum: c5c9f1c1a974fbcc6bc1edac3bcc6eac2f4f45cfd7906128044c4c0be40a9f025d6e9c943f0db8d6b9413308f95bf74eeab1394a87ae753e21bf3273888a4702
   languageName: node
   linkType: hard
 
@@ -17361,8 +17353,8 @@ __metadata:
     "@react-native-community/cli": 19.1.2
     "@react-native-community/cli-platform-android": 19.1.2
     "@react-native-community/cli-platform-ios": 19.1.2
-    "@react-native-harness/platform-android": 1.3.0
-    "@react-native-harness/platform-apple": 1.3.0
+    "@react-native-harness/platform-android": 1.4.0-rc.1
+    "@react-native-harness/platform-apple": 1.4.0-rc.1
     "@react-native-picker/picker": ^2.11.4
     "@react-native/babel-preset": 0.80.3
     "@react-native/metro-config": 0.80.3
@@ -17377,7 +17369,7 @@ __metadata:
     react-native: 0.80.3
     react-native-builder-bob: ^0.40.10
     react-native-gesture-handler: 2.29.1
-    react-native-harness: 1.3.0
+    react-native-harness: 1.4.0-rc.1
     react-native-nitro-modules: 0.35.0
     react-native-reanimated: 4.1.5
     react-native-safe-area-context: ^5.4.0
