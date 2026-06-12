@@ -5,7 +5,10 @@ import type {
 } from '../specs/ViewModel.nitro';
 import { useRiveProperty } from './useRiveProperty';
 import { RiveColor } from '../core/RiveColor';
-import type { PathsOfKind, TypedViewModelInstance } from '../core/TypedViewModelInstance';
+import type {
+  PathsOfKind,
+  TypedViewModelInstance,
+} from '../core/TypedViewModelInstance';
 import type { RiveFileSchema } from '../core/TypedRiveFile';
 
 const getColorProperty = (vmi: ViewModelInstance, p: string) =>

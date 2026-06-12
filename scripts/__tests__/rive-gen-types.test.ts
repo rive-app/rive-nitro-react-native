@@ -14,7 +14,8 @@ describe('rive-gen-types', () => {
       timeout: 30_000,
       cwd: resolve(__dirname, '../..'),
     });
-    if (result.status !== 0) throw new Error(result.stderr ?? 'generator failed');
+    if (result.status !== 0)
+      throw new Error(result.stderr ?? 'generator failed');
   });
 
   test('generates .riv.d.ts next to source file', () => {

@@ -6,22 +6,22 @@ declare const asset: RiveAsset<{
   artboards: 'Artboard';
   defaultArtboard: 'Artboard';
   stateMachines: {
-    'Artboard': 'State Machine 1';
+    Artboard: 'State Machine 1';
   };
   viewModels: {
-    'Person': {
-      'pet': 'viewModel:Pet';
-      'jump': 'trigger';
-      'likes_popcorn': 'boolean';
-      'favourite_pet': 'enumType';
-      'favourite_color': 'color';
-      'age': 'number';
-      'website': 'string';
-      'name': 'string';
+    Person: {
+      pet: 'viewModel:Pet';
+      jump: 'trigger';
+      likes_popcorn: 'boolean';
+      favourite_pet: 'enumType';
+      favourite_color: 'color';
+      age: 'number';
+      website: 'string';
+      name: 'string';
     };
-    'Pet': {
-      'type': 'enumType';
-      'name': 'string';
+    Pet: {
+      type: 'enumType';
+      name: 'string';
     };
   };
 }>;

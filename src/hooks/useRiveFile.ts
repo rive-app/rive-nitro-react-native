@@ -12,7 +12,11 @@ import type {
   ReferencedAssets,
   ResolvedReferencedAssets,
 } from '../core/ReferencedAssets';
-import type { RiveAsset, RiveFileSchema, TypedRiveFile } from '../core/TypedRiveFile';
+import type {
+  RiveAsset,
+  RiveFileSchema,
+  TypedRiveFile,
+} from '../core/TypedRiveFile';
 
 export type { ReferencedAssets, ResolvedReferencedAssets };
 export type RiveFileInput = number | { uri: string } | string | ArrayBuffer;

@@ -6,12 +6,12 @@ declare const asset: RiveAsset<{
   artboards: 'Artboard';
   defaultArtboard: 'Artboard';
   stateMachines: {
-    'Artboard': 'State Machine 1';
+    Artboard: 'State Machine 1';
   };
   viewModels: {
-    'TextModel': {
-      'trigger': 'trigger';
-      'textValue': 'string';
+    TextModel: {
+      trigger: 'trigger';
+      textValue: 'string';
     };
   };
 }>;

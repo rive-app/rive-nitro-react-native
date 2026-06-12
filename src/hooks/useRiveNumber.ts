@@ -4,7 +4,10 @@ import {
 } from '../specs/ViewModel.nitro';
 import type { UseRivePropertyResult } from '../types';
 import { useRiveProperty } from './useRiveProperty';
-import type { PathsOfKind, TypedViewModelInstance } from '../core/TypedViewModelInstance';
+import type {
+  PathsOfKind,
+  TypedViewModelInstance,
+} from '../core/TypedViewModelInstance';
 import type { RiveFileSchema } from '../core/TypedRiveFile';
 
 const getNumberProperty = (vmi: ViewModelInstance, p: string) =>

@@ -9,8 +9,11 @@ type NitroRiveViewProps = ComponentProps<typeof NitroRiveView>;
 
 export interface RiveViewProps<
   T extends RiveFileSchema = RiveFileSchema,
-  A extends T['artboards'] = T['defaultArtboard']
-> extends Omit<NitroRiveViewProps, 'onError' | 'file' | 'artboardName' | 'stateMachineName'> {
+  A extends T['artboards'] = T['defaultArtboard'],
+> extends Omit<
+  NitroRiveViewProps,
+  'onError' | 'file' | 'artboardName' | 'stateMachineName'
+> {
   onError?: (error: RiveError) => void;
   file: TypedRiveFile<T>;
   /** Name of the artboard to display. When using a generated schema, only valid artboard names are accepted. */
@@ -27,7 +30,7 @@ const defaultOnError = (error: RiveError) =>
 
 export function RiveView<
   T extends RiveFileSchema = RiveFileSchema,
-  A extends T['artboards'] = T['defaultArtboard']
+  A extends T['artboards'] = T['defaultArtboard'],
 >(props: RiveViewProps<T, A>) {
   const { onError, hybridRef: userHybridRef, ...rest } = props;
   const wrappedOnError = onError ?? defaultOnError;
