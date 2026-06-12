@@ -15,7 +15,7 @@ import kotlinx.coroutines.runBlocking
 class HybridViewModel(
   private val riveFile: RiveFile,
   private val riveWorker: CommandQueue,
-  private val viewModelName: String?,
+  private val viewModelName: String,
   private val parentFile: HybridRiveFile,
   private val vmSource: ViewModelSource
 ) : HybridViewModelSpec() {
@@ -24,10 +24,9 @@ class HybridViewModel(
   }
 
   override fun getPropertiesAsync(): Promise<Array<ViewModelPropertyInfo>> {
-    val name = viewModelName ?: return Promise.resolved(emptyArray())
     return Promise.async {
       riveFile
-        .getViewModelProperties(name)
+        .getViewModelProperties(viewModelName)
         .map { prop ->
         ViewModelPropertyInfo(name = prop.name, type = mapPropertyType(prop.type))
       }.toTypedArray()
@@ -37,9 +36,8 @@ class HybridViewModel(
   override val propertyCount: Double
     get() {
       DeprecationWarning.warn("propertyCount", "getPropertyCountAsync")
-      val name = viewModelName ?: throw UnsupportedOperationException("ViewModel name is unavailable")
       return try {
-        runBlocking { riveFile.getViewModelProperties(name) }.size.toDouble()
+        runBlocking { riveFile.getViewModelProperties(viewModelName) }.size.toDouble()
       } catch (e: Exception) {
         RiveLog.e(TAG, "propertyCount failed: ${e.message}")
         0.0
@@ -49,9 +47,8 @@ class HybridViewModel(
   override val instanceCount: Double
     get() {
       DeprecationWarning.warn("instanceCount", "getInstanceCountAsync")
-      val name = viewModelName ?: throw UnsupportedOperationException("ViewModel name is unavailable")
       return try {
-        runBlocking { riveFile.getViewModelInstanceNames(name) }.size.toDouble()
+        runBlocking { riveFile.getViewModelInstanceNames(viewModelName) }.size.toDouble()
       } catch (e: Exception) {
         RiveLog.e(TAG, "instanceCount failed: ${e.message}")
         0.0
@@ -59,30 +56,25 @@ class HybridViewModel(
     }
 
   override val modelName: String
-    get() = viewModelName ?: throw UnsupportedOperationException("ViewModel name is unavailable")
+    get() = viewModelName
 
   override fun getPropertyCountAsync(): Promise<Double> {
-    val name = viewModelName ?: return Promise.rejected(UnsupportedOperationException("ViewModel name is unavailable"))
-    return Promise.async { riveFile.getViewModelProperties(name).size.toDouble() }
+    return Promise.async { riveFile.getViewModelProperties(viewModelName).size.toDouble() }
   }
 
   override fun getInstanceCountAsync(): Promise<Double> {
-    val name = viewModelName ?: return Promise.rejected(UnsupportedOperationException("ViewModel name is unavailable"))
-    return Promise.async { riveFile.getViewModelInstanceNames(name).size.toDouble() }
+    return Promise.async { riveFile.getViewModelInstanceNames(viewModelName).size.toDouble() }
   }
 
   // Deprecated: Use createInstanceByNameAsync instead
   override fun createInstanceByIndex(index: Double): HybridViewModelInstanceSpec? {
     DeprecationWarning.warn("createInstanceByIndex", "createInstanceByNameAsync")
-    val name = viewModelName ?: throw UnsupportedOperationException("ViewModel name is unavailable")
     return try {
       val idx = index.toInt()
-      val instanceNames = runBlocking { riveFile.getViewModelInstanceNames(name) }
+      val instanceNames = runBlocking { riveFile.getViewModelInstanceNames(viewModelName) }
       if (idx < 0 || idx >= instanceNames.size) return null
       val instanceName = instanceNames[idx]
       runBlocking { createInstanceByNameImpl(instanceName) }
-    } catch (e: UnsupportedOperationException) {
-      throw e
     } catch (e: Exception) {
       RiveLog.e(TAG, "createInstanceByIndex($index) failed: ${e.message}")
       null
@@ -90,22 +82,18 @@ class HybridViewModel(
   }
 
   private suspend fun createInstanceByNameImpl(instanceName: String): HybridViewModelInstanceSpec? {
-    val name = viewModelName ?: throw UnsupportedOperationException("ViewModel name is unavailable")
-    val instanceNames = riveFile.getViewModelInstanceNames(name)
+    val instanceNames = riveFile.getViewModelInstanceNames(viewModelName)
     if (!instanceNames.contains(instanceName)) return null
     val source = vmSource.namedInstance(instanceName)
     val vmi = ViewModelInstance.fromFile(riveFile, source)
-    return HybridViewModelInstance(vmi, riveWorker, parentFile, name, instanceName)
+    return HybridViewModelInstance(vmi, riveWorker, parentFile, viewModelName, instanceName)
   }
 
   // Deprecated: Use createInstanceByNameAsync instead
   override fun createInstanceByName(name: String): HybridViewModelInstanceSpec? {
     DeprecationWarning.warn("createInstanceByName", "createInstanceByNameAsync")
-    if (viewModelName == null) throw UnsupportedOperationException("ViewModel name is unavailable")
     return try {
       runBlocking { createInstanceByNameImpl(name) }
-    } catch (e: UnsupportedOperationException) {
-      throw e
     } catch (e: Exception) {
       RiveLog.e(TAG, "createInstanceByName('$name') failed: ${e.message}")
       null
@@ -113,7 +101,6 @@ class HybridViewModel(
   }
 
   override fun createInstanceByNameAsync(name: String): Promise<HybridViewModelInstanceSpec?> {
-    if (viewModelName == null) return Promise.rejected(UnsupportedOperationException("ViewModel name is unavailable"))
     return Promise.async { createInstanceByNameImpl(name) }
   }
 

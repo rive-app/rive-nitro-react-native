@@ -27,6 +27,11 @@ class HybridViewModelNumberProperty: HybridViewModelNumberPropertySpec, ValuedPr
     property.value = Float(value)
   }
 
+  func setValueAsync(value: Double) throws -> Promise<Void> {
+    let v = Float(value)
+    return Promise.async { self.property.value = v }
+  }
+
   func addListener(onChanged: @escaping (Double) -> Void) throws -> () -> Void {
     return helper.addListener({ floatValue in onChanged(Double(floatValue)) })
   }

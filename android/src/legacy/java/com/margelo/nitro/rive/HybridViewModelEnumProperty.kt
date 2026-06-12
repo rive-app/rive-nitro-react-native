@@ -24,6 +24,10 @@ class HybridViewModelEnumProperty(private val viewModelEnum: ViewModelEnumProper
     viewModelEnum.value = value
   }
 
+  override fun setValueAsync(value: String): Promise<Unit> {
+    return Promise.async { set(value) }
+  }
+
   override fun addListener(onChanged: (value: String) -> Unit): () -> Unit {
     val remover = addListenerInternal(onChanged)
     ensureValueListenerJob(viewModelEnum.valueFlow)

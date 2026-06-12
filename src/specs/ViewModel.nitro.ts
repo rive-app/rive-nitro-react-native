@@ -137,6 +137,8 @@ export interface ViewModelNumberProperty
   /** Get the current value of the number property */
   getValueAsync(): Promise<number>;
   set(value: number): void;
+  /** Set the value asynchronously — awaitable, errors propagate, writes are ordered. */
+  setValueAsync(value: number): Promise<void>;
   /** Add a listener to the view model number property. Returns a function to remove the listener. */
   addListener(onChanged: (value: number) => void): () => void;
 }
@@ -149,6 +151,8 @@ export interface ViewModelStringProperty
   /** Get the current value of the string property */
   getValueAsync(): Promise<string>;
   set(value: string): void;
+  /** Set the value asynchronously — awaitable, errors propagate, writes are ordered. */
+  setValueAsync(value: string): Promise<void>;
   /** Add a listener to the view model string property. Returns a function to remove the listener. */
   addListener(onChanged: (value: string) => void): () => void;
 }
@@ -161,6 +165,8 @@ export interface ViewModelBooleanProperty
   /** Get the current value of the boolean property */
   getValueAsync(): Promise<boolean>;
   set(value: boolean): void;
+  /** Set the value asynchronously — awaitable, errors propagate, writes are ordered. */
+  setValueAsync(value: boolean): Promise<void>;
   /** Add a listener to the view model boolean property. Returns a function to remove the listener. */
   addListener(onChanged: (value: boolean) => void): () => void;
 }
@@ -173,6 +179,8 @@ export interface ViewModelColorProperty
   /** Get the current value of the color property */
   getValueAsync(): Promise<number>;
   set(value: number): void;
+  /** Set the value asynchronously — awaitable, errors propagate, writes are ordered. */
+  setValueAsync(value: number): Promise<void>;
   /** Add a listener to the view model color property. Returns a function to remove the listener. */
   addListener(onChanged: (value: number) => void): () => void;
 }
@@ -185,6 +193,8 @@ export interface ViewModelEnumProperty
   /** Get the current value of the enum property */
   getValueAsync(): Promise<string>;
   set(value: string): void;
+  /** Set the value asynchronously — awaitable, errors propagate, writes are ordered. */
+  setValueAsync(value: string): Promise<void>;
   /** Add a listener to the view model enum property. Returns a function to remove the listener. */
   addListener(onChanged: (value: string) => void): () => void;
 }

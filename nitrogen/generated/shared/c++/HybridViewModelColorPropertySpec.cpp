@@ -19,6 +19,7 @@ namespace margelo::nitro::rive {
       prototype.registerHybridSetter("value", &HybridViewModelColorPropertySpec::setValue);
       prototype.registerHybridMethod("getValueAsync", &HybridViewModelColorPropertySpec::getValueAsync);
       prototype.registerHybridMethod("set", &HybridViewModelColorPropertySpec::set);
+      prototype.registerHybridMethod("setValueAsync", &HybridViewModelColorPropertySpec::setValueAsync);
       prototype.registerHybridMethod("addListener", &HybridViewModelColorPropertySpec::addListener);
       prototype.registerHybridMethod("removeListeners", &HybridViewModelColorPropertySpec::removeListeners);
     });

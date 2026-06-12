@@ -37,6 +37,10 @@ class HybridViewModelBooleanProperty(
     instance.setBoolean(path, value)
   }
 
+  override fun setValueAsync(value: Boolean): Promise<Unit> {
+    return Promise.async { set(value) }
+  }
+
   override fun getValueAsync(): Promise<Boolean> {
     return Promise.async { instance.getBooleanFlow(path).first() }
   }

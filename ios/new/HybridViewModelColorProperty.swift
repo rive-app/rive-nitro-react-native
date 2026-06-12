@@ -40,6 +40,15 @@ class HybridViewModelColorProperty: HybridViewModelColorPropertySpec {
     }
   }
 
+  func setValueAsync(value: Double) throws -> Promise<Void> {
+    let color = Color(UInt32(truncatingIfNeeded: Int64(value)))
+    let inst = instance
+    let p = prop
+    return Promise.async { @MainActor in
+      inst.setValue(of: p, to: color)
+    }
+  }
+
   func getValueAsync() throws -> Promise<Double> {
     return Promise.async { try await self.fetchColorValue() }
   }

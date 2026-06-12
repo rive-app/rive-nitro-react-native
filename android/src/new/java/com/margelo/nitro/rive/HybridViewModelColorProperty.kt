@@ -37,6 +37,10 @@ class HybridViewModelColorProperty(
     instance.setColor(path, value.toLong().toInt())
   }
 
+  override fun setValueAsync(value: Double): Promise<Unit> {
+    return Promise.async { set(value) }
+  }
+
   override fun getValueAsync(): Promise<Double> {
     return Promise.async { instance.getColorFlow(path).first().toDouble() }
   }

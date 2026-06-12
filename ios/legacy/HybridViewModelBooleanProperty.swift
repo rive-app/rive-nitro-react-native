@@ -26,4 +26,8 @@ class HybridViewModelBooleanProperty: HybridViewModelBooleanPropertySpec, Valued
   func set(value: Bool) throws {
     property.value = value
   }
+
+  func setValueAsync(value: Bool) throws -> Promise<Void> {
+    return Promise.async { self.property.value = value }
+  }
 }

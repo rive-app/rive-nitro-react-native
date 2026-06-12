@@ -37,6 +37,10 @@ class HybridViewModelNumberProperty(
     instance.setNumber(path, value.toFloat())
   }
 
+  override fun setValueAsync(value: Double): Promise<Unit> {
+    return Promise.async { set(value) }
+  }
+
   override fun getValueAsync(): Promise<Double> {
     return Promise.async { instance.getNumberFlow(path).first().toDouble() }
   }

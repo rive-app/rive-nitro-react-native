@@ -24,6 +24,10 @@ class HybridViewModelColorProperty(private val viewModelColor: ViewModelColorPro
     viewModelColor.value = value.toLong().toInt()
   }
 
+  override fun setValueAsync(value: Double): Promise<Unit> {
+    return Promise.async { set(value) }
+  }
+
   override fun addListener(onChanged: (value: Double) -> Unit): () -> Unit {
     val remover = addListenerInternal { intValue: Int -> onChanged(intValue.toDouble()) }
     ensureValueListenerJob(viewModelColor.valueFlow)
