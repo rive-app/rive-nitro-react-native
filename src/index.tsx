@@ -20,8 +20,16 @@ export { RiveView, type RiveViewProps } from './core/RiveView';
 export type { RiveViewMethods };
 export type RiveViewRef = HybridView<NativeRiveViewProps, RiveViewTSMethods>;
 export type { RiveFile } from './specs/RiveFile.nitro';
-export type { RiveAsset, RiveFileSchema, TypedRiveFile } from './core/TypedRiveFile';
-export type { TypedViewModelInstance, TypedViewModelListProperty, PathsOfKind } from './core/TypedViewModelInstance';
+export type {
+  RiveAsset,
+  RiveFileSchema,
+  TypedRiveFile,
+} from './core/TypedRiveFile';
+export type {
+  TypedViewModelInstance,
+  TypedViewModelListProperty,
+  PathsOfKind,
+} from './core/TypedViewModelInstance';
 export type {
   ViewModel,
   ViewModelInstance,

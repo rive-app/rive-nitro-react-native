@@ -38,6 +38,7 @@ export type RiveAsset<T extends RiveFileSchema = RiveFileSchema> = number & {
  * Obtain one via `RiveFileFactory.fromURL<MySchema>(...)` or
  * `RiveFileFactory.fromSource(typedAsset)`.
  */
-export type TypedRiveFile<T extends RiveFileSchema = RiveFileSchema> = RiveFile & {
-  readonly __schema?: T;
-};
+export type TypedRiveFile<T extends RiveFileSchema = RiveFileSchema> =
+  RiveFile & {
+    readonly __schema?: T;
+  };

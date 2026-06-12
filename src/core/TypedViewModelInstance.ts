@@ -16,17 +16,21 @@ import type { RiveFileSchema } from './TypedRiveFile';
  * Elements can be any ViewModel defined in the file — the exact type is unknown
  * until runtime, so the element type is a union of all file ViewModels.
  */
-export interface TypedViewModelListProperty<T extends RiveFileSchema>
-  extends Omit<ViewModelListProperty, 'getInstanceAtAsync' | 'getInstanceAt'> {
+export interface TypedViewModelListProperty<
+  T extends RiveFileSchema,
+> extends Omit<ViewModelListProperty, 'getInstanceAtAsync' | 'getInstanceAt'> {
   getInstanceAtAsync(
     index: number
   ): Promise<
-    TypedViewModelInstance<T, Extract<keyof T['viewModels'], string>> | undefined
+    | TypedViewModelInstance<T, Extract<keyof T['viewModels'], string>>
+    | undefined
   >;
   /** @deprecated Use getInstanceAtAsync instead */
   getInstanceAt(
     index: number
-  ): TypedViewModelInstance<T, Extract<keyof T['viewModels'], string>> | undefined;
+  ):
+    | TypedViewModelInstance<T, Extract<keyof T['viewModels'], string>>
+    | undefined;
 }
 
 /** Property names whose type literal matches the given Kind */
@@ -61,7 +65,9 @@ type NestedPathsOfKind<
   VMName extends keyof T['viewModels'] & string,
   Kind extends string,
 > = {
-  [P in VMRefPropNames<T['viewModels'][VMName]>]: `${P}/${VMPropsOfKind<T['viewModels'][VMRefNameResolved<T, VMName, P>], Kind>}`;
+  [P in VMRefPropNames<
+    T['viewModels'][VMName]
+  >]: `${P}/${VMPropsOfKind<T['viewModels'][VMRefNameResolved<T, VMName, P>], Kind>}`;
 }[VMRefPropNames<T['viewModels'][VMName]>];
 
 /**
@@ -88,18 +94,18 @@ export interface TypedViewModelInstance<
   T extends RiveFileSchema,
   VMName extends keyof T['viewModels'] & string,
 > extends Omit<
-    ViewModelInstance,
-    | 'numberProperty'
-    | 'stringProperty'
-    | 'booleanProperty'
-    | 'colorProperty'
-    | 'triggerProperty'
-    | 'enumProperty'
-    | 'imageProperty'
-    | 'listProperty'
-    | 'viewModel'
-    | 'viewModelAsync'
-  > {
+  ViewModelInstance,
+  | 'numberProperty'
+  | 'stringProperty'
+  | 'booleanProperty'
+  | 'colorProperty'
+  | 'triggerProperty'
+  | 'enumProperty'
+  | 'imageProperty'
+  | 'listProperty'
+  | 'viewModel'
+  | 'viewModelAsync'
+> {
   numberProperty(
     path: VMPropsOfKind<T['viewModels'][VMName], 'number'>
   ): ViewModelNumberProperty | undefined;
@@ -135,10 +141,12 @@ export interface TypedViewModelInstance<
   /** Access a nested ViewModel instance; return type is typed to the referenced ViewModel. */
   viewModel<P extends VMRefPropNames<T['viewModels'][VMName]>>(
     path: P
-  ): TypedViewModelInstance<
-    T,
-    VMRefName<T['viewModels'][VMName][P]> & keyof T['viewModels'] & string
-  > | undefined;
+  ):
+    | TypedViewModelInstance<
+        T,
+        VMRefName<T['viewModels'][VMName][P]> & keyof T['viewModels'] & string
+      >
+    | undefined;
 
   viewModelAsync<P extends VMRefPropNames<T['viewModels'][VMName]>>(
     path: P

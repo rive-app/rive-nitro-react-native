@@ -8,7 +8,10 @@ import type {
   UseViewModelInstanceTriggerParameters,
 } from '../types';
 import { useDisposableMemo } from './useDisposableMemo';
-import type { PathsOfKind, TypedViewModelInstance } from '../core/TypedViewModelInstance';
+import type {
+  PathsOfKind,
+  TypedViewModelInstance,
+} from '../core/TypedViewModelInstance';
 import type { RiveFileSchema } from '../core/TypedRiveFile';
 
 /**

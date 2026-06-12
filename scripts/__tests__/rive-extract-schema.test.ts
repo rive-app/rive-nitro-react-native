@@ -28,21 +28,25 @@ describe('rive-extract-schema', () => {
   });
 
   test('extracts state machines per artboard', () => {
-    expect((schema.stateMachines as Record<string, string[]>)['Main']).toContain('State Machine 1');
+    expect((schema.stateMachines as Record<string, string[]>).Main).toContain(
+      'State Machine 1'
+    );
   });
 
   test('extracts viewModels', () => {
-    expect((schema.viewModels as Record<string, unknown>)['Rewards']).toBeDefined();
+    expect(
+      (schema.viewModels as Record<string, unknown>).Rewards
+    ).toBeDefined();
   });
 
   test('resolves nested viewModel references', () => {
     const vms = schema.viewModels as Record<string, Record<string, string>>;
-    expect(vms['Rewards']!['Coin']).toBe('viewModel:Item_Icon_Value');
+    expect(vms.Rewards!.Coin).toBe('viewModel:Item_Icon_Value');
   });
 
   test('extracts primitive property types', () => {
     const vms = schema.viewModels as Record<string, Record<string, string>>;
-    expect(vms['Item_Icon_Value']!['Item_Value']).toBe('number');
-    expect(vms['Energy_Bar']!['Bar_Color']).toBe('color');
+    expect(vms.Item_Icon_Value!.Item_Value).toBe('number');
+    expect(vms.Energy_Bar!.Bar_Color).toBe('color');
   });
 });

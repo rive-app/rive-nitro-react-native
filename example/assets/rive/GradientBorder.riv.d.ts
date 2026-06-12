@@ -6,11 +6,11 @@ declare const asset: RiveAsset<{
   artboards: 'Layout';
   defaultArtboard: 'Layout';
   stateMachines: {
-    'Layout': 'State';
+    Layout: 'State';
   };
   viewModels: {
-    'ViewModel': {
-      'isFocused': 'boolean';
+    ViewModel: {
+      isFocused: 'boolean';
     };
   };
 }>;

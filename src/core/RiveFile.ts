@@ -109,11 +109,19 @@ export namespace RiveFileFactory {
 
       // handle iOS bundled asset
       if (assetURI.match(/file:\/\//)) {
-        return RiveFileFactory.fromFileURL<T>(assetURI, referencedAssets, loadCdn);
+        return RiveFileFactory.fromFileURL<T>(
+          assetURI,
+          referencedAssets,
+          loadCdn
+        );
       }
 
       // handle Android bundled asset or resource name uri
-      return RiveFileFactory.fromResource<T>(assetURI, referencedAssets, loadCdn);
+      return RiveFileFactory.fromResource<T>(
+        assetURI,
+        referencedAssets,
+        loadCdn
+      );
     } catch (error: unknown) {
       const errorMessage =
         error instanceof Error ? error.message : String(error);
