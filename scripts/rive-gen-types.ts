@@ -13,7 +13,7 @@
  *   const file = await RiveFileFactory.fromSource(gameRiv); // TypedRiveFile<GameSchema> — T inferred
  */
 
-import { execSync } from 'child_process';
+import { spawnSync } from 'child_process';
 import { writeFileSync, mkdirSync, readdirSync, statSync } from 'fs';
 import { dirname, resolve, basename, extname } from 'path';
 import { fileURLToPath } from 'url';
@@ -31,11 +31,16 @@ interface Schema {
 function extractSchema(input: string): Schema {
   for (let attempt = 0; attempt < 2; attempt++) {
     try {
-      const json = execSync(`bun "${extractorPath}" "${input}"`, {
+      const result = spawnSync('bun', [extractorPath, input], {
         encoding: 'utf8',
         timeout: 30_000,
       });
-      return JSON.parse(json) as Schema;
+      if (result.error) throw result.error;
+      if (result.status !== 0)
+        throw new Error(
+          result.stderr || `bun exited with code ${result.status}`
+        );
+      return JSON.parse(result.stdout) as Schema;
     } catch (err) {
       if (attempt === 1) throw err;
     }
