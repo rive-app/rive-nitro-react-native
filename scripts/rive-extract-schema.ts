@@ -93,6 +93,15 @@ async function main() {
         } catch {
           props[p.name] = 'viewModel';
         }
+      } else if (p.type === 'enumType' && inst) {
+        try {
+          const ep = inst.enum?.(p.name);
+          const values: string[] = ep?.values ?? [];
+          props[p.name] =
+            values.length > 0 ? `enum:${values.join('|')}` : 'enum';
+        } catch {
+          props[p.name] = 'enum';
+        }
       } else {
         props[p.name] = p.type;
       }

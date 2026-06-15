@@ -33,12 +33,48 @@ export interface TypedViewModelListProperty<
     | undefined;
 }
 
-/** Property names whose type literal matches the given Kind */
+/** Split a pipe-separated string literal into a union: 'a|b|c' → 'a' | 'b' | 'c' */
+type UnionFromPipe<S extends string> = S extends `${infer A}|${infer B}`
+  ? A | UnionFromPipe<B>
+  : S;
+
+/** Extract the enum value union from a schema type string like 'enum:cat|dog|frog' */
+export type EnumValuesOf<S extends string> = S extends `enum:${infer V}`
+  ? UnionFromPipe<V>
+  : never;
+
+/**
+ * A typed enum property whose value and setter are constrained to the specific enum values
+ * extracted from the .riv file schema.
+ */
+export interface TypedViewModelEnumProperty<
+  Values extends string = string,
+> extends Omit<
+  ViewModelEnumProperty,
+  'value' | 'getValueAsync' | 'set' | 'addListener'
+> {
+  /** @deprecated Use getValueAsync (read) or set(value) (write) instead */
+  value: Values;
+  getValueAsync(): Promise<Values>;
+  set(value: Values): void;
+  addListener(onChanged: (value: Values) => void): () => void;
+}
+
+/**
+ * Property names whose type matches the given Kind.
+ * Use kind `'enum'` to match any enum property (stored as `'enum:val1|val2'` in the schema).
+ */
 export type VMPropsOfKind<
   VM extends Record<string, string>,
   Kind extends string,
 > = {
-  [K in keyof VM]: VM[K] extends Kind ? K : never;
+  [K in keyof VM]: Kind extends 'enum'
+    ? VM[K] extends `enum:${string}`
+      ? K
+      : never
+    : VM[K] extends Kind
+      ? K
+      : never;
 }[keyof VM] &
   string;
 
@@ -126,9 +162,11 @@ export interface TypedViewModelInstance<
     path: VMPropsOfKind<T['viewModels'][VMName], 'trigger'>
   ): ViewModelTriggerProperty | undefined;
 
-  enumProperty(
-    path: VMPropsOfKind<T['viewModels'][VMName], 'enumType'>
-  ): ViewModelEnumProperty | undefined;
+  enumProperty<P extends VMPropsOfKind<T['viewModels'][VMName], 'enum'>>(
+    path: P
+  ):
+    | TypedViewModelEnumProperty<EnumValuesOf<T['viewModels'][VMName][P]>>
+    | undefined;
 
   imageProperty(
     path: VMPropsOfKind<T['viewModels'][VMName], 'image'>
