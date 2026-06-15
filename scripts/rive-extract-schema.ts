@@ -60,12 +60,43 @@ async function main() {
   const bytes = await loadBytes(source);
   const runtime = await RuntimeLoader.awaitInstance();
 
-  // Use CustomFileAssetLoader to claim all embedded assets (images, fonts) as
-  // handled so the runtime never calls makeRenderImage. Without this, .riv files
-  // with embedded images cause the WASM to call process.exit(0) on headless Linux
-  // where WebGL is unavailable. We only need the schema (artboards/VMs), not images.
+  // On headless Linux (no WebGL) the WASM image-load counter (aa.total/aa.loaded)
+  // never reaches its target because image texture creation silently fails, so
+  // load() never resolves. We patch makeRenderImage to wrap img.decode so that
+  // img.la() is always called after decode — a safe no-op if WebGL already fired
+  // it, but unblocks the Promise when WebGL is absent.
+  const origMRI = (runtime.renderFactory as any).makeRenderImage.bind(
+    runtime.renderFactory
+  );
+  (runtime.renderFactory as any).makeRenderImage = function () {
+    const img = origMRI();
+    if (
+      img &&
+      typeof (img as any).la === 'function' &&
+      typeof (img as any).decode === 'function'
+    ) {
+      const origDecode = (img as any).decode.bind(img);
+      (img as any).decode = function (imgBytes: Uint8Array) {
+        origDecode(imgBytes); // fires la() internally if WebGL succeeds
+        // Defer la() to a microtask so it fires *after* the WASM's K() returns and
+        // assigns H. Calling la() synchronously inside K() would resolve the Promise
+        // with H=null (K hasn't returned yet), producing an empty file.
+        queueMicrotask(() => (img as any).la());
+      };
+    }
+    return img;
+  };
+
+  // CustomFileAssetLoader handles embedded assets so the runtime resolves load().
+  // For fonts: decode() loads font bytes (no WebGL needed).
+  // For images: decode() triggers our patched img.decode → img.la() unblocks.
   const assetLoader = new (runtime as any).CustomFileAssetLoader({
-    loadContents: () => true,
+    loadContents: (asset: any, embeddedBytes: Uint8Array) => {
+      if (embeddedBytes?.length && asset?.decode) {
+        asset.decode(embeddedBytes);
+      }
+      return true;
+    },
   });
 
   const riveFile = await runtime.load(bytes, assetLoader, false);
