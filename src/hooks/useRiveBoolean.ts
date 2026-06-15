@@ -29,7 +29,7 @@ export function useRiveBoolean<
 ): UseRivePropertyResult<boolean>;
 export function useRiveBoolean(
   path: string,
-  viewModelInstance?: ViewModelInstance | null
+  viewModelInstance?: (ViewModelInstance & { __vmBrand?: never }) | null
 ): UseRivePropertyResult<boolean>;
 export function useRiveBoolean(
   path: string,

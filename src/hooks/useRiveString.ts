@@ -29,7 +29,7 @@ export function useRiveString<
 ): UseRivePropertyResult<string>;
 export function useRiveString(
   path: string,
-  viewModelInstance?: ViewModelInstance | null
+  viewModelInstance?: (ViewModelInstance & { __vmBrand?: never }) | null
 ): UseRivePropertyResult<string>;
 export function useRiveString(
   path: string,

@@ -29,7 +29,7 @@ export function useRiveNumber<
 ): UseRivePropertyResult<number>;
 export function useRiveNumber(
   path: string,
-  viewModelInstance?: ViewModelInstance | null
+  viewModelInstance?: (ViewModelInstance & { __vmBrand?: never }) | null
 ): UseRivePropertyResult<number>;
 export function useRiveNumber(
   path: string,

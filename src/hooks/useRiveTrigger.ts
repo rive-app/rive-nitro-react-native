@@ -36,7 +36,7 @@ export function useRiveTrigger<
 ): UseRiveTriggerResult;
 export function useRiveTrigger(
   path: string,
-  viewModelInstance?: ViewModelInstance | null,
+  viewModelInstance?: (ViewModelInstance & { __vmBrand?: never }) | null,
   params?: UseViewModelInstanceTriggerParameters
 ): UseRiveTriggerResult;
 export function useRiveTrigger(

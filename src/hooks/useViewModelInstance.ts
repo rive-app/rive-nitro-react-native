@@ -272,10 +272,11 @@ export function useViewModelInstance<
 >(
   source: TypedRiveFile<T> | null | undefined,
   params: UseViewModelInstanceFileParams & { viewModelName: N }
-): {
-  instance: TypedViewModelInstance<T, N> | null | undefined;
-  error: Error | null;
-};
+):
+  | { instance: TypedViewModelInstance<T, N>; error: null }
+  | { instance: null; error: Error }
+  | { instance: null; error: null }
+  | { instance: undefined; error: null };
 
 // RiveFile overloads
 export function useViewModelInstance(
