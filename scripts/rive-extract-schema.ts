@@ -17,13 +17,17 @@ const input: string | undefined = process.argv[2];
 
 // @rive-app/canvas checks for browser globals during WASM initialisation.
 // We only call file-inspection APIs (no rendering), so minimal shims are enough.
-(globalThis as any).document = { createElement: () => ({ getContext: () => null }) };
+(globalThis as any).document = {
+  createElement: () => ({ getContext: () => null }),
+};
 (globalThis as any).Image = class {};
 
 // The WASM runtime prints warnings (e.g. "No WebGL support") via console.
 // Redirect them to stderr so our JSON output stays clean.
-console.log = (...args: unknown[]) => process.stderr.write(args.join(' ') + '\n');
-console.warn = (...args: unknown[]) => process.stderr.write(args.join(' ') + '\n');
+console.log = (...args: unknown[]) =>
+  process.stderr.write(args.join(' ') + '\n');
+console.warn = (...args: unknown[]) =>
+  process.stderr.write(args.join(' ') + '\n');
 
 if (!input) {
   process.stderr.write('Usage: bun rive-extract-schema.ts <path-or-url>\n');
@@ -73,7 +77,10 @@ async function main() {
   const vmCount = (riveFile as any).viewModelCount() as number;
   for (let i = 0; i < vmCount; i++) {
     const vm = (riveFile as any).viewModelByIndex(i);
-    const properties = vm.getProperties() as Array<{ name: string; type: string }>;
+    const properties = vm.getProperties() as Array<{
+      name: string;
+      type: string;
+    }>;
     // Create a blank instance to resolve viewModel property references
     const inst = vm.instance?.() as any;
     const props: Record<string, string> = {};
@@ -95,7 +102,11 @@ async function main() {
 
   const defaultArtboard = artboards[0] ?? '';
   process.stdout.write(
-    JSON.stringify({ artboards, defaultArtboard, stateMachines, viewModels }, null, 2) + '\n'
+    JSON.stringify(
+      { artboards, defaultArtboard, stateMachines, viewModels },
+      null,
+      2
+    ) + '\n'
   );
 }
 
