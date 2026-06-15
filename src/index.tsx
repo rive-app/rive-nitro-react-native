@@ -23,10 +23,12 @@ export type { RiveFile } from './specs/RiveFile.nitro';
 export type {
   RiveAsset,
   RiveFileSchema,
+  SchemaOf,
   TypedRiveFile,
 } from './core/TypedRiveFile';
 export type {
   TypedViewModelInstance,
+  TypedViewModelOf,
   TypedViewModelListProperty,
   TypedViewModelEnumProperty,
   PathsOfKind,
