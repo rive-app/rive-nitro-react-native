@@ -49,4 +49,14 @@ describe('rive-extract-schema', () => {
     expect(vms.Item_Icon_Value!.Item_Value).toBe('number');
     expect(vms.Energy_Bar!.Bar_Color).toBe('color');
   });
+
+  test('extracts enum values as pipe-separated string', () => {
+    const databinding = extract(
+      resolve(__dirname, '../../example/assets/rive/databinding.riv')
+    );
+    const vms = databinding.viewModels as Record<string, Record<string, string>>;
+    expect(vms.Person!.favourite_pet).toMatch(/^enum:/);
+    expect(vms.Person!.favourite_pet).toContain('chipmunk');
+    expect(vms.Person!.favourite_pet).toContain('dog');
+  });
 });

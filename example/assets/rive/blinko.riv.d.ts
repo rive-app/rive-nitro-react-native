@@ -66,7 +66,7 @@ declare const asset: RiveAsset<{
     pegVM: {
       blink: 'trigger';
       multiplierValue: 'number';
-      pegType: 'enumType';
+      pegType: 'enum:normal|multiplier';
       pegBounced: 'trigger';
     };
     gameLogicVM: {
@@ -82,7 +82,7 @@ declare const asset: RiveAsset<{
     };
     scoreBox: {
       Token: 'viewModel:TokenVM';
-      slotType: 'enumType';
+      slotType: 'enum:addToken|normal';
       landed: 'trigger';
       scoreValue: 'number';
     };

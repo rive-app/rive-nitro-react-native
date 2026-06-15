@@ -13,14 +13,14 @@ declare const asset: RiveAsset<{
       pet: 'viewModel:Pet';
       jump: 'trigger';
       likes_popcorn: 'boolean';
-      favourite_pet: 'enumType';
+      favourite_pet: 'enum:chipmunk|rat|frog|owl|cat|dog';
       favourite_color: 'color';
       age: 'number';
       website: 'string';
       name: 'string';
     };
     Pet: {
-      type: 'enumType';
+      type: 'enum:chipmunk|rat|frog|owl|cat|dog';
       name: 'string';
     };
   };

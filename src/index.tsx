@@ -28,7 +28,9 @@ export type {
 export type {
   TypedViewModelInstance,
   TypedViewModelListProperty,
+  TypedViewModelEnumProperty,
   PathsOfKind,
+  EnumValuesOf,
 } from './core/TypedViewModelInstance';
 export type {
   ViewModel,

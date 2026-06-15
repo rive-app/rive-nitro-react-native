@@ -1,12 +1,15 @@
 import { expectType, expectError, expectAssignable } from 'tsd';
 import type { TypedRiveFile, RiveAsset } from '../../src/core/TypedRiveFile';
-import type { TypedViewModelInstance } from '../../src/core/TypedViewModelInstance';
+import type {
+  TypedViewModelInstance,
+  TypedViewModelListProperty,
+  TypedViewModelEnumProperty,
+} from '../../src/core/TypedViewModelInstance';
 import type {
   ViewModelNumberProperty,
   ViewModelTriggerProperty,
   ViewModelBooleanProperty,
 } from '../../src/specs/ViewModel.nitro';
-import type { TypedViewModelListProperty } from '../../src/core/TypedViewModelInstance';
 import type { RiveViewProps } from '../../src/core/RiveView';
 import gradientBorderRiv from '../../example/assets/rive/GradientBorder.riv';
 import blinkoRiv from '../../example/assets/rive/blinko.riv';
@@ -187,6 +190,24 @@ expectError(
 expectError(
   storeVM.viewModel('property of pegVM')?.stringProperty('doesNotExist')
 );
+
+// --- Enum property ---
+
+// pegVM.pegType is 'enum:normal|multiplier' — returns typed enum property
+expectAssignable<
+  TypedViewModelEnumProperty<'normal' | 'multiplier'> | undefined
+>(storeVM.viewModel('property of pegVM')?.enumProperty('pegType'));
+
+// The enum value type is exactly 'normal' | 'multiplier'
+expectType<TypedViewModelEnumProperty<'normal' | 'multiplier'> | undefined>(
+  storeVM.viewModel('property of pegVM')?.enumProperty('pegType')
+);
+
+// Non-enum property rejected for enumProperty()
+expectError(storeVM.enumProperty('xbuttonClick'));
+
+// Nonexistent property rejected
+expectError(storeVM.enumProperty('doesNotExist'));
 
 // --- List property ---
 
