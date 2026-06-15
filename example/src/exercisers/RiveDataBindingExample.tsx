@@ -5,20 +5,18 @@ import {
   RiveView,
   useRiveNumber,
   useViewModelInstance,
-  type TypedViewModelInstance,
+  type TypedViewModelOf,
   type TypedRiveFile,
   useRiveString,
   useRiveColor,
   useRiveTrigger,
   useRiveFile,
-  type RiveAsset,
 } from '@rive-app/react-native';
 import { type Metadata } from '../shared/metadata';
 import rewardsRiv from '../../assets/rive/rewards.riv';
 
-type RewardsSchema = typeof rewardsRiv extends RiveAsset<infer T> ? T : never;
-type RewardsFile = TypedRiveFile<RewardsSchema>;
-type RewardsInstance = TypedViewModelInstance<RewardsSchema, 'Rewards'>;
+type RewardsFile = TypedRiveFile<typeof rewardsRiv>;
+type RewardsInstance = TypedViewModelOf<typeof rewardsRiv, 'Rewards'>;
 
 export default function WithRiveFile() {
   const { riveFile, isLoading, error } = useRiveFile(rewardsRiv);

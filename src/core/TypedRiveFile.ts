@@ -32,13 +32,33 @@ export type RiveAsset<T extends RiveFileSchema = RiveFileSchema> = number & {
 };
 
 /**
+ * Extracts the RiveFileSchema from a RiveAsset, TypedRiveFile, or a bare RiveFileSchema.
+ *
+ * @example
+ * import rewardsRiv from './rewards.riv';
+ * type Schema = SchemaOf<typeof rewardsRiv>; // RewardsSchema
+ */
+export type SchemaOf<T> = T extends {
+  readonly __riveSchema?: infer S extends RiveFileSchema;
+}
+  ? S
+  : T extends { readonly __schema?: infer S extends RiveFileSchema }
+    ? S
+    : T extends RiveFileSchema
+      ? T
+      : never;
+
+/**
  * A RiveFile branded with a schema type `T`.
  * The `__schema` field is purely a phantom type — it never exists at runtime.
+ *
+ * Accepts either a `RiveFileSchema` or a `RiveAsset<T>` (i.e. `typeof myRiv`).
  *
  * Obtain one via `RiveFileFactory.fromURL<MySchema>(...)` or
  * `RiveFileFactory.fromSource(typedAsset)`.
  */
-export type TypedRiveFile<T extends RiveFileSchema = RiveFileSchema> =
-  RiveFile & {
-    readonly __schema?: T;
-  };
+export type TypedRiveFile<
+  T extends RiveFileSchema | RiveAsset = RiveFileSchema,
+> = RiveFile & {
+  readonly __schema?: SchemaOf<T>;
+};

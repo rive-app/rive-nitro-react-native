@@ -9,7 +9,7 @@ import type {
   ViewModelImageProperty,
   ViewModelListProperty,
 } from '../specs/ViewModel.nitro';
-import type { RiveFileSchema } from './TypedRiveFile';
+import type { RiveAsset, RiveFileSchema, SchemaOf } from './TypedRiveFile';
 
 /**
  * A typed list property whose elements are ViewModelInstances from the same file.
@@ -199,3 +199,15 @@ export interface TypedViewModelInstance<
   /** Brand that prevents typed instances from matching untyped hook overloads. */
   readonly __vmBrand: [T, VMName];
 }
+
+/**
+ * Convenience alias: infer the ViewModel instance type directly from a RiveAsset import.
+ *
+ * @example
+ * import rewardsRiv from './rewards.riv';
+ * type RewardsInstance = TypedViewModelOf<typeof rewardsRiv, 'Rewards'>;
+ */
+export type TypedViewModelOf<
+  T extends RiveFileSchema | RiveAsset,
+  VMName extends Extract<keyof SchemaOf<T>['viewModels'], string>,
+> = TypedViewModelInstance<SchemaOf<T>, VMName>;
