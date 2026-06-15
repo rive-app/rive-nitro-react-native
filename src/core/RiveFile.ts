@@ -83,8 +83,18 @@ export namespace RiveFileFactory {
    * config.resolver.assetExts = [...config.resolver.assetExts, 'riv'];
    * ```
    */
+  export async function fromSource<T extends RiveFileSchema>(
+    source: RiveAsset<T>,
+    referencedAssets: ResolvedReferencedAssets | undefined,
+    loadCdn?: boolean
+  ): Promise<TypedRiveFile<T>>;
+  export async function fromSource(
+    source: number | { uri: string },
+    referencedAssets: ResolvedReferencedAssets | undefined,
+    loadCdn?: boolean
+  ): Promise<TypedRiveFile>;
   export async function fromSource<T extends RiveFileSchema = RiveFileSchema>(
-    source: RiveAsset<T> | { uri: string },
+    source: number | { uri: string },
     referencedAssets: ResolvedReferencedAssets | undefined,
     loadCdn: boolean = true
   ): Promise<TypedRiveFile<T>> {
