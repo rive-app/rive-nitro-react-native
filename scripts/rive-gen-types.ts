@@ -13,7 +13,13 @@
  *   const file = await RiveFileFactory.fromSource(gameRiv); // TypedRiveFile<GameSchema> — T inferred
  */
 
-import { readFileSync, writeFileSync, mkdirSync, readdirSync, statSync } from 'fs';
+import {
+  readFileSync,
+  writeFileSync,
+  mkdirSync,
+  readdirSync,
+  statSync,
+} from 'fs';
 import { dirname, resolve, basename, extname } from 'path';
 import { fileURLToPath } from 'url';
 import { RuntimeLoader } from '@rive-app/canvas';
@@ -72,9 +78,10 @@ async function getRuntime(): Promise<any> {
 }
 
 async function extractSchema(input: string): Promise<Schema> {
-  const bytes = input.startsWith('http://') || input.startsWith('https://')
-    ? new Uint8Array(await (await fetch(input)).arrayBuffer())
-    : new Uint8Array(readFileSync(input));
+  const bytes =
+    input.startsWith('http://') || input.startsWith('https://')
+      ? new Uint8Array(await (await fetch(input)).arrayBuffer())
+      : new Uint8Array(readFileSync(input));
 
   const runtime = await getRuntime();
 
@@ -105,7 +112,10 @@ async function extractSchema(input: string): Promise<Schema> {
   const vmCount = (riveFile as any).viewModelCount() as number;
   for (let i = 0; i < vmCount; i++) {
     const vm = (riveFile as any).viewModelByIndex(i);
-    const properties = vm.getProperties() as Array<{ name: string; type: string }>;
+    const properties = vm.getProperties() as Array<{
+      name: string;
+      type: string;
+    }>;
     const inst = vm.instance?.() as any;
     const props: Record<string, string> = {};
     for (const p of properties) {
@@ -121,7 +131,8 @@ async function extractSchema(input: string): Promise<Schema> {
         try {
           const ep = inst.enum?.(p.name);
           const values: string[] = ep?.values ?? [];
-          props[p.name] = values.length > 0 ? `enum:${values.join('|')}` : 'enum';
+          props[p.name] =
+            values.length > 0 ? `enum:${values.join('|')}` : 'enum';
         } catch {
           props[p.name] = 'enum';
         }
@@ -132,7 +143,12 @@ async function extractSchema(input: string): Promise<Schema> {
     viewModels[vm.name] = props;
   }
 
-  return { artboards, defaultArtboard: artboards[0] ?? '', stateMachines, viewModels };
+  return {
+    artboards,
+    defaultArtboard: artboards[0] ?? '',
+    stateMachines,
+    viewModels,
+  };
 }
 
 // With prettier quoteProps:"consistent", if any key in an object needs quotes, all get quotes.
