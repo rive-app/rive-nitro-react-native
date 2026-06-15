@@ -21,10 +21,7 @@ import {
   statSync,
 } from 'fs';
 import { dirname, resolve, basename, extname } from 'path';
-import { fileURLToPath } from 'url';
 import { RuntimeLoader } from '@rive-app/canvas';
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // Browser shims required by the @rive-app/canvas WASM runtime.
 (globalThis as any).document = {
