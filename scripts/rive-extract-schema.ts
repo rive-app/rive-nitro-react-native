@@ -60,30 +60,15 @@ async function main() {
   const bytes = await loadBytes(source);
   const runtime = await RuntimeLoader.awaitInstance();
 
-  // Stub makeRenderImage so runtime.load() resolves even without WebGL.
-  // On headless Linux, origMRI() returns null (no GPU), and passing null back
-  // causes the WASM to call process.exit(0) silently. Return a Proxy stub that
-  // no-ops all method calls and immediately fires the "loaded" callback (la).
-  const origMRI = (runtime.renderFactory as any).makeRenderImage?.bind(
-    runtime.renderFactory
-  );
-  if (origMRI) {
-    (runtime.renderFactory as any).makeRenderImage = function () {
-      const img = origMRI();
-      if (img) {
-        queueMicrotask(() => img.la?.());
-        return img;
-      }
-      // No WebGL: proxy that no-ops all calls so the WASM doesn't crash
-      const stub: any = new Proxy(Object.create(null), {
-        get: (_t, _p) => () => {},
-      });
-      queueMicrotask(() => stub.la());
-      return stub;
-    };
-  }
+  // Use CustomFileAssetLoader to claim all embedded assets (images, fonts) as
+  // handled so the runtime never calls makeRenderImage. Without this, .riv files
+  // with embedded images cause the WASM to call process.exit(0) on headless Linux
+  // where WebGL is unavailable. We only need the schema (artboards/VMs), not images.
+  const assetLoader = new (runtime as any).CustomFileAssetLoader({
+    loadContents: () => true,
+  });
 
-  const riveFile = await runtime.load(bytes, undefined, false);
+  const riveFile = await runtime.load(bytes, assetLoader, false);
 
   const artboards: string[] = [];
   const stateMachines: Record<string, string[]> = {};
