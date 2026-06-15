@@ -55,6 +55,7 @@ export default defineConfig([
       'lib/',
       '**/.expo/',
       '**/*.test-d.ts',
+      '**/*.riv.d.ts',
     ],
   },
 ]);

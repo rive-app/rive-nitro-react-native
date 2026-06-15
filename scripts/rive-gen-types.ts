@@ -48,22 +48,37 @@ function extractSchema(input: string): Schema {
   throw new Error('unreachable');
 }
 
+// With prettier quoteProps:"consistent", if any key in an object needs quotes, all get quotes.
+const IDENTIFIER_RE = /^[a-zA-Z_$][a-zA-Z0-9_$]*$/;
+const needsQuote = (s: string) => !IDENTIFIER_RE.test(s);
+const quoteKey = (s: string, forceQuote: boolean) =>
+  forceQuote || needsQuote(s) ? `'${s}'` : s;
+
 function smRecord(stateMachines: Record<string, string[]>): string {
+  const keys = Object.keys(stateMachines);
+  const force = keys.some(needsQuote);
   return Object.entries(stateMachines)
     .map(([ab, sms]) => {
       const union = sms.length ? sms.map((s) => `'${s}'`).join(' | ') : 'never';
-      return `    '${ab}': ${union};`;
+      return `    ${quoteKey(ab, force)}: ${union};`;
     })
     .join('\n');
 }
 
 function vmRecord(viewModels: Record<string, Record<string, string>>): string {
+  const vmKeys = Object.keys(viewModels);
+  const forceVmKeys = vmKeys.some(needsQuote);
   return Object.entries(viewModels)
     .map(([vmName, props]) => {
+      const propKeys = Object.keys(props);
+      const forcePropKeys = propKeys.some(needsQuote);
       const propLines = Object.entries(props)
-        .map(([propName, propType]) => `      '${propName}': '${propType}';`)
+        .map(
+          ([propName, propType]) =>
+            `      ${quoteKey(propName, forcePropKeys)}: '${propType}';`
+        )
         .join('\n');
-      return `    '${vmName}': {\n${propLines}\n    };`;
+      return `    ${quoteKey(vmName, forceVmKeys)}: {\n${propLines}\n    };`;
     })
     .join('\n');
 }
