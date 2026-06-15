@@ -36,7 +36,10 @@ function extractSchema(input: string): Schema {
         timeout: 30_000,
       });
       if (result.error) throw result.error;
-      if (result.signal) throw new Error(`bun killed by signal ${result.signal}\n${result.stderr}`);
+      if (result.signal)
+        throw new Error(
+          `bun killed by signal ${result.signal}\n${result.stderr}`
+        );
       if (result.status !== 0)
         throw new Error(
           result.stderr || `bun exited with code ${result.status}`
