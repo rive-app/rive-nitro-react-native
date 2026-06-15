@@ -3,14 +3,7 @@
 // Source: rewards.riv
 import type { RiveAsset } from '@rive-app/react-native';
 declare const asset: RiveAsset<{
-  artboards:
-    | 'Main'
-    | 'Lives 2'
-    | 'Item Value'
-    | 'Chest'
-    | 'Button'
-    | 'Heart'
-    | 'Item';
+  artboards: 'Main' | 'Lives 2' | 'Item Value' | 'Chest' | 'Button' | 'Heart' | 'Item';
   defaultArtboard: 'Main';
   stateMachines: {
     'Main': 'State Machine 1';
@@ -22,36 +15,36 @@ declare const asset: RiveAsset<{
     'Item': 'State Machine 1';
   };
   viewModels: {
-    Item_Icon_Value: {
-      Icon_React: 'trigger';
-      Property_Of_Item: 'viewModel:Item';
-      Item_Value: 'number';
+    'Item_Icon_Value': {
+      'Icon_React': 'trigger';
+      'Property_Of_Item': 'viewModel:Item';
+      'Item_Value': 'number';
     };
-    Energy_Bar: {
-      Bar_Color: 'color';
-      Lives: 'number';
-      Energy_Bar: 'number';
+    'Energy_Bar': {
+      'Bar_Color': 'color';
+      'Lives': 'number';
+      'Energy_Bar': 'number';
     };
-    Rewards: {
-      Price_Value: 'number';
-      Color: 'color';
-      Height: 'number';
-      With: 'number';
-      Item_Selection: 'viewModel:Item';
-      Item_Value_Icon: 'viewModel:Item_Icon_Value';
-      Button: 'viewModel:Button';
-      Coin: 'viewModel:Item_Icon_Value';
-      Gem: 'viewModel:Item_Icon_Value';
-      Energy_Bar: 'viewModel:Energy_Bar';
+    'Rewards': {
+      'Price_Value': 'number';
+      'Color': 'color';
+      'Height': 'number';
+      'With': 'number';
+      'Item_Selection': 'viewModel:Item';
+      'Item_Value_Icon': 'viewModel:Item_Icon_Value';
+      'Button': 'viewModel:Button';
+      'Coin': 'viewModel:Item_Icon_Value';
+      'Gem': 'viewModel:Item_Icon_Value';
+      'Energy_Bar': 'viewModel:Energy_Bar';
     };
-    Button: {
-      State_1: 'string';
-      Item_Text: 'string';
-      Item: 'viewModel:Item';
-      Pressed: 'trigger';
+    'Button': {
+      'State_1': 'string';
+      'Item_Text': 'string';
+      'Item': 'viewModel:Item';
+      'Pressed': 'trigger';
     };
-    Item: {
-      Item_Selection: 'enum:Coin|Gem';
+    'Item': {
+      'Item_Selection': 'enum:Coin|Gem';
     };
   };
 }>;

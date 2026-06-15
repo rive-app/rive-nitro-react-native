@@ -6,7 +6,7 @@ declare const asset: RiveAsset<{
   artboards: 'iOS_Android_Layouts_demo_v01';
   defaultArtboard: 'iOS_Android_Layouts_demo_v01';
   stateMachines: {
-    iOS_Android_Layouts_demo_v01: 'State Machine 1';
+    'iOS_Android_Layouts_demo_v01': 'State Machine 1';
   };
 }>;
 export default asset;

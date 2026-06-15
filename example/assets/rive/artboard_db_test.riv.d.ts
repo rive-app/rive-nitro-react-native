@@ -6,15 +6,15 @@ declare const asset: RiveAsset<{
   artboards: 'Main' | 'ArtboardGreen' | 'ArtboardBlue' | 'ArtboardRed';
   defaultArtboard: 'Main';
   stateMachines: {
-    Main: 'State Machine 1';
-    ArtboardGreen: 'State Machine 1';
-    ArtboardBlue: 'State Machine 1';
-    ArtboardRed: 'State Machine 1';
+    'Main': 'State Machine 1';
+    'ArtboardGreen': 'State Machine 1';
+    'ArtboardBlue': 'State Machine 1';
+    'ArtboardRed': 'State Machine 1';
   };
   viewModels: {
-    MainViewModel: {
-      artboard_1: 'artboard';
-      artboard_2: 'artboard';
+    'MainViewModel': {
+      'artboard_1': 'artboard';
+      'artboard_2': 'artboard';
     };
   };
 }>;

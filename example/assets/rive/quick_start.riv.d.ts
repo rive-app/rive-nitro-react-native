@@ -6,15 +6,15 @@ declare const asset: RiveAsset<{
   artboards: 'health_bar_v01';
   defaultArtboard: 'health_bar_v01';
   stateMachines: {
-    health_bar_v01: 'State Machine 1';
+    'health_bar_v01': 'State Machine 1';
   };
   viewModels: {
-    health_bar_01: {
-      gameOver: 'trigger';
-      hoverYes: 'boolean';
-      hoverNo: 'boolean';
-      healthColor: 'color';
-      health: 'number';
+    'health_bar_01': {
+      'gameOver': 'trigger';
+      'hoverYes': 'boolean';
+      'hoverNo': 'boolean';
+      'healthColor': 'color';
+      'health': 'number';
     };
   };
 }>;
