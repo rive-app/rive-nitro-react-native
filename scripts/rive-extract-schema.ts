@@ -60,17 +60,28 @@ async function main() {
   const bytes = await loadBytes(source);
   const runtime = await RuntimeLoader.awaitInstance();
 
-  // Stub image loading: call la() (the "loaded" callback) immediately so
-  // runtime.load() resolves without waiting for CDN asset fetches.
-  // Guard against null return when WebGL is unavailable (headless Linux).
-  const origMRI = (runtime.renderFactory as any).makeRenderImage.bind(
+  // Stub makeRenderImage so runtime.load() resolves even without WebGL.
+  // On headless Linux, origMRI() returns null (no GPU), and passing null back
+  // causes the WASM to call process.exit(0) silently. Return a Proxy stub that
+  // no-ops all method calls and immediately fires the "loaded" callback (la).
+  const origMRI = (runtime.renderFactory as any).makeRenderImage?.bind(
     runtime.renderFactory
   );
-  (runtime.renderFactory as any).makeRenderImage = function () {
-    const img = origMRI();
-    if (img) queueMicrotask(() => img.la?.());
-    return img;
-  };
+  if (origMRI) {
+    (runtime.renderFactory as any).makeRenderImage = function () {
+      const img = origMRI();
+      if (img) {
+        queueMicrotask(() => img.la?.());
+        return img;
+      }
+      // No WebGL: proxy that no-ops all calls so the WASM doesn't crash
+      const stub: any = new Proxy(Object.create(null), {
+        get: (_t, _p) => () => {},
+      });
+      queueMicrotask(() => stub.la());
+      return stub;
+    };
+  }
 
   const riveFile = await runtime.load(bytes, undefined, false);
 
