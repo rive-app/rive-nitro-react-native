@@ -54,7 +54,10 @@ describe('rive-extract-schema', () => {
     const databinding = extract(
       resolve(__dirname, '../../example/assets/rive/databinding.riv')
     );
-    const vms = databinding.viewModels as Record<string, Record<string, string>>;
+    const vms = databinding.viewModels as Record<
+      string,
+      Record<string, string>
+    >;
     expect(vms.Person!.favourite_pet).toMatch(/^enum:/);
     expect(vms.Person!.favourite_pet).toContain('chipmunk');
     expect(vms.Person!.favourite_pet).toContain('dog');

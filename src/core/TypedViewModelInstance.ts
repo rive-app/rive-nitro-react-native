@@ -195,4 +195,7 @@ export interface TypedViewModelInstance<
       >
     | undefined
   >;
+
+  /** Brand that prevents typed instances from matching untyped hook overloads. */
+  readonly __vmBrand: [T, VMName];
 }

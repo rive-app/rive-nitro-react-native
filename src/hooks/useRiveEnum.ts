@@ -25,7 +25,7 @@ export function useRiveEnum<
 
 export function useRiveEnum(
   path: string,
-  viewModelInstance?: ViewModelInstance | null
+  viewModelInstance?: (ViewModelInstance & { __vmBrand?: never }) | null
 ): UseRivePropertyResult<string>;
 
 export function useRiveEnum(

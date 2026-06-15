@@ -36,7 +36,7 @@ export function useRiveColor<
 ): UseRiveColorResult;
 export function useRiveColor(
   path: string,
-  viewModelInstance?: ViewModelInstance | null
+  viewModelInstance?: (ViewModelInstance & { __vmBrand?: never }) | null
 ): UseRiveColorResult;
 export function useRiveColor(
   path: string,

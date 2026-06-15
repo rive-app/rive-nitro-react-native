@@ -24,7 +24,8 @@
     "skipLibCheck": true,
     "strict": true,
     "target": "ESNext",
-    "verbatimModuleSyntax": true
+    "verbatimModuleSyntax": true,
+    "allowArbitraryExtensions": true
   },
 "exclude": ["expo-example", "expo55-example", "**/*.test-d.ts", "scripts/__tests__"]
 }
