@@ -3,48 +3,40 @@
 // Source: blinko.riv
 import type { RiveAsset } from '@rive-app/react-native';
 declare const asset: RiveAsset<{
-  artboards:
-    | 'Main'
-    | 'StoreItem'
-    | 'Token'
-    | 'Indicator'
-    | 'Puck'
-    | 'StoreIcon'
-    | 'Peg'
-    | 'scoreBox';
+  artboards: 'Main' | 'StoreItem' | 'Token' | 'Indicator' | 'Puck' | 'StoreIcon' | 'Peg' | 'scoreBox';
   defaultArtboard: 'Main';
   stateMachines: {
-    Main: 'State Machine 1';
-    StoreItem: 'State Machine 1';
-    Token: 'State Machine 1';
-    Indicator: 'State Machine 1';
-    Puck: 'State Machine 1';
-    StoreIcon: 'State Machine 1';
-    Peg: 'State Machine 1';
-    scoreBox: 'State Machine 1';
+    'Main': 'State Machine 1';
+    'StoreItem': 'State Machine 1';
+    'Token': 'State Machine 1';
+    'Indicator': 'State Machine 1';
+    'Puck': 'State Machine 1';
+    'StoreIcon': 'State Machine 1';
+    'Peg': 'State Machine 1';
+    'scoreBox': 'State Machine 1';
   };
   viewModels: {
-    IndicatorVM: {
-      purchased: 'boolean';
+    'IndicatorVM': {
+      'purchased': 'boolean';
     };
-    StoreItemVM: {
-      tokenCount: 'number';
-      height: 'number';
-      itemHover: 'boolean';
-      cost: 'number';
-      description: 'string';
-      id: 'string';
-      itemType: 'string';
-      maxPurchases: 'number';
-      name: 'string';
-      purchase: 'trigger';
-      purchaseCount: 'number';
+    'StoreItemVM': {
+      'tokenCount': 'number';
+      'height': 'number';
+      'itemHover': 'boolean';
+      'cost': 'number';
+      'description': 'string';
+      'id': 'string';
+      'itemType': 'string';
+      'maxPurchases': 'number';
+      'name': 'string';
+      'purchase': 'trigger';
+      'purchaseCount': 'number';
     };
-    storeIconVM: {
-      storeiconClick: 'trigger';
-      iconHovered: 'boolean';
+    'storeIconVM': {
+      'storeiconClick': 'trigger';
+      'iconHovered': 'boolean';
     };
-    storeVM: {
+    'storeVM': {
       'xbuttonClick': 'trigger';
       'xbuttonHover': 'boolean';
       'items': 'list';
@@ -60,37 +52,37 @@ declare const asset: RiveAsset<{
       'superMultiplierCost': 'number';
       'superMultiplierCount': 'number';
     };
-    TokenVM: {
-      spinToken: 'boolean';
+    'TokenVM': {
+      'spinToken': 'boolean';
     };
-    pegVM: {
-      blink: 'trigger';
-      multiplierValue: 'number';
-      pegType: 'enum:normal|multiplier';
-      pegBounced: 'trigger';
+    'pegVM': {
+      'blink': 'trigger';
+      'multiplierValue': 'number';
+      'pegType': 'enum:normal|multiplier';
+      'pegBounced': 'trigger';
     };
-    gameLogicVM: {
-      turnTokens: 'number';
-      turnScore: 'number';
-      buttonLabel: 'string';
-      message: 'string';
-      startTurn: 'trigger';
-      turnEnded: 'trigger';
-      gameEnded: 'boolean';
-      tokenCount: 'number';
-      scoreTotal: 'number';
+    'gameLogicVM': {
+      'turnTokens': 'number';
+      'turnScore': 'number';
+      'buttonLabel': 'string';
+      'message': 'string';
+      'startTurn': 'trigger';
+      'turnEnded': 'trigger';
+      'gameEnded': 'boolean';
+      'tokenCount': 'number';
+      'scoreTotal': 'number';
     };
-    scoreBox: {
-      Token: 'viewModel:TokenVM';
-      slotType: 'enum:addToken|normal';
-      landed: 'trigger';
-      scoreValue: 'number';
+    'scoreBox': {
+      'Token': 'viewModel:TokenVM';
+      'slotType': 'enum:addToken|normal';
+      'landed': 'trigger';
+      'scoreValue': 'number';
     };
-    PuckVM: {
-      puckBounce: 'trigger';
-      puckRotation: 'number';
+    'PuckVM': {
+      'puckBounce': 'trigger';
+      'puckRotation': 'number';
     };
-    main: {
+    'main': {
       'PuckVM': 'viewModel:PuckVM';
       'storeItemVM': 'viewModel:StoreItemVM';
       'storeIconVM': 'viewModel:storeIconVM';

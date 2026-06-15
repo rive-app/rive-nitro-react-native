@@ -6,13 +6,13 @@ declare const asset: RiveAsset<{
   artboards: 'Artboard';
   defaultArtboard: 'Artboard';
   stateMachines: {
-    Artboard: 'State Machine 1';
+    'Artboard': 'State Machine 1';
   };
   viewModels: {
-    First: {
-      imageValue: 'image';
-      colorValue: 'color';
-      textValue: 'string';
+    'First': {
+      'imageValue': 'image';
+      'colorValue': 'color';
+      'textValue': 'string';
     };
   };
 }>;
