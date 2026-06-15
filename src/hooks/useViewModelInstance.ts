@@ -3,7 +3,7 @@
 import { useMemo, useRef } from 'react';
 import type { ViewModel, ViewModelInstance } from '../specs/ViewModel.nitro';
 import type { RiveFile } from '../specs/RiveFile.nitro';
-import type { RiveFileSchema, TypedRiveFile } from '../core/TypedRiveFile';
+import type { RiveFileSchema } from '../core/TypedRiveFile';
 import type { TypedViewModelInstance } from '../core/TypedViewModelInstance';
 import type { RiveViewRef } from '../index';
 import { callDispose } from '../core/callDispose';
@@ -311,7 +311,7 @@ export function useViewModelInstance<
   T extends RiveFileSchema,
   N extends Extract<keyof T['viewModels'], string>,
 >(
-  source: TypedRiveFile<T> | null | undefined,
+  source: (RiveFile & { readonly __schema?: T }) | null | undefined,
   params: UseViewModelInstanceFileParams & { viewModelName: N }
 ):
   | { instance: TypedViewModelInstance<T, N>; error: null }
