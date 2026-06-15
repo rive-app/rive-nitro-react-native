@@ -15,9 +15,6 @@ import {
 import { type Metadata } from '../shared/metadata';
 import rewardsRiv from '../../assets/rive/rewards.riv';
 
-type RewardsFile = TypedRiveFile<typeof rewardsRiv>;
-type RewardsInstance = TypedViewModelOf<typeof rewardsRiv, 'Rewards'>;
-
 export default function WithRiveFile() {
   const { riveFile, isLoading, error } = useRiveFile(rewardsRiv);
 
@@ -38,14 +35,18 @@ export default function WithRiveFile() {
   );
 }
 
-function WithViewModelSetup({ file }: { file: RewardsFile }) {
+function WithViewModelSetup({
+  file,
+}: {
+  file: TypedRiveFile<typeof rewardsRiv>;
+}) {
   const { instance, error } = useViewModelInstance(file, {
     viewModelName: 'Rewards',
   });
 
   if (error) {
     console.error(error.message);
-    return <Text style={{ color: 'red' }}>{error.message}</Text>;
+    return <Text style={styles.errorText}>{error.message}</Text>;
   }
 
   if (!instance) {
@@ -59,8 +60,8 @@ function DataBindingExample({
   instance,
   file,
 }: {
-  instance: RewardsInstance;
-  file: RewardsFile;
+  instance: TypedViewModelOf<typeof rewardsRiv, 'Rewards'>;
+  file: TypedRiveFile<typeof rewardsRiv>;
 }) {
   const { error: coinValueError } = useRiveNumber('Coin/Item_Value', instance);
 
