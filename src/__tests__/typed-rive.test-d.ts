@@ -4,12 +4,16 @@ import type {
   TypedViewModelInstance,
   TypedViewModelListProperty,
   TypedViewModelEnumProperty,
+  UntypedViewModelInstance,
 } from '../../src/core/TypedViewModelInstance';
 import type {
+  ViewModelInstance,
   ViewModelNumberProperty,
   ViewModelTriggerProperty,
   ViewModelBooleanProperty,
 } from '../../src/specs/ViewModel.nitro';
+import type { UseRivePropertyResult } from '../../src/types';
+import { useRiveNumber } from '../../src/hooks/useRiveNumber';
 import type { RiveViewProps } from '../../src/core/RiveView';
 import gradientBorderRiv from '../../example/assets/rive/GradientBorder.riv';
 import blinkoRiv from '../../example/assets/rive/blinko.riv';
@@ -226,3 +230,45 @@ type AnyBlinkoVM = TypedViewModelInstance<
 >;
 declare const list: TypedViewModelListProperty<BlinkoSchema>;
 expectAssignable<Promise<AnyBlinkoVM | undefined>>(list.getInstanceAtAsync(0));
+
+// ============================================================
+// useRiveNumber
+// ============================================================
+
+declare const untypedInstance: UntypedViewModelInstance;
+declare const plainInstance: ViewModelInstance;
+
+// Typed overload: valid direct number path → result typed as number
+expectType<UseRivePropertyResult<number>>(
+  useRiveNumber('multiplierValue', storeVM)
+);
+
+// Typed overload: valid nested number path (nested ViewModel)
+expectType<UseRivePropertyResult<number>>(
+  useRiveNumber('property of pegVM/multiplierValue', storeVM)
+);
+
+// Typed overload: wrong kind — xbuttonClick is a trigger, not a number
+expectError(useRiveNumber('xbuttonClick', storeVM));
+
+// Typed overload: nonexistent path
+expectError(useRiveNumber('doesNotExist', storeVM));
+
+// Typed overload: nested path with wrong property kind
+expectError(useRiveNumber('property of pegVM/blink', storeVM));
+
+// Typed instance rejected by untyped overload → forces typed overload → wrong path errors
+expectError(useRiveNumber('multiplierValue' as string, storeVM));
+
+// Untyped overload: plain ViewModelInstance accepts any string path
+expectType<UseRivePropertyResult<number>>(
+  useRiveNumber('any/path', untypedInstance)
+);
+
+// Untyped overload: plain ViewModelInstance (no brand) also accepted
+expectType<UseRivePropertyResult<number>>(
+  useRiveNumber('any/path', plainInstance)
+);
+
+// No instance: falls back to untyped overload, still returns number result
+expectType<UseRivePropertyResult<number>>(useRiveNumber('multiplierValue'));
