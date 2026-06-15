@@ -200,6 +200,13 @@ if (outIdx !== -1) {
       : baseName.charAt(0).toUpperCase() + baseName.slice(1) + 'Schema';
   generate(input, outPath, 'standalone', typeName);
 } else {
+  if (input.startsWith('http://') || input.startsWith('https://')) {
+    process.stderr.write(
+      `Error: URL inputs require --out to specify the output path.\n` +
+        `  Example: rive-gen-types ${input} --out ./assets/file.riv.d.ts\n`
+    );
+    process.exit(1);
+  }
   // Default: write <file>.riv.d.ts next to the source file
   const absInput = resolve(process.cwd(), input);
   generate(input, `${absInput}.d.ts`, 'dts');
