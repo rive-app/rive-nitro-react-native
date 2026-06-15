@@ -54,6 +54,14 @@ jobs:
             exit 1
           fi
 
+      - name: Validate .riv schema files
+        run: |
+          yarn rive-gen-types --all example/assets/rive
+          if ! git diff --exit-code 'example/assets/rive/*.riv.d.ts'; then
+            echo "Error: .riv.d.ts files are out of date. Please run 'yarn rive-gen-types --all example/assets/rive' and commit the changes."
+            exit 1
+          fi
+
       - name: Typecheck files
         run: yarn typecheck
 
