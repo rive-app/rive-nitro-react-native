@@ -29,6 +29,18 @@ console.log = (...args: unknown[]) =>
 console.warn = (...args: unknown[]) =>
   process.stderr.write(args.join(' ') + '\n');
 
+// Catch errors from microtasks/unhandled rejections that would otherwise cause
+// a silent exit with code 0 on some Bun versions (e.g. when img.la() throws in
+// a queueMicrotask callback because WebGL is unavailable on Linux CI).
+process.on('uncaughtException', (err) => {
+  process.stderr.write(`uncaughtException: ${err.stack ?? err.message}\n`);
+  process.exit(1);
+});
+process.on('unhandledRejection', (reason) => {
+  process.stderr.write(`unhandledRejection: ${reason}\n`);
+  process.exit(1);
+});
+
 if (!input) {
   process.stderr.write('Usage: bun rive-extract-schema.ts <path-or-url>\n');
   process.exit(1);
@@ -50,12 +62,13 @@ async function main() {
 
   // Stub image loading: call la() (the "loaded" callback) immediately so
   // runtime.load() resolves without waiting for CDN asset fetches.
+  // Guard against null return when WebGL is unavailable (headless Linux).
   const origMRI = (runtime.renderFactory as any).makeRenderImage.bind(
     runtime.renderFactory
   );
   (runtime.renderFactory as any).makeRenderImage = function () {
     const img = origMRI();
-    queueMicrotask(() => img.la());
+    if (img) queueMicrotask(() => img.la?.());
     return img;
   };
 
