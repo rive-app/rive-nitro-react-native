@@ -29,6 +29,7 @@ export type {
 export type {
   TypedViewModelInstance,
   TypedViewModelOf,
+  UntypedViewModelInstance,
   TypedViewModelListProperty,
   TypedViewModelEnumProperty,
   PathsOfKind,

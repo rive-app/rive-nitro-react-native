@@ -7,6 +7,7 @@ import type { RiveFileSchema } from '../core/TypedRiveFile';
 import {
   type EnumValuesOf,
   type TypedViewModelInstance,
+  type UntypedViewModelInstance,
   type VMPropsOfKind,
 } from '../core/TypedViewModelInstance';
 import { useRiveProperty } from './useRiveProperty';
@@ -25,7 +26,7 @@ export function useRiveEnum<
 
 export function useRiveEnum(
   path: string,
-  viewModelInstance?: (ViewModelInstance & { __vmBrand?: never }) | null
+  viewModelInstance?: UntypedViewModelInstance | null
 ): UseRivePropertyResult<string>;
 
 export function useRiveEnum(
