@@ -7,6 +7,7 @@ import { useRiveProperty } from './useRiveProperty';
 import type {
   PathsOfKind,
   TypedViewModelInstance,
+  UntypedViewModelInstance,
 } from '../core/TypedViewModelInstance';
 import type { RiveFileSchema } from '../core/TypedRiveFile';
 
@@ -29,7 +30,7 @@ export function useRiveNumber<
 ): UseRivePropertyResult<number>;
 export function useRiveNumber(
   path: string,
-  viewModelInstance?: (ViewModelInstance & { __vmBrand?: never }) | null
+  viewModelInstance?: UntypedViewModelInstance | null
 ): UseRivePropertyResult<number>;
 export function useRiveNumber(
   path: string,

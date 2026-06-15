@@ -11,6 +11,7 @@ import { useDisposableMemo } from './useDisposableMemo';
 import type {
   PathsOfKind,
   TypedViewModelInstance,
+  UntypedViewModelInstance,
 } from '../core/TypedViewModelInstance';
 import type { RiveFileSchema } from '../core/TypedRiveFile';
 
@@ -36,7 +37,7 @@ export function useRiveTrigger<
 ): UseRiveTriggerResult;
 export function useRiveTrigger(
   path: string,
-  viewModelInstance?: (ViewModelInstance & { __vmBrand?: never }) | null,
+  viewModelInstance?: UntypedViewModelInstance | null,
   params?: UseViewModelInstanceTriggerParameters
 ): UseRiveTriggerResult;
 export function useRiveTrigger(

@@ -8,6 +8,7 @@ import { RiveColor } from '../core/RiveColor';
 import type {
   PathsOfKind,
   TypedViewModelInstance,
+  UntypedViewModelInstance,
 } from '../core/TypedViewModelInstance';
 import type { RiveFileSchema } from '../core/TypedRiveFile';
 
@@ -36,7 +37,7 @@ export function useRiveColor<
 ): UseRiveColorResult;
 export function useRiveColor(
   path: string,
-  viewModelInstance?: (ViewModelInstance & { __vmBrand?: never }) | null
+  viewModelInstance?: UntypedViewModelInstance | null
 ): UseRiveColorResult;
 export function useRiveColor(
   path: string,

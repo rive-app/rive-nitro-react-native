@@ -201,6 +201,13 @@ export interface TypedViewModelInstance<
 }
 
 /**
+ * A plain ViewModelInstance with no schema type information.
+ * Used in the untyped hook overloads — typed instances are intentionally
+ * excluded so TypeScript picks the typed overload when a schema is known.
+ */
+export type UntypedViewModelInstance = ViewModelInstance & { __vmBrand?: never };
+
+/**
  * Convenience alias: infer the ViewModel instance type directly from a RiveAsset import.
  *
  * @example
