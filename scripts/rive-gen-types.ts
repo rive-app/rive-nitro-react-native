@@ -13,13 +13,24 @@
  *   const file = await RiveFileFactory.fromSource(gameRiv); // TypedRiveFile<GameSchema> — T inferred
  */
 
-import { spawnSync } from 'child_process';
-import { writeFileSync, mkdirSync, readdirSync, statSync } from 'fs';
+import { readFileSync, writeFileSync, mkdirSync, readdirSync, statSync } from 'fs';
 import { dirname, resolve, basename, extname } from 'path';
 import { fileURLToPath } from 'url';
+import { RuntimeLoader } from '@rive-app/canvas';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const extractorPath = resolve(__dirname, 'rive-extract-schema.ts');
+
+// Browser shims required by the @rive-app/canvas WASM runtime.
+(globalThis as any).document = {
+  createElement: () => ({ getContext: () => null }),
+};
+(globalThis as any).Image = class {};
+
+// Silence WASM warnings (e.g. "No WebGL support") so they don't pollute output.
+console.log = (...args: unknown[]) =>
+  process.stderr.write(args.join(' ') + '\n');
+console.warn = (...args: unknown[]) =>
+  process.stderr.write(args.join(' ') + '\n');
 
 interface Schema {
   artboards: string[];
@@ -28,32 +39,100 @@ interface Schema {
   viewModels: Record<string, Record<string, string>>;
 }
 
-function extractSchema(input: string): Schema {
-  for (let attempt = 0; attempt < 2; attempt++) {
-    try {
-      const result = spawnSync('bun', [extractorPath, input], {
-        encoding: 'utf8',
-        timeout: 30_000,
-      });
-      if (result.error) throw result.error;
-      if (result.signal)
-        throw new Error(
-          `bun killed by signal ${result.signal}\n${result.stderr}`
-        );
-      if (result.status !== 0)
-        throw new Error(
-          result.stderr || `bun exited with code ${result.status}`
-        );
-      if (!result.stdout.trim())
-        throw new Error(
-          `bun exited 0 but produced no output\nstderr: ${result.stderr || '(empty)'}`
-        );
-      return JSON.parse(result.stdout) as Schema;
-    } catch (err) {
-      if (attempt === 1) throw err;
-    }
+let runtimeReady: Promise<any> | null = null;
+
+async function getRuntime(): Promise<any> {
+  if (!runtimeReady) {
+    runtimeReady = RuntimeLoader.awaitInstance().then((runtime) => {
+      // On headless Linux (no WebGL) the image-load counter (aa.total/aa.loaded)
+      // never resolves. Wrap img.decode to fire img.la() via queueMicrotask after
+      // K() returns so the Promise resolves with the actual file, not null.
+      const origMRI = (runtime.renderFactory as any).makeRenderImage.bind(
+        runtime.renderFactory
+      );
+      (runtime.renderFactory as any).makeRenderImage = function () {
+        const img = origMRI();
+        if (
+          img &&
+          typeof (img as any).la === 'function' &&
+          typeof (img as any).decode === 'function'
+        ) {
+          const origDecode = (img as any).decode.bind(img);
+          (img as any).decode = function (imgBytes: Uint8Array) {
+            origDecode(imgBytes);
+            queueMicrotask(() => (img as any).la());
+          };
+        }
+        return img;
+      };
+      return runtime;
+    });
   }
-  throw new Error('unreachable');
+  return runtimeReady;
+}
+
+async function extractSchema(input: string): Promise<Schema> {
+  const bytes = input.startsWith('http://') || input.startsWith('https://')
+    ? new Uint8Array(await (await fetch(input)).arrayBuffer())
+    : new Uint8Array(readFileSync(input));
+
+  const runtime = await getRuntime();
+
+  const assetLoader = new (runtime as any).CustomFileAssetLoader({
+    loadContents: (asset: any, embeddedBytes: Uint8Array) => {
+      if (embeddedBytes?.length && asset?.decode) {
+        asset.decode(embeddedBytes);
+      }
+      return true;
+    },
+  });
+
+  const riveFile = await runtime.load(bytes, assetLoader, false);
+
+  const artboards: string[] = [];
+  const stateMachines: Record<string, string[]> = {};
+  for (let i = 0; i < riveFile.artboardCount(); i++) {
+    const artboard = riveFile.artboardByIndex(i);
+    artboards.push(artboard.name);
+    const sms: string[] = [];
+    for (let j = 0; j < artboard.stateMachineCount(); j++) {
+      sms.push(artboard.stateMachineByIndex(j).name);
+    }
+    stateMachines[artboard.name] = sms;
+  }
+
+  const viewModels: Record<string, Record<string, string>> = {};
+  const vmCount = (riveFile as any).viewModelCount() as number;
+  for (let i = 0; i < vmCount; i++) {
+    const vm = (riveFile as any).viewModelByIndex(i);
+    const properties = vm.getProperties() as Array<{ name: string; type: string }>;
+    const inst = vm.instance?.() as any;
+    const props: Record<string, string> = {};
+    for (const p of properties) {
+      if (p.type === 'viewModel' && inst) {
+        try {
+          const nested = inst.viewModel?.(p.name);
+          const refName = nested?.getViewModelName?.();
+          props[p.name] = refName ? `viewModel:${refName}` : 'viewModel';
+        } catch {
+          props[p.name] = 'viewModel';
+        }
+      } else if (p.type === 'enumType' && inst) {
+        try {
+          const ep = inst.enum?.(p.name);
+          const values: string[] = ep?.values ?? [];
+          props[p.name] = values.length > 0 ? `enum:${values.join('|')}` : 'enum';
+        } catch {
+          props[p.name] = 'enum';
+        }
+      } else {
+        props[p.name] = p.type;
+      }
+    }
+    viewModels[vm.name] = props;
+  }
+
+  return { artboards, defaultArtboard: artboards[0] ?? '', stateMachines, viewModels };
 }
 
 // With prettier quoteProps:"consistent", if any key in an object needs quotes, all get quotes.
@@ -133,7 +212,7 @@ ${schemaBody(schema)}
 `;
 }
 
-function generate(
+async function generate(
   input: string,
   outPath: string,
   mode: 'dts' | 'standalone',
@@ -141,7 +220,7 @@ function generate(
 ) {
   let schema: Schema;
   try {
-    schema = extractSchema(input);
+    schema = await extractSchema(input);
   } catch (err) {
     process.stderr.write(
       `Failed to extract schema from ${input}: ${err instanceof Error ? err.message : String(err)}\n`
@@ -179,58 +258,65 @@ function findRivFiles(dir: string): string[] {
 
 // --- CLI ---
 
-// noUncheckedIndexedAccess: slice gives string[], index access gives string | undefined
-const args: string[] = process.argv.slice(2);
+async function main() {
+  // noUncheckedIndexedAccess: slice gives string[], index access gives string | undefined
+  const args: string[] = process.argv.slice(2);
 
-if (args[0] === '--all') {
-  const dir: string | undefined = args[1];
-  if (!dir) {
-    process.stderr.write('Usage: rive-gen-types --all <directory>\n');
-    process.exit(1);
+  if (args[0] === '--all') {
+    const dir: string | undefined = args[1];
+    if (!dir) {
+      process.stderr.write('Usage: rive-gen-types --all <directory>\n');
+      process.exit(1);
+    }
+    const files = findRivFiles(resolve(process.cwd(), dir));
+    if (!files.length) {
+      process.stderr.write(`No .riv files found in ${dir}\n`);
+      process.exit(1);
+    }
+    for (const file of files) {
+      await generate(file, `${file}.d.ts`, 'dts');
+    }
+    return;
   }
-  const files = findRivFiles(resolve(process.cwd(), dir));
-  if (!files.length) {
-    process.stderr.write(`No .riv files found in ${dir}\n`);
-    process.exit(1);
-  }
-  for (const file of files) {
-    generate(file, `${file}.d.ts`, 'dts');
-  }
-  process.exit(0);
-}
 
-if (!args.length || args[0]!.startsWith('--')) {
-  process.stderr.write(
-    'Usage:\n' +
-      '  rive-gen-types <path-or-url>               # writes <file>.riv.d.ts\n' +
-      '  rive-gen-types <path> --out <out.ts>        # standalone schema .ts\n' +
-      '  rive-gen-types --all <directory>            # all .riv files in dir\n'
-  );
-  process.exit(1);
-}
-
-const input = args[0]!;
-const outIdx = args.indexOf('--out');
-
-if (outIdx !== -1) {
-  // Standalone mode: generate a named schema type, not a .d.ts
-  const outPath = resolve(process.cwd(), args[outIdx + 1]!);
-  const baseName = basename(input, '.riv').replace(/[^a-zA-Z0-9]/g, '_');
-  const nameIdx = args.indexOf('--name');
-  const typeName =
-    nameIdx !== -1
-      ? args[nameIdx + 1]!
-      : baseName.charAt(0).toUpperCase() + baseName.slice(1) + 'Schema';
-  generate(input, outPath, 'standalone', typeName);
-} else {
-  if (input.startsWith('http://') || input.startsWith('https://')) {
+  if (!args.length || args[0]!.startsWith('--')) {
     process.stderr.write(
-      `Error: URL inputs require --out to specify the output path.\n` +
-        `  Example: rive-gen-types ${input} --out ./assets/file.riv.d.ts\n`
+      'Usage:\n' +
+        '  rive-gen-types <path-or-url>               # writes <file>.riv.d.ts\n' +
+        '  rive-gen-types <path> --out <out.ts>        # standalone schema .ts\n' +
+        '  rive-gen-types --all <directory>            # all .riv files in dir\n'
     );
     process.exit(1);
   }
-  // Default: write <file>.riv.d.ts next to the source file
-  const absInput = resolve(process.cwd(), input);
-  generate(input, `${absInput}.d.ts`, 'dts');
+
+  const input = args[0]!;
+  const outIdx = args.indexOf('--out');
+
+  if (outIdx !== -1) {
+    // Standalone mode: generate a named schema type, not a .d.ts
+    const outPath = resolve(process.cwd(), args[outIdx + 1]!);
+    const baseName = basename(input, '.riv').replace(/[^a-zA-Z0-9]/g, '_');
+    const nameIdx = args.indexOf('--name');
+    const typeName =
+      nameIdx !== -1
+        ? args[nameIdx + 1]!
+        : baseName.charAt(0).toUpperCase() + baseName.slice(1) + 'Schema';
+    await generate(input, outPath, 'standalone', typeName);
+  } else {
+    if (input.startsWith('http://') || input.startsWith('https://')) {
+      process.stderr.write(
+        `Error: URL inputs require --out to specify the output path.\n` +
+          `  Example: rive-gen-types ${input} --out ./assets/file.riv.d.ts\n`
+      );
+      process.exit(1);
+    }
+    // Default: write <file>.riv.d.ts next to the source file
+    const absInput = resolve(process.cwd(), input);
+    await generate(input, `${absInput}.d.ts`, 'dts');
+  }
 }
+
+main().catch((err: Error) => {
+  process.stderr.write(err.message + '\n');
+  process.exit(1);
+});
