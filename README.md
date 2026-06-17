@@ -13,10 +13,6 @@
 
 ![Rive hero image](https://cdn.rive.app/rive_logo_dark_bg.png)
 
-## Early Release
-
-> **⚠️ Early Release**: This package is in active development. We recommend testing thoroughly before using in production applications. We're actively gathering feedback to improve the library. Please share your thoughts and report any issues you encounter.
-
 ## Requirements
 
 - **React Native**: 0.78 or later (0.79+ recommended for better Android error messages)
@@ -254,9 +250,9 @@ This section tracks new features and improvements planned for this runtime that 
 | ----------------------------------------------------------------------------------------------------- | ------ |
 | [Reusable .riv File resources (preloading)](https://github.com/rive-app/rive-react-native/issues/260) | ✅     |
 | [Data Binding - Images](https://github.com/rive-app/rive-nitro-react-native/issues/9)                 | ✅     |
-| [Data Binding - Artboards](https://github.com/rive-app/rive-nitro-react-native/issues/10)             | 🚧     |
+| [Data Binding - Artboards](https://github.com/rive-app/rive-nitro-react-native/issues/10)             | ✅     |
 | [Data Binding - Lists](https://github.com/rive-app/rive-nitro-react-native/issues/11)                 | ✅     |
-| [Data Binding - Value props](https://github.com/rive-app/rive-nitro-react-native/pull/24)             | 🚧     |
+| [Data Binding - Value props](https://github.com/rive-app/rive-nitro-react-native/pull/24)             | ✅     |
 | [Suspense](https://github.com/rive-app/rive-nitro-react-native/pull/19)                               | 🚧     |
 
 ## Contributing
