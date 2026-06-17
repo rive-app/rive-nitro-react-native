@@ -10,6 +10,32 @@ import type { ResolvedReferencedAssets } from './ReferencedAssets';
 const RiveFileInternal =
   NitroModules.createHybridObject<RiveFileFactoryInternal>('RiveFileFactory');
 
+let _warnedLoadCdnUnsupported = false;
+
+/**
+ * The experimental backend ignores `loadCdn` — its CommandQueue file-load API
+ * has no CDN asset resolution. Warn once (per JS runtime) when a caller
+ * *explicitly* opts into `loadCdn: true` there, so they know CDN-referenced
+ * assets must be supplied via `referencedAssets` instead. Callers that don't
+ * pass `loadCdn` (the common case) are not warned.
+ */
+function warnLoadCdnUnsupportedOnExperimental(
+  loadCdn: boolean | undefined
+): void {
+  if (
+    loadCdn === true &&
+    !_warnedLoadCdnUnsupported &&
+    RiveFileInternal.backend === 'experimental'
+  ) {
+    _warnedLoadCdnUnsupported = true;
+    console.warn(
+      '[Rive] `loadCdn: true` is not supported on the experimental backend and is ignored. ' +
+        'CDN-referenced assets (fonts/images) are not fetched automatically — supply them ' +
+        'via the `referencedAssets` option instead.'
+    );
+  }
+}
+
 /**
  * Factory namespace for creating RiveFile instances from different sources.
  * Provides static methods to load Rive files from URLs, resources, or raw bytes.
@@ -23,17 +49,19 @@ export namespace RiveFileFactory {
   /**
    * Creates a RiveFile instance from a URL.
    * @param url - The URL of the Rive (.riv) file
-   * @param loadCdn - Whether to load from CDN (default: true)
+   * @param loadCdn - Whether to fetch CDN-referenced assets (default: true).
+   *   Ignored on the experimental backend — supply assets via `referencedAssets` instead.
    * @returns Promise that resolves to a RiveFile instance
    */
   export async function fromURL(
     url: string,
     referencedAssets: ResolvedReferencedAssets | undefined,
-    loadCdn: boolean = true
+    loadCdn?: boolean
   ): Promise<RiveFile> {
+    warnLoadCdnUnsupportedOnExperimental(loadCdn);
     return RiveFileInternal.fromURL(
       url,
-      loadCdn,
+      loadCdn ?? true,
       referencedAssets ? { data: referencedAssets } : undefined
     );
   }
@@ -41,17 +69,19 @@ export namespace RiveFileFactory {
   /**
    * Creates a RiveFile instance from a local file path URL.
    * @param pathURL - The local file path of the Rive (.riv) file
-   * @param loadCdn - Whether to load from CDN (default: true)
+   * @param loadCdn - Whether to fetch CDN-referenced assets (default: true).
+   *   Ignored on the experimental backend — supply assets via `referencedAssets` instead.
    * @returns Promise that resolves to a RiveFile instance
    */
   export async function fromFileURL(
     fileURL: string,
     referencedAssets: ResolvedReferencedAssets | undefined = undefined,
-    loadCdn: boolean = true
+    loadCdn?: boolean
   ): Promise<RiveFile> {
+    warnLoadCdnUnsupportedOnExperimental(loadCdn);
     return RiveFileInternal.fromFileURL(
       fileURL,
-      loadCdn,
+      loadCdn ?? true,
       referencedAssets ? { data: referencedAssets } : undefined
     );
   }
@@ -59,17 +89,19 @@ export namespace RiveFileFactory {
   /**
    * Creates a RiveFile instance from a local resource.
    * @param resource - The name of the local resource
-   * @param loadCdn - Whether to load from CDN (default: true)
+   * @param loadCdn - Whether to fetch CDN-referenced assets (default: true).
+   *   Ignored on the experimental backend — supply assets via `referencedAssets` instead.
    * @returns Promise that resolves to a RiveFile instance
    */
   export async function fromResource(
     resource: string,
     referencedAssets: ResolvedReferencedAssets | undefined,
-    loadCdn: boolean = true
+    loadCdn?: boolean
   ): Promise<RiveFile> {
+    warnLoadCdnUnsupportedOnExperimental(loadCdn);
     return RiveFileInternal.fromResource(
       resource,
-      loadCdn,
+      loadCdn ?? true,
       referencedAssets ? { data: referencedAssets } : undefined
     );
   }
@@ -77,17 +109,19 @@ export namespace RiveFileFactory {
   /**
    * Creates a RiveFile instance from raw bytes.
    * @param bytes - The raw bytes of the Rive (.riv) file
-   * @param loadCdn - Whether to load from CDN (default: true)
+   * @param loadCdn - Whether to fetch CDN-referenced assets (default: true).
+   *   Ignored on the experimental backend — supply assets via `referencedAssets` instead.
    * @returns Promise that resolves to a RiveFile instance
    */
   export async function fromBytes(
     bytes: ArrayBuffer,
     referencedAssets: ResolvedReferencedAssets | undefined,
-    loadCdn: boolean = true
+    loadCdn?: boolean
   ): Promise<RiveFile> {
+    warnLoadCdnUnsupportedOnExperimental(loadCdn);
     return RiveFileInternal.fromBytes(
       bytes,
-      loadCdn,
+      loadCdn ?? true,
       referencedAssets ? { data: referencedAssets } : undefined
     );
   }
@@ -95,7 +129,8 @@ export namespace RiveFileFactory {
   /**
    * Creates a RiveFile instance from a source that can be either a resource ID or a URI object.
    * @param source - Either a number representing a resource ID or an object with a uri property
-   * @param loadCdn - Whether to load from CDN (default: true)
+   * @param loadCdn - Whether to fetch CDN-referenced assets (default: true).
+   *   Ignored on the experimental backend — supply assets via `referencedAssets` instead.
    * @returns Promise that resolves to a RiveFile instance
    * @throws Error if the source is invalid or cannot be resolved
    * @example
@@ -117,7 +152,7 @@ export namespace RiveFileFactory {
   export async function fromSource(
     source: number | { uri: string },
     referencedAssets: ResolvedReferencedAssets | undefined,
-    loadCdn: boolean = true
+    loadCdn?: boolean
   ): Promise<RiveFile> {
     const assetID = typeof source === 'number' ? source : null;
     const sourceURI = typeof source === 'object' ? source.uri : null;
