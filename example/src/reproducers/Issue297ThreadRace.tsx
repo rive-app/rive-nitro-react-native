@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-deprecated -- the race needs the sync API */
 import {
   View,
   Text,
