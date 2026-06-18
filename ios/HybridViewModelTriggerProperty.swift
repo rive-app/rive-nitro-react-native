@@ -12,7 +12,7 @@ class HybridViewModelTriggerProperty: HybridViewModelTriggerPropertySpec, Valued
   }
 
   func trigger() {
-    property.trigger()
+    MainThread.run { property.trigger() }
   }
 
   func addListener(onChanged: @escaping () -> Void) throws -> () -> Void {

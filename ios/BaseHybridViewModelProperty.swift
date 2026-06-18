@@ -80,19 +80,21 @@ class PropertyListenerHelper<PropertyType: RivePropertyWithListeners> {
     guard let property = property else {
       return {}
     }
-    let id = property.addListener(callback)
+    let id = MainThread.run { property.addListener(callback) }
     listenerIds.append(id)
     return { [weak self, weak property] in
       guard let property = property else { return }
-      property.removeListener(id)
+      MainThread.run { property.removeListener(id) }
       self?.listenerIds.removeAll { $0 == id }
     }
   }
 
   func removeListeners() throws {
     guard let property = property else { return }
-    for id in listenerIds {
-      property.removeListener(id)
+    MainThread.run {
+      for id in listenerIds {
+        property.removeListener(id)
+      }
     }
     listenerIds.removeAll()
   }

@@ -9,10 +9,12 @@ class HybridViewModelArtboardProperty: HybridViewModelArtboardPropertySpec {
   }
 
   func set(artboard: (any HybridBindableArtboardSpec)?) throws {
-    if let hybridArtboard = artboard as? HybridBindableArtboard {
-      property.setValue(hybridArtboard.bindableArtboard)
-    } else {
-      property.setValue(nil)
+    MainThread.run {
+      if let hybridArtboard = artboard as? HybridBindableArtboard {
+        property.setValue(hybridArtboard.bindableArtboard)
+      } else {
+        property.setValue(nil)
+      }
     }
   }
 }
