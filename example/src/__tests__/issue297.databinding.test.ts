@@ -51,7 +51,10 @@ it('issue #297: concurrent data-binding access does not race (verified under TSa
       );
     }
 
-    // Concurrently on the JS thread: synchronous property reads/writes + nested resolve.
+    // JS thread: synchronous property reads/writes + nested resolve. These run
+    // sequentially here, but they overlap the viewModelAsync continuations above
+    // still resolving on the cooperative pool — that cross-thread overlap on the
+    // same instance is the race.
     for (let i = 0; i < CONCURRENCY; i++) {
       const namePath = i % 2 === 0 ? 'vm1/name' : 'vm2/name';
       const prop = instance!.stringProperty(namePath);

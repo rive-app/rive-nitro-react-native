@@ -71,7 +71,10 @@ function StressRunner({
       );
     }
 
-    // Concurrently, JS thread: synchronous property accessors into the same objects.
+    // JS thread: synchronous property accessors into the same objects. These run
+    // sequentially on the JS thread, but they overlap the viewModelAsync work above
+    // still resolving on the Swift cooperative pool — that cross-thread overlap is
+    // the race.
     for (let i = 0; i < CONCURRENCY; i++) {
       try {
         const namePath = i % 2 === 0 ? 'vm1/name' : 'vm2/name';
