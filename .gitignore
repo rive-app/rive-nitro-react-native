@@ -93,3 +93,6 @@ example/src/reproducers/local/*
 
 # Test coverage
 coverage/
+
+# react-native-harness build cache
+.harness/
