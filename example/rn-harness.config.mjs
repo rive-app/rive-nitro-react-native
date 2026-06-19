@@ -12,23 +12,38 @@ import { execSync } from 'node:child_process';
 // naming a device. Override with DEVICE_MODEL / IOS_VERSION; falls back to a fixed device
 // when nothing is booted (non-macOS runners, or before a simulator is up).
 function bootedSimulator() {
+  const booted = [];
   try {
     const out = execSync('xcrun simctl list devices booted -j', {
       encoding: 'utf8',
       stdio: ['ignore', 'pipe', 'ignore'],
     });
     for (const [runtime, devices] of Object.entries(JSON.parse(out).devices)) {
-      const device = (devices || []).find((d) => d.state === 'Booted');
       const version = runtime.match(/iOS-(\d+)-(\d+)/);
-      if (device && version) {
-        return { name: device.name, version: `${version[1]}.${version[2]}` };
+      if (!version) continue;
+      for (const device of devices || []) {
+        if (device.state === 'Booted') {
+          booted.push({
+            name: device.name,
+            version: `${version[1]}.${version[2]}`,
+          });
+        }
       }
     }
     // eslint-disable-next-line no-unused-vars
   } catch (error) {
     // no xcrun / no booted simulator — fall through to the default
   }
-  return null;
+  // With several booted, `simctl install booted` and this pick can disagree, so make
+  // the ambiguity loud — pin one with DEVICE_MODEL / IOS_VERSION.
+  if (booted.length > 1) {
+    const list = booted.map((d) => `${d.name} (${d.version})`).join(', ');
+    console.warn(
+      `[rn-harness] ${booted.length} booted simulators: ${list}. Using ${booted[0].name} ` +
+        `(${booted[0].version}); set DEVICE_MODEL / IOS_VERSION to choose.`
+    );
+  }
+  return booted[0] || null;
 }
 
 const booted = bootedSimulator();
