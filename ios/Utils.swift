@@ -38,15 +38,13 @@ enum MainThread {
 }
 
 extension Promise {
-  /// Runs `work` on the main thread and returns an already-resolved (or rejected)
-  /// Promise.
+  /// Runs `work` on the main thread (safe for the Rive runtime) and resolves the
+  /// Promise synchronously on the calling thread — not from a background executor
+  /// like `Promise.async`.
   ///
-  /// Unlike `Promise.async`, the work runs on the main thread (so it is safe to
-  /// touch the Rive runtime) and the Promise is resolved synchronously on the
-  /// calling (JS) thread. Because it is already resolved by the time Nitro attaches
-  /// its `.then` continuation, the Promise's continuation list is never mutated from
-  /// two threads at once — eliminating the data races that `Promise.async` produced
-  /// by resolving on a background executor.
+  /// Nitro's `Promise` keeps an unlocked listener list, so resolving on the spot
+  /// (before Nitro attaches its `.then`) avoids the data race `Promise.async` caused
+  /// by resolving on another thread while `.then` mutates that list.
   static func onMain(_ work: () throws -> T) -> Promise<T> {
     do {
       return Promise.resolved(withResult: try MainThread.run(work))
