@@ -96,7 +96,3 @@ coverage/
 
 # react-native-harness build cache
 .harness/
-
-# local-only docs (not committed)
-docs/local/*
-!docs/local/.gitkeep
