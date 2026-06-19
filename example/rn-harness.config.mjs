@@ -28,16 +28,14 @@ export default {
       name: 'ios',
       device: appleSimulator(deviceModel, iosVersion),
       bundleId: 'rive.example',
-      // When the host app is built with Thread Sanitizer, route TSan reports to a
-      // file and don't abort on first race so the test still completes (issue #297).
-      appLaunchOptions: process.env.HARNESS_TSAN
-        ? {
-            environment: {
-              TSAN_OPTIONS:
-                'log_path=/tmp/tsan_harness halt_on_error=0 verbosity=1',
-            },
-          }
-        : undefined,
+      // Only read when the app is built with Thread Sanitizer (ignored otherwise):
+      // write reports to a file and don't abort on the first race so the test still
+      // completes (issue #297).
+      appLaunchOptions: {
+        environment: {
+          TSAN_OPTIONS: 'log_path=/tmp/tsan_harness halt_on_error=0 verbosity=1',
+        },
+      },
     }),
   ],
   defaultRunner: 'ios',
