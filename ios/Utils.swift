@@ -38,18 +38,10 @@ enum MainThread {
 }
 
 extension Promise {
-  /// Runs `work` on the main thread (safe for the Rive runtime) and resolves the
-  /// Promise synchronously on the calling thread — not from a background executor
-  /// like `Promise.async`.
-  ///
-  /// Nitro's `Promise` keeps an unlocked listener list, so resolving on the spot
-  /// (before Nitro attaches its `.then`) avoids the data race `Promise.async` caused
-  /// by resolving on another thread while `.then` mutates that list.
-  static func onMain(_ work: () throws -> T) -> Promise<T> {
-    do {
-      return Promise.resolved(withResult: try MainThread.run(work))
-    } catch {
-      return Promise.rejected(withError: error)
-    }
+  /// Dispatches `work` to the main thread (where the Rive runtime is safe to touch)
+  /// and returns a Promise that resolves once the work completes.
+  /// See https://github.com/rive-app/rive-nitro-react-native/issues/297
+  static func onMain(_ work: @escaping () throws -> T) -> Promise<T> {
+    return Promise.parallel(.main, work)
   }
 }
