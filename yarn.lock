@@ -5489,7 +5489,7 @@ __metadata:
     react: 19.0.0
     react-native: 0.79.2
     react-native-builder-bob: ^0.40.10
-    react-native-nitro-modules: 0.35.0
+    react-native-nitro-modules: 0.35.9
     react-test-renderer: 19.0.0
     release-it: ^17.10.0
     turbo: ^1.10.7
@@ -5497,7 +5497,7 @@ __metadata:
   peerDependencies:
     react: "*"
     react-native: "*"
-    react-native-nitro-modules: ">=0.35.0 <0.36"
+    react-native-nitro-modules: ">=0.35.9 <0.36"
   languageName: unknown
   linkType: soft
 
@@ -10039,7 +10039,7 @@ __metadata:
     react-dom: 19.1.0
     react-native: 0.81.5
     react-native-gesture-handler: 2.29.1
-    react-native-nitro-modules: 0.35.0
+    react-native-nitro-modules: 0.35.9
     react-native-reanimated: 4.1.5
     react-native-safe-area-context: ~5.6.0
     react-native-screens: ~4.16.0
@@ -10570,7 +10570,7 @@ __metadata:
     react-dom: 19.2.0
     react-native: 0.83.4
     react-native-gesture-handler: ~2.29.0
-    react-native-nitro-modules: 0.35.0
+    react-native-nitro-modules: 0.35.9
     react-native-reanimated: 4.2.1
     react-native-safe-area-context: ~5.6.2
     react-native-screens: ~4.23.0
@@ -16393,13 +16393,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-nitro-modules@npm:0.35.0":
-  version: 0.35.0
-  resolution: "react-native-nitro-modules@npm:0.35.0"
+"react-native-nitro-modules@npm:0.35.9":
+  version: 0.35.9
+  resolution: "react-native-nitro-modules@npm:0.35.9"
   peerDependencies:
     react: "*"
     react-native: "*"
-  checksum: f006daa1aa58f1a0165a4d6fc087c8d190f2857a7acfd6b47080e5979f05beb20455ed3c66831d489df4eb57d2f430d1610094ed4d6ae3946e17d83362161aa6
+  checksum: 2c04481b132ae2fb247ae1658b426c04ddfb73ff7622716db2f5d316bc831ffb5c87fdedf65f39d5d8724daf5a56277d838936b49ec308f2e14f7208bbed130c
   languageName: node
   linkType: hard
 
@@ -16470,7 +16470,7 @@ __metadata:
     react-native-builder-bob: ^0.40.10
     react-native-gesture-handler: 2.29.1
     react-native-harness: 1.3.0
-    react-native-nitro-modules: 0.35.0
+    react-native-nitro-modules: 0.35.9
     react-native-reanimated: 4.1.5
     react-native-safe-area-context: ^5.4.0
     react-native-screens: ~4.18.0
