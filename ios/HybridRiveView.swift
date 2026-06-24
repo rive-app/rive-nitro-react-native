@@ -117,11 +117,12 @@ class HybridRiveView: HybridRiveViewSpec {
   func bindViewModelInstance(viewModelInstance: (any HybridViewModelInstanceSpec)) throws {
     guard let viewModelInstance = (viewModelInstance as? HybridViewModelInstance)?.viewModelInstance
     else { return }
-    try getRiveView().bindViewModelInstance(viewModelInstance: viewModelInstance)
+    try MainThread.run { try getRiveView().bindViewModelInstance(viewModelInstance: viewModelInstance) }
   }
 
   func getViewModelInstance() throws -> (any HybridViewModelInstanceSpec)? {
-    guard let viewModelInstance = try getRiveView().getViewModelInstance() else { return nil }
+    let viewModelInstance = try MainThread.run { try getRiveView().getViewModelInstance() }
+    guard let viewModelInstance else { return nil }
     return HybridViewModelInstance(viewModelInstance: viewModelInstance)
   }
 
