@@ -42,13 +42,20 @@ function Repro({
 
 it('issue #297: bindViewModelInstance/getViewModelInstance race the render thread', async () => {
   const file = await RiveFileFactory.fromSource(DATABINDING, undefined);
-  const viewModel = file.defaultArtboardViewModel(undefined);
-  const instance = viewModel?.createDefaultInstance() ?? null;
+  const viewModel = await file.defaultArtboardViewModelAsync(undefined);
+  const instance = (await viewModel?.createDefaultInstanceAsync()) ?? null;
   expect(instance).toBeTruthy();
 
   let viewRef: RiveViewRef | null = null;
 
-  await render(<Repro file={file} onRef={(ref) => { viewRef = ref; }} />);
+  await render(
+    <Repro
+      file={file}
+      onRef={(ref) => {
+        viewRef = ref;
+      }}
+    />
+  );
   await waitFor(() => expect(viewRef).toBeTruthy());
   await viewRef!.awaitViewReady();
 
