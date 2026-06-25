@@ -275,7 +275,7 @@ jobs:
         uses: futureware-tech/simulator-action@v4
         with:
           model: 'iPhone 16 Pro'
-          os_version: '18.6'
+          os_version: '>=26.0'
 
       - name: Install app on simulator
         run: xcrun simctl install booted example/ios/build/Build/Products/Debug-iphonesimulator/RiveExample.app
