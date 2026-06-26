@@ -11,20 +11,16 @@ class HybridViewModelColorProperty: HybridViewModelColorPropertySpec, ValuedProp
   }
 
   var value: Double {
-    get {
-      return property.value.toHexDouble()
-    }
-    set {
-      property.value = UIColor(argb: Int(newValue))
-    }
+    get { MainThread.run { property.value.toHexDouble() } }
+    set { MainThread.run { property.value = UIColor(argb: Int(newValue)) } }
   }
-  
+
   func getValueAsync() throws -> Promise<Double> {
-    return Promise.async { self.property.value.toHexDouble() }
+    return Promise.onMain { self.property.value.toHexDouble() }
   }
 
   func set(value: Double) throws {
-    property.value = UIColor(argb: Int(value))
+    MainThread.run { property.value = UIColor(argb: Int(value)) }
   }
 
   func addListener(onChanged: @escaping (Double) -> Void) throws -> () -> Void {

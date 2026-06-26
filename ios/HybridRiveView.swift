@@ -117,11 +117,12 @@ class HybridRiveView: HybridRiveViewSpec {
   func bindViewModelInstance(viewModelInstance: (any HybridViewModelInstanceSpec)) throws {
     guard let viewModelInstance = (viewModelInstance as? HybridViewModelInstance)?.viewModelInstance
     else { return }
-    try getRiveView().bindViewModelInstance(viewModelInstance: viewModelInstance)
+    try MainThread.run { try getRiveView().bindViewModelInstance(viewModelInstance: viewModelInstance) }
   }
 
   func getViewModelInstance() throws -> (any HybridViewModelInstanceSpec)? {
-    guard let viewModelInstance = try getRiveView().getViewModelInstance() else { return nil }
+    let viewModelInstance = try MainThread.run { try getRiveView().getViewModelInstance() }
+    guard let viewModelInstance else { return nil }
     return HybridViewModelInstance(viewModelInstance: viewModelInstance)
   }
 
@@ -132,31 +133,45 @@ class HybridRiveView: HybridRiveViewSpec {
   func removeEventListeners() throws { try getRiveView().removeEventListeners() }
 
   func setNumberInputValue(name: String, value: Double, path: String?) throws {
-    try getRiveView().setNumberInputValue(name: name, value: Float(value), path: path)
+    try MainThread.run {
+      try getRiveView().setNumberInputValue(name: name, value: Float(value), path: path)
+    }
   }
 
   func getNumberInputValue(name: String, path: String?) throws -> Double {
-    return try Double(getRiveView().getNumberInputValue(name: name, path: path))
+    try MainThread.run {
+      try Double(getRiveView().getNumberInputValue(name: name, path: path))
+    }
   }
 
   func setBooleanInputValue(name: String, value: Bool, path: String?) throws {
-    try getRiveView().setBooleanInputValue(name: name, value: value, path: path)
+    try MainThread.run {
+      try getRiveView().setBooleanInputValue(name: name, value: value, path: path)
+    }
   }
 
   func getBooleanInputValue(name: String, path: String?) throws -> Bool {
-    return try getRiveView().getBooleanInputValue(name: name, path: path)
+    try MainThread.run {
+      try getRiveView().getBooleanInputValue(name: name, path: path)
+    }
   }
 
   func triggerInput(name: String, path: String?) throws {
-    try getRiveView().triggerInput(name: name, path: path)
+    try MainThread.run {
+      try getRiveView().triggerInput(name: name, path: path)
+    }
   }
 
   func setTextRunValue(name: String, value: String, path: String?) throws {
-    try getRiveView().setTextRunValue(name: name, value: value, path: path)
+    try MainThread.run {
+      try getRiveView().setTextRunValue(name: name, value: value, path: path)
+    }
   }
 
   func getTextRunValue(name: String, path: String?) throws -> String {
-    return try getRiveView().getTextRunValue(name: name, path: path)
+    try MainThread.run {
+      try getRiveView().getTextRunValue(name: name, path: path)
+    }
   }
 
   // MARK: Views

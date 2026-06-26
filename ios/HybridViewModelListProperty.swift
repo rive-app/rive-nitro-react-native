@@ -11,12 +11,14 @@ class HybridViewModelListProperty: HybridViewModelListPropertySpec, ValuedProper
   }
 
   var length: Double {
-    Double(property.count)
+    MainThread.run { Double(property.count) }
   }
 
   func getInstanceAt(index: Double) throws -> (any HybridViewModelInstanceSpec)? {
-    guard let instance = property.instance(at: Int32(index)) else { return nil }
-    return HybridViewModelInstance(viewModelInstance: instance)
+    MainThread.run { () -> (any HybridViewModelInstanceSpec)? in
+      guard let instance = property.instance(at: Int32(index)) else { return nil }
+      return HybridViewModelInstance(viewModelInstance: instance)
+    }
   }
 
   private func requireViewModelInstance(_ instance: any HybridViewModelInstanceSpec) throws -> RiveDataBindingViewModel.Instance {
@@ -30,59 +32,61 @@ class HybridViewModelListProperty: HybridViewModelListPropertySpec, ValuedProper
 
   func addInstance(instance: any HybridViewModelInstanceSpec) throws {
     let viewModelInstance = try requireViewModelInstance(instance)
-    property.append(viewModelInstance)
+    MainThread.run { property.append(viewModelInstance) }
   }
 
   func addInstanceAt(instance: any HybridViewModelInstanceSpec, index: Double) throws -> Bool {
     let viewModelInstance = try requireViewModelInstance(instance)
-    return property.insert(viewModelInstance, at: Int32(index))
+    return MainThread.run { property.insert(viewModelInstance, at: Int32(index)) }
   }
 
   func removeInstance(instance: any HybridViewModelInstanceSpec) throws {
     let viewModelInstance = try requireViewModelInstance(instance)
-    property.remove(viewModelInstance)
+    MainThread.run { property.remove(viewModelInstance) }
   }
 
   func removeInstanceAt(index: Double) throws {
-    property.remove(at: Int32(index))
+    MainThread.run { property.remove(at: Int32(index)) }
   }
 
   func swap(index1: Double, index2: Double) throws -> Bool {
-    let idx1 = UInt32(index1)
-    let idx2 = UInt32(index2)
-    guard idx1 < property.count && idx2 < property.count else {
-      return false
+    MainThread.run {
+      let idx1 = UInt32(index1)
+      let idx2 = UInt32(index2)
+      guard idx1 < property.count && idx2 < property.count else {
+        return false
+      }
+      property.swap(at: idx1, with: idx2)
+      return true
     }
-    property.swap(at: idx1, with: idx2)
-    return true
   }
 
   func getLengthAsync() throws -> Promise<Double> {
-    return Promise.async { self.length }
+    return Promise.onMain { self.length }
   }
 
   func getInstanceAtAsync(index: Double) throws -> Promise<(any HybridViewModelInstanceSpec)?> {
-    return Promise.async { try self.getInstanceAt(index: index) }
+    return Promise.onMain { try self.getInstanceAt(index: index) }
   }
 
   func addInstanceAsync(instance: any HybridViewModelInstanceSpec) throws -> Promise<Void> {
-    return Promise.async { try self.addInstance(instance: instance) }
+    return Promise.onMain { try self.addInstance(instance: instance) }
   }
 
   func addInstanceAtAsync(instance: any HybridViewModelInstanceSpec, index: Double) throws -> Promise<Void> {
-    return Promise.async { let _ = try self.addInstanceAt(instance: instance, index: index) }
+    return Promise.onMain { let _ = try self.addInstanceAt(instance: instance, index: index) }
   }
 
   func removeInstanceAsync(instance: any HybridViewModelInstanceSpec) throws -> Promise<Void> {
-    return Promise.async { try self.removeInstance(instance: instance) }
+    return Promise.onMain { try self.removeInstance(instance: instance) }
   }
 
   func removeInstanceAtAsync(index: Double) throws -> Promise<Void> {
-    return Promise.async { try self.removeInstanceAt(index: index) }
+    return Promise.onMain { try self.removeInstanceAt(index: index) }
   }
 
   func swapAsync(index1: Double, index2: Double) throws -> Promise<Void> {
-    return Promise.async { let _ = try self.swap(index1: index1, index2: index2) }
+    return Promise.onMain { let _ = try self.swap(index1: index1, index2: index2) }
   }
 
   func addListener(onChanged: @escaping () -> Void) throws -> () -> Void {
