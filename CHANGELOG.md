@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.12](https://github.com/rive-app/rive-nitro-react-native/compare/v0.4.11...v0.4.12) (2026-06-26)
+
+
+### Bug Fixes
+
+* make Rive data binding thread-safe on iOS & Android ([#297](https://github.com/rive-app/rive-nitro-react-native/issues/297)) ([#298](https://github.com/rive-app/rive-nitro-react-native/issues/298)) ([abc0c2c](https://github.com/rive-app/rive-nitro-react-native/commit/abc0c2c27c8e1bc559b7b937df53b8ae3ee68e8e))
+
 ## [0.4.11](https://github.com/rive-app/rive-nitro-react-native/compare/v0.4.10...v0.4.11) (2026-06-08)
 
 
