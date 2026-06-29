@@ -145,7 +145,9 @@ jobs:
           yarn turbo run build:android --cache-dir="${{ env.TURBO_CACHE_DIR }}"
 
   build-ios:
-    runs-on: macos-latest
+    # Pinned: macos-latest is mid-migrating to macOS 26, whose sim set lacks an
+    # iPhone 16 Pro on iOS >=26, breaking the harness boot.
+    runs-on: macos-15
     env:
       XCODE_VERSION: 26.3
       TURBO_CACHE_DIR: .turbo/ios
@@ -213,7 +215,7 @@ jobs:
           yarn turbo run build:ios --cache-dir="${{ env.TURBO_CACHE_DIR }}"
 
   test-harness-ios:
-    runs-on: macos-latest
+    runs-on: macos-15
     timeout-minutes: 60
     env:
       XCODE_VERSION: 26.3
@@ -501,10 +503,10 @@ jobs:
           adb logcat -d -s ReactNativeJS:* RiveExample:* RNRive:* | tail -200 || echo "No logs found"
 
   test-harness-ios-legacy:
-    runs-on: macos-latest
+    runs-on: macos-15
     timeout-minutes: 90
     env:
-      XCODE_VERSION: 16.4
+      XCODE_VERSION: 26.3
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -578,7 +580,7 @@ jobs:
         uses: futureware-tech/simulator-action@v4
         with:
           model: 'iPhone 16 Pro'
-          os_version: '18.6'
+          os_version: '>=26.0'
 
       - name: Install app on simulator
         run: xcrun simctl install booted example/ios/build/Build/Products/Debug-iphonesimulator/RiveExample.app
