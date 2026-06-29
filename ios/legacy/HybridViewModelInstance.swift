@@ -8,60 +8,80 @@ class HybridViewModelInstance: HybridViewModelInstanceSpec {
     self.viewModelInstance = viewModelInstance
   }
 
-  var instanceName: String { viewModelInstance?.name ?? "" }
+  var instanceName: String { MainThread.run { viewModelInstance?.name ?? "" } }
 
   func getPropertiesAsync() throws -> Promise<[ViewModelPropertyInfo]> {
     throw RuntimeError.error(withMessage: "getPropertiesAsync is not supported on the legacy backend")
   }
 
   func numberProperty(path: String) throws -> (any HybridViewModelNumberPropertySpec)? {
-    guard let property = viewModelInstance?.numberProperty(fromPath: path) else { return nil }
-    return HybridViewModelNumberProperty(property: property)
+    MainThread.run { () -> (any HybridViewModelNumberPropertySpec)? in
+      guard let property = viewModelInstance?.numberProperty(fromPath: path) else { return nil }
+      return HybridViewModelNumberProperty(property: property)
+    }
   }
 
   func stringProperty(path: String) throws -> (any HybridViewModelStringPropertySpec)? {
-    guard let property = viewModelInstance?.stringProperty(fromPath: path) else { return nil }
-    return HybridViewModelStringProperty(property: property)
+    MainThread.run { () -> (any HybridViewModelStringPropertySpec)? in
+      guard let property = viewModelInstance?.stringProperty(fromPath: path) else { return nil }
+      return HybridViewModelStringProperty(property: property)
+    }
   }
 
   func booleanProperty(path: String) throws -> (any HybridViewModelBooleanPropertySpec)? {
-    guard let property = viewModelInstance?.booleanProperty(fromPath: path) else { return nil }
-    return HybridViewModelBooleanProperty(property: property)
+    MainThread.run { () -> (any HybridViewModelBooleanPropertySpec)? in
+      guard let property = viewModelInstance?.booleanProperty(fromPath: path) else { return nil }
+      return HybridViewModelBooleanProperty(property: property)
+    }
   }
 
   func colorProperty(path: String) throws -> (any HybridViewModelColorPropertySpec)? {
-    guard let property = viewModelInstance?.colorProperty(fromPath: path) else { return nil }
-    return HybridViewModelColorProperty(property: property)
+    MainThread.run { () -> (any HybridViewModelColorPropertySpec)? in
+      guard let property = viewModelInstance?.colorProperty(fromPath: path) else { return nil }
+      return HybridViewModelColorProperty(property: property)
+    }
   }
 
   func enumProperty(path: String) throws -> (any HybridViewModelEnumPropertySpec)? {
-    guard let property = viewModelInstance?.enumProperty(fromPath: path) else { return nil }
-    return HybridViewModelEnumProperty(property: property)
+    MainThread.run { () -> (any HybridViewModelEnumPropertySpec)? in
+      guard let property = viewModelInstance?.enumProperty(fromPath: path) else { return nil }
+      return HybridViewModelEnumProperty(property: property)
+    }
   }
 
   func triggerProperty(path: String) throws -> (any HybridViewModelTriggerPropertySpec)? {
-    guard let property = viewModelInstance?.triggerProperty(fromPath: path) else { return nil }
-    return HybridViewModelTriggerProperty(property: property)
+    MainThread.run { () -> (any HybridViewModelTriggerPropertySpec)? in
+      guard let property = viewModelInstance?.triggerProperty(fromPath: path) else { return nil }
+      return HybridViewModelTriggerProperty(property: property)
+    }
   }
 
   func imageProperty(path: String) throws -> (any HybridViewModelImagePropertySpec)? {
-    guard let property = viewModelInstance?.imageProperty(fromPath: path) else { return nil }
-    return HybridViewModelImageProperty(property: property)
+    MainThread.run { () -> (any HybridViewModelImagePropertySpec)? in
+      guard let property = viewModelInstance?.imageProperty(fromPath: path) else { return nil }
+      return HybridViewModelImageProperty(property: property)
+    }
   }
 
   func listProperty(path: String) throws -> (any HybridViewModelListPropertySpec)? {
-    guard let property = viewModelInstance?.listProperty(fromPath: path) else { return nil }
-    return HybridViewModelListProperty(property: property)
+    MainThread.run { () -> (any HybridViewModelListPropertySpec)? in
+      guard let property = viewModelInstance?.listProperty(fromPath: path) else { return nil }
+      return HybridViewModelListProperty(property: property)
+    }
   }
 
   func artboardProperty(path: String) throws -> (any HybridViewModelArtboardPropertySpec)? {
-    guard let property = viewModelInstance?.artboardProperty(fromPath: path) else { return nil }
-    return HybridViewModelArtboardProperty(property: property)
+    MainThread.run { () -> (any HybridViewModelArtboardPropertySpec)? in
+      guard let property = viewModelInstance?.artboardProperty(fromPath: path) else { return nil }
+      return HybridViewModelArtboardProperty(property: property)
+    }
   }
 
   func viewModel(path: String) throws -> (any HybridViewModelInstanceSpec)? {
-    guard let instance = viewModelInstance?.viewModelInstanceProperty(fromPath: path) else { return nil }
-    return HybridViewModelInstance(viewModelInstance: instance)
+    MainThread.run { () -> (any HybridViewModelInstanceSpec)? in
+      guard let instance = viewModelInstance?.viewModelInstanceProperty(fromPath: path) else { return nil }
+      return HybridViewModelInstance(viewModelInstance: instance)
+    }
   }
 
   func replaceViewModel(path: String, instance: any HybridViewModelInstanceSpec) throws {
@@ -69,13 +89,15 @@ class HybridViewModelInstance: HybridViewModelInstanceSpec {
           let nativeInstance = hybridInstance.viewModelInstance else {
       throw RuntimeError.error(withMessage: "Invalid ViewModelInstance provided to replaceViewModel")
     }
-    let success = viewModelInstance?.setViewModelInstanceProperty(fromPath: path, to: nativeInstance) ?? false
+    let success = MainThread.run {
+      viewModelInstance?.setViewModelInstanceProperty(fromPath: path, to: nativeInstance) ?? false
+    }
     if !success {
       throw RuntimeError.error(withMessage: "Failed to replace ViewModel at path: \(path)")
     }
   }
 
   func viewModelAsync(path: String) throws -> Promise<(any HybridViewModelInstanceSpec)?> {
-    return Promise.async { try self.viewModel(path: path) }
+    return Promise.onMain { try self.viewModel(path: path) }
   }
 }

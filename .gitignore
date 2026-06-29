@@ -96,3 +96,6 @@ coverage/
 
 # Kotlin build artifacts
 **/.kotlin/
+
+# react-native-harness build cache
+.harness/

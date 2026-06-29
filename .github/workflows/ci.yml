@@ -147,7 +147,7 @@ jobs:
   build-ios:
     runs-on: macos-latest
     env:
-      XCODE_VERSION: 16.4
+      XCODE_VERSION: 26.3
       TURBO_CACHE_DIR: .turbo/ios
     steps:
       - name: Checkout
@@ -216,7 +216,7 @@ jobs:
     runs-on: macos-latest
     timeout-minutes: 60
     env:
-      XCODE_VERSION: 16.4
+      XCODE_VERSION: 26.3
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -280,7 +280,7 @@ jobs:
         uses: futureware-tech/simulator-action@v4
         with:
           model: 'iPhone 16 Pro'
-          os_version: '18.6'
+          os_version: '>=26.0'
 
       - name: Install app on simulator
         run: xcrun simctl install booted example/ios/build/Build/Products/Debug-iphonesimulator/RiveExample.app
@@ -371,13 +371,24 @@ jobs:
           wait_for_port_free 8081
           echo "=== Pre-warm complete ==="
 
-          # Retry up to 5 times — bridgeTimeout (300s) handles connection failures,
-          # testTimeout (120s) handles hung tests, step timeout-minutes (15) is the backstop
+          # Retry up to 5 times, with a 300s watchdog per attempt. The harness can
+          # hang indefinitely if the app launches but never connects to the bridge
+          # (bridgeTimeout in rn-harness.config.mjs is 90s but doesn't abort that
+          # case), so without a cap a single stuck attempt eats the whole 15-min step
+          # budget and the retry loop never advances. macOS has no `timeout`, so use a
+          # background watchdog; nuke_harness then reaps the rest before the retry.
+          # testTimeout (120s) handles individual hung tests.
           for attempt in 1 2 3 4 5; do
             echo "=== Attempt $attempt of 5 ==="
             start_monitor
-            yarn test:harness:ios --verbose --testTimeout 120000
+            yarn test:harness:ios --verbose --testTimeout 120000 &
+            test_pid=$!
+            ( sleep 300; echo "  WATCHDOG: attempt $attempt exceeded 300s, killing harness"; kill -9 $test_pid 2>/dev/null ) &
+            watchdog_pid=$!
+            wait $test_pid 2>/dev/null
             exit_code=$?
+            kill $watchdog_pid 2>/dev/null || true
+            wait $watchdog_pid 2>/dev/null || true
             stop_monitor
             if [ $exit_code -eq 0 ]; then
               echo "Tests passed on attempt $attempt"

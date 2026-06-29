@@ -22,10 +22,12 @@ class HybridViewModelImageProperty: HybridViewModelImagePropertySpec, ValuedProp
   }
 
   func set(image: HybridRiveImageSpec?) throws {
-    if let hybridImage = image as? HybridRiveImage {
-      property.setValue(hybridImage.renderImage)
-    } else {
-      property.setValue(nil)
+    MainThread.run {
+      if let hybridImage = image as? HybridRiveImage {
+        property.setValue(hybridImage.renderImage)
+      } else {
+        property.setValue(nil)
+      }
     }
   }
 }

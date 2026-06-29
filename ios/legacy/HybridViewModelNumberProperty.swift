@@ -11,20 +11,16 @@ class HybridViewModelNumberProperty: HybridViewModelNumberPropertySpec, ValuedPr
   }
 
   var value: Double {
-    get {
-      return Double(property.value)
-    }
-    set {
-      property.value = Float(newValue)
-    }
+    get { MainThread.run { Double(property.value) } }
+    set { MainThread.run { property.value = Float(newValue) } }
   }
 
   func getValueAsync() throws -> Promise<Double> {
-    return Promise.async { Double(self.property.value) }
+    return Promise.onMain { Double(self.property.value) }
   }
 
   func set(value: Double) throws {
-    property.value = Float(value)
+    MainThread.run { property.value = Float(value) }
   }
 
   func setValueAsync(value: Double) throws -> Promise<Void> {
