@@ -10,6 +10,14 @@ import com.margelo.nitro.core.Promise
 class HybridViewModelStringProperty(private val viewModelString: ViewModelStringProperty) :
   HybridViewModelStringPropertySpec(),
   BaseHybridViewModelProperty<String> by BaseHybridViewModelPropertyImpl() {
+  override fun dispose() {
+    removeListeners()
+    super<HybridViewModelStringPropertySpec>.dispose()
+  }
+
+  override val memorySize: Long
+    get() = VIEW_MODEL_HYBRID_MEMORY_SIZE
+
   override var value: String
     get() = viewModelString.value
     set(value) {

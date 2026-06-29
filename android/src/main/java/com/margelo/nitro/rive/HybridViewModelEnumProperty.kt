@@ -10,6 +10,14 @@ import com.margelo.nitro.core.Promise
 class HybridViewModelEnumProperty(private val viewModelEnum: ViewModelEnumProperty) :
   HybridViewModelEnumPropertySpec(),
   BaseHybridViewModelProperty<String> by BaseHybridViewModelPropertyImpl() {
+  override fun dispose() {
+    removeListeners()
+    super<HybridViewModelEnumPropertySpec>.dispose()
+  }
+
+  override val memorySize: Long
+    get() = VIEW_MODEL_HYBRID_MEMORY_SIZE
+
   override var value: String
     get() = viewModelEnum.value
     set(value) {

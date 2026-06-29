@@ -11,6 +11,14 @@ import kotlinx.coroutines.flow.map
 class HybridViewModelListProperty(private val listProperty: ViewModelListProperty) :
   HybridViewModelListPropertySpec(),
   BaseHybridViewModelProperty<Unit> by BaseHybridViewModelPropertyImpl() {
+  override fun dispose() {
+    removeListeners()
+    super<HybridViewModelListPropertySpec>.dispose()
+  }
+
+  override val memorySize: Long
+    get() = VIEW_MODEL_HYBRID_MEMORY_SIZE
+
   override val length: Double
     get() = listProperty.size.toDouble()
 

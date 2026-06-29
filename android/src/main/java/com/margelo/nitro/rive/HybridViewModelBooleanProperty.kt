@@ -10,6 +10,14 @@ import com.margelo.nitro.core.Promise
 class HybridViewModelBooleanProperty(private val viewModelBoolean: ViewModelBooleanProperty) :
   HybridViewModelBooleanPropertySpec(),
   BaseHybridViewModelProperty<Boolean> by BaseHybridViewModelPropertyImpl() {
+  override fun dispose() {
+    removeListeners()
+    super<HybridViewModelBooleanPropertySpec>.dispose()
+  }
+
+  override val memorySize: Long
+    get() = VIEW_MODEL_HYBRID_MEMORY_SIZE
+
   override var value: Boolean
     get() = viewModelBoolean.value
     set(value) {
