@@ -39,10 +39,17 @@ type TriggerContext = {
   triggerFn: (() => void) | null;
   error: Error | null;
   renderCount: number;
+  rerender: (() => void) | null;
 };
 
 function createTriggerContext(): TriggerContext {
-  return { triggerCount: 0, triggerFn: null, error: null, renderCount: 0 };
+  return {
+    triggerCount: 0,
+    triggerFn: null,
+    error: null,
+    renderCount: 0,
+    rerender: null,
+  };
 }
 
 // ─── Test component: stable callback ───────────────────────────────
@@ -110,14 +117,19 @@ function UnstableTriggerComponent({
     context.error = error;
   }, [context, trigger, error]);
 
-  // Force re-renders to change callback identity
+  // Re-render on demand so the test can change the callback identity deterministically.
   useEffect(() => {
-    const interval = setInterval(() => setTick((t) => t + 1), 50);
-    const timeout = setTimeout(() => clearInterval(interval), 300);
-    return () => {
-      clearInterval(interval);
-      clearTimeout(timeout);
-    };
+    context.rerender = () => setTick((t) => t + 1);
+  }, [context]);
+
+  // Regression guard: block the JS thread at mount (as RiveView init does) to starve any
+  // re-render driver. The old setInterval-based version flaked here (renderCount stuck at 2);
+  // the deterministic re-renders above survive it.
+  useEffect(() => {
+    const end = Date.now() + 500;
+    while (Date.now() < end) {
+      /* simulate heavy mount-time work */
+    }
   }, []);
 
   return (
@@ -182,13 +194,19 @@ describe('useRiveTrigger hook', () => {
       />
     );
 
-    // Wait for the re-render burst to complete (300ms of re-renders every 50ms)
     await waitFor(
       () => {
-        expect(context.renderCount).toBeGreaterThanOrEqual(3);
+        expect(context.rerender).not.toBeNull();
       },
-      { timeout: 2000 }
+      { timeout: 3000 }
     );
+
+    // Re-render several times to churn the callback identity.
+    for (let i = 0; i < 3; i++) {
+      context.rerender!();
+      await new Promise((r) => setTimeout(r, 0));
+    }
+    expect(context.renderCount).toBeGreaterThanOrEqual(3);
 
     await waitFor(
       () => {
