@@ -201,6 +201,10 @@ export type UseViewModelInstanceResult =
 /**
  * Hook for getting a ViewModelInstance from a RiveFile, ViewModel, or RiveViewRef.
  *
+ * @deprecated Use {@link useViewModelInstanceAsync} instead. This hook creates the
+ * instance synchronously via deprecated runtime APIs that access the Rive runtime on
+ * the JS thread; the async variant uses the non-deprecated `*Async` APIs.
+ *
  * @param source - The RiveFile, ViewModel, or RiveViewRef to get an instance from
  * @param params - Configuration for which instance to retrieve
  * @returns An object with `instance` and `error` (discriminated union)

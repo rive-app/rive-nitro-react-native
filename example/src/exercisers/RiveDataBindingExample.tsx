@@ -4,7 +4,7 @@ import {
   Fit,
   RiveView,
   useRiveNumber,
-  useViewModelInstance,
+  useViewModelInstanceAsync,
   type ViewModelInstance,
   type RiveFile,
   useRiveString,
@@ -37,7 +37,7 @@ export default function WithRiveFile() {
 }
 
 function WithViewModelSetup({ file }: { file: RiveFile }) {
-  const { instance, error } = useViewModelInstance(file);
+  const { instance, error } = useViewModelInstanceAsync(file);
 
   if (error) {
     console.error(error.message);
