@@ -16,7 +16,7 @@ import {
   type RiveFile,
   useRiveFile,
   useRiveList,
-  useViewModelInstance,
+  useViewModelInstanceAsync,
 } from '@rive-app/react-native';
 import { type Metadata } from '../shared/metadata';
 
@@ -41,7 +41,7 @@ export default function MenuListExample() {
 }
 
 function MenuList({ file }: { file: RiveFile }) {
-  const { instance, error } = useViewModelInstance(file);
+  const { instance, error } = useViewModelInstanceAsync(file);
 
   if (error) {
     console.error(error.message);
