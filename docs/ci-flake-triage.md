@@ -170,7 +170,13 @@ you tried to reproduce. Concretely:
    window to force it out (this is exactly how the #230 guard and the JNI-overflow repro were built).
    Reproducing **across multiple runs / a stress loop** counts — you don't need a single deterministic
    shot. If a change makes the crash appear or vanish, that's your confirmation.
-4. Only when a theory is confirmed **and** a permanent guard exists does the signature move to
+4. **Log the dead ends too — especially theory-denying ones.** Record what you tried that *didn't*
+   work (wrong build/branch, N stress runs with 0 repro, a variation that changed nothing), and call
+   out any result that **contradicts** the current theory. A failed attempt is data: it stops the
+   next person re-running the same thing, and a theory-denying result is often the fastest route to
+   the real cause. Note the crucial gotchas explicitly (e.g. "built the wrong backend — the crash is
+   in the *experimental* path, so a default/legacy build can't hit it").
+5. Only when a theory is confirmed **and** a permanent guard exists does the signature move to
    `ci-flake:resolved`.
 
 ## Collection: the scheduled sweep
