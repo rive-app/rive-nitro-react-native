@@ -9,6 +9,9 @@ import com.margelo.nitro.core.Promise
 @Keep
 @DoNotStrip
 class HybridViewModel(private val viewModel: ViewModel) : HybridViewModelSpec() {
+  override val memorySize: Long
+    get() = VIEW_MODEL_HYBRID_MEMORY_SIZE
+
   override val propertyCount: Double
     get() = viewModel.propertyCount.toDouble()
   override val instanceCount: Double
