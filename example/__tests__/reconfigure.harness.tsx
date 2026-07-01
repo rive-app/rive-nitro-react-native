@@ -14,6 +14,7 @@ import {
   Fit,
   type RiveFile,
   type RiveViewRef,
+  type ViewModelNumberProperty,
 } from '@rive-app/react-native';
 
 const BOUNCING_BALL = require('../assets/rive/bouncing_ball.riv');
@@ -74,11 +75,17 @@ describe('RiveView reconfigure (file switch)', () => {
     await render(<Wrapper />);
     await waitFor(() => expect(context.ref).not.toBeNull(), { timeout: 5000 });
 
-    // Confirm bouncing_ball is animating via its ypos ViewModel property
-    const vmi1 = context.ref!.getViewModelInstance();
-    expect(vmi1).not.toBeNull();
-    const ypos1 = vmi1!.numberProperty('ypos');
-    expect(ypos1).toBeDefined();
+    // The ViewModel instance and its properties resolve asynchronously a short
+    // time after the view ref is assigned, so poll until the property is
+    // available rather than reading it the instant the ref exists.
+    let ypos1: ViewModelNumberProperty | undefined;
+    await waitFor(
+      () => {
+        ypos1 = context.ref!.getViewModelInstance()?.numberProperty('ypos');
+        expect(ypos1).toBeDefined();
+      },
+      { timeout: 5000 }
+    );
     const valueBefore = ypos1!.value;
     await delay(500);
     expect(ypos1!.value).not.toBe(valueBefore);
@@ -93,11 +100,16 @@ describe('RiveView reconfigure (file switch)', () => {
     await delay(600);
     expect(context.error).toBeNull();
 
-    // Animation should still be running on the reconfigured view
-    const vmi2 = context.ref!.getViewModelInstance();
-    expect(vmi2).not.toBeNull();
-    const ypos2 = vmi2!.numberProperty('ypos');
-    expect(ypos2).toBeDefined();
+    // Animation should still be running on the reconfigured view. The
+    // reconfigured instance also resolves asynchronously, so poll for it too.
+    let ypos2: ViewModelNumberProperty | undefined;
+    await waitFor(
+      () => {
+        ypos2 = context.ref!.getViewModelInstance()?.numberProperty('ypos');
+        expect(ypos2).toBeDefined();
+      },
+      { timeout: 5000 }
+    );
     const valueAfterSwitch = ypos2!.value;
     await delay(500);
     expect(ypos2!.value).not.toBe(valueAfterSwitch);
