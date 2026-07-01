@@ -33,5 +33,23 @@ target 'RiveExample' do
       :mac_catalyst_enabled => false,
       # :ccache_enabled => true
     )
+
+    # fmt `consteval` build error on Xcode 26.4+ (Apple clang 21): the compiler rejects
+    # fmt's compile-time FMT_STRING (basic_format_string's consteval ctor) as a
+    # non-constant-expression. Disable fmt's consteval path via FMT_USE_CONSTEVAL=0 while
+    # keeping C++20 — this is the interim workaround Expo recommends (expo/expo#44229) and
+    # mirrors what fmt itself does for broken-consteval compilers (fmt/base.h sets
+    # FMT_USE_CONSTEVAL 0 for e.g. Apple clang < 14). Preferred over compiling the fmt pod as
+    # C++17 because it keeps the whole graph on a single C++ standard. Real fix is upstream in
+    # React Native 0.83+ (fmtlib/fmt#4740, facebook/react-native#55601); remove once we bump.
+    installer.pods_project.targets.each do |target|
+      next unless target.name == 'fmt'
+      target.build_configurations.each do |bc|
+        defs = bc.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] || ['$(inherited)']
+        defs = [defs] unless defs.is_a?(Array)
+        defs << 'FMT_USE_CONSTEVAL=0' unless defs.include?('FMT_USE_CONSTEVAL=0')
+        bc.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] = defs
+      end
+    end
   end
 end
