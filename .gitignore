@@ -96,3 +96,6 @@ coverage/
 
 # react-native-harness build cache
 .harness/
+
+# Local Claude notes (personal, not shared)
+CLAUDE.local.md
