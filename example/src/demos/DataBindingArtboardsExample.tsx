@@ -10,7 +10,7 @@ import {
   Fit,
   RiveView,
   useRiveFile,
-  useViewModelInstance,
+  useViewModelInstanceAsync,
   type RiveFile,
   type BindableArtboard,
 } from '@rive-app/react-native';
@@ -78,7 +78,7 @@ function ArtboardSwapper({
   mainFile: RiveFile;
   assetsFile: RiveFile;
 }) {
-  const { instance, error } = useViewModelInstance(mainFile);
+  const { instance, error } = useViewModelInstanceAsync(mainFile);
   const [currentArtboard, setCurrentArtboard] = useState<string>('Dragon');
   const initializedRef = useRef(false);
 
