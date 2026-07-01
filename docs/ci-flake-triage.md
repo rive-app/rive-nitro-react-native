@@ -33,8 +33,10 @@ same red can never silently return. Two rules:
 1. **Collect** — pull the failed jobs' logs (`gh run view <run-id> --log-failed`).
 2. **Classify** — match the log against the [signature catalog](#signature-catalog). Known signature
    → append to its ledger issue. No match → open a `needs-triage` issue.
-3. **Reproduce** — for anything that isn't obviously transient infra, reproduce locally (see
-   [Local reproduction toolkit](#local-reproduction-toolkit)) and **quantify the rate**.
+3. **Reproduce** — for anything that isn't obviously transient infra, reproduce **locally** (see
+   [Local reproduction toolkit](#local-reproduction-toolkit)) and **quantify the rate**. Reproduction
+   is a *local* activity — CI only detects and records; you never re-run CI to investigate. Follow
+   the [reproduction discipline](#reproduction-discipline) below.
 4. **Accumulate** — every occurrence and every finding lands on the signature's ledger issue, so the
    picture sharpens over time instead of resetting each incident.
 5. **Mitigate** — apply the category [playbook](#categories--playbooks).
@@ -146,6 +148,30 @@ Reuse what's already here — don't build new harnesses.
   at ~1%).
 - **TSan for native races** — `rn-harness.config.mjs` wires `TSAN_OPTIONS` (`halt_on_error=0`) on
   iOS so races surface without aborting on the first. Use it for `product-bug` signatures.
+
+### Reproduction discipline
+
+For every signature, the ledger issue must honestly record what was captured and what happened when
+you tried to reproduce. Concretely:
+
+1. **Always capture the evidence.** Add the failing run's link to the **Occurrence log**, plus the
+   specific jobs, failing test files, and the key error/stack lines. Every new sighting appends a new
+   occurrence bullet (`- <date> — <jobs> — <run-url>`) — this is how frequency accrues over time.
+2. **Try to reproduce locally, then write down the result either way:**
+   - **Reproduced** → write the exact **repro steps** into the issue (commands, which harness test /
+     reproducer page, emulator/simulator, how many runs it took, observed rate). Someone else must be
+     able to follow them.
+   - **Not reproduced** → briefly note *how* you tried (what you ran, how many iterations, which
+     variations) and *why* you think it didn't repro (environment difference, load, timing). A short
+     honest note beats silence.
+3. **Theories are allowed without a repro — but a theory must be confirmed, not left dangling.** It's
+   fine to write a hypothesis from the stack trace alone. To confirm it, it is encouraged to *provoke*
+   the failure: add tweaks, artificial **delays**, **locks**, or **busy loops** at the suspected race
+   window to force it out (this is exactly how the #230 guard and the JNI-overflow repro were built).
+   Reproducing **across multiple runs / a stress loop** counts — you don't need a single deterministic
+   shot. If a change makes the crash appear or vanish, that's your confirmation.
+4. Only when a theory is confirmed **and** a permanent guard exists does the signature move to
+   `ci-flake:resolved`.
 
 ## Collection: the scheduled sweep
 
