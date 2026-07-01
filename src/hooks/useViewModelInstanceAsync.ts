@@ -333,7 +333,7 @@ export function useViewModelInstanceAsync(
       result.error
         ? `useViewModelInstanceAsync: ${result.error.message}`
         : 'useViewModelInstanceAsync: Failed to get ViewModelInstance. ' +
-          'Ensure the source has a valid ViewModel and instance available.'
+            'Ensure the source has a valid ViewModel and instance available.'
     );
   }
 
