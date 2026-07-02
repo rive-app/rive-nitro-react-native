@@ -145,8 +145,8 @@ jobs:
           yarn turbo run build:android --cache-dir="${{ env.TURBO_CACHE_DIR }}"
 
   build-ios:
-    # Pinned: macos-latest is mid-migrating to macOS 26, whose sim set lacks an
-    # iPhone 16 Pro on iOS >=26, breaking the harness boot.
+    # Pinned: macos-latest is mid-migration to macOS 26, whose simulator set
+    # has no iPhone 16 Pro on an iOS >=26 runtime, breaking the harness boot.
     runs-on: macos-15
     env:
       XCODE_VERSION: 26.3
@@ -215,6 +215,8 @@ jobs:
           yarn turbo run build:ios --cache-dir="${{ env.TURBO_CACHE_DIR }}"
 
   test-harness-ios:
+    # Pinned to macos-15 — see build-ios. macos-26 runners lack a matching
+    # iPhone 16 Pro / iOS >=26 simulator, so the boot step fails intermittently.
     runs-on: macos-15
     timeout-minutes: 60
     env:
