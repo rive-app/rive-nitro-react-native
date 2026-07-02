@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.13](https://github.com/rive-app/rive-nitro-react-native/compare/v0.4.12...v0.4.13) (2026-07-01)
+
+
+### Bug Fixes
+
+* **android:** avoid NoSuchElementException in view-model property listener dispatch ([#301](https://github.com/rive-app/rive-nitro-react-native/issues/301)) ([d47784f](https://github.com/rive-app/rive-nitro-react-native/commit/d47784f1002a6bde7f193ca91f778dedae2ef789))
+
 ## [0.4.12](https://github.com/rive-app/rive-nitro-react-native/compare/v0.4.11...v0.4.12) (2026-06-26)
 
 
