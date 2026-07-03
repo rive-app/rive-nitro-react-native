@@ -4726,6 +4726,25 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@react-native-harness/runtime@patch:@react-native-harness/runtime@npm%3A1.4.0-rc.1#./.yarn/patches/@react-native-harness-runtime-npm-1.4.0-rc.1-5f3d78d6f0.patch::locator=%40rive-app%2Freact-native%40workspace%3A.":
+  version: 1.4.0-rc.1
+  resolution: "@react-native-harness/runtime@patch:@react-native-harness/runtime@npm%3A1.4.0-rc.1#./.yarn/patches/@react-native-harness-runtime-npm-1.4.0-rc.1-5f3d78d6f0.patch::version=1.4.0-rc.1&hash=5a12e2&locator=%40rive-app%2Freact-native%40workspace%3A."
+  dependencies:
+    "@react-native-harness/bridge": 1.4.0-rc.1
+    "@vitest/expect": 4.0.16
+    "@vitest/spy": 4.0.16
+    chai: ^6.2.2
+    event-target-shim: ^6.0.2
+    react-native-url-polyfill: ^3.0.0
+    use-sync-external-store: ^1.6.0
+    zustand: ^5.0.5
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: 0ab55c9b2c156547b1f1338b089a009b1f8c4b14222f09edcd4082a4a4ab478d02bec1d84164ed3ed37cfcb55f6ac8caefd8f380c36f4a63f1310757636da61b
+  languageName: node
+  linkType: hard
+
 "@react-native-harness/tools@npm:1.4.0-rc.1":
   version: 1.4.0-rc.1
   resolution: "@react-native-harness/tools@npm:1.4.0-rc.1"
