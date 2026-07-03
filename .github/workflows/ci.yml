@@ -465,6 +465,45 @@ jobs:
           echo "=== Simulator logs (last 5m) ==="
           xcrun simctl spawn booted log show --predicate 'processImagePath CONTAINS "expo57example"' --last 5m --style compact 2>&1 | tail -200 || echo "No logs found"
 
+      - name: Debug - Collect iOS crash reports
+        if: failure() || cancelled()
+        run: |
+          set +e
+          UDID=$(xcrun simctl list devices | awk -F '[()]' '/Booted/{print $2; exit}')
+          echo "Booted simulator UDID: ${UDID:-<none>}"
+          mkdir -p crash-reports
+          # Simulator app crashes are written to the host's DiagnosticReports by
+          # ReportCrash, and sometimes inside the simulator's own data dir. Grab
+          # RiveExample-named reports plus anything from the last 25 min as a fallback.
+          for dir in \
+            "$HOME/Library/Logs/DiagnosticReports" \
+            "$HOME/Library/Developer/CoreSimulator/Devices/$UDID/data/Library/Logs/DiagnosticReports"; do
+            [ -d "$dir" ] || continue
+            find "$dir" -type f \
+              \( -iname 'RiveExample-*' -o \( \( -iname '*.ips' -o -iname '*.crash' \) -mmin -25 \) \) \
+              -exec cp {} crash-reports/ \; 2>/dev/null
+          done
+          count=$(ls -1 crash-reports 2>/dev/null | wc -l | tr -d ' ')
+          echo "=== Collected ${count} crash report(s) ==="
+          for f in crash-reports/*; do
+            [ -e "$f" ] || continue
+            echo "---------------- ${f} ----------------"
+            cat "$f"
+            echo
+          done
+          if [ "${count}" = "0" ]; then
+            echo "No crash reports found (app may not have crashed, or reports were not flushed yet)."
+          fi
+          exit 0
+
+      - name: Upload iOS crash reports
+        if: failure() || cancelled()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-harness-crash-reports
+          path: crash-reports/
+          if-no-files-found: ignore
+
   test-harness-android:
     runs-on: ubuntu-latest
     timeout-minutes: 30
