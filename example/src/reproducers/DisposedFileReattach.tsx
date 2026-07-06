@@ -1,13 +1,7 @@
 import { useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  NativeModules,
-  Platform,
-} from 'react-native';
+import { View, Text, StyleSheet, Pressable, Platform } from 'react-native';
 import { RiveView, useRiveFile, Fit } from '@rive-app/react-native';
+import { getDebugUtils } from 'rive-debug-utils';
 import { type Metadata } from '../shared/metadata';
 
 /**
@@ -19,13 +13,13 @@ import { type Metadata } from '../shared/metadata';
  * onAttachedToWindow re-acquires the disposed object and throws
  * "Cannot acquire a disposed object".
  *
- * The RiveViewReattach native module (example app only) simulates the
- * re-attach: it captures the Android view before unmount and adds it back to
- * the window afterwards, catching the exception so the result can be shown
- * here. FAIL = crash reproduced, PASS = re-attach survived.
+ * The rive-debug-utils native helper simulates the re-attach: it captures the
+ * Android view before unmount and adds it back to the window afterwards,
+ * catching the exception so the result can be shown here.
+ * FAIL = crash reproduced, PASS = re-attach survived.
  */
 
-const { RiveViewReattach } = NativeModules;
+const RIVE_VIEW_CLASS = 'com.rive.RiveReactNativeView';
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
@@ -50,16 +44,9 @@ export default function DisposedFileReattach() {
   const [result, setResult] = useState<'pass' | 'fail' | null>(null);
 
   const run = async () => {
-    if (Platform.OS !== 'android') {
-      setStatus('Android-only reproducer');
-      return;
-    }
-    if (RiveViewReattach == null) {
-      // The native helper only exists in the bare example app; the page is
-      // also reachable from the Expo examples via the shared PagesList.
-      setStatus(
-        'RiveViewReattach helper not available in this app — run the bare example'
-      );
+    const debugUtils = getDebugUtils();
+    if (debugUtils == null) {
+      setStatus('rive-debug-utils native helper not available (Android only)');
       return;
     }
     setResult(null);
@@ -68,7 +55,7 @@ export default function DisposedFileReattach() {
     await sleep(500);
 
     setStatus('capturing native view...');
-    const found = await RiveViewReattach.captureRiveView();
+    const found = await debugUtils.captureView(RIVE_VIEW_CLASS);
     if (!found) {
       setStatus('no RiveReactNativeView found on screen');
       return;
@@ -79,8 +66,8 @@ export default function DisposedFileReattach() {
     await sleep(500);
 
     setStatus('re-attaching dropped view...');
-    const outcome = await RiveViewReattach.reattachCapturedView();
-    await RiveViewReattach.releaseCapturedView();
+    const outcome = await debugUtils.reattachCapturedView();
+    await debugUtils.releaseCapturedView();
 
     if (outcome === 'no-crash') {
       setResult('pass');

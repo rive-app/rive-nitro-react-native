@@ -1,0 +1,15 @@
+{
+  "name": "rive-debug-utils",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Native test/debug helpers for the Rive example apps (not published)",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "nitrogen": "nitrogen"
+  },
+  "peerDependencies": {
+    "react-native": "*",
+    "react-native-nitro-modules": "*"
+  }
+}
