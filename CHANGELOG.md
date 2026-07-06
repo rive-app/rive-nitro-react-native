@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.4.14](https://github.com/rive-app/rive-nitro-react-native/compare/v0.4.13...v0.4.14) (2026-07-06)
+
+
+### Bug Fixes
+
+* **android:** bump rive-android to 11.6.2 ([#317](https://github.com/rive-app/rive-nitro-react-native/issues/317)) ([ae66b24](https://github.com/rive-app/rive-nitro-react-native/commit/ae66b2409418feb61d2e73d0900af169a1d1c505))
+* **android:** don't re-acquire a disposed Rive file on view re-attach ([#319](https://github.com/rive-app/rive-nitro-react-native/issues/319)) ([4259723](https://github.com/rive-app/rive-nitro-react-native/commit/4259723cda269a29700fdba81a85bddd131f429c))
+* **hooks:** no-op stale property setter calls after dispose ([#316](https://github.com/rive-app/rive-nitro-react-native/issues/316)) ([dbb4dd7](https://github.com/rive-app/rive-nitro-react-native/commit/dbb4dd7f8bdef33d2c50e399a0b299459d01abb2))
+
 ## [0.4.13](https://github.com/rive-app/rive-nitro-react-native/compare/v0.4.12...v0.4.13) (2026-07-01)
 
 
