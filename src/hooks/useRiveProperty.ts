@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   type ObservableProperty,
   type ViewModelInstance,
@@ -31,6 +31,9 @@ export function useRiveProperty<P extends ViewModelProperty, T>(
   Error | null,
   P | undefined,
 ] {
+  // Nulled by useDisposableMemo the moment the property is disposed, so the
+  // setter can tell a live property from a disposed one (see setPropertyValue).
+  const liveRef = useRef<ObservableViewModelProperty<T> | undefined>(undefined);
   const property = useDisposableMemo(
     () => {
       if (!viewModelInstance) return undefined;
@@ -40,7 +43,8 @@ export function useRiveProperty<P extends ViewModelProperty, T>(
       ) as unknown as ObservableViewModelProperty<T>;
     },
     (p) => p?.dispose(),
-    [viewModelInstance, path]
+    [viewModelInstance, path],
+    liveRef
   );
 
   // Always start undefined — the listener delivers the current value as its first emission.
@@ -92,16 +96,26 @@ export function useRiveProperty<P extends ViewModelProperty, T>(
   // property.value read and is consistent with how React state works.
   const setPropertyValue = useCallback(
     (valueOrUpdater: T | ((prevValue: T | undefined) => T)) => {
-      if (!property) {
+      // Read through liveRef instead of the captured `property`: a stale
+      // closure (e.g. an async callback) can fire after the property was
+      // disposed by a deps change or unmount, and writing to the disposed
+      // hybrid throws ("NativeState is null" — fatal when uncaught in
+      // release). Same guard as useRiveTrigger.
+      const liveProperty = liveRef.current;
+      if (!liveProperty) {
         return;
       } else {
         const newValue =
           typeof valueOrUpdater === 'function'
             ? (valueOrUpdater as (prevValue: T | undefined) => T)(value)
             : valueOrUpdater;
-        property.value = newValue;
+        liveProperty.value = newValue;
       }
     },
+    // `property` kept in deps so the setter identity changes with the
+    // property — consumers' effects keyed on the setter re-fire (see
+    // "should apply value after instance becomes available" test).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [property, value]
   );
 
@@ -115,7 +129,8 @@ export function useRiveProperty<P extends ViewModelProperty, T>(
  * @template T - The primitive type of the property value (number, boolean, string)
  */
 interface ObservableViewModelProperty<T>
-  extends ViewModelProperty, ObservableProperty {
+  extends ViewModelProperty,
+    ObservableProperty {
   addListener: (onChanged: (value: T) => void) => () => void;
   value: T;
 }
