@@ -34,5 +34,5 @@
       "kotlin": "HybridRiveRuntime"
     }
   },
-  "ignorePaths": ["node_modules"]
+  "ignorePaths": ["node_modules", "**/node_modules", "rive-debug-utils"]
 }

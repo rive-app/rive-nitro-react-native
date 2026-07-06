@@ -111,7 +111,8 @@
   "workspaces": [
     "example",
     "expo-example",
-    "expo55-example"
+    "expo55-example",
+    "rive-debug-utils"
   ],
   "packageManager": "yarn@3.6.1",
   "jest": {

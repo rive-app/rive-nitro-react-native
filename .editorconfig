@@ -34,5 +34,5 @@ ktlint_standard_backing-property-naming = disabled
 ktlint_standard_no-consecutive-comments = disabled
 ktlint_standard_no-empty-first-line-in-class-body = disabled
 
-[nitrogen/generated/**/*.kt]
+[{nitrogen,rive-debug-utils/nitrogen}/generated/**/*.kt]
 ktlint = disabled
