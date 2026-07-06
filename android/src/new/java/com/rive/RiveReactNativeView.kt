@@ -402,5 +402,9 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
     artboardHandle = null
     stateMachineHandle = null
     riveSurface = null
+    // A dropped view can be attached to a window again (e.g. Fabric view
+    // recycling); onSurfaceTextureAvailable must not create a surface on a
+    // command queue whose owning file may already be disposed.
+    riveWorker = null
   }
 }
