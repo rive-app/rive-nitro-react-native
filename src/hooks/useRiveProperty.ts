@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   type ObservableProperty,
   type ViewModelInstance,
@@ -31,6 +31,10 @@ export function useRiveProperty<P extends ViewModelProperty, T>(
   Error | null,
   P | undefined,
 ] {
+  // Nulled by useDisposableMemo the moment the property is disposed, so the
+  // setter can tell a live property from a disposed one (see setPropertyValue).
+  const liveRef = useRef<ObservableViewModelProperty<T> | undefined>(undefined);
+  const wasEverLive = useRef(false);
   const property = useDisposableMemo(
     () => {
       if (!viewModelInstance) return undefined;
@@ -40,8 +44,13 @@ export function useRiveProperty<P extends ViewModelProperty, T>(
       ) as unknown as ObservableViewModelProperty<T>;
     },
     (p) => p?.dispose(),
-    [viewModelInstance, path]
+    [viewModelInstance, path],
+    liveRef
   );
+
+  if (liveRef.current) {
+    wasEverLive.current = true;
+  }
 
   // Always start undefined — the listener delivers the current value as its first emission.
   // (iOS experimental: via valueStream; iOS/Android legacy: emitted synchronously on subscribe)
@@ -87,22 +96,45 @@ export function useRiveProperty<P extends ViewModelProperty, T>(
     };
   }, [property]);
 
-  // Set the value of the property (no-op if property isn't available yet).
-  // Uses tracked `value` from state for updater functions — avoids a synchronous
-  // property.value read and is consistent with how React state works.
+  // Set the value of the property (warn + no-op if the property isn't
+  // available). Uses tracked `value` from state for updater functions —
+  // avoids a synchronous property.value read and is consistent with how
+  // React state works.
   const setPropertyValue = useCallback(
     (valueOrUpdater: T | ((prevValue: T | undefined) => T)) => {
-      if (!property) {
+      // Read through liveRef instead of the captured `property`: a stale
+      // closure (e.g. an async callback) can fire after the property was
+      // disposed by a deps change or unmount, and writing to the disposed
+      // hybrid throws ("NativeState is null" — fatal when uncaught in
+      // release). Same guard as useRiveTrigger.
+      const liveProperty = liveRef.current;
+      if (!liveProperty) {
+        if (wasEverLive.current) {
+          console.warn(
+            `useRiveProperty: setValue('${path}') called after dispose. ` +
+              'The property has been cleaned up — this is likely a stale closure ' +
+              'from an async callback that fired after unmount.'
+          );
+        } else {
+          console.warn(
+            `useRiveProperty: setValue('${path}') called but the property is not available yet. ` +
+              'The viewModelInstance may still be loading.'
+          );
+        }
         return;
       } else {
         const newValue =
           typeof valueOrUpdater === 'function'
             ? (valueOrUpdater as (prevValue: T | undefined) => T)(value)
             : valueOrUpdater;
-        property.value = newValue;
+        liveProperty.value = newValue;
       }
     },
-    [property, value]
+    // `property` kept in deps so the setter identity changes with the
+    // property — consumers' effects keyed on the setter re-fire (see
+    // "should apply value after instance becomes available" test).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [property, path, value]
   );
 
   return [value, setPropertyValue, error, property as unknown as P];
