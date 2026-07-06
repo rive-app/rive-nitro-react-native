@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.widget.FrameLayout
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
+import app.rive.runtime.kotlin.ResourceType
 import app.rive.runtime.kotlin.RiveAnimationView
 import app.rive.runtime.kotlin.RiveViewLifecycleObserver
 import app.rive.runtime.kotlin.controllers.RiveFileController
@@ -59,8 +60,25 @@ class ReactNativeRiveViewLifecycleObserver(dependencies: MutableList<RefCount>) 
 
 @SuppressLint("ViewConstructor")
 class ReactNativeRiveAnimationView(context: ThemedReactContext) : RiveAnimationView(context) {
+  @SuppressLint("VisibleForTests")
   fun dispose() {
+    // Invalidate the cached resource so a later re-attach can't try to reload
+    // the File we release below (mirrors RiveAnimationView.saveControllerState()).
+    rendererAttributes.resource = null
     (lifecycleObserver as ReactNativeRiveViewLifecycleObserver).dispose()
+  }
+
+  // A dropped view can be attached to a window again (e.g. Fabric view
+  // recycling) after its File was disposed. onAttachedToWindow would reload
+  // the cached resource and re-acquire the dead File, crashing with
+  // "Cannot acquire a disposed object" — drop the stale resource first.
+  @SuppressLint("VisibleForTests")
+  override fun onAttachedToWindow() {
+    val resource = rendererAttributes.resource
+    if (resource is ResourceType.ResourceRiveFile && !resource.file.hasCppObject) {
+      rendererAttributes.resource = null
+    }
+    super.onAttachedToWindow()
   }
 
   @SuppressLint("VisibleForTests")
