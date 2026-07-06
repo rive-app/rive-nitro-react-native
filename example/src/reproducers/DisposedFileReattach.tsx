@@ -54,6 +54,14 @@ export default function DisposedFileReattach() {
       setStatus('Android-only reproducer');
       return;
     }
+    if (RiveViewReattach == null) {
+      // The native helper only exists in the bare example app; the page is
+      // also reachable from the Expo examples via the shared PagesList.
+      setStatus(
+        'RiveViewReattach helper not available in this app — run the bare example'
+      );
+      return;
+    }
     setResult(null);
     setMounted(true);
     setStatus('mounting view...');
