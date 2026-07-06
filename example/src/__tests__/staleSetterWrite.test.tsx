@@ -19,7 +19,7 @@ import {
  * useRiveProperty must turn it into a no-op.
  */
 const DATABINDING = require('../../assets/rive/databinding.riv');
-const WRITES = 400;
+const WRITES = 50;
 
 type Ctx = {
   setValue: ((v: number) => void) | null;

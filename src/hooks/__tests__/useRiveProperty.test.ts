@@ -3,6 +3,14 @@ import { useRiveProperty } from '../useRiveProperty';
 import type { ViewModelInstance } from '../../specs/ViewModel.nitro';
 
 describe('useRiveProperty', () => {
+  beforeEach(() => {
+    jest.spyOn(console, 'warn').mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    (console.warn as jest.Mock).mockRestore();
+  });
+
   const createMockProperty = (initialValue: string) => {
     let currentValue = initialValue;
     let listener: ((value: string) => void) | null = null;
@@ -292,7 +300,7 @@ describe('useRiveProperty', () => {
       };
     };
 
-    it('setter captured before a path change does not write to the disposed property', () => {
+    it('setter captured before a path change writes to the current property, not the disposed one', () => {
       const oldProperty = createDisposeTrackingProperty('old');
       const newProperty = createDisposeTrackingProperty('new');
       const mockInstance = createMockViewModelInstance({
@@ -320,7 +328,10 @@ describe('useRiveProperty', () => {
         staleSetter('boom');
       });
 
+      // Live-ref semantics (same as useRiveTrigger): the setter targets the
+      // hook's current property, never the disposed one.
       expect(oldProperty.writesAfterDispose).toEqual([]);
+      expect(newProperty.value).toBe('boom');
     });
 
     it('setter called after unmount does not write to the disposed property', () => {
@@ -349,6 +360,9 @@ describe('useRiveProperty', () => {
         staleSetter('boom');
 
         expect(property.writesAfterDispose).toEqual([]);
+        expect(console.warn).toHaveBeenCalledWith(
+          expect.stringContaining("setValue('text') called after dispose")
+        );
       } finally {
         jest.useRealTimers();
       }

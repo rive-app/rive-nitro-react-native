@@ -34,6 +34,7 @@ export function useRiveProperty<P extends ViewModelProperty, T>(
   // Nulled by useDisposableMemo the moment the property is disposed, so the
   // setter can tell a live property from a disposed one (see setPropertyValue).
   const liveRef = useRef<ObservableViewModelProperty<T> | undefined>(undefined);
+  const wasEverLive = useRef(false);
   const property = useDisposableMemo(
     () => {
       if (!viewModelInstance) return undefined;
@@ -46,6 +47,10 @@ export function useRiveProperty<P extends ViewModelProperty, T>(
     [viewModelInstance, path],
     liveRef
   );
+
+  if (liveRef.current) {
+    wasEverLive.current = true;
+  }
 
   // Always start undefined — the listener delivers the current value as its first emission.
   // (iOS experimental: via valueStream; iOS/Android legacy: emitted synchronously on subscribe)
@@ -91,9 +96,10 @@ export function useRiveProperty<P extends ViewModelProperty, T>(
     };
   }, [property]);
 
-  // Set the value of the property (no-op if property isn't available yet).
-  // Uses tracked `value` from state for updater functions — avoids a synchronous
-  // property.value read and is consistent with how React state works.
+  // Set the value of the property (warn + no-op if the property isn't
+  // available). Uses tracked `value` from state for updater functions —
+  // avoids a synchronous property.value read and is consistent with how
+  // React state works.
   const setPropertyValue = useCallback(
     (valueOrUpdater: T | ((prevValue: T | undefined) => T)) => {
       // Read through liveRef instead of the captured `property`: a stale
@@ -103,6 +109,18 @@ export function useRiveProperty<P extends ViewModelProperty, T>(
       // release). Same guard as useRiveTrigger.
       const liveProperty = liveRef.current;
       if (!liveProperty) {
+        if (wasEverLive.current) {
+          console.warn(
+            `useRiveProperty: setValue('${path}') called after dispose. ` +
+              'The property has been cleaned up — this is likely a stale closure ' +
+              'from an async callback that fired after unmount.'
+          );
+        } else {
+          console.warn(
+            `useRiveProperty: setValue('${path}') called but the property is not available yet. ` +
+              'The viewModelInstance may still be loading.'
+          );
+        }
         return;
       } else {
         const newValue =
@@ -116,7 +134,7 @@ export function useRiveProperty<P extends ViewModelProperty, T>(
     // property — consumers' effects keyed on the setter re-fire (see
     // "should apply value after instance becomes available" test).
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [property, value]
+    [property, path, value]
   );
 
   return [value, setPropertyValue, error, property as unknown as P];
@@ -129,8 +147,7 @@ export function useRiveProperty<P extends ViewModelProperty, T>(
  * @template T - The primitive type of the property value (number, boolean, string)
  */
 interface ObservableViewModelProperty<T>
-  extends ViewModelProperty,
-    ObservableProperty {
+  extends ViewModelProperty, ObservableProperty {
   addListener: (onChanged: (value: T) => void) => () => void;
   value: T;
 }
