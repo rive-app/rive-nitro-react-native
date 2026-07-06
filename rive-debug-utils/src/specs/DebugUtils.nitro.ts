@@ -8,9 +8,10 @@ import type { HybridObject } from 'react-native-nitro-modules';
  * to the window. Exceptions from re-attaching are reported back to JS instead
  * of crashing the app, so reproducer pages can display the result.
  */
-export interface DebugUtils extends HybridObject<{
-  android: 'kotlin';
-}> {
+export interface DebugUtils
+  extends HybridObject<{
+    android: 'kotlin';
+  }> {
   /**
    * Finds the first view whose class name is `viewClassName` in the current
    * activity's hierarchy and keeps a strong reference to it.
