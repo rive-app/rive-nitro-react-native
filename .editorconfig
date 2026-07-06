@@ -37,5 +37,5 @@ ktlint_standard_condition-wrapping = disabled
 ktlint_standard_if-else-wrapping = disabled
 ktlint_standard_function-naming = disabled
 
-[nitrogen/generated/**/*.kt]
+[{nitrogen,rive-debug-utils/nitrogen}/generated/**/*.kt]
 ktlint = disabled
