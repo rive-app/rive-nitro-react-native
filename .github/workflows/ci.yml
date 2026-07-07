@@ -249,6 +249,11 @@ jobs:
 
       - name: Install cocoapods
         working-directory: expo57-example/ios
+        env:
+          # Same bucket EAS Build uses for prebuilt third-party XCFrameworks
+          # (reanimated, worklets, ...). Unofficial endpoint — on 404 or if it
+          # ever breaks, pods silently fall back to building from source.
+          EXPO_PRECOMPILED_MODULES_BASE_URL: https://storage.googleapis.com/eas-build-precompiled-modules/
         run: |
           start=$(date +%s)
           pod install
