@@ -31,6 +31,7 @@ namespace margelo::nitro::rive::views {
         const react::RawValue* rawValue = rawProps.at("artboardName", nullptr, nullptr);
         if (rawValue == nullptr) return sourceProps.artboardName;
         const auto& [runtime, value] = (std::pair<jsi::Runtime*, jsi::Value>)*rawValue;
+        if (value.isNull()) return CachedProp<std::optional<std::string>>::fromRawValue(*runtime, jsi::Value::undefined(), sourceProps.artboardName);
         return CachedProp<std::optional<std::string>>::fromRawValue(*runtime, value, sourceProps.artboardName);
       } catch (const std::exception& exc) {
         throw std::runtime_error(std::string("RiveView.artboardName: ") + exc.what());
@@ -41,6 +42,7 @@ namespace margelo::nitro::rive::views {
         const react::RawValue* rawValue = rawProps.at("stateMachineName", nullptr, nullptr);
         if (rawValue == nullptr) return sourceProps.stateMachineName;
         const auto& [runtime, value] = (std::pair<jsi::Runtime*, jsi::Value>)*rawValue;
+        if (value.isNull()) return CachedProp<std::optional<std::string>>::fromRawValue(*runtime, jsi::Value::undefined(), sourceProps.stateMachineName);
         return CachedProp<std::optional<std::string>>::fromRawValue(*runtime, value, sourceProps.stateMachineName);
       } catch (const std::exception& exc) {
         throw std::runtime_error(std::string("RiveView.stateMachineName: ") + exc.what());
@@ -51,6 +53,7 @@ namespace margelo::nitro::rive::views {
         const react::RawValue* rawValue = rawProps.at("autoPlay", nullptr, nullptr);
         if (rawValue == nullptr) return sourceProps.autoPlay;
         const auto& [runtime, value] = (std::pair<jsi::Runtime*, jsi::Value>)*rawValue;
+        if (value.isNull()) return CachedProp<std::optional<bool>>::fromRawValue(*runtime, jsi::Value::undefined(), sourceProps.autoPlay);
         return CachedProp<std::optional<bool>>::fromRawValue(*runtime, value, sourceProps.autoPlay);
       } catch (const std::exception& exc) {
         throw std::runtime_error(std::string("RiveView.autoPlay: ") + exc.what());
@@ -71,6 +74,7 @@ namespace margelo::nitro::rive::views {
         const react::RawValue* rawValue = rawProps.at("alignment", nullptr, nullptr);
         if (rawValue == nullptr) return sourceProps.alignment;
         const auto& [runtime, value] = (std::pair<jsi::Runtime*, jsi::Value>)*rawValue;
+        if (value.isNull()) return CachedProp<std::optional<Alignment>>::fromRawValue(*runtime, jsi::Value::undefined(), sourceProps.alignment);
         return CachedProp<std::optional<Alignment>>::fromRawValue(*runtime, value, sourceProps.alignment);
       } catch (const std::exception& exc) {
         throw std::runtime_error(std::string("RiveView.alignment: ") + exc.what());
@@ -81,6 +85,7 @@ namespace margelo::nitro::rive::views {
         const react::RawValue* rawValue = rawProps.at("fit", nullptr, nullptr);
         if (rawValue == nullptr) return sourceProps.fit;
         const auto& [runtime, value] = (std::pair<jsi::Runtime*, jsi::Value>)*rawValue;
+        if (value.isNull()) return CachedProp<std::optional<Fit>>::fromRawValue(*runtime, jsi::Value::undefined(), sourceProps.fit);
         return CachedProp<std::optional<Fit>>::fromRawValue(*runtime, value, sourceProps.fit);
       } catch (const std::exception& exc) {
         throw std::runtime_error(std::string("RiveView.fit: ") + exc.what());
@@ -91,6 +96,7 @@ namespace margelo::nitro::rive::views {
         const react::RawValue* rawValue = rawProps.at("layoutScaleFactor", nullptr, nullptr);
         if (rawValue == nullptr) return sourceProps.layoutScaleFactor;
         const auto& [runtime, value] = (std::pair<jsi::Runtime*, jsi::Value>)*rawValue;
+        if (value.isNull()) return CachedProp<std::optional<double>>::fromRawValue(*runtime, jsi::Value::undefined(), sourceProps.layoutScaleFactor);
         return CachedProp<std::optional<double>>::fromRawValue(*runtime, value, sourceProps.layoutScaleFactor);
       } catch (const std::exception& exc) {
         throw std::runtime_error(std::string("RiveView.layoutScaleFactor: ") + exc.what());
@@ -101,6 +107,7 @@ namespace margelo::nitro::rive::views {
         const react::RawValue* rawValue = rawProps.at("dataBind", nullptr, nullptr);
         if (rawValue == nullptr) return sourceProps.dataBind;
         const auto& [runtime, value] = (std::pair<jsi::Runtime*, jsi::Value>)*rawValue;
+        if (value.isNull()) return CachedProp<std::optional<std::variant<std::shared_ptr<HybridViewModelInstanceSpec>, DataBindMode, DataBindByName>>>::fromRawValue(*runtime, jsi::Value::undefined(), sourceProps.dataBind);
         return CachedProp<std::optional<std::variant<std::shared_ptr<HybridViewModelInstanceSpec>, DataBindMode, DataBindByName>>>::fromRawValue(*runtime, value, sourceProps.dataBind);
       } catch (const std::exception& exc) {
         throw std::runtime_error(std::string("RiveView.dataBind: ") + exc.what());
