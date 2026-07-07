@@ -25,7 +25,8 @@
     "react-native-reanimated": "4.1.5",
     "react-native-safe-area-context": "^5.4.0",
     "react-native-screens": "~4.18.0",
-    "react-native-worklets": "0.6.1"
+    "react-native-worklets": "0.6.1",
+    "rive-debug-utils": "workspace:*"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

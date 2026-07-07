@@ -3,6 +3,14 @@ import { useRiveProperty } from '../useRiveProperty';
 import type { ViewModelInstance } from '../../specs/ViewModel.nitro';
 
 describe('useRiveProperty', () => {
+  beforeEach(() => {
+    jest.spyOn(console, 'warn').mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    (console.warn as jest.Mock).mockRestore();
+  });
+
   const createMockProperty = (initialValue: string) => {
     let currentValue = initialValue;
     let listener: ((value: string) => void) | null = null;
@@ -251,5 +259,113 @@ describe('useRiveProperty', () => {
     rerender({ instance: mockInstance2 });
 
     expect(result.current[0]).toBe('Instance2Value');
+  });
+
+  // A setter captured in a stale closure (e.g. an async callback) can fire
+  // after its property was disposed by a deps change or unmount. The write
+  // must be a no-op: on a disposed native property it throws
+  // ("NativeState is null"), which is fatal when uncaught in release.
+  describe('stale-closure writes', () => {
+    const createDisposeTrackingProperty = (initialValue: string) => {
+      let currentValue = initialValue;
+      let listener: ((value: string) => void) | null = null;
+      const writesAfterDispose: string[] = [];
+      let disposed = false;
+
+      return {
+        get value() {
+          return currentValue;
+        },
+        set value(newValue: string) {
+          if (disposed) {
+            writesAfterDispose.push(newValue);
+            return;
+          }
+          currentValue = newValue;
+          listener?.(newValue);
+        },
+        addListener: jest.fn((callback: (value: string) => void) => {
+          listener = callback;
+          callback(currentValue);
+          return () => {
+            listener = null;
+          };
+        }),
+        dispose: jest.fn(() => {
+          disposed = true;
+        }),
+        get writesAfterDispose() {
+          return writesAfterDispose;
+        },
+      };
+    };
+
+    it('setter captured before a path change writes to the current property, not the disposed one', () => {
+      const oldProperty = createDisposeTrackingProperty('old');
+      const newProperty = createDisposeTrackingProperty('new');
+      const mockInstance = createMockViewModelInstance({
+        'drinks/tea': oldProperty,
+        'drinks/coffee': newProperty,
+      } as unknown as Record<string, ReturnType<typeof createMockProperty>>);
+
+      const { result, rerender } = renderHook(
+        (props: { path: string }) =>
+          useRiveProperty<any, string>(
+            mockInstance,
+            props.path,
+            (vmi: any, p) => vmi.stringProperty(p)
+          ),
+        { initialProps: { path: 'drinks/tea' } }
+      );
+
+      const staleSetter = result.current[1];
+
+      // Deps change → useDisposableMemo disposes oldProperty during render
+      rerender({ path: 'drinks/coffee' });
+      expect(oldProperty.dispose).toHaveBeenCalled();
+
+      act(() => {
+        staleSetter('boom');
+      });
+
+      // Live-ref semantics (same as useRiveTrigger): the setter targets the
+      // hook's current property, never the disposed one.
+      expect(oldProperty.writesAfterDispose).toEqual([]);
+      expect(newProperty.value).toBe('boom');
+    });
+
+    it('setter called after unmount does not write to the disposed property', () => {
+      jest.useFakeTimers();
+      try {
+        const property = createDisposeTrackingProperty('initial');
+        const mockInstance = createMockViewModelInstance({
+          text: property,
+        } as unknown as Record<string, ReturnType<typeof createMockProperty>>);
+
+        const { result, unmount } = renderHook(() =>
+          useRiveProperty<any, string>(mockInstance, 'text', (vmi: any, p) =>
+            vmi.stringProperty(p)
+          )
+        );
+
+        const staleSetter = result.current[1];
+
+        unmount();
+        // In __DEV__, useDisposableMemo defers unmount disposal via setTimeout(0)
+        act(() => {
+          jest.runAllTimers();
+        });
+        expect(property.dispose).toHaveBeenCalled();
+
+        staleSetter('boom');
+
+        expect(property.writesAfterDispose).toEqual([]);
+        expect(console.warn).toHaveBeenCalledWith(
+          expect.stringContaining("setValue('text') called after dispose")
+        );
+      } finally {
+        jest.useRealTimers();
+      }
+    });
   });
 });
