@@ -173,6 +173,62 @@ describe('useViewModelInstanceAsync - RiveFile source', () => {
   });
 });
 
+describe('useViewModelInstanceAsync - native rejections', () => {
+  // The new native backend rejects on a missing artboard (main's backend
+  // resolves undefined instead); the hook must map both to the same error.
+  it('maps an artboard lookup rejection to the artboard-not-found error', async () => {
+    const mockRiveFile = createMockRiveFile({});
+    (mockRiveFile.defaultArtboardViewModelAsync as jest.Mock).mockRejectedValue(
+      new Error('No Artboard found with name MissingBoard.')
+    );
+
+    const { result } = renderHook(() =>
+      useViewModelInstanceAsync(mockRiveFile, { artboardName: 'MissingBoard' })
+    );
+
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+    expect(result.current.instance).toBeNull();
+    expect(result.current.error?.message).toContain(
+      "Artboard 'MissingBoard' not found"
+    );
+  });
+
+  it('surfaces the underlying failure when createInstanceByNameAsync rejects (RiveFile source)', async () => {
+    const defaultViewModel = createMockViewModel();
+    (defaultViewModel.createInstanceByNameAsync as jest.Mock).mockRejectedValue(
+      new Error('Cannot acquire a disposed object')
+    );
+    const mockRiveFile = createMockRiveFile({ defaultViewModel });
+
+    const { result } = renderHook(() =>
+      useViewModelInstanceAsync(mockRiveFile, { instanceName: 'Gordon' })
+    );
+
+    await waitFor(() => expect(result.current.error).toBeInstanceOf(Error));
+    expect(result.current.instance).toBeNull();
+    expect(result.current.error?.message).toContain(
+      'Cannot acquire a disposed object'
+    );
+  });
+
+  it('surfaces the underlying failure when createInstanceByNameAsync rejects (ViewModel source)', async () => {
+    const mockViewModel = createMockViewModel();
+    (mockViewModel.createInstanceByNameAsync as jest.Mock).mockRejectedValue(
+      new Error('Cannot acquire a disposed object')
+    );
+
+    const { result } = renderHook(() =>
+      useViewModelInstanceAsync(mockViewModel, { name: 'Gordon' })
+    );
+
+    await waitFor(() => expect(result.current.error).toBeInstanceOf(Error));
+    expect(result.current.instance).toBeNull();
+    expect(result.current.error?.message).toContain(
+      'Cannot acquire a disposed object'
+    );
+  });
+});
+
 describe('useViewModelInstanceAsync - ViewModel source', () => {
   it('uses createDefaultInstanceAsync by default', async () => {
     const defaultInstance = createMockViewModelInstance();

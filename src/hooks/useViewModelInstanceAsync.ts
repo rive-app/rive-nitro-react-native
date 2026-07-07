@@ -30,6 +30,10 @@ type CreateInstanceResult = {
   error?: string;
 };
 
+function errorMessage(e: unknown): string {
+  return e instanceof Error ? e.message : String(e);
+}
+
 async function createInstanceAsync(
   source: ViewModelSource | null | undefined,
   instanceName: string | undefined,
@@ -58,9 +62,20 @@ async function createInstanceAsync(
         };
       }
     } else {
-      viewModel = await source.defaultArtboardViewModelAsync(
-        artboardName ? ArtboardByName(artboardName) : undefined
-      );
+      // Some native backends reject on a missing artboard instead of
+      // resolving undefined — map both to the same friendly error.
+      try {
+        viewModel = await source.defaultArtboardViewModelAsync(
+          artboardName ? ArtboardByName(artboardName) : undefined
+        );
+      } catch (e) {
+        if (!artboardName) throw e;
+        return {
+          instance: null,
+          needsDispose: false,
+          error: `Artboard '${artboardName}' not found or has no ViewModel (${errorMessage(e)})`,
+        };
+      }
       if (!viewModel) {
         if (artboardName) {
           return {
@@ -77,7 +92,11 @@ async function createInstanceAsync(
       try {
         vmi = await viewModel.createInstanceByNameAsync(instanceName);
       } catch (e) {
-        console.warn(`createInstanceByNameAsync('${instanceName}') failed:`, e);
+        return {
+          instance: null,
+          needsDispose: false,
+          error: `Failed to create ViewModel instance '${instanceName}': ${errorMessage(e)}`,
+        };
       }
     } else {
       vmi = await viewModel.createDefaultInstanceAsync();
@@ -98,7 +117,11 @@ async function createInstanceAsync(
     try {
       vmi = await source.createInstanceByNameAsync(instanceName);
     } catch (e) {
-      console.warn(`createInstanceByNameAsync('${instanceName}') failed:`, e);
+      return {
+        instance: null,
+        needsDispose: false,
+        error: `Failed to create ViewModel instance '${instanceName}': ${errorMessage(e)}`,
+      };
     }
     if (!vmi) {
       return {
@@ -144,11 +167,19 @@ const LOADING_RESULT: UseViewModelInstanceAsyncResult = {
  * render. Consumers should guard on the result:
  *
  * ```tsx
+ * const { riveFile, error: fileError } = useRiveFile(require('./animation.riv'));
  * const { instance, isLoading, error } = useViewModelInstanceAsync(riveFile);
+ * if (fileError || error) return <ErrorScreen error={fileError ?? error} />;
  * if (isLoading || !instance) return <ActivityIndicator />;
  * // ...
  * <RiveView file={riveFile} dataBind={instance} />
  * ```
+ *
+ * Note: while `source` is `null`/`undefined` the hook stays in the loading
+ * state — it cannot tell "still loading" from "failed upstream". If the source
+ * comes from {@link useRiveFile}, check that hook's `error` as above; keying a
+ * spinner off this hook's `isLoading` alone would spin forever on a failed
+ * file load.
  *
  * @param source - The RiveFile, ViewModel, or RiveViewRef to get an instance from
  * @param params - Configuration for which instance to retrieve
