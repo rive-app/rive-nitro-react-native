@@ -100,11 +100,15 @@ class HybridRiveFile(
       Artboard.fromFile(file)
     }
     val vmSource = ViewModelSource.DefaultForArtboard(artboard)
+    // getDefaultViewModelInfo throws when the artboard has no default
+    // ViewModel — a normal state for VM-less files (issue #189 fixture), not
+    // a failure. Resolve null like the legacy backend so callers get the
+    // documented "no ViewModel" result instead of a raw error.
     val vmInfo = try {
       file.getDefaultViewModelInfo(artboard)
     } catch (e: Exception) {
       runCatching { artboard.close() }
-      throw e
+      return null
     }
     return HybridViewModel(file, riveWorker, vmInfo.viewModelName, this, vmSource, ownedArtboard = artboard)
   }

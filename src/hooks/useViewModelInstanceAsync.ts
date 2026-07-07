@@ -31,10 +31,11 @@ type CreateInstanceResult = {
 };
 
 // The message stays clean and stable ("… not found"); when the native call
-// *rejected* (a real creation failure) the runtime error is attached as
-// `cause` so its diagnostic (e.g. iOS reports which view model it came from) is
-// preserved without leaking into the message. A plain resolve-without-instance
-// (Android's missing-name path returns null) carries no cause. See #305.
+// *rejected* the runtime error is attached as `cause` so its diagnostic is
+// preserved without leaking into the message. Only some backends reject on a
+// bad name (the new iOS backend throws `invalidViewModelInstance`); the
+// legacy backends and Android's pre-check resolve null instead, so a missing
+// `cause` is normal. See #305.
 function instanceNotFoundError(instanceName: string, cause?: unknown): Error {
   return new Error(
     `ViewModel instance '${instanceName}' not found`,
@@ -75,10 +76,11 @@ async function createInstanceAsync(
           artboardName ? ArtboardByName(artboardName) : undefined
         );
       } catch (e) {
-        // Both platforms *throw* on an unknown artboard name (iOS
-        // `createArtboard`, Android `Artboard.fromFile`) rather than resolving
-        // undefined, so map the rejection to the not-found error below instead
-        // of leaking the raw native message. Without a name it's a real error.
+        // The new backend *throws* on an unknown artboard name (iOS
+        // `createArtboard`, Android `Artboard.fromFile`) while the legacy
+        // backend resolves undefined — map the rejection to the same
+        // not-found error below instead of leaking the raw native message.
+        // Without a name a rejection is a real error.
         if (!artboardName) throw e;
         viewModel = undefined;
       }
@@ -183,9 +185,10 @@ const LOADING_RESULT: UseViewModelInstanceAsyncResult = {
  *
  * A `null` source resolves to a terminal `{ instance: null, isLoading: false }`
  * (not perpetual loading), while an `undefined` source keeps the hook loading.
- * This mirrors {@link useRiveFile}, which returns `riveFile: undefined` while
- * loading and `riveFile: null` on error — so when chaining the two, check the
- * file's own `error`, since this hook cannot observe why the source is absent:
+ * This mirrors {@link useRiveFile} (`riveFile: undefined` while loading,
+ * `null` on error) and `useRive` (`riveViewRef: undefined` until the view is
+ * ready, `null` on failure) — so when chaining, check the upstream hook's own
+ * `error`, since this hook cannot observe why the source is absent:
  *
  * ```tsx
  * const { riveFile, error: fileError } = useRiveFile(source);

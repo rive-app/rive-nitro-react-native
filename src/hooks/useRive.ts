@@ -3,7 +3,13 @@ import type { RiveViewRef } from '@rive-app/react-native';
 
 export function useRive() {
   const riveRef = useRef<RiveViewRef>(null);
-  const [riveViewRef, setRiveViewRef] = useState<RiveViewRef | null>(null);
+  // `undefined` = view not ready yet, `null` = failed/detached — the same
+  // convention as useRiveFile, so hooks consuming the ref (e.g.
+  // useViewModelInstanceAsync) stay in their loading state until the view is
+  // actually ready instead of settling on a transient null.
+  const [riveViewRef, setRiveViewRef] = useState<
+    RiveViewRef | null | undefined
+  >(undefined);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const setRef = useCallback((node: RiveViewRef | null) => {

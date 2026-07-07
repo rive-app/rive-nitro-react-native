@@ -212,8 +212,9 @@ describe('useViewModelInstanceAsync - RiveFile source', () => {
   });
 
   it('maps an artboard-lookup rejection to the not-found error', async () => {
-    // Both native platforms *throw* on an unknown artboard name rather than
-    // resolving undefined, so the rejection must map to the friendly message.
+    // The new backend *throws* on an unknown artboard name while the legacy
+    // backend resolves undefined; a rejection must map to the same friendly
+    // message the resolve-undefined path produces.
     const mockRiveFile = createMockRiveFile({});
     (mockRiveFile.defaultArtboardViewModelAsync as jest.Mock).mockRejectedValue(
       new Error('Artboard not found in file')

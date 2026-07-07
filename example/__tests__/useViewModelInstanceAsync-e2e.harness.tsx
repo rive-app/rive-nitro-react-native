@@ -7,7 +7,7 @@ import {
   cleanup,
 } from 'react-native-harness';
 import { useEffect } from 'react';
-import { Platform, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import {
   RiveFileFactory,
   useRiveFile,
@@ -18,10 +18,12 @@ import {
 } from '@rive-app/react-native';
 
 // These run against the real native runtime on purpose: the Jest unit tests
-// mock the *Async APIs so an unknown artboard/viewModel resolves `undefined`,
-// but both platforms actually *throw* on a bad artboard name — the exact gap
-// the friendly-error mapping in useViewModelInstanceAsync closes.
+// mock the *Async APIs, but the backends genuinely diverge — the new backend
+// *rejects* on a bad artboard/instance name while the legacy backend resolves
+// null/undefined. These pin the hook's contract across both.
 const MULTI_AB = require('../assets/rive/arbtboards-models-instances.riv');
+// ViewModels exist but no artboard default (issue #189 fixture).
+const NO_DEFAULT_VM = require('../assets/rive/nodefaultbouncing.riv');
 
 function expectDefined<T>(value: T): asserts value is NonNullable<T> {
   expect(value).toBeDefined();
@@ -164,9 +166,9 @@ function FileErrorProbe({
 }
 
 // ── #1: unknown artboard name maps to the friendly not-found error ───
-// Native throws (iOS `createArtboard`, Android `Artboard.fromFile`) rather than
-// resolving undefined, so without the mapping this would leak the raw native
-// message through the outer catch and the "not found" branch would be dead.
+// The new backend throws (iOS `createArtboard`, Android `Artboard.fromFile`)
+// while the legacy backend resolves undefined; the hook must map both to the
+// same friendly error instead of leaking a raw native message.
 
 describe('useViewModelInstanceAsync: unknown artboard name', () => {
   it('surfaces the friendly "not found" error instead of the raw native message', async () => {
@@ -284,14 +286,15 @@ describe('useViewModelInstanceAsync: null vs undefined source', () => {
 });
 
 // ── Instance creation failure keeps a clean message + native cause ───
-// When createInstanceByNameAsync *rejects*, the message stays a stable
-// "… not found" but the native diagnostic is attached as `error.cause` so it
-// isn't lost. The platforms diverge on a bad name: iOS throws
-// `invalidViewModelInstance` (no pre-check) → a cause is present; Android's
-// `contains()` guard resolves null → no cause. This pins that real contract.
+// The stable contract is the message: always "… not found", never a raw
+// native error. `cause` is an optional diagnostic — present when the backend
+// *rejects* (the new iOS backend throws `invalidViewModelInstance`), absent
+// when the lookup resolves null (the legacy backends, and Android's
+// `contains()` pre-check). Asserting a cause per-platform would pin that
+// accidental divergence, so only its shape is checked when present.
 
 describe('useViewModelInstanceAsync: instance creation failure', () => {
-  it('keeps a clean not-found message and attaches the native cause on iOS', async () => {
+  it('keeps a clean not-found message on every backend (cause optional)', async () => {
     const file = await loadFile();
     const ctx = createCtx();
     await render(
@@ -305,17 +308,13 @@ describe('useViewModelInstanceAsync: instance creation failure', () => {
     await waitFor(() => expect(ctx.isLoading).toBe(false), { timeout: 5000 });
     expect(ctx.instance).toBeNull();
     expectDefined(ctx.error);
-    // Message stays clean and stable on every platform.
+    // Message stays clean and stable on every platform and backend.
     expect(ctx.error.message).toContain('not found');
+    expect(ctx.error.message).not.toContain('Could not create');
     const cause = (ctx.error as Error & { cause?: unknown }).cause;
-    if (Platform.OS === 'ios') {
-      // iOS rejects with invalidViewModelInstance — preserved as `cause`,
-      // not leaked into the message.
-      expectDefined(cause);
-      expect(String((cause as Error).message)).toContain('Could not create');
-    } else {
-      // Android resolves null on a missing name — a plain not-found, no cause.
-      expect(cause).toBeUndefined();
+    if (cause !== undefined) {
+      // A rejecting backend must preserve the native diagnostic, not lose it.
+      expect(String((cause as Error).message).length).toBeGreaterThan(0);
     }
     cleanup();
   });
@@ -336,6 +335,25 @@ describe('useViewModelInstanceAsync: instance creation failure', () => {
     await waitFor(() => expect(ctx.isLoading).toBe(false), { timeout: 5000 });
     expect(ctx.instance).toBeNull();
     expectDefined(ctx.error);
+    cleanup();
+  });
+});
+
+// ── A VM-less default artboard is "no ViewModel", not an error ───────
+// The new backend's getDefaultViewModelInfo throws when the artboard has no
+// default ViewModel, which would surface a raw native error for a perfectly
+// valid file (the issue #189 fixture); the legacy backend resolves null. The
+// natives normalize this to resolve-null so the hook's documented
+// { instance: null, error: null } state is reachable on every backend.
+
+describe('useViewModelInstanceAsync: file without a default ViewModel', () => {
+  it('resolves null with no error', async () => {
+    const file = await RiveFileFactory.fromSource(NO_DEFAULT_VM, undefined);
+    const ctx = createCtx();
+    await render(<FixedSourceProbe source={file} ctx={ctx} />);
+    await waitFor(() => expect(ctx.isLoading).toBe(false), { timeout: 5000 });
+    expect(ctx.instance).toBeNull();
+    expect(ctx.error).toBeNull();
     cleanup();
   });
 });
