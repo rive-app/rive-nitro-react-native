@@ -174,6 +174,16 @@ class HybridRiveView: HybridRiveViewSpec {
     }
   }
 
+  // MARK: Lifecycle
+  func dispose() {
+    // Nitro finalizes HybridObjects on the JS/GC thread; the view's teardown
+    // must run on main (mirrors the legacy backend's dispose()).
+    let riveView = view as? RiveReactNativeView
+    DispatchQueue.main.async {
+      riveView?.detach()
+    }
+  }
+
   // MARK: Views
   var view: UIView = RiveReactNativeView()
   func getRiveView() throws -> RiveReactNativeView {
@@ -206,6 +216,9 @@ class HybridRiveView: HybridRiveViewSpec {
 
       try MainActor.assumeIsolated {
         let riveView = try getRiveView()
+        riveView.onLoadError = { [weak self] message in
+          self?.onError(RiveError(message: message, type: .unknown))
+        }
         riveView.configure(
           config, dataBindingChanged: dataBindingChanged, reload: needsReload,
           initialUpdate: initialUpdate)
