@@ -15,10 +15,20 @@ class HybridViewModelInstance(
   private val riveWorker: CommandQueue,
   private val parentFile: HybridRiveFile,
   private val viewModelName: String? = null,
-  private val _instanceName: String? = null
+  private val _instanceName: String? = null,
+  // False for wrappers that alias an instance owned elsewhere (e.g. the
+  // view's bound instance returned by RiveView.getViewModelInstance()).
+  private val ownsInstance: Boolean = true
 ) : HybridViewModelInstanceSpec() {
   companion object {
     private const val TAG = "HybridViewModelInstance"
+  }
+
+  override fun dispose() {
+    if (ownsInstance) {
+      runCatching { viewModelInstance.close() }
+    }
+    super.dispose()
   }
 
   // TODO: Workaround — rive-android experimental SDK doesn't expose ViewModelInstance.name.

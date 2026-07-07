@@ -62,6 +62,10 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
 
   private val viewReadyDeferred = CompletableDeferred<Boolean>()
   private var boundInstance: ViewModelInstance? = null
+
+  // Instances created by the view itself (Auto/ByName binding) must be closed
+  // by the view; instances passed in from JS are owned by their JS wrapper.
+  private var ownsBoundInstance = false
   private var riveWorker: CommandQueue? = null
   private var activeFit: Fit = Fit.Contain()
 
@@ -103,6 +107,9 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
       }
 
       override fun onSurfaceTextureDestroyed(st: SurfaceTexture): Boolean {
+        this@RiveReactNativeView.riveSurface?.let { surface ->
+          runCatching { surface.close() }
+        }
         this@RiveReactNativeView.riveSurface = null
         return false
       }
@@ -186,6 +193,10 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
     if (reload) {
       RiveErrorLogger.resetReportedErrors()
       RiveErrorLogger.addListener(errorListener)
+      stateMachineHandle?.let { old ->
+        runCatching { config.riveWorker.deleteStateMachine(old) }
+      }
+      stateMachineHandle = null
       artboard?.close()
 
       val newArtboard = if (config.artboardName != null) {
@@ -216,7 +227,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
 
     resizeArtboardIfLayout()
 
-    if (dataBindingChanged || initialUpdate) {
+    if (dataBindingChanged || initialUpdate || reload) {
       applyDataBinding(config.bindData, config.riveFile)
     }
   }
@@ -288,10 +299,19 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
     return boundInstance
   }
 
+  private fun setBoundInstance(instance: ViewModelInstance?, owns: Boolean) {
+    val previous = boundInstance
+    if (ownsBoundInstance && previous != null && previous !== instance) {
+      runCatching { previous.close() }
+    }
+    boundInstance = instance
+    ownsBoundInstance = owns
+  }
+
   private fun applyDataBinding(bindData: BindData, riveFile: RiveFile) {
     when (bindData) {
       is BindData.None -> {
-        boundInstance = null
+        setBoundInstance(null, owns = false)
       }
       is BindData.Auto -> {
         viewScope.launch {
@@ -305,9 +325,10 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
               val instance = ViewModelInstance.fromFile(riveFile, source)
               if (instance.instanceHandle.handle == 1L) {
                 Log.d(TAG, "Auto-binding skipped: no default ViewModel for artboard")
+                runCatching { instance.close() }
                 return@withContext
               }
-              boundInstance = instance
+              setBoundInstance(instance, owns = true)
               bindInstanceToStateMachine(instance)
             }
           } catch (e: Exception) {
@@ -316,7 +337,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
         }
       }
       is BindData.Instance -> {
-        boundInstance = bindData.instance
+        setBoundInstance(bindData.instance, owns = false)
         bindInstanceToStateMachine(bindData.instance)
       }
       is BindData.ByName -> {
@@ -324,7 +345,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
           val art = artboard ?: return
           val source = ViewModelSource.DefaultForArtboard(art).namedInstance(bindData.name)
           val instance = ViewModelInstance.fromFile(riveFile, source)
-          boundInstance = instance
+          setBoundInstance(instance, owns = true)
           bindInstanceToStateMachine(instance)
         } catch (e: Exception) {
           Log.e(TAG, "Failed to create named instance", e)
@@ -393,11 +414,14 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
     viewScope.cancel()
     RiveErrorLogger.removeListener(errorListener)
     stopRenderLoop()
-    // Null handles to prevent any further draw calls.
-    // Don't close artboard/stateMachine/surface here — the command queue
-    // may still have a pending draw command that references them.
-    // Let them be cleaned up by GC instead.
-    boundInstance = null
+    // The command queue is FIFO, so deletes enqueued here run after any
+    // still-pending draw commands that reference these handles.
+    setBoundInstance(null, owns = false)
+    stateMachineHandle?.let { old ->
+      riveWorker?.let { worker -> runCatching { worker.deleteStateMachine(old) } }
+    }
+    artboard?.let { runCatching { it.close() } }
+    riveSurface?.let { runCatching { it.close() } }
     artboard = null
     artboardHandle = null
     stateMachineHandle = null

@@ -99,8 +99,13 @@ class HybridRiveFile(
       Artboard.fromFile(file)
     }
     val vmSource = ViewModelSource.DefaultForArtboard(artboard)
-    val vmInfo = file.getDefaultViewModelInfo(artboard)
-    return HybridViewModel(file, riveWorker, vmInfo.viewModelName, this, vmSource)
+    val vmInfo = try {
+      file.getDefaultViewModelInfo(artboard)
+    } catch (e: Exception) {
+      runCatching { artboard.close() }
+      throw e
+    }
+    return HybridViewModel(file, riveWorker, vmInfo.viewModelName, this, vmSource, ownedArtboard = artboard)
   }
 
   // Deprecated: Use defaultArtboardViewModelAsync instead
