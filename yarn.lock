@@ -10513,6 +10513,7 @@ __metadata:
     react-native-screens: ~4.16.0
     react-native-web: ~0.21.0
     react-native-worklets: 0.6.1
+    rive-debug-utils: "workspace:*"
     typescript: ~5.9.2
   languageName: unknown
   linkType: soft
@@ -11054,6 +11055,7 @@ __metadata:
     react-native-screens: ~4.23.0
     react-native-web: ~0.21.0
     react-native-worklets: 0.7.4
+    rive-debug-utils: "workspace:*"
     typescript: ~5.9.2
   languageName: unknown
   linkType: soft
@@ -17375,6 +17377,7 @@ __metadata:
     react-native-safe-area-context: ^5.4.0
     react-native-screens: ~4.18.0
     react-native-worklets: 0.6.1
+    rive-debug-utils: "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -18246,6 +18249,15 @@ __metadata:
   checksum: 87f4164e396f0171b0a3386cc1877a817f572148ee13a7e113b238e48e8a9f2f31d009a92ec38a591ff1567d9662c6b67fd8818a2dbbaed74bc26a87a2a4a9a0
   languageName: node
   linkType: hard
+
+"rive-debug-utils@workspace:*, rive-debug-utils@workspace:rive-debug-utils":
+  version: 0.0.0-use.local
+  resolution: "rive-debug-utils@workspace:rive-debug-utils"
+  peerDependencies:
+    react-native: "*"
+    react-native-nitro-modules: "*"
+  languageName: unknown
+  linkType: soft
 
 "rollup@npm:^4.43.0":
   version: 4.60.4
