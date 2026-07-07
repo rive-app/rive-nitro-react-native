@@ -6,14 +6,18 @@ import {
   waitFor,
   cleanup,
 } from 'react-native-harness';
-import { useEffect } from 'react';
-import { Text, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { Platform, Text, View } from 'react-native';
 import {
+  Fit,
   RiveFileFactory,
+  RiveView,
+  useRive,
   useRiveFile,
   useViewModelInstanceAsync,
   type RiveFile,
   type RiveFileInput,
+  type RiveViewRef,
   type ViewModelInstance,
 } from '@rive-app/react-native';
 
@@ -24,6 +28,8 @@ import {
 const MULTI_AB = require('../assets/rive/arbtboards-models-instances.riv');
 // ViewModels exist but no artboard default (issue #189 fixture).
 const NO_DEFAULT_VM = require('../assets/rive/nodefaultbouncing.riv');
+// Default artboard auto-binds a default ViewModel.
+const BOUNCING_BALL = require('../assets/rive/bouncing_ball.riv');
 
 function expectDefined<T>(value: T): asserts value is NonNullable<T> {
   expect(value).toBeDefined();
@@ -335,6 +341,92 @@ describe('useViewModelInstanceAsync: instance creation failure', () => {
     await waitFor(() => expect(ctx.isLoading).toBe(false), { timeout: 5000 });
     expect(ctx.instance).toBeNull();
     expectDefined(ctx.error);
+    cleanup();
+  });
+});
+
+function RefSourceConsumer({ file, ctx }: { file: RiveFile; ctx: AsyncCtx }) {
+  const { riveViewRef, setHybridRef } = useRive();
+  const { instance, error, isLoading } = useViewModelInstanceAsync(riveViewRef);
+  useEffect(() => {
+    ctx.instance = instance;
+    ctx.error = error;
+    ctx.isLoading = isLoading;
+  }, [ctx, instance, error, isLoading]);
+  return (
+    <View style={{ width: 200, height: 200 }}>
+      <RiveView
+        hybridRef={setHybridRef}
+        style={{ flex: 1 }}
+        file={file}
+        autoPlay={true}
+        fit={Fit.Contain}
+      />
+    </View>
+  );
+}
+
+function EagerRefConsumer({ file, ctx }: { file: RiveFile; ctx: AsyncCtx }) {
+  // Raw hybridRef: the ref is exposed the moment the native view attaches,
+  // before awaitViewReady/auto-bind complete — the widest race window.
+  const [viewRef, setViewRef] = useState<RiveViewRef | undefined>(undefined);
+  const { instance, error, isLoading } = useViewModelInstanceAsync(viewRef);
+  useEffect(() => {
+    ctx.instance = instance;
+    ctx.error = error;
+    ctx.isLoading = isLoading;
+  }, [ctx, instance, error, isLoading]);
+  return (
+    <View style={{ width: 200, height: 200 }}>
+      <RiveView
+        hybridRef={{
+          f: (ref: RiveViewRef | null) => setViewRef(ref ?? undefined),
+        }}
+        style={{ flex: 1 }}
+        file={file}
+        autoPlay={true}
+        fit={Fit.Contain}
+      />
+    </View>
+  );
+}
+
+// ── RiveViewRef source: the auto-bound instance must be delivered ────
+// The auto-bound ViewModelInstance resolves asynchronously a short time after
+// the view ref is assigned (see autoplay.harness.tsx), so a one-shot
+// getViewModelInstance() read races the bind and can settle a terminal
+// { instance: null } on fast mounts.
+
+describe('useViewModelInstanceAsync: RiveViewRef source', () => {
+  it('resolves the auto-bound instance from a useRive view ref', async () => {
+    // getViewModelInstance() returns null on Android experimental — auto-bind
+    // doesn't expose the VMI handle to JS yet (same skip as autoplay.harness).
+    const isAndroidExperimental =
+      Platform.OS === 'android' &&
+      RiveFileFactory.getBackend() === 'experimental';
+    if (isAndroidExperimental) return;
+
+    const file = await RiveFileFactory.fromSource(BOUNCING_BALL, undefined);
+    const ctx = createCtx();
+    await render(<RefSourceConsumer file={file} ctx={ctx} />);
+    await waitFor(() => expect(ctx.isLoading).toBe(false), { timeout: 10000 });
+    expect(ctx.error).toBeNull();
+    expect(ctx.instance).toBeTruthy();
+    cleanup();
+  });
+
+  it('resolves the auto-bound instance from a raw hybridRef (pre-bind window)', async () => {
+    const isAndroidExperimental =
+      Platform.OS === 'android' &&
+      RiveFileFactory.getBackend() === 'experimental';
+    if (isAndroidExperimental) return;
+
+    const file = await RiveFileFactory.fromSource(BOUNCING_BALL, undefined);
+    const ctx = createCtx();
+    await render(<EagerRefConsumer file={file} ctx={ctx} />);
+    await waitFor(() => expect(ctx.isLoading).toBe(false), { timeout: 10000 });
+    expect(ctx.error).toBeNull();
+    expect(ctx.instance).toBeTruthy();
     cleanup();
   });
 });

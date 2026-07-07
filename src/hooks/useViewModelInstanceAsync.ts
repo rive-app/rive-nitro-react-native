@@ -43,19 +43,37 @@ function instanceNotFoundError(instanceName: string, cause?: unknown): Error {
   );
 }
 
+// The view's auto-bound instance resolves asynchronously a short time after
+// the ref is assigned and there is no native bind-complete signal to await
+// yet, so a one-shot getViewModelInstance() read would settle a terminal null
+// on fast mounts. Poll briefly instead; a view with no data binding resolves
+// null after the timeout (late, but the correct terminal state).
+const REF_BIND_POLL_MS = 50;
+const REF_BIND_TIMEOUT_MS = 5000;
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 async function createInstanceAsync(
   source: ViewModelSource | null | undefined,
   instanceName: string | undefined,
   artboardName: string | undefined,
   viewModelName: string | undefined,
-  useNew: boolean
+  useNew: boolean,
+  isCancelled: () => boolean
 ): Promise<CreateInstanceResult> {
   if (!source) {
     return { instance: undefined, needsDispose: false };
   }
 
   if (isRiveViewRef(source)) {
-    const vmi = source.getViewModelInstance();
+    let vmi = source.getViewModelInstance();
+    const deadline = Date.now() + REF_BIND_TIMEOUT_MS;
+    while (!vmi && Date.now() < deadline && !isCancelled()) {
+      await sleep(REF_BIND_POLL_MS);
+      vmi = source.getViewModelInstance();
+    }
     return { instance: vmi ?? null, needsDispose: false };
   }
 
@@ -71,6 +89,7 @@ async function createInstanceAsync(
         };
       }
     } else {
+      let artboardCause: unknown;
       try {
         viewModel = await source.defaultArtboardViewModelAsync(
           artboardName ? ArtboardByName(artboardName) : undefined
@@ -79,9 +98,10 @@ async function createInstanceAsync(
         // The new backend *throws* on an unknown artboard name (iOS
         // `createArtboard`, Android `Artboard.fromFile`) while the legacy
         // backend resolves undefined — map the rejection to the same
-        // not-found error below instead of leaking the raw native message.
+        // not-found error below, preserving the native diagnostic as `cause`.
         // Without a name a rejection is a real error.
         if (!artboardName) throw e;
+        artboardCause = e;
         viewModel = undefined;
       }
       if (!viewModel) {
@@ -90,7 +110,8 @@ async function createInstanceAsync(
             instance: null,
             needsDispose: false,
             error: new Error(
-              `Artboard '${artboardName}' not found or has no ViewModel`
+              `Artboard '${artboardName}' not found or has no ViewModel`,
+              artboardCause !== undefined ? { cause: artboardCause } : undefined
             ),
           };
         }
@@ -332,7 +353,8 @@ export function useViewModelInstanceAsync(
           instanceName,
           artboardName,
           viewModelName,
-          useNew
+          useNew,
+          () => cancelled
         );
         created = c;
 
@@ -366,10 +388,7 @@ export function useViewModelInstanceAsync(
         setResult({
           instance: null,
           isLoading: false,
-          error:
-            e instanceof Error
-              ? e
-              : new Error('Failed to create ViewModel instance'),
+          error: e instanceof Error ? e : new Error(String(e)),
         });
       }
     })();

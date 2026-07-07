@@ -9,6 +9,7 @@ import { useViewModelInstanceAsync } from '../useViewModelInstanceAsync';
 import type { RiveFile } from '../../specs/RiveFile.nitro';
 import type { ViewModel, ViewModelInstance } from '../../specs/ViewModel.nitro';
 import type { ArtboardBy } from '../../specs/ArtboardBy';
+import type { RiveViewRef } from '../../index';
 
 function createMockViewModelInstance(name = 'TestInstance'): ViewModelInstance {
   return {
@@ -230,6 +231,41 @@ describe('useViewModelInstanceAsync - RiveFile source', () => {
     expect(result.current.error?.message).toBe(
       "Artboard 'NonExistent' not found or has no ViewModel"
     );
+    // The native diagnostic must survive as `cause`, not be swallowed.
+    expect((result.current.error as Error & { cause?: unknown }).cause).toEqual(
+      new Error('Artboard not found in file')
+    );
+  });
+
+  it('artboard resolve-undefined miss carries no cause', async () => {
+    const mockRiveFile = createMockRiveFile({});
+
+    const { result } = renderHook(() =>
+      useViewModelInstanceAsync(mockRiveFile, { artboardName: 'NonExistent' })
+    );
+
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+    expect(result.current.error?.message).toBe(
+      "Artboard 'NonExistent' not found or has no ViewModel"
+    );
+    expect(
+      (result.current.error as Error & { cause?: unknown }).cause
+    ).toBeUndefined();
+  });
+
+  it('preserves the value of a non-Error rejection in the error message', async () => {
+    const defaultViewModel = createMockViewModel();
+    (
+      defaultViewModel.createDefaultInstanceAsync as jest.Mock
+    ).mockRejectedValue('file was disposed');
+    const mockRiveFile = createMockRiveFile({ defaultViewModel });
+
+    const { result } = renderHook(() =>
+      useViewModelInstanceAsync(mockRiveFile)
+    );
+
+    await waitFor(() => expect(result.current.error).toBeInstanceOf(Error));
+    expect(result.current.error?.message).toBe('file was disposed');
   });
 
   it('propagates a rejection unchanged when no artboardName was given', async () => {
@@ -288,6 +324,70 @@ describe('useViewModelInstanceAsync - ViewModel source', () => {
     expect(mockViewModel.createInstanceByNameAsync).toHaveBeenCalledWith(
       'Gordon'
     );
+  });
+});
+
+function createMockRiveViewRef(
+  getViewModelInstance: () => ViewModelInstance | null | undefined
+): RiveViewRef {
+  return { getViewModelInstance: jest.fn(getViewModelInstance) } as any;
+}
+
+describe('useViewModelInstanceAsync - RiveViewRef source', () => {
+  it('resolves the view-bound instance', async () => {
+    const vmi = createMockViewModelInstance();
+    const ref = createMockRiveViewRef(() => vmi);
+
+    const { result } = renderHook(() => useViewModelInstanceAsync(ref));
+
+    await waitFor(() => expect(result.current.instance).toBe(vmi));
+    expect(result.current.error).toBeNull();
+  });
+
+  it('does not dispose a view-owned instance on unmount', async () => {
+    const vmi = createMockViewModelInstance();
+    const ref = createMockRiveViewRef(() => vmi);
+
+    const { result, unmount } = renderHook(() =>
+      useViewModelInstanceAsync(ref)
+    );
+
+    await waitFor(() => expect(result.current.instance).toBe(vmi));
+    unmount();
+    expect(vmi.dispose).not.toHaveBeenCalled();
+  });
+
+  it('retries until the auto-bound instance appears', async () => {
+    // Auto-bind completes a short time after the ref is assigned; the hook
+    // must poll rather than settle a terminal null on the first read.
+    const vmi = createMockViewModelInstance();
+    let calls = 0;
+    const ref = createMockRiveViewRef(() => (++calls >= 3 ? vmi : undefined));
+
+    const { result } = renderHook(() => useViewModelInstanceAsync(ref));
+
+    expect(result.current.isLoading).toBe(true);
+    await waitFor(() => expect(result.current.instance).toBe(vmi), {
+      timeout: 2000,
+    });
+    expect(calls).toBeGreaterThanOrEqual(3);
+  });
+
+  it('stops polling when unmounted before the instance appears', async () => {
+    const getVmi = jest.fn((): ViewModelInstance | undefined => undefined);
+    const ref = { getViewModelInstance: getVmi } as unknown as RiveViewRef;
+
+    const { unmount } = renderHook(() => useViewModelInstanceAsync(ref));
+    unmount();
+
+    await act(async () => {
+      await new Promise((r) => setTimeout(r, 200));
+    });
+    const callsAfterUnmount = getVmi.mock.calls.length;
+    await act(async () => {
+      await new Promise((r) => setTimeout(r, 200));
+    });
+    expect(getVmi.mock.calls.length).toBe(callsAfterUnmount);
   });
 });
 

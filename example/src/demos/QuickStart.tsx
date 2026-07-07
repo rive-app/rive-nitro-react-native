@@ -40,18 +40,18 @@ export default function QuickStart() {
 
   const handleTakeDamage = () => {
     setHealth((h) => (h ?? 0) - 7);
-    riveViewRef!.play();
+    riveViewRef?.play();
   };
 
   const handleMaxHealth = () => {
     setHealth(100);
-    riveViewRef!.play();
+    riveViewRef?.play();
   };
 
   const handleGameOver = () => {
     setHealth(0);
     gameOverTrigger();
-    riveViewRef!.play();
+    riveViewRef?.play();
   };
 
   if (fileError || error) {
