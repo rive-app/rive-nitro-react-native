@@ -55,6 +55,9 @@ export default defineConfig([
       'lib/',
       '**/.expo/',
       '**/.harness/',
+      // Agent worktrees (.claude/worktrees/*) are gitignored full-repo copies;
+      // linting them duplicates every finding and slows the run.
+      '**/.claude/',
     ],
   },
 ]);
