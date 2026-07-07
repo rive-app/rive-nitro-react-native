@@ -113,6 +113,7 @@
     "example",
     "expo-example",
     "expo55-example",
+    "expo57-example",
     "rive-debug-utils"
   ],
   "packageManager": "yarn@3.6.1",
