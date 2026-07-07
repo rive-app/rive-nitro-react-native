@@ -27,8 +27,20 @@ function isRiveFile(
 type CreateInstanceResult = {
   instance: ViewModelInstance | null | undefined;
   needsDispose: boolean;
-  error?: string;
+  error?: Error;
 };
+
+// The message stays clean and stable ("… not found"); when the native call
+// *rejected* (a real creation failure) the runtime error is attached as
+// `cause` so its diagnostic (e.g. iOS reports which view model it came from) is
+// preserved without leaking into the message. A plain resolve-without-instance
+// (Android's missing-name path returns null) carries no cause. See #305.
+function instanceNotFoundError(instanceName: string, cause?: unknown): Error {
+  return new Error(
+    `ViewModel instance '${instanceName}' not found`,
+    cause !== undefined ? { cause } : undefined
+  );
+}
 
 async function createInstanceAsync(
   source: ViewModelSource | null | undefined,
@@ -54,19 +66,30 @@ async function createInstanceAsync(
         return {
           instance: null,
           needsDispose: false,
-          error: `ViewModel '${viewModelName}' not found`,
+          error: new Error(`ViewModel '${viewModelName}' not found`),
         };
       }
     } else {
-      viewModel = await source.defaultArtboardViewModelAsync(
-        artboardName ? ArtboardByName(artboardName) : undefined
-      );
+      try {
+        viewModel = await source.defaultArtboardViewModelAsync(
+          artboardName ? ArtboardByName(artboardName) : undefined
+        );
+      } catch (e) {
+        // Both platforms *throw* on an unknown artboard name (iOS
+        // `createArtboard`, Android `Artboard.fromFile`) rather than resolving
+        // undefined, so map the rejection to the not-found error below instead
+        // of leaking the raw native message. Without a name it's a real error.
+        if (!artboardName) throw e;
+        viewModel = undefined;
+      }
       if (!viewModel) {
         if (artboardName) {
           return {
             instance: null,
             needsDispose: false,
-            error: `Artboard '${artboardName}' not found or has no ViewModel`,
+            error: new Error(
+              `Artboard '${artboardName}' not found or has no ViewModel`
+            ),
           };
         }
         return { instance: null, needsDispose: false };
@@ -77,7 +100,11 @@ async function createInstanceAsync(
       try {
         vmi = await viewModel.createInstanceByNameAsync(instanceName);
       } catch (e) {
-        console.warn(`createInstanceByNameAsync('${instanceName}') failed:`, e);
+        return {
+          instance: null,
+          needsDispose: false,
+          error: instanceNotFoundError(instanceName, e),
+        };
       }
     } else {
       vmi = await viewModel.createDefaultInstanceAsync();
@@ -86,7 +113,7 @@ async function createInstanceAsync(
       return {
         instance: null,
         needsDispose: false,
-        error: `ViewModel instance '${instanceName}' not found`,
+        error: instanceNotFoundError(instanceName),
       };
     }
     return { instance: vmi ?? null, needsDispose: true };
@@ -98,13 +125,17 @@ async function createInstanceAsync(
     try {
       vmi = await source.createInstanceByNameAsync(instanceName);
     } catch (e) {
-      console.warn(`createInstanceByNameAsync('${instanceName}') failed:`, e);
+      return {
+        instance: null,
+        needsDispose: false,
+        error: instanceNotFoundError(instanceName, e),
+      };
     }
     if (!vmi) {
       return {
         instance: null,
         needsDispose: false,
-        error: `ViewModel instance '${instanceName}' not found`,
+        error: instanceNotFoundError(instanceName),
       };
     }
   } else if (useNew) {
@@ -148,6 +179,19 @@ const LOADING_RESULT: UseViewModelInstanceAsyncResult = {
  * if (isLoading || !instance) return <ActivityIndicator />;
  * // ...
  * <RiveView file={riveFile} dataBind={instance} />
+ * ```
+ *
+ * A `null` source resolves to a terminal `{ instance: null, isLoading: false }`
+ * (not perpetual loading), while an `undefined` source keeps the hook loading.
+ * This mirrors {@link useRiveFile}, which returns `riveFile: undefined` while
+ * loading and `riveFile: null` on error — so when chaining the two, check the
+ * file's own `error`, since this hook cannot observe why the source is absent:
+ *
+ * ```tsx
+ * const { riveFile, error: fileError } = useRiveFile(source);
+ * const { instance, isLoading } = useViewModelInstanceAsync(riveFile);
+ * if (fileError) return <Text>{fileError.message}</Text>;
+ * if (isLoading || !instance) return <ActivityIndicator />;
  * ```
  *
  * @param source - The RiveFile, ViewModel, or RiveViewRef to get an instance from
@@ -256,11 +300,22 @@ export function useViewModelInstanceAsync(
     useState<UseViewModelInstanceAsyncResult>(LOADING_RESULT);
 
   useEffect(() => {
+    if (source === null) {
+      // Source resolved to absent/failed rather than pending. `useRiveFile`
+      // returns `riveFile: null` on load error (vs `undefined` while loading),
+      // so settle to a terminal null instead of spinning forever — otherwise a
+      // consumer keying a spinner off `isLoading` hangs with no signal. The
+      // file's own `error` carries the reason.
+      setResult({ instance: null, isLoading: false, error: null });
+      return;
+    }
+
     // Reset to the loading state whenever the inputs change so we never expose a
     // stale (and about-to-be-disposed) instance from a previous resolution.
     setResult((prev) => (prev.isLoading ? prev : LOADING_RESULT));
 
     if (!source) {
+      // `undefined`: not resolved yet (e.g. the file is still loading).
       return;
     }
 
@@ -298,11 +353,7 @@ export function useViewModelInstanceAsync(
           }
           setResult({ instance: c.instance, isLoading: false, error: null });
         } else if (c.error) {
-          setResult({
-            instance: null,
-            isLoading: false,
-            error: new Error(c.error),
-          });
+          setResult({ instance: null, isLoading: false, error: c.error });
         } else {
           // Resolved, but there is genuinely no ViewModel (not an error).
           setResult({ instance: null, isLoading: false, error: null });

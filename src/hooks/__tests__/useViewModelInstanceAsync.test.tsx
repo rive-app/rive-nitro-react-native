@@ -160,6 +160,45 @@ describe('useViewModelInstanceAsync - RiveFile source', () => {
     expect(result.current.error?.message).toContain('NonExistent');
   });
 
+  it('attaches the native cause when createInstanceByNameAsync rejects', async () => {
+    // A rejection is a real creation failure — keep the clean "not found"
+    // message but preserve the native diagnostic as `error.cause`.
+    const nativeError = new Error(
+      'invalidViewModelInstance("Could not create ...")'
+    );
+    const defaultViewModel = createMockViewModel({});
+    (defaultViewModel.createInstanceByNameAsync as jest.Mock).mockRejectedValue(
+      nativeError
+    );
+    const mockRiveFile = createMockRiveFile({ defaultViewModel });
+
+    const { result } = renderHook(() =>
+      useViewModelInstanceAsync(mockRiveFile, { instanceName: 'Whatever' })
+    );
+
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+    expect(result.current.instance).toBeNull();
+    expect(result.current.error?.message).toBe(
+      "ViewModel instance 'Whatever' not found"
+    );
+    expect(result.current.error?.cause).toBe(nativeError);
+  });
+
+  it('has no cause when a missing instance resolves to null (not a rejection)', async () => {
+    const defaultViewModel = createMockViewModel({ namedInstances: {} });
+    const mockRiveFile = createMockRiveFile({ defaultViewModel });
+
+    const { result } = renderHook(() =>
+      useViewModelInstanceAsync(mockRiveFile, { instanceName: 'Missing' })
+    );
+
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+    expect(result.current.error?.message).toBe(
+      "ViewModel instance 'Missing' not found"
+    );
+    expect(result.current.error?.cause).toBeUndefined();
+  });
+
   it('resolves null with no error when the artboard has no ViewModel', async () => {
     const mockRiveFile = createMockRiveFile({});
 
@@ -170,6 +209,41 @@ describe('useViewModelInstanceAsync - RiveFile source', () => {
     await waitFor(() => expect(result.current.isLoading).toBe(false));
     expect(result.current.instance).toBeNull();
     expect(result.current.error).toBeNull();
+  });
+
+  it('maps an artboard-lookup rejection to the not-found error', async () => {
+    // Both native platforms *throw* on an unknown artboard name rather than
+    // resolving undefined, so the rejection must map to the friendly message.
+    const mockRiveFile = createMockRiveFile({});
+    (mockRiveFile.defaultArtboardViewModelAsync as jest.Mock).mockRejectedValue(
+      new Error('Artboard not found in file')
+    );
+
+    const { result } = renderHook(() =>
+      useViewModelInstanceAsync(mockRiveFile, { artboardName: 'NonExistent' })
+    );
+
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+    expect(result.current.instance).toBeNull();
+    expect(result.current.error).toBeInstanceOf(Error);
+    expect(result.current.error?.message).toBe(
+      "Artboard 'NonExistent' not found or has no ViewModel"
+    );
+  });
+
+  it('propagates a rejection unchanged when no artboardName was given', async () => {
+    const mockRiveFile = createMockRiveFile({});
+    (mockRiveFile.defaultArtboardViewModelAsync as jest.Mock).mockRejectedValue(
+      new Error('native boom')
+    );
+
+    const { result } = renderHook(() =>
+      useViewModelInstanceAsync(mockRiveFile)
+    );
+
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+    expect(result.current.instance).toBeNull();
+    expect(result.current.error?.message).toBe('native boom');
   });
 });
 
@@ -216,9 +290,17 @@ describe('useViewModelInstanceAsync - ViewModel source', () => {
   });
 });
 
-describe('useViewModelInstanceAsync - null source', () => {
-  it('stays in the loading state when the source is null', async () => {
+describe('useViewModelInstanceAsync - null vs undefined source', () => {
+  it('settles to a terminal null when the source is null (e.g. file load failed)', async () => {
     const { result } = renderHook(() => useViewModelInstanceAsync(null));
+
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+    expect(result.current.instance).toBeNull();
+    expect(result.current.error).toBeNull();
+  });
+
+  it('stays in the loading state when the source is undefined (still resolving)', async () => {
+    const { result } = renderHook(() => useViewModelInstanceAsync(undefined));
 
     expect(result.current.isLoading).toBe(true);
     expect(result.current.instance).toBeUndefined();
