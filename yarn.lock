@@ -12643,7 +12643,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"expo-symbols@npm:^57.0.0, expo-symbols@npm:~57.0.0":
+"expo-symbols@npm:^57.0.0":
   version: 57.0.0
   resolution: "expo-symbols@npm:57.0.0"
   dependencies:
@@ -12798,7 +12798,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "expo57-example@workspace:expo57-example"
   dependencies:
-    "@expo/vector-icons": ^15.0.3
     "@react-native-async-storage/async-storage": ^2.1.2
     "@react-native-harness/platform-apple": 1.4.0-rc.1
     "@react-native-picker/picker": ^2.11.4
@@ -12820,7 +12819,6 @@ __metadata:
     expo-screen-orientation: ~57.0.0
     expo-splash-screen: ~57.0.2
     expo-status-bar: ~57.0.0
-    expo-symbols: ~57.0.0
     expo-system-ui: ~57.0.0
     expo-web-browser: ~57.0.0
     react: 19.2.3

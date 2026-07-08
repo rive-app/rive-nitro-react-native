@@ -1,12 +1,9 @@
 import '@example/polyfills';
 import { useEffect, useState } from 'react';
-import { StyleSheet, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { IconSymbol } from '@/components/ui/icon-symbol';
 import { HomeMenu, PagesList, type PageItem } from '@example/shared/HomeMenu';
 
 const LAST_OPENED_KEY = '@rive_example_last_opened';
@@ -26,8 +23,9 @@ export default function HomeScreen() {
   }, []);
 
   const handleInvokeGC = () => {
-    if (typeof global.gc === 'function') {
-      global.gc();
+    const g = globalThis as { gc?: () => void };
+    if (typeof g.gc === 'function') {
+      g.gc();
       console.log('GC invoked');
     } else {
       console.error('global.gc is not available');
@@ -46,37 +44,36 @@ export default function HomeScreen() {
   };
 
   return (
-    <ThemedView style={styles.container}>
-      <ThemedView style={styles.header}>
-        <ThemedText type="title" style={styles.title}>
-          Rive Examples
-        </ThemedText>
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.title}>Rive Examples</Text>
         <TouchableOpacity
           onPress={() => setShowMenu(!showMenu)}
           style={styles.menuButton}
         >
-          <IconSymbol size={24} name="wrench.fill" color="#007AFF" />
+          <Text style={styles.menuButtonText}>🔧</Text>
         </TouchableOpacity>
         {showMenu && (
-          <ThemedView style={styles.menu}>
+          <View style={styles.menu}>
             <TouchableOpacity onPress={handleRunTests} style={styles.menuItem}>
-              <ThemedText style={styles.menuItemText}>Run Tests</ThemedText>
+              <Text style={styles.menuItemText}>Run Tests</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={handleInvokeGC} style={styles.menuItem}>
-              <ThemedText style={styles.menuItemText}>Invoke GC</ThemedText>
+              <Text style={styles.menuItemText}>Invoke GC</Text>
             </TouchableOpacity>
-          </ThemedView>
+          </View>
         )}
-      </ThemedView>
+      </View>
 
       <HomeMenu lastOpened={lastOpened} onNavigate={handleNavigate} />
-    </ThemedView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#fff',
   },
   header: {
     padding: 20,
@@ -87,6 +84,8 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   title: {
+    fontSize: 28,
+    fontWeight: 'bold',
     textAlign: 'center',
   },
   menuButton: {
@@ -94,6 +93,9 @@ const styles = StyleSheet.create({
     right: 20,
     top: 64,
     padding: 8,
+  },
+  menuButtonText: {
+    fontSize: 20,
   },
   menu: {
     marginTop: 12,
