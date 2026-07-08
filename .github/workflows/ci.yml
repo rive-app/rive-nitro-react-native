@@ -80,11 +80,15 @@ jobs:
 
       - name: Build package
         run: yarn prepare
-
   build-android:
+    # Builds the Expo 57 example — the default Android build on CI. Shares
+    # its build cache key with the test-harness-android job (cache warmer +
+    # exact-key short-circuit). The bare example is built by the scheduled
+    # bare-example workflow.
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     env:
-      TURBO_CACHE_DIR: .turbo/android
+      ANDROID_API_LEVEL: 35
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -92,32 +96,33 @@ jobs:
       - name: Setup
         uses: ./.github/actions/setup
 
-      - name: Cache turborepo for Android
-        id: turbo-cache-android
-        uses: actions/cache@v4
+      # Exact-key probe only (no download): on a hit the build is already
+      # proven for these inputs and the whole job short-circuits.
+      - name: Check Android build cache
+        id: build-cache-check
+        uses: actions/cache/restore@v4
         with:
-          path: ${{ env.TURBO_CACHE_DIR }}
-          key: ${{ runner.os }}-turborepo-android-${{ hashFiles('package.json', 'yarn.lock', 'android/**', 'nitrogen/generated/android/**', 'src/specs/*.nitro.ts') }}
-          restore-keys: |
-            ${{ runner.os }}-turborepo-android-
+          path: expo57-example/android/app/build
+          key: ${{ runner.os }}-android-build-expo57-${{ env.ANDROID_API_LEVEL }}-${{ hashFiles('package.json', 'yarn.lock', 'android/**', 'nitrogen/generated/android/**', 'expo57-example/package.json', 'expo57-example/app.json', 'expo57-example/app.config.js') }}
+          lookup-only: true
 
-      - name: Check turborepo cache for Android
-        run: |
-          TURBO_CACHE_STATUS=$(node -p "($(yarn turbo run build:android --cache-dir="${{ env.TURBO_CACHE_DIR }}" --dry=json)).tasks.find(t => t.task === 'build:android').cache.status")
-
-          if [[ $TURBO_CACHE_STATUS == "HIT" ]]; then
-            echo "turbo_cache_hit=1" >> $GITHUB_ENV
-          fi
+      # react-native 0.86 requires node ^20.19.4 — see build-ios. Gradle also
+      # shells out to node for autolinking.
+      - name: Use Node 22
+        if: steps.build-cache-check.outputs.cache-hit != 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
 
       - name: Install JDK
-        if: env.turbo_cache_hit != 1
+        if: steps.build-cache-check.outputs.cache-hit != 'true'
         uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
           java-version: '17'
 
       - name: Finalize Android SDK
-        if: env.turbo_cache_hit != 1
+        if: steps.build-cache-check.outputs.cache-hit != 'true'
         run: |
           /bin/bash -c "yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses > /dev/null"
           for i in 1 2 3; do
@@ -126,23 +131,37 @@ jobs:
             sleep 10
           done
 
+      - name: Expo prebuild
+        if: steps.build-cache-check.outputs.cache-hit != 'true'
+        working-directory: expo57-example
+        run: npx expo prebuild -p android --no-install
+
       - name: Cache Gradle
-        if: env.turbo_cache_hit != 1
+        if: steps.build-cache-check.outputs.cache-hit != 'true'
         uses: actions/cache@v4
         with:
           path: |
             ~/.gradle/wrapper
             ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('example/android/gradle/wrapper/gradle-wrapper.properties') }}
+          key: ${{ runner.os }}-gradle-harness-${{ hashFiles('expo57-example/android/gradle/wrapper/gradle-wrapper.properties') }}
           restore-keys: |
+            ${{ runner.os }}-gradle-harness-
             ${{ runner.os }}-gradle-
 
-      - name: Build example for Android
+      - name: Build Android app
+        if: steps.build-cache-check.outputs.cache-hit != 'true'
+        working-directory: expo57-example/android
         env:
           JAVA_OPTS: "-XX:MaxHeapSize=6g"
-          TURBO_FORCE: ${{ steps.turbo-cache-android.outputs.cache-hit != 'true' }}
         run: |
-          yarn turbo run build:android --cache-dir="${{ env.TURBO_CACHE_DIR }}"
+          ./gradlew assembleDebug --no-daemon --console=plain -PreactNativeArchitectures=x86_64
+
+      - name: Save Android build cache
+        if: steps.build-cache-check.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: expo57-example/android/app/build
+          key: ${{ steps.build-cache-check.outputs.cache-primary-key }}
 
   build-ios:
     # Builds the Expo 57 example — the default iOS build on CI. It uses
