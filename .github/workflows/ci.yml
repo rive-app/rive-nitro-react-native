@@ -145,85 +145,20 @@ jobs:
           yarn turbo run build:android --cache-dir="${{ env.TURBO_CACHE_DIR }}"
 
   build-ios:
+    # Builds the Expo 57 example — the default iOS build on CI. It uses
+    # Expo's precompiled React Native XCFrameworks plus the EAS prebuilt
+    # third-party pods, so a cold build is ~2.5x faster than the bare
+    # example (which the test-harness-ios jobs still build and exercise).
     # Pinned: macos-latest is mid-migration to macOS 26, whose simulator set
     # has no iPhone 16 Pro on an iOS >=26 runtime, breaking the harness boot.
-    runs-on: macos-15
-    env:
-      XCODE_VERSION: 26.3
-      TURBO_CACHE_DIR: .turbo/ios
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup
-        uses: ./.github/actions/setup
-
-      - name: Cache turborepo for iOS
-        id: turbo-cache-ios
-        uses: actions/cache@v4
-        with:
-          path: ${{ env.TURBO_CACHE_DIR }}
-          key: ${{ runner.os }}-turborepo-ios-${{ hashFiles('yarn.lock', 'ios/**', 'nitrogen/generated/ios/**', '*.podspec', 'src/specs/*.nitro.ts') }}
-          restore-keys: |
-            ${{ runner.os }}-turborepo-ios-
-
-      - name: Check turborepo cache for iOS
-        run: |
-          TURBO_CACHE_STATUS=$(node -p "($(yarn turbo run build:ios --cache-dir="${{ env.TURBO_CACHE_DIR }}" --dry=json)).tasks.find(t => t.task === 'build:ios').cache.status")
-
-          if [[ $TURBO_CACHE_STATUS == "HIT" ]]; then
-            echo "turbo_cache_hit=1" >> $GITHUB_ENV
-          fi
-
-      - name: Use appropriate Xcode version
-        if: env.turbo_cache_hit != 1
-        uses: maxim-lobanov/setup-xcode@v1
-        with:
-          xcode-version: ${{ env.XCODE_VERSION }}
-
-      - name: Restore cocoapods
-        if: env.turbo_cache_hit != 1
-        id: cocoapods-cache
-        uses: actions/cache/restore@v4
-        with:
-          path: |
-            **/ios/Pods
-          key: ${{ runner.os }}-cocoapods-${{ hashFiles('package.json', '*.podspec', 'example/ios/Podfile.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-cocoapods-
-
-      - name: Install cocoapods
-        if: env.turbo_cache_hit != 1 && steps.cocoapods-cache.outputs.cache-hit != 'true'
-        run: |
-          cd example
-          bundle install
-          rm -f ios/Podfile.lock ios/Pods/Manifest.lock
-          bundle exec pod install --project-directory=ios
-
-      - name: Cache cocoapods
-        if: env.turbo_cache_hit != 1 && steps.cocoapods-cache.outputs.cache-hit != 'true'
-        uses: actions/cache/save@v4
-        with:
-          path: |
-            **/ios/Pods
-          key: ${{ steps.cocoapods-cache.outputs.cache-key }}
-
-      - name: Build example for iOS
-        env:
-          TURBO_FORCE: ${{ steps.turbo-cache-ios.outputs.cache-hit != 'true' }}
-        run: |
-          yarn turbo run build:ios --cache-dir="${{ env.TURBO_CACHE_DIR }}"
-
-  build-expo57-ios:
-    # Experiment: Expo SDK 57 with precompiled React Native XCFrameworks
-    # (https://expo.dev/blog/faster-ios-builds-with-precompiled-xcframeworks).
-    # Deliberately uncached (no turbo short-circuit, no Pods cache) so every
-    # run is a cold build whose timing is comparable across runs.
-    # Pinned to macos-15 — see build-ios.
     runs-on: macos-15
     timeout-minutes: 45
     env:
       XCODE_VERSION: 26.3
+      # Same bucket EAS Build uses for prebuilt third-party XCFrameworks
+      # (reanimated, worklets, ...). Unofficial endpoint — on 404 or if it
+      # ever breaks, pods silently fall back to building from source.
+      EXPO_PRECOMPILED_MODULES_BASE_URL: https://storage.googleapis.com/eas-build-precompiled-modules/
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -231,64 +166,92 @@ jobs:
       - name: Setup
         uses: ./.github/actions/setup
 
+      # Exact-key probe only (no download): on a hit the build is already
+      # proven for these inputs and the whole job short-circuits.
+      - name: Check iOS build cache
+        id: build-cache-check
+        uses: actions/cache/restore@v4
+        with:
+          path: expo57-example/ios/build
+          key: ${{ runner.os }}-ios-build-expo57-${{ env.XCODE_VERSION }}-${{ hashFiles('yarn.lock', 'ios/**', 'nitrogen/generated/ios/**', '*.podspec', 'src/specs/*.nitro.ts', 'expo57-example/package.json', 'expo57-example/app.json', 'expo57-example/app.config.js', 'expo57-example/app/**', 'expo57-example/babel.config.js', 'expo57-example/metro.config.js') }}
+          lookup-only: true
+
       # react-native 0.86 requires node ^20.19.4; .nvmrc (20.19.0) is too old
-      # for this job's expo prebuild/codegen, so override node here only.
+      # for expo prebuild/codegen, so override node here only.
       - name: Use Node 22
+        if: steps.build-cache-check.outputs.cache-hit != 'true'
         uses: actions/setup-node@v4
         with:
           node-version: 22
 
       - name: Use appropriate Xcode version
+        if: steps.build-cache-check.outputs.cache-hit != 'true'
         uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: ${{ env.XCODE_VERSION }}
 
       - name: Expo prebuild
+        if: steps.build-cache-check.outputs.cache-hit != 'true'
         working-directory: expo57-example
         run: npx expo prebuild -p ios --no-install
 
+      - name: Restore cocoapods
+        if: steps.build-cache-check.outputs.cache-hit != 'true'
+        id: cocoapods-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: expo57-example/ios/Pods
+          key: ${{ runner.os }}-cocoapods-expo57-${{ hashFiles('yarn.lock', '*.podspec', 'expo57-example/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-cocoapods-expo57-
+
       - name: Install cocoapods
+        if: steps.build-cache-check.outputs.cache-hit != 'true'
         working-directory: expo57-example/ios
-        env:
-          # Same bucket EAS Build uses for prebuilt third-party XCFrameworks
-          # (reanimated, worklets, ...). Unofficial endpoint — on 404 or if it
-          # ever breaks, pods silently fall back to building from source.
-          EXPO_PRECOMPILED_MODULES_BASE_URL: https://storage.googleapis.com/eas-build-precompiled-modules/
-        run: |
-          start=$(date +%s)
-          pod install
-          echo "POD_INSTALL_SECONDS=$(( $(date +%s) - start ))" >> "$GITHUB_ENV"
+        run: pod install
+
+      - name: Save cocoapods cache
+        if: steps.build-cache-check.outputs.cache-hit != 'true' && steps.cocoapods-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: expo57-example/ios/Pods
+          key: ${{ steps.cocoapods-cache.outputs.cache-primary-key }}
+
+      # Second restore (with download + prefix fallback) so xcodebuild can
+      # reuse a previous build dir incrementally.
+      - name: Restore iOS build cache
+        if: steps.build-cache-check.outputs.cache-hit != 'true'
+        uses: actions/cache/restore@v4
+        with:
+          path: expo57-example/ios/build
+          key: ${{ steps.build-cache-check.outputs.cache-primary-key }}
+          restore-keys: |
+            ${{ runner.os }}-ios-build-expo57-${{ env.XCODE_VERSION }}-
 
       - name: Build expo57-example for iOS
+        if: steps.build-cache-check.outputs.cache-hit != 'true'
         working-directory: expo57-example/ios
         run: |
-          start=$(date +%s)
-          set -o pipefail
-          xcodebuild -workspace expo57example.xcworkspace \
-            -scheme expo57example \
-            -configuration Debug \
-            -sdk iphonesimulator \
-            -destination 'generic/platform=iOS Simulator' \
+          set -o pipefail && xcodebuild \
             -derivedDataPath build \
-            CODE_SIGNING_ALLOWED=NO \
-            build | xcbeautify --quieter
-          echo "XCODEBUILD_SECONDS=$(( $(date +%s) - start ))" >> "$GITHUB_ENV"
+            -workspace expo57example.xcworkspace \
+            -scheme expo57example \
+            -sdk iphonesimulator \
+            -configuration Debug \
+            build \
+            CODE_SIGNING_ALLOWED=NO
 
-      - name: Report build timings
-        run: |
-          {
-            echo "### expo57-example iOS build (precompiled XCFrameworks)"
-            echo ""
-            echo "| Step | Duration |"
-            echo "| --- | --- |"
-            echo "| pod install | ${POD_INSTALL_SECONDS}s |"
-            echo "| xcodebuild (Debug, simulator) | ${XCODEBUILD_SECONDS}s |"
-          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Save iOS build cache
+        if: steps.build-cache-check.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: expo57-example/ios/build
+          key: ${{ steps.build-cache-check.outputs.cache-primary-key }}
 
   test-harness-expo57-ios:
     # Runs the shared harness suite against the Expo 57 example (precompiled
     # RN XCFrameworks + EAS prebuilt third-party pods), so the app build is a
-    # fraction of the bare example's. Deliberately uncached — see build-expo57-ios.
+    # fraction of the bare example's. Deliberately uncached — see build-ios.
     # Pinned to macos-15 — see build-ios.
     runs-on: macos-15
     timeout-minutes: 60
@@ -301,7 +264,7 @@ jobs:
       - name: Setup
         uses: ./.github/actions/setup
 
-      # react-native 0.86 requires node ^20.19.4 — see build-expo57-ios.
+      # react-native 0.86 requires node ^20.19.4 — see build-ios.
       - name: Use Node 22
         uses: actions/setup-node@v4
         with:
@@ -319,7 +282,7 @@ jobs:
       - name: Install cocoapods
         working-directory: expo57-example/ios
         env:
-          # Same bucket EAS Build uses — see build-expo57-ios.
+          # Same bucket EAS Build uses — see build-ios.
           EXPO_PRECOMPILED_MODULES_BASE_URL: https://storage.googleapis.com/eas-build-precompiled-modules/
         run: pod install
 
