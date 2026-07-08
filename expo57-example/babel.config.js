@@ -11,7 +11,9 @@ module.exports = function (api) {
 
   const config = getConfig(
     {
-      presets: ['babel-preset-expo'],
+      // The harness preset is a no-op unless RN_HARNESS is set by the
+      // react-native-harness CLI's Metro server.
+      presets: ['babel-preset-expo', 'react-native-harness/babel-preset'],
     },
     { root, pkg }
   );

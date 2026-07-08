@@ -12,6 +12,10 @@ const root = path.resolve(__dirname, '..');
 /** @type {import('expo/metro-config').MetroConfig} */
 const config = getDefaultConfig(__dirname);
 config.resolver.assetExts = [...config.resolver.assetExts, 'riv'];
+// Shared example assets live outside this project root (../example/assets).
+// Classic `/assets/../…` URLs lose the `..` to URL normalization in Metro's
+// server, so serve out-of-root assets via the unstable_path query form.
+config.transformer.publicPath = '/assets/?unstable_path=.';
 
 const bobConfig = getConfig(config, {
   root,

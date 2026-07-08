@@ -1,0 +1,26 @@
+diff --git a/dist/resolvers/resolver.js b/dist/resolvers/resolver.js
+index f9035b775331d31ec343c9c359ac235a07f72c76..b2a6157e8f9fc0f5ee2d53bb76f34ec4ae389b40 100644
+--- a/dist/resolvers/resolver.js
++++ b/dist/resolvers/resolver.js
+@@ -16,11 +16,19 @@ export const createHarnessEntryPointResolver = (harnessConfig) => {
+     return (context, moduleName, platform) => {
+         void platform;
+         const currentOrigin = path.resolve(context.originModulePath);
+-        if (currentOrigin !== rootPath) {
++        // Entry requests originate from the project root, or - in monorepos
++        // where Metro's server root is above the project (e.g. Expo) - from
++        // that ancestor directory.
++        if (currentOrigin !== rootPath && !rootPath.startsWith(currentOrigin + path.sep)) {
+             return null;
+         }
+         const requestedModule = getExtensionlessAbsolutePath(currentOrigin, moduleName);
+-        if (requestedModule === expectedEntryPoint) {
++        // Expo apps may also request the virtual entry `.expo/.virtual-metro-entry`,
++        // which Expo's resolver maps to the app's real entry point. It never
++        // matches the configured entryPoint textually, so treat it as the app
++        // entry too.
++        const isExpoVirtualEntry = /[/\\]\.expo[/\\]\.virtual-metro-entry$/.test(requestedModule);
++        if (requestedModule === expectedEntryPoint || isExpoVirtualEntry) {
+             return {
+                 type: 'sourceFile',
+                 filePath: resolvedHarnessPath,

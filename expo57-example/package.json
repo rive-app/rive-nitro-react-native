@@ -8,7 +8,8 @@
     "ios": "expo run:ios",
     "web": "expo start --web",
     "lint": "expo lint",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test:harness:ios": "react-native-harness --harnessRunner ios"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
@@ -43,11 +44,13 @@
     "rive-debug-utils": "workspace:*"
   },
   "devDependencies": {
+    "@react-native-harness/platform-apple": "1.4.0-rc.1",
     "@types/react": "~19.2.2",
     "babel-preset-expo": "~57.0.2",
     "eslint": "^9.25.0",
     "eslint-config-expo": "~57.0.0",
     "eslint-import-resolver-typescript": "^4.4.4",
+    "react-native-harness": "1.4.0-rc.1",
     "typescript": "~6.0.3"
   },
   "private": true

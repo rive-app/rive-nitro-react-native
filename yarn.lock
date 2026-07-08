@@ -5499,6 +5499,27 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@react-native-harness/bundler-metro@patch:@react-native-harness/bundler-metro@npm%3A1.4.0-rc.1#./.yarn/patches/@react-native-harness-bundler-metro-npm-1.4.0-rc.1-748c6eda8c.patch::locator=%40rive-app%2Freact-native%40workspace%3A.":
+  version: 1.4.0-rc.1
+  resolution: "@react-native-harness/bundler-metro@patch:@react-native-harness/bundler-metro@npm%3A1.4.0-rc.1#./.yarn/patches/@react-native-harness-bundler-metro-npm-1.4.0-rc.1-748c6eda8c.patch::version=1.4.0-rc.1&hash=034abb&locator=%40rive-app%2Freact-native%40workspace%3A."
+  dependencies:
+    "@react-native-harness/babel-preset": 1.4.0-rc.1
+    "@react-native-harness/config": 1.4.0-rc.1
+    "@react-native-harness/runtime": 1.4.0-rc.1
+    "@react-native-harness/tools": 1.4.0-rc.1
+    "@react-native/metro-config": "*"
+    connect: ^3.7.0
+    nocache: ^4.0.0
+    tslib: ^2.3.0
+  peerDependencies:
+    metro: "*"
+    metro-cache: "*"
+    metro-config: "*"
+    metro-resolver: "*"
+  checksum: 5554ced0610cfadb4117b65d11a4cb50159db5da0293497d30273e4844ed9289d37b29828af2ae0feb97285026a9f1067f55eaa72fd856786c345a42235bc171
+  languageName: node
+  linkType: hard
+
 "@react-native-harness/cli@npm:1.4.0-rc.1":
   version: 1.4.0-rc.1
   resolution: "@react-native-harness/cli@npm:1.4.0-rc.1"
@@ -12779,6 +12800,7 @@ __metadata:
   dependencies:
     "@expo/vector-icons": ^15.0.3
     "@react-native-async-storage/async-storage": ^2.1.2
+    "@react-native-harness/platform-apple": 1.4.0-rc.1
     "@react-native-picker/picker": ^2.11.4
     "@react-navigation/bottom-tabs": ^7.15.5
     "@react-navigation/elements": ^2.6.3
@@ -12805,6 +12827,7 @@ __metadata:
     react-dom: 19.2.3
     react-native: 0.86.0
     react-native-gesture-handler: ~2.32.0
+    react-native-harness: 1.4.0-rc.1
     react-native-nitro-modules: 0.35.10
     react-native-reanimated: 4.5.0
     react-native-safe-area-context: ~5.7.0
