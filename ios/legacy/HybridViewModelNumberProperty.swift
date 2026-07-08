@@ -25,7 +25,9 @@ class HybridViewModelNumberProperty: HybridViewModelNumberPropertySpec, ValuedPr
 
   func setValueAsync(value: Double) throws -> Promise<Void> {
     let v = Float(value)
-    return Promise.async { self.property.value = v }
+    // Main-thread write like every other legacy mutation — Promise.async
+    // would race the main-thread render loop.
+    return Promise.onMain { self.property.value = v }
   }
 
   func addListener(onChanged: @escaping (Double) -> Void) throws -> () -> Void {

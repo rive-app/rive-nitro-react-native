@@ -24,6 +24,8 @@ class HybridViewModelBooleanProperty: HybridViewModelBooleanPropertySpec, Valued
   }
 
   func setValueAsync(value: Bool) throws -> Promise<Void> {
-    return Promise.async { self.property.value = value }
+    // Main-thread write like every other legacy mutation — Promise.async
+    // would race the main-thread render loop.
+    return Promise.onMain { self.property.value = value }
   }
 }

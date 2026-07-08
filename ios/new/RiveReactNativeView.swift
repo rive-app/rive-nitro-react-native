@@ -56,6 +56,17 @@ class RiveReactNativeView: UIView {
       cleanup()
     }
 
+    // A dataBind-only change with a live instance re-binds the running state
+    // machine instead of rebuilding artboard + state machine, which would
+    // visually restart the animation. Only the .instance case can bind
+    // without async resolution; the other modes fall through to the rebuild.
+    if !reload, !initialUpdate, dataBindingChanged,
+       let rive = riveInstance, case .instance(let vmi) = config.bindData {
+      rive.stateMachine.bindViewModelInstance(vmi)
+      rive.fit = config.fit
+      return
+    }
+
     if reload || dataBindingChanged || initialUpdate {
       // Applied synchronously so a play()/pause() issued while the config
       // task is still in flight isn't clobbered when it completes — the task
