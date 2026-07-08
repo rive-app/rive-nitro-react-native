@@ -57,6 +57,10 @@ class RiveReactNativeView: UIView {
     }
 
     if reload || dataBindingChanged || initialUpdate {
+      // Applied synchronously so a play()/pause() issued while the config
+      // task is still in flight isn't clobbered when it completes — the task
+      // reads the then-current isPaused instead of recomputing it.
+      isPaused = !config.autoPlay
       configTask?.cancel()
       configTask = Task { [weak self] in
         guard let self else { return }
@@ -98,7 +102,6 @@ class RiveReactNativeView: UIView {
           guard !Task.isCancelled else { return }
 
           self.riveInstance = rive
-          self.isPaused = !config.autoPlay
           if let pending = self.pendingBindInstance {
             self.pendingBindInstance = nil
             rive.stateMachine.bindViewModelInstance(pending)
