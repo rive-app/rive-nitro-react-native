@@ -12799,6 +12799,7 @@ __metadata:
   resolution: "expo57-example@workspace:expo57-example"
   dependencies:
     "@react-native-async-storage/async-storage": ^2.1.2
+    "@react-native-harness/platform-android": 1.4.0-rc.1
     "@react-native-harness/platform-apple": 1.4.0-rc.1
     "@react-native-picker/picker": ^2.11.4
     "@react-navigation/bottom-tabs": ^7.15.5

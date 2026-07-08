@@ -9,7 +9,8 @@
     "web": "expo start --web",
     "lint": "expo lint",
     "typecheck": "tsc --noEmit",
-    "test:harness:ios": "react-native-harness --harnessRunner ios"
+    "test:harness:ios": "react-native-harness --harnessRunner ios",
+    "test:harness:android": "react-native-harness --harnessRunner android"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^2.1.2",
@@ -42,6 +43,7 @@
     "rive-debug-utils": "workspace:*"
   },
   "devDependencies": {
+    "@react-native-harness/platform-android": "1.4.0-rc.1",
     "@react-native-harness/platform-apple": "1.4.0-rc.1",
     "@types/react": "~19.2.2",
     "babel-preset-expo": "~57.0.2",

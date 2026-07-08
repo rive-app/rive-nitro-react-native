@@ -1,4 +1,8 @@
 import {
+  androidPlatform,
+  androidEmulator,
+} from '@react-native-harness/platform-android';
+import {
   applePlatform,
   appleSimulator,
 } from '@react-native-harness/platform-apple';
@@ -63,6 +67,11 @@ export default {
   maxAppRestarts: 3,
   forwardClientLogs: true,
   runners: [
+    androidPlatform({
+      name: 'android',
+      device: androidEmulator(process.env.ANDROID_AVD || 'Pixel_6'),
+      bundleId: 'com.rive.expo57example',
+    }),
     applePlatform({
       name: 'ios',
       device: appleSimulator(deviceModel, iosVersion),
