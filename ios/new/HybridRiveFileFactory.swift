@@ -22,9 +22,9 @@ final class HybridRiveFileFactory: HybridRiveFileFactorySpec, @unchecked Sendabl
       }
       let data = try await HTTPDataLoader.shared.downloadData(from: fileURL)
       let worker = try await HybridRiveFileFactory.sharedWorkerTask.value
-      await AssetLoader.registerAssets(referencedAssets, on: worker)
+      let registeredAssets = await AssetLoader.registerAssets(referencedAssets, on: worker)
       let file = try await File(source: .data(data), worker: worker)
-      return HybridRiveFile(file: file, worker: worker)
+      return HybridRiveFile(file: file, worker: worker, registeredAssets: registeredAssets)
     }
   }
 
@@ -40,9 +40,9 @@ final class HybridRiveFileFactory: HybridRiveFileFactorySpec, @unchecked Sendabl
       }
       let data = try FileDataLoader().loadData(from: url)
       let worker = try await HybridRiveFileFactory.sharedWorkerTask.value
-      await AssetLoader.registerAssets(referencedAssets, on: worker)
+      let registeredAssets = await AssetLoader.registerAssets(referencedAssets, on: worker)
       let file = try await File(source: .data(data), worker: worker)
-      return HybridRiveFile(file: file, worker: worker)
+      return HybridRiveFile(file: file, worker: worker, registeredAssets: registeredAssets)
     }
   }
 
@@ -54,9 +54,9 @@ final class HybridRiveFileFactory: HybridRiveFileFactorySpec, @unchecked Sendabl
         throw RuntimeError.error(withMessage: "Could not find Rive file: \(resource).riv")
       }
       let worker = try await HybridRiveFileFactory.sharedWorkerTask.value
-      await AssetLoader.registerAssets(referencedAssets, on: worker)
+      let registeredAssets = await AssetLoader.registerAssets(referencedAssets, on: worker)
       let file = try await File(source: .local(resource, nil), worker: worker)
-      return HybridRiveFile(file: file, worker: worker)
+      return HybridRiveFile(file: file, worker: worker, registeredAssets: registeredAssets)
     }
   }
 
@@ -66,9 +66,9 @@ final class HybridRiveFileFactory: HybridRiveFileFactorySpec, @unchecked Sendabl
     let data = bytes.toData(copyIfNeeded: true)
     return Promise.async {
       let worker = try await HybridRiveFileFactory.sharedWorkerTask.value
-      await AssetLoader.registerAssets(referencedAssets, on: worker)
+      let registeredAssets = await AssetLoader.registerAssets(referencedAssets, on: worker)
       let file = try await File(source: .data(data), worker: worker)
-      return HybridRiveFile(file: file, worker: worker)
+      return HybridRiveFile(file: file, worker: worker, registeredAssets: registeredAssets)
     }
   }
 }

@@ -10,30 +10,49 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.Dispatchers
 
+/** An asset registered on the shared command queue on behalf of one file. */
+class RegisteredAsset(
+  private val name: String,
+  private val asset: app.rive.Asset<*>
+) {
+  fun release() {
+    runCatching { asset.unregister(name) }
+    runCatching { asset.close() }
+  }
+}
+
 object AssetLoader {
   private const val TAG = "AssetLoader"
 
+  /**
+   * Registers the referenced assets and returns them so the owning file can
+   * release (unregister + close) them on dispose — registration is global
+   * per name on the shared command queue, so without this the decoded bytes
+   * accumulate for the app's lifetime.
+   */
   suspend fun registerAssets(
     referencedAssets: ReferencedAssetsType?,
     riveWorker: CommandQueue
-  ) {
-    val assetsData = referencedAssets?.data ?: return
+  ): List<RegisteredAsset> {
+    val assetsData = referencedAssets?.data ?: return emptyList()
 
-    coroutineScope {
+    return coroutineScope {
       assetsData
         .map { (name, assetData) ->
         async(Dispatchers.IO) {
           try {
-            val source = DataSourceResolver.resolve(assetData) ?: return@async
+            val source = DataSourceResolver.resolve(assetData) ?: return@async null
             val loader = source.createLoader()
             val data = loader.load(source)
             val type = inferAssetType(name, data, assetData.type)
             registerAsset(data, name, type, riveWorker)
           } catch (e: Exception) {
             Log.e(TAG, "Failed to load asset '$name'", e)
+            null
           }
         }
       }.awaitAll()
+        .filterNotNull()
     }
   }
 
@@ -66,7 +85,7 @@ object AssetLoader {
     name: String,
     type: AssetType,
     riveWorker: CommandQueue
-  ) {
+  ): RegisteredAsset? {
     Log.i(TAG, "Registering $type asset '$name' (${data.size} bytes)")
     when (type) {
       AssetType.IMAGE -> {
@@ -75,6 +94,7 @@ object AssetLoader {
         if (result is app.rive.Result.Success) {
           result.value.register(name)
           Log.i(TAG, "Image '$name' registered")
+          return RegisteredAsset(name, result.value)
         }
       }
       AssetType.FONT -> {
@@ -83,6 +103,7 @@ object AssetLoader {
         if (result is app.rive.Result.Success) {
           result.value.register(name)
           Log.i(TAG, "Font '$name' registered")
+          return RegisteredAsset(name, result.value)
         }
       }
       AssetType.AUDIO -> {
@@ -91,9 +112,11 @@ object AssetLoader {
         if (result is app.rive.Result.Success) {
           result.value.register(name)
           Log.i(TAG, "Audio '$name' registered")
+          return RegisteredAsset(name, result.value)
         }
       }
     }
+    return null
   }
 
   private fun inferAssetType(name: String, data: ByteArray, explicitType: RiveAssetType?): AssetType {
