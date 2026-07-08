@@ -60,7 +60,7 @@ class HybridViewModel: HybridViewModelSpec {
 
   private func createInstanceByIndexImpl(index: Double) async throws -> (any HybridViewModelInstanceSpec)? {
     let names = try await self.file.getInstanceNames(of: self.vmName)
-    let idx = Int(index)
+    guard let idx = Int(exactly: index.rounded()) else { return nil }
     guard idx >= 0 && idx < names.count else { return nil }
     let name = names[idx]
     let vmi = try await self.file.createViewModelInstance(.name(name, from: .name(self.vmName)))

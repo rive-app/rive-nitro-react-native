@@ -1,4 +1,5 @@
 import Foundation
+import NitroModules
 
 /// Runs async work on MainActor and blocks the calling thread until complete.
 /// Safe to call from JS thread (Nitro bridge) - blocks JS thread, not main thread.
@@ -11,7 +12,12 @@ import Foundation
 /// 5. `semaphore.signal()` → JS thread unblocks
 /// 6. **No deadlock!**
 func blockingAsync<T>(_ work: @escaping @MainActor () async throws -> T) throws -> T {
-  dispatchPrecondition(condition: .notOnQueue(.main))
+  if Thread.isMainThread {
+    // Deliberate: blocking the main thread here would deadlock the MainActor
+    // work this waits on. Throwing beats trapping the whole app.
+    throw RuntimeError.error(
+      withMessage: "Deprecated blocking Rive API called on the main thread - use the *Async variant")
+  }
   let semaphore = DispatchSemaphore(value: 0)
   var result: Result<T, Error>!
 
@@ -32,9 +38,14 @@ func blockingAsync<T>(_ work: @escaping @MainActor () async throws -> T) throws 
   }
 }
 
-/// Non-throwing variant for operations that don't throw
-func blockingAsync<T>(_ work: @escaping @MainActor () async -> T) -> T {
-  dispatchPrecondition(condition: .notOnQueue(.main))
+/// Variant for operations that don't throw (still throws if misused on main)
+func blockingAsync<T>(_ work: @escaping @MainActor () async -> T) throws -> T {
+  if Thread.isMainThread {
+    // Deliberate: blocking the main thread here would deadlock the MainActor
+    // work this waits on. Throwing beats trapping the whole app.
+    throw RuntimeError.error(
+      withMessage: "Deprecated blocking Rive API called on the main thread - use the *Async variant")
+  }
   let semaphore = DispatchSemaphore(value: 0)
   var result: T!
 

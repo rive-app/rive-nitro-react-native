@@ -118,7 +118,7 @@ android {
     targetCompatibility JavaVersion.VERSION_1_8
   }
 
-  def useLegacy = rootProject.findProperty('USE_RIVE_LEGACY') == 'true'
+  def useLegacy = ['true', '1'].contains(rootProject.findProperty('USE_RIVE_LEGACY')?.toString())
 
   sourceSets {
     main {
