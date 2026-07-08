@@ -118,31 +118,38 @@ async function createInstanceAsync(
         return { instance: null, needsDispose: false };
       }
     }
-    let vmi: ViewModelInstance | undefined;
-    if (instanceName) {
-      try {
-        vmi = await viewModel.createInstanceByNameAsync(instanceName);
-      } catch (e) {
+    try {
+      let vmi: ViewModelInstance | undefined;
+      if (instanceName) {
+        try {
+          vmi = await viewModel.createInstanceByNameAsync(instanceName);
+        } catch (e) {
+          return {
+            instance: null,
+            needsDispose: false,
+            error: instanceNotFoundError(instanceName, e),
+          };
+        }
+      } else {
+        vmi = await viewModel.createDefaultInstanceAsync();
+      }
+      if (!vmi && instanceName) {
         return {
           instance: null,
           needsDispose: false,
-          error: instanceNotFoundError(instanceName, e),
+          error: instanceNotFoundError(instanceName),
         };
       }
-    } else {
-      vmi = await viewModel.createDefaultInstanceAsync();
+      return { instance: vmi ?? null, needsDispose: true };
+    } finally {
+      // The intermediate ViewModel wrapper is hook-internal; disposing it
+      // releases the native resources it owns (e.g. the artboard resolved
+      // for DefaultForArtboard sources on the experimental backend).
+      callDispose(viewModel);
     }
-    if (!vmi && instanceName) {
-      return {
-        instance: null,
-        needsDispose: false,
-        error: instanceNotFoundError(instanceName),
-      };
-    }
-    return { instance: vmi ?? null, needsDispose: true };
   }
 
-  // ViewModel source
+  // ViewModel source (caller-owned — not disposed here)
   let vmi: ViewModelInstance | undefined;
   if (instanceName) {
     try {
