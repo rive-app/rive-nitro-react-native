@@ -37,7 +37,6 @@ fun Variant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName?.toBindData(
 
 object DefaultConfiguration {
   const val AUTOPLAY = true
-  val FIT = RiveFit.Contain()
   val ALIGNMENT = RiveAlignment.Center
   val LAYOUTSCALEFACTOR = null
 }
@@ -108,7 +107,9 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
   override fun getViewModelInstance(): HybridViewModelInstanceSpec? {
     val vmi = view.getViewModelInstance() ?: return null
     val hybridFile = file as? HybridRiveFile ?: return null
-    return HybridViewModelInstance(vmi, hybridFile.riveWorker, hybridFile)
+    // The view owns (or JS-side dataBind owns) this instance — the wrapper
+    // must not close it on dispose.
+    return HybridViewModelInstance(vmi, hybridFile.riveWorker, hybridFile, ownsInstance = false)
   }
 
   override fun play(): Promise<Unit> = Promise.async { view.play() }
@@ -161,14 +162,16 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
       val hybridFile = file as? HybridRiveFile
       val riveFile = hybridFile?.riveFile ?: return@logged
 
-      val convertedFit = convertFit(fit, layoutScaleFactor?.toFloat()) ?: DefaultConfiguration.FIT
+      val convertedAlignment = convertAlignment(alignment) ?: DefaultConfiguration.ALIGNMENT
+      val convertedFit = convertFit(fit, layoutScaleFactor?.toFloat(), convertedAlignment)
+        ?: RiveFit.Contain(convertedAlignment)
       val config = ViewConfiguration(
         artboardName = artboardName,
         stateMachineName = stateMachineName,
         autoPlay = autoPlay ?: DefaultConfiguration.AUTOPLAY,
         riveFile = riveFile,
         riveWorker = HybridRiveFileFactory.getSharedWorker(),
-        alignment = convertAlignment(alignment) ?: DefaultConfiguration.ALIGNMENT,
+        alignment = convertedAlignment,
         fit = convertedFit,
         layoutScaleFactor = layoutScaleFactor?.toFloat() ?: DefaultConfiguration.LAYOUTSCALEFACTOR,
         bindData = dataBind.toBindData()
@@ -219,16 +222,21 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
     }
   }
 
-  private fun convertFit(fit: Fit?, layoutScaleFactor: Float? = null): RiveFit? {
+  private fun convertFit(
+    fit: Fit?,
+    layoutScaleFactor: Float? = null,
+    alignment: RiveAlignment = DefaultConfiguration.ALIGNMENT
+  ): RiveFit? {
     if (fit == null) return null
     return when (fit) {
+      // Fill and Layout cover the whole surface, so they carry no alignment.
       Fit.FILL -> RiveFit.Fill
-      Fit.CONTAIN -> RiveFit.Contain()
-      Fit.COVER -> RiveFit.Cover()
-      Fit.FITWIDTH -> RiveFit.FitWidth()
-      Fit.FITHEIGHT -> RiveFit.FitHeight()
-      Fit.NONE -> RiveFit.None()
-      Fit.SCALEDOWN -> RiveFit.ScaleDown()
+      Fit.CONTAIN -> RiveFit.Contain(alignment)
+      Fit.COVER -> RiveFit.Cover(alignment)
+      Fit.FITWIDTH -> RiveFit.FitWidth(alignment)
+      Fit.FITHEIGHT -> RiveFit.FitHeight(alignment)
+      Fit.NONE -> RiveFit.None(alignment)
+      Fit.SCALEDOWN -> RiveFit.ScaleDown(alignment)
       Fit.LAYOUT -> RiveFit.Layout(scaleFactor = layoutScaleFactor ?: context.resources.displayMetrics.density)
     }
   }

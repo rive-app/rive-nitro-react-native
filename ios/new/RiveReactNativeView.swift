@@ -23,19 +23,30 @@ class RiveReactNativeView: UIView {
   private var riveUIView: RiveUIView?
   private var riveInstance: RiveRuntime.Rive?
   private var pendingBindInstance: ViewModelInstance?
-  private var viewReadyContinuations: [CheckedContinuation<Void, Never>] = []
+  private var viewReadyContinuations: [CheckedContinuation<Bool, Never>] = []
   private var isViewReady = false
   private var configTask: Task<Void, Never>?
   private var isPaused = false
   var autoPlay: Bool = true
 
+  /// Configure failures are reported here (wired to the onError prop).
+  var onLoadError: ((String) -> Void)?
+
   func awaitViewReady() async -> Bool {
-    if !isViewReady {
-      await withCheckedContinuation { continuation in
-        viewReadyContinuations.append(continuation)
-      }
+    if isViewReady {
+      return true
     }
-    return true
+    return await withCheckedContinuation { continuation in
+      viewReadyContinuations.append(continuation)
+    }
+  }
+
+  private func resumeViewReadyContinuations(_ result: Bool) {
+    let continuations = viewReadyContinuations
+    viewReadyContinuations.removeAll()
+    for continuation in continuations {
+      continuation.resume(returning: result)
+    }
   }
 
   func configure(_ config: ViewConfiguration, dataBindingChanged: Bool = false, reload: Bool = false, initialUpdate: Bool = false) {
@@ -96,13 +107,14 @@ class RiveReactNativeView: UIView {
 
           if !self.isViewReady {
             self.isViewReady = true
-            for continuation in self.viewReadyContinuations {
-              continuation.resume()
-            }
-            self.viewReadyContinuations.removeAll()
+            self.resumeViewReadyContinuations(true)
           }
         } catch {
-          RCTLogError("[RiveReactNativeView] Failed to configure: \(error)")
+          guard !Task.isCancelled else { return }
+          let message = (error as NSError).localizedDescription
+          RiveLog.e("RiveReactNativeView", "Failed to configure: \(message)")
+          self.onLoadError?(message)
+          self.resumeViewReadyContinuations(false)
         }
       }
     } else {
@@ -206,9 +218,29 @@ class RiveReactNativeView: UIView {
     pendingBindInstance = nil
   }
 
+  /// Final teardown, called from HybridRiveView.dispose() (always on main).
+  /// Unlike the reload-path cleanup(), this also settles any pending
+  /// awaitViewReady() callers so their promises (which retain this view)
+  /// don't hang forever.
+  func detach() {
+    resumeViewReadyContinuations(false)
+    cleanup()
+  }
+
   deinit {
-    MainActor.assumeIsolated {
-      cleanup()
+    // deinit is nonisolated and Nitro can drop the last reference off the
+    // main thread (JS/GC thread); cleanup() must run on main. Capture the
+    // resources, not self.
+    let task = configTask
+    let uiView = riveUIView
+    if Thread.isMainThread {
+      task?.cancel()
+      uiView?.removeFromSuperview()
+    } else {
+      DispatchQueue.main.async {
+        task?.cancel()
+        uiView?.removeFromSuperview()
+      }
     }
   }
 }

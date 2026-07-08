@@ -1,6 +1,7 @@
 package com.margelo.nitro.rive
 
 import androidx.annotation.Keep
+import app.rive.Artboard
 import app.rive.RiveFile
 import app.rive.ViewModelInstance
 import app.rive.ViewModelSource
@@ -17,10 +18,18 @@ class HybridViewModel(
   private val riveWorker: CommandQueue,
   private val viewModelName: String,
   private val parentFile: HybridRiveFile,
-  private val vmSource: ViewModelSource
+  private val vmSource: ViewModelSource,
+  // Artboard created solely to resolve this view model (DefaultForArtboard
+  // sources) — owned by this wrapper and closed with it.
+  private val ownedArtboard: Artboard? = null
 ) : HybridViewModelSpec() {
   companion object {
     private const val TAG = "HybridViewModel"
+  }
+
+  override fun dispose() {
+    ownedArtboard?.let { runCatching { it.close() } }
+    super.dispose()
   }
 
   override fun getPropertiesAsync(): Promise<Array<ViewModelPropertyInfo>> {
