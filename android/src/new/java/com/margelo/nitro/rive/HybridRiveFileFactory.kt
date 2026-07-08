@@ -25,7 +25,11 @@ object RiveErrorLogger : app.rive.RiveLog.Logger {
   private val reportedErrors = mutableSetOf<String>()
 
   fun addListener(listener: (String) -> Unit) {
-    synchronized(listeners) { listeners.add(listener) }
+    // Idempotent: views re-register on every reload; duplicates would fan
+    // out the same error N times to onError.
+    synchronized(listeners) {
+      if (!listeners.contains(listener)) listeners.add(listener)
+    }
   }
 
   fun removeListener(listener: (String) -> Unit) {

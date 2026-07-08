@@ -78,7 +78,19 @@ export interface ViewModelInstance
   readonly instanceName: string;
   /** All properties available on this view model instance */
   getPropertiesAsync(): Promise<ViewModelPropertyInfo[]>;
-  /** Get a number property from the view model instance at the given path */
+  /**
+   * Get a number property from the view model instance at the given path.
+   *
+   * Backend note (applies to all property accessors below): the legacy
+   * backend validates the path synchronously and returns `undefined` when it
+   * does not exist. The experimental backend cannot — property lookup
+   * happens on the async command server — so it returns an unvalidated
+   * handle for any path, and a bad path surfaces when the property is used:
+   * `getValueAsync()` rejects, listeners never fire, and the `useRive*`
+   * hooks report it via their `error` result. Do not rely on a falsy return
+   * to detect typos on the experimental backend; check
+   * `getPropertiesAsync()` or handle the `getValueAsync()` rejection.
+   */
   numberProperty(path: string): ViewModelNumberProperty | undefined;
 
   /** Get a string property from the view model instance at the given path */

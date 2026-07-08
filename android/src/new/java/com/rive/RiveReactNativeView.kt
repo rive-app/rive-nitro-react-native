@@ -321,13 +321,19 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
             withContext(Dispatchers.Main) {
               if (disposed) return@withContext
               val art = artboard ?: return@withContext
-              val source = ViewModelSource.DefaultForArtboard(art).defaultInstance()
-              val instance = ViewModelInstance.fromFile(riveFile, source)
-              if (instance.instanceHandle.handle == 1L) {
+              // Probe for a default ViewModel first — getDefaultViewModelInfo
+              // throws when the artboard has none, a normal state. (Creating
+              // the instance regardless and checking its handle against a
+              // magic value relied on undocumented handle allocation.)
+              try {
+                riveFile.getDefaultViewModelInfo(art)
+              } catch (e: Exception) {
                 Log.d(TAG, "Auto-binding skipped: no default ViewModel for artboard")
-                runCatching { instance.close() }
                 return@withContext
               }
+              if (disposed) return@withContext
+              val source = ViewModelSource.DefaultForArtboard(art).defaultInstance()
+              val instance = ViewModelInstance.fromFile(riveFile, source)
               setBoundInstance(instance, owns = true)
               bindInstanceToStateMachine(instance)
             }
@@ -409,8 +415,13 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
     throw UnsupportedOperationException("Text runs not supported in experimental API")
   }
 
+  // Runs twice per view: eagerly from HybridRiveView.dispose() (JS unmount,
+  // posted to main) and from RiveViewManager.onDropViewInstance — must stay
+  // idempotent and on the main thread (Choreographer is thread-local).
   fun dispose() {
+    if (disposed) return
     disposed = true
+    viewReadyDeferred.complete(false)
     viewScope.cancel()
     RiveErrorLogger.removeListener(errorListener)
     stopRenderLoop()
