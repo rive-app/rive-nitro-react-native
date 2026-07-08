@@ -14,7 +14,7 @@ import {
   RiveView,
   useRive,
   useRiveFile,
-  useViewModelInstanceAsync,
+  useViewModelInstance,
   type RiveFile,
   type RiveFileInput,
   type RiveViewRef,
@@ -58,7 +58,8 @@ function ArtboardProbe({
   artboardName: string;
   ctx: AsyncCtx;
 }) {
-  const { instance, error, isLoading } = useViewModelInstanceAsync(file, {
+  const { instance, error, isLoading } = useViewModelInstance(file, {
+    async: true,
     artboardName,
   });
   useEffect(() => {
@@ -84,7 +85,8 @@ function ViewModelProbe({
   onInit?: (vmi: ViewModelInstance) => void;
   ctx: AsyncCtx;
 }) {
-  const { instance, error, isLoading } = useViewModelInstanceAsync(file, {
+  const { instance, error, isLoading } = useViewModelInstance(file, {
+    async: true,
     viewModelName,
     onInit,
   });
@@ -111,7 +113,8 @@ function InstanceNameProbe({
   instanceName: string;
   ctx: AsyncCtx;
 }) {
-  const { instance, error, isLoading } = useViewModelInstanceAsync(file, {
+  const { instance, error, isLoading } = useViewModelInstance(file, {
+    async: true,
     viewModelName,
     instanceName,
   });
@@ -134,7 +137,9 @@ function FixedSourceProbe({
   source: RiveFile | null | undefined;
   ctx: AsyncCtx;
 }) {
-  const { instance, error, isLoading } = useViewModelInstanceAsync(source);
+  const { instance, error, isLoading } = useViewModelInstance(source, {
+    async: true,
+  });
   useEffect(() => {
     ctx.instance = instance;
     ctx.error = error;
@@ -157,7 +162,9 @@ function FileErrorProbe({
   ctx: FileErrorCtx;
 }) {
   const { riveFile, error: fileError } = useRiveFile(input);
-  const { instance, error, isLoading } = useViewModelInstanceAsync(riveFile);
+  const { instance, error, isLoading } = useViewModelInstance(riveFile, {
+    async: true,
+  });
   useEffect(() => {
     ctx.fileErrored = fileError != null;
     ctx.instance = instance;
@@ -176,7 +183,7 @@ function FileErrorProbe({
 // while the legacy backend resolves undefined; the hook must map both to the
 // same friendly error instead of leaking a raw native message.
 
-describe('useViewModelInstanceAsync: unknown artboard name', () => {
+describe('useViewModelInstance async: unknown artboard name', () => {
   it('surfaces the friendly "not found" error instead of the raw native message', async () => {
     const file = await loadFile();
     const ctx = createCtx();
@@ -211,7 +218,7 @@ describe('useViewModelInstanceAsync: unknown artboard name', () => {
 // throwing onInit silently blank-screened. These lock the contract the fixed
 // example now relies on: a throw becomes `error`, a clean onInit resolves.
 
-describe('useViewModelInstanceAsync: onInit', () => {
+describe('useViewModelInstance async: onInit', () => {
   it('surfaces an onInit throw as error and leaves instance null', async () => {
     const file = await loadFile();
     const ctx = createCtx();
@@ -258,7 +265,7 @@ describe('useViewModelInstanceAsync: onInit', () => {
 // terminate on `null`, otherwise a consumer keying a spinner off `isLoading`
 // hangs forever with no signal.
 
-describe('useViewModelInstanceAsync: null vs undefined source', () => {
+describe('useViewModelInstance async: null vs undefined source', () => {
   it('stays loading while the source is undefined (file still resolving)', async () => {
     const ctx = createCtx();
     await render(<FixedSourceProbe source={undefined} ctx={ctx} />);
@@ -299,7 +306,7 @@ describe('useViewModelInstanceAsync: null vs undefined source', () => {
 // `contains()` pre-check). Asserting a cause per-platform would pin that
 // accidental divergence, so only its shape is checked when present.
 
-describe('useViewModelInstanceAsync: instance creation failure', () => {
+describe('useViewModelInstance async: instance creation failure', () => {
   it('keeps a clean not-found message on every backend (cause optional)', async () => {
     const file = await loadFile();
     const ctx = createCtx();
@@ -347,7 +354,9 @@ describe('useViewModelInstanceAsync: instance creation failure', () => {
 
 function RefSourceConsumer({ file, ctx }: { file: RiveFile; ctx: AsyncCtx }) {
   const { riveViewRef, setHybridRef } = useRive();
-  const { instance, error, isLoading } = useViewModelInstanceAsync(riveViewRef);
+  const { instance, error, isLoading } = useViewModelInstance(riveViewRef, {
+    async: true,
+  });
   useEffect(() => {
     ctx.instance = instance;
     ctx.error = error;
@@ -370,7 +379,9 @@ function EagerRefConsumer({ file, ctx }: { file: RiveFile; ctx: AsyncCtx }) {
   // Raw hybridRef: the ref is exposed the moment the native view attaches,
   // before awaitViewReady/auto-bind complete — the widest race window.
   const [viewRef, setViewRef] = useState<RiveViewRef | undefined>(undefined);
-  const { instance, error, isLoading } = useViewModelInstanceAsync(viewRef);
+  const { instance, error, isLoading } = useViewModelInstance(viewRef, {
+    async: true,
+  });
   useEffect(() => {
     ctx.instance = instance;
     ctx.error = error;
@@ -397,7 +408,7 @@ function EagerRefConsumer({ file, ctx }: { file: RiveFile; ctx: AsyncCtx }) {
 // getViewModelInstance() read races the bind and can settle a terminal
 // { instance: null } on fast mounts.
 
-describe('useViewModelInstanceAsync: RiveViewRef source', () => {
+describe('useViewModelInstance async: RiveViewRef source', () => {
   it('resolves the auto-bound instance from a useRive view ref', async () => {
     // getViewModelInstance() returns null on Android experimental — auto-bind
     // doesn't expose the VMI handle to JS yet (same skip as autoplay.harness).
@@ -438,7 +449,7 @@ describe('useViewModelInstanceAsync: RiveViewRef source', () => {
 // natives normalize this to resolve-null so the hook's documented
 // { instance: null, error: null } state is reachable on every backend.
 
-describe('useViewModelInstanceAsync: file without a default ViewModel', () => {
+describe('useViewModelInstance async: file without a default ViewModel', () => {
   it('resolves null with no error', async () => {
     const file = await RiveFileFactory.fromSource(NO_DEFAULT_VM, undefined);
     const ctx = createCtx();

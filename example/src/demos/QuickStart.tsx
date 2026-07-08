@@ -13,7 +13,7 @@ import {
   useRiveFile,
   useRiveNumber,
   useRiveTrigger,
-  useViewModelInstanceAsync,
+  useViewModelInstance,
   Fit,
 } from '@rive-app/react-native';
 import type { Metadata } from '../shared/metadata';
@@ -23,9 +23,10 @@ export default function QuickStart() {
     require('../../assets/rive/quick_start.riv')
   );
   const { riveViewRef, setHybridRef } = useRive();
-  const { instance: viewModelInstance, error } = useViewModelInstanceAsync(
+  const { instance: viewModelInstance, error } = useViewModelInstance(
     riveFile,
     {
+      async: true,
       onInit: (vmi) => vmi.numberProperty('health')!.set(9),
     }
   );

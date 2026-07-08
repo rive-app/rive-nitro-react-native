@@ -36,6 +36,7 @@ function AgeHook({ instance, ctx }: { instance: ViewModelInstance; ctx: Ctx }) {
 }
 
 function Repro({ file, ctx }: { file: RiveFile; ctx: Ctx }) {
+  // eslint-disable-next-line @typescript-eslint/no-deprecated -- #297 regression rides the sync creation path on purpose
   const { instance } = useViewModelInstance(file);
   const [hookKey, setHookKey] = useState(0);
   useEffect(() => {

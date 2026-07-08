@@ -198,8 +198,9 @@ const LOADING_RESULT: UseViewModelInstanceAsyncResult = {
 };
 
 /**
- * Async version of {@link useViewModelInstance}. Creates a ViewModelInstance
- * using the non-deprecated `*Async` runtime APIs, resolving off the JS thread.
+ * Implementation behind `useViewModelInstance(source, { async: true })` — not
+ * exported publicly. Creates a ViewModelInstance using the non-deprecated
+ * `*Async` runtime APIs, resolving off the JS thread.
  *
  * Because creation is asynchronous, the instance is not available on the first
  * render. Consumers should guard on the result:

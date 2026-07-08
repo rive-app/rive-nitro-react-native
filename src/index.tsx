@@ -65,14 +65,11 @@ export { useRiveColor } from './hooks/useRiveColor';
 export { useRiveTrigger } from './hooks/useRiveTrigger';
 export { useRiveList } from './hooks/useRiveList';
 export {
-  // eslint-disable-next-line @typescript-eslint/no-deprecated -- intentionally re-exported for backward compatibility; prefer useViewModelInstanceAsync
+  // eslint-disable-next-line @typescript-eslint/no-deprecated -- only the non-async overloads are deprecated; the export itself is current
   useViewModelInstance,
   type UseViewModelInstanceResult,
+  type UseViewModelInstanceRequiredResult,
 } from './hooks/useViewModelInstance';
-export {
-  useViewModelInstanceAsync,
-  type UseViewModelInstanceAsyncResult,
-} from './hooks/useViewModelInstanceAsync';
 export { useRiveFile, type UseRiveFileResult } from './hooks/useRiveFile';
 export { type RiveFileInput } from './hooks/useRiveFile';
 export { type SetValueAction } from './types';

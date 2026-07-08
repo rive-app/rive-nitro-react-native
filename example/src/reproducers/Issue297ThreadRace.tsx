@@ -11,7 +11,7 @@ import {
   Fit,
   RiveView,
   useRiveFile,
-  useViewModelInstanceAsync,
+  useViewModelInstance,
   type ViewModelInstance,
   type RiveFile,
 } from '@rive-app/react-native';
@@ -130,7 +130,7 @@ function StressRunner({
 }
 
 function WithViewModelSetup({ file }: { file: RiveFile }) {
-  const { instance, error } = useViewModelInstanceAsync(file);
+  const { instance, error } = useViewModelInstance(file, { async: true });
 
   if (error) {
     return <Text style={styles.errorText}>{error.message}</Text>;

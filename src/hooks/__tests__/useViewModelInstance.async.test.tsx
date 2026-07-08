@@ -5,7 +5,7 @@ import {
   waitFor,
   act,
 } from '@testing-library/react-native';
-import { useViewModelInstanceAsync } from '../useViewModelInstanceAsync';
+import { useViewModelInstance } from '../useViewModelInstance';
 import type { RiveFile } from '../../specs/RiveFile.nitro';
 import type { ViewModel, ViewModelInstance } from '../../specs/ViewModel.nitro';
 import type { ArtboardBy } from '../../specs/ArtboardBy';
@@ -68,14 +68,14 @@ function createMockRiveFile(options?: {
   } as any;
 }
 
-describe('useViewModelInstanceAsync - RiveFile source', () => {
+describe('useViewModelInstance async - RiveFile source', () => {
   it('is loading on first render, then resolves the default instance', async () => {
     const defaultInstance = createMockViewModelInstance();
     const defaultViewModel = createMockViewModel({ defaultInstance });
     const mockRiveFile = createMockRiveFile({ defaultViewModel });
 
     const { result } = renderHook(() =>
-      useViewModelInstanceAsync(mockRiveFile)
+      useViewModelInstance(mockRiveFile, { async: true })
     );
 
     expect(result.current.isLoading).toBe(true);
@@ -97,7 +97,8 @@ describe('useViewModelInstanceAsync - RiveFile source', () => {
     const mockRiveFile = createMockRiveFile({ defaultViewModel });
 
     const { result } = renderHook(() =>
-      useViewModelInstanceAsync(mockRiveFile, {
+      useViewModelInstance(mockRiveFile, {
+        async: true,
         instanceName: 'PersonInstance',
       })
     );
@@ -119,7 +120,10 @@ describe('useViewModelInstanceAsync - RiveFile source', () => {
     });
 
     const { result } = renderHook(() =>
-      useViewModelInstanceAsync(mockRiveFile, { artboardName: 'MainArtboard' })
+      useViewModelInstance(mockRiveFile, {
+        async: true,
+        artboardName: 'MainArtboard',
+      })
     );
 
     await waitFor(() => expect(result.current.instance).toBe(mainInstance));
@@ -139,7 +143,10 @@ describe('useViewModelInstanceAsync - RiveFile source', () => {
     });
 
     const { result } = renderHook(() =>
-      useViewModelInstanceAsync(mockRiveFile, { viewModelName: 'Settings' })
+      useViewModelInstance(mockRiveFile, {
+        async: true,
+        viewModelName: 'Settings',
+      })
     );
 
     await waitFor(() => expect(result.current.instance).toBe(settingsInstance));
@@ -152,7 +159,10 @@ describe('useViewModelInstanceAsync - RiveFile source', () => {
     const mockRiveFile = createMockRiveFile({ defaultViewModel });
 
     const { result } = renderHook(() =>
-      useViewModelInstanceAsync(mockRiveFile, { instanceName: 'NonExistent' })
+      useViewModelInstance(mockRiveFile, {
+        async: true,
+        instanceName: 'NonExistent',
+      })
     );
 
     await waitFor(() => expect(result.current.isLoading).toBe(false));
@@ -174,7 +184,10 @@ describe('useViewModelInstanceAsync - RiveFile source', () => {
     const mockRiveFile = createMockRiveFile({ defaultViewModel });
 
     const { result } = renderHook(() =>
-      useViewModelInstanceAsync(mockRiveFile, { instanceName: 'Whatever' })
+      useViewModelInstance(mockRiveFile, {
+        async: true,
+        instanceName: 'Whatever',
+      })
     );
 
     await waitFor(() => expect(result.current.isLoading).toBe(false));
@@ -190,7 +203,10 @@ describe('useViewModelInstanceAsync - RiveFile source', () => {
     const mockRiveFile = createMockRiveFile({ defaultViewModel });
 
     const { result } = renderHook(() =>
-      useViewModelInstanceAsync(mockRiveFile, { instanceName: 'Missing' })
+      useViewModelInstance(mockRiveFile, {
+        async: true,
+        instanceName: 'Missing',
+      })
     );
 
     await waitFor(() => expect(result.current.isLoading).toBe(false));
@@ -204,7 +220,7 @@ describe('useViewModelInstanceAsync - RiveFile source', () => {
     const mockRiveFile = createMockRiveFile({});
 
     const { result } = renderHook(() =>
-      useViewModelInstanceAsync(mockRiveFile)
+      useViewModelInstance(mockRiveFile, { async: true })
     );
 
     await waitFor(() => expect(result.current.isLoading).toBe(false));
@@ -222,7 +238,10 @@ describe('useViewModelInstanceAsync - RiveFile source', () => {
     );
 
     const { result } = renderHook(() =>
-      useViewModelInstanceAsync(mockRiveFile, { artboardName: 'NonExistent' })
+      useViewModelInstance(mockRiveFile, {
+        async: true,
+        artboardName: 'NonExistent',
+      })
     );
 
     await waitFor(() => expect(result.current.isLoading).toBe(false));
@@ -241,7 +260,10 @@ describe('useViewModelInstanceAsync - RiveFile source', () => {
     const mockRiveFile = createMockRiveFile({});
 
     const { result } = renderHook(() =>
-      useViewModelInstanceAsync(mockRiveFile, { artboardName: 'NonExistent' })
+      useViewModelInstance(mockRiveFile, {
+        async: true,
+        artboardName: 'NonExistent',
+      })
     );
 
     await waitFor(() => expect(result.current.isLoading).toBe(false));
@@ -261,7 +283,7 @@ describe('useViewModelInstanceAsync - RiveFile source', () => {
     const mockRiveFile = createMockRiveFile({ defaultViewModel });
 
     const { result } = renderHook(() =>
-      useViewModelInstanceAsync(mockRiveFile)
+      useViewModelInstance(mockRiveFile, { async: true })
     );
 
     await waitFor(() => expect(result.current.error).toBeInstanceOf(Error));
@@ -275,7 +297,7 @@ describe('useViewModelInstanceAsync - RiveFile source', () => {
     );
 
     const { result } = renderHook(() =>
-      useViewModelInstanceAsync(mockRiveFile)
+      useViewModelInstance(mockRiveFile, { async: true })
     );
 
     await waitFor(() => expect(result.current.isLoading).toBe(false));
@@ -284,13 +306,13 @@ describe('useViewModelInstanceAsync - RiveFile source', () => {
   });
 });
 
-describe('useViewModelInstanceAsync - ViewModel source', () => {
+describe('useViewModelInstance async - ViewModel source', () => {
   it('uses createDefaultInstanceAsync by default', async () => {
     const defaultInstance = createMockViewModelInstance();
     const mockViewModel = createMockViewModel({ defaultInstance });
 
     const { result } = renderHook(() =>
-      useViewModelInstanceAsync(mockViewModel)
+      useViewModelInstance(mockViewModel, { async: true })
     );
 
     await waitFor(() => expect(result.current.instance).toBe(defaultInstance));
@@ -302,7 +324,10 @@ describe('useViewModelInstanceAsync - ViewModel source', () => {
     const mockViewModel = createMockViewModel({ blankInstance });
 
     const { result } = renderHook(() =>
-      useViewModelInstanceAsync(mockViewModel, { useNew: true })
+      useViewModelInstance(mockViewModel, {
+        async: true,
+        useNew: true,
+      })
     );
 
     await waitFor(() => expect(result.current.instance).toBe(blankInstance));
@@ -317,7 +342,10 @@ describe('useViewModelInstanceAsync - ViewModel source', () => {
     });
 
     const { result } = renderHook(() =>
-      useViewModelInstanceAsync(mockViewModel, { name: 'Gordon' })
+      useViewModelInstance(mockViewModel, {
+        async: true,
+        name: 'Gordon',
+      })
     );
 
     await waitFor(() => expect(result.current.instance).toBe(namedInstance));
@@ -333,12 +361,14 @@ function createMockRiveViewRef(
   return { getViewModelInstance: jest.fn(getViewModelInstance) } as any;
 }
 
-describe('useViewModelInstanceAsync - RiveViewRef source', () => {
+describe('useViewModelInstance async - RiveViewRef source', () => {
   it('resolves the view-bound instance', async () => {
     const vmi = createMockViewModelInstance();
     const ref = createMockRiveViewRef(() => vmi);
 
-    const { result } = renderHook(() => useViewModelInstanceAsync(ref));
+    const { result } = renderHook(() =>
+      useViewModelInstance(ref, { async: true })
+    );
 
     await waitFor(() => expect(result.current.instance).toBe(vmi));
     expect(result.current.error).toBeNull();
@@ -349,7 +379,7 @@ describe('useViewModelInstanceAsync - RiveViewRef source', () => {
     const ref = createMockRiveViewRef(() => vmi);
 
     const { result, unmount } = renderHook(() =>
-      useViewModelInstanceAsync(ref)
+      useViewModelInstance(ref, { async: true })
     );
 
     await waitFor(() => expect(result.current.instance).toBe(vmi));
@@ -364,7 +394,9 @@ describe('useViewModelInstanceAsync - RiveViewRef source', () => {
     let calls = 0;
     const ref = createMockRiveViewRef(() => (++calls >= 3 ? vmi : undefined));
 
-    const { result } = renderHook(() => useViewModelInstanceAsync(ref));
+    const { result } = renderHook(() =>
+      useViewModelInstance(ref, { async: true })
+    );
 
     expect(result.current.isLoading).toBe(true);
     await waitFor(() => expect(result.current.instance).toBe(vmi), {
@@ -377,7 +409,9 @@ describe('useViewModelInstanceAsync - RiveViewRef source', () => {
     const getVmi = jest.fn((): ViewModelInstance | undefined => undefined);
     const ref = { getViewModelInstance: getVmi } as unknown as RiveViewRef;
 
-    const { unmount } = renderHook(() => useViewModelInstanceAsync(ref));
+    const { unmount } = renderHook(() =>
+      useViewModelInstance(ref, { async: true })
+    );
     unmount();
 
     await act(async () => {
@@ -391,9 +425,11 @@ describe('useViewModelInstanceAsync - RiveViewRef source', () => {
   });
 });
 
-describe('useViewModelInstanceAsync - null vs undefined source', () => {
+describe('useViewModelInstance async - null vs undefined source', () => {
   it('settles to a terminal null when the source is null (e.g. file load failed)', async () => {
-    const { result } = renderHook(() => useViewModelInstanceAsync(null));
+    const { result } = renderHook(() =>
+      useViewModelInstance(null, { async: true })
+    );
 
     await waitFor(() => expect(result.current.isLoading).toBe(false));
     expect(result.current.instance).toBeNull();
@@ -401,7 +437,9 @@ describe('useViewModelInstanceAsync - null vs undefined source', () => {
   });
 
   it('stays in the loading state when the source is undefined (still resolving)', async () => {
-    const { result } = renderHook(() => useViewModelInstanceAsync(undefined));
+    const { result } = renderHook(() =>
+      useViewModelInstance(undefined, { async: true })
+    );
 
     expect(result.current.isLoading).toBe(true);
     expect(result.current.instance).toBeUndefined();
@@ -415,7 +453,7 @@ describe('useViewModelInstanceAsync - null vs undefined source', () => {
   });
 });
 
-describe('useViewModelInstanceAsync - onInit', () => {
+describe('useViewModelInstance async - onInit', () => {
   it('calls onInit with the resolved instance', async () => {
     const defaultInstance = createMockViewModelInstance();
     const defaultViewModel = createMockViewModel({ defaultInstance });
@@ -423,7 +461,10 @@ describe('useViewModelInstanceAsync - onInit', () => {
     const onInit = jest.fn();
 
     const { result } = renderHook(() =>
-      useViewModelInstanceAsync(mockRiveFile, { onInit })
+      useViewModelInstance(mockRiveFile, {
+        async: true,
+        onInit,
+      })
     );
 
     await waitFor(() => expect(result.current.instance).toBe(defaultInstance));
@@ -437,7 +478,8 @@ describe('useViewModelInstanceAsync - onInit', () => {
     const mockRiveFile = createMockRiveFile({ defaultViewModel });
 
     const { result } = renderHook(() =>
-      useViewModelInstanceAsync(mockRiveFile, {
+      useViewModelInstance(mockRiveFile, {
+        async: true,
         onInit: () => {
           throw new Error('init boom');
         },
@@ -451,14 +493,14 @@ describe('useViewModelInstanceAsync - onInit', () => {
   });
 });
 
-describe('useViewModelInstanceAsync - disposal', () => {
+describe('useViewModelInstance async - disposal', () => {
   it('disposes the instance on unmount', async () => {
     const defaultInstance = createMockViewModelInstance();
     const defaultViewModel = createMockViewModel({ defaultInstance });
     const mockRiveFile = createMockRiveFile({ defaultViewModel });
 
     const { result, unmount } = renderHook(() =>
-      useViewModelInstanceAsync(mockRiveFile)
+      useViewModelInstance(mockRiveFile, { async: true })
     );
 
     await waitFor(() => expect(result.current.instance).toBe(defaultInstance));
@@ -478,7 +520,7 @@ describe('useViewModelInstanceAsync - disposal', () => {
     const mockRiveFile = createMockRiveFile({ defaultViewModel });
 
     const { unmount } = renderHook(() =>
-      useViewModelInstanceAsync(mockRiveFile)
+      useViewModelInstance(mockRiveFile, { async: true })
     );
 
     unmount();
@@ -502,7 +544,8 @@ describe('useViewModelInstanceAsync - disposal', () => {
     });
 
     const { result, rerender } = renderHook(
-      ({ file }: { file: RiveFile }) => useViewModelInstanceAsync(file),
+      ({ file }: { file: RiveFile }) =>
+        useViewModelInstance(file, { async: true }),
       { initialProps: { file: fileA } }
     );
 
@@ -518,7 +561,7 @@ describe('useViewModelInstanceAsync - disposal', () => {
   });
 });
 
-describe('useViewModelInstanceAsync - required', () => {
+describe('useViewModelInstance async - required', () => {
   class ErrorBoundary extends React.Component<
     { onError: (e: Error) => void; children?: React.ReactNode },
     { hasError: boolean }
@@ -536,7 +579,8 @@ describe('useViewModelInstanceAsync - required', () => {
   }
 
   function Probe({ source }: { source: RiveFile }) {
-    useViewModelInstanceAsync(source, {
+    useViewModelInstance(source, {
+      async: true,
       viewModelName: 'NonExistent',
       required: true,
     });

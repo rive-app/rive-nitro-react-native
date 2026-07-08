@@ -13,7 +13,7 @@ import {
   RiveView,
   useRiveFile,
   useRiveString,
-  useViewModelInstanceAsync,
+  useViewModelInstance,
   type ViewModelInstance,
   type RiveFile,
   type RiveViewRef,
@@ -41,7 +41,7 @@ export default function NestedViewModelExample() {
 }
 
 function WithViewModelSetup({ file }: { file: RiveFile }) {
-  const { instance, error } = useViewModelInstanceAsync(file);
+  const { instance, error } = useViewModelInstance(file, { async: true });
 
   if (error) {
     console.error(error.message);
