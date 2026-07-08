@@ -10,9 +10,9 @@ Properties of all .riv files used in this project.
 |------|----|----|-----|-------|
 | `quick_start.riv` | Yes | Yes | Yes | Artboard: `health_bar_v01`. VM props: `health` (number), `gameOver` (trigger). Game health/damage system. |
 | `databinding.riv` | Yes | Yes | Yes | Primary data binding test file. `Person` VM with: `age` (number), `name` (string), `likes_popcorn` (bool), `favourite_color` (color), `favourite_pet` (enum), `jump` (trigger). Nested `pet` VM. Enum `Pets`: dog/cat/frog/owl/chipmunk/rat. 2 view models total. |
-| `databinding_lists.riv` | Yes | Yes | - | `DevRel` VM with `team` list property. Default 5 items. Tests list mutations. **Experimental crash**: list mutations (removeInstanceAt, swap, addInstanceAt) cause EXC_BAD_ACCESS. |
-| `databinding_images.riv` | Yes | Yes | - | `MyViewModel` with `bound_image` image property. **Experimental crash**: EXC_BAD_ACCESS on load. |
-| `artboard_db_test.riv` | Yes | Yes | - | Multiple artboards, artboard properties: `artboard_1`, `artboard_2`. **Experimental crash**: EXC_BAD_ACCESS on load. |
+| `databinding_lists.riv` | Yes | Yes | - | `DevRel` VM with `team` list property. Default 5 items. Tests list mutations (exercised on the experimental backend by `databinding-advanced` / `async-api` harness suites). |
+| `databinding_images.riv` | Yes | Yes | - | `MyViewModel` with `bound_image` image property. Runs on the experimental backend (covered by harness suites). |
+| `artboard_db_test.riv` | Yes | Yes | - | Multiple artboards, artboard properties: `artboard_1`, `artboard_2`. Runs on the experimental backend (covered by harness suites). |
 | `viewmodelproperty.riv` | Yes | Yes | - | Complex nested VMs: `vm1`/`vm2` instances with nested `pet` VM. Tests replaceViewModel(). |
 | `rewards.riv` | Yes | Yes | Yes | Bouncing chest animation by default. Nested property paths: `Coin/Item_Value` (number), `Button/State_1` (string), `Energy_Bar/Bar_Color` (color), `Button/Pressed` (trigger). Works with experimental runtime. |
 | `many_viewmodels.riv` | Yes | Yes | - | Named instances: `red`, `green`, `blue`. Image property: `imageValue`. |
@@ -45,10 +45,10 @@ Properties of all .riv files used in this project.
 
 ## Experimental Backend Compatibility
 
-Files that **crash** the experimental backend:
-- `databinding_images.riv` - EXC_BAD_ACCESS on load
-- `artboard_db_test.riv` - EXC_BAD_ACCESS on load
-- `databinding_lists.riv` - list mutation operations crash
+Historical note: `databinding_images.riv`, `artboard_db_test.riv`, and
+`databinding_lists.riv` list mutations crashed early experimental builds
+(EXC_BAD_ACCESS); all three are now exercised green by the harness suites CI
+runs on the experimental backend.
 
 Files that **don't work** with experimental backend:
 - `vehicles.riv` (remote) - no state machine, experimental API requires one

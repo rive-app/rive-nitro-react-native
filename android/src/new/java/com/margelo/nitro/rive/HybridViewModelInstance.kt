@@ -37,8 +37,18 @@ class HybridViewModelInstance(
     get() = _instanceName ?: ""
 
   override fun getPropertiesAsync(): Promise<Array<ViewModelPropertyInfo>> {
-    val name = viewModelName ?: return Promise.resolved(emptyArray())
-    val file = parentFile.riveFile ?: return Promise.resolved(emptyArray())
+    // "No metadata" must not read as "no properties" — instances obtained
+    // via nested paths, list items, or the view don't carry their ViewModel
+    // name on this backend.
+    val name = viewModelName ?: return Promise.rejected(
+      RuntimeException(
+        "getPropertiesAsync is unavailable for this instance: its ViewModel " +
+          "metadata is unknown (nested/list/view-obtained instances). Query the " +
+          "ViewModel it was created from instead."
+      )
+    )
+    val file = parentFile.riveFile
+      ?: return Promise.rejected(RuntimeException("The RiveFile backing this instance was disposed"))
     return Promise.async {
       file
         .getViewModelProperties(name)

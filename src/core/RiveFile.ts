@@ -16,8 +16,8 @@ const RiveFileInternal =
  */
 export namespace RiveFileFactory {
   /** Which backend is in use: "legacy" or "experimental" */
-  export function getBackend(): string {
-    return RiveFileInternal.backend;
+  export function getBackend(): 'legacy' | 'experimental' {
+    return RiveFileInternal.backend as 'legacy' | 'experimental';
   }
 
   /**

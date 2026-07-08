@@ -39,7 +39,11 @@ export interface ViewModel
   readonly instanceCount: number;
   /** The name of the view model */
   readonly modelName: string;
-  /** All properties defined on this view model */
+  /**
+   * All properties defined on this view model.
+   *
+   * Backend note: rejects on the legacy backend (experimental only).
+   */
   getPropertiesAsync(): Promise<ViewModelPropertyInfo[]>;
   /** The number of properties in the view model */
   getPropertyCountAsync(): Promise<number>;
@@ -74,9 +78,22 @@ export interface ViewModelInstance
     ios: 'swift';
     android: 'kotlin';
   }> {
-  /** The name of the view model instance */
+  /**
+   * The name of the view model instance.
+   *
+   * Experimental backend: the runtime does not expose instance names, so this
+   * is only populated for instances created via `createInstanceByName` /
+   * `createInstanceByIndex` — default, blank, nested, and view-obtained
+   * instances report `""`.
+   */
   readonly instanceName: string;
-  /** All properties available on this view model instance */
+  /**
+   * All properties available on this view model instance.
+   *
+   * Backend note: rejects on the legacy backend, and on the experimental
+   * backend for instances whose ViewModel metadata is unknown (nested paths,
+   * list items, view-obtained instances) — query the ViewModel instead.
+   */
   getPropertiesAsync(): Promise<ViewModelPropertyInfo[]>;
   /**
    * Get a number property from the view model instance at the given path.
