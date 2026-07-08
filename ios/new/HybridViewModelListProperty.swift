@@ -35,8 +35,22 @@ class HybridViewModelListProperty: HybridViewModelListPropertySpec {
     }
   }
 
+  private func requireIndexInBounds(_ index: Int32, allowEnd: Bool = false) async throws {
+    let size = try await Int32(vmiInstance.size(of: prop))
+    let max = allowEnd ? size : size - 1
+    if index < 0 || index > max {
+      throw RuntimeError.error(
+        withMessage: "index \(index) out of bounds for list of size \(size)")
+    }
+  }
+
   private func fetchInstance(at index: Double) async throws -> (any HybridViewModelInstanceSpec)? {
-    let vmi = try await vmiInstance.value(of: prop, at: Int32(index))
+    // The command server hands out a handle for any index — probe the size
+    // so out-of-range lookups return nil like the legacy backend.
+    let idx = Int32(index)
+    let size = try await Int32(vmiInstance.size(of: prop))
+    if idx < 0 || idx >= size { return nil }
+    let vmi = try await vmiInstance.value(of: prop, at: idx)
     return HybridViewModelInstance(viewModelInstance: vmi, worker: worker)
   }
 
@@ -139,6 +153,7 @@ class HybridViewModelListProperty: HybridViewModelListPropertySpec {
     let p = prop
     let idx = Int32(index)
     return Promise.async { @MainActor in
+      try await self.requireIndexInBounds(idx, allowEnd: true)
       inst.insertInstance(vmi, to: p, at: idx)
     }
   }
@@ -160,6 +175,7 @@ class HybridViewModelListProperty: HybridViewModelListPropertySpec {
     let p = prop
     let idx = Int32(index)
     return Promise.async { @MainActor in
+      try await self.requireIndexInBounds(idx)
       inst.removeInstance(at: idx, from: p)
     }
   }
@@ -170,6 +186,8 @@ class HybridViewModelListProperty: HybridViewModelListPropertySpec {
     let idx1 = Int32(index1)
     let idx2 = Int32(index2)
     return Promise.async { @MainActor in
+      try await self.requireIndexInBounds(idx1)
+      try await self.requireIndexInBounds(idx2)
       inst.swapInstance(atIndex: idx1, withIndex: idx2, in: p)
     }
   }

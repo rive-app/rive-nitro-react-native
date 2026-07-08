@@ -86,6 +86,16 @@ export function useRiveList(
     };
   }, [property, path, revision]);
 
+  // The experimental backend has no native list-change notifications
+  // (addListener is a no-op there) — refresh after our own mutations so
+  // `length` stays live on both backends.
+  const afterMutation = useCallback(<T>(op: Promise<T>): Promise<T> => {
+    return op.then((result) => {
+      setRevision((r) => r + 1);
+      return result;
+    });
+  }, []);
+
   const getInstanceAt = useCallback(
     (index: number) => {
       return property
@@ -97,43 +107,47 @@ export function useRiveList(
 
   const addInstance = useCallback(
     (instance: ViewModelInstance) => {
-      return property ? property.addInstanceAsync(instance) : Promise.resolve();
+      return property
+        ? afterMutation(property.addInstanceAsync(instance))
+        : Promise.resolve();
     },
-    [property]
+    [property, afterMutation]
   );
 
   const addInstanceAt = useCallback(
     (instance: ViewModelInstance, index: number) => {
       return property
-        ? property.addInstanceAtAsync(instance, index)
+        ? afterMutation(property.addInstanceAtAsync(instance, index))
         : Promise.resolve();
     },
-    [property]
+    [property, afterMutation]
   );
 
   const removeInstance = useCallback(
     (instance: ViewModelInstance) => {
       return property
-        ? property.removeInstanceAsync(instance)
+        ? afterMutation(property.removeInstanceAsync(instance))
         : Promise.resolve();
     },
-    [property]
+    [property, afterMutation]
   );
 
   const removeInstanceAt = useCallback(
     (index: number) => {
       return property
-        ? property.removeInstanceAtAsync(index)
+        ? afterMutation(property.removeInstanceAtAsync(index))
         : Promise.resolve();
     },
-    [property]
+    [property, afterMutation]
   );
 
   const swap = useCallback(
     (index1: number, index2: number) => {
-      return property ? property.swapAsync(index1, index2) : Promise.resolve();
+      return property
+        ? afterMutation(property.swapAsync(index1, index2))
+        : Promise.resolve();
     },
-    [property]
+    [property, afterMutation]
   );
 
   return {
