@@ -409,8 +409,13 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
     throw UnsupportedOperationException("Text runs not supported in experimental API")
   }
 
+  // Runs twice per view: eagerly from HybridRiveView.dispose() (JS unmount,
+  // posted to main) and from RiveViewManager.onDropViewInstance — must stay
+  // idempotent and on the main thread (Choreographer is thread-local).
   fun dispose() {
+    if (disposed) return
     disposed = true
+    viewReadyDeferred.complete(false)
     viewScope.cancel()
     RiveErrorLogger.removeListener(errorListener)
     stopRenderLoop()

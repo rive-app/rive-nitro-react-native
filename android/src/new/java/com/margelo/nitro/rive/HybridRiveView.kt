@@ -2,6 +2,7 @@ package com.margelo.nitro.rive
 
 import androidx.annotation.Keep
 import com.facebook.proguard.annotations.DoNotStrip
+import com.facebook.react.bridge.UiThreadUtil
 import com.facebook.react.uimanager.ThemedReactContext
 import com.margelo.nitro.core.Promise
 import com.rive.BindData
@@ -47,6 +48,20 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
   companion object {
     private const val TAG = "HybridRiveView"
   }
+
+  //region Lifecycle
+  override fun dispose() {
+    // Eager teardown on JS unmount (RiveView calls dispose() in its unmount
+    // effect, PR #202); RiveViewManager.onDropViewInstance is the backstop.
+    // Nitro invokes this on the JS thread, but the view's teardown touches
+    // main-thread state (Choreographer), so hop to main.
+    val riveView = view
+    UiThreadUtil.runOnUiThread {
+      riveView.dispose()
+    }
+    super.dispose()
+  }
+  //endregion
 
   override val view: RiveReactNativeView = RiveReactNativeView(context).apply {
     onError = { msg ->
