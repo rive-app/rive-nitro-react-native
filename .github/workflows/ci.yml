@@ -256,7 +256,7 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: example/ios/build
-          key: ${{ runner.os }}-ios-build-${{ env.XCODE_VERSION }}-${{ hashFiles('yarn.lock', 'ios/**', 'nitrogen/generated/ios/**', '*.podspec', 'example/ios/Podfile.lock', 'example/ios/RiveExample/**') }}
+          key: ${{ runner.os }}-ios-build-${{ env.XCODE_VERSION }}-${{ hashFiles('package.json', 'yarn.lock', 'ios/**', 'nitrogen/generated/ios/**', '*.podspec', 'example/ios/Podfile.lock', 'example/ios/RiveExample/**') }}
           restore-keys: |
             ${{ runner.os }}-ios-build-${{ env.XCODE_VERSION }}-
 
@@ -459,7 +459,7 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: example/android/app/build
-          key: ${{ runner.os }}-android-build-${{ env.ANDROID_API_LEVEL }}-${{ hashFiles('yarn.lock', 'android/**', 'nitrogen/generated/android/**', 'example/android/app/build.gradle', 'example/android/gradle.properties') }}
+          key: ${{ runner.os }}-android-build-${{ env.ANDROID_API_LEVEL }}-${{ hashFiles('package.json', 'yarn.lock', 'android/**', 'nitrogen/generated/android/**', 'example/android/app/build.gradle', 'example/android/gradle.properties') }}
           restore-keys: |
             ${{ runner.os }}-android-build-${{ env.ANDROID_API_LEVEL }}-
 
@@ -527,7 +527,7 @@ jobs:
         with:
           path: |
             **/ios/Pods
-          key: ${{ runner.os }}-legacy-cocoapods-${{ hashFiles('example/ios/Podfile', '*.podspec') }}
+          key: ${{ runner.os }}-legacy-cocoapods-${{ hashFiles('package.json', 'example/ios/Podfile', '*.podspec') }}
           restore-keys: |
             ${{ runner.os }}-legacy-cocoapods-
 
@@ -554,7 +554,7 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: example/ios/build
-          key: ${{ runner.os }}-ios-legacy-build-${{ env.XCODE_VERSION }}-${{ hashFiles('yarn.lock', 'ios/**', 'nitrogen/generated/ios/**', '*.podspec', 'example/ios/Podfile', 'example/ios/RiveExample/**') }}
+          key: ${{ runner.os }}-ios-legacy-build-${{ env.XCODE_VERSION }}-${{ hashFiles('package.json', 'yarn.lock', 'ios/**', 'nitrogen/generated/ios/**', '*.podspec', 'example/ios/Podfile', 'example/ios/RiveExample/**') }}
           restore-keys: |
             ${{ runner.os }}-ios-legacy-build-${{ env.XCODE_VERSION }}-
 
@@ -666,7 +666,7 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: example/android/app/build
-          key: ${{ runner.os }}-android-legacy-build-${{ env.ANDROID_API_LEVEL }}-${{ hashFiles('yarn.lock', 'android/**', 'nitrogen/generated/android/**', 'example/android/app/build.gradle', 'example/android/gradle.properties') }}
+          key: ${{ runner.os }}-android-legacy-build-${{ env.ANDROID_API_LEVEL }}-${{ hashFiles('package.json', 'yarn.lock', 'android/**', 'nitrogen/generated/android/**', 'example/android/app/build.gradle', 'example/android/gradle.properties') }}
           restore-keys: |
             ${{ runner.os }}-android-legacy-build-${{ env.ANDROID_API_LEVEL }}-
 
