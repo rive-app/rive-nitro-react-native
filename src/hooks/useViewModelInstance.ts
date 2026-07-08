@@ -1,12 +1,9 @@
-// TODO: migrate createInstance/createInstanceByName/etc to async equivalents
-/* eslint-disable @typescript-eslint/no-deprecated */
-import { useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import type { ViewModel, ViewModelInstance } from '../specs/ViewModel.nitro';
 import type { RiveFile } from '../specs/RiveFile.nitro';
 import type { RiveViewRef } from '../index';
 import { callDispose } from '../core/callDispose';
 import { ArtboardByName } from '../specs/ArtboardBy';
-import { useDisposableMemo } from './useDisposableMemo';
 
 interface UseViewModelInstanceBaseParams {
   /**
@@ -16,8 +13,9 @@ interface UseViewModelInstanceBaseParams {
    */
   required?: boolean;
   /**
-   * Called synchronously when a new instance is created, before the hook returns.
-   * Use this to set initial values that need to be available immediately.
+   * Called when a new instance is created, before the hook publishes it.
+   * Use this to set initial values so they are applied before consumers see
+   * the instance.
    * Note: This callback is excluded from deps - changing it won't recreate the instance.
    */
   onInit?: (instance: ViewModelInstance) => void;
@@ -107,13 +105,13 @@ type CreateInstanceResult = {
   error?: string;
 };
 
-function createInstance(
+async function createInstanceAsync(
   source: ViewModelSource | null | undefined,
   instanceName: string | undefined,
   artboardName: string | undefined,
   viewModelName: string | undefined,
   useNew: boolean
-): CreateInstanceResult {
+): Promise<CreateInstanceResult> {
   if (!source) {
     return { instance: undefined, needsDispose: false };
   }
@@ -126,7 +124,7 @@ function createInstance(
   if (isRiveFile(source)) {
     let viewModel: ViewModel | undefined;
     if (viewModelName) {
-      viewModel = source.viewModelByName(viewModelName);
+      viewModel = await source.viewModelByNameAsync(viewModelName);
       if (!viewModel) {
         return {
           instance: null,
@@ -135,7 +133,7 @@ function createInstance(
         };
       }
     } else {
-      viewModel = source.defaultArtboardViewModel(
+      viewModel = await source.defaultArtboardViewModelAsync(
         artboardName ? ArtboardByName(artboardName) : undefined
       );
       if (!viewModel) {
@@ -149,33 +147,43 @@ function createInstance(
         return { instance: null, needsDispose: false };
       }
     }
-    let vmi: ViewModelInstance | undefined;
-    if (instanceName) {
-      try {
-        vmi = viewModel.createInstanceByName(instanceName);
-      } catch (e) {
-        console.warn(`createInstanceByName('${instanceName}') failed:`, e);
+    try {
+      let vmi: ViewModelInstance | undefined;
+      if (instanceName) {
+        try {
+          vmi = await viewModel.createInstanceByNameAsync(instanceName);
+        } catch (e) {
+          console.warn(
+            `createInstanceByNameAsync('${instanceName}') failed:`,
+            e
+          );
+        }
+        if (!vmi) {
+          return {
+            instance: null,
+            needsDispose: false,
+            error: `ViewModel instance '${instanceName}' not found`,
+          };
+        }
+      } else {
+        vmi = await viewModel.createDefaultInstanceAsync();
       }
-    } else {
-      vmi = viewModel.createDefaultInstance();
+      return { instance: vmi ?? null, needsDispose: true };
+    } finally {
+      // The intermediate ViewModel wrapper is hook-internal; disposing it
+      // releases the native resources it owns (e.g. the artboard resolved
+      // for DefaultForArtboard sources on the experimental backend).
+      callDispose(viewModel);
     }
-    if (!vmi && instanceName) {
-      return {
-        instance: null,
-        needsDispose: false,
-        error: `ViewModel instance '${instanceName}' not found`,
-      };
-    }
-    return { instance: vmi ?? null, needsDispose: true };
   }
 
-  // ViewModel source
+  // ViewModel source (caller-owned — not disposed here)
   let vmi: ViewModelInstance | undefined;
   if (instanceName) {
     try {
-      vmi = source.createInstanceByName(instanceName);
+      vmi = await source.createInstanceByNameAsync(instanceName);
     } catch (e) {
-      console.warn(`createInstanceByName('${instanceName}') failed:`, e);
+      console.warn(`createInstanceByNameAsync('${instanceName}') failed:`, e);
     }
     if (!vmi) {
       return {
@@ -185,9 +193,9 @@ function createInstance(
       };
     }
   } else if (useNew) {
-    vmi = source.createInstance();
+    vmi = await source.createBlankInstanceAsync();
   } else {
-    vmi = source.createDefaultInstance();
+    vmi = await source.createDefaultInstanceAsync();
   }
   return { instance: vmi ?? null, needsDispose: true };
 }
@@ -340,27 +348,47 @@ export function useViewModelInstance(
   const onInitRef = useRef(onInit);
   onInitRef.current = onInit;
 
-  const result = useDisposableMemo(
-    () => {
-      const created = createInstance(
-        source,
-        instanceName,
-        artboardName,
-        viewModelName,
-        useNew
-      );
-      if (created.instance && onInitRef.current) {
-        onInitRef.current(created.instance);
+  const [result, setResult] = useState<CreateInstanceResult>({
+    instance: undefined,
+    needsDispose: false,
+  });
+
+  useEffect(() => {
+    let cancelled = false;
+    let created: CreateInstanceResult | null = null;
+    // Back to the loading state while the new instance resolves.
+    setResult({ instance: undefined, needsDispose: false });
+    createInstanceAsync(
+      source,
+      instanceName,
+      artboardName,
+      viewModelName,
+      useNew
+    ).then(
+      (r) => {
+        if (cancelled) {
+          if (r.needsDispose && r.instance) callDispose(r.instance);
+          return;
+        }
+        created = r;
+        if (r.instance && onInitRef.current) {
+          onInitRef.current(r.instance);
+        }
+        setResult(r);
+      },
+      (e: unknown) => {
+        if (cancelled) return;
+        const message = e instanceof Error ? e.message : String(e);
+        setResult({ instance: null, needsDispose: false, error: message });
       }
-      return created;
-    },
-    (r) => {
-      if (r.needsDispose && r.instance) {
-        callDispose(r.instance);
+    );
+    return () => {
+      cancelled = true;
+      if (created?.needsDispose && created.instance) {
+        callDispose(created.instance);
       }
-    },
-    [source, instanceName, artboardName, viewModelName, useNew]
-  );
+    };
+  }, [source, instanceName, artboardName, viewModelName, useNew]);
 
   const error = useMemo(
     () => (result.error ? new Error(result.error) : null),

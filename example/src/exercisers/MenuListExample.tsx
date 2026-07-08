@@ -139,8 +139,8 @@ function MenuListContent({
     swap(index1, index2);
   };
 
-  const updateLabelAtIndex = (index: number, label: string) => {
-    const menuItem = getInstanceAt(index);
+  const updateLabelAtIndex = async (index: number, label: string) => {
+    const menuItem = await getInstanceAt(index);
     if (!menuItem) return;
 
     const menuItemLabel = menuItem.stringProperty('label');

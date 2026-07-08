@@ -45,6 +45,7 @@ export type UseViewModelInstanceTriggerParameters = {
 export interface UseRiveListResult {
   /**
    * The number of instances in the list.
+   * Updated asynchronously when the list changes.
    */
   length: number;
   /**
@@ -52,36 +53,34 @@ export interface UseRiveListResult {
    */
   getInstanceAt: (
     index: number
-  ) => import('./specs/ViewModel.nitro').ViewModelInstance | undefined;
+  ) => Promise<import('./specs/ViewModel.nitro').ViewModelInstance | undefined>;
   /**
    * Add an instance to the end of the list.
    */
   addInstance: (
     instance: import('./specs/ViewModel.nitro').ViewModelInstance
-  ) => void;
+  ) => Promise<void>;
   /**
    * Add an instance at the given index.
-   * @returns true if successful
    */
   addInstanceAt: (
     instance: import('./specs/ViewModel.nitro').ViewModelInstance,
     index: number
-  ) => boolean;
+  ) => Promise<void>;
   /**
    * Remove an instance from the list.
    */
   removeInstance: (
     instance: import('./specs/ViewModel.nitro').ViewModelInstance
-  ) => void;
+  ) => Promise<void>;
   /**
    * Remove the instance at the given index.
    */
-  removeInstanceAt: (index: number) => void;
+  removeInstanceAt: (index: number) => Promise<void>;
   /**
    * Swap the instances at the given indices.
-   * @returns true if successful
    */
-  swap: (index1: number, index2: number) => boolean;
+  swap: (index1: number, index2: number) => Promise<void>;
   /**
    * The error if the property is not found.
    */

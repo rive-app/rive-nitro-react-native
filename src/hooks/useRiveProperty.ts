@@ -75,18 +75,37 @@ export function useRiveProperty<P extends ViewModelProperty, T>(
   // Add listener for changes to the property
   useEffect(() => {
     if (!property) return;
+    let cancelled = false;
+    let listenerDelivered = false;
 
-    // Deliver the current value immediately so the hook transitions from
-    // undefined → value without waiting for a property change.
-    // (Legacy addListener does NOT emit on subscribe — only on changes.
-    //  Experimental valueStream emits the current value as its first element.)
-    setValue(property.value);
+    // Deliver the current value so the hook transitions from undefined → value
+    // without waiting for a property change (legacy addListener does NOT emit
+    // on subscribe — only on changes). On the experimental backend the
+    // accessor returns an unvalidated handle — the command server can only
+    // report a bad path asynchronously — so a rejection here is also how
+    // "property not found" surfaces as the hook's error.
+    property.getValueAsync().then(
+      (initialValue) => {
+        // A listener emission is always newer than this read — never
+        // overwrite it with the stale initial value.
+        if (!cancelled && !listenerDelivered) {
+          setValue(initialValue);
+        }
+      },
+      (e: unknown) => {
+        if (cancelled) return;
+        const message = e instanceof Error ? e.message : String(e);
+        setError(new Error(`Property "${path}" is not available: ${message}`));
+      }
+    );
 
     const removeListener = property.addListener((newValue) => {
+      listenerDelivered = true;
       setValue(newValue);
     });
 
     return () => {
+      cancelled = true;
       try {
         removeListener();
       } catch {
@@ -94,7 +113,7 @@ export function useRiveProperty<P extends ViewModelProperty, T>(
         // Native dispose() handles listener cleanup, so this is safe to ignore.
       }
     };
-  }, [property]);
+  }, [property, path]);
 
   // Set the value of the property (warn + no-op if the property isn't
   // available). Uses tracked `value` from state for updater functions —
@@ -127,7 +146,7 @@ export function useRiveProperty<P extends ViewModelProperty, T>(
           typeof valueOrUpdater === 'function'
             ? (valueOrUpdater as (prevValue: T | undefined) => T)(value)
             : valueOrUpdater;
-        liveProperty.value = newValue;
+        liveProperty.set(newValue);
       }
     },
     // `property` kept in deps so the setter identity changes with the
@@ -141,8 +160,9 @@ export function useRiveProperty<P extends ViewModelProperty, T>(
 }
 
 /**
- * This interface extends the ViewModelProperty and ObservableProperty interfaces.
- * It adds the addListener and value as known properties.
+ * This interface extends the ViewModelProperty and ObservableProperty interfaces
+ * with the typed async/observable surface the hook drives (the deprecated
+ * sync `value` accessor is deliberately not part of it).
  *
  * @template T - The primitive type of the property value (number, boolean, string)
  */
@@ -150,5 +170,6 @@ interface ObservableViewModelProperty<T>
   extends ViewModelProperty,
     ObservableProperty {
   addListener: (onChanged: (value: T) => void) => () => void;
-  value: T;
+  getValueAsync(): Promise<T>;
+  set(value: T): void;
 }
