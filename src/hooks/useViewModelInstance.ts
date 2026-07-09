@@ -292,6 +292,9 @@ export type UseViewModelInstanceRequiredResult =
  * ```tsx
  * // With required: true (throws once resolved to null, use with Error Boundary).
  * // Note: instance is still `undefined` while loading — guard on isLoading.
+ * // The required-narrowed return type applies only when the source's TYPE is
+ * // non-nullable; with a nullable source (e.g. straight from useRiveFile) the
+ * // call resolves to the standard overload — the runtime throw still applies.
  * const { instance, isLoading } = useViewModelInstance(riveFile, { async: true, required: true });
  * ```
  *
@@ -399,7 +402,18 @@ export function useViewModelInstance(
   const isAsync = params?.async ?? false;
   // The flag selects between two hook implementations (different hook
   // orders), so it must stay constant for the lifetime of the component —
-  // documented on the param.
+  // documented on the param. React's own failure for a flip is the cryptic
+  // "Rendered more hooks than during the previous render"; explain first.
+  const initialAsyncRef = useRef(isAsync);
+  if (initialAsyncRef.current !== isAsync) {
+    console.error(
+      'useViewModelInstance: the `async` param changed between renders ' +
+        `(${String(initialAsyncRef.current)} → ${String(isAsync)}). It selects ` +
+        'between two hook implementations, so it must stay constant for the ' +
+        'lifetime of the component; remount (e.g. change `key`) to switch modes.'
+    );
+    initialAsyncRef.current = isAsync;
+  }
   if (isAsync) {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     return useViewModelInstanceAsync(
@@ -469,8 +483,8 @@ function useViewModelInstanceSync(
     // async path.
     if (required) {
       throw new Error(
-        'useViewModelInstance: Failed to get ViewModelInstance. ' +
-          'Ensure the source has a valid ViewModel and instance available.'
+        'useViewModelInstance: source is null — the file or view failed to ' +
+          "resolve upstream (if it comes from useRiveFile or useRive, check that hook's error)."
       );
     }
     return { instance: null, isLoading: false, error: null };

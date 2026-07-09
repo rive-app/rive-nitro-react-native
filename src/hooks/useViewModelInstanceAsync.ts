@@ -425,10 +425,18 @@ export function useViewModelInstanceAsync(
   }, [source, instanceName, artboardName, viewModelName, useNew]);
 
   if (required && result.instance === null && !result.isLoading) {
+    // The public entry point is useViewModelInstance — don't leak this
+    // internal hook's name into user-facing errors.
+    if (source === null) {
+      throw new Error(
+        'useViewModelInstance: source is null — the file or view failed to ' +
+          "resolve upstream (if it comes from useRiveFile or useRive, check that hook's error)."
+      );
+    }
     throw new Error(
       result.error
-        ? `useViewModelInstanceAsync: ${result.error.message}`
-        : 'useViewModelInstanceAsync: Failed to get ViewModelInstance. ' +
+        ? `useViewModelInstance: ${result.error.message}`
+        : 'useViewModelInstance: Failed to get ViewModelInstance. ' +
           'Ensure the source has a valid ViewModel and instance available.'
     );
   }

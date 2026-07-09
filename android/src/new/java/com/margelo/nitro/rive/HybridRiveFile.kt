@@ -103,10 +103,16 @@ class HybridRiveFile(
     // getDefaultViewModelInfo throws when the artboard has no default
     // ViewModel — a normal state for VM-less files (issue #189 fixture), not
     // a failure. Resolve null like the legacy backend so callers get the
-    // documented "no ViewModel" result instead of a raw error.
+    // documented "no ViewModel" result — but propagate cancellation and log
+    // what was swallowed so a genuine failure (disposed file, dead command
+    // queue) isn't a silently blank screen.
     val vmInfo = try {
       file.getDefaultViewModelInfo(artboard)
+    } catch (e: kotlinx.coroutines.CancellationException) {
+      runCatching { artboard.close() }
+      throw e
     } catch (e: Exception) {
+      RiveLog.d(TAG, "defaultArtboardViewModel: resolving null — getDefaultViewModelInfo failed: ${e.message}")
       runCatching { artboard.close() }
       return null
     }

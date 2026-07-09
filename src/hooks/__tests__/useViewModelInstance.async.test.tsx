@@ -687,9 +687,79 @@ describe('useViewModelInstance async - required', () => {
     );
 
     await waitFor(() => expect(onError).toHaveBeenCalled());
-    expect((onError.mock.calls[0][0] as Error).message).toContain(
-      'NonExistent'
+    const message = (onError.mock.calls[0][0] as Error).message;
+    expect(message).toContain('NonExistent');
+    // Users called useViewModelInstance — the internal hook name must not leak.
+    expect(message).toContain('useViewModelInstance:');
+    expect(message).not.toContain('useViewModelInstanceAsync');
+    consoleError.mockRestore();
+  });
+
+  it('names the absent source (not the ViewModel) when required throws for a null source', async () => {
+    const consoleError = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {});
+    const onError = jest.fn();
+
+    function NullSourceProbe() {
+      useViewModelInstance(null as RiveFile | null, {
+        async: true,
+        required: true,
+      });
+      return null;
+    }
+
+    render(
+      <ErrorBoundary onError={onError}>
+        <NullSourceProbe />
+      </ErrorBoundary>
     );
+
+    await waitFor(() => expect(onError).toHaveBeenCalled());
+    const message = (onError.mock.calls[0][0] as Error).message;
+    // A null source means the file/view failed upstream — pointing users at
+    // "Ensure the source has a valid ViewModel" sends them the wrong way.
+    expect(message).toContain('useViewModelInstance:');
+    expect(message).toMatch(/source is null/i);
+    expect(message).toMatch(/useRiveFile|useRive/);
+    consoleError.mockRestore();
+  });
+});
+
+describe('useViewModelInstance - async flag constancy guard', () => {
+  it('reports an actionable error when async changes between renders', async () => {
+    const consoleError = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {});
+    const defaultInstance = createMockViewModelInstance();
+    // The initial render takes the sync path, so the mock must speak the
+    // sync API too (the shared factories only stub the *Async surface).
+    const mockRiveFile = {
+      ...createMockRiveFile({
+        defaultViewModel: createMockViewModel({ defaultInstance }),
+      }),
+      defaultArtboardViewModel: jest.fn(() => ({
+        dispose: jest.fn(),
+        createDefaultInstance: jest.fn(() => defaultInstance),
+        createInstanceByName: jest.fn(),
+        createInstance: jest.fn(),
+      })),
+    } as unknown as RiveFile;
+
+    const { rerender } = renderHook(
+      ({ isAsync }: { isAsync: boolean }) =>
+        useViewModelInstance(mockRiveFile, { async: isAsync }),
+      { initialProps: { isAsync: false } }
+    );
+
+    // Flipping the flag switches hook implementations — React will throw its
+    // generic hooks-order invariant; the hook must first explain why.
+    expect(() => rerender({ isAsync: true })).toThrow();
+    expect(
+      consoleError.mock.calls.some((c) =>
+        String(c[0]).includes('`async` param changed between renders')
+      )
+    ).toBe(true);
     consoleError.mockRestore();
   });
 });

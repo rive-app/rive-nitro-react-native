@@ -32,7 +32,10 @@ const NO_DEFAULT_VM = require('../assets/rive/nodefaultbouncing.riv');
 const BOUNCING_BALL = require('../assets/rive/bouncing_ball.riv');
 
 function expectDefined<T>(value: T): asserts value is NonNullable<T> {
+  // toBeDefined() alone passes for null, which would betray the NonNullable
+  // type claim this helper makes.
   expect(value).toBeDefined();
+  expect(value).not.toBeNull();
 }
 
 async function loadFile() {
@@ -348,6 +351,9 @@ describe('useViewModelInstance async: instance creation failure', () => {
     await waitFor(() => expect(ctx.isLoading).toBe(false), { timeout: 5000 });
     expect(ctx.instance).toBeNull();
     expectDefined(ctx.error);
+    // The stable message, not a leaked raw native diagnostic.
+    expect(ctx.error.message).toContain('not found');
+    expect(ctx.error.message).not.toContain('Could not create');
     cleanup();
   });
 });
@@ -415,7 +421,12 @@ describe('useViewModelInstance async: RiveViewRef source', () => {
     const isAndroidExperimental =
       Platform.OS === 'android' &&
       RiveFileFactory.getBackend() === 'experimental';
-    if (isAndroidExperimental) return;
+    if (isAndroidExperimental) {
+      console.warn(
+        'SKIP: android-experimental — getViewModelInstance() does not expose the auto-bound VMI yet'
+      );
+      return;
+    }
 
     const file = await RiveFileFactory.fromSource(BOUNCING_BALL, undefined);
     const ctx = createCtx();
@@ -430,7 +441,12 @@ describe('useViewModelInstance async: RiveViewRef source', () => {
     const isAndroidExperimental =
       Platform.OS === 'android' &&
       RiveFileFactory.getBackend() === 'experimental';
-    if (isAndroidExperimental) return;
+    if (isAndroidExperimental) {
+      console.warn(
+        'SKIP: android-experimental — getViewModelInstance() does not expose the auto-bound VMI yet'
+      );
+      return;
+    }
 
     const file = await RiveFileFactory.fromSource(BOUNCING_BALL, undefined);
     const ctx = createCtx();
