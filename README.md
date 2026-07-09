@@ -27,44 +27,6 @@
 
 - Error messages on Android in React Native 0.78-0.79 may not be descriptive, this is a [known issue](https://github.com/mrousavy/nitro/issues/382) in React Native and is fixed in RN 0.80
 
-## Runtime Backends
-
-This library ships two native backends and uses the **experimental** Rive
-runtime backend by default (Rive's new CommandQueue-based async API). The
-previous implementation is included as the **legacy** backend and can be
-selected at build time:
-
-- **iOS** — set the Podfile global before `pod install`:
-
-  ```ruby
-  # Podfile (before the target block)
-  $UseRiveLegacy = true
-  ```
-
-  (`USE_RIVE_LEGACY=1 pod install` also works, but the env var only applies
-  to that invocation — any plain `pod install` afterwards silently switches
-  the project back to the experimental backend, so prefer the Podfile
-  global.)
-
-- **Android** — set the Gradle property, e.g. in `android/gradle.properties`:
-
-  ```properties
-  USE_RIVE_LEGACY=true
-  ```
-
-You can check which backend is active at runtime via
-`RiveFileFactory.getBackend()` (`'experimental' | 'legacy'`).
-
-Behavioral differences on the experimental backend:
-
-- The deprecated state-machine-input, text-run, and Rive-event view methods
-  throw — use [data binding](https://rive.app/docs/runtimes/data-binding)
-  instead.
-- Property accessors (`numberProperty(path)` etc.) return unvalidated
-  handles; a bad path surfaces via the `getValueAsync()` rejection or the
-  `useRive*` hooks' `error` result instead of an `undefined` return.
-- `updateReferencedAssets` (runtime asset swapping) is not supported.
-
 ## Installation
 
 ```sh

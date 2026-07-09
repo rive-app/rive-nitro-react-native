@@ -81,10 +81,11 @@ export interface ViewModelInstance
   /**
    * The name of the view model instance.
    *
-   * Experimental backend: the runtime does not expose instance names, so this
-   * is only populated for instances created via `createInstanceByName` /
-   * `createInstanceByIndex` — default, blank, nested, and view-obtained
-   * instances report `""`.
+   * Experimental backend: the runtime does not expose instance names yet
+   * (verified through rive-android 11.7.0; SDK support has been requested),
+   * so this is only populated for instances created via
+   * `createInstanceByName` / `createInstanceByIndex` — default, blank,
+   * nested, and view-obtained instances report `""` until the SDKs expose it.
    */
   readonly instanceName: string;
   /**
