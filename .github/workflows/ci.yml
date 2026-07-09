@@ -103,7 +103,7 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: expo57-example/android/app/build
-          key: ${{ runner.os }}-android-build-expo57-${{ env.ANDROID_API_LEVEL }}-${{ hashFiles('package.json', 'yarn.lock', 'android/**', 'nitrogen/generated/android/**', 'expo57-example/package.json', 'expo57-example/app.json', 'expo57-example/app.config.js') }}
+          key: ${{ runner.os }}-android-build-expo57-${{ env.ANDROID_API_LEVEL }}-${{ hashFiles('package.json', 'yarn.lock', 'android/**', 'nitrogen/generated/android/**', 'expo57-example/package.json', 'expo57-example/app.json', 'expo57-example/app.config.js', 'expo57-example/assets/**') }}
           lookup-only: true
 
       # react-native 0.86 requires node ^20.19.4 — see build-ios. Gradle also
@@ -192,7 +192,7 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: expo57-example/ios/build
-          key: ${{ runner.os }}-ios-build-expo57-${{ env.XCODE_VERSION }}-${{ hashFiles('package.json', 'yarn.lock', 'ios/**', 'nitrogen/generated/ios/**', '*.podspec', 'src/specs/*.nitro.ts', 'expo57-example/package.json', 'expo57-example/app.json', 'expo57-example/app.config.js', 'expo57-example/app/**', 'expo57-example/babel.config.js', 'expo57-example/metro.config.js') }}
+          key: ${{ runner.os }}-ios-build-expo57-${{ env.XCODE_VERSION }}-${{ hashFiles('package.json', 'yarn.lock', 'ios/**', 'nitrogen/generated/ios/**', '*.podspec', 'src/specs/*.nitro.ts', 'expo57-example/package.json', 'expo57-example/app.json', 'expo57-example/app.config.js', 'expo57-example/assets/**', 'expo57-example/app/**', 'expo57-example/babel.config.js', 'expo57-example/metro.config.js') }}
           lookup-only: true
 
       # react-native 0.86 requires node ^20.19.4; .nvmrc (20.19.0) is too old
@@ -303,7 +303,7 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: expo57-example/ios/build
-          key: ${{ runner.os }}-ios-build-expo57-${{ env.XCODE_VERSION }}-${{ hashFiles('package.json', 'yarn.lock', 'ios/**', 'nitrogen/generated/ios/**', '*.podspec', 'src/specs/*.nitro.ts', 'expo57-example/package.json', 'expo57-example/app.json', 'expo57-example/app.config.js', 'expo57-example/app/**', 'expo57-example/babel.config.js', 'expo57-example/metro.config.js') }}
+          key: ${{ runner.os }}-ios-build-expo57-${{ env.XCODE_VERSION }}-${{ hashFiles('package.json', 'yarn.lock', 'ios/**', 'nitrogen/generated/ios/**', '*.podspec', 'src/specs/*.nitro.ts', 'expo57-example/package.json', 'expo57-example/app.json', 'expo57-example/app.config.js', 'expo57-example/assets/**', 'expo57-example/app/**', 'expo57-example/babel.config.js', 'expo57-example/metro.config.js') }}
           restore-keys: |
             ${{ runner.os }}-ios-build-expo57-${{ env.XCODE_VERSION }}-
 
@@ -519,7 +519,7 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: expo57-example/android/app/build
-          key: ${{ runner.os }}-android-build-expo57-${{ env.ANDROID_API_LEVEL }}-${{ hashFiles('package.json', 'yarn.lock', 'android/**', 'nitrogen/generated/android/**', 'expo57-example/package.json', 'expo57-example/app.json', 'expo57-example/app.config.js') }}
+          key: ${{ runner.os }}-android-build-expo57-${{ env.ANDROID_API_LEVEL }}-${{ hashFiles('package.json', 'yarn.lock', 'android/**', 'nitrogen/generated/android/**', 'expo57-example/package.json', 'expo57-example/app.json', 'expo57-example/app.config.js', 'expo57-example/assets/**') }}
           restore-keys: |
             ${{ runner.os }}-android-build-expo57-${{ env.ANDROID_API_LEVEL }}-
 
@@ -598,7 +598,7 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: expo57-example/ios/build
-          key: ${{ runner.os }}-ios-legacy-build-expo57-${{ env.XCODE_VERSION }}-${{ hashFiles('package.json', 'yarn.lock', 'ios/**', 'nitrogen/generated/ios/**', '*.podspec', 'src/specs/*.nitro.ts', 'expo57-example/package.json', 'expo57-example/app.json', 'expo57-example/app.config.js', 'expo57-example/app/**', 'expo57-example/babel.config.js', 'expo57-example/metro.config.js') }}
+          key: ${{ runner.os }}-ios-legacy-build-expo57-${{ env.XCODE_VERSION }}-${{ hashFiles('package.json', 'yarn.lock', 'ios/**', 'nitrogen/generated/ios/**', '*.podspec', 'src/specs/*.nitro.ts', 'expo57-example/package.json', 'expo57-example/app.json', 'expo57-example/app.config.js', 'expo57-example/assets/**', 'expo57-example/app/**', 'expo57-example/babel.config.js', 'expo57-example/metro.config.js') }}
           restore-keys: |
             ${{ runner.os }}-ios-legacy-build-expo57-${{ env.XCODE_VERSION }}-
 
@@ -821,7 +821,7 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: expo57-example/android/app/build
-          key: ${{ runner.os }}-android-legacy-build-expo57-${{ env.ANDROID_API_LEVEL }}-${{ hashFiles('package.json', 'yarn.lock', 'android/**', 'nitrogen/generated/android/**', 'expo57-example/package.json', 'expo57-example/app.json', 'expo57-example/app.config.js') }}
+          key: ${{ runner.os }}-android-legacy-build-expo57-${{ env.ANDROID_API_LEVEL }}-${{ hashFiles('package.json', 'yarn.lock', 'android/**', 'nitrogen/generated/android/**', 'expo57-example/package.json', 'expo57-example/app.json', 'expo57-example/app.config.js', 'expo57-example/assets/**') }}
           restore-keys: |
             ${{ runner.os }}-android-legacy-build-expo57-${{ env.ANDROID_API_LEVEL }}-
 
