@@ -533,6 +533,55 @@ describe('useViewModelInstance async - disposal', () => {
     expect(defaultInstance.dispose).toHaveBeenCalled();
   });
 
+  it('never commits a frame pairing the new source with the old instance', async () => {
+    // On source change the reset must happen during render, not in the
+    // effect: otherwise React commits one frame of
+    // <RiveView file={fileB} dataBind={instanceA} /> (isLoading false, so
+    // consumer guards can't catch it) and then disposes instanceA while it
+    // is still the committed dataBind.
+    const instanceA = createMockViewModelInstance('A');
+    const fileA = createMockRiveFile({
+      defaultViewModel: createMockViewModel({ defaultInstance: instanceA }),
+    });
+    const instanceB = createMockViewModelInstance('B');
+    const fileB = createMockRiveFile({
+      defaultViewModel: createMockViewModel({ defaultInstance: instanceB }),
+    });
+
+    const frames: Array<{
+      file: RiveFile;
+      instance: ViewModelInstance | null | undefined;
+      isLoading: boolean;
+    }> = [];
+    function Probe({ file }: { file: RiveFile }) {
+      const { instance, isLoading } = useViewModelInstance(file, {
+        async: true,
+      });
+      React.useEffect(() => {
+        frames.push({ file, instance, isLoading });
+      });
+      return null;
+    }
+
+    const view = render(<Probe file={fileA} />);
+    await waitFor(() =>
+      expect(frames.some((f) => f.instance === instanceA)).toBe(true)
+    );
+
+    await act(async () => {
+      view.rerender(<Probe file={fileB} />);
+      await Promise.resolve();
+    });
+    await waitFor(() =>
+      expect(frames.some((f) => f.instance === instanceB)).toBe(true)
+    );
+
+    const mismatched = frames.filter(
+      (f) => f.file === fileB && f.instance === instanceA
+    );
+    expect(mismatched).toEqual([]);
+  });
+
   it('disposes the previous instance when the source changes', async () => {
     const instanceA = createMockViewModelInstance('A');
     const fileA = createMockRiveFile({

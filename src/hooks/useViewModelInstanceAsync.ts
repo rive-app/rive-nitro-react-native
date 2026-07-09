@@ -331,6 +331,25 @@ export function useViewModelInstanceAsync(
   const [result, setResult] =
     useState<UseViewModelInstanceAsyncResult>(LOADING_RESULT);
 
+  // Reset to the loading state during render (not in the effect) when the
+  // inputs change: an effect-time reset would let React commit one frame
+  // pairing the new source with the previous (about-to-be-disposed) instance
+  // at isLoading: false — a mismatch consumer guards cannot catch, and the
+  // old instance would be disposed while still committed as e.g. a view's
+  // dataBind. Resetting mid-render makes React re-render before committing.
+  const [prevDeps, setPrevDeps] = useState<readonly unknown[]>([
+    source,
+    instanceName,
+    artboardName,
+    viewModelName,
+    useNew,
+  ]);
+  const deps = [source, instanceName, artboardName, viewModelName, useNew];
+  if (deps.some((d, i) => d !== prevDeps[i])) {
+    setPrevDeps(deps);
+    setResult((prev) => (prev.isLoading ? prev : LOADING_RESULT));
+  }
+
   useEffect(() => {
     if (source === null) {
       // Source resolved to absent/failed rather than pending. `useRiveFile`
@@ -341,10 +360,6 @@ export function useViewModelInstanceAsync(
       setResult({ instance: null, isLoading: false, error: null });
       return;
     }
-
-    // Reset to the loading state whenever the inputs change so we never expose a
-    // stale (and about-to-be-disposed) instance from a previous resolution.
-    setResult((prev) => (prev.isLoading ? prev : LOADING_RESULT));
 
     if (!source) {
       // `undefined`: not resolved yet (e.g. the file is still loading).
