@@ -25,7 +25,9 @@ class HybridViewModelColorProperty: HybridViewModelColorPropertySpec, ValuedProp
 
   func setValueAsync(value: Double) throws -> Promise<Void> {
     let color = UIColor(argb: Int(value))
-    return Promise.async { self.property.value = color }
+    // Main-thread write like every other legacy mutation — Promise.async
+    // would race the main-thread render loop.
+    return Promise.onMain { self.property.value = color }
   }
 
   func addListener(onChanged: @escaping (Double) -> Void) throws -> () -> Void {

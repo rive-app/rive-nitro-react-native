@@ -89,7 +89,9 @@ export interface RiveFile
   /**
    * Get all enums defined in this Rive file.
    * Useful for debugging and building dynamic UIs.
-   * @experimental Uses the experimental Rive API on iOS
+   *
+   * Backend note: implemented on the experimental (default) backend and on
+   * legacy Android; legacy iOS rejects (not supported there).
    */
   getEnums(): Promise<RiveEnumDefinition[]>;
 }

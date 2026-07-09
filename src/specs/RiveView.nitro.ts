@@ -77,17 +77,26 @@ export interface RiveViewMethods extends HybridViewMethods {
   /**
    * Adds an event listener to the Rive view
    * @deprecated Use data binding instead. See https://rive.app/docs/runtimes/data-binding
+   *
+   * Throws on the experimental (default) backend — only the legacy backend
+   * (USE_RIVE_LEGACY) implements it.
    * @param onEvent - The function to call when an event is triggered
    */
   onEventListener(onEvent: (event: UnifiedRiveEvent) => void): void;
   /**
    * Removes all event listeners from the Rive view
    * @deprecated Use data binding instead. See https://rive.app/docs/runtimes/data-binding
+   *
+   * Throws on the experimental (default) backend — only the legacy backend
+   * (USE_RIVE_LEGACY) implements it.
    */
   removeEventListeners(): void;
   /**
    * Sets a number state machine input on the Rive view
    * @deprecated Use data binding instead. See https://rive.app/docs/runtimes/data-binding
+   *
+   * Throws on the experimental (default) backend — only the legacy backend
+   * (USE_RIVE_LEGACY) implements it.
    * @param name - The name of the state machine input
    * @param value - The value to set the state machine input to
    * @param path - The optional path to the state machine input on a nested artboard
@@ -96,6 +105,9 @@ export interface RiveViewMethods extends HybridViewMethods {
   /**
    * Gets a number state machine input from the Rive view
    * @deprecated Use data binding instead. See https://rive.app/docs/runtimes/data-binding
+   *
+   * Throws on the experimental (default) backend — only the legacy backend
+   * (USE_RIVE_LEGACY) implements it.
    * @param name - The name of the state machine input
    * @param path - The optional path to the state machine input on a nested artboard
    * @returns The value of the state machine input
@@ -104,6 +116,9 @@ export interface RiveViewMethods extends HybridViewMethods {
   /**
    * Sets a boolean state machine input on the Rive view
    * @deprecated Use data binding instead. See https://rive.app/docs/runtimes/data-binding
+   *
+   * Throws on the experimental (default) backend — only the legacy backend
+   * (USE_RIVE_LEGACY) implements it.
    * @param name - The name of the state machine input
    * @param value - The value to set the state machine input to
    * @param path - The optional path to the state machine input on a nested artboard
@@ -112,6 +127,9 @@ export interface RiveViewMethods extends HybridViewMethods {
   /**
    * Gets a boolean state machine input from the Rive view
    * @deprecated Use data binding instead. See https://rive.app/docs/runtimes/data-binding
+   *
+   * Throws on the experimental (default) backend — only the legacy backend
+   * (USE_RIVE_LEGACY) implements it.
    * @param name - The name of the state machine input
    * @param path - The optional path to the state machine input on a nested artboard
    * @returns The value of the state machine input
@@ -120,6 +138,9 @@ export interface RiveViewMethods extends HybridViewMethods {
   /**
    * Triggers a trigger state machine input on the Rive view
    * @deprecated Use data binding instead. See https://rive.app/docs/runtimes/data-binding
+   *
+   * Throws on the experimental (default) backend — only the legacy backend
+   * (USE_RIVE_LEGACY) implements it.
    * @param name - The name of the state machine input
    * @param path - The optional path to the state machine input on a nested artboard
    */
@@ -127,6 +148,9 @@ export interface RiveViewMethods extends HybridViewMethods {
   /**
    * Sets the text run value on the Rive view
    * @deprecated Use data binding instead. See https://rive.app/docs/runtimes/data-binding
+   *
+   * Throws on the experimental (default) backend — only the legacy backend
+   * (USE_RIVE_LEGACY) implements it.
    * @param name - The name of the text run
    * @param value - The text to set the text run value to
    * @param path - The optional path to the text run on a nested artboard
@@ -135,6 +159,9 @@ export interface RiveViewMethods extends HybridViewMethods {
   /**
    * Gets the text run value from the Rive view
    * @deprecated Use data binding instead. See https://rive.app/docs/runtimes/data-binding
+   *
+   * Throws on the experimental (default) backend — only the legacy backend
+   * (USE_RIVE_LEGACY) implements it.
    * @param name - The name of the text run
    * @param path - The optional path to the text run on a nested artboard
    * @returns The text run value

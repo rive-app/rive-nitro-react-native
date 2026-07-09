@@ -31,31 +31,54 @@ enum AssetType {
 }
 
 @MainActor
+/// An asset registered on the shared worker on behalf of one file.
+/// Registration is global per name, so the owning file must release it on
+/// dispose or the decoded bytes accumulate for the app's lifetime.
+struct RegisteredAsset {
+  let name: String
+  let type: AssetType
+
+  @MainActor
+  func release(on worker: Worker) {
+    switch type {
+    case .image: worker.removeGlobalImageAsset(name: name)
+    case .font: worker.removeGlobalFontAsset(name)
+    case .audio: worker.removeGlobalAudioAsset(name: name)
+    }
+  }
+}
+
 final class AssetLoader {
 
   static func registerAssets(
     _ referencedAssets: ReferencedAssetsType?,
     on worker: Worker
-  ) async {
-    guard let assets = referencedAssets?.data else { return }
+  ) async -> [RegisteredAsset] {
+    guard let assets = referencedAssets?.data else { return [] }
 
-    await withTaskGroup(of: Void.self) { group in
+    return await withTaskGroup(of: RegisteredAsset?.self) { group in
       for (name, asset) in assets {
         group.addTask { @MainActor in
           await self.loadAndRegisterAsset(name: name, asset: asset, worker: worker)
         }
       }
+      var registered: [RegisteredAsset] = []
+      for await entry in group {
+        if let entry { registered.append(entry) }
+      }
+      return registered
     }
   }
 
+  @MainActor
   private static func loadAndRegisterAsset(
     name: String,
     asset: ResolvedReferencedAsset,
     worker: Worker
-  ) async {
+  ) async -> RegisteredAsset? {
     do {
       let data = try await loadAssetData(asset)
-      guard !data.isEmpty else { return }
+      guard !data.isEmpty else { return nil }
 
       // Prefer an explicit type provided by the caller.
       let resolvedType: AssetType?
@@ -70,12 +93,14 @@ final class AssetLoader {
       }
       guard let resolvedType else {
         RCTLogWarn("[Rive] Could not determine asset type for: \(name)")
-        return
+        return nil
       }
 
       try await registerAsset(data: data, name: name, type: resolvedType, worker: worker)
+      return RegisteredAsset(name: name, type: resolvedType)
     } catch {
       RCTLogError("Failed to load asset '\(name)': \(error)")
+      return nil
     }
   }
 
@@ -155,6 +180,7 @@ final class AssetLoader {
     return nil
   }
 
+  @MainActor
   private static func registerAsset(
     data: Data,
     name: String,

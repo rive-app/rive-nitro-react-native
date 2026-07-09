@@ -4,14 +4,16 @@ import NitroModules
 class HybridRiveFile: HybridRiveFileSpec {
   var file: File?
   var worker: Worker?
+  private var registeredAssets: [RegisteredAsset] = []
 
   override init() {
     super.init()
   }
 
-  init(file: File, worker: Worker) {
+  init(file: File, worker: Worker, registeredAssets: [RegisteredAsset] = []) {
     self.file = file
     self.worker = worker
+    self.registeredAssets = registeredAssets
   }
 
   // Deprecated: Use getViewModelNamesAsync instead
@@ -40,7 +42,7 @@ class HybridRiveFile: HybridRiveFileSpec {
     guard let file = file, let worker = worker else { return nil }
     return try blockingAsync {
       let names = try await file.getViewModelNames()
-      let idx = Int(index)
+      guard let idx = Int(exactly: index.rounded()) else { return nil }
       guard idx >= 0 && idx < names.count else { return nil }
       return HybridViewModel(file: file, vmName: names[idx], worker: worker)
     }
@@ -76,7 +78,7 @@ class HybridRiveFile: HybridRiveFileSpec {
       case .index:
         guard let index = artboardBy.index else { return nil }
         let names = try await file.getArtboardNames()
-        let idx = Int(index)
+        guard let idx = Int(exactly: index.rounded()) else { return nil }
         guard idx >= 0 && idx < names.count else { return nil }
         artboardName = names[idx]
       default:
@@ -163,6 +165,15 @@ class HybridRiveFile: HybridRiveFileSpec {
   }
 
   func dispose() {
+    // Worker's asset APIs are MainActor-isolated; dispose can arrive from
+    // the JS thread (Nitro) or deinit.
+    let assets = registeredAssets
+    registeredAssets = []
+    if let worker, !assets.isEmpty {
+      Task { @MainActor in
+        assets.forEach { $0.release(on: worker) }
+      }
+    }
     file = nil
     worker = nil
   }

@@ -124,7 +124,7 @@ class HybridRiveFileFactory : HybridRiveFileFactorySpec() {
   ): HybridRiveFile {
     val worker = getSharedWorker()
 
-    AssetLoader.registerAssets(referencedAssets, worker)
+    val registeredAssets = AssetLoader.registerAssets(referencedAssets, worker)
 
     val source = RiveFileSource.Bytes(data)
     val result = RiveFile.fromSource(source, worker)
@@ -135,7 +135,7 @@ class HybridRiveFileFactory : HybridRiveFileFactorySpec() {
       else -> throw RuntimeException("Failed to load Rive file: unexpected result")
     }
 
-    return HybridRiveFile(riveFile, worker)
+    return HybridRiveFile(riveFile, worker, registeredAssets)
   }
 
   override fun fromURL(url: String, loadCdn: Boolean, referencedAssets: ReferencedAssetsType?): Promise<HybridRiveFileSpec> {

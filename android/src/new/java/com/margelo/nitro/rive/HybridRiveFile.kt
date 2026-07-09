@@ -14,7 +14,8 @@ import kotlinx.coroutines.runBlocking
 @DoNotStrip
 class HybridRiveFile(
   internal var riveFile: RiveFile?,
-  internal val riveWorker: CommandQueue
+  internal val riveWorker: CommandQueue,
+  private val registeredAssets: List<RegisteredAsset> = emptyList()
 ) : HybridRiveFileSpec() {
   companion object {
     private const val TAG = "HybridRiveFile"
@@ -198,6 +199,7 @@ class HybridRiveFile(
 
   override fun dispose() {
     weakViews.clear()
+    registeredAssets.forEach { it.release() }
     riveFile?.close()
     riveFile = null
   }

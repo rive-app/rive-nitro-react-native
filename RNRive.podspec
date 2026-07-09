@@ -30,7 +30,7 @@ end
 
 # The experimental runtime backend is used by default. Set USE_RIVE_LEGACY=1
 # (or $UseRiveLegacy = true in Podfile) to fall back to the legacy backend.
-use_legacy = ENV['USE_RIVE_LEGACY'] == '1' || (defined?($UseRiveLegacy) && $UseRiveLegacy)
+use_legacy = ['1', 'true'].include?(ENV['USE_RIVE_LEGACY']) || (defined?($UseRiveLegacy) && $UseRiveLegacy)
 
 if use_legacy
   Pod::UI.puts "@rive-app/react-native: Using legacy Rive runtime backend (iOS SDK #{rive_ios_version})"
@@ -66,6 +66,5 @@ Pod::Spec.new do |s|
  install_modules_dependencies(s)
 
   unless use_legacy
-    s.xcconfig = { 'OTHER_SWIFT_FLAGS' => '$(inherited) -DRIVE_EXPERIMENTAL_API' }
   end
 end

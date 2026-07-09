@@ -38,9 +38,22 @@ class HybridViewModelListProperty(
     return Promise.async { instance.getListSize(path).toDouble() }
   }
 
+  private suspend fun requireIndexInBounds(index: Int, allowEnd: Boolean = false) {
+    val size = instance.getListSize(path)
+    val max = if (allowEnd) size else size - 1
+    if (index < 0 || index > max) {
+      throw IndexOutOfBoundsException("index $index out of bounds for list '$path' of size $size")
+    }
+  }
+
   private suspend fun fetchInstanceAt(index: Double): HybridViewModelInstanceSpec? {
     val file = parentFile.riveFile ?: return null
-    val source = ViewModelInstanceSource.ReferenceListItem(instance, path, index.toInt())
+    val idx = index.toInt()
+    // The command server hands out a handle for any index — probe the size
+    // so out-of-range lookups return null like the legacy backend.
+    val size = instance.getListSize(path)
+    if (idx < 0 || idx >= size) return null
+    val source = ViewModelInstanceSource.ReferenceListItem(instance, path, idx)
     val vmi = ViewModelInstance.fromFile(file, source)
     return HybridViewModelInstance(vmi, riveWorker, parentFile)
   }
@@ -112,6 +125,7 @@ class HybridViewModelListProperty(
     val hybridInstance = instance as? HybridViewModelInstance
       ?: return Promise.rejected(RuntimeException("Expected HybridViewModelInstance"))
     return Promise.async {
+      requireIndexInBounds(index.toInt(), allowEnd = true)
       this.instance.insertToListAtIndex(path, index.toInt(), hybridInstance.viewModelInstance)
     }
   }
@@ -126,12 +140,15 @@ class HybridViewModelListProperty(
 
   override fun removeInstanceAtAsync(index: Double): Promise<Unit> {
     return Promise.async {
+      requireIndexInBounds(index.toInt())
       this.instance.removeFromListAtIndex(path, index.toInt())
     }
   }
 
   override fun swapAsync(index1: Double, index2: Double): Promise<Unit> {
     return Promise.async {
+      requireIndexInBounds(index1.toInt())
+      requireIndexInBounds(index2.toInt())
       this.instance.swapListItems(path, index1.toInt(), index2.toInt())
     }
   }

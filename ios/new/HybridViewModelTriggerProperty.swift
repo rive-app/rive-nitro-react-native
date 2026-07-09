@@ -22,9 +22,13 @@ class HybridViewModelTriggerProperty: HybridViewModelTriggerPropertySpec {
 
   func addListener(onChanged: @escaping () -> Void) throws -> () -> Void {
     let id = UUID()
-    let task = Task { @MainActor [weak self] in
-      guard let self else { return }
-      for try await _ in self.instance.stream(of: self.prop) {
+    // Capture the dependencies, not self: the infinite stream loop would
+    // otherwise keep this wrapper alive until listeners are removed
+    // explicitly, making the deinit cancelAll() safety net unreachable.
+    let inst = instance
+    let p = prop
+    let task = Task { @MainActor in
+      for try await _ in inst.stream(of: p) {
         onChanged()
       }
     }

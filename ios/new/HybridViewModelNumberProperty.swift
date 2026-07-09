@@ -53,15 +53,19 @@ class HybridViewModelNumberProperty: HybridViewModelNumberPropertySpec {
   }
 
   func addListener(onChanged: @escaping (Double) -> Void) throws -> () -> Void {
-    return listeners.register(Task { @MainActor [weak self] in
-      guard let self else { return }
+    // Capture the dependencies, not self: the infinite stream loop would
+    // otherwise keep this wrapper alive until listeners are removed
+    // explicitly, making the deinit cancelAll() safety net unreachable.
+    let inst = instance
+    let p = prop
+    return listeners.register(Task { @MainActor in
       // Emit current value immediately so the first subscription receives it
-      let current = try? await self.instance.value(of: self.prop)
+      let current = try? await inst.value(of: p)
       if let current, !Task.isCancelled {
         onChanged(Double(current))
       }
       while !Task.isCancelled {
-        let stream = self.instance.valueStream(of: self.prop)
+        let stream = inst.valueStream(of: p)
         do {
           for try await val in stream {
             onChanged(Double(val))

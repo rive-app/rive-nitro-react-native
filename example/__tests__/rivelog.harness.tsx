@@ -69,19 +69,40 @@ describe('RiveLog', () => {
     }
   );
 
-  it('suppresses all logs with a no-op handler', async () => {
-    const logs: LogEntry[] = [];
-    RiveLog.setHandler(() => {});
+  // Experimental-only: needs a deterministic log source (deprecation
+  // warnings), which the legacy backend doesn't emit.
+  (isExperimental ? it : it.skip)(
+    'suppresses all logs with a no-op handler',
+    async () => {
+      // First prove the capture works with a forwarding handler…
+      const logs: LogEntry[] = [];
+      RiveLog.setHandler((level, tag, message) => {
+        logs.push({ level, tag, message });
+      });
 
-    const file = await RiveFileFactory.fromSource(BOUNCING_BALL, undefined);
+      const file = await RiveFileFactory.fromSource(BOUNCING_BALL, undefined);
+      file.artboardCount;
+      await waitFor(
+        () => {
+          expect(
+            logs.filter((l) => l.tag === 'Deprecation').length
+          ).toBeGreaterThan(0);
+        },
+        { timeout: 2000 }
+      );
 
-    file.artboardCount;
+      // …then a no-op handler must swallow a fresh warning (a different
+      // deprecated member, so the once-per-session dedup doesn't apply).
+      const seen = logs.length;
+      RiveLog.setHandler(() => {});
+      file.viewModelCount;
+      await new Promise((r) => setTimeout(r, 500));
+      expect(logs.length).toBe(seen);
 
-    expect(logs.length).toBe(0);
-
-    RiveLog.resetHandler();
-    cleanup();
-  });
+      RiveLog.resetHandler();
+      cleanup();
+    }
+  );
 
   it('resetHandler restores default logging without throwing', async () => {
     RiveLog.setHandler(() => {});

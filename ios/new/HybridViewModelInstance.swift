@@ -19,7 +19,17 @@ class HybridViewModelInstance: HybridViewModelInstanceSpec {
   var instanceName: String { _instanceName }
 
   func getPropertiesAsync() throws -> Promise<[ViewModelPropertyInfo]> {
-    guard let file = file, let vmName = vmName else { return Promise.resolved(withResult: []) }
+    // "No metadata" must not read as "no properties" — instances obtained
+    // via nested paths, list items, or the view don't carry their file and
+    // ViewModel name on this backend.
+    guard let file = file, let vmName = vmName else {
+      return Promise.rejected(
+        withError: RuntimeError.error(
+          withMessage:
+            "getPropertiesAsync is unavailable for this instance: its ViewModel "
+            + "metadata is unknown (nested/list/view-obtained instances). Query the "
+            + "ViewModel it was created from instead."))
+    }
     return Promise.async {
       let props = try await file.getProperties(of: vmName)
       return props.map { ViewModelPropertyInfo(name: $0.name, type: mapPropertyType($0.type)) }

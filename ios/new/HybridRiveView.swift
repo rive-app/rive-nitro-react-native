@@ -197,11 +197,11 @@ class HybridRiveView: HybridRiveViewSpec {
   func afterUpdate() {
     logged(tag: "HybridRiveView", note: "afterUpdate") {
       guard let hybridFile = file as? HybridRiveFile else {
-        RCTLogError("[HybridRiveView] file is not HybridRiveFile: \(type(of: file))")
+        RiveLog.w("HybridRiveView", "file is not HybridRiveFile: \(type(of: file))")
         return
       }
       guard let riveFile = hybridFile.file else {
-        RCTLogError("[HybridRiveView] hybridFile.file is nil")
+        RiveLog.w("HybridRiveView", "hybridFile.file is nil (disposed?) - skipping update")
         return
       }
 
