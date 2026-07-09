@@ -5,7 +5,10 @@ import {
   waitFor,
   act,
 } from '@testing-library/react-native';
-import { useViewModelInstance } from '../useViewModelInstance';
+import {
+  useViewModelInstance,
+  type UseViewModelInstanceFileParams,
+} from '../useViewModelInstance';
 import type { RiveFile } from '../../specs/RiveFile.nitro';
 import type { ViewModel, ViewModelInstance } from '../../specs/ViewModel.nitro';
 import type { ArtboardBy } from '../../specs/ArtboardBy';
@@ -360,6 +363,40 @@ function createMockRiveViewRef(
 ): RiveViewRef {
   return { getViewModelInstance: jest.fn(getViewModelInstance) } as any;
 }
+
+describe('useViewModelInstance - param type compatibility', () => {
+  // These pin overload resolution as much as runtime behavior: a params
+  // object built separately widens `async` to boolean, and the exported
+  // params types declare `async?: boolean` — both must remain accepted
+  // (`yarn tsc` is the gate that fails when the overloads regress).
+  it('accepts a params object with a widened boolean async', async () => {
+    const defaultInstance = createMockViewModelInstance();
+    const defaultViewModel = createMockViewModel({ defaultInstance });
+    const mockRiveFile = createMockRiveFile({ defaultViewModel });
+
+    const params = { async: true }; // widens to { async: boolean }
+    const { result } = renderHook(() =>
+      useViewModelInstance(mockRiveFile, params)
+    );
+
+    await waitFor(() => expect(result.current.instance).toBe(defaultInstance));
+  });
+
+  it('accepts a value of the exported file-params type with a nullable source', async () => {
+    const defaultInstance = createMockViewModelInstance();
+    const defaultViewModel = createMockViewModel({ defaultInstance });
+    const mockRiveFile: RiveFile | null | undefined = createMockRiveFile({
+      defaultViewModel,
+    });
+
+    const params: UseViewModelInstanceFileParams = { async: true };
+    const { result } = renderHook(() =>
+      useViewModelInstance(mockRiveFile, params)
+    );
+
+    await waitFor(() => expect(result.current.instance).toBe(defaultInstance));
+  });
+});
 
 describe('useViewModelInstance async - RiveViewRef source', () => {
   it('resolves the view-bound instance', async () => {

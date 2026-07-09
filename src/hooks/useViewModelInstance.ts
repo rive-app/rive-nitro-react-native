@@ -238,7 +238,7 @@ export type UseViewModelInstanceRequiredResult =
  * during render via deprecated runtime APIs that block the JS thread. The
  * async path will become the default in the next major.
  *
- * With `async: true`, a `null` source settles to a terminal
+ * In both modes, a `null` source settles to a terminal
  * `{ instance: null, isLoading: false }` while an `undefined` source keeps
  * the hook loading. This mirrors {@link useRiveFile} (`riveFile: undefined`
  * while loading, `null` on error) and `useRive` (`riveViewRef: undefined`
@@ -369,6 +369,25 @@ export function useViewModelInstance(
   params?: UseViewModelInstanceRefParams & { async?: false }
 ): UseViewModelInstanceResult;
 
+// Widened-`async` catch-alls: a params object built separately (or typed
+// with the exported *Params types) carries `async?: boolean` and matches no
+// literal overload above — without these the compiler rejects the call and
+// blames the *source* argument. The flag still must stay constant for the
+// component's lifetime. Literal `async` values resolve to the more specific
+// overloads first, keeping the deprecation warnings and `required` narrowing.
+export function useViewModelInstance(
+  source: RiveFile | null | undefined,
+  params?: UseViewModelInstanceFileParams
+): UseViewModelInstanceResult;
+export function useViewModelInstance(
+  source: ViewModel | null | undefined,
+  params?: UseViewModelInstanceViewModelParams
+): UseViewModelInstanceResult;
+export function useViewModelInstance(
+  source: RiveViewRef | null | undefined,
+  params?: UseViewModelInstanceRefParams
+): UseViewModelInstanceResult;
+
 // Implementation
 export function useViewModelInstance(
   source: ViewModelSource | null | undefined,
@@ -442,6 +461,20 @@ function useViewModelInstanceSync(
     () => (result.error ? new Error(result.error) : null),
     [result.error]
   );
+
+  if (result.instance === undefined && source === null) {
+    // Source resolved to absent/failed rather than pending (`useRiveFile`
+    // returns null on load error, undefined while loading) — settle to a
+    // terminal null instead of reporting isLoading forever, mirroring the
+    // async path.
+    if (required) {
+      throw new Error(
+        'useViewModelInstance: Failed to get ViewModelInstance. ' +
+          'Ensure the source has a valid ViewModel and instance available.'
+      );
+    }
+    return { instance: null, isLoading: false, error: null };
+  }
 
   if (required && result.instance === null) {
     throw new Error(
