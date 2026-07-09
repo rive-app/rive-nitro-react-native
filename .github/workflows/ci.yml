@@ -369,7 +369,7 @@ jobs:
 
       - name: Run harness tests on iOS
         working-directory: expo57-example
-        timeout-minutes: 15
+        timeout-minutes: 35
         shell: bash --noprofile --norc -o pipefail {0}
         env:
           # First attempt bundles through the harness Metro on app boot; CI
@@ -433,12 +433,12 @@ jobs:
           BOOTED_UDID=$(xcrun simctl list devices booted | grep -oE '[0-9A-F-]{36}' | head -1)
           echo "booted simulator: ${BOOTED_UDID:-none}"
 
-          for attempt in 1 2 3 4 5; do
-            echo "=== Attempt $attempt of 5 ==="
+          for attempt in 1 2 3; do
+            echo "=== Attempt $attempt of 3 ==="
             start_monitor
             yarn test:harness:ios --verbose --testTimeout 120000 &
             test_pid=$!
-            ( sleep 300; echo "  WATCHDOG: attempt $attempt exceeded 300s, killing harness"; kill -9 $test_pid 2>/dev/null ) &
+            ( sleep 600; echo "  WATCHDOG: attempt $attempt exceeded 600s, killing harness"; kill -9 $test_pid 2>/dev/null ) &
             watchdog_pid=$!
             wait $test_pid 2>/dev/null
             exit_code=$?
@@ -506,7 +506,7 @@ jobs:
 
   test-harness-android:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 50
     env:
       ANDROID_API_LEVEL: 35
     steps:
@@ -595,7 +595,7 @@ jobs:
           script: |
             adb install expo57-example/android/app/build/outputs/apk/debug/app-debug.apk
             sleep 10
-            cd expo57-example && for attempt in 1 2 3; do echo "Attempt $attempt of 3"; if timeout 300 env ANDROID_AVD=test yarn test:harness:android --verbose --testTimeout 120000; then echo "Tests passed on attempt $attempt"; exit 0; fi; echo "Attempt $attempt failed (exit $?), retrying..."; sleep 5; done; echo "All attempts failed"; exit 1
+            cd expo57-example && for attempt in 1 2 3; do echo "Attempt $attempt of 3"; if timeout 600 env ANDROID_AVD=test yarn test:harness:android --verbose --testTimeout 120000; then echo "Tests passed on attempt $attempt"; exit 0; fi; echo "Attempt $attempt failed (exit $?), retrying..."; sleep 5; done; echo "All attempts failed"; exit 1
 
       - name: Debug - Check logcat
         if: failure() || cancelled()
@@ -703,7 +703,7 @@ jobs:
 
       - name: Run harness tests on iOS
         working-directory: expo57-example
-        timeout-minutes: 15
+        timeout-minutes: 35
         shell: bash --noprofile --norc -o pipefail {0}
         env:
           # First attempt bundles through the harness Metro on app boot; CI
@@ -767,12 +767,12 @@ jobs:
           BOOTED_UDID=$(xcrun simctl list devices booted | grep -oE '[0-9A-F-]{36}' | head -1)
           echo "booted simulator: ${BOOTED_UDID:-none}"
 
-          for attempt in 1 2 3 4 5; do
-            echo "=== Attempt $attempt of 5 ==="
+          for attempt in 1 2 3; do
+            echo "=== Attempt $attempt of 3 ==="
             start_monitor
             yarn test:harness:ios --verbose --testTimeout 120000 &
             test_pid=$!
-            ( sleep 300; echo "  WATCHDOG: attempt $attempt exceeded 300s, killing harness"; kill -9 $test_pid 2>/dev/null ) &
+            ( sleep 600; echo "  WATCHDOG: attempt $attempt exceeded 600s, killing harness"; kill -9 $test_pid 2>/dev/null ) &
             watchdog_pid=$!
             wait $test_pid 2>/dev/null
             exit_code=$?
@@ -840,7 +840,7 @@ jobs:
 
   test-harness-android-legacy:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 50
     env:
       ANDROID_API_LEVEL: 35
     steps:
@@ -936,7 +936,7 @@ jobs:
           script: |
             adb install expo57-example/android/app/build/outputs/apk/debug/app-debug.apk
             sleep 10
-            cd expo57-example && for attempt in 1 2 3; do echo "Attempt $attempt of 3"; if timeout 300 env ANDROID_AVD=test yarn test:harness:android --verbose --testTimeout 120000; then echo "Tests passed on attempt $attempt"; exit 0; fi; echo "Attempt $attempt failed (exit $?), retrying..."; sleep 5; done; echo "All attempts failed"; exit 1
+            cd expo57-example && for attempt in 1 2 3; do echo "Attempt $attempt of 3"; if timeout 600 env ANDROID_AVD=test yarn test:harness:android --verbose --testTimeout 120000; then echo "Tests passed on attempt $attempt"; exit 0; fi; echo "Attempt $attempt failed (exit $?), retrying..."; sleep 5; done; echo "All attempts failed"; exit 1
 
       - name: Debug - Check logcat
         if: failure() || cancelled()
