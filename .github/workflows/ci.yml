@@ -375,6 +375,8 @@ jobs:
           # First attempt bundles through the harness Metro on app boot; CI
           # cold transforms can exceed the default 90s bridge window.
           HARNESS_BRIDGE_TIMEOUT: '180000'
+          # Debug logging to pin down ios-harness-startup-hang (#328).
+          HARNESS_DEBUG: '1'
         run: |
           # Background monitor: logs port/process state every 10s during an attempt
           start_monitor() {
@@ -419,7 +421,17 @@ jobs:
             lsof -ti:3001 | xargs kill -9 2>/dev/null || true
             wait_for_port_free 8081
             wait_for_port_free 3001
+            # A wedged CoreSimulator hangs harness startup on every retry
+            # (ios-harness-startup-hang, #328) — reset it and reboot the sim.
+            sudo pkill -9 -f CoreSimulatorService 2>/dev/null || true
+            sleep 5
+            if [ -n "$BOOTED_UDID" ]; then
+              xcrun simctl bootstatus "$BOOTED_UDID" -b || true
+            fi
           }
+
+          BOOTED_UDID=$(xcrun simctl list devices booted | grep -oE '[0-9A-F-]{36}' | head -1)
+          echo "booted simulator: ${BOOTED_UDID:-none}"
 
           for attempt in 1 2 3 4 5; do
             echo "=== Attempt $attempt of 5 ==="
@@ -658,6 +670,8 @@ jobs:
           # First attempt bundles through the harness Metro on app boot; CI
           # cold transforms can exceed the default 90s bridge window.
           HARNESS_BRIDGE_TIMEOUT: '180000'
+          # Debug logging to pin down ios-harness-startup-hang (#328).
+          HARNESS_DEBUG: '1'
         run: |
           # Background monitor: logs port/process state every 10s during an attempt
           start_monitor() {
@@ -702,7 +716,17 @@ jobs:
             lsof -ti:3001 | xargs kill -9 2>/dev/null || true
             wait_for_port_free 8081
             wait_for_port_free 3001
+            # A wedged CoreSimulator hangs harness startup on every retry
+            # (ios-harness-startup-hang, #328) — reset it and reboot the sim.
+            sudo pkill -9 -f CoreSimulatorService 2>/dev/null || true
+            sleep 5
+            if [ -n "$BOOTED_UDID" ]; then
+              xcrun simctl bootstatus "$BOOTED_UDID" -b || true
+            fi
           }
+
+          BOOTED_UDID=$(xcrun simctl list devices booted | grep -oE '[0-9A-F-]{36}' | head -1)
+          echo "booted simulator: ${BOOTED_UDID:-none}"
 
           for attempt in 1 2 3 4 5; do
             echo "=== Attempt $attempt of 5 ==="
