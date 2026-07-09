@@ -12,7 +12,6 @@ import app.rive.runtime.kotlin.core.Alignment as RiveAlignment
 import app.rive.runtime.kotlin.core.errors.*
 import android.util.Log
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 
 fun Variant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName?.toBindData(): BindData {
@@ -116,13 +115,9 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
     }
 
   override fun getViewModelInstance(): HybridViewModelInstanceSpec? {
-    // Read on the main thread: the controller's state-machine list is mutated
-    // there during startup and the legacy runtime has no internal
-    // synchronization (issue #297 race class). Mirrors iOS's MainThread.run;
-    // `immediate` avoids a deadlock when already called on main.
-    val viewModelInstance =
-      runBlocking(Dispatchers.Main.immediate) { view.getViewModelInstance() }
-        ?: return null
+    // Thread-safety lives in RiveReactNativeView.getViewModelInstance(): it
+    // returns a main-thread-maintained snapshot without blocking this thread.
+    val viewModelInstance = view.getViewModelInstance() ?: return null
     return HybridViewModelInstance(viewModelInstance)
   }
 
