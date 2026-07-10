@@ -57,6 +57,11 @@ jobs:
       - name: Typecheck files
         run: yarn typecheck
 
+      # Overload/deprecation pins (src/__tests__/*.test-d.ts). PR #294 adds
+      # the same tsd wiring without gating it; keep this step when merging.
+      - name: Type tests
+        run: yarn typetest
+
   test:
     runs-on: ubuntu-latest
     steps:
