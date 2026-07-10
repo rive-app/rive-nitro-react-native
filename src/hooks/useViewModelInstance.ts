@@ -318,15 +318,15 @@ export function useViewModelInstance(
   source: RiveFile | null | undefined,
   params: UseViewModelInstanceFileParams & { async: true }
 ): UseViewModelInstanceResult;
-/** @deprecated Pass `async: true` — without it the instance is created synchronously via deprecated runtime APIs that block the JS thread. `async: true` becomes the default in the next major. */
+/** @deprecated Pass `async: true` — without it the instance is created synchronously via deprecated runtime APIs that block the JS thread. `async: true` becomes the default in the next major. If your params object's `async` widened to `boolean`, re-pin it at the call site: `{ ...params, async: true }`. */
 export function useViewModelInstance(
   source: RiveFile,
-  params: UseViewModelInstanceFileParams & { async?: false; required: true }
+  params: UseViewModelInstanceFileParams & { required: true }
 ): UseViewModelInstanceRequiredResult;
-/** @deprecated Pass `async: true` — without it the instance is created synchronously via deprecated runtime APIs that block the JS thread. `async: true` becomes the default in the next major. */
+/** @deprecated Pass `async: true` — without it the instance is created synchronously via deprecated runtime APIs that block the JS thread. `async: true` becomes the default in the next major. If your params object's `async` widened to `boolean`, re-pin it at the call site: `{ ...params, async: true }`. */
 export function useViewModelInstance(
   source: RiveFile | null | undefined,
-  params?: UseViewModelInstanceFileParams & { async?: false }
+  params?: UseViewModelInstanceFileParams
 ): UseViewModelInstanceResult;
 
 // ViewModel overloads
@@ -338,18 +338,15 @@ export function useViewModelInstance(
   source: ViewModel | null | undefined,
   params: UseViewModelInstanceViewModelParams & { async: true }
 ): UseViewModelInstanceResult;
-/** @deprecated Pass `async: true` — without it the instance is created synchronously via deprecated runtime APIs that block the JS thread. `async: true` becomes the default in the next major. */
+/** @deprecated Pass `async: true` — without it the instance is created synchronously via deprecated runtime APIs that block the JS thread. `async: true` becomes the default in the next major. If your params object's `async` widened to `boolean`, re-pin it at the call site: `{ ...params, async: true }`. */
 export function useViewModelInstance(
   source: ViewModel,
-  params: UseViewModelInstanceViewModelParams & {
-    async?: false;
-    required: true;
-  }
+  params: UseViewModelInstanceViewModelParams & { required: true }
 ): UseViewModelInstanceRequiredResult;
-/** @deprecated Pass `async: true` — without it the instance is created synchronously via deprecated runtime APIs that block the JS thread. `async: true` becomes the default in the next major. */
+/** @deprecated Pass `async: true` — without it the instance is created synchronously via deprecated runtime APIs that block the JS thread. `async: true` becomes the default in the next major. If your params object's `async` widened to `boolean`, re-pin it at the call site: `{ ...params, async: true }`. */
 export function useViewModelInstance(
   source: ViewModel | null | undefined,
-  params?: UseViewModelInstanceViewModelParams & { async?: false }
+  params?: UseViewModelInstanceViewModelParams
 ): UseViewModelInstanceResult;
 
 // RiveViewRef overloads
@@ -361,31 +358,12 @@ export function useViewModelInstance(
   source: RiveViewRef | null | undefined,
   params: UseViewModelInstanceRefParams & { async: true }
 ): UseViewModelInstanceResult;
-/** @deprecated Pass `async: true` — without it the instance is created synchronously via deprecated runtime APIs that block the JS thread. `async: true` becomes the default in the next major. */
+/** @deprecated Pass `async: true` — without it the instance is created synchronously via deprecated runtime APIs that block the JS thread. `async: true` becomes the default in the next major. If your params object's `async` widened to `boolean`, re-pin it at the call site: `{ ...params, async: true }`. */
 export function useViewModelInstance(
   source: RiveViewRef,
-  params: UseViewModelInstanceRefParams & { async?: false; required: true }
+  params: UseViewModelInstanceRefParams & { required: true }
 ): UseViewModelInstanceRequiredResult;
-/** @deprecated Pass `async: true` — without it the instance is created synchronously via deprecated runtime APIs that block the JS thread. `async: true` becomes the default in the next major. */
-export function useViewModelInstance(
-  source: RiveViewRef | null | undefined,
-  params?: UseViewModelInstanceRefParams & { async?: false }
-): UseViewModelInstanceResult;
-
-// Widened-`async` catch-alls: a params object built separately (or typed
-// with the exported *Params types) carries `async?: boolean` and matches no
-// literal overload above — without these the compiler rejects the call and
-// blames the *source* argument. The flag still must stay constant for the
-// component's lifetime. Literal `async` values resolve to the more specific
-// overloads first, keeping the deprecation warnings and `required` narrowing.
-export function useViewModelInstance(
-  source: RiveFile | null | undefined,
-  params?: UseViewModelInstanceFileParams
-): UseViewModelInstanceResult;
-export function useViewModelInstance(
-  source: ViewModel | null | undefined,
-  params?: UseViewModelInstanceViewModelParams
-): UseViewModelInstanceResult;
+/** @deprecated Pass `async: true` — without it the instance is created synchronously via deprecated runtime APIs that block the JS thread. `async: true` becomes the default in the next major. If your params object's `async` widened to `boolean`, re-pin it at the call site: `{ ...params, async: true }`. */
 export function useViewModelInstance(
   source: RiveViewRef | null | undefined,
   params?: UseViewModelInstanceRefParams

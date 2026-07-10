@@ -367,8 +367,10 @@ function createMockRiveViewRef(
 describe('useViewModelInstance - param type compatibility', () => {
   // These pin overload resolution as much as runtime behavior: a params
   // object built separately widens `async` to boolean, and the exported
-  // params types declare `async?: boolean` — both must remain accepted
-  // (`yarn tsc` is the gate that fails when the overloads regress).
+  // params types declare `async?: boolean` — both must keep COMPILING and
+  // behave per the runtime value (`yarn tsc` is the gate). By design they
+  // resolve to the deprecated overloads: the warning's message tells such
+  // callers to re-pin with `{ ...params, async: true }`.
   it('accepts a params object with a widened boolean async', async () => {
     const defaultInstance = createMockViewModelInstance();
     const defaultViewModel = createMockViewModel({ defaultInstance });
@@ -376,6 +378,7 @@ describe('useViewModelInstance - param type compatibility', () => {
 
     const params = { async: true }; // widens to { async: boolean }
     const { result } = renderHook(() =>
+      // eslint-disable-next-line @typescript-eslint/no-deprecated -- widened async resolves to the deprecated overload by design; runtime still honors the value
       useViewModelInstance(mockRiveFile, params)
     );
 
@@ -391,6 +394,7 @@ describe('useViewModelInstance - param type compatibility', () => {
 
     const params: UseViewModelInstanceFileParams = { async: true };
     const { result } = renderHook(() =>
+      // eslint-disable-next-line @typescript-eslint/no-deprecated -- exported param types carry async?: boolean and resolve to the deprecated overload by design
       useViewModelInstance(mockRiveFile, params)
     );
 
@@ -748,6 +752,7 @@ describe('useViewModelInstance - async flag constancy guard', () => {
 
     const { rerender } = renderHook(
       ({ isAsync }: { isAsync: boolean }) =>
+        // eslint-disable-next-line @typescript-eslint/no-deprecated -- dynamic async is the misuse under test
         useViewModelInstance(mockRiveFile, { async: isAsync }),
       { initialProps: { isAsync: false } }
     );
