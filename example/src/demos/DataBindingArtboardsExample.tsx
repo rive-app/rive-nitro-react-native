@@ -78,7 +78,7 @@ function ArtboardSwapper({
   mainFile: RiveFile;
   assetsFile: RiveFile;
 }) {
-  const { instance, error } = useViewModelInstance(mainFile);
+  const { instance, error } = useViewModelInstance(mainFile, { async: true });
   const [currentArtboard, setCurrentArtboard] = useState<string>('Dragon');
   const initializedRef = useRef(false);
 

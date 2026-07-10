@@ -86,8 +86,13 @@ class HybridRiveFile : HybridRiveFileSpec() {
     }
   }
 
+  // The *Async lookups run on the main thread (via [riveMainScope], not Nitro's
+  // Dispatchers.Default pool): they walk the same RiveFile the attached views
+  // render on the main thread, and the legacy runtime has no internal
+  // synchronization — off-main access is the race class of issue #297.
+  // "Async" here means "doesn't block the JS thread".
   override fun getViewModelNamesAsync(): Promise<Array<String>> {
-    return Promise.async {
+    return Promise.async(riveMainScope) {
       val file = riveFile ?: return@async emptyArray()
       val count = file.viewModelCount
       val names = mutableListOf<String>()
@@ -103,19 +108,19 @@ class HybridRiveFile : HybridRiveFileSpec() {
   }
 
   override fun viewModelByNameAsync(name: String, validate: Boolean?): Promise<HybridViewModelSpec?> {
-    return Promise.async { viewModelByName(name) }
+    return Promise.async(riveMainScope) { viewModelByName(name) }
   }
 
   override fun defaultArtboardViewModelAsync(artboardBy: ArtboardBy?): Promise<HybridViewModelSpec?> {
-    return Promise.async { defaultArtboardViewModel(artboardBy) }
+    return Promise.async(riveMainScope) { defaultArtboardViewModel(artboardBy) }
   }
 
   override fun getArtboardCountAsync(): Promise<Double> {
-    return Promise.async { artboardCount }
+    return Promise.async(riveMainScope) { artboardCount }
   }
 
   override fun getArtboardNamesAsync(): Promise<Array<String>> {
-    return Promise.async { artboardNames }
+    return Promise.async(riveMainScope) { artboardNames }
   }
 
   override fun updateReferencedAssets(referencedAssets: ReferencedAssetsType) {
@@ -140,7 +145,7 @@ class HybridRiveFile : HybridRiveFileSpec() {
 
   override fun getEnums(): Promise<Array<RiveEnumDefinition>> {
     val file = riveFile ?: return Promise.resolved(emptyArray())
-    return Promise.async {
+    return Promise.async(riveMainScope) {
       try {
         file.enums
           .map { enum ->

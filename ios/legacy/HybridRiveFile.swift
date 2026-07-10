@@ -90,8 +90,13 @@ class HybridRiveFile: HybridRiveFileSpec, RiveViewSource {
     return HybridBindableArtboard(bindableArtboard: bindable)
   }
 
+  // The *Async lookups run on the main thread (not Nitro's pool): they walk
+  // the same RiveFile the attached views render on the main thread, and the
+  // legacy runtime has no internal synchronization — off-main access is the
+  // race class of issue #297. "Async" here means "doesn't block the JS
+  // thread", matching HybridViewModel's create*InstanceAsync.
   func getViewModelNamesAsync() throws -> Promise<[String]> {
-    return Promise.async {
+    return Promise.onMain {
       guard let file = self.riveFile else { return [] }
       let count = file.viewModelCount
       var names: [String] = []
@@ -105,19 +110,19 @@ class HybridRiveFile: HybridRiveFileSpec, RiveViewSource {
   }
 
   func viewModelByNameAsync(name: String, validate: Bool?) throws -> Promise<(any HybridViewModelSpec)?> {
-    return Promise.async { try self.viewModelByName(name: name) }
+    return Promise.onMain { try self.viewModelByName(name: name) }
   }
 
   func defaultArtboardViewModelAsync(artboardBy: ArtboardBy?) throws -> Promise<(any HybridViewModelSpec)?> {
-    return Promise.async { try self.defaultArtboardViewModel(artboardBy: artboardBy) }
+    return Promise.onMain { try self.defaultArtboardViewModel(artboardBy: artboardBy) }
   }
 
   func getArtboardCountAsync() throws -> Promise<Double> {
-    return Promise.async { self.artboardCount }
+    return Promise.onMain { self.artboardCount }
   }
 
   func getArtboardNamesAsync() throws -> Promise<[String]> {
-    return Promise.async { self.artboardNames }
+    return Promise.onMain { self.artboardNames }
   }
 
   func updateReferencedAssets(referencedAssets: ReferencedAssetsType) {

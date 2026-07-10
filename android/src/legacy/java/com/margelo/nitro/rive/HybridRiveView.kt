@@ -115,6 +115,8 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
     }
 
   override fun getViewModelInstance(): HybridViewModelInstanceSpec? {
+    // Thread-safety lives in RiveReactNativeView.getViewModelInstance(): it
+    // returns a main-thread-maintained snapshot without blocking this thread.
     val viewModelInstance = view.getViewModelInstance() ?: return null
     return HybridViewModelInstance(viewModelInstance)
   }

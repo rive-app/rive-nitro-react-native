@@ -26,6 +26,7 @@ export default function ReloadRebind() {
   const { riveFile } = useRiveFile(
     require('../../assets/rive/quick_start.riv')
   );
+  // eslint-disable-next-line @typescript-eslint/no-deprecated -- intentionally exercises the deprecated sync creation path
   const { instance: viewModelInstance } = useViewModelInstance(riveFile, {
     onInit: (vmi) => vmi.numberProperty('health')!.set(50),
   });

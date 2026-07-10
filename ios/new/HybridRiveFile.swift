@@ -89,8 +89,21 @@ class HybridRiveFile: HybridRiveFileSpec {
     }
 
     let artboard = try await file.createArtboard(artboardName)
-    let vmInfo = try await file.getDefaultViewModelInfo(for: artboard)
-    return HybridViewModel(file: file, vmName: vmInfo.viewModelName, worker: worker)
+    // getDefaultViewModelInfo throws when the artboard has no default
+    // ViewModel — a normal state for VM-less files (issue #189 fixture), not
+    // a failure. Resolve nil like the legacy backend so callers get the
+    // documented "no ViewModel" result — but propagate cancellation and log
+    // what was swallowed so a genuine failure (disposed file, dead worker)
+    // isn't a silently blank screen.
+    do {
+      let vmInfo = try await file.getDefaultViewModelInfo(for: artboard)
+      return HybridViewModel(file: file, vmName: vmInfo.viewModelName, worker: worker)
+    } catch is CancellationError {
+      throw CancellationError()
+    } catch {
+      RiveLog.d("RiveFile", "defaultArtboardViewModel: resolving nil — getDefaultViewModelInfo failed: \(error)")
+      return nil
+    }
   }
 
   // Deprecated: Use defaultArtboardViewModelAsync instead

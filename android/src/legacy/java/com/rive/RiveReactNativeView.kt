@@ -165,15 +165,40 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
     if (!stateMachines.isNullOrEmpty()) {
       stateMachines.first().viewModelInstance = vmi
     }
+    // Keep the snapshot fresh at the moment binding changes so a JS-side
+    // read right after binding sees the instance without waiting for a
+    // posted refresh (guards the read-after-bind contract, issue #156).
+    lastKnownViewModelInstance = readViewModelInstanceOnMain()
   }
 
-  fun getViewModelInstance(): ViewModelInstance? {
+  // Cache maintained on the main thread: the controller's state-machine list
+  // is mutated there and the legacy runtime has no internal synchronization
+  // (issue #297 race class), so other threads must not traverse it. Off-main
+  // reads return the last main-thread snapshot and schedule a refresh —
+  // eventually consistent, which suits the polling callers (the async hook's
+  // ref path, harness waitFor loops). Blocking on the main thread instead
+  // would risk a JS↔main deadlock under the legacy bridge.
+  @Volatile
+  private var lastKnownViewModelInstance: ViewModelInstance? = null
+
+  private fun readViewModelInstanceOnMain(): ViewModelInstance? {
     val stateMachines = riveAnimationView?.controller?.stateMachines
     return if (!stateMachines.isNullOrEmpty()) {
       stateMachines.first().viewModelInstance
     } else {
       null
     }
+  }
+
+  fun getViewModelInstance(): ViewModelInstance? {
+    if (android.os.Looper.myLooper() == android.os.Looper.getMainLooper()) {
+      lastKnownViewModelInstance = readViewModelInstanceOnMain()
+      return lastKnownViewModelInstance
+    }
+    android.os.Handler(android.os.Looper.getMainLooper()).post {
+      lastKnownViewModelInstance = readViewModelInstanceOnMain()
+    }
+    return lastKnownViewModelInstance
   }
 
   fun applyDataBinding(bindData: BindData) {
@@ -360,6 +385,9 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
         }
       }
     }
+    // Keep the snapshot fresh at the moment binding changes — see
+    // lastKnownViewModelInstance.
+    lastKnownViewModelInstance = readViewModelInstanceOnMain()
   }
 
   private fun convertEventProperties(properties: Map<String, Any>?): Map<String, EventPropertiesOutput>? {

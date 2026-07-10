@@ -57,23 +57,25 @@ class HybridViewModel(private val viewModel: ViewModel) : HybridViewModelSpec() 
     return Promise.rejected(UnsupportedOperationException("getPropertiesAsync is not supported on the legacy backend"))
   }
 
+  // Main-hopped like HybridRiveFile's lookups — the legacy runtime is only
+  // safe to touch on the main thread (see riveMainScope).
   override fun getPropertyCountAsync(): Promise<Double> {
-    return Promise.async { propertyCount }
+    return Promise.async(riveMainScope) { propertyCount }
   }
 
   override fun getInstanceCountAsync(): Promise<Double> {
-    return Promise.async { instanceCount }
+    return Promise.async(riveMainScope) { instanceCount }
   }
 
   override fun createInstanceByNameAsync(name: String): Promise<HybridViewModelInstanceSpec?> {
-    return Promise.async { createInstanceByName(name) }
+    return Promise.async(riveMainScope) { createInstanceByName(name) }
   }
 
   override fun createDefaultInstanceAsync(): Promise<HybridViewModelInstanceSpec?> {
-    return Promise.async { createDefaultInstance() }
+    return Promise.async(riveMainScope) { createDefaultInstance() }
   }
 
   override fun createBlankInstanceAsync(): Promise<HybridViewModelInstanceSpec?> {
-    return Promise.async { createInstance() }
+    return Promise.async(riveMainScope) { createInstance() }
   }
 }

@@ -258,7 +258,7 @@ function MountedView({ text }: { text: string }) {
     // https://rive.app/marketplace/26480-49641-simple-test-text-property/
     require('../../assets/rive/font_fallback.riv')
   );
-  const { instance } = useViewModelInstance(riveFile);
+  const { instance } = useViewModelInstance(riveFile, { async: true });
 
   const { setValue: setRiveText, error: textError } = useRiveString(
     TEXT_PROPERTY,
