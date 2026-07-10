@@ -165,6 +165,10 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
     if (!stateMachines.isNullOrEmpty()) {
       stateMachines.first().viewModelInstance = vmi
     }
+    // Keep the snapshot fresh at the moment binding changes so a JS-side
+    // read right after binding sees the instance without waiting for a
+    // posted refresh (guards the read-after-bind contract, issue #156).
+    lastKnownViewModelInstance = readViewModelInstanceOnMain()
   }
 
   // Cache maintained on the main thread: the controller's state-machine list
@@ -381,6 +385,9 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
         }
       }
     }
+    // Keep the snapshot fresh at the moment binding changes — see
+    // lastKnownViewModelInstance.
+    lastKnownViewModelInstance = readViewModelInstanceOnMain()
   }
 
   private fun convertEventProperties(properties: Map<String, Any>?): Map<String, EventPropertiesOutput>? {
