@@ -363,11 +363,22 @@ describe('useViewModelInstance - ViewModel source', () => {
   });
 });
 
-describe('useViewModelInstance - null source', () => {
-  it('should return undefined instance when source is null', () => {
+describe('useViewModelInstance - null vs undefined source', () => {
+  it('settles to a terminal null when the source is null (e.g. file load failed)', () => {
+    // Mirrors the async path: `useRiveFile` returns null on error and
+    // undefined while loading — a null source must not read as isLoading.
     const { result } = renderHook(() => useViewModelInstance(null));
 
+    expect(result.current.instance).toBeNull();
+    expect(result.current.isLoading).toBe(false);
+    expect(result.current.error).toBeNull();
+  });
+
+  it('reports isLoading while the source is undefined (still resolving)', () => {
+    const { result } = renderHook(() => useViewModelInstance(undefined));
+
     expect(result.current.instance).toBeUndefined();
+    expect(result.current.isLoading).toBe(true);
     expect(result.current.error).toBeNull();
   });
 });

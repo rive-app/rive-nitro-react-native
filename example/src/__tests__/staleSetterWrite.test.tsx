@@ -34,6 +34,7 @@ function AgeHook({ instance, ctx }: { instance: ViewModelInstance; ctx: Ctx }) {
 }
 
 function Repro({ file, ctx }: { file: RiveFile; ctx: Ctx }) {
+  // eslint-disable-next-line @typescript-eslint/no-deprecated -- stale-write regression rides the sync creation path on purpose
   const { instance } = useViewModelInstance(file);
   if (!instance) return null;
   return (

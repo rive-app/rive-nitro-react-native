@@ -6,7 +6,7 @@
   - Data Binding: https://rive.app/docs/runtimes/data-binding
 */
 
-import { Button, View, StyleSheet } from 'react-native';
+import { Button, Text, View, StyleSheet } from 'react-native';
 import {
   RiveView,
   useRive,
@@ -19,13 +19,17 @@ import {
 import type { Metadata } from '../shared/metadata';
 
 export default function QuickStart() {
-  const { riveFile } = useRiveFile(
+  const { riveFile, error: fileError } = useRiveFile(
     require('../../assets/rive/quick_start.riv')
   );
   const { riveViewRef, setHybridRef } = useRive();
-  const { instance: viewModelInstance } = useViewModelInstance(riveFile, {
-    onInit: (vmi) => vmi.numberProperty('health')!.set(9),
-  });
+  const { instance: viewModelInstance, error } = useViewModelInstance(
+    riveFile,
+    {
+      async: true,
+      onInit: (vmi) => vmi.numberProperty('health')!.set(9),
+    }
+  );
 
   const { setValue: setHealth } = useRiveNumber('health', viewModelInstance);
 
@@ -37,19 +41,27 @@ export default function QuickStart() {
 
   const handleTakeDamage = () => {
     setHealth((h) => (h ?? 0) - 7);
-    riveViewRef!.play();
+    riveViewRef?.play();
   };
 
   const handleMaxHealth = () => {
     setHealth(100);
-    riveViewRef!.play();
+    riveViewRef?.play();
   };
 
   const handleGameOver = () => {
     setHealth(0);
     gameOverTrigger();
-    riveViewRef!.play();
+    riveViewRef?.play();
   };
+
+  if (fileError || error) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.errorText}>{(fileError ?? error)!.message}</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -85,5 +97,8 @@ const styles = StyleSheet.create({
   rive: {
     width: '100%',
     height: 400,
+  },
+  errorText: {
+    color: 'red',
   },
 });
