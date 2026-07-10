@@ -50,6 +50,15 @@ export default defineConfig([
     },
   },
   {
+    // Type-test files pin overload/deprecation resolution: a
+    // no-deprecated disable there asserts "this call IS deprecated", so an
+    // unused directive means the resolution regressed and must fail lint.
+    files: ['**/*.typetest.{ts,tsx}'],
+    linterOptions: {
+      reportUnusedDisableDirectives: 'error',
+    },
+  },
+  {
     ignores: [
       'node_modules/',
       'lib/',
