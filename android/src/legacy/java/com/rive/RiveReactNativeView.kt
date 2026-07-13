@@ -110,6 +110,9 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
     if (willDispose) {
       riveAnimationView?.dispose()
       removeEventListeners()
+      // Post-dispose reads must resolve null, not the retained (released)
+      // instance; also stops pinning it for the view's remaining lifetime.
+      lastKnownViewModelInstance = null
     }
     super.onDetachedFromWindow()
   }
@@ -182,6 +185,10 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
   private var lastKnownViewModelInstance: ViewModelInstance? = null
 
   private fun readViewModelInstanceOnMain(): ViewModelInstance? {
+    // A refresh posted before dispose() can run after it; reading the
+    // torn-down controller's stale list here would re-cache a released
+    // instance right after onDetachedFromWindow cleared it.
+    if (willDispose) return null
     val stateMachines = riveAnimationView?.controller?.stateMachines
     return if (!stateMachines.isNullOrEmpty()) {
       stateMachines.first().viewModelInstance
