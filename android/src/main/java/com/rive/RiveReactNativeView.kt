@@ -184,6 +184,8 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
   @Volatile
   private var lastKnownViewModelInstance: ViewModelInstance? = null
 
+  private val mainHandler = android.os.Handler(android.os.Looper.getMainLooper())
+
   private fun readViewModelInstanceOnMain(): ViewModelInstance? {
     // A refresh posted before dispose() can run after it; reading the
     // torn-down controller's stale list here would re-cache a released
@@ -202,7 +204,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
       lastKnownViewModelInstance = readViewModelInstanceOnMain()
       return lastKnownViewModelInstance
     }
-    android.os.Handler(android.os.Looper.getMainLooper()).post {
+    mainHandler.post {
       lastKnownViewModelInstance = readViewModelInstanceOnMain()
     }
     return lastKnownViewModelInstance
