@@ -130,7 +130,7 @@ function StressRunner({
 }
 
 function WithViewModelSetup({ file }: { file: RiveFile }) {
-  const { instance, error } = useViewModelInstance(file);
+  const { instance, error } = useViewModelInstance(file, { async: true });
 
   if (error) {
     return <Text style={styles.errorText}>{error.message}</Text>;

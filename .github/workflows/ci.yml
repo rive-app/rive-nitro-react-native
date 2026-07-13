@@ -57,6 +57,10 @@ jobs:
       - name: Typecheck files
         run: yarn typecheck
 
+      # Overload/deprecation pins (src/__tests__/*.test-d.ts).
+      - name: Type tests
+        run: yarn typetest
+
   test:
     runs-on: ubuntu-latest
     steps:

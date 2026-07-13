@@ -302,9 +302,17 @@ describe('Auto dataBind with no default ViewModel (issue #189)', () => {
 
     expect(context.error).toBeNull();
 
-    const vmi = context.ref!.getViewModelInstance();
-    expect(vmi).not.toBeNull();
-    expect(vmi!.numberProperty('ypos')).toBeDefined();
+    // The default ViewModel instance and its properties resolve asynchronously a
+    // short time after the view ref is assigned, so poll until the property is
+    // available rather than reading it the instant the ref exists.
+    await waitFor(
+      () => {
+        expect(
+          context.ref!.getViewModelInstance()?.numberProperty('ypos')
+        ).toBeDefined();
+      },
+      { timeout: 5000 }
+    );
 
     cleanup();
   });

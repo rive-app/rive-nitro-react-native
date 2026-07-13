@@ -46,7 +46,8 @@
     "copy:nitrogen-config": "mkdir -p lib/nitrogen/generated/shared/json && cp nitrogen/generated/shared/json/RiveViewConfig.json lib/nitrogen/generated/shared/json/",
     "lint:swift": "./scripts/lint-swift.sh",
     "lint:kotlin": "./scripts/lint-kotlin.sh",
-    "lint:native": "yarn lint:swift && yarn lint:kotlin"
+    "lint:native": "yarn lint:swift && yarn lint:kotlin",
+    "typetest": "tsd --typings src/index.tsx"
   },
   "keywords": [
     "react-native",
@@ -100,6 +101,7 @@
     "react-native-nitro-modules": "0.35.10",
     "react-test-renderer": "19.0.0",
     "release-it": "^17.10.0",
+    "tsd": "^0.33.0",
     "turbo": "^1.10.7",
     "typescript": "^5.2.2"
   },
@@ -123,6 +125,10 @@
     "testMatch": [
       "<rootDir>/src/**/__tests__/**/*.{js,jsx,ts,tsx}",
       "<rootDir>/src/**/*.{spec,test}.{js,jsx,ts,tsx}"
+    ],
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "\\.test-d\\.ts$"
     ],
     "modulePathIgnorePatterns": [
       "<rootDir>/example/node_modules",
@@ -188,6 +194,24 @@
         }
       ]
     ]
+  },
+  "tsd": {
+    "typings": "src/index.tsx",
+    "directory": "src/__tests__",
+    "compilerOptions": {
+      "paths": {
+        "@rive-app/react-native": [
+          "./src/index"
+        ]
+      },
+      "moduleResolution": "bundler",
+      "jsx": "react-jsx",
+      "lib": [
+        "ESNext"
+      ],
+      "strict": true,
+      "allowArbitraryExtensions": true
+    }
   },
   "create-react-native-library": {
     "languages": "kotlin-swift",
