@@ -599,13 +599,15 @@ jobs:
           script: |
             adb install expo57-example/android/app/build/outputs/apk/debug/app-debug.apk
             sleep 10
-            cd expo57-example && for attempt in 1 2 3; do echo "Attempt $attempt of 3"; if timeout 600 env ANDROID_AVD=test yarn test:harness:android --verbose --testTimeout 120000; then echo "Tests passed on attempt $attempt"; exit 0; fi; echo "Attempt $attempt failed (exit $?), retrying..."; sleep 5; done; echo "All attempts failed"; exit 1
+            cd expo57-example && for attempt in 1 2 3; do echo "Attempt $attempt of 3"; if timeout 600 env ANDROID_AVD=test yarn test:harness:android --verbose --testTimeout 120000; then echo "Tests passed on attempt $attempt"; exit 0; fi; echo "Attempt $attempt failed (exit $?), retrying..."; ../scripts/collect-android-crash-logs.sh "$attempt" ../crash-logs; sleep 5; done; ../scripts/collect-android-crash-logs.sh final ../crash-logs; echo "All attempts failed"; exit 1
 
-      - name: Debug - Check logcat
+      - name: Upload Android crash logs
         if: failure() || cancelled()
-        run: |
-          echo "=== Checking logcat for errors ==="
-          adb logcat -d -s ReactNativeJS:* RNRive:* | tail -200 || echo "No logs found"
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-harness-crash-logs
+          path: crash-logs/
+          if-no-files-found: ignore
 
   test-harness-ios-legacy:
     # Same as test-harness-ios but with the legacy Rive backend
@@ -940,10 +942,12 @@ jobs:
           script: |
             adb install expo57-example/android/app/build/outputs/apk/debug/app-debug.apk
             sleep 10
-            cd expo57-example && for attempt in 1 2 3; do echo "Attempt $attempt of 3"; if timeout 600 env ANDROID_AVD=test yarn test:harness:android --verbose --testTimeout 120000; then echo "Tests passed on attempt $attempt"; exit 0; fi; echo "Attempt $attempt failed (exit $?), retrying..."; sleep 5; done; echo "All attempts failed"; exit 1
+            cd expo57-example && for attempt in 1 2 3; do echo "Attempt $attempt of 3"; if timeout 600 env ANDROID_AVD=test yarn test:harness:android --verbose --testTimeout 120000; then echo "Tests passed on attempt $attempt"; exit 0; fi; echo "Attempt $attempt failed (exit $?), retrying..."; ../scripts/collect-android-crash-logs.sh "$attempt" ../crash-logs; sleep 5; done; ../scripts/collect-android-crash-logs.sh final ../crash-logs; echo "All attempts failed"; exit 1
 
-      - name: Debug - Check logcat
+      - name: Upload Android crash logs
         if: failure() || cancelled()
-        run: |
-          echo "=== Checking logcat for errors ==="
-          adb logcat -d -s ReactNativeJS:* RNRive:* | tail -200 || echo "No logs found"
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-harness-legacy-crash-logs
+          path: crash-logs/
+          if-no-files-found: ignore
