@@ -144,11 +144,12 @@ jobs:
           yarn turbo run build:android --cache-dir="${{ env.TURBO_CACHE_DIR }}"
 
   build-ios:
-    # Pinned: macos-latest is mid-migration to macOS 26, whose simulator set
-    # has no iPhone 16 Pro on an iOS >=26 runtime, breaking the harness boot.
-    runs-on: macos-15
+    # Trial: Cirrus Runners' macOS 26 (Tahoe) image on Apple Silicon. The
+    # runner image ships the 3 latest Xcodes (26.0.1/26.1.1/26.2) plus the
+    # `xcodes` switcher, so XCODE_VERSION must be one of those.
+    runs-on: ghcr.io/cirruslabs/macos-runner:tahoe
     env:
-      XCODE_VERSION: 26.3
+      XCODE_VERSION: 26.2
       TURBO_CACHE_DIR: .turbo/ios
     steps:
       - name: Checkout
@@ -174,11 +175,9 @@ jobs:
             echo "turbo_cache_hit=1" >> $GITHUB_ENV
           fi
 
-      - name: Use appropriate Xcode version
+      - name: Select Xcode version
         if: env.turbo_cache_hit != 1
-        uses: maxim-lobanov/setup-xcode@v1
-        with:
-          xcode-version: ${{ env.XCODE_VERSION }}
+        run: sudo xcodes select ${{ env.XCODE_VERSION }}
 
       - name: Restore cocoapods
         if: env.turbo_cache_hit != 1
@@ -214,12 +213,11 @@ jobs:
           yarn turbo run build:ios --cache-dir="${{ env.TURBO_CACHE_DIR }}"
 
   test-harness-ios:
-    # Pinned to macos-15 — see build-ios. macos-26 runners lack a matching
-    # iPhone 16 Pro / iOS >=26 simulator, so the boot step fails intermittently.
-    runs-on: macos-15
+    # Trial: Cirrus Runners — see build-ios.
+    runs-on: ghcr.io/cirruslabs/macos-runner:tahoe
     timeout-minutes: 60
     env:
-      XCODE_VERSION: 26.3
+      XCODE_VERSION: 26.2
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -227,10 +225,8 @@ jobs:
       - name: Setup
         uses: ./.github/actions/setup
 
-      - name: Use appropriate Xcode version
-        uses: maxim-lobanov/setup-xcode@v1
-        with:
-          xcode-version: ${{ env.XCODE_VERSION }}
+      - name: Select Xcode version
+        run: sudo xcodes select ${{ env.XCODE_VERSION }}
 
       - name: Restore cocoapods
         id: cocoapods-cache
