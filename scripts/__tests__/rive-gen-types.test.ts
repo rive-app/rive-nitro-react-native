@@ -35,7 +35,7 @@ describe('rive-gen-types', () => {
 
   test('generated file contains viewModel types', () => {
     const content = readFileSync(OUT_DTS, 'utf8');
-    expect(content).toContain("'Rewards'");
+    expect(content).toContain('Rewards: {');
     expect(content).toContain("'viewModel:Item_Icon_Value'");
   });
 
