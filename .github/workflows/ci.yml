@@ -275,21 +275,19 @@ jobs:
           path: example/ios/build
           key: ${{ steps.ios-build-cache.outputs.cache-primary-key }}
 
-      # The Cirrus image has no pre-created devices, and simulator-action only
-      # matches existing ones — create the device (and runtime, if missing) first.
-      - name: Ensure iPhone 16 Pro simulator exists
+      # The Cirrus image only pre-creates devices for its oldest runtime (iOS 18),
+      # and simulator-action doesn't create devices — make one on iOS 26 explicitly.
+      - name: Create iPhone 16 Pro simulator on iOS 26
         run: |
-          xcrun simctl list runtimes
-          if ! xcrun simctl list devices available | grep -q 'iPhone 16 Pro ('; then
+          runtime=$(xcrun simctl list runtimes available | awk '/^iOS 26/{id=$NF} END{print id}')
+          if [ -z "$runtime" ]; then
+            echo "No iOS 26 runtime installed; downloading via xcodebuild"
+            sudo xcodebuild -downloadPlatform iOS
             runtime=$(xcrun simctl list runtimes available | awk '/^iOS 26/{id=$NF} END{print id}')
-            if [ -z "$runtime" ]; then
-              echo "No iOS 26 runtime installed; downloading via xcodebuild"
-              sudo xcodebuild -downloadPlatform iOS
-              runtime=$(xcrun simctl list runtimes available | awk '/^iOS 26/{id=$NF} END{print id}')
-            fi
-            echo "Creating iPhone 16 Pro on $runtime"
-            xcrun simctl create 'iPhone 16 Pro' com.apple.CoreSimulator.SimDeviceType.iPhone-16-Pro "$runtime"
           fi
+          echo "Creating iPhone 16 Pro on $runtime"
+          xcrun simctl create 'iPhone 16 Pro' com.apple.CoreSimulator.SimDeviceType.iPhone-16-Pro "$runtime"
+          xcrun simctl list devices available
 
       - name: Boot iOS Simulator
         uses: futureware-tech/simulator-action@v4
