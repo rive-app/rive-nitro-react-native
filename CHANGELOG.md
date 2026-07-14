@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.16](https://github.com/rive-app/rive-nitro-react-native/compare/v0.4.15...v0.4.16) (2026-07-14)
+
+
+### Bug Fixes
+
+* **android:** release data-binding HybridObject native resources ([#302](https://github.com/rive-app/rive-nitro-react-native/issues/302)) ([4281519](https://github.com/rive-app/rive-nitro-react-native/commit/42815197962f0ba9d2fd5bd960301edebd112c55))
+
 ## [0.4.15](https://github.com/rive-app/rive-nitro-react-native/compare/v0.4.14...v0.4.15) (2026-07-13)
 
 

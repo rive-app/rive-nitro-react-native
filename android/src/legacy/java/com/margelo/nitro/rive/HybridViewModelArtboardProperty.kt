@@ -9,6 +9,9 @@ import com.facebook.proguard.annotations.DoNotStrip
 class HybridViewModelArtboardProperty(private val property: ViewModelArtboardProperty) :
   HybridViewModelArtboardPropertySpec() {
 
+  override val memorySize: Long
+    get() = VIEW_MODEL_HYBRID_MEMORY_SIZE
+
   override fun set(artboard: HybridBindableArtboardSpec?) {
     val bindable = (artboard as? HybridBindableArtboard)?.bindableArtboard
     property.set(bindable)

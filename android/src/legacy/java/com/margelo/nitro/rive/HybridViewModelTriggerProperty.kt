@@ -9,6 +9,14 @@ import com.facebook.proguard.annotations.DoNotStrip
 class HybridViewModelTriggerProperty(private val viewModelTrigger: ViewModelTriggerProperty) :
   HybridViewModelTriggerPropertySpec(),
   BaseHybridViewModelProperty<ViewModelTriggerProperty.TriggerUnit> by BaseHybridViewModelPropertyImpl() {
+  override fun dispose() {
+    removeListeners()
+    super<HybridViewModelTriggerPropertySpec>.dispose()
+  }
+
+  override val memorySize: Long
+    get() = VIEW_MODEL_HYBRID_MEMORY_SIZE
+
   override fun trigger() {
     viewModelTrigger.trigger()
   }
