@@ -314,10 +314,10 @@ export function useViewModelInstance<
   source: (RiveFile & { readonly __schema?: T }) | null | undefined,
   params: UseViewModelInstanceFileParams & { viewModelName: N }
 ):
-  | { instance: TypedViewModelInstance<T, N>; error: null }
-  | { instance: null; error: Error }
-  | { instance: null; error: null }
-  | { instance: undefined; error: null };
+  | { instance: TypedViewModelInstance<T, N>; isLoading: false; error: null }
+  | { instance: null; isLoading: false; error: Error }
+  | { instance: null; isLoading: false; error: null }
+  | { instance: undefined; isLoading: true; error: null };
 
 // RiveFile overloads
 export function useViewModelInstance(

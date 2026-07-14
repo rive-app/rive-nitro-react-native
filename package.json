@@ -48,7 +48,7 @@
     "lint:swift": "./scripts/lint-swift.sh",
     "lint:kotlin": "./scripts/lint-kotlin.sh",
     "lint:native": "yarn lint:swift && yarn lint:kotlin",
-"typetest": "tsd --typings src/index.tsx",
+    "typetest": "tsd --typings src/index.tsx",
     "test:scripts": "cd scripts/__tests__ && bun test --no-parallel"
   },
   "keywords": [
@@ -203,7 +203,7 @@
     "directory": "src/__tests__",
     "compilerOptions": {
       "paths": {
-"@rive-app/react-native": [
+        "@rive-app/react-native": [
           "./src/index"
         ]
       },
