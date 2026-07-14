@@ -1,6 +1,6 @@
 {
   "name": "@rive-app/react-native",
-  "version": "0.4.14",
+  "version": "0.4.15",
   "description": "Rive React Native",
   "main": "./lib/module/index.js",
   "types": "./lib/typescript/src/index.d.ts",
@@ -202,11 +202,15 @@
     "directory": "src/__tests__",
     "compilerOptions": {
       "paths": {
-        "@rive-app/react-native": ["./src/index"]
+        "@rive-app/react-native": [
+          "./src/index"
+        ]
       },
       "moduleResolution": "bundler",
       "jsx": "react-jsx",
-      "lib": ["ESNext"],
+      "lib": [
+        "ESNext"
+      ],
       "strict": true,
       "allowArbitraryExtensions": true
     }

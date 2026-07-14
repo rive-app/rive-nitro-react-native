@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.15](https://github.com/rive-app/rive-nitro-react-native/compare/v0.4.14...v0.4.15) (2026-07-13)
+
+
+### Features
+
+* **hooks:** async instance creation via useViewModelInstance({ async: true }) ([#331](https://github.com/rive-app/rive-nitro-react-native/issues/331)) ([78052b5](https://github.com/rive-app/rive-nitro-react-native/commit/78052b57ec89b0649285697afdcff9d05308a785))
+
 ## [0.4.14](https://github.com/rive-app/rive-nitro-react-native/compare/v0.4.13...v0.4.14) (2026-07-06)
 
 
