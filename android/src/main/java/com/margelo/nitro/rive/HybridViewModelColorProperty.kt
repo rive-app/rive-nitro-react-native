@@ -10,6 +10,14 @@ import com.margelo.nitro.core.Promise
 class HybridViewModelColorProperty(private val viewModelColor: ViewModelColorProperty) :
   HybridViewModelColorPropertySpec(),
   BaseHybridViewModelProperty<Int> by BaseHybridViewModelPropertyImpl() {
+  override fun dispose() {
+    removeListeners()
+    super<HybridViewModelColorPropertySpec>.dispose()
+  }
+
+  override val memorySize: Long
+    get() = VIEW_MODEL_HYBRID_MEMORY_SIZE
+
   override var value: Double
     get() = viewModelColor.value.toDouble()
     set(value) {

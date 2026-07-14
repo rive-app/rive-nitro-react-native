@@ -6,6 +6,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 
+// memorySize hint: these wrappers look tiny to Hermes but each pins a JNI global ref, so
+// without it the GC lets them pile up until the global reference table (cap 51200) overflows.
+const val VIEW_MODEL_HYBRID_MEMORY_SIZE = 65_536L
+
 @Keep
 @DoNotStrip
 interface BaseHybridViewModelProperty<T> {

@@ -10,6 +10,14 @@ import kotlinx.coroutines.flow.map
 class HybridViewModelImageProperty(private val viewModelImage: ViewModelImageProperty) :
   HybridViewModelImagePropertySpec(),
   BaseHybridViewModelProperty<Unit> by BaseHybridViewModelPropertyImpl() {
+  override fun dispose() {
+    removeListeners()
+    super<HybridViewModelImagePropertySpec>.dispose()
+  }
+
+  override val memorySize: Long
+    get() = VIEW_MODEL_HYBRID_MEMORY_SIZE
+
   override fun set(image: HybridRiveImageSpec?) {
     viewModelImage.set((image as? HybridRiveImage)?.renderImage)
   }
