@@ -16,6 +16,7 @@ import app.rive.core.ArtboardHandle
 import app.rive.core.CommandQueue
 import app.rive.core.RiveSurface
 import app.rive.core.StateMachineHandle
+import app.rive.core.SurfaceTextureSurface
 import com.facebook.react.uimanager.ThemedReactContext
 import com.margelo.nitro.rive.RiveErrorLogger
 import com.margelo.nitro.rive.RiveLog
@@ -99,7 +100,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
         this@RiveReactNativeView.surfaceHeight = h
         this@RiveReactNativeView.riveWorker?.let { worker ->
           if (this@RiveReactNativeView.riveSurface == null) {
-            this@RiveReactNativeView.riveSurface = worker.createRiveSurface(st)
+            this@RiveReactNativeView.riveSurface = worker.createRiveSurface(SurfaceTextureSurface(st, w, h))
             Log.d(TAG, "onSurfaceTextureAvailable: surface created")
             resizeArtboardIfLayout()
           }
@@ -117,6 +118,9 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
       override fun onSurfaceTextureSizeChanged(st: SurfaceTexture, w: Int, h: Int) {
         this@RiveReactNativeView.surfaceWidth = w
         this@RiveReactNativeView.surfaceHeight = h
+        // Since 11.7.x the render target keeps its creation-time size and
+        // RiveSurface.resize() is internal to the SDK, so only the artboard
+        // is resized here (same behavior as before the 11.7.2 bump).
         resizeArtboardIfLayout()
       }
 
@@ -216,7 +220,9 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
       }
 
       if (surfaceTexture != null && riveSurface == null) {
-        riveSurface = config.riveWorker.createRiveSurface(surfaceTexture!!)
+        riveSurface = config.riveWorker.createRiveSurface(
+          SurfaceTextureSurface(surfaceTexture!!, surfaceWidth, surfaceHeight)
+        )
       }
 
       Log.d(TAG, "configure: artboard=${artboardHandle != null} sm=${stateMachineHandle != null} surface=${riveSurface != null}")
