@@ -56,6 +56,7 @@ namespace margelo::nitro::rive {
   public:
     // Methods
     std::shared_ptr<Promise<void>> initialize() override;
+    void setAndroidRenderBackend(AndroidRenderBackend backend) override;
 
   private:
     jni::global_ref<JHybridRiveRuntimeSpec::JavaPart> _javaPart;

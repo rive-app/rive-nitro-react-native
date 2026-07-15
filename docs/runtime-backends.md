@@ -37,3 +37,20 @@ Behavioral differences on the experimental backend:
   handles; a bad path surfaces via the `getValueAsync()` rejection or the
   `useRive*` hooks' `error` result instead of an `undefined` return.
 - `updateReferencedAssets` (runtime asset swapping) is not supported.
+
+## Android render backend (experimental backend only)
+
+The experimental Android backend renders with OpenGL by default. Vulkan can
+be opted into per process:
+
+```ts
+import { RiveRuntime } from '@rive-app/react-native';
+
+RiveRuntime.setAndroidRenderBackend('vulkan');
+```
+
+Call it before loading any Rive files — the choice is fixed once the shared
+render worker is created (a later call logs a warning and is ignored).
+Vulkan requires Android 10 (API 29) or newer; rive-android automatically
+falls back to OpenGL when Vulkan is unavailable or fails to initialize. The
+call is a no-op on iOS and on the legacy Android backend.

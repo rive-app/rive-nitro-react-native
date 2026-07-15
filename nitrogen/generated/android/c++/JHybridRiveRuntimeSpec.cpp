@@ -7,13 +7,16 @@
 
 #include "JHybridRiveRuntimeSpec.hpp"
 
-
+// Forward declaration of `AndroidRenderBackend` to properly resolve imports.
+namespace margelo::nitro::rive { enum class AndroidRenderBackend; }
 
 #include <string>
 #include <optional>
 #include <NitroModules/Promise.hpp>
 #include <NitroModules/JPromise.hpp>
 #include <NitroModules/JUnit.hpp>
+#include "AndroidRenderBackend.hpp"
+#include "JAndroidRenderBackend.hpp"
 
 namespace margelo::nitro::rive {
 
@@ -71,6 +74,10 @@ namespace margelo::nitro::rive {
       });
       return __promise;
     }();
+  }
+  void JHybridRiveRuntimeSpec::setAndroidRenderBackend(AndroidRenderBackend backend) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<JAndroidRenderBackend> /* backend */)>("setAndroidRenderBackend");
+    method(_javaPart, JAndroidRenderBackend::fromCpp(backend));
   }
 
 } // namespace margelo::nitro::rive

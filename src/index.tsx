@@ -74,5 +74,6 @@ export { useRiveFile, type UseRiveFileResult } from './hooks/useRiveFile';
 export { type RiveFileInput } from './hooks/useRiveFile';
 export { type SetValueAction } from './types';
 export { RiveRuntime } from './core/RiveRuntime';
+export type { AndroidRenderBackend } from './specs/RiveRuntime.nitro';
 export { RiveLog, type RiveLogLevel } from './core/RiveLogger';
 export { DataBindMode };
