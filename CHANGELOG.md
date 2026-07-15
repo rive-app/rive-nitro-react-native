@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.18](https://github.com/rive-app/rive-nitro-react-native/compare/v0.4.17...v0.4.18) (2026-07-15)
+
+
+### Bug Fixes
+
+* pin npm down to v11 as latest compatible version for our node runner ([#340](https://github.com/rive-app/rive-nitro-react-native/issues/340)) ([5154496](https://github.com/rive-app/rive-nitro-react-native/commit/5154496f0c943b068a6d04b77d7e6cb7b9450afa))
+
 ## [0.4.17](https://github.com/rive-app/rive-nitro-react-native/compare/v0.4.16...v0.4.17) (2026-07-14)
 
 
