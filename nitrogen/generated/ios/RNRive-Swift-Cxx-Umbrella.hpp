@@ -80,6 +80,8 @@ namespace margelo::nitro::rive { enum class RiveErrorType; }
 namespace margelo::nitro::rive { struct RiveError; }
 // Forward declaration of `RiveEventType` to properly resolve imports.
 namespace margelo::nitro::rive { enum class RiveEventType; }
+// Forward declaration of `Semantics` to properly resolve imports.
+namespace margelo::nitro::rive { enum class Semantics; }
 // Forward declaration of `UnifiedRiveEvent` to properly resolve imports.
 namespace margelo::nitro::rive { struct UnifiedRiveEvent; }
 // Forward declaration of `ViewModelPropertyInfo` to properly resolve imports.
@@ -124,6 +126,7 @@ namespace margelo::nitro::rive { enum class ViewModelPropertyType; }
 #include "RiveError.hpp"
 #include "RiveErrorType.hpp"
 #include "RiveEventType.hpp"
+#include "Semantics.hpp"
 #include "UnifiedRiveEvent.hpp"
 #include "ViewModelPropertyInfo.hpp"
 #include "ViewModelPropertyType.hpp"

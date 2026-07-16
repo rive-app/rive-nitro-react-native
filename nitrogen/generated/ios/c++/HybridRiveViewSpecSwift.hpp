@@ -18,6 +18,8 @@ namespace margelo::nitro::rive { class HybridRiveFileSpec; }
 namespace margelo::nitro::rive { enum class Alignment; }
 // Forward declaration of `Fit` to properly resolve imports.
 namespace margelo::nitro::rive { enum class Fit; }
+// Forward declaration of `Semantics` to properly resolve imports.
+namespace margelo::nitro::rive { enum class Semantics; }
 // Forward declaration of `HybridViewModelInstanceSpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridViewModelInstanceSpec; }
 // Forward declaration of `DataBindMode` to properly resolve imports.
@@ -39,6 +41,7 @@ namespace margelo::nitro::rive { enum class RiveEventType; }
 #include "HybridRiveFileSpec.hpp"
 #include "Alignment.hpp"
 #include "Fit.hpp"
+#include "Semantics.hpp"
 #include "HybridViewModelInstanceSpec.hpp"
 #include "DataBindMode.hpp"
 #include "DataBindByName.hpp"
@@ -145,6 +148,13 @@ namespace margelo::nitro::rive {
     }
     inline void setLayoutScaleFactor(std::optional<double> layoutScaleFactor) noexcept override {
       _swiftPart.setLayoutScaleFactor(layoutScaleFactor);
+    }
+    inline std::optional<Semantics> getSemantics() noexcept override {
+      auto __result = _swiftPart.getSemantics();
+      return __result;
+    }
+    inline void setSemantics(std::optional<Semantics> semantics) noexcept override {
+      _swiftPart.setSemantics(semantics);
     }
     inline std::optional<std::variant<std::shared_ptr<HybridViewModelInstanceSpec>, DataBindMode, DataBindByName>> getDataBind() noexcept override {
       auto __result = _swiftPart.getDataBind();

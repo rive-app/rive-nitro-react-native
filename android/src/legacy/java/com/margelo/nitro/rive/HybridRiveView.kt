@@ -89,6 +89,10 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
   override var alignment: Alignment? = null
   override var fit: Fit? = null
   override var layoutScaleFactor: Double? = null
+
+  // Accepted for API parity; semantics are only available in the new Rive
+  // runtime, and Android support is pending upstream (iOS-only for now).
+  override var semantics: Semantics? = null
   override var dataBind: Variant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName? = null
     set(value) {
       if (field != value) {

@@ -96,6 +96,16 @@ namespace margelo::nitro::rive::views {
         throw std::runtime_error(std::string("RiveView.layoutScaleFactor: ") + exc.what());
       }
     }()),
+    semantics([&]() -> CachedProp<std::optional<Semantics>> {
+      try {
+        const react::RawValue* rawValue = rawProps.at("semantics", nullptr, nullptr);
+        if (rawValue == nullptr) return sourceProps.semantics;
+        const auto& [runtime, value] = (std::pair<jsi::Runtime*, jsi::Value>)*rawValue;
+        return CachedProp<std::optional<Semantics>>::fromRawValue(*runtime, value, sourceProps.semantics);
+      } catch (const std::exception& exc) {
+        throw std::runtime_error(std::string("RiveView.semantics: ") + exc.what());
+      }
+    }()),
     dataBind([&]() -> CachedProp<std::optional<std::variant<std::shared_ptr<HybridViewModelInstanceSpec>, DataBindMode, DataBindByName>>> {
       try {
         const react::RawValue* rawValue = rawProps.at("dataBind", nullptr, nullptr);
@@ -136,6 +146,7 @@ namespace margelo::nitro::rive::views {
       case hashString("alignment"): return true;
       case hashString("fit"): return true;
       case hashString("layoutScaleFactor"): return true;
+      case hashString("semantics"): return true;
       case hashString("dataBind"): return true;
       case hashString("onError"): return true;
       case hashString("hybridRef"): return true;

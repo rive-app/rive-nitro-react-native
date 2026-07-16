@@ -269,6 +269,23 @@ open class HybridRiveViewSpec_cxx {
     }
   }
   
+  public final var semantics: bridge.std__optional_Semantics_ {
+    @inline(__always)
+    get {
+      return { () -> bridge.std__optional_Semantics_ in
+        if let __unwrappedValue = self.__implementation.semantics {
+          return bridge.create_std__optional_Semantics_(__unwrappedValue)
+        } else {
+          return .init()
+        }
+      }()
+    }
+    @inline(__always)
+    set {
+      self.__implementation.semantics = newValue.has_value() ? newValue.pointee : nil
+    }
+  }
+  
   public final var dataBind: bridge.std__optional_std__variant_std__shared_ptr_HybridViewModelInstanceSpec___DataBindMode__DataBindByName__ {
     @inline(__always)
     get {

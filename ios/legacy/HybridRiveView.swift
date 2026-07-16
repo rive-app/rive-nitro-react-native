@@ -106,6 +106,9 @@ class HybridRiveView: HybridRiveViewSpec {
   var alignment: Alignment?
   var fit: Fit?
   var layoutScaleFactor: Double?
+  // Accepted for API parity; semantics are only available in the new Rive
+  // runtime (the experimental backend).
+  var semantics: Semantics?
   var onError: (RiveError) -> Void = { _ in }
 
   func awaitViewReady() throws -> Promise<Bool> {
