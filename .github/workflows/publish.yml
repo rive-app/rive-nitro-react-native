@@ -10,6 +10,7 @@ jobs:
     permissions:
       contents: read
       id-token: write
+      issues: write
     steps:
       - uses: actions/checkout@v6
 
@@ -26,3 +27,31 @@ jobs:
       - run: yarn prepare
 
       - run: npm publish --provenance --access public ${{ github.event.release.prerelease && '--tag next' || ''}}
+
+      - name: Verify package is available on npm
+        run: |
+          PKG=$(node -p "require('./package.json').name")
+          VERSION=$(node -p "require('./package.json').version")
+          for i in $(seq 1 10); do
+            if npm view "$PKG@$VERSION" version > /dev/null 2>&1; then
+              echo "$PKG@$VERSION is live on npm"
+              exit 0
+            fi
+            echo "$PKG@$VERSION not visible on npm yet, retrying in 30s ($i/10)"
+            sleep 30
+          done
+          echo "$PKG@$VERSION did not appear on npm"
+          exit 1
+
+      - name: File issue on publish failure
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh issue create --repo "$GITHUB_REPOSITORY" \
+            --title "npm publish failed for ${{ github.event.release.tag_name }}" \
+            --body "The publish workflow for release \`${{ github.event.release.tag_name }}\` failed, so this version is likely not on npm.
+
+          Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+          cc @mfazekas @zplata"
