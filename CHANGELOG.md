@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.19](https://github.com/rive-app/rive-nitro-react-native/compare/v0.4.18...v0.4.19) (2026-07-16)
+
+
+### Bug Fixes
+
+* **android:** make play() start the configured state machine on cold start ([#343](https://github.com/rive-app/rive-nitro-react-native/issues/343)) ([99344d8](https://github.com/rive-app/rive-nitro-react-native/commit/99344d87ce05f48feeac073090c7232c102a7c74)), closes [#332](https://github.com/rive-app/rive-nitro-react-native/issues/332)
+
 ## [0.4.18](https://github.com/rive-app/rive-nitro-react-native/compare/v0.4.17...v0.4.18) (2026-07-15)
 
 
