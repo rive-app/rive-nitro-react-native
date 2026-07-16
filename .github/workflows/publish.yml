@@ -54,4 +54,4 @@ jobs:
 
           Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
-          cc @mfazekas @zplata"
+          cc @mfazekas"
