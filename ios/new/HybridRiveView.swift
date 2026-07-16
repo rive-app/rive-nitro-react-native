@@ -98,6 +98,7 @@ class HybridRiveView: HybridRiveViewSpec {
   var alignment: Alignment?
   var fit: Fit?
   var layoutScaleFactor: Double?
+  var semantics: Semantics?
   var onError: (RiveError) -> Void = { _ in }
 
   func awaitViewReady() throws -> Promise<Bool> {
@@ -211,6 +212,7 @@ class HybridRiveView: HybridRiveViewSpec {
         autoPlay: autoPlay ?? DefaultConfiguration.autoPlay,
         file: riveFile,
         fit: toRiveFit(fit, alignment: alignment, layoutScaleFactor: layoutScaleFactor),
+        semantics: toRiveSemantics(semantics),
         bindData: try dataBind.toBindData()
       )
 
@@ -255,6 +257,15 @@ class HybridRiveView: HybridRiveViewSpec {
         return .layout(scaleFactor: .explicit(Float(sf)))
       }
       return .layout(scaleFactor: .automatic)
+    }
+  }
+
+  private func toRiveSemantics(_ semantics: Semantics?) -> RiveRuntime.Semantics {
+    switch semantics {
+    case .off: return .off
+    case .on: return .on
+    case .automatic: return .automatic
+    case nil: return RiveUIView.Constants.Defaults.semantics
     }
   }
 

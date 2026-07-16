@@ -17,6 +17,7 @@ public protocol HybridRiveViewSpec_protocol: HybridObject, HybridView {
   var alignment: Alignment? { get set }
   var fit: Fit? { get set }
   var layoutScaleFactor: Double? { get set }
+  var semantics: Semantics? { get set }
   var dataBind: Variant__any_HybridViewModelInstanceSpec__DataBindMode_DataBindByName? { get set }
   var onError: (_ error: RiveError) -> Void { get set }
 

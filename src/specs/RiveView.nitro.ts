@@ -5,6 +5,7 @@ import type {
 } from 'react-native-nitro-modules';
 import type { RiveFile } from './RiveFile.nitro';
 import { Fit } from '../core/Fit';
+import { Semantics } from '../core/Semantics';
 import type { ViewModelInstance } from './ViewModel.nitro';
 import type { Alignment } from '../core/Alignment';
 import type { UnifiedRiveEvent, RiveEvent } from '../core/Events';
@@ -37,6 +38,16 @@ export interface RiveViewProps extends HybridViewProps {
   fit?: Fit;
   /** The scale factor to apply to the Rive graphic when using Fit.Layout */
   layoutScaleFactor?: number;
+  /**
+   * Exposes accessibility semantics authored in the Rive editor to the
+   * platform screen reader (VoiceOver). Defaults to Semantics.Off.
+   *
+   * Only supported on the experimental (default) iOS backend so far; ignored
+   * elsewhere. Android support is pending the upstream rive-android runtime.
+   *
+   * @see https://rive.app/docs/runtimes/apple/semantics
+   */
+  semantics?: Semantics;
   /** The view model instance to bind, to the state machine. Defaults to DataBindMode.Auto */
   dataBind?: ViewModelInstance | DataBindMode | DataBindByName;
   /** Callback function that is called when an error occurs */

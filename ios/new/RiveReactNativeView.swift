@@ -15,6 +15,7 @@ struct ViewConfiguration {
   let autoPlay: Bool
   let file: File
   let fit: RiveRuntime.Fit
+  let semantics: RiveRuntime.Semantics
   let bindData: BindData
 }
 
@@ -27,6 +28,9 @@ class RiveReactNativeView: UIView {
   private var isViewReady = false
   private var configTask: Task<Void, Never>?
   private var isPaused = false
+  private var semantics: RiveRuntime.Semantics = RiveUIView.Constants.Defaults.semantics {
+    didSet { riveUIView?.semantics = semantics }
+  }
   var autoPlay: Bool = true
 
   /// Configure failures are reported here (wired to the onError prop).
@@ -51,6 +55,8 @@ class RiveReactNativeView: UIView {
 
   func configure(_ config: ViewConfiguration, dataBindingChanged: Bool = false, reload: Bool = false, initialUpdate: Bool = false) {
     dispatchPrecondition(condition: .onQueue(.main))
+
+    semantics = config.semantics
 
     if reload {
       cleanup()
@@ -208,8 +214,10 @@ class RiveReactNativeView: UIView {
       // not found") from the old MTKView after removeFromSuperview.
       existing.rive = rive
       existing.isPaused = isPaused
+      existing.semantics = semantics
     } else {
       let uiView = RiveUIView(rive: rive, isPaused: isPaused)
+      uiView.semantics = semantics
       uiView.translatesAutoresizingMaskIntoConstraints = false
       addSubview(uiView)
       NSLayoutConstraint.activate([

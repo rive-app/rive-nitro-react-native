@@ -42,6 +42,7 @@ export type {
 export type { BindableArtboard } from './specs/BindableArtboard.nitro';
 export { Fit } from './core/Fit';
 export { Alignment } from './core/Alignment';
+export { Semantics } from './core/Semantics';
 export { RiveFileFactory } from './core/RiveFile';
 export { RiveImages } from './core/RiveImages';
 export type { RiveImage } from './specs/RiveImage.nitro';

@@ -11,6 +11,7 @@
     "alignment": true,
     "fit": true,
     "layoutScaleFactor": true,
+    "semantics": true,
     "dataBind": true,
     "onError": true,
     "hybridRef": true

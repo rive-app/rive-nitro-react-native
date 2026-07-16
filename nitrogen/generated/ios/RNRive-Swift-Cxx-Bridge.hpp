@@ -78,6 +78,8 @@ namespace margelo::nitro::rive { enum class RiveErrorType; }
 namespace margelo::nitro::rive { struct RiveError; }
 // Forward declaration of `RiveEventType` to properly resolve imports.
 namespace margelo::nitro::rive { enum class RiveEventType; }
+// Forward declaration of `Semantics` to properly resolve imports.
+namespace margelo::nitro::rive { enum class Semantics; }
 // Forward declaration of `UnifiedRiveEvent` to properly resolve imports.
 namespace margelo::nitro::rive { struct UnifiedRiveEvent; }
 // Forward declaration of `ViewModelPropertyInfo` to properly resolve imports.
@@ -167,6 +169,7 @@ namespace RNRive { class HybridViewModelTriggerPropertySpec_cxx; }
 #include "RiveError.hpp"
 #include "RiveErrorType.hpp"
 #include "RiveEventType.hpp"
+#include "Semantics.hpp"
 #include "UnifiedRiveEvent.hpp"
 #include "ViewModelPropertyInfo.hpp"
 #include "ViewModelPropertyType.hpp"
@@ -952,6 +955,21 @@ namespace margelo::nitro::rive::bridge::swift {
     return optional.has_value();
   }
   inline Fit get_std__optional_Fit_(const std::optional<Fit>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::optional<Semantics>
+  /**
+   * Specialized version of `std::optional<Semantics>`.
+   */
+  using std__optional_Semantics_ = std::optional<Semantics>;
+  inline std::optional<Semantics> create_std__optional_Semantics_(const Semantics& value) noexcept {
+    return std::optional<Semantics>(value);
+  }
+  inline bool has_value_std__optional_Semantics_(const std::optional<Semantics>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline Semantics get_std__optional_Semantics_(const std::optional<Semantics>& optional) noexcept {
     return optional.value();
   }
   
