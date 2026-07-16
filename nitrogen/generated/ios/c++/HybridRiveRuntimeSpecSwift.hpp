@@ -12,11 +12,13 @@
 // Forward declaration of `HybridRiveRuntimeSpec_cxx` to properly resolve imports.
 namespace RNRive { class HybridRiveRuntimeSpec_cxx; }
 
-
+// Forward declaration of `AndroidRenderBackend` to properly resolve imports.
+namespace margelo::nitro::rive { enum class AndroidRenderBackend; }
 
 #include <string>
 #include <optional>
 #include <NitroModules/Promise.hpp>
+#include "AndroidRenderBackend.hpp"
 
 #include "RNRive-Swift-Cxx-Umbrella.hpp"
 
@@ -81,6 +83,12 @@ namespace margelo::nitro::rive {
       }
       auto __value = std::move(__result.value());
       return __value;
+    }
+    inline void setAndroidRenderBackend(AndroidRenderBackend backend) override {
+      auto __result = _swiftPart.setAndroidRenderBackend(static_cast<int>(backend));
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
     }
 
   private:

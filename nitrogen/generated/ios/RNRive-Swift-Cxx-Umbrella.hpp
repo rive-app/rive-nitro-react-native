@@ -10,6 +10,8 @@
 // Forward declarations of C++ defined types
 // Forward declaration of `Alignment` to properly resolve imports.
 namespace margelo::nitro::rive { enum class Alignment; }
+// Forward declaration of `AndroidRenderBackend` to properly resolve imports.
+namespace margelo::nitro::rive { enum class AndroidRenderBackend; }
 // Forward declaration of `ArtboardByTypes` to properly resolve imports.
 namespace margelo::nitro::rive { enum class ArtboardByTypes; }
 // Forward declaration of `ArtboardBy` to properly resolve imports.
@@ -87,6 +89,7 @@ namespace margelo::nitro::rive { enum class ViewModelPropertyType; }
 
 // Include C++ defined types
 #include "Alignment.hpp"
+#include "AndroidRenderBackend.hpp"
 #include "ArtboardBy.hpp"
 #include "ArtboardByTypes.hpp"
 #include "DataBindByName.hpp"

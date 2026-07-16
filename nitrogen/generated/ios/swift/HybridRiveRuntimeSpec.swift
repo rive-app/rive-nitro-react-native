@@ -15,6 +15,7 @@ public protocol HybridRiveRuntimeSpec_protocol: HybridObject {
 
   // Methods
   func initialize() throws -> Promise<Void>
+  func setAndroidRenderBackend(backend: AndroidRenderBackend) throws -> Void
 }
 
 public extension HybridRiveRuntimeSpec_protocol {

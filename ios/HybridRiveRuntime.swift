@@ -8,4 +8,8 @@ final class HybridRiveRuntime: HybridRiveRuntimeSpec {
   func initialize() throws -> Promise<Void> {
     return .resolved()
   }
+
+  func setAndroidRenderBackend(backend: AndroidRenderBackend) throws {
+    // Android-only setting; nothing to do on iOS.
+  }
 }
