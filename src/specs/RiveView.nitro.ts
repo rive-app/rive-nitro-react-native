@@ -20,6 +20,16 @@ export interface DataBindByName {
 }
 
 /**
+ * A frame rate range for the render loop, mirroring CAFrameRateRange.
+ * The system picks a rate between minimum and maximum, ideally preferred.
+ */
+export interface FrameRateRange {
+  minimum: number;
+  maximum: number;
+  preferred?: number;
+}
+
+/**
  * Props interface for the RiveView component.
  * Extends HybridViewProps to include Rive-specific properties.
  */
@@ -38,6 +48,21 @@ export interface RiveViewProps extends HybridViewProps {
   fit?: Fit;
   /** The scale factor to apply to the Rive graphic when using Fit.Layout */
   layoutScaleFactor?: number;
+  /**
+   * Preferred frame rate for the render loop. A number caps rendering at that
+   * many frames per second; a FrameRateRange maps to CAFrameRateRange on iOS,
+   * while Android applies it best-effort as a cap at preferred ?? maximum.
+   * Useful to reduce the CPU/battery cost of long-running looping animations
+   * that don't need the display's full refresh rate (e.g. loaders on 120Hz
+   * screens). Capping limits frame production, not animation time — playback
+   * still advances by the real elapsed time between frames.
+   *
+   * Only supported on the experimental (default) backends; the legacy
+   * backends ignore it. Undefined = render at the display refresh rate.
+   *
+   * @see https://rive.app/docs/runtimes/apple/apple#frame-rate
+   */
+  frameRate?: number | FrameRateRange;
   /**
    * Exposes accessibility semantics authored in the Rive editor to the
    * platform screen reader (VoiceOver). Defaults to Semantics.Off.

@@ -16,6 +16,7 @@ struct ViewConfiguration {
   let file: File
   let fit: RiveRuntime.Fit
   let semantics: RiveRuntime.Semantics
+  let frameRate: RiveRuntime.FrameRate
   let bindData: BindData
 }
 
@@ -30,6 +31,9 @@ class RiveReactNativeView: UIView {
   private var isPaused = false
   private var semantics: RiveRuntime.Semantics = RiveUIView.Constants.Defaults.semantics {
     didSet { riveUIView?.semantics = semantics }
+  }
+  private var frameRate: RiveRuntime.FrameRate = RiveUIView.Constants.Defaults.frameRate {
+    didSet { riveUIView?.frameRate = frameRate }
   }
   var autoPlay: Bool = true
 
@@ -57,6 +61,7 @@ class RiveReactNativeView: UIView {
     dispatchPrecondition(condition: .onQueue(.main))
 
     semantics = config.semantics
+    frameRate = config.frameRate
 
     if reload {
       cleanup()
@@ -215,9 +220,11 @@ class RiveReactNativeView: UIView {
       existing.rive = rive
       existing.isPaused = isPaused
       existing.semantics = semantics
+      existing.frameRate = frameRate
     } else {
       let uiView = RiveUIView(rive: rive, isPaused: isPaused)
       uiView.semantics = semantics
+      uiView.frameRate = frameRate
       uiView.translatesAutoresizingMaskIntoConstraints = false
       addSubview(uiView)
       NSLayoutConstraint.activate([

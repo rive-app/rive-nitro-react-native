@@ -97,6 +97,17 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
   override var fit: Fit? = null
   override var layoutScaleFactor: Double? = null
 
+  // The render loop can only skip frames, so a range is honored best-effort
+  // as a cap at preferred ?? maximum.
+  override var frameRate: Variant_Double_FrameRateRange? = null
+    set(value) {
+      field = value
+      view.frameRate = value?.match(
+        first = { it },
+        second = { range -> range.preferred ?: range.maximum }
+      )
+    }
+
   // Accepted for API parity; semantics support is pending in the upstream
   // rive-android runtime (iOS-only for now).
   override var semantics: Semantics? = null

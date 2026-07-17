@@ -2,11 +2,14 @@ package com.rive
 
 import android.annotation.SuppressLint
 import android.graphics.SurfaceTexture
+import android.os.Build
 import android.util.Log
 import android.view.Choreographer
 import android.view.MotionEvent
 import android.view.TextureView
+import android.view.View
 import android.widget.FrameLayout
+import com.facebook.react.bridge.UiThreadUtil
 import app.rive.Artboard
 import app.rive.Fit
 import app.rive.RiveFile
@@ -53,7 +56,19 @@ data class ViewConfiguration(
 class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
   companion object {
     private const val TAG = "RiveReactNativeView"
+
+    // Half of a 120Hz vsync: lets a cap land on the nearest vsync multiple
+    // (e.g. every 4th frame at 120Hz for a 30fps cap) instead of drifting past
+    // it and halving the effective rate.
+    private const val CAP_TOLERANCE_NS = 4_000_000L
   }
+
+  // Render at most this many frames per second; null = every vsync.
+  var frameRate: Double? = null
+    set(value) {
+      field = value
+      updateFrameRateHint()
+    }
 
   var onError: ((String) -> Unit)? = null
 
@@ -84,6 +99,11 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
   private var disposed = false
   private var lastFrameTimeNs = 0L
   private var frameCount = 0L
+
+  // While paused the loop still ticks, but only draws when something changed
+  // (initial content, resize, rebinding) — otherwise a paused view would keep
+  // re-rendering identical frames at full refresh rate.
+  private var needsRedraw = true
 
   @Volatile
   private var paused = false
@@ -118,6 +138,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
       override fun onSurfaceTextureSizeChanged(st: SurfaceTexture, w: Int, h: Int) {
         this@RiveReactNativeView.surfaceWidth = w
         this@RiveReactNativeView.surfaceHeight = h
+        this@RiveReactNativeView.needsRedraw = true
         // Since 11.7.x the render target keeps its creation-time size and
         // RiveSurface.resize() is internal to the SDK, so only the artboard
         // is resized here (same behavior as before the 11.7.2 bump).
@@ -135,6 +156,25 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
   private val renderCallback = object : Choreographer.FrameCallback {
     override fun doFrame(frameTimeNanos: Long) {
       if (!renderLoopRunning || disposed) return
+
+      if (paused && !needsRedraw) {
+        // Keep the timebase fresh so resuming advances by one frame, not by
+        // the whole pause span.
+        lastFrameTimeNs = frameTimeNanos
+        Choreographer.getInstance().postFrameCallback(this)
+        return
+      }
+
+      val capPeriodNs = frameRate?.takeIf { it > 0 }
+        ?.let { (1_000_000_000.0 / it).toLong() }
+      if (capPeriodNs != null && lastFrameTimeNs != 0L &&
+        frameTimeNanos - lastFrameTimeNs < capPeriodNs - CAP_TOLERANCE_NS
+      ) {
+        // Skip without touching lastFrameTimeNs: the eventual advance must
+        // cover the full elapsed time so capped playback keeps wall-clock speed.
+        Choreographer.getInstance().postFrameCallback(this)
+        return
+      }
 
       val deltaTime = if (lastFrameTimeNs == 0L) {
         Duration.ZERO
@@ -154,6 +194,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
             worker.advanceStateMachine(sm, deltaTime)
           }
           worker.draw(art, sm, rs, activeFit)
+          needsRedraw = false
           frameCount++
           val isFirstFrame = frameCount == 1L
           if (isFirstFrame) {
@@ -174,12 +215,27 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
     if (renderLoopRunning) return
     renderLoopRunning = true
     lastFrameTimeNs = 0L
+    updateFrameRateHint()
     Choreographer.getInstance().postFrameCallback(renderCallback)
   }
 
   private fun stopRenderLoop() {
     renderLoopRunning = false
+    updateFrameRateHint()
     Choreographer.getInstance().removeFrameCallback(renderCallback)
+  }
+
+  // Advisory platform hint (upstream applies the same one inside its Compose
+  // loop): on capable displays a capped, actively-drawing view lets the
+  // system lower the refresh rate, saving power beyond the skipped draws.
+  // Callers may be off-main (play()/pause() run on a coroutine), so hop.
+  private fun updateFrameRateHint() {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.VANILLA_ICE_CREAM) return
+    UiThreadUtil.runOnUiThread {
+      val fps = frameRate?.takeIf { it > 0 && renderLoopRunning && !paused }
+      textureView.requestedFrameRate =
+        fps?.toFloat() ?: View.REQUESTED_FRAME_RATE_CATEGORY_NO_PREFERENCE
+    }
   }
 
   suspend fun awaitViewReady(): Boolean {
@@ -189,6 +245,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
   fun configure(config: ViewConfiguration, dataBindingChanged: Boolean, reload: Boolean = false, initialUpdate: Boolean = false) {
     riveWorker = config.riveWorker
     activeFit = config.fit
+    needsRedraw = true
     Log.d(
       TAG,
       "configure: reload=$reload initialUpdate=$initialUpdate fit=$activeFit surfaceTexture=${surfaceTexture != null} surfaceW=$surfaceWidth surfaceH=$surfaceHeight"
@@ -371,6 +428,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
     val smHandle = stateMachineHandle
     if (worker != null && smHandle != null) {
       worker.bindViewModelInstance(smHandle, instance.instanceHandle)
+      needsRedraw = true
     } else {
       Log.w(TAG, "Cannot bind VMI: worker or state machine handle not available")
     }
@@ -378,10 +436,12 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
 
   fun play() {
     paused = false
+    updateFrameRateHint()
   }
 
   fun pause() {
     paused = true
+    updateFrameRateHint()
   }
 
   // Deprecated: the experimental Rive runtime has no reset primitive.
@@ -391,6 +451,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
 
   fun playIfNeeded() {
     paused = false
+    updateFrameRateHint()
   }
 
   fun setNumberInputValue(name: String, value: Double, path: String?) {

@@ -64,6 +64,8 @@ namespace margelo::nitro::rive {
     void setFit(std::optional<Fit> fit) override;
     std::optional<double> getLayoutScaleFactor() override;
     void setLayoutScaleFactor(std::optional<double> layoutScaleFactor) override;
+    std::optional<std::variant<double, FrameRateRange>> getFrameRate() override;
+    void setFrameRate(const std::optional<std::variant<double, FrameRateRange>>& frameRate) override;
     std::optional<Semantics> getSemantics() override;
     void setSemantics(std::optional<Semantics> semantics) override;
     std::optional<std::variant<std::shared_ptr<HybridViewModelInstanceSpec>, DataBindMode, DataBindByName>> getDataBind() override;

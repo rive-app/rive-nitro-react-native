@@ -11,6 +11,7 @@
     "alignment": true,
     "fit": true,
     "layoutScaleFactor": true,
+    "frameRate": true,
     "semantics": true,
     "dataBind": true,
     "onError": true,
