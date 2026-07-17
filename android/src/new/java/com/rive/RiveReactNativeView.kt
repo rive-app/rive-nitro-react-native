@@ -165,7 +165,8 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
         return
       }
 
-      val capPeriodNs = frameRate?.takeIf { it > 0 }
+      val capPeriodNs = frameRate
+        ?.takeIf { it > 0 }
         ?.let { (1_000_000_000.0 / it).toLong() }
       if (capPeriodNs != null && lastFrameTimeNs != 0L &&
         frameTimeNanos - lastFrameTimeNs < capPeriodNs - CAP_TOLERANCE_NS
