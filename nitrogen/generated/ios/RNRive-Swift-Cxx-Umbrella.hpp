@@ -22,6 +22,8 @@ namespace margelo::nitro::rive { struct DataBindByName; }
 namespace margelo::nitro::rive { enum class DataBindMode; }
 // Forward declaration of `Fit` to properly resolve imports.
 namespace margelo::nitro::rive { enum class Fit; }
+// Forward declaration of `FrameRateRange` to properly resolve imports.
+namespace margelo::nitro::rive { struct FrameRateRange; }
 // Forward declaration of `HybridBindableArtboardSpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridBindableArtboardSpec; }
 // Forward declaration of `HybridFallbackFontSpec` to properly resolve imports.
@@ -97,6 +99,7 @@ namespace margelo::nitro::rive { enum class ViewModelPropertyType; }
 #include "DataBindByName.hpp"
 #include "DataBindMode.hpp"
 #include "Fit.hpp"
+#include "FrameRateRange.hpp"
 #include "HybridBindableArtboardSpec.hpp"
 #include "HybridFallbackFontSpec.hpp"
 #include "HybridRiveFileFactorySpec.hpp"

@@ -13,6 +13,8 @@ namespace margelo::nitro::rive { class HybridRiveFileSpec; }
 namespace margelo::nitro::rive { enum class Alignment; }
 // Forward declaration of `Fit` to properly resolve imports.
 namespace margelo::nitro::rive { enum class Fit; }
+// Forward declaration of `FrameRateRange` to properly resolve imports.
+namespace margelo::nitro::rive { struct FrameRateRange; }
 // Forward declaration of `Semantics` to properly resolve imports.
 namespace margelo::nitro::rive { enum class Semantics; }
 // Forward declaration of `HybridViewModelInstanceSpec` to properly resolve imports.
@@ -39,12 +41,15 @@ namespace margelo::nitro::rive { enum class RiveEventType; }
 #include "JAlignment.hpp"
 #include "Fit.hpp"
 #include "JFit.hpp"
+#include "FrameRateRange.hpp"
+#include <variant>
+#include "JVariant_Double_FrameRateRange.hpp"
+#include "JFrameRateRange.hpp"
 #include "Semantics.hpp"
 #include "JSemantics.hpp"
 #include "HybridViewModelInstanceSpec.hpp"
 #include "DataBindMode.hpp"
 #include "DataBindByName.hpp"
-#include <variant>
 #include "JVariant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName.hpp"
 #include "JHybridViewModelInstanceSpec.hpp"
 #include "JDataBindMode.hpp"
@@ -159,6 +164,15 @@ namespace margelo::nitro::rive {
   void JHybridRiveViewSpec::setLayoutScaleFactor(std::optional<double> layoutScaleFactor) {
     static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<jni::JDouble> /* layoutScaleFactor */)>("setLayoutScaleFactor");
     method(_javaPart, layoutScaleFactor.has_value() ? jni::JDouble::valueOf(layoutScaleFactor.value()) : nullptr);
+  }
+  std::optional<std::variant<double, FrameRateRange>> JHybridRiveViewSpec::getFrameRate() {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JVariant_Double_FrameRateRange>()>("getFrameRate");
+    auto __result = method(_javaPart);
+    return __result != nullptr ? std::make_optional(__result->toCpp()) : std::nullopt;
+  }
+  void JHybridRiveViewSpec::setFrameRate(const std::optional<std::variant<double, FrameRateRange>>& frameRate) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<JVariant_Double_FrameRateRange> /* frameRate */)>("setFrameRate");
+    method(_javaPart, frameRate.has_value() ? JVariant_Double_FrameRateRange::fromCpp(frameRate.value()) : nullptr);
   }
   std::optional<Semantics> JHybridRiveViewSpec::getSemantics() {
     static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JSemantics>()>("getSemantics");

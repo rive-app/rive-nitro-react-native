@@ -18,6 +18,8 @@ namespace margelo::nitro::rive { class HybridRiveFileSpec; }
 namespace margelo::nitro::rive { enum class Alignment; }
 // Forward declaration of `Fit` to properly resolve imports.
 namespace margelo::nitro::rive { enum class Fit; }
+// Forward declaration of `FrameRateRange` to properly resolve imports.
+namespace margelo::nitro::rive { struct FrameRateRange; }
 // Forward declaration of `Semantics` to properly resolve imports.
 namespace margelo::nitro::rive { enum class Semantics; }
 // Forward declaration of `HybridViewModelInstanceSpec` to properly resolve imports.
@@ -41,11 +43,12 @@ namespace margelo::nitro::rive { enum class RiveEventType; }
 #include "HybridRiveFileSpec.hpp"
 #include "Alignment.hpp"
 #include "Fit.hpp"
+#include "FrameRateRange.hpp"
+#include <variant>
 #include "Semantics.hpp"
 #include "HybridViewModelInstanceSpec.hpp"
 #include "DataBindMode.hpp"
 #include "DataBindByName.hpp"
-#include <variant>
 #include "RiveError.hpp"
 #include <functional>
 #include "RiveErrorType.hpp"
@@ -148,6 +151,13 @@ namespace margelo::nitro::rive {
     }
     inline void setLayoutScaleFactor(std::optional<double> layoutScaleFactor) noexcept override {
       _swiftPart.setLayoutScaleFactor(layoutScaleFactor);
+    }
+    inline std::optional<std::variant<double, FrameRateRange>> getFrameRate() noexcept override {
+      auto __result = _swiftPart.getFrameRate();
+      return __result;
+    }
+    inline void setFrameRate(const std::optional<std::variant<double, FrameRateRange>>& frameRate) noexcept override {
+      _swiftPart.setFrameRate(frameRate);
     }
     inline std::optional<Semantics> getSemantics() noexcept override {
       auto __result = _swiftPart.getSemantics();

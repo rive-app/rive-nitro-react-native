@@ -22,11 +22,12 @@
 #include "HybridRiveFileSpec.hpp"
 #include "Alignment.hpp"
 #include "Fit.hpp"
+#include "FrameRateRange.hpp"
+#include <variant>
 #include "Semantics.hpp"
 #include "HybridViewModelInstanceSpec.hpp"
 #include "DataBindMode.hpp"
 #include "DataBindByName.hpp"
-#include <variant>
 #include "RiveError.hpp"
 #include <functional>
 #include "HybridRiveViewSpec.hpp"
@@ -58,6 +59,7 @@ namespace margelo::nitro::rive::views {
     CachedProp<std::optional<Alignment>> alignment;
     CachedProp<std::optional<Fit>> fit;
     CachedProp<std::optional<double>> layoutScaleFactor;
+    CachedProp<std::optional<std::variant<double, FrameRateRange>>> frameRate;
     CachedProp<std::optional<Semantics>> semantics;
     CachedProp<std::optional<std::variant<std::shared_ptr<HybridViewModelInstanceSpec>, DataBindMode, DataBindByName>>> dataBind;
     CachedProp<std::function<void(const RiveError& /* error */)>> onError;

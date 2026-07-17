@@ -90,6 +90,10 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
   override var fit: Fit? = null
   override var layoutScaleFactor: Double? = null
 
+  // Accepted for API parity; frame-rate control is only implemented on the
+  // experimental backends.
+  override var frameRate: Variant_Double_FrameRateRange? = null
+
   // Accepted for API parity; semantics are only available in the new Rive
   // runtime, and Android support is pending upstream (iOS-only for now).
   override var semantics: Semantics? = null

@@ -20,6 +20,8 @@ namespace margelo::nitro::rive { struct DataBindByName; }
 namespace margelo::nitro::rive { enum class DataBindMode; }
 // Forward declaration of `Fit` to properly resolve imports.
 namespace margelo::nitro::rive { enum class Fit; }
+// Forward declaration of `FrameRateRange` to properly resolve imports.
+namespace margelo::nitro::rive { struct FrameRateRange; }
 // Forward declaration of `HybridBindableArtboardSpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridBindableArtboardSpec; }
 // Forward declaration of `HybridFallbackFontSpec` to properly resolve imports.
@@ -140,6 +142,7 @@ namespace RNRive { class HybridViewModelTriggerPropertySpec_cxx; }
 #include "DataBindByName.hpp"
 #include "DataBindMode.hpp"
 #include "Fit.hpp"
+#include "FrameRateRange.hpp"
 #include "HybridBindableArtboardSpec.hpp"
 #include "HybridFallbackFontSpec.hpp"
 #include "HybridRiveFileFactorySpec.hpp"
@@ -955,6 +958,50 @@ namespace margelo::nitro::rive::bridge::swift {
     return optional.has_value();
   }
   inline Fit get_std__optional_Fit_(const std::optional<Fit>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::variant<double, FrameRateRange>
+  /**
+   * Wrapper struct for `std::variant<double, FrameRateRange>`.
+   * std::variant cannot be used in Swift because of a Swift bug.
+   * Not even specializing it works. So we create a wrapper struct.
+   */
+  struct std__variant_double__FrameRateRange_ final {
+    std::variant<double, FrameRateRange> variant;
+    std__variant_double__FrameRateRange_(std::variant<double, FrameRateRange> variant): variant(variant) { }
+    operator std::variant<double, FrameRateRange>() const noexcept {
+      return variant;
+    }
+    inline size_t index() const noexcept {
+      return variant.index();
+    }
+    inline double get_0() const noexcept {
+      return std::get<0>(variant);
+    }
+    inline FrameRateRange get_1() const noexcept {
+      return std::get<1>(variant);
+    }
+  };
+  inline std__variant_double__FrameRateRange_ create_std__variant_double__FrameRateRange_(double value) noexcept {
+    return std__variant_double__FrameRateRange_(value);
+  }
+  inline std__variant_double__FrameRateRange_ create_std__variant_double__FrameRateRange_(const FrameRateRange& value) noexcept {
+    return std__variant_double__FrameRateRange_(value);
+  }
+  
+  // pragma MARK: std::optional<std::variant<double, FrameRateRange>>
+  /**
+   * Specialized version of `std::optional<std::variant<double, FrameRateRange>>`.
+   */
+  using std__optional_std__variant_double__FrameRateRange__ = std::optional<std::variant<double, FrameRateRange>>;
+  inline std::optional<std::variant<double, FrameRateRange>> create_std__optional_std__variant_double__FrameRateRange__(const std::variant<double, FrameRateRange>& value) noexcept {
+    return std::optional<std::variant<double, FrameRateRange>>(value);
+  }
+  inline bool has_value_std__optional_std__variant_double__FrameRateRange__(const std::optional<std::variant<double, FrameRateRange>>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline std::variant<double, FrameRateRange> get_std__optional_std__variant_double__FrameRateRange__(const std::optional<std::variant<double, FrameRateRange>>& optional) noexcept {
     return optional.value();
   }
   

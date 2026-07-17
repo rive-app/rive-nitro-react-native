@@ -65,6 +65,10 @@ void JHybridRiveViewStateUpdater::updateViewProps(jni::alias_ref<jni::JClass> /*
     hybridView->setLayoutScaleFactor(props->layoutScaleFactor.value);
     props->layoutScaleFactor.isDirty = false;
   }
+  if (props->frameRate.isDirty) {
+    hybridView->setFrameRate(props->frameRate.value);
+    props->frameRate.isDirty = false;
+  }
   if (props->semantics.isDirty) {
     hybridView->setSemantics(props->semantics.value);
     props->semantics.isDirty = false;

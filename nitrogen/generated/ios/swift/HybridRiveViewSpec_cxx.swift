@@ -269,6 +269,49 @@ open class HybridRiveViewSpec_cxx {
     }
   }
   
+  public final var frameRate: bridge.std__optional_std__variant_double__FrameRateRange__ {
+    @inline(__always)
+    get {
+      return { () -> bridge.std__optional_std__variant_double__FrameRateRange__ in
+        if let __unwrappedValue = self.__implementation.frameRate {
+          return bridge.create_std__optional_std__variant_double__FrameRateRange__({ () -> bridge.std__variant_double__FrameRateRange_ in
+            switch __unwrappedValue {
+              case .first(let __value):
+                return bridge.create_std__variant_double__FrameRateRange_(__value)
+              case .second(let __value):
+                return bridge.create_std__variant_double__FrameRateRange_(__value)
+            }
+          }().variant)
+        } else {
+          return .init()
+        }
+      }()
+    }
+    @inline(__always)
+    set {
+      self.__implementation.frameRate = { () -> Variant_Double_FrameRateRange? in
+        if bridge.has_value_std__optional_std__variant_double__FrameRateRange__(newValue) {
+          let __unwrapped = bridge.get_std__optional_std__variant_double__FrameRateRange__(newValue)
+          return { () -> Variant_Double_FrameRateRange in
+            let __variant = bridge.std__variant_double__FrameRateRange_(__unwrapped)
+            switch __variant.index() {
+              case 0:
+                let __actual = __variant.get_0()
+                return .first(__actual)
+              case 1:
+                let __actual = __variant.get_1()
+                return .second(__actual)
+              default:
+                fatalError("Variant can never have index \(__variant.index())!")
+            }
+          }()
+        } else {
+          return nil
+        }
+      }()
+    }
+  }
+  
   public final var semantics: bridge.std__optional_Semantics_ {
     @inline(__always)
     get {

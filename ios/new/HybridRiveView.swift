@@ -98,6 +98,7 @@ class HybridRiveView: HybridRiveViewSpec {
   var alignment: Alignment?
   var fit: Fit?
   var layoutScaleFactor: Double?
+  var frameRate: Variant_Double_FrameRateRange?
   var semantics: Semantics?
   var onError: (RiveError) -> Void = { _ in }
 
@@ -213,6 +214,7 @@ class HybridRiveView: HybridRiveViewSpec {
         file: riveFile,
         fit: toRiveFit(fit, alignment: alignment, layoutScaleFactor: layoutScaleFactor),
         semantics: toRiveSemantics(semantics),
+        frameRate: toRiveFrameRate(frameRate),
         bindData: try dataBind.toBindData()
       )
 
@@ -257,6 +259,21 @@ class HybridRiveView: HybridRiveViewSpec {
         return .layout(scaleFactor: .explicit(Float(sf)))
       }
       return .layout(scaleFactor: .automatic)
+    }
+  }
+
+  private func toRiveFrameRate(_ frameRate: Variant_Double_FrameRateRange?) -> RiveRuntime.FrameRate {
+    switch frameRate {
+    case .first(let fps):
+      return .fps(Int(fps.rounded()))
+    case .second(let range):
+      return .range(
+        minimum: Float(range.minimum),
+        maximum: Float(range.maximum),
+        preferred: range.preferred.map { Float($0) }
+      )
+    case nil:
+      return RiveUIView.Constants.Defaults.frameRate
     }
   }
 
