@@ -223,7 +223,7 @@ The following table compares feature availability with the [previous Rive React 
 | Artboard selection                | ✅     | Specify artboard to render                                       |
 | State machine selection           | ✅     | Specify a state machine to play                                  |
 | View autoPlay & play/pause        | ✅     | Control view playback                                            |
-| Fit & Alignment                   | ✅     | Fit modes supported, alignment coming soon                       |
+| Fit & Alignment                   | ✅     | Fit and alignment modes supported                                |
 | Layout & Responsiveness           | ✅     | Basic responsive layouts supported                               |
 | Data Binding                      | ✅     | Control data binding through runtime code                        |
 | Asset management                  | ✅     | Load assets out of band (referenced)                             |
