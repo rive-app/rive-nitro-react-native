@@ -101,11 +101,7 @@ export interface RiveFileFactory
     ios: 'swift';
     android: 'kotlin';
   }> {
-  /**
-   * Which backend is in use. `'experimental'` identifies the new
-   * (CommandQueue-based) runtime — the string predates the "new runtime"
-   * naming and is kept for API stability.
-   */
+  /** @internal Which runtime is in use ("experimental" = the new CommandQueue-based one). For internal testing; removed in 0.6 with the legacy runtime. */
   readonly backend: string;
   fromURL(
     url: string,

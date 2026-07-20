@@ -31,7 +31,7 @@ describe('useRiveProperty', () => {
       addListener: jest.fn((callback: (value: string) => void) => {
         listener = callback;
         // Emit the current value immediately on subscribe, matching native behaviour:
-        // iOS legacy emits synchronously; experimental backend emits via valueStream.
+        // iOS legacy emits synchronously; new runtime emits via valueStream.
         callback(currentValue);
         return () => {
           listener = null;
@@ -125,8 +125,8 @@ describe('useRiveProperty', () => {
     expect(error?.message).toContain('nonexistent/path');
   });
 
-  it('should surface an error when getValueAsync rejects (experimental backend: unvalidated handle for a bad path)', async () => {
-    // The experimental backend returns a wrapper for any path — the bad path
+  it('should surface an error when getValueAsync rejects (new runtime: unvalidated handle for a bad path)', async () => {
+    // The new runtime returns a wrapper for any path — the bad path
     // is only reported when the command server is asked for the value.
     const rejectingProperty = {
       set: jest.fn(),

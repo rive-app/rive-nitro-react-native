@@ -284,7 +284,7 @@ describe('Property Listeners', () => {
 const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 describe('Listener callback invocation (experimental only)', () => {
-  // The experimental backend emits the current value on addListener;
+  // The new runtime emits the current value on addListener;
   // legacy only fires on subsequent changes — these tests would hang.
   it('numberProperty listener emits current value', async () => {
     if (!isExperimental()) return;

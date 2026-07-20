@@ -61,7 +61,7 @@ export function useRiveList(
   }, [property]);
 
   // Re-read the length whenever the list changes (revision bumps) or the
-  // property itself changes. On the experimental backend a rejection here is
+  // property itself changes. On the new runtime a rejection here is
   // also how an invalid list path surfaces.
   useEffect(() => {
     if (!property) {
@@ -86,7 +86,7 @@ export function useRiveList(
     };
   }, [property, path, revision]);
 
-  // The experimental backend has no native list-change notifications
+  // The new runtime has no native list-change notifications
   // (addListener is a no-op there) — refresh after our own mutations so
   // `length` stays live on both backends.
   const afterMutation = useCallback(<T>(op: Promise<T>): Promise<T> => {

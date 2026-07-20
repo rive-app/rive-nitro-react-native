@@ -7,7 +7,7 @@ const isExperimental = RiveFileFactory.getBackend() === 'experimental';
 type LogEntry = { level: string; tag: string; message: string };
 
 describe('RiveLog', () => {
-  // Deprecation warnings only fire in the experimental backend
+  // Deprecation warnings only fire in the new runtime
   (isExperimental ? it : it.skip)(
     'captures deprecation warning from sync method',
     async () => {

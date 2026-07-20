@@ -329,7 +329,7 @@ describe('imperative playback control (play/pause/reset)', () => {
     cleanup();
   });
 
-  // reset() is deprecated and a no-op on the experimental backend (no reset
+  // reset() is deprecated and a no-op on the new runtime (no reset
   // primitive in the runtime); it logs an error and resolves without throwing.
   it('reset() resolves without throwing (deprecated no-op)', async () => {
     const { file, instance } = await loadBouncingBall();

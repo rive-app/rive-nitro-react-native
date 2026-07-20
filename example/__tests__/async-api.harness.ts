@@ -63,7 +63,7 @@ describe('Async ViewModel Creation', () => {
       const instance = await vm.createInstanceByNameAsync('__DoesNotExist__');
       expect(instance).toBeUndefined();
     } catch {
-      // experimental backend may throw
+      // new runtime may throw
     }
   });
 
@@ -275,7 +275,7 @@ describe('Async ViewModelInstance Methods', () => {
         expect(result).toBeUndefined();
       }
     } catch {
-      // experimental backend may throw
+      // new runtime may throw
     }
   });
 

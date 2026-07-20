@@ -42,9 +42,12 @@ function warnLoadCdnUnsupportedOnExperimental(
  */
 export namespace RiveFileFactory {
   /**
-   * Which backend is in use. `'experimental'` identifies the new
-   * (CommandQueue-based) runtime — the string predates the "new runtime"
-   * naming and is kept for API stability.
+   * Which runtime is in use — `'experimental'` is the new (CommandQueue-based)
+   * runtime, `'legacy'` the previous one.
+   *
+   * @internal For internal testing only. The legacy runtime exists for
+   * behavior comparison during the rollout; it and this API will be removed
+   * in 0.6.
    */
   export function getBackend(): 'legacy' | 'experimental' {
     return RiveFileInternal.backend as 'legacy' | 'experimental';

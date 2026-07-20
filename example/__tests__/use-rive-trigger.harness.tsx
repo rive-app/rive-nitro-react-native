@@ -191,7 +191,7 @@ describe('useRiveTrigger hook', () => {
 
     expect(context.error).toBeNull();
 
-    // Wait for the experimental backend's view to be ready before firing.
+    // Wait for the new runtime's view to be ready before firing.
     await waitForViewReady(context);
 
     // Fire trigger and wait for it — pollChanges() runs on frame ticks,
@@ -243,7 +243,7 @@ describe('useRiveTrigger hook', () => {
 
     expect(context.error).toBeNull();
 
-    // Wait for the experimental backend's view to be ready before firing.
+    // Wait for the new runtime's view to be ready before firing.
     await waitForViewReady(context);
 
     // Fire trigger AFTER the re-render burst — before the fix, this was lost

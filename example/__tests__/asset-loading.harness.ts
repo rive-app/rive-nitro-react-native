@@ -9,7 +9,7 @@ function isExperimental() {
 
 describe('Asset loading with referencedAssets', () => {
   // referencedAssets with raw ResolvedReferencedAsset objects only works
-  // on the experimental backend; legacy uses a different resolution path.
+  // on the new runtime; legacy uses a different resolution path.
   it('loads file with font asset (type: font)', async () => {
     if (!isExperimental()) return;
     const file = await RiveFileFactory.fromSource(OUT_OF_BAND, {
