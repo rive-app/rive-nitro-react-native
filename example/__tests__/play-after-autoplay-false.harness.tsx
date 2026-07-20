@@ -99,8 +99,20 @@ async function waitForWritableInput(context: TestContext): Promise<void> {
   );
 }
 
+// The regression under test (#343) is in the legacy backend, and the probe
+// relies on SMI inputs — a legacy-only API that throws on the experimental
+// backends (both platforms).
+function skipOnExperimental(): boolean {
+  if (RiveFileFactory.getBackend() === 'experimental') {
+    console.warn('SKIP: experimental backend — SMI inputs are not supported');
+    return true;
+  }
+  return false;
+}
+
 describe('play() after autoPlay={false} (issue #332 follow-up)', () => {
   it('control: autoPlay={true} exposes a writable state machine input', async () => {
+    if (skipOnExperimental()) return;
     const context = await mountRatingView(true);
 
     await waitForWritableInput(context);
@@ -110,6 +122,7 @@ describe('play() after autoPlay={false} (issue #332 follow-up)', () => {
   });
 
   it('play() starts the configured state machine with writable inputs', async () => {
+    if (skipOnExperimental()) return;
     const context = await mountRatingView(false);
 
     await context.ref!.play();
