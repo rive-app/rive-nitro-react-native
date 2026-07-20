@@ -47,7 +47,7 @@ export namespace RiveFileFactory {
    *
    * @internal For internal testing only. The legacy runtime exists for
    * behavior comparison during the rollout; it and this API will be removed
-   * in 0.6.
+   * in a future release once the new runtime has fully proven out.
    */
   export function getBackend(): 'legacy' | 'experimental' {
     return RiveFileInternal.backend as 'legacy' | 'experimental';

@@ -28,7 +28,8 @@ proven out. Select it at build time:
 You can check which backend is active at runtime via
 `RiveFileFactory.getBackend()` (`'experimental' | 'legacy'`, where
 `'experimental'` is the new runtime). This API is for internal testing only —
-it and the legacy runtime will be removed in 0.6.
+it and the legacy runtime will be removed in a future release once the new
+runtime has fully proven out (not necessarily 0.6).
 
 Behavioral differences on the new runtime:
 

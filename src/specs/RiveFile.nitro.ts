@@ -101,7 +101,7 @@ export interface RiveFileFactory
     ios: 'swift';
     android: 'kotlin';
   }> {
-  /** @internal Which runtime is in use ("experimental" = the new CommandQueue-based one). For internal testing; removed in 0.6 with the legacy runtime. */
+  /** @internal Which runtime is in use ("experimental" = the new CommandQueue-based one). For internal testing; will be removed together with the legacy runtime in a future release. */
   readonly backend: string;
   fromURL(
     url: string,

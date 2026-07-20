@@ -46,5 +46,5 @@ deprecated calls keep working with runtime warnings.
 
 ## 4. 0.6
 
-The deprecated APIs and the legacy runtime are removed. Apps that completed
+Removal of the deprecated APIs is planned for 0.6. Apps that completed
 step 1 need no further changes.
