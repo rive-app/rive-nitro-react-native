@@ -3,6 +3,7 @@ package com.margelo.nitro.rive
 import androidx.annotation.Keep
 import com.facebook.proguard.annotations.DoNotStrip
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
@@ -25,7 +26,7 @@ class BaseHybridViewModelPropertyImpl<T> : BaseHybridViewModelProperty<T> {
       scope = CoroutineScope(Dispatchers.Default)
     }
     if (job == null) {
-      job = scope?.launch {
+      job = scope?.launch(start = CoroutineStart.UNDISPATCHED) {
         valueFlow.drop(drop).collect { value ->
           onChanged(value)
         }

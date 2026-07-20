@@ -7,10 +7,11 @@ import type { HybridObject } from 'react-native-nitro-modules';
  * Used for data binding artboards - swapping artboard sources at runtime.
  * @see {@link https://rive.app/docs/runtimes/data-binding Rive Data Binding Documentation}
  */
-export interface BindableArtboard extends HybridObject<{
-  ios: 'swift';
-  android: 'kotlin';
-}> {
+export interface BindableArtboard
+  extends HybridObject<{
+    ios: 'swift';
+    android: 'kotlin';
+  }> {
   /** The name of the artboard */
   readonly artboardName: string;
 }

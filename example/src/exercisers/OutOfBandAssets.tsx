@@ -22,26 +22,17 @@ export default function OutOfBandAssetsExample() {
       referencedAssets: {
         'Inter-594377': {
           source: require('../../assets/fonts/Inter-594377.ttf'),
-          // source: {
-          //   fileName: 'Inter-594377.ttf',
-          //   path: 'fonts', // only needed for Android assets
-          // },
+          type: 'font',
         },
         'referenced-image-2929282': {
           source: {
             uri: uri,
           },
-          // source: {
-          //   fileName: 'referenced-image-2929282.png',
-          //   path: 'images', // only needed for Android assets
-          // },
+          type: 'image',
         },
         'referenced_audio-2929340': {
           source: require('../../assets/audio/referenced_audio-2929340.wav'),
-          // source: {
-          //   fileName: 'referenced_audio-2929340.wav',
-          //   path: 'audio', // only needed for Android assets
-          // },
+          type: 'audio',
         },
       },
     }

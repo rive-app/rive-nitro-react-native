@@ -14,6 +14,7 @@ import {
   RiveView,
   useRiveTrigger,
   type RiveFile,
+  type RiveViewRef,
 } from '@rive-app/react-native';
 import type { ViewModelInstance } from '@rive-app/react-native';
 
@@ -40,6 +41,7 @@ type TriggerContext = {
   error: Error | null;
   renderCount: number;
   rerender: (() => void) | null;
+  ref: RiveViewRef | null;
 };
 
 function createTriggerContext(): TriggerContext {
@@ -49,7 +51,18 @@ function createTriggerContext(): TriggerContext {
     error: null,
     renderCount: 0,
     rerender: null,
+    ref: null,
   };
+}
+
+async function waitForViewReady(context: TriggerContext): Promise<void> {
+  await waitFor(
+    () => {
+      expect(context.ref).not.toBeNull();
+    },
+    { timeout: 5000 }
+  );
+  await context.ref!.awaitViewReady();
 }
 
 // ─── Test component: stable callback ───────────────────────────────
@@ -81,6 +94,11 @@ function StableTriggerComponent({
   return (
     <View style={{ width: 200, height: 200 }}>
       <RiveView
+        hybridRef={{
+          f: (ref: RiveViewRef | null) => {
+            context.ref = ref;
+          },
+        }}
         file={file}
         fit={Fit.Contain}
         dataBind={instance}
@@ -135,6 +153,11 @@ function UnstableTriggerComponent({
   return (
     <View style={{ width: 200, height: 200 }}>
       <RiveView
+        hybridRef={{
+          f: (ref: RiveViewRef | null) => {
+            context.ref = ref;
+          },
+        }}
         file={file}
         fit={Fit.Contain}
         dataBind={instance}
@@ -167,6 +190,9 @@ describe('useRiveTrigger hook', () => {
     );
 
     expect(context.error).toBeNull();
+
+    // Wait for the experimental backend's view to be ready before firing.
+    await waitForViewReady(context);
 
     // Fire trigger and wait for it — pollChanges() runs on frame ticks,
     // so we wait for each trigger individually to avoid coalescing.
@@ -216,6 +242,9 @@ describe('useRiveTrigger hook', () => {
     );
 
     expect(context.error).toBeNull();
+
+    // Wait for the experimental backend's view to be ready before firing.
+    await waitForViewReady(context);
 
     // Fire trigger AFTER the re-render burst — before the fix, this was lost
     context.triggerFn!();

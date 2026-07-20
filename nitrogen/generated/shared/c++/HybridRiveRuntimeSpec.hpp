@@ -13,11 +13,13 @@
 #error NitroModules cannot be found! Are you sure you installed NitroModules properly?
 #endif
 
-
+// Forward declaration of `AndroidRenderBackend` to properly resolve imports.
+namespace margelo::nitro::rive { enum class AndroidRenderBackend; }
 
 #include <string>
 #include <optional>
 #include <NitroModules/Promise.hpp>
+#include "AndroidRenderBackend.hpp"
 
 namespace margelo::nitro::rive {
 
@@ -52,6 +54,7 @@ namespace margelo::nitro::rive {
     public:
       // Methods
       virtual std::shared_ptr<Promise<void>> initialize() = 0;
+      virtual void setAndroidRenderBackend(AndroidRenderBackend backend) = 0;
 
     protected:
       // Hybrid Setup

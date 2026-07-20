@@ -160,4 +160,15 @@ open class HybridRiveRuntimeSpec_cxx {
       return bridge.create_Result_std__shared_ptr_Promise_void___(__exceptionPtr)
     }
   }
+  
+  @inline(__always)
+  public final func setAndroidRenderBackend(backend: Int32) -> bridge.Result_void_ {
+    do {
+      try self.__implementation.setAndroidRenderBackend(backend: margelo.nitro.rive.AndroidRenderBackend(rawValue: backend)!)
+      return bridge.create_Result_void_()
+    } catch (let __error) {
+      let __exceptionPtr = __error.toCpp()
+      return bridge.create_Result_void_(__exceptionPtr)
+    }
+  }
 }

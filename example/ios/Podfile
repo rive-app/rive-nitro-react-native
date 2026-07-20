@@ -10,6 +10,30 @@ require Pod::Executable.execute_command('node', ['-p',
 platform :ios, min_ios_version_supported
 prepare_react_native_project!
 
+# fmt `consteval` build error on Xcode 26.4+ (Apple clang 21): RN 0.80's bundled fmt 11.0.2
+# fails to compile (expo/expo#44229, facebook/react-native#55601), and it predates both the
+# FMT_USE_CONSTEVAL escape hatch (fmt 11.1) and the real code fix (fmt 12.x, shipped with
+# RN 0.83+). Force fmt 12.1.0 — the exact version RN 0.86 ships — by rewriting the vendored
+# podspecs before dependency resolution (RCT-Folly exact-pins fmt, so its podspec must be
+# relaxed too). Re-runs on every `pod install`, so it survives `yarn install` re-extraction.
+# Drop this once the example is on RN >= 0.83.
+rn_podspecs = File.expand_path('../node_modules/react-native/third-party-podspecs', __dir__)
+{
+  'fmt.podspec' => [['"11.0.2"', '"12.1.0"']],
+  'RCT-Folly.podspec' => [['spec.dependency "fmt", "11.0.2"', 'spec.dependency "fmt", "12.1.0"']],
+}.each do |file, subs|
+  path = File.join(rn_podspecs, file)
+  contents = File.read(path)
+  patched = subs.reduce(contents) { |c, (from, to)| c.gsub(from, to) }
+  if patched != contents
+    File.write(path, patched)
+    Pod::UI.puts "Forced fmt 12.1.0 in #{file} (Xcode 26.4+ consteval fix)".green
+  end
+  # CocoaPods reuses cached podspec JSONs even when the .podspec changed underneath it
+  cached = File.join(__dir__, 'Pods', 'Local Podspecs', "#{file}.json")
+  File.delete(cached) if File.exist?(cached) && File.read(cached).include?('11.0.2')
+end
+
 linkage = ENV['USE_FRAMEWORKS']
 if linkage != nil
   Pod::UI.puts "Configuring Pod with #{linkage}ally linked Frameworks".green
@@ -33,5 +57,6 @@ target 'RiveExample' do
       :mac_catalyst_enabled => false,
       # :ccache_enabled => true
     )
+
   end
 end

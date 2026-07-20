@@ -73,6 +73,18 @@ abstract class HybridRiveViewSpec: HybridView() {
   @get:Keep
   @set:DoNotStrip
   @set:Keep
+  abstract var frameRate: Variant_Double_FrameRateRange?
+  
+  @get:DoNotStrip
+  @get:Keep
+  @set:DoNotStrip
+  @set:Keep
+  abstract var semantics: Semantics?
+  
+  @get:DoNotStrip
+  @get:Keep
+  @set:DoNotStrip
+  @set:Keep
   abstract var dataBind: Variant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName?
   
   abstract var onError: (error: RiveError) -> Unit

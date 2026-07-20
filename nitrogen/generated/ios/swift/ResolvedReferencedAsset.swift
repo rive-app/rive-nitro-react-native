@@ -18,7 +18,7 @@ public extension ResolvedReferencedAsset {
   /**
    * Create a new instance of `ResolvedReferencedAsset`.
    */
-  init(sourceUrl: String?, sourceAsset: String?, sourceAssetId: String?, path: String?, image: (any HybridRiveImageSpec)?) {
+  init(sourceUrl: String?, sourceAsset: String?, sourceAssetId: String?, path: String?, image: (any HybridRiveImageSpec)?, type: RiveAssetType?) {
     self.init({ () -> bridge.std__optional_std__string_ in
       if let __unwrappedValue = sourceUrl {
         return bridge.create_std__optional_std__string_(std.string(__unwrappedValue))
@@ -49,6 +49,12 @@ public extension ResolvedReferencedAsset {
           let __cxxWrapped = __unwrappedValue.getCxxWrapper()
           return __cxxWrapped.getCxxPart()
         }())
+      } else {
+        return .init()
+      }
+    }(), { () -> bridge.std__optional_RiveAssetType_ in
+      if let __unwrappedValue = type {
+        return bridge.create_std__optional_RiveAssetType_(__unwrappedValue)
       } else {
         return .init()
       }
@@ -117,5 +123,10 @@ public extension ResolvedReferencedAsset {
         return nil
       }
     }()
+  }
+  
+  @inline(__always)
+  var type: RiveAssetType? {
+    return self.__type.value
   }
 }

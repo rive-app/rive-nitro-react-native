@@ -40,6 +40,7 @@ target_sources(
   ../nitrogen/generated/shared/c++/HybridRiveFontConfigSpec.cpp
   ../nitrogen/generated/shared/c++/HybridRiveImageSpec.cpp
   ../nitrogen/generated/shared/c++/HybridRiveImageFactorySpec.cpp
+  ../nitrogen/generated/shared/c++/HybridRiveLoggerSpec.cpp
   ../nitrogen/generated/shared/c++/HybridRiveRuntimeSpec.cpp
   ../nitrogen/generated/shared/c++/HybridRiveViewSpec.cpp
   ../nitrogen/generated/shared/c++/views/HybridRiveViewComponent.cpp
@@ -63,8 +64,10 @@ target_sources(
   ../nitrogen/generated/android/c++/JHybridRiveFontConfigSpec.cpp
   ../nitrogen/generated/android/c++/JHybridRiveImageSpec.cpp
   ../nitrogen/generated/android/c++/JHybridRiveImageFactorySpec.cpp
+  ../nitrogen/generated/android/c++/JHybridRiveLoggerSpec.cpp
   ../nitrogen/generated/android/c++/JHybridRiveRuntimeSpec.cpp
   ../nitrogen/generated/android/c++/JHybridRiveViewSpec.cpp
+  ../nitrogen/generated/android/c++/JVariant_Double_FrameRateRange.cpp
   ../nitrogen/generated/android/c++/JVariant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName.cpp
   ../nitrogen/generated/android/c++/JEventPropertiesOutput.cpp
   ../nitrogen/generated/android/c++/views/JHybridRiveViewStateUpdater.cpp

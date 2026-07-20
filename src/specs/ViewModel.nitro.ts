@@ -2,20 +2,49 @@ import type { HybridObject } from 'react-native-nitro-modules';
 import type { RiveImage } from './RiveImage.nitro';
 import type { BindableArtboard } from './BindableArtboard.nitro';
 
+export type ViewModelPropertyType =
+  | 'none'
+  | 'string'
+  | 'number'
+  | 'boolean'
+  | 'color'
+  | 'list'
+  | 'enum'
+  | 'trigger'
+  | 'viewModel'
+  | 'integer'
+  | 'symbolListIndex'
+  | 'assetImage'
+  | 'artboard'
+  | 'input'
+  | 'any';
+
+export interface ViewModelPropertyInfo {
+  readonly name: string;
+  readonly type: ViewModelPropertyType;
+}
+
 /**
  * A Rive View Model as created in the Rive editor.
  * @see {@link https://rive.app/docs/runtimes/data-binding Rive Data Binding Documentation}
  */
-export interface ViewModel extends HybridObject<{
-  ios: 'swift';
-  android: 'kotlin';
-}> {
+export interface ViewModel
+  extends HybridObject<{
+    ios: 'swift';
+    android: 'kotlin';
+  }> {
   /** @deprecated Use getPropertyCountAsync instead */
   readonly propertyCount: number;
   /** @deprecated Use getInstanceCountAsync instead */
   readonly instanceCount: number;
   /** The name of the view model */
   readonly modelName: string;
+  /**
+   * All properties defined on this view model.
+   *
+   * Backend note: rejects on the legacy backend (experimental only).
+   */
+  getPropertiesAsync(): Promise<ViewModelPropertyInfo[]>;
   /** The number of properties in the view model */
   getPropertyCountAsync(): Promise<number>;
   /** The number of view model instances in the view model */
@@ -44,13 +73,42 @@ export interface ViewModel extends HybridObject<{
  * in the view model.
  * @see {@link https://rive.app/docs/runtimes/data-binding Rive Data Binding Documentation}
  */
-export interface ViewModelInstance extends HybridObject<{
-  ios: 'swift';
-  android: 'kotlin';
-}> {
-  /** The name of the view model instance */
+export interface ViewModelInstance
+  extends HybridObject<{
+    ios: 'swift';
+    android: 'kotlin';
+  }> {
+  /**
+   * The name of the view model instance.
+   *
+   * Experimental backend: the runtime does not expose instance names yet
+   * (verified through rive-android 11.7.0; SDK support has been requested),
+   * so this is only populated for instances created via
+   * `createInstanceByName` / `createInstanceByIndex` — default, blank,
+   * nested, and view-obtained instances report `""` until the SDKs expose it.
+   */
   readonly instanceName: string;
-  /** Get a number property from the view model instance at the given path */
+  /**
+   * All properties available on this view model instance.
+   *
+   * Backend note: rejects on the legacy backend, and on the experimental
+   * backend for instances whose ViewModel metadata is unknown (nested paths,
+   * list items, view-obtained instances) — query the ViewModel instead.
+   */
+  getPropertiesAsync(): Promise<ViewModelPropertyInfo[]>;
+  /**
+   * Get a number property from the view model instance at the given path.
+   *
+   * Backend note (applies to all property accessors below): the legacy
+   * backend validates the path synchronously and returns `undefined` when it
+   * does not exist. The experimental backend cannot — property lookup
+   * happens on the async command server — so it returns an unvalidated
+   * handle for any path, and a bad path surfaces when the property is used:
+   * `getValueAsync()` rejects, listeners never fire, and the `useRive*`
+   * hooks report it via their `error` result. Do not rely on a falsy return
+   * to detect typos on the experimental backend; check
+   * `getPropertiesAsync()` or handle the `getValueAsync()` rejection.
+   */
   numberProperty(path: string): ViewModelNumberProperty | undefined;
 
   /** Get a string property from the view model instance at the given path */
@@ -77,13 +135,8 @@ export interface ViewModelInstance extends HybridObject<{
   /** Get an artboard property from the view model instance at the given path */
   artboardProperty(path: string): ViewModelArtboardProperty | undefined;
 
-  /**
-   * Get a nested ViewModel instance at the given path.
-   * Supports path notation with "/" for nested access (e.g., "Parent/Child").
-   * @deprecated Use viewModelAsync instead
-   */
+  /** @deprecated Use viewModelAsync instead */
   viewModel(path: string): ViewModelInstance | undefined;
-
   /** Get a nested ViewModel instance at the given path. Supports "/" for nested access (e.g., "Parent/Child"). */
   viewModelAsync(path: string): Promise<ViewModelInstance | undefined>;
 
@@ -95,10 +148,11 @@ export interface ViewModelInstance extends HybridObject<{
   replaceViewModel(path: string, instance: ViewModelInstance): void;
 }
 
-export interface ViewModelProperty extends HybridObject<{
-  ios: 'swift';
-  android: 'kotlin';
-}> {}
+export interface ViewModelProperty
+  extends HybridObject<{
+    ios: 'swift';
+    android: 'kotlin';
+  }> {}
 
 export interface ObservableProperty {
   /** Remove all listeners from the property */
@@ -106,62 +160,78 @@ export interface ObservableProperty {
 }
 
 export interface ViewModelNumberProperty
-  extends ViewModelProperty, ObservableProperty {
+  extends ViewModelProperty,
+    ObservableProperty {
   /** @deprecated Use getValueAsync (read) or set(value) (write) instead */
   value: number;
   /** Get the current value of the number property */
   getValueAsync(): Promise<number>;
   set(value: number): void;
+  /** Set the value asynchronously — awaitable, errors propagate, writes are ordered. */
+  setValueAsync(value: number): Promise<void>;
   /** Add a listener to the view model number property. Returns a function to remove the listener. */
   addListener(onChanged: (value: number) => void): () => void;
 }
 
 export interface ViewModelStringProperty
-  extends ViewModelProperty, ObservableProperty {
+  extends ViewModelProperty,
+    ObservableProperty {
   /** @deprecated Use getValueAsync (read) or set(value) (write) instead */
   value: string;
   /** Get the current value of the string property */
   getValueAsync(): Promise<string>;
   set(value: string): void;
+  /** Set the value asynchronously — awaitable, errors propagate, writes are ordered. */
+  setValueAsync(value: string): Promise<void>;
   /** Add a listener to the view model string property. Returns a function to remove the listener. */
   addListener(onChanged: (value: string) => void): () => void;
 }
 
 export interface ViewModelBooleanProperty
-  extends ViewModelProperty, ObservableProperty {
+  extends ViewModelProperty,
+    ObservableProperty {
   /** @deprecated Use getValueAsync (read) or set(value) (write) instead */
   value: boolean;
   /** Get the current value of the boolean property */
   getValueAsync(): Promise<boolean>;
   set(value: boolean): void;
+  /** Set the value asynchronously — awaitable, errors propagate, writes are ordered. */
+  setValueAsync(value: boolean): Promise<void>;
   /** Add a listener to the view model boolean property. Returns a function to remove the listener. */
   addListener(onChanged: (value: boolean) => void): () => void;
 }
 
 export interface ViewModelColorProperty
-  extends ViewModelProperty, ObservableProperty {
+  extends ViewModelProperty,
+    ObservableProperty {
   /** @deprecated Use getValueAsync (read) or set(value) (write) instead */
   value: number;
   /** Get the current value of the color property */
   getValueAsync(): Promise<number>;
   set(value: number): void;
+  /** Set the value asynchronously — awaitable, errors propagate, writes are ordered. */
+  setValueAsync(value: number): Promise<void>;
   /** Add a listener to the view model color property. Returns a function to remove the listener. */
   addListener(onChanged: (value: number) => void): () => void;
 }
 
 export interface ViewModelEnumProperty
-  extends ViewModelProperty, ObservableProperty {
+  extends ViewModelProperty,
+    ObservableProperty {
   /** @deprecated Use getValueAsync (read) or set(value) (write) instead */
   value: string;
   /** Get the current value of the enum property */
   getValueAsync(): Promise<string>;
   set(value: string): void;
+  /** Set the value asynchronously — awaitable, errors propagate, writes are ordered. */
+  setValueAsync(value: string): Promise<void>;
   /** Add a listener to the view model enum property. Returns a function to remove the listener. */
   addListener(onChanged: (value: string) => void): () => void;
 }
 
 export interface ViewModelTriggerProperty
-  extends ViewModelProperty, ObservableProperty {
+  extends ViewModelProperty,
+    ObservableProperty {
   /** Add a listener to the view model trigger property. Returns a function to remove the listener. */
   addListener(onChanged: () => void): () => void;
   /** Trigger the view model trigger property */
@@ -169,7 +239,8 @@ export interface ViewModelTriggerProperty
 }
 
 export interface ViewModelImageProperty
-  extends ViewModelProperty, ObservableProperty {
+  extends ViewModelProperty,
+    ObservableProperty {
   /** Set the image property value */
   set(image: RiveImage | undefined): void;
   /** Add a listener to the view model image property. Returns a function to remove the listener. */
@@ -181,7 +252,8 @@ export interface ViewModelImageProperty
  * @see {@link https://rive.app/docs/runtimes/data-binding#lists Rive Data Binding Lists}
  */
 export interface ViewModelListProperty
-  extends ViewModelProperty, ObservableProperty {
+  extends ViewModelProperty,
+    ObservableProperty {
   /** @deprecated Use getLengthAsync instead */
   readonly length: number;
   /** @deprecated Use getInstanceAtAsync instead */

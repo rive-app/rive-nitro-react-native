@@ -11,6 +11,8 @@
 namespace margelo::nitro::rive { class HybridViewModelSpec; }
 // Forward declaration of `HybridBindableArtboardSpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridBindableArtboardSpec; }
+// Forward declaration of `RiveEnumDefinition` to properly resolve imports.
+namespace margelo::nitro::rive { struct RiveEnumDefinition; }
 // Forward declaration of `ArtboardBy` to properly resolve imports.
 namespace margelo::nitro::rive { struct ArtboardBy; }
 // Forward declaration of `ArtboardByTypes` to properly resolve imports.
@@ -21,6 +23,8 @@ namespace margelo::nitro::rive { struct ReferencedAssetsType; }
 namespace margelo::nitro::rive { struct ResolvedReferencedAsset; }
 // Forward declaration of `HybridRiveImageSpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridRiveImageSpec; }
+// Forward declaration of `RiveAssetType` to properly resolve imports.
+namespace margelo::nitro::rive { enum class RiveAssetType; }
 
 #include <optional>
 #include <string>
@@ -32,6 +36,8 @@ namespace margelo::nitro::rive { class HybridRiveImageSpec; }
 #include <NitroModules/JPromise.hpp>
 #include "HybridBindableArtboardSpec.hpp"
 #include "JHybridBindableArtboardSpec.hpp"
+#include "RiveEnumDefinition.hpp"
+#include "JRiveEnumDefinition.hpp"
 #include "ArtboardBy.hpp"
 #include "JArtboardBy.hpp"
 #include "ArtboardByTypes.hpp"
@@ -43,6 +49,8 @@ namespace margelo::nitro::rive { class HybridRiveImageSpec; }
 #include "JResolvedReferencedAsset.hpp"
 #include "HybridRiveImageSpec.hpp"
 #include "JHybridRiveImageSpec.hpp"
+#include "RiveAssetType.hpp"
+#include "JRiveAssetType.hpp"
 
 namespace margelo::nitro::rive {
 
@@ -221,6 +229,31 @@ namespace margelo::nitro::rive {
     static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JHybridBindableArtboardSpec::JavaPart>(jni::alias_ref<jni::JString> /* name */)>("getBindableArtboard");
     auto __result = method(_javaPart, jni::make_jstring(name));
     return __result->getJHybridBindableArtboardSpec();
+  }
+  std::shared_ptr<Promise<std::vector<RiveEnumDefinition>>> JHybridRiveFileSpec::getEnums() {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>()>("getEnums");
+    auto __result = method(_javaPart);
+    return [&]() {
+      auto __promise = Promise<std::vector<RiveEnumDefinition>>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& __boxedResult) {
+        auto __result = jni::static_ref_cast<jni::JArrayClass<JRiveEnumDefinition>>(__boxedResult);
+        __promise->resolve([&]() {
+          size_t __size = __result->size();
+          std::vector<RiveEnumDefinition> __vector;
+          __vector.reserve(__size);
+          for (size_t __i = 0; __i < __size; __i++) {
+            auto __element = __result->getElement(__i);
+            __vector.push_back(__element->toCpp());
+          }
+          return __vector;
+        }());
+      });
+      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
+        jni::JniException __jniError(__throwable);
+        __promise->reject(std::make_exception_ptr(__jniError));
+      });
+      return __promise;
+    }();
   }
 
 } // namespace margelo::nitro::rive

@@ -1,0 +1,180 @@
+import NitroModules
+import RiveRuntime
+
+typealias ReferencedAssetCache = [String: RiveFileAsset]
+
+class HybridRiveFile: HybridRiveFileSpec, RiveViewSource {
+  var riveFile: RiveFile?
+  var referencedAssetCache: ReferencedAssetCache?
+  var assetLoader: ReferencedAssetLoader?
+  var cachedFactory: RiveFactory?
+  private var weakViews: [Weak<RiveReactNativeView>] = []
+
+  public func setRiveFile(_ riveFile: RiveFile) {
+    self.riveFile = riveFile
+  }
+
+  func registerView(_ view: RiveReactNativeView) {
+    weakViews.append(Weak(view))
+  }
+
+  func unregisterView(_ view: RiveReactNativeView) {
+    weakViews.removeAll { $0.value === view }
+  }
+
+  private func refreshAfterAssetChange() {
+    weakViews = weakViews.filter { $0.value != nil }
+
+    for weakView in weakViews {
+      guard let view = weakView.value else { continue }
+      view.refreshAfterAssetChange()
+    }
+  }
+
+  var viewModelCount: Double? {
+    guard let count = riveFile?.viewModelCount else { return nil }
+    return Double(count)
+  }
+
+  func viewModelByIndex(index: Double) throws -> (any HybridViewModelSpec)? {
+    guard index >= 0 else { return nil }
+    guard let vm = riveFile?.viewModel(at: UInt(index)) else { return nil }
+    return HybridViewModel(viewModel: vm)
+  }
+
+  func viewModelByName(name: String) throws -> (any HybridViewModelSpec)? {
+    guard let vm = riveFile?.viewModelNamed(name) else { return nil }
+    return HybridViewModel(viewModel: vm)
+  }
+
+  func defaultArtboardViewModel(artboardBy: ArtboardBy?) throws -> (any HybridViewModelSpec)? {
+    guard let file = riveFile else { return nil }
+    let artboard: RiveArtboard?
+
+    if let artboardBy = artboardBy {
+      switch artboardBy.type {
+      case .index:
+        guard let index = artboardBy.index else { return nil }
+        artboard = try? file.artboard(from: Int(index))
+      case .name:
+        guard let name = artboardBy.name else { return nil }
+        artboard = try? file.artboard(fromName: name)
+      default:
+        artboard = nil
+      }
+    } else {
+      artboard = try? file.artboard()
+    }
+
+    guard let artboard = artboard,
+          let vm = file.defaultViewModel(for: artboard) else { return nil }
+    return HybridViewModel(viewModel: vm)
+  }
+
+  var artboardCount: Double {
+    Double(riveFile?.artboardNames().count ?? 0)
+  }
+
+  var artboardNames: [String] {
+    riveFile?.artboardNames() ?? []
+  }
+
+  func getBindableArtboard(name: String) throws -> any HybridBindableArtboardSpec {
+    guard let bindable = try riveFile?.bindableArtboard(withName: name) else {
+      throw NSError(
+        domain: "RiveError",
+        code: 0,
+        userInfo: [NSLocalizedDescriptionKey: "Artboard '\(name)' not found"]
+      )
+    }
+    return HybridBindableArtboard(bindableArtboard: bindable)
+  }
+
+  // The *Async lookups run on the main thread (not Nitro's pool): they walk
+  // the same RiveFile the attached views render on the main thread, and the
+  // legacy runtime has no internal synchronization — off-main access is the
+  // race class of issue #297. "Async" here means "doesn't block the JS
+  // thread", matching HybridViewModel's create*InstanceAsync.
+  func getViewModelNamesAsync() throws -> Promise<[String]> {
+    return Promise.onMain {
+      guard let file = self.riveFile else { return [] }
+      let count = file.viewModelCount
+      var names: [String] = []
+      for i in 0..<count {
+        if let vm = file.viewModel(at: UInt(i)) {
+          names.append(vm.name)
+        }
+      }
+      return names
+    }
+  }
+
+  func viewModelByNameAsync(name: String, validate: Bool?) throws -> Promise<(any HybridViewModelSpec)?> {
+    return Promise.onMain { try self.viewModelByName(name: name) }
+  }
+
+  func defaultArtboardViewModelAsync(artboardBy: ArtboardBy?) throws -> Promise<(any HybridViewModelSpec)?> {
+    return Promise.onMain { try self.defaultArtboardViewModel(artboardBy: artboardBy) }
+  }
+
+  func getArtboardCountAsync() throws -> Promise<Double> {
+    return Promise.onMain { self.artboardCount }
+  }
+
+  func getArtboardNamesAsync() throws -> Promise<[String]> {
+    return Promise.onMain { self.artboardNames }
+  }
+
+  func updateReferencedAssets(referencedAssets: ReferencedAssetsType) {
+    guard let assetsData = referencedAssets.data,
+          let cache = referencedAssetCache,
+          let loader = assetLoader,
+          let _ = riveFile else {
+      return
+    }
+
+    let dispatchGroup = DispatchGroup()
+    var hasChanged = false
+
+    for (key, assetData) in assetsData {
+      guard let asset = cache[key] else { continue }
+      if let riveFactory = cachedFactory {
+        dispatchGroup.enter()
+        loader.loadAsset(source: assetData, asset: asset, factory: riveFactory) {
+          dispatchGroup.leave()
+        }
+      } else {
+        RCTLogError("[RiveFile] no factory available for update")
+      }
+      hasChanged = true
+    }
+
+    if hasChanged {
+      dispatchGroup.notify(queue: .main) { [weak self] in
+        self?.refreshAfterAssetChange()
+      }
+    }
+  }
+
+  func getEnums() throws -> Promise<[RiveEnumDefinition]> {
+    return Promise.async {
+      throw NSError(
+        domain: "RiveError",
+        code: 1,
+        userInfo: [NSLocalizedDescriptionKey: "getEnums requires the experimental iOS backend."]
+      )
+    }
+  }
+
+  func dispose() {
+    weakViews.removeAll()
+    referencedAssetCache = nil
+    assetLoader = nil
+    cachedFactory = nil
+    riveFile = nil
+  }
+
+  deinit {
+    dispose()
+  }
+}

@@ -38,6 +38,10 @@ abstract class HybridRiveRuntimeSpec: HybridObject() {
   @DoNotStrip
   @Keep
   abstract fun initialize(): Promise<Unit>
+  
+  @DoNotStrip
+  @Keep
+  abstract fun setAndroidRenderBackend(backend: AndroidRenderBackend): Unit
 
   // Default implementation of `HybridObject.toString()`
   override fun toString(): String {

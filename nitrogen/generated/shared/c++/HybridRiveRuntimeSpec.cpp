@@ -17,6 +17,7 @@ namespace margelo::nitro::rive {
       prototype.registerHybridGetter("isInitialized", &HybridRiveRuntimeSpec::getIsInitialized);
       prototype.registerHybridGetter("initError", &HybridRiveRuntimeSpec::getInitError);
       prototype.registerHybridMethod("initialize", &HybridRiveRuntimeSpec::initialize);
+      prototype.registerHybridMethod("setAndroidRenderBackend", &HybridRiveRuntimeSpec::setAndroidRenderBackend);
     });
   }
 

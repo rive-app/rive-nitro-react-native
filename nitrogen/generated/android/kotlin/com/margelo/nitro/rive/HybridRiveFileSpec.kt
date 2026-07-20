@@ -78,6 +78,10 @@ abstract class HybridRiveFileSpec: HybridObject() {
   @DoNotStrip
   @Keep
   abstract fun getBindableArtboard(name: String): HybridBindableArtboardSpec
+  
+  @DoNotStrip
+  @Keep
+  abstract fun getEnums(): Promise<Array<RiveEnumDefinition>>
 
   // Default implementation of `HybridObject.toString()`
   override fun toString(): String {

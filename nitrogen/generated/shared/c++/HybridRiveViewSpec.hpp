@@ -19,6 +19,10 @@ namespace margelo::nitro::rive { class HybridRiveFileSpec; }
 namespace margelo::nitro::rive { enum class Alignment; }
 // Forward declaration of `Fit` to properly resolve imports.
 namespace margelo::nitro::rive { enum class Fit; }
+// Forward declaration of `FrameRateRange` to properly resolve imports.
+namespace margelo::nitro::rive { struct FrameRateRange; }
+// Forward declaration of `Semantics` to properly resolve imports.
+namespace margelo::nitro::rive { enum class Semantics; }
 // Forward declaration of `HybridViewModelInstanceSpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridViewModelInstanceSpec; }
 // Forward declaration of `DataBindMode` to properly resolve imports.
@@ -36,10 +40,12 @@ namespace margelo::nitro::rive { struct UnifiedRiveEvent; }
 #include "HybridRiveFileSpec.hpp"
 #include "Alignment.hpp"
 #include "Fit.hpp"
+#include "FrameRateRange.hpp"
+#include <variant>
+#include "Semantics.hpp"
 #include "HybridViewModelInstanceSpec.hpp"
 #include "DataBindMode.hpp"
 #include "DataBindByName.hpp"
-#include <variant>
 #include "RiveError.hpp"
 #include <functional>
 #include <NitroModules/Promise.hpp>
@@ -86,6 +92,10 @@ namespace margelo::nitro::rive {
       virtual void setFit(std::optional<Fit> fit) = 0;
       virtual std::optional<double> getLayoutScaleFactor() = 0;
       virtual void setLayoutScaleFactor(std::optional<double> layoutScaleFactor) = 0;
+      virtual std::optional<std::variant<double, FrameRateRange>> getFrameRate() = 0;
+      virtual void setFrameRate(const std::optional<std::variant<double, FrameRateRange>>& frameRate) = 0;
+      virtual std::optional<Semantics> getSemantics() = 0;
+      virtual void setSemantics(std::optional<Semantics> semantics) = 0;
       virtual std::optional<std::variant<std::shared_ptr<HybridViewModelInstanceSpec>, DataBindMode, DataBindByName>> getDataBind() = 0;
       virtual void setDataBind(const std::optional<std::variant<std::shared_ptr<HybridViewModelInstanceSpec>, DataBindMode, DataBindByName>>& dataBind) = 0;
       virtual std::function<void(const RiveError& /* error */)> getOnError() = 0;

@@ -32,7 +32,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           reporter: github-pr-review
           ktlint_version: "1.5.0"
-          android: true
+          fail_on_error: true
 
   lint:
     runs-on: ubuntu-latest
@@ -84,11 +84,15 @@ jobs:
 
       - name: Build package
         run: yarn prepare
-
   build-android:
+    # Builds the Expo 57 example — the default Android build on CI. Shares
+    # its build cache key with the test-harness-android job (cache warmer +
+    # exact-key short-circuit). The bare example is built by the scheduled
+    # bare-example workflow.
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     env:
-      TURBO_CACHE_DIR: .turbo/android
+      ANDROID_API_LEVEL: 35
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -96,60 +100,88 @@ jobs:
       - name: Setup
         uses: ./.github/actions/setup
 
-      - name: Cache turborepo for Android
-        id: turbo-cache-android
-        uses: actions/cache@v4
+      # Exact-key probe only (no download): on a hit the build is already
+      # proven for these inputs and the whole job short-circuits.
+      - name: Check Android build cache
+        id: build-cache-check
+        uses: actions/cache/restore@v4
         with:
-          path: ${{ env.TURBO_CACHE_DIR }}
-          key: ${{ runner.os }}-turborepo-android-${{ hashFiles('yarn.lock', 'android/**', 'nitrogen/generated/android/**', 'src/specs/*.nitro.ts') }}
-          restore-keys: |
-            ${{ runner.os }}-turborepo-android-
+          path: expo57-example/android/app/build
+          key: ${{ runner.os }}-android-build-expo57-${{ env.ANDROID_API_LEVEL }}-${{ hashFiles('package.json', 'yarn.lock', 'android/**', 'nitrogen/generated/android/**', 'expo57-example/package.json', 'expo57-example/app.json', 'expo57-example/app.config.js', 'expo57-example/assets/**') }}
+          lookup-only: true
 
-      - name: Check turborepo cache for Android
-        run: |
-          TURBO_CACHE_STATUS=$(node -p "($(yarn turbo run build:android --cache-dir="${{ env.TURBO_CACHE_DIR }}" --dry=json)).tasks.find(t => t.task === 'build:android').cache.status")
-
-          if [[ $TURBO_CACHE_STATUS == "HIT" ]]; then
-            echo "turbo_cache_hit=1" >> $GITHUB_ENV
-          fi
+      # react-native 0.86 requires node ^20.19.4 — see build-ios. Gradle also
+      # shells out to node for autolinking.
+      - name: Use Node 22
+        if: steps.build-cache-check.outputs.cache-hit != 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
 
       - name: Install JDK
-        if: env.turbo_cache_hit != 1
+        if: steps.build-cache-check.outputs.cache-hit != 'true'
         uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
           java-version: '17'
 
       - name: Finalize Android SDK
-        if: env.turbo_cache_hit != 1
+        if: steps.build-cache-check.outputs.cache-hit != 'true'
         run: |
           /bin/bash -c "yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses > /dev/null"
+          for i in 1 2 3; do
+            $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "ndk;27.1.12297006" && break
+            echo "NDK install attempt $i failed, retrying..."
+            sleep 10
+          done
+
+      - name: Expo prebuild
+        if: steps.build-cache-check.outputs.cache-hit != 'true'
+        working-directory: expo57-example
+        run: npx expo prebuild -p android --no-install
 
       - name: Cache Gradle
-        if: env.turbo_cache_hit != 1
+        if: steps.build-cache-check.outputs.cache-hit != 'true'
         uses: actions/cache@v4
         with:
           path: |
             ~/.gradle/wrapper
             ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('example/android/gradle/wrapper/gradle-wrapper.properties') }}
+          key: ${{ runner.os }}-gradle-harness-${{ hashFiles('expo57-example/android/gradle/wrapper/gradle-wrapper.properties') }}
           restore-keys: |
+            ${{ runner.os }}-gradle-harness-
             ${{ runner.os }}-gradle-
 
-      - name: Build example for Android
+      - name: Build Android app
+        if: steps.build-cache-check.outputs.cache-hit != 'true'
+        working-directory: expo57-example/android
         env:
           JAVA_OPTS: "-XX:MaxHeapSize=6g"
-          TURBO_FORCE: ${{ steps.turbo-cache-android.outputs.cache-hit != 'true' }}
         run: |
-          yarn turbo run build:android --cache-dir="${{ env.TURBO_CACHE_DIR }}"
+          ./gradlew assembleDebug --no-daemon --console=plain -PreactNativeArchitectures=x86_64
+
+      - name: Save Android build cache
+        if: steps.build-cache-check.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: expo57-example/android/app/build
+          key: ${{ steps.build-cache-check.outputs.cache-primary-key }}
 
   build-ios:
+    # Builds the Expo 57 example — the default iOS build on CI. It uses
+    # Expo's precompiled React Native XCFrameworks plus the EAS prebuilt
+    # third-party pods, so a cold build is ~2.5x faster than the bare
+    # example (which the test-harness-ios jobs still build and exercise).
     # Pinned: macos-latest is mid-migration to macOS 26, whose simulator set
     # has no iPhone 16 Pro on an iOS >=26 runtime, breaking the harness boot.
     runs-on: macos-15
+    timeout-minutes: 45
     env:
       XCODE_VERSION: 26.3
-      TURBO_CACHE_DIR: .turbo/ios
+      # Same bucket EAS Build uses for prebuilt third-party XCFrameworks
+      # (reanimated, worklets, ...). Unofficial endpoint — on 404 or if it
+      # ever breaks, pods silently fall back to building from source.
+      EXPO_PRECOMPILED_MODULES_BASE_URL: https://storage.googleapis.com/eas-build-precompiled-modules/
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -157,63 +189,91 @@ jobs:
       - name: Setup
         uses: ./.github/actions/setup
 
-      - name: Cache turborepo for iOS
-        id: turbo-cache-ios
-        uses: actions/cache@v4
+      # Exact-key probe only (no download): on a hit the build is already
+      # proven for these inputs and the whole job short-circuits.
+      - name: Check iOS build cache
+        id: build-cache-check
+        uses: actions/cache/restore@v4
         with:
-          path: ${{ env.TURBO_CACHE_DIR }}
-          key: ${{ runner.os }}-turborepo-ios-${{ hashFiles('yarn.lock', 'ios/**', 'nitrogen/generated/ios/**', '*.podspec', 'src/specs/*.nitro.ts') }}
-          restore-keys: |
-            ${{ runner.os }}-turborepo-ios-
+          path: expo57-example/ios/build
+          key: ${{ runner.os }}-ios-build-expo57-${{ env.XCODE_VERSION }}-${{ hashFiles('package.json', 'yarn.lock', 'ios/**', 'nitrogen/generated/ios/**', '*.podspec', 'src/specs/*.nitro.ts', 'expo57-example/package.json', 'expo57-example/app.json', 'expo57-example/app.config.js', 'expo57-example/assets/**', 'expo57-example/app/**', 'expo57-example/babel.config.js', 'expo57-example/metro.config.js') }}
+          lookup-only: true
 
-      - name: Check turborepo cache for iOS
-        run: |
-          TURBO_CACHE_STATUS=$(node -p "($(yarn turbo run build:ios --cache-dir="${{ env.TURBO_CACHE_DIR }}" --dry=json)).tasks.find(t => t.task === 'build:ios').cache.status")
-
-          if [[ $TURBO_CACHE_STATUS == "HIT" ]]; then
-            echo "turbo_cache_hit=1" >> $GITHUB_ENV
-          fi
+      # react-native 0.86 requires node ^20.19.4; .nvmrc (20.19.0) is too old
+      # for expo prebuild/codegen, so override node here only.
+      - name: Use Node 22
+        if: steps.build-cache-check.outputs.cache-hit != 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
 
       - name: Use appropriate Xcode version
-        if: env.turbo_cache_hit != 1
+        if: steps.build-cache-check.outputs.cache-hit != 'true'
         uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: ${{ env.XCODE_VERSION }}
 
+      - name: Expo prebuild
+        if: steps.build-cache-check.outputs.cache-hit != 'true'
+        working-directory: expo57-example
+        run: npx expo prebuild -p ios --no-install
+
       - name: Restore cocoapods
-        if: env.turbo_cache_hit != 1
+        if: steps.build-cache-check.outputs.cache-hit != 'true'
         id: cocoapods-cache
         uses: actions/cache/restore@v4
         with:
-          path: |
-            **/ios/Pods
-          key: ${{ runner.os }}-cocoapods-${{ hashFiles('package.json', '*.podspec', 'example/ios/Podfile.lock') }}
+          path: expo57-example/ios/Pods
+          key: ${{ runner.os }}-cocoapods-expo57-${{ hashFiles('package.json', 'yarn.lock', '*.podspec', 'expo57-example/package.json') }}
           restore-keys: |
-            ${{ runner.os }}-cocoapods-
+            ${{ runner.os }}-cocoapods-expo57-
 
       - name: Install cocoapods
-        if: env.turbo_cache_hit != 1 && steps.cocoapods-cache.outputs.cache-hit != 'true'
-        run: |
-          cd example
-          bundle install
-          rm -f ios/Podfile.lock ios/Pods/Manifest.lock
-          bundle exec pod install --project-directory=ios
+        if: steps.build-cache-check.outputs.cache-hit != 'true'
+        working-directory: expo57-example/ios
+        run: pod install
 
-      - name: Cache cocoapods
-        if: env.turbo_cache_hit != 1 && steps.cocoapods-cache.outputs.cache-hit != 'true'
+      - name: Save cocoapods cache
+        if: steps.build-cache-check.outputs.cache-hit != 'true' && steps.cocoapods-cache.outputs.cache-hit != 'true'
         uses: actions/cache/save@v4
         with:
-          path: |
-            **/ios/Pods
-          key: ${{ steps.cocoapods-cache.outputs.cache-key }}
+          path: expo57-example/ios/Pods
+          key: ${{ steps.cocoapods-cache.outputs.cache-primary-key }}
 
-      - name: Build example for iOS
-        env:
-          TURBO_FORCE: ${{ steps.turbo-cache-ios.outputs.cache-hit != 'true' }}
+      # Second restore (with download + prefix fallback) so xcodebuild can
+      # reuse a previous build dir incrementally.
+      - name: Restore iOS build cache
+        if: steps.build-cache-check.outputs.cache-hit != 'true'
+        uses: actions/cache/restore@v4
+        with:
+          path: expo57-example/ios/build
+          key: ${{ steps.build-cache-check.outputs.cache-primary-key }}
+          restore-keys: |
+            ${{ runner.os }}-ios-build-expo57-${{ env.XCODE_VERSION }}-
+
+      - name: Build expo57-example for iOS
+        if: steps.build-cache-check.outputs.cache-hit != 'true'
+        working-directory: expo57-example/ios
         run: |
-          yarn turbo run build:ios --cache-dir="${{ env.TURBO_CACHE_DIR }}"
+          set -o pipefail && xcodebuild \
+            -derivedDataPath build \
+            -workspace expo57example.xcworkspace \
+            -scheme expo57example \
+            -sdk iphonesimulator \
+            -configuration Debug \
+            build \
+            CODE_SIGNING_ALLOWED=NO
 
+      - name: Save iOS build cache
+        if: steps.build-cache-check.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: expo57-example/ios/build
+          key: ${{ steps.build-cache-check.outputs.cache-primary-key }}
   test-harness-ios:
+    # Runs the shared harness suite against the Expo 57 example. The build
+    # cache is shared with build-ios (same key), so this job usually only
+    # boots the simulator and runs tests.
     # Pinned to macos-15 — see build-ios. macos-26 runners lack a matching
     # iPhone 16 Pro / iOS >=26 simulator, so the boot step fails intermittently.
     runs-on: macos-15
@@ -227,46 +287,63 @@ jobs:
       - name: Setup
         uses: ./.github/actions/setup
 
+      # react-native 0.86 requires node ^20.19.4 — see build-ios.
+      - name: Use Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
       - name: Use appropriate Xcode version
         uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: ${{ env.XCODE_VERSION }}
 
-      - name: Restore cocoapods
-        id: cocoapods-cache
-        uses: actions/cache/restore@v4
-        with:
-          path: |
-            **/ios/Pods
-          key: ${{ runner.os }}-cocoapods-${{ hashFiles('package.json', '*.podspec', 'example/ios/Podfile.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-cocoapods-
-
-      - name: Install cocoapods
-        if: steps.cocoapods-cache.outputs.cache-hit != 'true'
-        run: |
-          cd example
-          bundle install
-          rm -f ios/Podfile.lock ios/Pods/Manifest.lock
-          bundle exec pod install --project-directory=ios
+      - name: Expo prebuild
+        working-directory: expo57-example
+        run: npx expo prebuild -p ios --no-install
 
       - name: Restore iOS build cache
         id: ios-build-cache
         uses: actions/cache/restore@v4
         with:
-          path: example/ios/build
-          key: ${{ runner.os }}-ios-build-${{ env.XCODE_VERSION }}-${{ hashFiles('yarn.lock', 'ios/**', 'nitrogen/generated/ios/**', '*.podspec', 'example/ios/Podfile.lock', 'example/ios/RiveExample/**') }}
+          path: expo57-example/ios/build
+          key: ${{ runner.os }}-ios-build-expo57-${{ env.XCODE_VERSION }}-${{ hashFiles('package.json', 'yarn.lock', 'ios/**', 'nitrogen/generated/ios/**', '*.podspec', 'src/specs/*.nitro.ts', 'expo57-example/package.json', 'expo57-example/app.json', 'expo57-example/app.config.js', 'expo57-example/assets/**', 'expo57-example/app/**', 'expo57-example/babel.config.js', 'expo57-example/metro.config.js') }}
           restore-keys: |
-            ${{ runner.os }}-ios-build-${{ env.XCODE_VERSION }}-
+            ${{ runner.os }}-ios-build-expo57-${{ env.XCODE_VERSION }}-
+
+      - name: Restore cocoapods
+        if: steps.ios-build-cache.outputs.cache-hit != 'true'
+        id: cocoapods-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: expo57-example/ios/Pods
+          key: ${{ runner.os }}-cocoapods-expo57-${{ hashFiles('package.json', 'yarn.lock', '*.podspec', 'expo57-example/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-cocoapods-expo57-
+
+      - name: Install cocoapods
+        if: steps.ios-build-cache.outputs.cache-hit != 'true'
+        working-directory: expo57-example/ios
+        env:
+          # Same bucket EAS Build uses — see build-ios.
+          EXPO_PRECOMPILED_MODULES_BASE_URL: https://storage.googleapis.com/eas-build-precompiled-modules/
+        run: pod install
+
+      - name: Save cocoapods cache
+        if: steps.ios-build-cache.outputs.cache-hit != 'true' && steps.cocoapods-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: expo57-example/ios/Pods
+          key: ${{ steps.cocoapods-cache.outputs.cache-primary-key }}
 
       - name: Build iOS app
         if: steps.ios-build-cache.outputs.cache-hit != 'true'
-        working-directory: example/ios
+        working-directory: expo57-example/ios
         run: |
           set -o pipefail && xcodebuild \
             -derivedDataPath build \
-            -workspace RiveExample.xcworkspace \
-            -scheme RiveExample \
+            -workspace expo57example.xcworkspace \
+            -scheme expo57example \
             -sdk iphonesimulator \
             -configuration Debug \
             build \
@@ -276,7 +353,7 @@ jobs:
         if: steps.ios-build-cache.outputs.cache-hit != 'true'
         uses: actions/cache/save@v4
         with:
-          path: example/ios/build
+          path: expo57-example/ios/build
           key: ${{ steps.ios-build-cache.outputs.cache-primary-key }}
 
       - name: Boot iOS Simulator
@@ -286,7 +363,7 @@ jobs:
           os_version: '>=26.0'
 
       - name: Install app on simulator
-        run: xcrun simctl install booted example/ios/build/Build/Products/Debug-iphonesimulator/RiveExample.app
+        run: xcrun simctl install booted expo57-example/ios/build/Build/Products/Debug-iphonesimulator/expo57example.app
 
       - name: Wait for simulator to be fully ready
         run: |
@@ -295,9 +372,15 @@ jobs:
           xcrun simctl list devices | grep Booted
 
       - name: Run harness tests on iOS
-        working-directory: example
-        timeout-minutes: 15
+        working-directory: expo57-example
+        timeout-minutes: 35
         shell: bash --noprofile --norc -o pipefail {0}
+        env:
+          # First attempt bundles through the harness Metro on app boot; CI
+          # cold transforms can exceed the default 90s bridge window.
+          HARNESS_BRIDGE_TIMEOUT: '180000'
+          # Debug logging to pin down ios-harness-startup-hang (#328).
+          HARNESS_DEBUG: '1'
         run: |
           # Background monitor: logs port/process state every 10s during an attempt
           start_monitor() {
@@ -307,7 +390,7 @@ jobs:
                 ts=$(date +%H:%M:%S)
                 metro=$(lsof -ti:8081 2>/dev/null || echo "no")
                 bridge=$(lsof -ti:3001 2>/dev/null || echo "no")
-                app=$(pgrep -f RiveExample 2>/dev/null || echo "no")
+                app=$(pgrep -f expo57example 2>/dev/null || echo "no")
                 echo "[$ts] metro:$metro bridge:$bridge app:$app"
               done
             ) &
@@ -342,51 +425,24 @@ jobs:
             lsof -ti:3001 | xargs kill -9 2>/dev/null || true
             wait_for_port_free 8081
             wait_for_port_free 3001
+            # A wedged CoreSimulator hangs harness startup on every retry
+            # (ios-harness-startup-hang, #328) — reset it and reboot the sim.
+            sudo pkill -9 -f CoreSimulatorService 2>/dev/null || true
+            sleep 5
+            if [ -n "$BOOTED_UDID" ]; then
+              xcrun simctl bootstatus "$BOOTED_UDID" -b || true
+            fi
           }
 
-          # Pre-warm Metro: compile the JS bundle once so all test attempts use cached transforms.
-          # The harness starts its own Metro, but it reuses the on-disk transform cache.
-          echo "=== Pre-warming Metro bundle ==="
-          npx react-native start --port 8081 --no-interactive &
-          PREWARM_PID=$!
+          BOOTED_UDID=$(xcrun simctl list devices booted | grep -oE '[0-9A-F-]{36}' | head -1)
+          echo "booted simulator: ${BOOTED_UDID:-none}"
 
-          # Wait for Metro to be responsive
-          for i in $(seq 1 30); do
-            if curl -s http://localhost:8081/status 2>/dev/null | grep -q "packager-status:running"; then
-              echo "Metro is running (after ${i}s)"
-              break
-            fi
-            sleep 2
-          done
-
-          # Trigger full bundle compilation (the slow part on cold start)
-          echo "Fetching iOS bundle to warm cache..."
-          if curl -s --max-time 300 -o /dev/null -w "Bundle fetch: HTTP %{http_code} in %{time_total}s\n" \
-            "http://localhost:8081/index.bundle?platform=ios&dev=true&minify=false"; then
-            echo "Metro bundle cache is warm"
-          else
-            echo "WARNING: Metro pre-warm failed (will rely on bridgeTimeout fallback)"
-          fi
-
-          # Kill pre-warm Metro — harness needs to start its own, but cache persists on disk
-          kill $PREWARM_PID 2>/dev/null || true
-          wait $PREWARM_PID 2>/dev/null || true
-          wait_for_port_free 8081
-          echo "=== Pre-warm complete ==="
-
-          # Retry up to 5 times, with a 300s watchdog per attempt. The harness can
-          # hang indefinitely if the app launches but never connects to the bridge
-          # (bridgeTimeout in rn-harness.config.mjs is 90s but doesn't abort that
-          # case), so without a cap a single stuck attempt eats the whole 15-min step
-          # budget and the retry loop never advances. macOS has no `timeout`, so use a
-          # background watchdog; nuke_harness then reaps the rest before the retry.
-          # testTimeout (120s) handles individual hung tests.
-          for attempt in 1 2 3 4 5; do
-            echo "=== Attempt $attempt of 5 ==="
+          for attempt in 1 2 3; do
+            echo "=== Attempt $attempt of 3 ==="
             start_monitor
             yarn test:harness:ios --verbose --testTimeout 120000 &
             test_pid=$!
-            ( sleep 300; echo "  WATCHDOG: attempt $attempt exceeded 300s, killing harness"; kill -9 $test_pid 2>/dev/null ) &
+            ( sleep 600; echo "  WATCHDOG: attempt $attempt exceeded 600s, killing harness"; kill -9 $test_pid 2>/dev/null ) &
             watchdog_pid=$!
             wait $test_pid 2>/dev/null
             exit_code=$?
@@ -406,14 +462,55 @@ jobs:
       - name: Debug - Check for console logs
         if: failure() || cancelled()
         run: |
+          echo "=== Metro health ==="
+          curl -s --max-time 5 http://localhost:8081/status || echo "Metro not responding"
+          echo "=== Metro process ==="
+          lsof -i:8081 | head -5 || echo "Nothing on port 8081"
           echo "=== Simulator logs (last 5m) ==="
-          xcrun simctl spawn booted log show --predicate 'processImagePath CONTAINS "RiveExample"' --last 5m --style compact 2>&1 | tail -200 || echo "No logs found"
-          echo "=== System log for Metro/Node ==="
-          xcrun simctl spawn booted log show --predicate 'process CONTAINS "node" OR process CONTAINS "metro"' --last 5m --style compact 2>&1 | tail -50 || true
+          xcrun simctl spawn booted log show --predicate 'processImagePath CONTAINS "expo57example"' --last 5m --style compact 2>&1 | tail -200 || echo "No logs found"
+
+      - name: Debug - Collect iOS crash reports
+        if: failure() || cancelled()
+        run: |
+          set +e
+          UDID=$(xcrun simctl list devices | awk -F '[()]' '/Booted/{print $2; exit}')
+          echo "Booted simulator UDID: ${UDID:-<none>}"
+          mkdir -p crash-reports
+          # Simulator app crashes are written to the host's DiagnosticReports by
+          # ReportCrash, and sometimes inside the simulator's own data dir. Grab
+          # RiveExample-named reports plus anything from the last 25 min as a fallback.
+          for dir in \
+            "$HOME/Library/Logs/DiagnosticReports" \
+            "$HOME/Library/Developer/CoreSimulator/Devices/$UDID/data/Library/Logs/DiagnosticReports"; do
+            [ -d "$dir" ] || continue
+            find "$dir" -type f \
+              \( -iname 'RiveExample-*' -o \( \( -iname '*.ips' -o -iname '*.crash' \) -mmin -25 \) \) \
+              -exec cp {} crash-reports/ \; 2>/dev/null
+          done
+          count=$(ls -1 crash-reports 2>/dev/null | wc -l | tr -d ' ')
+          echo "=== Collected ${count} crash report(s) ==="
+          for f in crash-reports/*; do
+            [ -e "$f" ] || continue
+            echo "---------------- ${f} ----------------"
+            cat "$f"
+            echo
+          done
+          if [ "${count}" = "0" ]; then
+            echo "No crash reports found (app may not have crashed, or reports were not flushed yet)."
+          fi
+          exit 0
+
+      - name: Upload iOS crash reports
+        if: failure() || cancelled()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-harness-crash-reports
+          path: crash-reports/
+          if-no-files-found: ignore
 
   test-harness-android:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 50
     env:
       ANDROID_API_LEVEL: 35
     steps:
@@ -422,6 +519,13 @@ jobs:
 
       - name: Setup
         uses: ./.github/actions/setup
+
+      # react-native 0.86 requires node ^20.19.4 — see build-ios. Gradle also
+      # shells out to node for autolinking.
+      - name: Use Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
 
       - name: Install JDK
         uses: actions/setup-java@v4
@@ -432,6 +536,15 @@ jobs:
       - name: Finalize Android SDK
         run: |
           /bin/bash -c "yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses > /dev/null"
+          for i in 1 2 3; do
+            $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "ndk;27.1.12297006" && break
+            echo "NDK install attempt $i failed, retrying..."
+            sleep 10
+          done
+
+      - name: Expo prebuild
+        working-directory: expo57-example
+        run: npx expo prebuild -p android --no-install
 
       - name: Cache Gradle
         uses: actions/cache@v4
@@ -439,7 +552,7 @@ jobs:
           path: |
             ~/.gradle/wrapper
             ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-harness-${{ hashFiles('example/android/gradle/wrapper/gradle-wrapper.properties') }}
+          key: ${{ runner.os }}-gradle-harness-${{ hashFiles('expo57-example/android/gradle/wrapper/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-harness-
             ${{ runner.os }}-gradle-
@@ -448,14 +561,14 @@ jobs:
         id: android-build-cache
         uses: actions/cache/restore@v4
         with:
-          path: example/android/app/build
-          key: ${{ runner.os }}-android-build-${{ env.ANDROID_API_LEVEL }}-${{ hashFiles('yarn.lock', 'android/**', 'nitrogen/generated/android/**', 'example/android/app/build.gradle', 'example/android/gradle.properties') }}
+          path: expo57-example/android/app/build
+          key: ${{ runner.os }}-android-build-expo57-${{ env.ANDROID_API_LEVEL }}-${{ hashFiles('package.json', 'yarn.lock', 'android/**', 'nitrogen/generated/android/**', 'expo57-example/package.json', 'expo57-example/app.json', 'expo57-example/app.config.js', 'expo57-example/assets/**') }}
           restore-keys: |
-            ${{ runner.os }}-android-build-${{ env.ANDROID_API_LEVEL }}-
+            ${{ runner.os }}-android-build-expo57-${{ env.ANDROID_API_LEVEL }}-
 
       - name: Build Android app
         if: steps.android-build-cache.outputs.cache-hit != 'true'
-        working-directory: example/android
+        working-directory: expo57-example/android
         env:
           JAVA_OPTS: "-XX:MaxHeapSize=6g"
         run: |
@@ -465,7 +578,7 @@ jobs:
         if: steps.android-build-cache.outputs.cache-hit != 'true'
         uses: actions/cache/save@v4
         with:
-          path: example/android/app/build
+          path: expo57-example/android/app/build
           key: ${{ steps.android-build-cache.outputs.cache-primary-key }}
 
       - name: Enable KVM
@@ -484,12 +597,357 @@ jobs:
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
           disable-animations: true
           script: |
-            adb install example/android/app/build/outputs/apk/debug/app-debug.apk
+            adb install expo57-example/android/app/build/outputs/apk/debug/app-debug.apk
             sleep 10
-            cd example && for attempt in 1 2 3; do echo "Attempt $attempt of 3"; if timeout 300 env ANDROID_AVD=test yarn test:harness:android --verbose --testTimeout 120000; then echo "Tests passed on attempt $attempt"; exit 0; fi; echo "Attempt $attempt failed (exit $?), retrying..."; sleep 5; done; echo "All attempts failed"; exit 1
+            cd expo57-example && for attempt in 1 2 3; do echo "Attempt $attempt of 3"; if timeout 600 env ANDROID_AVD=test yarn test:harness:android --verbose --testTimeout 120000; then echo "Tests passed on attempt $attempt"; exit 0; fi; echo "Attempt $attempt failed (exit $?), retrying..."; ../scripts/collect-android-crash-logs.sh "$attempt" ../crash-logs; sleep 5; done; ../scripts/collect-android-crash-logs.sh final ../crash-logs; echo "All attempts failed"; exit 1
 
-      - name: Debug - Check logcat
+      - name: Upload Android crash logs
+        if: failure() || cancelled()
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-harness-crash-logs
+          path: crash-logs/
+          if-no-files-found: ignore
+
+  test-harness-ios-legacy:
+    # Same as test-harness-ios but with the legacy Rive backend
+    # (USE_RIVE_LEGACY=1 pod install).
+    runs-on: macos-15
+    timeout-minutes: 90
+    env:
+      XCODE_VERSION: 26.3
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup
+        uses: ./.github/actions/setup
+
+      # react-native 0.86 requires node ^20.19.4 — see build-ios.
+      - name: Use Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Use appropriate Xcode version
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: ${{ env.XCODE_VERSION }}
+
+      - name: Expo prebuild
+        working-directory: expo57-example
+        run: npx expo prebuild -p ios --no-install
+
+      - name: Restore iOS build cache
+        id: ios-build-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: expo57-example/ios/build
+          key: ${{ runner.os }}-ios-legacy-build-expo57-${{ env.XCODE_VERSION }}-${{ hashFiles('package.json', 'yarn.lock', 'ios/**', 'nitrogen/generated/ios/**', '*.podspec', 'src/specs/*.nitro.ts', 'expo57-example/package.json', 'expo57-example/app.json', 'expo57-example/app.config.js', 'expo57-example/assets/**', 'expo57-example/app/**', 'expo57-example/babel.config.js', 'expo57-example/metro.config.js') }}
+          restore-keys: |
+            ${{ runner.os }}-ios-legacy-build-expo57-${{ env.XCODE_VERSION }}-
+
+      - name: Restore cocoapods
+        if: steps.ios-build-cache.outputs.cache-hit != 'true'
+        id: cocoapods-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: expo57-example/ios/Pods
+          key: ${{ runner.os }}-cocoapods-expo57-legacy-${{ hashFiles('package.json', 'yarn.lock', '*.podspec', 'expo57-example/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-cocoapods-expo57-legacy-
+
+      - name: Install cocoapods
+        if: steps.ios-build-cache.outputs.cache-hit != 'true'
+        working-directory: expo57-example/ios
+        env:
+          # Same bucket EAS Build uses — see build-ios.
+          EXPO_PRECOMPILED_MODULES_BASE_URL: https://storage.googleapis.com/eas-build-precompiled-modules/
+        run: USE_RIVE_LEGACY=1 pod install
+
+      - name: Save cocoapods cache
+        if: steps.ios-build-cache.outputs.cache-hit != 'true' && steps.cocoapods-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: expo57-example/ios/Pods
+          key: ${{ steps.cocoapods-cache.outputs.cache-primary-key }}
+
+      - name: Build iOS app
+        if: steps.ios-build-cache.outputs.cache-hit != 'true'
+        working-directory: expo57-example/ios
+        run: |
+          set -o pipefail && xcodebuild \
+            -derivedDataPath build \
+            -workspace expo57example.xcworkspace \
+            -scheme expo57example \
+            -sdk iphonesimulator \
+            -configuration Debug \
+            build \
+            CODE_SIGNING_ALLOWED=NO
+
+      - name: Save iOS build cache
+        if: steps.ios-build-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: expo57-example/ios/build
+          key: ${{ steps.ios-build-cache.outputs.cache-primary-key }}
+
+      - name: Boot iOS Simulator
+        uses: futureware-tech/simulator-action@v4
+        with:
+          model: 'iPhone 16 Pro'
+          os_version: '>=26.0'
+
+      - name: Install app on simulator
+        run: xcrun simctl install booted expo57-example/ios/build/Build/Products/Debug-iphonesimulator/expo57example.app
+
+      - name: Wait for simulator to be fully ready
+        run: |
+          echo "Waiting for simulator to be fully ready..."
+          sleep 10
+          xcrun simctl list devices | grep Booted
+
+      - name: Run harness tests on iOS
+        working-directory: expo57-example
+        timeout-minutes: 35
+        shell: bash --noprofile --norc -o pipefail {0}
+        env:
+          # First attempt bundles through the harness Metro on app boot; CI
+          # cold transforms can exceed the default 90s bridge window.
+          HARNESS_BRIDGE_TIMEOUT: '180000'
+          # Debug logging to pin down ios-harness-startup-hang (#328).
+          HARNESS_DEBUG: '1'
+        run: |
+          # Background monitor: logs port/process state every 10s during an attempt
+          start_monitor() {
+            (
+              while true; do
+                sleep 10
+                ts=$(date +%H:%M:%S)
+                metro=$(lsof -ti:8081 2>/dev/null || echo "no")
+                bridge=$(lsof -ti:3001 2>/dev/null || echo "no")
+                app=$(pgrep -f expo57example 2>/dev/null || echo "no")
+                echo "[$ts] metro:$metro bridge:$bridge app:$app"
+              done
+            ) &
+            MONITOR_PID=$!
+          }
+          stop_monitor() {
+            kill $MONITOR_PID 2>/dev/null || true
+            wait $MONITOR_PID 2>/dev/null || true
+          }
+
+          wait_for_port_free() {
+            local port=$1
+            local timeout=${2:-10}
+            local i=0
+            while lsof -ti:$port >/dev/null 2>&1; do
+              if [ $i -ge $timeout ]; then
+                echo "  WARNING: port $port still in use after ${timeout}s"
+                return 1
+              fi
+              sleep 1
+              i=$((i + 1))
+            done
+            echo "  port $port is free (${i}s)"
+            return 0
+          }
+
+          nuke_harness() {
+            echo "[$(date +%H:%M:%S)] cleanup: killing all harness/metro/node processes"
+            pkill -9 -f "react-native-harness" 2>/dev/null || true
+            pkill -9 -f "jest" 2>/dev/null || true
+            lsof -ti:8081 | xargs kill -9 2>/dev/null || true
+            lsof -ti:3001 | xargs kill -9 2>/dev/null || true
+            wait_for_port_free 8081
+            wait_for_port_free 3001
+            # A wedged CoreSimulator hangs harness startup on every retry
+            # (ios-harness-startup-hang, #328) — reset it and reboot the sim.
+            sudo pkill -9 -f CoreSimulatorService 2>/dev/null || true
+            sleep 5
+            if [ -n "$BOOTED_UDID" ]; then
+              xcrun simctl bootstatus "$BOOTED_UDID" -b || true
+            fi
+          }
+
+          BOOTED_UDID=$(xcrun simctl list devices booted | grep -oE '[0-9A-F-]{36}' | head -1)
+          echo "booted simulator: ${BOOTED_UDID:-none}"
+
+          for attempt in 1 2 3; do
+            echo "=== Attempt $attempt of 3 ==="
+            start_monitor
+            yarn test:harness:ios --verbose --testTimeout 120000 &
+            test_pid=$!
+            ( sleep 600; echo "  WATCHDOG: attempt $attempt exceeded 600s, killing harness"; kill -9 $test_pid 2>/dev/null ) &
+            watchdog_pid=$!
+            wait $test_pid 2>/dev/null
+            exit_code=$?
+            kill $watchdog_pid 2>/dev/null || true
+            wait $watchdog_pid 2>/dev/null || true
+            stop_monitor
+            if [ $exit_code -eq 0 ]; then
+              echo "Tests passed on attempt $attempt"
+              exit 0
+            fi
+            echo "Attempt $attempt failed (exit $exit_code), retrying..."
+            nuke_harness
+          done
+          echo "All attempts failed"
+          exit 1
+
+      - name: Debug - Check for console logs
         if: failure() || cancelled()
         run: |
-          echo "=== Checking logcat for errors ==="
-          adb logcat -d -s ReactNativeJS:* RiveExample:* RNRive:* | tail -200 || echo "No logs found"
+          echo "=== Metro health ==="
+          curl -s --max-time 5 http://localhost:8081/status || echo "Metro not responding"
+          echo "=== Metro process ==="
+          lsof -i:8081 | head -5 || echo "Nothing on port 8081"
+          echo "=== Simulator logs (last 5m) ==="
+          xcrun simctl spawn booted log show --predicate 'processImagePath CONTAINS "expo57example"' --last 5m --style compact 2>&1 | tail -200 || echo "No logs found"
+
+      - name: Debug - Collect iOS crash reports
+        if: failure() || cancelled()
+        run: |
+          set +e
+          UDID=$(xcrun simctl list devices | awk -F '[()]' '/Booted/{print $2; exit}')
+          echo "Booted simulator UDID: ${UDID:-<none>}"
+          mkdir -p crash-reports
+          # Simulator app crashes are written to the host's DiagnosticReports by
+          # ReportCrash, and sometimes inside the simulator's own data dir. Grab
+          # RiveExample-named reports plus anything from the last 25 min as a fallback.
+          for dir in \
+            "$HOME/Library/Logs/DiagnosticReports" \
+            "$HOME/Library/Developer/CoreSimulator/Devices/$UDID/data/Library/Logs/DiagnosticReports"; do
+            [ -d "$dir" ] || continue
+            find "$dir" -type f \
+              \( -iname 'RiveExample-*' -o \( \( -iname '*.ips' -o -iname '*.crash' \) -mmin -25 \) \) \
+              -exec cp {} crash-reports/ \; 2>/dev/null
+          done
+          count=$(ls -1 crash-reports 2>/dev/null | wc -l | tr -d ' ')
+          echo "=== Collected ${count} crash report(s) ==="
+          for f in crash-reports/*; do
+            [ -e "$f" ] || continue
+            echo "---------------- ${f} ----------------"
+            cat "$f"
+            echo
+          done
+          if [ "${count}" = "0" ]; then
+            echo "No crash reports found (app may not have crashed, or reports were not flushed yet)."
+          fi
+          exit 0
+
+      - name: Upload iOS crash reports
+        if: failure() || cancelled()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-harness-legacy-crash-reports
+          path: crash-reports/
+          if-no-files-found: ignore
+
+  test-harness-android-legacy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    env:
+      ANDROID_API_LEVEL: 35
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup
+        uses: ./.github/actions/setup
+
+      # react-native 0.86 requires node ^20.19.4 — see build-ios. Gradle also
+      # shells out to node for autolinking.
+      - name: Use Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Finalize Android SDK
+        run: |
+          /bin/bash -c "yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses > /dev/null"
+          for i in 1 2 3; do
+            $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "ndk;27.1.12297006" && break
+            echo "NDK install attempt $i failed, retrying..."
+            sleep 10
+          done
+
+      - name: Expo prebuild
+        working-directory: expo57-example
+        run: npx expo prebuild -p android --no-install
+
+      - name: Enable legacy Rive backend
+        run: |
+          # The prebuild-generated gradle.properties has no trailing newline;
+          # a bare append would glue onto the last property.
+          printf '\nUSE_RIVE_LEGACY=true\n' >> expo57-example/android/gradle.properties
+
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/wrapper
+            ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-harness-legacy-${{ hashFiles('expo57-example/android/gradle/wrapper/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-harness-legacy-
+            ${{ runner.os }}-gradle-harness-
+            ${{ runner.os }}-gradle-
+
+      - name: Restore Android build cache
+        id: android-build-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: expo57-example/android/app/build
+          key: ${{ runner.os }}-android-legacy-build-expo57-${{ env.ANDROID_API_LEVEL }}-${{ hashFiles('package.json', 'yarn.lock', 'android/**', 'nitrogen/generated/android/**', 'expo57-example/package.json', 'expo57-example/app.json', 'expo57-example/app.config.js', 'expo57-example/assets/**') }}
+          restore-keys: |
+            ${{ runner.os }}-android-legacy-build-expo57-${{ env.ANDROID_API_LEVEL }}-
+
+      - name: Build Android app
+        if: steps.android-build-cache.outputs.cache-hit != 'true'
+        working-directory: expo57-example/android
+        env:
+          JAVA_OPTS: "-XX:MaxHeapSize=6g"
+        run: |
+          ./gradlew assembleDebug --no-daemon --console=plain -PreactNativeArchitectures=x86_64
+
+      - name: Save Android build cache
+        if: steps.android-build-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: expo57-example/android/app/build
+          key: ${{ steps.android-build-cache.outputs.cache-primary-key }}
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Run harness tests on Android
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ env.ANDROID_API_LEVEL }}
+          arch: x86_64
+          target: google_apis
+          force-avd-creation: false
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
+          disable-animations: true
+          script: |
+            adb install expo57-example/android/app/build/outputs/apk/debug/app-debug.apk
+            sleep 10
+            cd expo57-example && for attempt in 1 2 3; do echo "Attempt $attempt of 3"; if timeout 600 env ANDROID_AVD=test yarn test:harness:android --verbose --testTimeout 120000; then echo "Tests passed on attempt $attempt"; exit 0; fi; echo "Attempt $attempt failed (exit $?), retrying..."; ../scripts/collect-android-crash-logs.sh "$attempt" ../crash-logs; sleep 5; done; ../scripts/collect-android-crash-logs.sh final ../crash-logs; echo "All attempts failed"; exit 1
+
+      - name: Upload Android crash logs
+        if: failure() || cancelled()
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-harness-legacy-crash-logs
+          path: crash-logs/
+          if-no-files-found: ignore

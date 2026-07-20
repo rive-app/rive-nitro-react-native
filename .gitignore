@@ -73,6 +73,8 @@ android/keystores/debug.keystore
 .expo/
 expo-example/ios
 expo-example/android
+expo57-example/ios
+expo57-example/android
 
 # Turborepo
 .turbo/
@@ -93,6 +95,9 @@ example/src/reproducers/local/*
 
 # Test coverage
 coverage/
+
+# Kotlin build artifacts
+**/.kotlin/
 
 # react-native-harness build cache
 .harness/

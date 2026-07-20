@@ -107,6 +107,16 @@ using namespace margelo::nitro::rive::views;
     swiftPart.setLayoutScaleFactor(newViewProps.layoutScaleFactor.value);
     newViewProps.layoutScaleFactor.isDirty = false;
   }
+  // frameRate: optional
+  if (newViewProps.frameRate.isDirty) {
+    swiftPart.setFrameRate(newViewProps.frameRate.value);
+    newViewProps.frameRate.isDirty = false;
+  }
+  // semantics: optional
+  if (newViewProps.semantics.isDirty) {
+    swiftPart.setSemantics(newViewProps.semantics.value);
+    newViewProps.semantics.isDirty = false;
+  }
   // dataBind: optional
   if (newViewProps.dataBind.isDirty) {
     swiftPart.setDataBind(newViewProps.dataBind.value);

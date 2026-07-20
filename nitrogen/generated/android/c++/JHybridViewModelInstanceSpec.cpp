@@ -7,6 +7,10 @@
 
 #include "JHybridViewModelInstanceSpec.hpp"
 
+// Forward declaration of `ViewModelPropertyInfo` to properly resolve imports.
+namespace margelo::nitro::rive { struct ViewModelPropertyInfo; }
+// Forward declaration of `ViewModelPropertyType` to properly resolve imports.
+namespace margelo::nitro::rive { enum class ViewModelPropertyType; }
 // Forward declaration of `HybridViewModelNumberPropertySpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridViewModelNumberPropertySpec; }
 // Forward declaration of `HybridViewModelStringPropertySpec` to properly resolve imports.
@@ -29,6 +33,13 @@ namespace margelo::nitro::rive { class HybridViewModelArtboardPropertySpec; }
 namespace margelo::nitro::rive { class HybridViewModelInstanceSpec; }
 
 #include <string>
+#include "ViewModelPropertyInfo.hpp"
+#include <vector>
+#include <NitroModules/Promise.hpp>
+#include <NitroModules/JPromise.hpp>
+#include "JViewModelPropertyInfo.hpp"
+#include "ViewModelPropertyType.hpp"
+#include "JViewModelPropertyType.hpp"
 #include <memory>
 #include "HybridViewModelNumberPropertySpec.hpp"
 #include <optional>
@@ -51,8 +62,6 @@ namespace margelo::nitro::rive { class HybridViewModelInstanceSpec; }
 #include "JHybridViewModelArtboardPropertySpec.hpp"
 #include "HybridViewModelInstanceSpec.hpp"
 #include "JHybridViewModelInstanceSpec.hpp"
-#include <NitroModules/Promise.hpp>
-#include <NitroModules/JPromise.hpp>
 
 namespace margelo::nitro::rive {
 
@@ -91,6 +100,31 @@ namespace margelo::nitro::rive {
   }
 
   // Methods
+  std::shared_ptr<Promise<std::vector<ViewModelPropertyInfo>>> JHybridViewModelInstanceSpec::getPropertiesAsync() {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>()>("getPropertiesAsync");
+    auto __result = method(_javaPart);
+    return [&]() {
+      auto __promise = Promise<std::vector<ViewModelPropertyInfo>>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& __boxedResult) {
+        auto __result = jni::static_ref_cast<jni::JArrayClass<JViewModelPropertyInfo>>(__boxedResult);
+        __promise->resolve([&]() {
+          size_t __size = __result->size();
+          std::vector<ViewModelPropertyInfo> __vector;
+          __vector.reserve(__size);
+          for (size_t __i = 0; __i < __size; __i++) {
+            auto __element = __result->getElement(__i);
+            __vector.push_back(__element->toCpp());
+          }
+          return __vector;
+        }());
+      });
+      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
+        jni::JniException __jniError(__throwable);
+        __promise->reject(std::make_exception_ptr(__jniError));
+      });
+      return __promise;
+    }();
+  }
   std::optional<std::shared_ptr<HybridViewModelNumberPropertySpec>> JHybridViewModelInstanceSpec::numberProperty(const std::string& path) {
     static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JHybridViewModelNumberPropertySpec::JavaPart>(jni::alias_ref<jni::JString> /* path */)>("numberProperty");
     auto __result = method(_javaPart, jni::make_jstring(path));

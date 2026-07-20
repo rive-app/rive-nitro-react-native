@@ -19,7 +19,12 @@ export { NitroRiveView } from './core/NitroRiveViewComponent';
 export { RiveView, type RiveViewProps } from './core/RiveView';
 export type { RiveViewMethods };
 export type RiveViewRef = HybridView<NativeRiveViewProps, RiveViewTSMethods>;
-export type { RiveFile } from './specs/RiveFile.nitro';
+export type { FrameRateRange } from './specs/RiveView.nitro';
+export type {
+  RiveFile,
+  RiveEnumDefinition,
+  RiveAssetType,
+} from './specs/RiveFile.nitro';
 export type {
   ViewModel,
   ViewModelInstance,
@@ -32,10 +37,13 @@ export type {
   ViewModelImageProperty,
   ViewModelListProperty,
   ViewModelArtboardProperty,
+  ViewModelPropertyType,
+  ViewModelPropertyInfo,
 } from './specs/ViewModel.nitro';
 export type { BindableArtboard } from './specs/BindableArtboard.nitro';
 export { Fit } from './core/Fit';
 export { Alignment } from './core/Alignment';
+export { Semantics } from './core/Semantics';
 export { RiveFileFactory } from './core/RiveFile';
 export { RiveImages } from './core/RiveImages';
 export type { RiveImage } from './specs/RiveImage.nitro';
@@ -68,4 +76,6 @@ export { useRiveFile, type UseRiveFileResult } from './hooks/useRiveFile';
 export { type RiveFileInput } from './hooks/useRiveFile';
 export { type SetValueAction } from './types';
 export { RiveRuntime } from './core/RiveRuntime';
+export type { AndroidRenderBackend } from './specs/RiveRuntime.nitro';
+export { RiveLog, type RiveLogLevel } from './core/RiveLogger';
 export { DataBindMode };

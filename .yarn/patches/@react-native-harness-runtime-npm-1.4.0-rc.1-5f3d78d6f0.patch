@@ -1,0 +1,120 @@
+diff --git a/dist/bundler/bundle.js b/dist/bundler/bundle.js
+index abc86b64d38265d8c605925ed71f6138f3b48e37..9e42cc97b2624e14992e705b241d458ca556259b 100644
+--- a/dist/bundler/bundle.js
++++ b/dist/bundler/bundle.js
+@@ -19,3 +19,18 @@ export const fetchModule = async (fileName) => {
+     }
+     return text;
+ };
++/**
++ * Ask Metro to drop this entry's dependency graph. Metro caches one graph per
++ * distinct `.bundle` entry (for delta updates), so fetching each test file as
++ * its own entry would otherwise retain one graph per file for the whole run and
++ * OOM the runner. Metro frees a graph on a DELETE to its bundle URL, so we reuse
++ * the exact fetch URL to match the graph id.
++ */
++export const releaseModule = async (fileName) => {
++    try {
++        await fetch(getModuleUrl(fileName), { method: 'DELETE' });
++    }
++    catch {
++        // Best-effort: a failed release only costs memory, never correctness.
++    }
++};
+diff --git a/dist/bundler/factory.js b/dist/bundler/factory.js
+index 49bf4d1d47a3ee17b51f876405dde860ebbdfc4e..086d040f6bd38895743a11a3fb63deaffe2ac08b 100644
+--- a/dist/bundler/factory.js
++++ b/dist/bundler/factory.js
+@@ -1,5 +1,5 @@
+ import { getEmitter } from '../utils/emitter.js';
+-import { fetchModule } from './bundle.js';
++import { fetchModule, releaseModule } from './bundle.js';
+ import { BundlingFailedError } from './errors.js';
+ export const getBundler = () => {
+     const events = getEmitter();
+@@ -32,5 +32,6 @@ export const getBundler = () => {
+                 throw error;
+             }
+         },
++        releaseModule: (filePath) => releaseModule(filePath),
+     };
+ };
+diff --git a/dist/client/factory.js b/dist/client/factory.js
+index d5e29eaf166efa7bb68ece1faf21f9bc501b43ff..f7ee7d60afe742590d938641a1a72fd4f026a0bb 100644
+--- a/dist/client/factory.js
++++ b/dist/client/factory.js
+@@ -57,6 +57,8 @@ export const getClient = async () => {
+                 });
+             }
+             finally {
++                // Free this file's Metro graph so graphs don't accumulate per file (OOM).
++                await bundler?.releaseModule(path);
+                 collector?.dispose();
+                 runner?.dispose();
+                 events?.clearAllListeners();
+diff --git a/src/bundler/bundle.ts b/src/bundler/bundle.ts
+index 4adf52166f6c0369f4dab39838378251dbc76c38..68b8a3f6daf231f5345e729d35bc62e62b614837 100644
+--- a/src/bundler/bundle.ts
++++ b/src/bundler/bundle.ts
+@@ -24,3 +24,18 @@ export const fetchModule = async (fileName: string): Promise<string> => {
+ 
+   return text;
+ };
++
++/**
++ * Ask Metro to drop this entry's dependency graph. Metro caches one graph per
++ * distinct `.bundle` entry (for delta updates), so fetching each test file as
++ * its own entry would otherwise retain one graph per file for the whole run and
++ * OOM the runner. Metro frees a graph on a DELETE to its bundle URL, so we reuse
++ * the exact fetch URL to match the graph id.
++ */
++export const releaseModule = async (fileName: string): Promise<void> => {
++  try {
++    await fetch(getModuleUrl(fileName), { method: 'DELETE' });
++  } catch {
++    // Best-effort: a failed release only costs memory, never correctness.
++  }
++};
+diff --git a/src/bundler/factory.ts b/src/bundler/factory.ts
+index e793159849851e6e7c864bd41dade3422fa5db05..f3b4100c9c98f0bd5495150c04b081bf9bdf5727 100644
+--- a/src/bundler/factory.ts
++++ b/src/bundler/factory.ts
+@@ -1,7 +1,7 @@
+ import { BundlerEvents } from '@react-native-harness/bridge';
+ import { getEmitter } from '../utils/emitter.js';
+ import { Bundler } from './types.js';
+-import { fetchModule } from './bundle.js';
++import { fetchModule, releaseModule } from './bundle.js';
+ import { BundlingFailedError } from './errors.js';
+ 
+ export const getBundler = (): Bundler => {
+@@ -39,5 +39,6 @@ export const getBundler = (): Bundler => {
+         throw error;
+       }
+     },
++    releaseModule: (filePath) => releaseModule(filePath),
+   };
+ };
+diff --git a/src/bundler/types.ts b/src/bundler/types.ts
+index ca03fb1d1ff0168599ac612a18359fd7615552e5..9c5e0126e6937373d58096043668e4c9b4e89536 100644
+--- a/src/bundler/types.ts
++++ b/src/bundler/types.ts
+@@ -4,4 +4,5 @@ import { EventEmitter } from '../utils/emitter.js';
+ export type Bundler = {
+   events: EventEmitter<BundlerEvents>;
+   getModule: (filePath: string) => Promise<string>;
++  releaseModule: (filePath: string) => Promise<void>;
+ };
+diff --git a/src/client/factory.ts b/src/client/factory.ts
+index 14a05830b94397b9868d2f3e6c2c880a37a901ec..b17e47f4e4d559d2faf98c4a5834d703363be6cd 100644
+--- a/src/client/factory.ts
++++ b/src/client/factory.ts
+@@ -81,6 +81,8 @@ export const getClient = async (): Promise<HarnessHandle> => {
+           runner: options.runner,
+         });
+       } finally {
++        // Free this file's Metro graph so graphs don't accumulate per file (OOM).
++        await bundler?.releaseModule(path);
+         collector?.dispose();
+         runner?.dispose();
+         events?.clearAllListeners();

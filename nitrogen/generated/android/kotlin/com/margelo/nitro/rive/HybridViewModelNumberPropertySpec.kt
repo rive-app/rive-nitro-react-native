@@ -41,6 +41,10 @@ abstract class HybridViewModelNumberPropertySpec: HybridViewModelPropertySpec() 
   @Keep
   abstract fun set(value: Double): Unit
   
+  @DoNotStrip
+  @Keep
+  abstract fun setValueAsync(value: Double): Promise<Unit>
+  
   abstract fun addListener(onChanged: (value: Double) -> Unit): () -> Unit
   
   @DoNotStrip

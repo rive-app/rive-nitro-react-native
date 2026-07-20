@@ -24,8 +24,12 @@ namespace margelo::nitro::rive { struct ReferencedAssetsType; }
 namespace margelo::nitro::rive { struct ResolvedReferencedAsset; }
 // Forward declaration of `HybridRiveImageSpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridRiveImageSpec; }
+// Forward declaration of `RiveAssetType` to properly resolve imports.
+namespace margelo::nitro::rive { enum class RiveAssetType; }
 // Forward declaration of `HybridBindableArtboardSpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridBindableArtboardSpec; }
+// Forward declaration of `RiveEnumDefinition` to properly resolve imports.
+namespace margelo::nitro::rive { struct RiveEnumDefinition; }
 
 #include <optional>
 #include <string>
@@ -38,8 +42,10 @@ namespace margelo::nitro::rive { class HybridBindableArtboardSpec; }
 #include "ResolvedReferencedAsset.hpp"
 #include <unordered_map>
 #include "HybridRiveImageSpec.hpp"
+#include "RiveAssetType.hpp"
 #include <NitroModules/Promise.hpp>
 #include "HybridBindableArtboardSpec.hpp"
+#include "RiveEnumDefinition.hpp"
 
 #include "RNRive-Swift-Cxx-Umbrella.hpp"
 
@@ -173,6 +179,14 @@ namespace margelo::nitro::rive {
     }
     inline std::shared_ptr<HybridBindableArtboardSpec> getBindableArtboard(const std::string& name) override {
       auto __result = _swiftPart.getBindableArtboard(name);
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline std::shared_ptr<Promise<std::vector<RiveEnumDefinition>>> getEnums() override {
+      auto __result = _swiftPart.getEnums();
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }

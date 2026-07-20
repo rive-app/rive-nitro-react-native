@@ -13,10 +13,14 @@
 #error NitroModules cannot be found! Are you sure you installed NitroModules properly?
 #endif
 
+// Forward declaration of `ViewModelPropertyInfo` to properly resolve imports.
+namespace margelo::nitro::rive { struct ViewModelPropertyInfo; }
 // Forward declaration of `HybridViewModelInstanceSpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridViewModelInstanceSpec; }
 
 #include <string>
+#include "ViewModelPropertyInfo.hpp"
+#include <vector>
 #include <NitroModules/Promise.hpp>
 #include <memory>
 #include "HybridViewModelInstanceSpec.hpp"
@@ -55,6 +59,7 @@ namespace margelo::nitro::rive {
 
     public:
       // Methods
+      virtual std::shared_ptr<Promise<std::vector<ViewModelPropertyInfo>>> getPropertiesAsync() = 0;
       virtual std::shared_ptr<Promise<double>> getPropertyCountAsync() = 0;
       virtual std::shared_ptr<Promise<double>> getInstanceCountAsync() = 0;
       virtual std::optional<std::shared_ptr<HybridViewModelInstanceSpec>> createInstanceByIndex(double index) = 0;

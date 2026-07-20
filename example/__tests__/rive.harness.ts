@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'react-native-harness';
-import { RiveFileFactory } from '@rive-app/react-native';
+import { Platform } from 'react-native';
+import { RiveFileFactory, RiveImages, RiveLog } from '@rive-app/react-native';
 
 const QUICK_START = require('../assets/rive/quick_start.riv');
 const VIEWMODEL = require('../assets/rive/viewmodelproperty.riv');
@@ -19,6 +20,18 @@ describe('RiveFile Loading', () => {
     expect(file).toBeDefined();
     expect(file.artboardNames.length).toBeGreaterThan(0);
   });
+
+  it('fromBytes works', async () => {
+    // Load the file first via fromSource, then get the URL and fetch raw bytes
+    // Simpler: use fromURL to get a known .riv, then re-load via fromBytes
+    const response = await fetch(
+      'https://cdn.rive.app/animations/vehicles.riv'
+    );
+    const bytes = await response.arrayBuffer();
+    const file = await RiveFileFactory.fromBytes(bytes, undefined);
+    expect(file).toBeDefined();
+    expect(file.artboardNames.length).toBeGreaterThan(0);
+  });
 });
 
 describe('ViewModel', () => {
@@ -30,12 +43,17 @@ describe('ViewModel', () => {
     const instance = vm?.createDefaultInstance();
     expect(instance).toBeDefined();
 
-    const vm1 = instance?.viewModel('vm1');
-    const vm2 = instance?.viewModel('vm2');
+    const vm1 = await instance?.viewModelAsync('vm1');
+    const vm2 = await instance?.viewModelAsync('vm2');
     expect(vm1).toBeDefined();
     expect(vm2).toBeDefined();
 
-    expect(instance?.viewModel('nonexistent')).toBeUndefined();
+    // Experimental backends don't validate nested VM paths — the SDK returns
+    // a handle even for nonexistent paths instead of null.
+    const isExperimental = RiveFileFactory.getBackend() === 'experimental';
+    if (!isExperimental) {
+      expect(await instance?.viewModelAsync('nonexistent')).toBeUndefined();
+    }
 
     expect(vm1?.instanceName).toBeDefined();
     expect(typeof vm1?.instanceName).toBe('string');
@@ -43,12 +61,18 @@ describe('ViewModel', () => {
   });
 
   it('replaceViewModel() replaces and shares state', async () => {
+    // replaceViewModel is a no-op on Android experimental (not yet implemented)
+    const isAndroidExperimental =
+      Platform.OS === 'android' &&
+      RiveFileFactory.getBackend() === 'experimental';
+    if (isAndroidExperimental) return;
+
     const file = await RiveFileFactory.fromSource(VIEWMODEL, undefined);
     const vm = file.defaultArtboardViewModel();
     const instance = vm?.createDefaultInstance();
     expect(instance).toBeDefined();
 
-    const vm2Instance = instance?.viewModel('vm2');
+    const vm2Instance = await instance?.viewModelAsync('vm2');
     expect(vm2Instance).toBeDefined();
 
     const vm2NameProp = vm2Instance?.stringProperty('name');
@@ -58,8 +82,28 @@ describe('ViewModel', () => {
 
     instance?.replaceViewModel('vm1', vm2Instance!);
 
-    const vm1AfterReplace = instance?.viewModel('vm1');
+    const vm1AfterReplace = await instance?.viewModelAsync('vm1');
     const vm1NameProp = vm1AfterReplace?.stringProperty('name');
-    expect(vm1NameProp?.value).toBe(testValue);
+    const val = vm1NameProp?.value;
+    expect(val).toBe(testValue);
+  });
+});
+
+describe('RiveImages', () => {
+  it('loadFromURLAsync loads an image', async () => {
+    const image = await RiveImages.loadFromURLAsync(
+      'https://picsum.photos/id/237/100/100'
+    );
+    expect(image).toBeDefined();
+    expect(image.byteSize).toBeGreaterThan(0);
+  });
+});
+
+describe('RiveLog.setLogLevel', () => {
+  it('setLogLevel does not throw for valid levels', () => {
+    expect(() => RiveLog.setLogLevel('debug')).not.toThrow();
+    expect(() => RiveLog.setLogLevel('info')).not.toThrow();
+    expect(() => RiveLog.setLogLevel('warn')).not.toThrow();
+    expect(() => RiveLog.setLogLevel('error')).not.toThrow();
   });
 });

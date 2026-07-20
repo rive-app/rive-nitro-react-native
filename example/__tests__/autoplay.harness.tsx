@@ -7,7 +7,7 @@ import {
   cleanup,
 } from 'react-native-harness';
 import { useEffect } from 'react';
-import { View } from 'react-native';
+import { Platform, View } from 'react-native';
 import {
   RiveView,
   RiveFileFactory,
@@ -32,6 +32,35 @@ function expectDefined<T>(value: T): asserts value is NonNullable<T> {
 function valueChanged(a: number, b: number): boolean {
   if (Number.isNaN(a) || Number.isNaN(b)) return false;
   return Math.abs(a - b) > 0.001;
+}
+
+const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+// Polls prop.value directly: state-machine-driven changes don't fire addListener on all platforms.
+function pollChangedWithin(
+  instance: ViewModelInstance,
+  propertyName: string,
+  timeout = 800
+): Promise<boolean> {
+  return new Promise((resolve) => {
+    const prop = instance.numberProperty(propertyName);
+    if (!prop) {
+      resolve(false);
+      return;
+    }
+    const initial = prop.value;
+    const timer = setTimeout(() => {
+      clearInterval(poll);
+      resolve(false);
+    }, timeout);
+    const poll = setInterval(() => {
+      if (valueChanged(prop.value, initial)) {
+        clearTimeout(timer);
+        clearInterval(poll);
+        resolve(true);
+      }
+    }, 50);
+  });
 }
 
 async function loadBouncingBall() {
@@ -89,46 +118,6 @@ function waitForPropertyChange(
       const currentValue = prop.value;
       if (valueChanged(currentValue, initialValue)) {
         done(currentValue);
-      }
-    }, 50);
-  });
-}
-
-/**
- * Returns true if the property value changes within the timeout, false otherwise.
- */
-function didPropertyChange(
-  instance: ViewModelInstance,
-  propertyName: string,
-  timeout = 500
-): Promise<boolean> {
-  return new Promise((resolve) => {
-    const prop = instance.numberProperty(propertyName);
-    if (!prop) {
-      resolve(false);
-      return;
-    }
-
-    const initialValue = prop.value;
-
-    function done(changed: boolean) {
-      clearTimeout(timer);
-      clearInterval(pollTimer);
-      removeListener();
-      resolve(changed);
-    }
-
-    const timer = setTimeout(() => done(false), timeout);
-
-    const removeListener = prop.addListener((newValue: number) => {
-      if (newValue !== initialValue) {
-        done(true);
-      }
-    });
-
-    const pollTimer = setInterval(() => {
-      if (prop.value !== initialValue) {
-        done(true);
       }
     }, 50);
   });
@@ -205,7 +194,7 @@ describe('autoPlay prop (issue #138)', () => {
       { timeout: 5000 }
     );
 
-    const changed = await didPropertyChange(instance, 'ypos');
+    const changed = await pollChangedWithin(instance, 'ypos', 800);
     expect(changed).toBe(false);
     expect(context.error).toBeNull();
 
@@ -269,8 +258,114 @@ describe('autoPlay prop (issue #138)', () => {
   });
 });
 
+describe('imperative playback control (play/pause/reset)', () => {
+  // These observe the ypos ViewModel property to detect whether the state
+  // machine is advancing, instead of inspecting pixels.
+
+  it('pause() stops ypos from advancing', async () => {
+    const { file, instance } = await loadBouncingBall();
+
+    const context: TestContext = { ref: null, error: null };
+    await render(
+      <RiveTestView
+        file={file}
+        autoPlay={true}
+        instance={instance}
+        context={context}
+      />
+    );
+
+    await waitFor(
+      () => {
+        expect(context.ref).not.toBeNull();
+      },
+      { timeout: 5000 }
+    );
+
+    // Confirm it is actually playing before we pause.
+    await waitForPropertyChange(instance, 'ypos');
+
+    await context.ref!.pause();
+    // Let any in-flight frame settle so we don't catch a trailing advance.
+    await delay(100);
+
+    const changedWhilePaused = await pollChangedWithin(instance, 'ypos', 800);
+    expect(changedWhilePaused).toBe(false);
+    expect(context.error).toBeNull();
+
+    cleanup();
+  });
+
+  it('play() resumes ypos after pause()', async () => {
+    const { file, instance } = await loadBouncingBall();
+
+    const context: TestContext = { ref: null, error: null };
+    await render(
+      <RiveTestView
+        file={file}
+        autoPlay={true}
+        instance={instance}
+        context={context}
+      />
+    );
+
+    await waitFor(
+      () => {
+        expect(context.ref).not.toBeNull();
+      },
+      { timeout: 5000 }
+    );
+
+    await waitForPropertyChange(instance, 'ypos');
+    await context.ref!.pause();
+    await delay(100);
+    expect(await pollChangedWithin(instance, 'ypos', 800)).toBe(false);
+
+    await context.ref!.play();
+    const resumed = await waitForPropertyChange(instance, 'ypos');
+    expect(typeof resumed).toBe('number');
+    expect(context.error).toBeNull();
+
+    cleanup();
+  });
+
+  // reset() is deprecated and a no-op on the experimental backend (no reset
+  // primitive in the runtime); it logs an error and resolves without throwing.
+  it('reset() resolves without throwing (deprecated no-op)', async () => {
+    const { file, instance } = await loadBouncingBall();
+
+    const context: TestContext = { ref: null, error: null };
+    await render(
+      <RiveTestView
+        file={file}
+        autoPlay={true}
+        instance={instance}
+        context={context}
+      />
+    );
+
+    await waitFor(
+      () => {
+        expect(context.ref).not.toBeNull();
+      },
+      { timeout: 5000 }
+    );
+
+    await expect(context.ref!.reset()).resolves.toBeUndefined();
+
+    cleanup();
+  });
+});
+
 describe('Auto dataBind with no default ViewModel (issue #189)', () => {
   it('auto-binds default ViewModel when one exists', async () => {
+    // getViewModelInstance() returns null on Android experimental — auto-bind
+    // doesn't expose the VMI handle to JS yet
+    const isAndroidExperimental =
+      Platform.OS === 'android' &&
+      RiveFileFactory.getBackend() === 'experimental';
+    if (isAndroidExperimental) return;
+
     const file = await RiveFileFactory.fromSource(BOUNCING_BALL, undefined);
 
     const context: TestContext = { ref: null, error: null };

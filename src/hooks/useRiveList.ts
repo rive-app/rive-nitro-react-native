@@ -1,12 +1,13 @@
-// TODO: migrate length/getInstanceAt to async equivalents
-/* eslint-disable @typescript-eslint/no-deprecated */
-import { useCallback, useEffect, useState, useMemo } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import type { ViewModelInstance } from '../specs/ViewModel.nitro';
 import type { UseRiveListResult } from '../types';
 import { useDisposableMemo } from './useDisposableMemo';
 
 /**
  * Hook for interacting with list ViewModel instance properties.
+ *
+ * All operations go through the async native API — on the experimental
+ * backend the sync accessors would block the JS thread on the command queue.
  *
  * @param path - The path to the list property
  * @param viewModelInstance - The ViewModelInstance containing the list property
@@ -17,6 +18,7 @@ export function useRiveList(
   viewModelInstance?: ViewModelInstance | null
 ): UseRiveListResult {
   const [error, setError] = useState<Error | null>(null);
+  const [length, setLength] = useState(0);
   const [revision, setRevision] = useState(0);
 
   useEffect(() => {
@@ -58,52 +60,94 @@ export function useRiveList(
     };
   }, [property]);
 
-  const length = useMemo(() => {
-    // revision is used to trigger re-computation when list changes
-    revision;
-    return property?.length ?? 0;
-  }, [property, revision]);
+  // Re-read the length whenever the list changes (revision bumps) or the
+  // property itself changes. On the experimental backend a rejection here is
+  // also how an invalid list path surfaces.
+  useEffect(() => {
+    if (!property) {
+      setLength(0);
+      return;
+    }
+    let cancelled = false;
+    property.getLengthAsync().then(
+      (len) => {
+        if (!cancelled) setLength(len);
+      },
+      (e: unknown) => {
+        if (cancelled) return;
+        const message = e instanceof Error ? e.message : String(e);
+        setError(
+          new Error(`List property "${path}" is not available: ${message}`)
+        );
+      }
+    );
+    return () => {
+      cancelled = true;
+    };
+  }, [property, path, revision]);
+
+  // The experimental backend has no native list-change notifications
+  // (addListener is a no-op there) — refresh after our own mutations so
+  // `length` stays live on both backends.
+  const afterMutation = useCallback(<T>(op: Promise<T>): Promise<T> => {
+    return op.then((result) => {
+      setRevision((r) => r + 1);
+      return result;
+    });
+  }, []);
 
   const getInstanceAt = useCallback(
     (index: number) => {
-      return property?.getInstanceAt(index);
+      return property
+        ? property.getInstanceAtAsync(index)
+        : Promise.resolve(undefined);
     },
     [property]
   );
 
   const addInstance = useCallback(
     (instance: ViewModelInstance) => {
-      property?.addInstance(instance);
+      return property
+        ? afterMutation(property.addInstanceAsync(instance))
+        : Promise.resolve();
     },
-    [property]
+    [property, afterMutation]
   );
 
   const addInstanceAt = useCallback(
     (instance: ViewModelInstance, index: number) => {
-      return property?.addInstanceAt(instance, index) ?? false;
+      return property
+        ? afterMutation(property.addInstanceAtAsync(instance, index))
+        : Promise.resolve();
     },
-    [property]
+    [property, afterMutation]
   );
 
   const removeInstance = useCallback(
     (instance: ViewModelInstance) => {
-      property?.removeInstance(instance);
+      return property
+        ? afterMutation(property.removeInstanceAsync(instance))
+        : Promise.resolve();
     },
-    [property]
+    [property, afterMutation]
   );
 
   const removeInstanceAt = useCallback(
     (index: number) => {
-      property?.removeInstanceAt(index);
+      return property
+        ? afterMutation(property.removeInstanceAtAsync(index))
+        : Promise.resolve();
     },
-    [property]
+    [property, afterMutation]
   );
 
   const swap = useCallback(
     (index1: number, index2: number) => {
-      return property?.swap(index1, index2) ?? false;
+      return property
+        ? afterMutation(property.swapAsync(index1, index2))
+        : Promise.resolve();
     },
-    [property]
+    [property, afterMutation]
   );
 
   return {

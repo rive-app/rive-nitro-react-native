@@ -28,28 +28,14 @@ if !rive_ios_version
   raise "Internal Error: Failed to determine Rive iOS SDK version. Please ensure package.json contains 'runtimeVersions.ios'"
 end
 
-Pod::UI.puts "@rive-app/react-native: Rive iOS SDK #{rive_ios_version}"
+# The experimental runtime backend is used by default. Set USE_RIVE_LEGACY=1
+# (or $UseRiveLegacy = true in Podfile) to fall back to the legacy backend.
+use_legacy = ['1', 'true'].include?(ENV['USE_RIVE_LEGACY']) || (defined?($UseRiveLegacy) && $UseRiveLegacy)
 
-# Xcode 26 workaround: strip .Swift Clang submodule from RiveRuntime's prebuilt
-# modulemaps to prevent ODR conflicts with locally-compiled Swift C++ interop.
-# See: https://github.com/rive-app/rive-nitro-react-native/issues/173
-if defined?(Pod::Installer)
-  module RiveXcode26SwiftModuleFix
-    def run_podfile_pre_install_hooks
-      rive_dir = File.join(sandbox.root.to_s, 'RiveRuntime')
-      if Dir.exist?(rive_dir)
-        Dir.glob(File.join(rive_dir, '**', 'module.modulemap')).each do |path|
-          content = File.read(path)
-          next unless content.include?('RiveRuntime.Swift')
-          cleaned = content.gsub(/\nmodule RiveRuntime\.Swift \{[^}]*\}\n?/m, "\n")
-          File.write(path, cleaned)
-        end
-      end
-      super
-    end
-  end
-
-  Pod::Installer.prepend(RiveXcode26SwiftModuleFix)
+if use_legacy
+  Pod::UI.puts "@rive-app/react-native: Using legacy Rive runtime backend (iOS SDK #{rive_ios_version})"
+else
+  Pod::UI.puts "@rive-app/react-native: Using experimental Rive runtime backend"
 end
 
 Pod::Spec.new do |s|
@@ -65,11 +51,20 @@ Pod::Spec.new do |s|
 
   s.source_files = "ios/**/*.{h,m,mm,swift}"
 
+  if use_legacy
+    s.exclude_files = ["ios/new/**"]
+  else
+    s.exclude_files = ["ios/legacy/**"]
+  end
+
   s.public_header_files = ['ios/RCTSwiftLog.h']
   load 'nitrogen/generated/ios/RNRive+autolinking.rb'
   add_nitrogen_files(s)
 
-  s.dependency "RiveRuntime", rive_ios_version
+  s.dependency 'RiveRuntime', rive_ios_version
 
  install_modules_dependencies(s)
+
+  unless use_legacy
+  end
 end

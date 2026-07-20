@@ -32,11 +32,10 @@ type CreateInstanceResult = {
 
 // The message stays clean and stable ("… not found"); when the native call
 // *rejected* the runtime error is attached as `cause` so its diagnostic is
-// preserved without leaking into the message. This backend resolves null on
-// a bad name (Android also pre-checks), so a missing `cause` is normal; the
-// rejection handling exists because the experimental backend
-// (feat/rive-ios-experimental) throws instead — the hook keeps one contract
-// for both. See #305.
+// preserved without leaking into the message. Only some backends reject on a
+// bad name (the new iOS backend throws `invalidViewModelInstance`); the
+// legacy backends and Android's pre-check resolve null instead, so a missing
+// `cause` is normal. See #305.
 function instanceNotFoundError(instanceName: string, cause?: unknown): Error {
   return new Error(
     `ViewModel instance '${instanceName}' not found`,
@@ -96,11 +95,11 @@ async function createInstanceAsync(
           artboardName ? ArtboardByName(artboardName) : undefined
         );
       } catch (e) {
-        // This backend resolves undefined on an unknown artboard name, but
-        // the experimental backend throws (iOS `createArtboard`, Android
-        // `Artboard.fromFile`) — map a rejection to the same not-found error
-        // below, preserving the native diagnostic as `cause`. Without a name
-        // a rejection is a real error.
+        // The new backend *throws* on an unknown artboard name (iOS
+        // `createArtboard`, Android `Artboard.fromFile`) while the legacy
+        // backend resolves undefined — map the rejection to the same
+        // not-found error below, preserving the native diagnostic as `cause`.
+        // Without a name a rejection is a real error.
         if (!artboardName) throw e;
         artboardCause = e;
         viewModel = undefined;
@@ -438,7 +437,7 @@ export function useViewModelInstanceAsync(
       result.error
         ? `useViewModelInstance: ${result.error.message}`
         : 'useViewModelInstance: Failed to get ViewModelInstance. ' +
-            'Ensure the source has a valid ViewModel and instance available.'
+          'Ensure the source has a valid ViewModel and instance available.'
     );
   }
 

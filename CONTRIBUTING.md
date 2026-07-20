@@ -134,3 +134,9 @@ When you're sending a pull request:
 - Review the documentation to make sure it looks good.
 - Follow the pull request template when opening a pull request.
 - For pull requests that change the API or implementation, discuss with maintainers first by opening an issue.
+
+## Runtime backends
+
+The legacy backend exists for behavior comparison during the experimental
+rollout — see [docs/runtime-backends.md](docs/runtime-backends.md) for how to
+select it and the behavioral differences to compare against.

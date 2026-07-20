@@ -20,18 +20,21 @@ namespace margelo::nitro::rive { struct ReferencedAssetsType; }
 namespace margelo::nitro::rive { struct ResolvedReferencedAsset; }
 // Forward declaration of `HybridRiveImageSpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridRiveImageSpec; }
+// Forward declaration of `RiveAssetType` to properly resolve imports.
+namespace margelo::nitro::rive { enum class RiveAssetType; }
 // Forward declaration of `ArrayBufferHolder` to properly resolve imports.
 namespace NitroModules { class ArrayBufferHolder; }
 
+#include <string>
 #include <memory>
 #include "HybridRiveFileSpec.hpp"
 #include <NitroModules/Promise.hpp>
-#include <string>
 #include "ReferencedAssetsType.hpp"
 #include <optional>
 #include "ResolvedReferencedAsset.hpp"
 #include <unordered_map>
 #include "HybridRiveImageSpec.hpp"
+#include "RiveAssetType.hpp"
 #include <NitroModules/ArrayBuffer.hpp>
 #include <NitroModules/ArrayBufferHolder.hpp>
 
@@ -81,7 +84,10 @@ namespace margelo::nitro::rive {
 
   public:
     // Properties
-    
+    inline std::string getBackend() noexcept override {
+      auto __result = _swiftPart.getBackend();
+      return __result;
+    }
 
   public:
     // Methods

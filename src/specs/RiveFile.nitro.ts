@@ -4,6 +4,25 @@ import type { ArtboardBy } from './ArtboardBy';
 import type { RiveImage } from './RiveImage.nitro';
 import type { BindableArtboard } from './BindableArtboard.nitro';
 
+/**
+ * Represents an enum definition from a Rive file.
+ * Useful for debugging and building dynamic UIs based on available enum values.
+ */
+export interface RiveEnumDefinition {
+  /** The name of the enum (e.g., "Status") */
+  readonly name: string;
+  /** All possible values for this enum (e.g., ["Active", "Inactive", "Pending"]) */
+  readonly values: string[];
+}
+
+/**
+ * Explicitly declares the type of a referenced asset.
+ * Providing this is **recommended** — the new Rive runtime no longer exposes
+ * the asset type at load time, so falling back to extension/magic-byte
+ * inference is deprecated and may be removed in a future release.
+ */
+export type RiveAssetType = 'image' | 'font' | 'audio';
+
 export type ResolvedReferencedAsset = {
   sourceUrl?: string;
   sourceAsset?: string;
@@ -11,6 +30,11 @@ export type ResolvedReferencedAsset = {
   sourceAssetId?: string;
   path?: string;
   image?: RiveImage;
+  /**
+   * Explicitly declares the type of this asset.
+   * Recommended — provide this instead of relying on extension/magic-byte inference.
+   */
+  type?: RiveAssetType;
 };
 
 export type ReferencedAssetsType = {
@@ -20,10 +44,11 @@ export type ReferencedAssetsType = {
 /**
  * A Rive file (.riv) as created in the Rive editor.
  */
-export interface RiveFile extends HybridObject<{
-  ios: 'swift';
-  android: 'kotlin';
-}> {
+export interface RiveFile
+  extends HybridObject<{
+    ios: 'swift';
+    android: 'kotlin';
+  }> {
   /** @deprecated Use getViewModelNamesAsync instead */
   readonly viewModelCount?: number;
   /** @deprecated Use getViewModelNamesAsync + viewModelByNameAsync instead */
@@ -60,12 +85,24 @@ export interface RiveFile extends HybridObject<{
    * @see {@link https://rive.app/docs/runtimes/data-binding Rive Data Binding Documentation}
    */
   getBindableArtboard(name: string): BindableArtboard;
+
+  /**
+   * Get all enums defined in this Rive file.
+   * Useful for debugging and building dynamic UIs.
+   *
+   * Backend note: implemented on the experimental (default) backend and on
+   * legacy Android; legacy iOS rejects (not supported there).
+   */
+  getEnums(): Promise<RiveEnumDefinition[]>;
 }
 
-export interface RiveFileFactory extends HybridObject<{
-  ios: 'swift';
-  android: 'kotlin';
-}> {
+export interface RiveFileFactory
+  extends HybridObject<{
+    ios: 'swift';
+    android: 'kotlin';
+  }> {
+  /** Which backend is in use: "legacy" or "experimental" */
+  readonly backend: string;
   fromURL(
     url: string,
     loadCdn: boolean,

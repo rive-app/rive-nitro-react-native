@@ -108,6 +108,10 @@ function waitForInputOnEntry(
 
 describe('Entry transition uses user VM values (issue #282)', () => {
   it('inputOnEntry reflects user-set input value, not the default', async () => {
+    // Legacy Android SDK crashes on stateMachineNamed() with this .riv file
+    if (RiveFileFactory.getBackend() !== 'experimental') {
+      return;
+    }
     const file = await loadFile();
     const vm = file.defaultArtboardViewModel();
     expectDefined(vm);

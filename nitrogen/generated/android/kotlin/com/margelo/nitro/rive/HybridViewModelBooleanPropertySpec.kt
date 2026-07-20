@@ -41,6 +41,10 @@ abstract class HybridViewModelBooleanPropertySpec: HybridViewModelPropertySpec()
   @Keep
   abstract fun set(value: Boolean): Unit
   
+  @DoNotStrip
+  @Keep
+  abstract fun setValueAsync(value: Boolean): Promise<Unit>
+  
   abstract fun addListener(onChanged: (value: Boolean) -> Unit): () -> Unit
   
   @DoNotStrip

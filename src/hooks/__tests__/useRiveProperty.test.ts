@@ -1,4 +1,4 @@
-import { renderHook, act } from '@testing-library/react-native';
+import { renderHook, act, waitFor } from '@testing-library/react-native';
 import { useRiveProperty } from '../useRiveProperty';
 import type { ViewModelInstance } from '../../specs/ViewModel.nitro';
 
@@ -23,6 +23,11 @@ describe('useRiveProperty', () => {
         currentValue = newValue;
         listener?.(newValue);
       },
+      set: jest.fn((newValue: string) => {
+        currentValue = newValue;
+        listener?.(newValue);
+      }),
+      getValueAsync: jest.fn(() => Promise.resolve(currentValue)),
       addListener: jest.fn((callback: (value: string) => void) => {
         listener = callback;
         // Emit the current value immediately on subscribe, matching native behaviour:
@@ -118,6 +123,36 @@ describe('useRiveProperty', () => {
     const [, , error] = result.current;
     expect(error).toBeInstanceOf(Error);
     expect(error?.message).toContain('nonexistent/path');
+  });
+
+  it('should surface an error when getValueAsync rejects (experimental backend: unvalidated handle for a bad path)', async () => {
+    // The experimental backend returns a wrapper for any path — the bad path
+    // is only reported when the command server is asked for the value.
+    const rejectingProperty = {
+      set: jest.fn(),
+      getValueAsync: jest.fn(() =>
+        Promise.reject(new Error('Property not found: typo/path'))
+      ),
+      addListener: jest.fn(() => () => {}),
+      dispose: jest.fn(),
+    };
+    const mockInstance = createMockViewModelInstance({
+      'typo/path': rejectingProperty as any,
+    });
+
+    const { result } = renderHook(() =>
+      useRiveProperty<any, string>(
+        mockInstance,
+        'typo/path',
+        (vmi: any, path: string) => vmi.enumProperty(path)
+      )
+    );
+
+    await waitFor(() => {
+      expect(result.current[2]).toBeInstanceOf(Error);
+    });
+    expect(result.current[2]?.message).toContain('typo/path');
+    expect(result.current[0]).toBeUndefined();
   });
 
   it('should not crash when setValue is called on an invalid property', () => {
@@ -284,6 +319,19 @@ describe('useRiveProperty', () => {
           currentValue = newValue;
           listener?.(newValue);
         },
+        set: jest.fn((newValue: string) => {
+          if (disposed) {
+            writesAfterDispose.push(newValue);
+            return;
+          }
+          currentValue = newValue;
+          listener?.(newValue);
+        }),
+        getValueAsync: jest.fn(() =>
+          disposed
+            ? Promise.reject(new Error('disposed'))
+            : Promise.resolve(currentValue)
+        ),
         addListener: jest.fn((callback: (value: string) => void) => {
           listener = callback;
           callback(currentValue);

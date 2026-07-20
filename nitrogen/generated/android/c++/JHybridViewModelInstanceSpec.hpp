@@ -54,6 +54,7 @@ namespace margelo::nitro::rive {
 
   public:
     // Methods
+    std::shared_ptr<Promise<std::vector<ViewModelPropertyInfo>>> getPropertiesAsync() override;
     std::optional<std::shared_ptr<HybridViewModelNumberPropertySpec>> numberProperty(const std::string& path) override;
     std::optional<std::shared_ptr<HybridViewModelStringPropertySpec>> stringProperty(const std::string& path) override;
     std::optional<std::shared_ptr<HybridViewModelBooleanPropertySpec>> booleanProperty(const std::string& path) override;

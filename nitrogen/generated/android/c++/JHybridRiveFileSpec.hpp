@@ -66,6 +66,7 @@ namespace margelo::nitro::rive {
     std::shared_ptr<Promise<double>> getArtboardCountAsync() override;
     std::shared_ptr<Promise<std::vector<std::string>>> getArtboardNamesAsync() override;
     std::shared_ptr<HybridBindableArtboardSpec> getBindableArtboard(const std::string& name) override;
+    std::shared_ptr<Promise<std::vector<RiveEnumDefinition>>> getEnums() override;
 
   private:
     jni::global_ref<JHybridRiveFileSpec::JavaPart> _javaPart;

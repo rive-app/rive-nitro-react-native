@@ -19,34 +19,33 @@ async function loadFile(source: number) {
 }
 
 describe('RiveFile ViewModel Access', () => {
-  it('viewModelCount returns expected count', async () => {
+  it('getViewModelNamesAsync returns expected count', async () => {
     const file = await loadFile(DATABINDING);
-    expect(file.viewModelCount).toBe(2);
+    const names = await file.getViewModelNamesAsync();
+    expect(names.length).toBe(2);
   });
 
-  it('viewModelByIndex(0) returns a ViewModel', async () => {
+  it('getViewModelNamesAsync returns non-empty names', async () => {
     const file = await loadFile(DATABINDING);
-    const vm = file.viewModelByIndex(0);
+    const names = await file.getViewModelNamesAsync();
+    expect(names.length).toBeGreaterThan(0);
+    names.forEach((name) => expect(typeof name).toBe('string'));
+  });
+
+  it('viewModelByNameAsync with first name returns a ViewModel', async () => {
+    const file = await loadFile(DATABINDING);
+    const names = await file.getViewModelNamesAsync();
+    const vm = await file.viewModelByNameAsync(names[0]!);
     expect(vm).toBeDefined();
   });
 
-  it('viewModelByIndex(-1) returns undefined or throws', async () => {
+  it('viewModelByNameAsync with non-existent name returns undefined or throws', async () => {
     const file = await loadFile(DATABINDING);
     try {
-      const vm = file.viewModelByIndex(-1);
+      const vm = await file.viewModelByNameAsync('__DoesNotExist__');
       expect(vm).toBeUndefined();
     } catch {
-      // Android Rive SDK throws a JNI exception for invalid indices
-    }
-  });
-
-  it('viewModelByIndex(100) returns undefined or throws', async () => {
-    const file = await loadFile(DATABINDING);
-    try {
-      const vm = file.viewModelByIndex(100);
-      expect(vm).toBeUndefined();
-    } catch {
-      // Android Rive SDK throws a JNI exception for out-of-range indices
+      // Some backends throw for non-existent names
     }
   });
 
@@ -65,6 +64,30 @@ describe('RiveFile ViewModel Access', () => {
     } catch {
       // Android Rive SDK throws a JNI exception for non-existent names
     }
+  });
+});
+
+describe('File Enums', () => {
+  it('getEnums() returns Pets enum with expected values', async () => {
+    const file = await loadFile(DATABINDING);
+
+    // getEnums throws on the legacy backend
+    let enums;
+    try {
+      enums = await file.getEnums();
+    } catch {
+      return;
+    }
+    expect(enums.length).toBeGreaterThan(0);
+
+    const petsEnum = enums.find((e) => e.name === 'Pets');
+    expectDefined(petsEnum);
+    expect(petsEnum.values).toContain('dog');
+    expect(petsEnum.values).toContain('cat');
+    expect(petsEnum.values).toContain('frog');
+    expect(petsEnum.values).toContain('owl');
+    expect(petsEnum.values).toContain('chipmunk');
+    expect(petsEnum.values).toContain('rat');
   });
 });
 
@@ -104,7 +127,8 @@ describe('ViewModel Creation Variants', () => {
 
   it('createInstanceByIndex(0) works', async () => {
     const file = await loadFile(DATABINDING);
-    const vm = file.viewModelByIndex(0);
+    const names = await file.getViewModelNamesAsync();
+    const vm = await file.viewModelByNameAsync(names[0]!);
     expectDefined(vm);
 
     const instance = vm.createInstanceByIndex(0);
@@ -213,10 +237,7 @@ describe('List Properties', () => {
     expect(addedName.value).toBe('Hernan');
   });
 
-  // These 3 list mutations crash the Rive experimental renderer
-  // (EXC_BAD_ACCESS in rive::CommandQueue::processMessages).
-  // They pass on the legacy backend. Skipping until the Rive engine fix.
-  it.skip('removeInstanceAt decreases length', async () => {
+  it('removeInstanceAt decreases length', async () => {
     const file = await loadFile(DATABINDING_LISTS);
     const vm = file.viewModelByName('DevRel');
     expectDefined(vm);
@@ -231,7 +252,7 @@ describe('List Properties', () => {
     expect(list.length).toBe(initialLength - 1);
   });
 
-  it.skip('swap reorders items', async () => {
+  it('swap reorders items', async () => {
     const file = await loadFile(DATABINDING_LISTS);
     const vm = file.viewModelByName('DevRel');
     expectDefined(vm);
@@ -254,7 +275,7 @@ describe('List Properties', () => {
     expect(name1After).toBe(name0Before);
   });
 
-  it.skip('addInstanceAt inserts at position', async () => {
+  it('addInstanceAt inserts at position', async () => {
     const file = await loadFile(DATABINDING_LISTS);
     const devRelVM = file.viewModelByName('DevRel');
     expectDefined(devRelVM);
@@ -280,10 +301,7 @@ describe('List Properties', () => {
   });
 });
 
-// These two .riv files crash the Rive experimental renderer on load
-// (EXC_BAD_ACCESS in rive::CommandQueue::processMessages).
-// They pass on the legacy backend. Skipping until the Rive engine fix.
-describe.skip('Artboard Properties', () => {
+describe('Artboard Properties', () => {
   it('artboardProperty returns defined properties', async () => {
     const file = await loadFile(ARTBOARD_DB_TEST);
     const vm = file.defaultArtboardViewModel();
@@ -325,7 +343,7 @@ describe.skip('Artboard Properties', () => {
   });
 });
 
-describe.skip('Image Properties', () => {
+describe('Image Properties', () => {
   it('imageProperty("bound_image") returns defined property', async () => {
     const file = await loadFile(DATABINDING_IMAGES);
     const vm = file.viewModelByName('MyViewModel');

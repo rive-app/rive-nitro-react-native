@@ -46,6 +46,7 @@
     "copy:nitrogen-config": "mkdir -p lib/nitrogen/generated/shared/json && cp nitrogen/generated/shared/json/RiveViewConfig.json lib/nitrogen/generated/shared/json/",
     "lint:swift": "./scripts/lint-swift.sh",
     "lint:kotlin": "./scripts/lint-kotlin.sh",
+    "lint:fix:kotlin": "./scripts/lint-fix-kotlin.sh",
     "lint:native": "yarn lint:swift && yarn lint:kotlin",
     "typetest": "tsd --typings src/index.tsx"
   },
@@ -114,6 +115,7 @@
     "example",
     "expo-example",
     "expo55-example",
+    "expo57-example",
     "rive-debug-utils"
   ],
   "packageManager": "yarn@3.6.1",
@@ -149,7 +151,7 @@
       "tagName": "v${version}"
     },
     "npm": {
-      "publish": true
+      "publish": false
     },
     "github": {
       "release": true
@@ -220,6 +222,8 @@
   },
   "resolutions": {
     "core-js-compat": "^3.40.0",
-    "browserslist": "^4.24.4"
+    "browserslist": "^4.24.4",
+    "@react-native-harness/runtime@1.4.0-rc.1": "patch:@react-native-harness/runtime@npm%3A1.4.0-rc.1#./.yarn/patches/@react-native-harness-runtime-npm-1.4.0-rc.1-5f3d78d6f0.patch",
+    "@react-native-harness/bundler-metro@1.4.0-rc.1": "patch:@react-native-harness/bundler-metro@npm%3A1.4.0-rc.1#./.yarn/patches/@react-native-harness-bundler-metro-npm-1.4.0-rc.1-748c6eda8c.patch"
   }
 }
