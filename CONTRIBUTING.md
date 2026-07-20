@@ -137,6 +137,6 @@ When you're sending a pull request:
 
 ## Runtime backends
 
-The legacy backend exists for behavior comparison during the experimental
+The legacy backend exists for behavior comparison during the new-runtime
 rollout — see [docs/runtime-backends.md](docs/runtime-backends.md) for how to
 select it and the behavioral differences to compare against.

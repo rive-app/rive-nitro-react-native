@@ -57,7 +57,7 @@ export interface RiveViewProps extends HybridViewProps {
    * screens). Capping limits frame production, not animation time — playback
    * still advances by the real elapsed time between frames.
    *
-   * Only supported on the experimental (default) backends; the legacy
+   * Only supported on the new (default) runtimes; the legacy
    * backends ignore it. Undefined = render at the display refresh rate.
    *
    * @see https://rive.app/docs/runtimes/apple/apple#frame-rate
@@ -67,7 +67,7 @@ export interface RiveViewProps extends HybridViewProps {
    * Exposes accessibility semantics authored in the Rive editor to the
    * platform screen reader (VoiceOver). Defaults to Semantics.Off.
    *
-   * Only supported on the experimental (default) iOS backend so far; ignored
+   * Only supported on the new (default) iOS runtime so far; ignored
    * elsewhere. Android support is pending the upstream rive-android runtime.
    *
    * @see https://rive.app/docs/runtimes/apple/semantics
@@ -102,7 +102,7 @@ export interface RiveViewMethods extends HybridViewMethods {
   pause(): Promise<void>;
   /**
    * Resets the Rive graphic to its initial state.
-   * @deprecated Not supported on the experimental backend (logs an error and
+   * @deprecated Not supported on the new runtime (logs an error and
    * does nothing).
    */
   reset(): Promise<void>;
@@ -114,7 +114,7 @@ export interface RiveViewMethods extends HybridViewMethods {
    * Adds an event listener to the Rive view
    * @deprecated Use data binding instead. See https://rive.app/docs/runtimes/data-binding
    *
-   * Throws on the experimental (default) backend — only the legacy backend
+   * Throws on the new (default) runtime — only the legacy backend
    * (USE_RIVE_LEGACY) implements it.
    * @param onEvent - The function to call when an event is triggered
    */
@@ -123,7 +123,7 @@ export interface RiveViewMethods extends HybridViewMethods {
    * Removes all event listeners from the Rive view
    * @deprecated Use data binding instead. See https://rive.app/docs/runtimes/data-binding
    *
-   * Throws on the experimental (default) backend — only the legacy backend
+   * Throws on the new (default) runtime — only the legacy backend
    * (USE_RIVE_LEGACY) implements it.
    */
   removeEventListeners(): void;
@@ -131,7 +131,7 @@ export interface RiveViewMethods extends HybridViewMethods {
    * Sets a number state machine input on the Rive view
    * @deprecated Use data binding instead. See https://rive.app/docs/runtimes/data-binding
    *
-   * Throws on the experimental (default) backend — only the legacy backend
+   * Throws on the new (default) runtime — only the legacy backend
    * (USE_RIVE_LEGACY) implements it.
    * @param name - The name of the state machine input
    * @param value - The value to set the state machine input to
@@ -142,7 +142,7 @@ export interface RiveViewMethods extends HybridViewMethods {
    * Gets a number state machine input from the Rive view
    * @deprecated Use data binding instead. See https://rive.app/docs/runtimes/data-binding
    *
-   * Throws on the experimental (default) backend — only the legacy backend
+   * Throws on the new (default) runtime — only the legacy backend
    * (USE_RIVE_LEGACY) implements it.
    * @param name - The name of the state machine input
    * @param path - The optional path to the state machine input on a nested artboard
@@ -153,7 +153,7 @@ export interface RiveViewMethods extends HybridViewMethods {
    * Sets a boolean state machine input on the Rive view
    * @deprecated Use data binding instead. See https://rive.app/docs/runtimes/data-binding
    *
-   * Throws on the experimental (default) backend — only the legacy backend
+   * Throws on the new (default) runtime — only the legacy backend
    * (USE_RIVE_LEGACY) implements it.
    * @param name - The name of the state machine input
    * @param value - The value to set the state machine input to
@@ -164,7 +164,7 @@ export interface RiveViewMethods extends HybridViewMethods {
    * Gets a boolean state machine input from the Rive view
    * @deprecated Use data binding instead. See https://rive.app/docs/runtimes/data-binding
    *
-   * Throws on the experimental (default) backend — only the legacy backend
+   * Throws on the new (default) runtime — only the legacy backend
    * (USE_RIVE_LEGACY) implements it.
    * @param name - The name of the state machine input
    * @param path - The optional path to the state machine input on a nested artboard
@@ -175,7 +175,7 @@ export interface RiveViewMethods extends HybridViewMethods {
    * Triggers a trigger state machine input on the Rive view
    * @deprecated Use data binding instead. See https://rive.app/docs/runtimes/data-binding
    *
-   * Throws on the experimental (default) backend — only the legacy backend
+   * Throws on the new (default) runtime — only the legacy backend
    * (USE_RIVE_LEGACY) implements it.
    * @param name - The name of the state machine input
    * @param path - The optional path to the state machine input on a nested artboard
@@ -185,7 +185,7 @@ export interface RiveViewMethods extends HybridViewMethods {
    * Sets the text run value on the Rive view
    * @deprecated Use data binding instead. See https://rive.app/docs/runtimes/data-binding
    *
-   * Throws on the experimental (default) backend — only the legacy backend
+   * Throws on the new (default) runtime — only the legacy backend
    * (USE_RIVE_LEGACY) implements it.
    * @param name - The name of the text run
    * @param value - The text to set the text run value to
@@ -196,7 +196,7 @@ export interface RiveViewMethods extends HybridViewMethods {
    * Gets the text run value from the Rive view
    * @deprecated Use data binding instead. See https://rive.app/docs/runtimes/data-binding
    *
-   * Throws on the experimental (default) backend — only the legacy backend
+   * Throws on the new (default) runtime — only the legacy backend
    * (USE_RIVE_LEGACY) implements it.
    * @param name - The name of the text run
    * @param path - The optional path to the text run on a nested artboard

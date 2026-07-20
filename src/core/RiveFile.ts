@@ -13,7 +13,7 @@ const RiveFileInternal =
 let _warnedLoadCdnUnsupported = false;
 
 /**
- * The experimental backend ignores `loadCdn` — its CommandQueue file-load API
+ * The new runtime ignores `loadCdn` — its CommandQueue file-load API
  * has no CDN asset resolution. Warn once (per JS runtime) when a caller
  * *explicitly* opts into `loadCdn: true` there, so they know CDN-referenced
  * assets must be supplied via `referencedAssets` instead. Callers that don't
@@ -29,7 +29,7 @@ function warnLoadCdnUnsupportedOnExperimental(
   ) {
     _warnedLoadCdnUnsupported = true;
     console.warn(
-      '[Rive] `loadCdn: true` is not supported on the experimental backend and is ignored. ' +
+      '[Rive] `loadCdn: true` is not supported on the new runtime and is ignored. ' +
         'CDN-referenced assets (fonts/images) are not fetched automatically — supply them ' +
         'via the `referencedAssets` option instead.'
     );
@@ -41,7 +41,11 @@ function warnLoadCdnUnsupportedOnExperimental(
  * Provides static methods to load Rive files from URLs, resources, or raw bytes.
  */
 export namespace RiveFileFactory {
-  /** Which backend is in use: "legacy" or "experimental" */
+  /**
+   * Which backend is in use. `'experimental'` identifies the new
+   * (CommandQueue-based) runtime — the string predates the "new runtime"
+   * naming and is kept for API stability.
+   */
   export function getBackend(): 'legacy' | 'experimental' {
     return RiveFileInternal.backend as 'legacy' | 'experimental';
   }
@@ -50,7 +54,7 @@ export namespace RiveFileFactory {
    * Creates a RiveFile instance from a URL.
    * @param url - The URL of the Rive (.riv) file
    * @param loadCdn - Whether to fetch CDN-referenced assets (default: true).
-   *   Ignored on the experimental backend — supply assets via `referencedAssets` instead.
+   *   Ignored on the new runtime — supply assets via `referencedAssets` instead.
    * @returns Promise that resolves to a RiveFile instance
    */
   export async function fromURL(
@@ -70,7 +74,7 @@ export namespace RiveFileFactory {
    * Creates a RiveFile instance from a local file path URL.
    * @param pathURL - The local file path of the Rive (.riv) file
    * @param loadCdn - Whether to fetch CDN-referenced assets (default: true).
-   *   Ignored on the experimental backend — supply assets via `referencedAssets` instead.
+   *   Ignored on the new runtime — supply assets via `referencedAssets` instead.
    * @returns Promise that resolves to a RiveFile instance
    */
   export async function fromFileURL(
@@ -90,7 +94,7 @@ export namespace RiveFileFactory {
    * Creates a RiveFile instance from a local resource.
    * @param resource - The name of the local resource
    * @param loadCdn - Whether to fetch CDN-referenced assets (default: true).
-   *   Ignored on the experimental backend — supply assets via `referencedAssets` instead.
+   *   Ignored on the new runtime — supply assets via `referencedAssets` instead.
    * @returns Promise that resolves to a RiveFile instance
    */
   export async function fromResource(
@@ -110,7 +114,7 @@ export namespace RiveFileFactory {
    * Creates a RiveFile instance from raw bytes.
    * @param bytes - The raw bytes of the Rive (.riv) file
    * @param loadCdn - Whether to fetch CDN-referenced assets (default: true).
-   *   Ignored on the experimental backend — supply assets via `referencedAssets` instead.
+   *   Ignored on the new runtime — supply assets via `referencedAssets` instead.
    * @returns Promise that resolves to a RiveFile instance
    */
   export async function fromBytes(
@@ -130,7 +134,7 @@ export namespace RiveFileFactory {
    * Creates a RiveFile instance from a source that can be either a resource ID or a URI object.
    * @param source - Either a number representing a resource ID or an object with a uri property
    * @param loadCdn - Whether to fetch CDN-referenced assets (default: true).
-   *   Ignored on the experimental backend — supply assets via `referencedAssets` instead.
+   *   Ignored on the new runtime — supply assets via `referencedAssets` instead.
    * @returns Promise that resolves to a RiveFile instance
    * @throws Error if the source is invalid or cannot be resolved
    * @example
