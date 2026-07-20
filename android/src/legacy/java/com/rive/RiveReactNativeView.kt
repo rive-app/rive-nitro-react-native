@@ -95,6 +95,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
   private var eventListeners: MutableList<RiveFileController.RiveEventListener> = mutableListOf()
   private val viewReadyDeferred = CompletableDeferred<Boolean>()
   private var _activeStateMachineName: String? = null
+  private var configuredStateMachineName: String? = null
   private var willDispose = false
 
   init {
@@ -151,6 +152,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
         riveAnimationView?.play(settleInitialState = false)
       }
       _activeStateMachineName = getSafeStateMachineName()
+      configuredStateMachineName = config.stateMachineName
     } else {
       riveAnimationView?.alignment = config.alignment
       riveAnimationView?.fit = config.fit
@@ -215,10 +217,30 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
   }
 
   fun play() {
-    if (_activeStateMachineName == null) {
-      _activeStateMachineName = getSafeStateMachineName()
+    val view = riveAnimationView ?: return
+    val stateMachineToStart = stateMachineToStartExplicitly(view)
+
+    if (stateMachineToStart != null) {
+      view.play(stateMachineToStart, isStateMachine = true)
+      _activeStateMachineName = stateMachineToStart
+    } else {
+      if (_activeStateMachineName == null) {
+        _activeStateMachineName = getSafeStateMachineName()
+      }
+      view.play()
     }
-    riveAnimationView?.play()
+  }
+
+  // No-arg play() resumes paused instances and starts linear animations, but
+  // on a cold start it would pick the artboard's first state machine rather
+  // than the configured one (#332) — that case needs an explicit start.
+  private fun stateMachineToStartExplicitly(view: ReactNativeRiveAnimationView): String? {
+    val controller = view.controller
+    val hasInstances =
+      controller.stateMachines.isNotEmpty() || controller.animations.isNotEmpty()
+    if (hasInstances) return null
+    return configuredStateMachineName
+      ?: controller.activeArtboard?.stateMachineNames?.firstOrNull()
   }
 
   fun pause() = riveAnimationView?.pause()
