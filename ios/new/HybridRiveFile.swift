@@ -164,7 +164,7 @@ class HybridRiveFile: HybridRiveFileSpec {
   }
 
   func updateReferencedAssets(referencedAssets: ReferencedAssetsType) {
-    RCTLogWarn("[Rive] updateReferencedAssets is not supported with the new runtime — already-rendered artboards cannot be updated. Use the legacy backend for runtime asset swapping.")
+    RCTLogWarn("[Rive] updateReferencedAssets is not supported — already-rendered artboards cannot be updated. Supply assets via referencedAssets at load time instead.")
   }
 
   func getEnums() throws -> Promise<[RiveEnumDefinition]> {
