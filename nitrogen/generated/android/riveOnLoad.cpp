@@ -46,6 +46,7 @@
 #include "JHybridViewModelListPropertySpec.hpp"
 #include "JHybridViewModelArtboardPropertySpec.hpp"
 #include <NitroModules/DefaultConstructableObject.hpp>
+#include "HybridRiveWorkletBridge.hpp"
 
 namespace margelo::nitro::rive {
 
@@ -189,6 +190,15 @@ void registerAllNatives() {
     "RiveLogger",
     []() -> std::shared_ptr<HybridObject> {
       return JHybridRiveLoggerSpecImpl::create();
+    }
+  );
+  HybridObjectRegistry::registerHybridObjectConstructor(
+    "RiveWorkletBridge",
+    []() -> std::shared_ptr<HybridObject> {
+      static_assert(std::is_default_constructible_v<HybridRiveWorkletBridge>,
+                    "The HybridObject \"HybridRiveWorkletBridge\" is not default-constructible! "
+                    "Create a public constructor that takes zero arguments to be able to autolink this HybridObject.");
+      return std::make_shared<HybridRiveWorkletBridge>();
     }
   );
 }
