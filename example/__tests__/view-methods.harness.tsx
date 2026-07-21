@@ -96,11 +96,11 @@ describe('RiveView methods', () => {
   });
 });
 
-// The headline behavioral break of the experimental backend: the deprecated
+// The headline behavioral break of the new runtime: the deprecated
 // SMI-input / text-run / event methods throw instead of being implemented.
 // Guards the documented contract (specs say "Throws on the experimental
 // backend") — if an implementation lands, update the docs and these tests.
-describe('deprecated RiveView methods throw on the experimental backend', () => {
+describe('deprecated RiveView methods throw on the new runtime', () => {
   const mountView = async () => {
     const file = await RiveFileFactory.fromSource(BOUNCING_BALL, undefined);
     const context: TestContext = { ref: null, error: null };

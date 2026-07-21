@@ -172,7 +172,7 @@ class RiveReactNativeView: UIView {
 
   func reset() {
     // Deprecated: the experimental Rive runtime has no reset primitive.
-    RiveLog.e("RiveReactNativeView", "reset() is deprecated and not supported on the experimental backend")
+    RiveLog.e("RiveReactNativeView", "reset() is deprecated and not supported on the new runtime")
   }
 
   func playIfNeeded() {
@@ -183,31 +183,31 @@ class RiveReactNativeView: UIView {
   }
 
   func setNumberInputValue(name: String, value: Float, path: String?) throws {
-    throw RuntimeError.error(withMessage: "SMI inputs not supported in experimental API")
+    throw RuntimeError.error(withMessage: "SMI inputs are not supported by the new runtime — use data binding")
   }
 
   func getNumberInputValue(name: String, path: String?) throws -> Float {
-    throw RuntimeError.error(withMessage: "SMI inputs not supported in experimental API")
+    throw RuntimeError.error(withMessage: "SMI inputs are not supported by the new runtime — use data binding")
   }
 
   func setBooleanInputValue(name: String, value: Bool, path: String?) throws {
-    throw RuntimeError.error(withMessage: "SMI inputs not supported in experimental API")
+    throw RuntimeError.error(withMessage: "SMI inputs are not supported by the new runtime — use data binding")
   }
 
   func getBooleanInputValue(name: String, path: String?) throws -> Bool {
-    throw RuntimeError.error(withMessage: "SMI inputs not supported in experimental API")
+    throw RuntimeError.error(withMessage: "SMI inputs are not supported by the new runtime — use data binding")
   }
 
   func triggerInput(name: String, path: String?) throws {
-    throw RuntimeError.error(withMessage: "SMI inputs not supported in experimental API")
+    throw RuntimeError.error(withMessage: "SMI inputs are not supported by the new runtime — use data binding")
   }
 
   func setTextRunValue(name: String, value: String, path: String?) throws {
-    throw RuntimeError.error(withMessage: "Text runs not supported in experimental API")
+    throw RuntimeError.error(withMessage: "Text runs are not supported by the new runtime — use data binding")
   }
 
   func getTextRunValue(name: String, path: String?) throws -> String {
-    throw RuntimeError.error(withMessage: "Text runs not supported in experimental API")
+    throw RuntimeError.error(withMessage: "Text runs are not supported by the new runtime — use data binding")
   }
 
   // MARK: - Internal

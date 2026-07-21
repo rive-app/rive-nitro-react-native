@@ -144,7 +144,7 @@ async function createInstanceAsync(
     } finally {
       // The intermediate ViewModel wrapper is hook-internal; disposing it
       // releases the native resources it owns (e.g. the artboard resolved
-      // for DefaultForArtboard sources on the experimental backend).
+      // for DefaultForArtboard sources on the new runtime).
       callDispose(viewModel);
     }
   }

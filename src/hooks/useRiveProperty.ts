@@ -53,7 +53,7 @@ export function useRiveProperty<P extends ViewModelProperty, T>(
   }
 
   // Always start undefined — the listener delivers the current value as its first emission.
-  // (iOS experimental: via valueStream; iOS/Android legacy: emitted synchronously on subscribe)
+  // (new iOS runtime: via valueStream; iOS/Android legacy: emitted synchronously on subscribe)
   // This ensures consumers handle the loading state correctly on all backends.
   const [value, setValue] = useState<T | undefined>(undefined);
   const [error, setError] = useState<Error | null>(null);
@@ -80,7 +80,7 @@ export function useRiveProperty<P extends ViewModelProperty, T>(
 
     // Deliver the current value so the hook transitions from undefined → value
     // without waiting for a property change (legacy addListener does NOT emit
-    // on subscribe — only on changes). On the experimental backend the
+    // on subscribe — only on changes). On the new runtime the
     // accessor returns an unvalidated handle — the command server can only
     // report a bad path asynchronously — so a rejection here is also how
     // "property not found" surfaces as the hook's error.

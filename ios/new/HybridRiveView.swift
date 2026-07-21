@@ -127,11 +127,11 @@ class HybridRiveView: HybridRiveViewSpec {
   }
 
   func onEventListener(onEvent: @escaping (UnifiedRiveEvent) -> Void) throws {
-    throw RuntimeError.error(withMessage: "Events are not supported in the experimental iOS API")
+    throw RuntimeError.error(withMessage: "Events are not supported by the new iOS runtime — use data binding")
   }
 
   func removeEventListeners() throws {
-    throw RuntimeError.error(withMessage: "Events are not supported in the experimental iOS API")
+    throw RuntimeError.error(withMessage: "Events are not supported by the new iOS runtime — use data binding")
   }
 
   func setNumberInputValue(name: String, value: Double, path: String?) throws {

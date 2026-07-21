@@ -195,7 +195,7 @@ class HybridRiveFile(
   override fun updateReferencedAssets(referencedAssets: ReferencedAssetsType) {
     RiveLog.w(
       TAG,
-      "updateReferencedAssets is not supported with the experimental backend — already-rendered artboards cannot be updated. Use the legacy backend for runtime asset swapping."
+      "updateReferencedAssets is not supported — already-rendered artboards cannot be updated. Supply assets via referencedAssets at load time instead."
     )
   }
 

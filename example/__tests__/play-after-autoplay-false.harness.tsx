@@ -104,7 +104,7 @@ async function waitForWritableInput(context: TestContext): Promise<void> {
 // backends (both platforms).
 function skipOnExperimental(): boolean {
   if (RiveFileFactory.getBackend() === 'experimental') {
-    console.warn('SKIP: experimental backend — SMI inputs are not supported');
+    console.warn('SKIP: new runtime — SMI inputs are not supported');
     return true;
   }
   return false;

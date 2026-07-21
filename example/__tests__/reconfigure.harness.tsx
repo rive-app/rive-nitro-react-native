@@ -53,7 +53,7 @@ function SwitchableRiveView({
 
 describe('RiveView reconfigure (file switch)', () => {
   it('animation still plays after switching file prop and back', async () => {
-    // Fix only applies to iOS experimental — setupRiveUIView teardown churn
+    // Fix only applies to the new iOS runtime — setupRiveUIView teardown churn
     if (
       Platform.OS !== 'ios' ||
       RiveFileFactory.getBackend() !== 'experimental'

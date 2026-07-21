@@ -39,11 +39,7 @@ export interface ViewModel
   readonly instanceCount: number;
   /** The name of the view model */
   readonly modelName: string;
-  /**
-   * All properties defined on this view model.
-   *
-   * Backend note: rejects on the legacy backend (experimental only).
-   */
+  /** All properties defined on this view model */
   getPropertiesAsync(): Promise<ViewModelPropertyInfo[]>;
   /** The number of properties in the view model */
   getPropertyCountAsync(): Promise<number>;
@@ -81,9 +77,8 @@ export interface ViewModelInstance
   /**
    * The name of the view model instance.
    *
-   * Experimental backend: the runtime does not expose instance names yet
-   * (verified through rive-android 11.7.0; SDK support has been requested),
-   * so this is only populated for instances created via
+   * The underlying Rive SDKs do not expose instance names yet (support has
+   * been requested), so this is only populated for instances created via
    * `createInstanceByName` / `createInstanceByIndex` — default, blank,
    * nested, and view-obtained instances report `""` until the SDKs expose it.
    */
@@ -91,23 +86,20 @@ export interface ViewModelInstance
   /**
    * All properties available on this view model instance.
    *
-   * Backend note: rejects on the legacy backend, and on the experimental
-   * backend for instances whose ViewModel metadata is unknown (nested paths,
-   * list items, view-obtained instances) — query the ViewModel instead.
+   * Rejects for instances whose ViewModel metadata is unknown (nested
+   * paths, list items, view-obtained instances) — query the
+   * {@link ViewModel} it was created from instead.
    */
   getPropertiesAsync(): Promise<ViewModelPropertyInfo[]>;
   /**
    * Get a number property from the view model instance at the given path.
    *
-   * Backend note (applies to all property accessors below): the legacy
-   * backend validates the path synchronously and returns `undefined` when it
-   * does not exist. The experimental backend cannot — property lookup
-   * happens on the async command server — so it returns an unvalidated
-   * handle for any path, and a bad path surfaces when the property is used:
-   * `getValueAsync()` rejects, listeners never fire, and the `useRive*`
-   * hooks report it via their `error` result. Do not rely on a falsy return
-   * to detect typos on the experimental backend; check
-   * `getPropertiesAsync()` or handle the `getValueAsync()` rejection.
+   * Note (applies to all property accessors below): the returned handle is
+   * not validated — property lookup happens on the async runtime — so a bad
+   * path surfaces when the property is used: `getValueAsync()` rejects,
+   * listeners never fire, and the `useRive*` hooks report it via their
+   * `error` result. To detect typos, check `getPropertiesAsync()` or handle
+   * the `getValueAsync()` rejection.
    */
   numberProperty(path: string): ViewModelNumberProperty | undefined;
 

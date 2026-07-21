@@ -121,7 +121,7 @@ describe('ViewModel Creation Variants', () => {
       const instance = vm.createInstanceByName('DoesNotExist');
       expect(instance).toBeUndefined();
     } catch {
-      // experimental backend throws - that's fine
+      // new runtime throws - that's fine
     }
   });
 

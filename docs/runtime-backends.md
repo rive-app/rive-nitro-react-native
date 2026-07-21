@@ -1,10 +1,10 @@
 # Runtime backends (contributor guide)
 
-The library ships two native backends and uses the **experimental** Rive
+The library ships two native backends and uses the **new** Rive
 runtime backend (Rive's CommandQueue-based async API) by default. The
 previous implementation is kept as the **legacy** backend **for development
 and behavior comparison only** — it is not a supported end-user
-configuration and will be removed once the experimental backend has fully
+configuration and will be removed once the new runtime has fully
 proven out. Select it at build time:
 
 - **iOS** — set the Podfile global before `pod install`:
@@ -16,7 +16,7 @@ proven out. Select it at build time:
 
   (`USE_RIVE_LEGACY=1 pod install` also works, but the env var only applies
   to that invocation — any plain `pod install` afterwards silently switches
-  the project back to the experimental backend, so prefer the Podfile
+  the project back to the new runtime, so prefer the Podfile
   global.)
 
 - **Android** — set the Gradle property, e.g. in `android/gradle.properties`:
@@ -26,9 +26,12 @@ proven out. Select it at build time:
   ```
 
 You can check which backend is active at runtime via
-`RiveFileFactory.getBackend()` (`'experimental' | 'legacy'`).
+`RiveFileFactory.getBackend()` (`'experimental' | 'legacy'`, where
+`'experimental'` is the new runtime). This API is for internal testing only —
+it and the legacy runtime will be removed in a future release once the new
+runtime has fully proven out (not necessarily 0.6).
 
-Behavioral differences on the experimental backend:
+Behavioral differences on the new runtime:
 
 - The deprecated state-machine-input, text-run, and Rive-event view methods
   throw — use [data binding](https://rive.app/docs/runtimes/data-binding)
@@ -38,9 +41,9 @@ Behavioral differences on the experimental backend:
   `useRive*` hooks' `error` result instead of an `undefined` return.
 - `updateReferencedAssets` (runtime asset swapping) is not supported.
 
-## Android render backend (experimental backend only)
+## Android render backend (new runtime only)
 
-The experimental Android backend renders with OpenGL by default. Vulkan can
+The new Android runtime renders with OpenGL by default. Vulkan can
 be opted into per process:
 
 ```ts
