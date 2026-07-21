@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.5.0-beta](https://github.com/rive-app/rive-nitro-react-native/compare/v0.4.19...v0.5.0-beta) (2026-07-21)
+
+
+### ⚠ BREAKING CHANGES
+
+* experimental Rive runtime backend (iOS + Android) ([#134](https://github.com/rive-app/rive-nitro-react-native/issues/134))
+
+### Features
+
+* experimental Rive runtime backend (iOS + Android) ([#134](https://github.com/rive-app/rive-nitro-react-native/issues/134)) ([ae779a3](https://github.com/rive-app/rive-nitro-react-native/commit/ae779a30668fbaef2ad58f015ab6365a7ff83fe6))
+
 ## [0.4.19](https://github.com/rive-app/rive-nitro-react-native/compare/v0.4.18...v0.4.19) (2026-07-16)
 
 
