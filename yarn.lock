@@ -7004,10 +7004,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rive-app/canvas@npm:^2.38.0":
-  version: 2.38.0
-  resolution: "@rive-app/canvas@npm:2.38.0"
-  checksum: a75508c461db26c48d3d3daebd9bd2b1a28fd528062640bd99f767f3b0fc32a518e3bffaadccbab93b3819c7f1225f7d1c65e1534c036798482cf271b5d61161
+"@rive-app/canvas@npm:^2.39.0":
+  version: 2.39.0
+  resolution: "@rive-app/canvas@npm:2.39.0"
+  checksum: a21b663691615c9a27253c6dfbf607167693de09d037b9a9e67d14d173edb8720575726b0b7d91dccb8f5321f7abbf948505714b7a88829540b3ed6c875815e2
   languageName: node
   linkType: hard
 
@@ -7022,7 +7022,7 @@ __metadata:
     "@react-native/babel-preset": 0.79.2
     "@react-native/eslint-config": ^0.78.0
     "@release-it/conventional-changelog": ^9.0.2
-    "@rive-app/canvas": ^2.38.0
+    "@rive-app/canvas": ^2.39.0
     "@testing-library/react-hooks": ^8.0.1
     "@testing-library/react-native": ^13.3.3
     "@types/jest": ^29.5.5
