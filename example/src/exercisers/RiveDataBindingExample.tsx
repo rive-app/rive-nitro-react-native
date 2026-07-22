@@ -5,19 +5,18 @@ import {
   RiveView,
   useRiveNumber,
   useViewModelInstance,
-  type ViewModelInstance,
-  type RiveFile,
+  type TypedViewModelOf,
+  type TypedRiveFile,
   useRiveString,
   useRiveColor,
   useRiveTrigger,
   useRiveFile,
 } from '@rive-app/react-native';
 import { type Metadata } from '../shared/metadata';
+import rewardsRiv from '../../assets/rive/rewards.riv';
 
 export default function WithRiveFile() {
-  const { riveFile, isLoading, error } = useRiveFile(
-    require('../../assets/rive/rewards.riv')
-  );
+  const { riveFile, isLoading, error } = useRiveFile(rewardsRiv);
 
   return (
     <View style={styles.container}>
@@ -36,12 +35,19 @@ export default function WithRiveFile() {
   );
 }
 
-function WithViewModelSetup({ file }: { file: RiveFile }) {
-  const { instance, error } = useViewModelInstance(file, { async: true });
+function WithViewModelSetup({
+  file,
+}: {
+  file: TypedRiveFile<typeof rewardsRiv>;
+}) {
+  const { instance, error } = useViewModelInstance(file, {
+    viewModelName: 'Rewards',
+    async: true,
+  });
 
   if (error) {
     console.error(error.message);
-    return <Text style={{ color: 'red' }}>{error.message}</Text>;
+    return <Text style={styles.errorText}>{error.message}</Text>;
   }
 
   if (!instance) {
@@ -55,8 +61,8 @@ function DataBindingExample({
   instance,
   file,
 }: {
-  instance: ViewModelInstance;
-  file: RiveFile;
+  instance: TypedViewModelOf<typeof rewardsRiv, 'Rewards'>;
+  file: TypedRiveFile<typeof rewardsRiv>;
 }) {
   const { error: coinValueError } = useRiveNumber('Coin/Item_Value', instance);
 
@@ -64,7 +70,10 @@ function DataBindingExample({
     console.error('coinValueError', coinValueError);
   }
 
-  const { setValue: setButtonText } = useRiveString('Button/State_1', instance);
+  const { setValue: setButtonText } = useRiveString(
+    'Button/Item_Text',
+    instance
+  );
 
   const { setValue: setBarColor, error: barColorError } = useRiveColor(
     'Energy_Bar/Bar_Color',

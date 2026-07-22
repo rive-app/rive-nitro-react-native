@@ -58,6 +58,7 @@ export default defineConfig([
       // tsd owns *.test-d.ts (yarn typetest) — deprecated calls there are
       // intentional expectDeprecated() pins, not violations.
       '**/*.test-d.ts',
+'**/*.riv.d.ts',
       // Agent worktrees (.claude/worktrees/*) are gitignored full-repo copies;
       // linting them duplicates every finding and slows the run.
       '**/.claude/',
