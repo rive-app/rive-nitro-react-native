@@ -4,6 +4,12 @@ import {
 } from '../specs/ViewModel.nitro';
 import type { UseRivePropertyResult } from '../types';
 import { useRiveProperty } from './useRiveProperty';
+import type {
+  PathsOfKind,
+  TypedViewModelInstance,
+  UntypedViewModelInstance,
+} from '../core/TypedViewModelInstance';
+import type { RiveFileSchema } from '../core/TypedRiveFile';
 
 const getNumberProperty = (vmi: ViewModelInstance, p: string) =>
   vmi.numberProperty(p);
@@ -15,6 +21,17 @@ const getNumberProperty = (vmi: ViewModelInstance, p: string) =>
  * @param viewModelInstance - The ViewModelInstance containing the number property to operate on
  * @returns An object with the number value, a setter function, and an error if the property is not found
  */
+export function useRiveNumber<
+  T extends RiveFileSchema,
+  N extends Extract<keyof T['viewModels'], string>,
+>(
+  path: PathsOfKind<T, N, 'number'>,
+  viewModelInstance?: TypedViewModelInstance<T, N> | null
+): UseRivePropertyResult<number>;
+export function useRiveNumber(
+  path: string,
+  viewModelInstance?: UntypedViewModelInstance | null
+): UseRivePropertyResult<number>;
 export function useRiveNumber(
   path: string,
   viewModelInstance?: ViewModelInstance | null

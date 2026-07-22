@@ -8,6 +8,12 @@ import type {
   UseViewModelInstanceTriggerParameters,
 } from '../types';
 import { useDisposableMemo } from './useDisposableMemo';
+import type {
+  PathsOfKind,
+  TypedViewModelInstance,
+  UntypedViewModelInstance,
+} from '../core/TypedViewModelInstance';
+import type { RiveFileSchema } from '../core/TypedRiveFile';
 
 /**
  * Hook for interacting with trigger ViewModel instance properties.
@@ -21,6 +27,19 @@ import { useDisposableMemo } from './useDisposableMemo';
  * @param params - Optional parameters including onTrigger callback
  * @returns A trigger function and any error
  */
+export function useRiveTrigger<
+  T extends RiveFileSchema,
+  N extends Extract<keyof T['viewModels'], string>,
+>(
+  path: PathsOfKind<T, N, 'trigger'>,
+  viewModelInstance?: TypedViewModelInstance<T, N> | null,
+  params?: UseViewModelInstanceTriggerParameters
+): UseRiveTriggerResult;
+export function useRiveTrigger(
+  path: string,
+  viewModelInstance?: UntypedViewModelInstance | null,
+  params?: UseViewModelInstanceTriggerParameters
+): UseRiveTriggerResult;
 export function useRiveTrigger(
   path: string,
   viewModelInstance?: ViewModelInstance | null,

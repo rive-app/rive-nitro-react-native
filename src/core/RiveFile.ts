@@ -1,8 +1,6 @@
 import { NitroModules } from 'react-native-nitro-modules';
-import type {
-  RiveFile,
-  RiveFileFactory as RiveFileFactoryInternal,
-} from '../specs/RiveFile.nitro';
+import type { RiveFileFactory as RiveFileFactoryInternal } from '../specs/RiveFile.nitro';
+import type { RiveAsset, RiveFileSchema, TypedRiveFile } from './TypedRiveFile';
 
 import { Image } from 'react-native';
 import type { ResolvedReferencedAssets } from './ReferencedAssets';
@@ -60,17 +58,17 @@ export namespace RiveFileFactory {
    *   Ignored — supply assets via `referencedAssets` instead.
    * @returns Promise that resolves to a RiveFile instance
    */
-  export async function fromURL(
+  export async function fromURL<T extends RiveFileSchema = RiveFileSchema>(
     url: string,
     referencedAssets: ResolvedReferencedAssets | undefined,
     loadCdn?: boolean
-  ): Promise<RiveFile> {
+  ): Promise<TypedRiveFile<T>> {
     warnLoadCdnUnsupportedOnExperimental(loadCdn);
     return RiveFileInternal.fromURL(
       url,
       loadCdn ?? true,
       referencedAssets ? { data: referencedAssets } : undefined
-    );
+    ) as Promise<TypedRiveFile<T>>;
   }
 
   /**
@@ -80,17 +78,17 @@ export namespace RiveFileFactory {
    *   Ignored — supply assets via `referencedAssets` instead.
    * @returns Promise that resolves to a RiveFile instance
    */
-  export async function fromFileURL(
+  export async function fromFileURL<T extends RiveFileSchema = RiveFileSchema>(
     fileURL: string,
     referencedAssets: ResolvedReferencedAssets | undefined = undefined,
     loadCdn?: boolean
-  ): Promise<RiveFile> {
+  ): Promise<TypedRiveFile<T>> {
     warnLoadCdnUnsupportedOnExperimental(loadCdn);
     return RiveFileInternal.fromFileURL(
       fileURL,
       loadCdn ?? true,
       referencedAssets ? { data: referencedAssets } : undefined
-    );
+    ) as Promise<TypedRiveFile<T>>;
   }
 
   /**
@@ -100,17 +98,17 @@ export namespace RiveFileFactory {
    *   Ignored — supply assets via `referencedAssets` instead.
    * @returns Promise that resolves to a RiveFile instance
    */
-  export async function fromResource(
+  export async function fromResource<T extends RiveFileSchema = RiveFileSchema>(
     resource: string,
     referencedAssets: ResolvedReferencedAssets | undefined,
     loadCdn?: boolean
-  ): Promise<RiveFile> {
+  ): Promise<TypedRiveFile<T>> {
     warnLoadCdnUnsupportedOnExperimental(loadCdn);
     return RiveFileInternal.fromResource(
       resource,
       loadCdn ?? true,
       referencedAssets ? { data: referencedAssets } : undefined
-    );
+    ) as Promise<TypedRiveFile<T>>;
   }
 
   /**
@@ -120,17 +118,17 @@ export namespace RiveFileFactory {
    *   Ignored — supply assets via `referencedAssets` instead.
    * @returns Promise that resolves to a RiveFile instance
    */
-  export async function fromBytes(
+  export async function fromBytes<T extends RiveFileSchema = RiveFileSchema>(
     bytes: ArrayBuffer,
     referencedAssets: ResolvedReferencedAssets | undefined,
     loadCdn?: boolean
-  ): Promise<RiveFile> {
+  ): Promise<TypedRiveFile<T>> {
     warnLoadCdnUnsupportedOnExperimental(loadCdn);
     return RiveFileInternal.fromBytes(
       bytes,
       loadCdn ?? true,
       referencedAssets ? { data: referencedAssets } : undefined
-    );
+    ) as Promise<TypedRiveFile<T>>;
   }
 
   /**
@@ -156,11 +154,21 @@ export namespace RiveFileFactory {
    * config.resolver.assetExts = [...config.resolver.assetExts, 'riv'];
    * ```
    */
+  export async function fromSource<T extends RiveFileSchema>(
+    source: RiveAsset<T>,
+    referencedAssets: ResolvedReferencedAssets | undefined,
+    loadCdn?: boolean
+  ): Promise<TypedRiveFile<T>>;
   export async function fromSource(
     source: number | { uri: string },
     referencedAssets: ResolvedReferencedAssets | undefined,
     loadCdn?: boolean
-  ): Promise<RiveFile> {
+  ): Promise<TypedRiveFile>;
+  export async function fromSource<T extends RiveFileSchema = RiveFileSchema>(
+    source: number | { uri: string },
+    referencedAssets: ResolvedReferencedAssets | undefined,
+    loadCdn?: boolean
+  ): Promise<TypedRiveFile<T>> {
     const assetID = typeof source === 'number' ? source : null;
     const sourceURI = typeof source === 'object' ? source.uri : null;
 
@@ -177,16 +185,24 @@ export namespace RiveFileFactory {
     try {
       // handle http address and dev server
       if (assetURI.match(/https?:\/\//)) {
-        return RiveFileFactory.fromURL(assetURI, referencedAssets, loadCdn);
+        return RiveFileFactory.fromURL<T>(assetURI, referencedAssets, loadCdn);
       }
 
       // handle iOS bundled asset
       if (assetURI.match(/file:\/\//)) {
-        return RiveFileFactory.fromFileURL(assetURI, referencedAssets, loadCdn);
+        return RiveFileFactory.fromFileURL<T>(
+          assetURI,
+          referencedAssets,
+          loadCdn
+        );
       }
 
       // handle Android bundled asset or resource name uri
-      return RiveFileFactory.fromResource(assetURI, referencedAssets, loadCdn);
+      return RiveFileFactory.fromResource<T>(
+        assetURI,
+        referencedAssets,
+        loadCdn
+      );
     } catch (error: unknown) {
       const errorMessage =
         error instanceof Error ? error.message : String(error);
