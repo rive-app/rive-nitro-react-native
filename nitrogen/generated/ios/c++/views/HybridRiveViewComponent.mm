@@ -127,6 +127,11 @@ using namespace margelo::nitro::rive::views;
     swiftPart.setOnError(newViewProps.onError.value);
     newViewProps.onError.isDirty = false;
   }
+  // onStop: function
+  if (newViewProps.onStop.isDirty) {
+    swiftPart.setOnStop(newViewProps.onStop.value);
+    newViewProps.onStop.isDirty = false;
+  }
 
   swiftPart.afterUpdate();
 

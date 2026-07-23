@@ -100,6 +100,8 @@ namespace margelo::nitro::rive {
       virtual void setDataBind(const std::optional<std::variant<std::shared_ptr<HybridViewModelInstanceSpec>, DataBindMode, DataBindByName>>& dataBind) = 0;
       virtual std::function<void(const RiveError& /* error */)> getOnError() = 0;
       virtual void setOnError(const std::function<void(const RiveError& /* error */)>& onError) = 0;
+      virtual std::function<void()> getOnStop() = 0;
+      virtual void setOnStop(const std::function<void()>& onStop) = 0;
 
     public:
       // Methods

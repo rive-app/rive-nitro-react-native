@@ -113,6 +113,7 @@ class HybridRiveView: HybridRiveViewSpec {
   // runtime (the experimental backend).
   var semantics: Semantics?
   var onError: (RiveError) -> Void = { _ in }
+  var onStop: () -> Void = {}
 
   func awaitViewReady() throws -> Promise<Bool> {
     return Promise.async { [self] in
@@ -209,6 +210,9 @@ class HybridRiveView: HybridRiveViewSpec {
       )
 
       let riveView = try getRiveView()
+      riveView.onStop = { [weak self] in
+        self?.onStop()
+      }
       try riveView.configure(
         config, dataBindingChanged: dataBindingChanged, reload: needsReload,
         initialUpdate: initialUpdate)

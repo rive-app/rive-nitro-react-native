@@ -67,6 +67,9 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
     onError = { msg ->
       this@HybridRiveView.onError(RiveError(type = RiveErrorType.UNKNOWN, message = msg))
     }
+    onStop = {
+      this@HybridRiveView.onStop()
+    }
   }
   private var needsReload = false
   private var dataBindingChanged = false
@@ -119,6 +122,7 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
       }
     }
   override var onError: (error: RiveError) -> Unit = {}
+  override var onStop: () -> Unit = {}
 
   override fun awaitViewReady(): Promise<Boolean> {
     return Promise.async {

@@ -101,6 +101,7 @@ class HybridRiveView: HybridRiveViewSpec {
   var frameRate: Variant_Double_FrameRateRange?
   var semantics: Semantics?
   var onError: (RiveError) -> Void = { _ in }
+  var onStop: () -> Void = {}
 
   func awaitViewReady() throws -> Promise<Bool> {
     return Promise.async { [self] in
@@ -222,6 +223,9 @@ class HybridRiveView: HybridRiveViewSpec {
         let riveView = try getRiveView()
         riveView.onLoadError = { [weak self] message in
           self?.onError(RiveError(message: message, type: .unknown))
+        }
+        riveView.onSettled = { [weak self] in
+          self?.onStop()
         }
         riveView.configure(
           config, dataBindingChanged: dataBindingChanged, reload: needsReload,

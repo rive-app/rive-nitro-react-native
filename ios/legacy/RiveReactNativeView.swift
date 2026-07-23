@@ -31,7 +31,7 @@ enum NitroRiveError: Error {
   case fileNotFound(message: String)
 }
 
-class RiveReactNativeView: UIView, RiveStateMachineDelegate {
+class RiveReactNativeView: UIView, RiveStateMachineDelegate, RivePlayerDelegate {
   // MARK: Internal Properties
   private var riveView: RiveView?
   private var baseViewModel: RiveViewModel?
@@ -42,6 +42,9 @@ class RiveReactNativeView: UIView, RiveStateMachineDelegate {
 
   // MARK: Public Config Properties
   var autoPlay: Bool = true
+
+  /// Fired when the state machine/animation stops playing (wired to the onStop prop).
+  var onStop: (() -> Void)?
 
   // MARK: - Public Methods
 
@@ -233,6 +236,7 @@ class RiveReactNativeView: UIView, RiveStateMachineDelegate {
       riveView.translatesAutoresizingMaskIntoConstraints = false
       addSubview(riveView)
       riveView.stateMachineDelegate = self
+      riveView.playerDelegate = self
       NSLayoutConstraint.activate([
         riveView.leadingAnchor.constraint(equalTo: leadingAnchor),
         riveView.trailingAnchor.constraint(equalTo: trailingAnchor),
@@ -245,6 +249,7 @@ class RiveReactNativeView: UIView, RiveStateMachineDelegate {
   func cleanup() {
     riveView?.removeFromSuperview()
     riveView?.stateMachineDelegate = nil
+    riveView?.playerDelegate = nil
     riveView = nil
     baseViewModel = nil
     if let viewSource = viewSource {
@@ -268,6 +273,18 @@ class RiveReactNativeView: UIView, RiveStateMachineDelegate {
       listener(eventType)
     }
   }
+
+  // MARK: - RivePlayerDelegate
+  // The animation view never has an explicit stop() call today (only
+  // play/pause/reset are exposed to JS), so this fires exactly when a
+  // non-looping animation or state machine naturally comes to rest.
+  func player(playedWithModel riveModel: RiveModel?) {}
+  func player(pausedWithModel riveModel: RiveModel?) {}
+  func player(loopedWithModel riveModel: RiveModel?, type: Int) {}
+  func player(stoppedWithModel riveModel: RiveModel?) {
+    onStop?()
+  }
+  func player(didAdvanceby seconds: Double, riveModel: RiveModel?) {}
 
   private func convertEventProperties(_ properties: [String: Any]?) -> [String:
     EventPropertiesOutput]? {

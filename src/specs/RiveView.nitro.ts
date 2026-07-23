@@ -77,6 +77,12 @@ export interface RiveViewProps extends HybridViewProps {
   dataBind?: ViewModelInstance | DataBindMode | DataBindByName;
   /** Callback function that is called when an error occurs */
   onError: (error: RiveError) => void;
+  /**
+   * Callback function that is called when the animation/state machine stops
+   * playing, e.g. when a non-looping animation reaches its end. Not called
+   * for pause() — only when playback naturally comes to rest.
+   */
+  onStop: () => void;
 }
 
 /**

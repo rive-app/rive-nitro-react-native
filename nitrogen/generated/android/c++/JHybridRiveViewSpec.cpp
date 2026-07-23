@@ -61,6 +61,7 @@ namespace margelo::nitro::rive { enum class RiveEventType; }
 #include "JRiveError.hpp"
 #include "RiveErrorType.hpp"
 #include "JRiveErrorType.hpp"
+#include "JFunc_void.hpp"
 #include <NitroModules/Promise.hpp>
 #include <NitroModules/JPromise.hpp>
 #include <NitroModules/JUnit.hpp>
@@ -208,6 +209,23 @@ namespace margelo::nitro::rive {
   void JHybridRiveViewSpec::setOnError(const std::function<void(const RiveError& /* error */)>& onError) {
     static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<JFunc_void_RiveError::javaobject> /* onError */)>("setOnError_cxx");
     method(_javaPart, JFunc_void_RiveError_cxx::fromCpp(onError));
+  }
+  std::function<void()> JHybridRiveViewSpec::getOnStop() {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JFunc_void::javaobject>()>("getOnStop_cxx");
+    auto __result = method(_javaPart);
+    return [&]() -> std::function<void()> {
+      if (__result->isInstanceOf(JFunc_void_cxx::javaClassStatic())) [[likely]] {
+        auto downcast = jni::static_ref_cast<JFunc_void_cxx::javaobject>(__result);
+        return downcast->cthis()->getFunction();
+      } else {
+        auto __resultRef = jni::make_global(__result);
+        return JNICallable<JFunc_void, void()>(std::move(__resultRef));
+      }
+    }();
+  }
+  void JHybridRiveViewSpec::setOnStop(const std::function<void()>& onStop) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<JFunc_void::javaobject> /* onStop */)>("setOnStop_cxx");
+    method(_javaPart, JFunc_void_cxx::fromCpp(onStop));
   }
 
   // Methods

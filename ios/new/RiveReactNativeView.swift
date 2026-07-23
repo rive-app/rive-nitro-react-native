@@ -28,6 +28,7 @@ class RiveReactNativeView: UIView {
   private var viewReadyContinuations: [CheckedContinuation<Bool, Never>] = []
   private var isViewReady = false
   private var configTask: Task<Void, Never>?
+  private var settledTask: Task<Void, Never>?
   private var isPaused = false
   private var semantics: RiveRuntime.Semantics = RiveUIView.Constants.Defaults.semantics {
     didSet { riveUIView?.semantics = semantics }
@@ -39,6 +40,10 @@ class RiveReactNativeView: UIView {
 
   /// Configure failures are reported here (wired to the onError prop).
   var onLoadError: ((String) -> Void)?
+
+  /// Fired whenever the state machine settles (reaches rest, e.g. a
+  /// non-looping animation reaching its end); wired to the onStop prop.
+  var onSettled: (() -> Void)?
 
   func awaitViewReady() async -> Bool {
     if isViewReady {
@@ -212,7 +217,18 @@ class RiveReactNativeView: UIView {
 
   // MARK: - Internal
 
+  private func observeSettled(of rive: RiveRuntime.Rive) {
+    settledTask?.cancel()
+    settledTask = Task { [weak self] in
+      for await _ in rive.stateMachine.settledStream() {
+        guard !Task.isCancelled else { return }
+        self?.onSettled?()
+      }
+    }
+  }
+
   private func setupRiveUIView(with rive: RiveRuntime.Rive) {
+    observeSettled(of: rive)
     if let existing = riveUIView {
       // Reuse the existing view — avoids tearing down the MTKView on every
       // reconfigure, which previously caused orphaned draw calls ("state machine
@@ -241,6 +257,8 @@ class RiveReactNativeView: UIView {
     dispatchPrecondition(condition: .onQueue(.main))
     configTask?.cancel()
     configTask = nil
+    settledTask?.cancel()
+    settledTask = nil
     riveUIView?.removeFromSuperview()
     riveUIView = nil
     riveInstance = nil
@@ -261,13 +279,16 @@ class RiveReactNativeView: UIView {
     // main thread (JS/GC thread); cleanup() must run on main. Capture the
     // resources, not self.
     let task = configTask
+    let settled = settledTask
     let uiView = riveUIView
     if Thread.isMainThread {
       task?.cancel()
+      settled?.cancel()
       uiView?.removeFromSuperview()
     } else {
       DispatchQueue.main.async {
         task?.cancel()
+        settled?.cancel()
         uiView?.removeFromSuperview()
       }
     }

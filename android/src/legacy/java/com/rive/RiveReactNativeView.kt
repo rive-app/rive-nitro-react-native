@@ -13,6 +13,7 @@ import com.facebook.react.uimanager.ThemedReactContext
 import app.rive.runtime.kotlin.core.Alignment
 import app.rive.runtime.kotlin.core.File
 import app.rive.runtime.kotlin.core.Fit
+import app.rive.runtime.kotlin.core.PlayableInstance
 import app.rive.runtime.kotlin.core.RiveEvent
 import app.rive.runtime.kotlin.core.RiveOpenURLEvent
 import app.rive.runtime.kotlin.core.SMIBoolean
@@ -98,9 +99,25 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
   private var configuredStateMachineName: String? = null
   private var willDispose = false
 
+  // Fired when the state machine/animation stops playing, e.g. when a
+  // non-looping animation reaches its end (wired to the onStop prop).
+  var onStop: (() -> Unit)? = null
+
+  private val fileControllerListener = object : RiveFileController.Listener {
+    override fun notifyPlay(playableInstance: PlayableInstance) {}
+    override fun notifyPause(playableInstance: PlayableInstance) {}
+    override fun notifyStop(playableInstance: PlayableInstance) {
+      onStop?.invoke()
+    }
+    override fun notifyLoop(playableInstance: PlayableInstance) {}
+    override fun notifyStateChanged(stateMachineName: String, stateName: String) {}
+    override fun notifyAdvance(elapsedTime: Float) {}
+  }
+
   init {
     riveAnimationView = ReactNativeRiveAnimationView(context)
     addView(riveAnimationView)
+    riveAnimationView?.registerListener(fileControllerListener)
   }
 
   fun dispose() {
@@ -109,6 +126,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
 
   override fun onDetachedFromWindow() {
     if (willDispose) {
+      riveAnimationView?.unregisterListener(fileControllerListener)
       riveAnimationView?.dispose()
       removeEventListeners()
       // Post-dispose reads must resolve null, not the retained (released)

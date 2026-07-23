@@ -58,7 +58,11 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
   //endregion
 
   //region State
-  override val view: RiveReactNativeView = RiveReactNativeView(context)
+  override val view: RiveReactNativeView = RiveReactNativeView(context).apply {
+    onStop = {
+      this@HybridRiveView.onStop()
+    }
+  }
   private var needsReload = false
   private var dataBindingChanged = false
   private var initialUpdate = true
@@ -105,6 +109,7 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
       }
     }
   override var onError: (error: RiveError) -> Unit = {}
+  override var onStop: () -> Unit = {}
   //endregion
 
   //region View Methods
