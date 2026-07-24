@@ -113,6 +113,11 @@ class HybridRiveView: HybridRiveViewSpec {
   // runtime (the experimental backend).
   var semantics: Semantics?
   var onError: (RiveError) -> Void = { _ in }
+  // Not wired on the legacy runtime: RivePlayerDelegate has no signal that
+  // reliably maps to "playback came to rest" here (stoppedWithModel only
+  // fires from an explicit stop(), which this wrapper never calls). The
+  // legacy backend is internal-testing-only, so this stays a no-op rather
+  // than reporting an incorrect stop.
   var onStop: () -> Void = {}
 
   func awaitViewReady() throws -> Promise<Bool> {
@@ -210,9 +215,6 @@ class HybridRiveView: HybridRiveViewSpec {
       )
 
       let riveView = try getRiveView()
-      riveView.onStop = { [weak self] in
-        self?.onStop()
-      }
       try riveView.configure(
         config, dataBindingChanged: dataBindingChanged, reload: needsReload,
         initialUpdate: initialUpdate)

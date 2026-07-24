@@ -29,6 +29,7 @@ class RiveReactNativeView: UIView {
   private var isViewReady = false
   private var configTask: Task<Void, Never>?
   private var settledTask: Task<Void, Never>?
+  private var stopNotifyTask: Task<Void, Never>?
   private var isPaused = false
   private var semantics: RiveRuntime.Semantics = RiveUIView.Constants.Defaults.semantics {
     didSet { riveUIView?.semantics = semantics }
@@ -222,8 +223,21 @@ class RiveReactNativeView: UIView {
     settledTask = Task { [weak self] in
       for await _ in rive.stateMachine.settledStream() {
         guard !Task.isCancelled else { return }
-        self?.onSettled?()
+        self?.scheduleStopNotification()
       }
+    }
+  }
+
+  // The SDK can emit settle back-to-back right after configure (an initial
+  // rest, immediately perturbed by setup — e.g. data-bind — and re-settling),
+  // which would otherwise report two stops for a single, user-visible "came
+  // to rest". Coalesce a tight burst into one onStop call.
+  private func scheduleStopNotification() {
+    stopNotifyTask?.cancel()
+    stopNotifyTask = Task { [weak self] in
+      try? await Task.sleep(nanoseconds: 150_000_000)
+      guard !Task.isCancelled else { return }
+      self?.onSettled?()
     }
   }
 
@@ -259,6 +273,8 @@ class RiveReactNativeView: UIView {
     configTask = nil
     settledTask?.cancel()
     settledTask = nil
+    stopNotifyTask?.cancel()
+    stopNotifyTask = nil
     riveUIView?.removeFromSuperview()
     riveUIView = nil
     riveInstance = nil
@@ -280,15 +296,18 @@ class RiveReactNativeView: UIView {
     // resources, not self.
     let task = configTask
     let settled = settledTask
+    let stopNotify = stopNotifyTask
     let uiView = riveUIView
     if Thread.isMainThread {
       task?.cancel()
       settled?.cancel()
+      stopNotify?.cancel()
       uiView?.removeFromSuperview()
     } else {
       DispatchQueue.main.async {
         task?.cancel()
         settled?.cancel()
+        stopNotify?.cancel()
         uiView?.removeFromSuperview()
       }
     }
