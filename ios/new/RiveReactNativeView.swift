@@ -220,6 +220,10 @@ class RiveReactNativeView: UIView {
 
   private func observeSettled(of rive: RiveRuntime.Rive) {
     settledTask?.cancel()
+    // A stop scheduled by the previous Rive instance must not fire into the
+    // new one after a reconfigure.
+    stopNotifyTask?.cancel()
+    stopNotifyTask = nil
     settledTask = Task { [weak self] in
       for await _ in rive.stateMachine.settledStream() {
         guard !Task.isCancelled else { return }
