@@ -180,6 +180,13 @@ namespace margelo::nitro::rive {
     inline void setOnError(const std::function<void(const RiveError& /* error */)>& onError) noexcept override {
       _swiftPart.setOnError(onError);
     }
+    inline std::function<void()> getOnStop() noexcept override {
+      auto __result = _swiftPart.getOnStop();
+      return __result;
+    }
+    inline void setOnStop(const std::function<void()>& onStop) noexcept override {
+      _swiftPart.setOnStop(onStop);
+    }
 
   public:
     // Methods

@@ -208,6 +208,23 @@ import { RiveView, RiveErrorType } from '@rive-app/react-native';
 
 > **Note**: If no `onError` handler is provided, errors will be logged to the console by default.
 
+## Animation Lifecycle
+
+The `RiveView` component provides an `onStop` callback prop, called when the animation/state machine stops playing — for example, when a non-looping animation reaches its end. This is useful for splash-screen-style animations where you want to navigate away once playback finishes:
+
+```js
+<RiveView
+  file={riveFile}
+  autoPlay={true}
+  onStop={() => {
+    // The animation has finished playing
+    navigation.replace('Home');
+  }}
+/>
+```
+
+> **Note**: `onStop` is not called by `pause()` — only when playback naturally comes to rest (e.g. a one-shot animation or a state machine reaching a state with no further transitions).
+
 ## Feature Support
 
 This section provides a comprehensive overview of feature availability in `@rive-app/react-native`, comparing it with the [previous Rive React Native runtime](https://github.com/rive-app/rive-react-native) and outlining the development roadmap.
@@ -234,6 +251,7 @@ The following table compares feature availability with the [previous Rive React 
 | `useRive()` hook                  | ✅     | Convenient hook to access the Rive View ref after load           |
 | `useRiveFile()` hook              | ✅     | Convenient hook to load a Rive file                              |
 | `RiveView` error handling         | ✅     | Error handler for failed view operations                         |
+| `RiveView` `onStop` callback      | ✅     | Callback fired when the animation/state machine stops playing    |
 | `source` .riv file loading        | ✅     | Conveniently load .riv files from JS source                      |
 | Accessibility semantics           | ⚠️     | Editor-authored semantics → VoiceOver (iOS; Android in progress) |
 | Animation selection               | ❌     | Animation playback not planned, use state machines               |

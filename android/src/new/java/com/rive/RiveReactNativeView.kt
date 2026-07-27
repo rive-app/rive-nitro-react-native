@@ -26,6 +26,7 @@ import com.margelo.nitro.rive.RiveLog
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
@@ -71,6 +72,20 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
     }
 
   var onError: ((String) -> Unit)? = null
+
+  // Fired when the state machine settles (reaches rest, e.g. a non-looping
+  // animation reaching its end); wired to the onStop prop.
+  var onStop: (() -> Unit)? = null
+
+  private var settledJob: Job? = null
+
+  // rive-runtime's command server emits a settle signal on every advance
+  // whose advanceAndApply returns false, not just on the settle edge — so
+  // once the state machine is at rest we simply stop advancing it (also
+  // saves CPU). Re-armed by whatever could actually move the state machine
+  // again: pointer input, resuming playback, or a data-binding change.
+  @Volatile
+  private var settled = false
 
   private val errorListener: (String) -> Unit = { msg ->
     onError?.invoke(msg)
@@ -191,7 +206,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
 
       if (worker != null && art != null && sm != null && rs != null) {
         try {
-          if (!paused) {
+          if (!paused && !settled) {
             worker.advanceStateMachine(sm, deltaTime)
           }
           worker.draw(art, sm, rs, activeFit)
@@ -271,11 +286,13 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
 
       riveFile = config.riveFile
 
-      stateMachineHandle = if (config.stateMachineName != null) {
+      val newStateMachineHandle = if (config.stateMachineName != null) {
         config.riveWorker.createStateMachineByName(newArtboard.artboardHandle, config.stateMachineName)
       } else {
         config.riveWorker.createDefaultStateMachine(newArtboard.artboardHandle)
       }
+      stateMachineHandle = newStateMachineHandle
+      observeSettled(config.riveWorker, newStateMachineHandle)
 
       if (surfaceTexture != null && riveSurface == null) {
         riveSurface = config.riveWorker.createRiveSurface(
@@ -293,6 +310,19 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
 
     if (dataBindingChanged || initialUpdate || reload) {
       applyDataBinding(config.bindData, config.riveFile)
+    }
+  }
+
+  private fun observeSettled(worker: CommandQueue, handle: StateMachineHandle) {
+    settled = false
+    settledJob?.cancel()
+    settledJob = viewScope.launch {
+      worker.settledFlow.collect { settledHandle ->
+        if (settledHandle == handle && !settled) {
+          settled = true
+          onStop?.invoke()
+        }
+      }
     }
   }
 
@@ -350,6 +380,9 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
           worker.pointerExit(smHandle, fit, w, h, id, -1f, -1f)
         }
       }
+      // A pointer event may move the state machine off rest; resume advancing
+      // so the render loop actually applies its effect.
+      settled = false
     } catch (e: Exception) {
       Log.e(TAG, "Pointer event failed", e)
     }
@@ -430,6 +463,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
     if (worker != null && smHandle != null) {
       worker.bindViewModelInstance(smHandle, instance.instanceHandle)
       needsRedraw = true
+      settled = false
     } else {
       Log.w(TAG, "Cannot bind VMI: worker or state machine handle not available")
     }
@@ -437,6 +471,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
 
   fun play() {
     paused = false
+    settled = false
     updateFrameRateHint()
   }
 
@@ -452,6 +487,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
 
   fun playIfNeeded() {
     paused = false
+    settled = false
     updateFrameRateHint()
   }
 
@@ -490,6 +526,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
     if (disposed) return
     disposed = true
     viewReadyDeferred.complete(false)
+    settledJob?.cancel()
     viewScope.cancel()
     RiveErrorLogger.removeListener(errorListener)
     stopRenderLoop()

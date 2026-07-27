@@ -105,6 +105,14 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
       }
     }
   override var onError: (error: RiveError) -> Unit = {}
+
+  // Not wired on the legacy runtime: RiveFileController.Listener has no
+  // signal that reliably maps to "playback came to rest" here — a settling
+  // state machine reports notifyPause, and notifyStop instead fires
+  // spuriously from setArtboard()'s internal stopAnimations() on reconfigure.
+  // The legacy backend is internal-testing-only, so this stays a no-op
+  // rather than reporting an incorrect stop.
+  override var onStop: () -> Unit = {}
   //endregion
 
   //region View Methods

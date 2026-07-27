@@ -5,12 +5,21 @@ import { callDispose } from './callDispose';
 import type { RiveViewRef } from '../index';
 
 export interface RiveViewProps
-  extends Omit<ComponentProps<typeof NitroRiveView>, 'onError'> {
+  extends Omit<ComponentProps<typeof NitroRiveView>, 'onError' | 'onStop'> {
   onError?: (error: RiveError) => void;
+  /**
+   * Called when the animation/state machine stops playing, e.g. when a
+   * non-looping animation reaches its end. Not called for pause() — only
+   * when playback naturally comes to rest. Useful for splash-screen-style
+   * animations where you want to navigate away once playback finishes.
+   */
+  onStop?: () => void;
 }
 
 const defaultOnError = (error: RiveError) =>
   console.error(`[${RiveErrorType[error.type]}] ${error.message}`);
+
+const defaultOnStop = () => {};
 
 /**
  * RiveView is a React Native component that renders Rive graphics.
@@ -38,14 +47,16 @@ const defaultOnError = (error: RiveError) =>
  * @property {number | FrameRateRange} [frameRate] - Preferred frame rate for the render loop (new runtimes only)
  * @property {Object} [style] - React Native style object for container customization
  * @property {(error: RiveError) => void} [onError] - Callback function that is called when an error occurs
+ * @property {() => void} [onStop] - Callback function that is called when the animation/state machine stops playing (e.g. reaches the end of a non-looping animation)
  *
  * The component also exposes methods for controlling playback:
  * - play(): Starts playing the Rive graphic
  * - pause(): Pauses the Rive graphic
  */
 export function RiveView(props: RiveViewProps) {
-  const { onError, hybridRef: userHybridRef, ...rest } = props;
+  const { onError, onStop, hybridRef: userHybridRef, ...rest } = props;
   const wrappedOnError = onError ?? defaultOnError;
+  const wrappedOnStop = onStop ?? defaultOnStop;
   const viewRef = useRef<RiveViewRef | null>(null);
 
   useEffect(() => {
@@ -68,6 +79,7 @@ export function RiveView(props: RiveViewProps) {
     <NitroRiveView
       {...rest}
       onError={{ f: wrappedOnError }}
+      onStop={{ f: wrappedOnStop }}
       hybridRef={{ f: setRef }}
     />
   );
