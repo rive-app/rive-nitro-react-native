@@ -35,9 +35,9 @@ export type {
   TypedViewModelInstance,
   TypedViewModelOf,
   UntypedViewModelInstance,
-  TypedViewModelListProperty,
   TypedViewModelEnumProperty,
   PathsOfKind,
+  PropTypeAtPath,
   EnumValuesOf,
 } from './core/TypedViewModelInstance';
 export type {

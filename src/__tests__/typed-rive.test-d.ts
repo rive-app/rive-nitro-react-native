@@ -1,8 +1,13 @@
-import { expectType, expectError, expectAssignable } from 'tsd';
+import {
+  expectType,
+  expectError,
+  expectAssignable,
+  expectDeprecated,
+  expectNotDeprecated,
+} from 'tsd';
 import type { TypedRiveFile, RiveAsset } from '../../src/core/TypedRiveFile';
 import type {
   TypedViewModelInstance,
-  TypedViewModelListProperty,
   TypedViewModelEnumProperty,
   UntypedViewModelInstance,
 } from '../../src/core/TypedViewModelInstance';
@@ -11,12 +16,18 @@ import type {
   ViewModelNumberProperty,
   ViewModelTriggerProperty,
   ViewModelBooleanProperty,
+  ViewModelListProperty,
 } from '../../src/specs/ViewModel.nitro';
+import type { RiveFile } from '../../src/specs/RiveFile.nitro';
 import type { UseRivePropertyResult } from '../../src/types';
 import { useRiveNumber } from '../../src/hooks/useRiveNumber';
+import { useRiveEnum } from '../../src/hooks/useRiveEnum';
+import { useViewModelInstance } from '../../src/hooks/useViewModelInstance';
 import type { RiveViewProps } from '../../src/core/RiveView';
 import gradientBorderRiv from '../../example/assets/rive/GradientBorder.riv';
 import blinkoRiv from '../../example/assets/rive/blinko.riv';
+import rewardsRiv from '../../example/assets/rive/rewards.riv';
+import fallbackFontsRiv from '../../example/assets/rive/fallback_fonts.riv';
 
 // Infer schemas from the generated .riv.d.ts assets
 type GradientBorderSchema = typeof gradientBorderRiv extends RiveAsset<infer T>
@@ -215,21 +226,26 @@ expectError(storeVM.enumProperty('doesNotExist'));
 
 // --- List property ---
 
-// storeVM.items is a 'list' — returns a typed list property
-expectAssignable<TypedViewModelListProperty<BlinkoSchema> | undefined>(
-  storeVM.listProperty('items')
-);
+// storeVM.items is a 'list' — path is constrained, the property itself is the
+// plain runtime type: the schema cannot know which ViewModel a list holds at a
+// given index, and a union element would make every accessor parameter
+// intersect to `never` (unusable).
+expectType<ViewModelListProperty | undefined>(storeVM.listProperty('items'));
 
 // Non-list property rejected for listProperty()
 expectError(storeVM.listProperty('xbuttonClick'));
 
-// List element is a union of all file ViewModels (any one of them)
-type AnyBlinkoVM = TypedViewModelInstance<
-  BlinkoSchema,
-  Extract<keyof BlinkoSchema['viewModels'], string>
->;
-declare const list: TypedViewModelListProperty<BlinkoSchema>;
-expectAssignable<Promise<AnyBlinkoVM | undefined>>(list.getInstanceAtAsync(0));
+// List elements are untyped instances — usable with any accessor / untyped hooks
+declare const listProp: ViewModelListProperty;
+expectType<Promise<ViewModelInstance | undefined>>(
+  listProp.getInstanceAtAsync(0)
+);
+async function listElementIsUsable() {
+  const el = await listProp.getInstanceAtAsync(0);
+  el?.numberProperty('anything');
+  useRiveNumber('any/path', el);
+}
+void listElementIsUsable;
 
 // ============================================================
 // useRiveNumber
@@ -272,3 +288,137 @@ expectType<UseRivePropertyResult<number>>(
 
 // No instance: falls back to untyped overload, still returns number result
 expectType<UseRivePropertyResult<number>>(useRiveNumber('multiplierValue'));
+
+// ============================================================
+// useViewModelInstance — schema-aware file overloads
+// ============================================================
+
+declare const plainFile: RiveFile;
+
+// --- Files without a generated schema degrade to untyped (never `never`) ---
+// This is the load-bearing backward-compat guarantee: RiveFileFactory.* and
+// useRiveFile(require(...)) produce TypedRiveFile<RiveFileSchema>, and code
+// that passes viewModelName + uses untyped hooks must keep compiling.
+{
+  const { instance } = useViewModelInstance(plainFile, {
+    viewModelName: 'AnyNameAtAll',
+    async: true,
+  });
+  expectType<ViewModelInstance | null | undefined>(instance);
+  useRiveNumber('score', instance);
+  if (instance) {
+    instance.numberProperty('score');
+    useRiveNumber('nested/path', instance);
+  }
+}
+
+declare const baseTypedFile: TypedRiveFile;
+{
+  const { instance } = useViewModelInstance(baseTypedFile, {
+    viewModelName: 'AnyNameAtAll',
+    async: true,
+  });
+  expectType<ViewModelInstance | null | undefined>(instance);
+  useRiveNumber('score', instance);
+}
+
+// --- Schema-typed file + valid viewModelName → typed instance ---
+{
+  const { instance } = useViewModelInstance(blinkoFile, {
+    viewModelName: 'storeVM',
+    async: true,
+  });
+  expectType<
+    TypedViewModelInstance<BlinkoSchema, 'storeVM'> | null | undefined
+  >(instance);
+}
+
+// --- Invalid viewModelName on a schema-typed file is a hard error ---
+// It must NOT silently fall through to an untyped overload.
+expectError(
+  useViewModelInstance(blinkoFile, {
+    viewModelName: 'NotAViewModel',
+    async: true,
+  })
+);
+
+// --- Typed file without viewModelName → untyped result (default instance) ---
+{
+  const { instance } = useViewModelInstance(blinkoFile, { async: true });
+  expectType<ViewModelInstance | null | undefined>(instance);
+}
+
+// --- required: true keeps its narrowing on the typed overload ---
+{
+  const { instance } = useViewModelInstance(blinkoFile, {
+    viewModelName: 'storeVM',
+    async: true,
+    required: true,
+  });
+  expectType<TypedViewModelInstance<BlinkoSchema, 'storeVM'> | undefined>(
+    instance
+  );
+}
+
+// --- Deprecation composes with the typed overloads ---
+// Without async: true the sync (JS-thread-blocking) path is used — the typed
+// call must carry the same @deprecated marker as the untyped one.
+expectDeprecated(useViewModelInstance(blinkoFile, { viewModelName: 'storeVM' }));
+expectDeprecated(useViewModelInstance(plainFile));
+expectNotDeprecated(
+  useViewModelInstance(blinkoFile, { viewModelName: 'storeVM', async: true })
+);
+
+// ============================================================
+// Schemas without ViewModels still type artboards/state machines
+// ============================================================
+
+type FallbackFontsSchema =
+  typeof fallbackFontsRiv extends RiveAsset<infer T> ? T : never;
+declare const fontsFile: TypedRiveFile<FallbackFontsSchema>;
+
+expectAssignable<RiveViewProps<FallbackFontsSchema>>({
+  file: fontsFile,
+  artboardName: 'Artboard',
+});
+expectError<RiveViewProps<FallbackFontsSchema>>({
+  file: fontsFile,
+  artboardName: 'NotAnArtboard',
+});
+
+// A file with no ViewModels accepts no viewModelName at all
+expectError(
+  useViewModelInstance(fontsFile, { viewModelName: 'anything', async: true })
+);
+
+// ============================================================
+// useRiveEnum — nested paths (parity with the sibling hooks)
+// ============================================================
+
+type RewardsSchema = typeof rewardsRiv extends RiveAsset<infer T> ? T : never;
+declare const rewardsVM: TypedViewModelInstance<RewardsSchema, 'Rewards'>;
+
+// Direct enum path on the owning VM
+declare const itemVM: TypedViewModelInstance<RewardsSchema, 'Item'>;
+expectType<UseRivePropertyResult<'Coin' | 'Gem'>>(
+  useRiveEnum('Item_Selection', itemVM)
+);
+
+// Nested enum path — Item_Selection on Rewards is 'viewModel:Item'
+expectType<UseRivePropertyResult<'Coin' | 'Gem'>>(
+  useRiveEnum('Item_Selection/Item_Selection', rewardsVM)
+);
+
+// Two-hop nested enum path: Rewards → Item_Value_Icon → Property_Of_Item → Item_Selection
+expectType<UseRivePropertyResult<'Coin' | 'Gem'>>(
+  useRiveEnum('Item_Value_Icon/Property_Of_Item/Item_Selection', rewardsVM)
+);
+
+// Wrong nested enum path errors
+expectError(useRiveEnum('Item_Selection/DoesNotExist', rewardsVM));
+
+// Instance accessors accept nested paths too
+expectAssignable<ViewModelNumberProperty | undefined>(
+  rewardsVM.numberProperty('Item_Value_Icon/Item_Value')
+);
+expectError(rewardsVM.numberProperty('Item_Value_Icon/DoesNotExist'));

@@ -4,7 +4,10 @@ import { useMemo, useRef } from 'react';
 import type { ViewModel, ViewModelInstance } from '../specs/ViewModel.nitro';
 import type { RiveFile } from '../specs/RiveFile.nitro';
 import type { RiveFileSchema } from '../core/TypedRiveFile';
-import type { TypedViewModelInstance } from '../core/TypedViewModelInstance';
+import type {
+  IsBaseSchema,
+  TypedViewModelInstance,
+} from '../core/TypedViewModelInstance';
 import type { RiveViewRef } from '../index';
 import { callDispose } from '../core/callDispose';
 import { ArtboardByName } from '../specs/ArtboardBy';
@@ -84,6 +87,31 @@ export type UseViewModelInstanceFileParams =
   | UseViewModelInstanceFileDefault
   | UseViewModelInstanceFileByArtboard
   | UseViewModelInstanceFileByViewModelName;
+
+/**
+ * Valid `viewModelName` values for a file with schema `S` — any string when
+ * nothing is statically known about the file.
+ */
+type VMNameArg<S extends RiveFileSchema> =
+  IsBaseSchema<S> extends true
+    ? string
+    : Extract<keyof S['viewModels'], string>;
+
+/**
+ * File params whose `viewModelName` is constrained to the file's schema.
+ * Intersecting `N` with the valid names (instead of constraining `N` itself)
+ * makes an invalid name a hard error inside this overload rather than a
+ * constraint failure that would silently fall through to another overload.
+ */
+type UseViewModelInstanceFileParamsFor<
+  S extends RiveFileSchema,
+  N extends string,
+> =
+  | UseViewModelInstanceFileDefault
+  | UseViewModelInstanceFileByArtboard
+  | (Omit<UseViewModelInstanceFileByViewModelName, 'viewModelName'> & {
+      viewModelName: N & VMNameArg<S>;
+    });
 
 export interface UseViewModelInstanceViewModelParams
   extends UseViewModelInstanceBaseParams {
@@ -221,6 +249,45 @@ export type UseViewModelInstanceRequiredResult =
   | { instance: undefined; isLoading: true; error: null };
 
 /**
+ * File-source result: typed when the schema is statically known and
+ * `viewModelName` names one of its ViewModels, untyped otherwise.
+ */
+type UseViewModelInstanceFileResult<
+  S extends RiveFileSchema,
+  N extends string,
+> =
+  IsBaseSchema<S> extends true
+    ? UseViewModelInstanceResult
+    : N extends Extract<keyof S['viewModels'], string>
+      ?
+          | {
+              instance: TypedViewModelInstance<S, N>;
+              isLoading: false;
+              error: null;
+            }
+          | { instance: null; isLoading: false; error: Error }
+          | { instance: null; isLoading: false; error: null }
+          | { instance: undefined; isLoading: true; error: null }
+      : UseViewModelInstanceResult;
+
+/** File-source result with `required: true` — the `null` cases are removed. */
+type UseViewModelInstanceFileRequiredResult<
+  S extends RiveFileSchema,
+  N extends string,
+> =
+  IsBaseSchema<S> extends true
+    ? UseViewModelInstanceRequiredResult
+    : N extends Extract<keyof S['viewModels'], string>
+      ?
+          | {
+              instance: TypedViewModelInstance<S, N>;
+              isLoading: false;
+              error: null;
+            }
+          | { instance: undefined; isLoading: true; error: null }
+      : UseViewModelInstanceRequiredResult;
+
+/**
  * Hook for getting a ViewModelInstance from a RiveFile, ViewModel, or RiveViewRef.
  *
  * Pass `async: true` to create the instance via the async runtime APIs,
@@ -311,38 +378,44 @@ export type UseViewModelInstanceRequiredResult =
  * });
  * ```
  */
-// Typed overload: TypedRiveFile + literal viewModelName → TypedViewModelInstance
+// RiveFile overloads — schema-aware. When the file carries a generated schema
+// and `viewModelName` names one of its ViewModels, the instance is typed;
+// files without a generated schema (base RiveFileSchema) degrade to the
+// untyped result. An invalid `viewModelName` on a schema-typed file is a hard
+// error — it must not silently fall through to an untyped overload.
 export function useViewModelInstance<
-  T extends RiveFileSchema,
-  N extends Extract<keyof T['viewModels'], string>,
+  S extends RiveFileSchema = RiveFileSchema,
+  N extends string = string,
 >(
-  source: (RiveFile & { readonly __schema?: T }) | null | undefined,
-  params: UseViewModelInstanceFileParams & { viewModelName: N }
-):
-  | { instance: TypedViewModelInstance<T, N>; isLoading: false; error: null }
-  | { instance: null; isLoading: false; error: Error }
-  | { instance: null; isLoading: false; error: null }
-  | { instance: undefined; isLoading: true; error: null };
-
-// RiveFile overloads
-export function useViewModelInstance(
-  source: RiveFile,
-  params: UseViewModelInstanceFileParams & { async: true; required: true }
-): UseViewModelInstanceRequiredResult;
-export function useViewModelInstance(
-  source: RiveFile | null | undefined,
-  params: UseViewModelInstanceFileParams & { async: true }
-): UseViewModelInstanceResult;
+  source: RiveFile & { readonly __schema?: S },
+  params: UseViewModelInstanceFileParamsFor<S, N> & {
+    async: true;
+    required: true;
+  }
+): UseViewModelInstanceFileRequiredResult<S, N>;
+export function useViewModelInstance<
+  S extends RiveFileSchema = RiveFileSchema,
+  N extends string = string,
+>(
+  source: (RiveFile & { readonly __schema?: S }) | null | undefined,
+  params: UseViewModelInstanceFileParamsFor<S, N> & { async: true }
+): UseViewModelInstanceFileResult<S, N>;
 /** @deprecated Pass `async: true` — without it the instance is created synchronously via deprecated runtime APIs that block the JS thread. `async: true` becomes the default in the next major. If your params object's `async` widened to `boolean`, re-pin it at the call site: `{ ...params, async: true }`. */
-export function useViewModelInstance(
-  source: RiveFile,
-  params: UseViewModelInstanceFileParams & { required: true }
-): UseViewModelInstanceRequiredResult;
+export function useViewModelInstance<
+  S extends RiveFileSchema = RiveFileSchema,
+  N extends string = string,
+>(
+  source: RiveFile & { readonly __schema?: S },
+  params: UseViewModelInstanceFileParamsFor<S, N> & { required: true }
+): UseViewModelInstanceFileRequiredResult<S, N>;
 /** @deprecated Pass `async: true` — without it the instance is created synchronously via deprecated runtime APIs that block the JS thread. `async: true` becomes the default in the next major. If your params object's `async` widened to `boolean`, re-pin it at the call site: `{ ...params, async: true }`. */
-export function useViewModelInstance(
-  source: RiveFile | null | undefined,
-  params?: UseViewModelInstanceFileParams
-): UseViewModelInstanceResult;
+export function useViewModelInstance<
+  S extends RiveFileSchema = RiveFileSchema,
+  N extends string = string,
+>(
+  source: (RiveFile & { readonly __schema?: S }) | null | undefined,
+  params?: UseViewModelInstanceFileParamsFor<S, N>
+): UseViewModelInstanceFileResult<S, N>;
 
 // ViewModel overloads
 export function useViewModelInstance(
