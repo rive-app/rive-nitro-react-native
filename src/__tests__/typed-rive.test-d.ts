@@ -218,6 +218,13 @@ expectType<TypedViewModelEnumProperty<'normal' | 'multiplier'> | undefined>(
   storeVM.viewModel('property of pegVM')?.enumProperty('pegType')
 );
 
+// All enum property setters are narrowed to the declared values
+declare const pegTypeProp: TypedViewModelEnumProperty<'normal' | 'multiplier'>;
+pegTypeProp.set('normal');
+expectType<Promise<void>>(pegTypeProp.setValueAsync('multiplier'));
+expectError(pegTypeProp.set('bogus'));
+expectError(pegTypeProp.setValueAsync('bogus'));
+
 // Non-enum property rejected for enumProperty()
 expectError(storeVM.enumProperty('xbuttonClick'));
 

@@ -23,19 +23,23 @@ import {
 import { dirname, resolve, basename, extname } from 'path';
 import { RuntimeLoader } from '@rive-app/canvas';
 
-// Browser shims required by the @rive-app/canvas WASM runtime.
-(globalThis as any).document = {
-  createElement: () => ({ getContext: () => null }),
-};
-(globalThis as any).Image = class {};
+// Called from main() so that importing this module (for unit-testing the
+// exported emit helpers) has no global side effects.
+function setupWasmShims(): void {
+  // Browser shims required by the @rive-app/canvas WASM runtime.
+  (globalThis as any).document = {
+    createElement: () => ({ getContext: () => null }),
+  };
+  (globalThis as any).Image = class {};
 
-// Silence WASM warnings (e.g. "No WebGL support") so they don't pollute output.
-console.log = (...args: unknown[]) =>
-  process.stderr.write(args.join(' ') + '\n');
-console.warn = (...args: unknown[]) =>
-  process.stderr.write(args.join(' ') + '\n');
+  // Silence WASM warnings (e.g. "No WebGL support") so they don't pollute output.
+  console.log = (...args: unknown[]) =>
+    process.stderr.write(args.join(' ') + '\n');
+  console.warn = (...args: unknown[]) =>
+    process.stderr.write(args.join(' ') + '\n');
+}
 
-interface Schema {
+export interface Schema {
   artboards: string[];
   defaultArtboard: string;
   stateMachines: Record<string, string[]>;
@@ -115,18 +119,7 @@ async function extractSchema(input: string): Promise<Schema> {
       } else if (p.type === 'enumType' && inst) {
         try {
           const ep = inst.enum?.(p.name);
-          const values: string[] = ep?.values ?? [];
-          // '|' is the separator in the 'enum:a|b' encoding — a value containing
-          // it cannot be represented, so fall back to an untyped enum.
-          if (values.some((v) => v.includes('|'))) {
-            process.stderr.write(
-              `Warning: enum property '${p.name}' has a value containing '|'; emitting untyped 'enum'.\n`
-            );
-            props[p.name] = 'enum';
-          } else {
-            props[p.name] =
-              values.length > 0 ? `enum:${values.join('|')}` : 'enum';
-          }
+          props[p.name] = enumTypeString(p.name, ep?.values ?? []);
         } catch {
           props[p.name] = 'enum';
         }
@@ -151,11 +144,11 @@ const needsQuote = (s: string) => !IDENTIFIER_RE.test(s);
 // Rive names are free-form editor strings — escape for a single-quoted literal.
 const escapeLiteral = (s: string) =>
   s.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
-const strLit = (s: string) => `'${escapeLiteral(s)}'`;
-const quoteKey = (s: string, forceQuote: boolean) =>
+export const strLit = (s: string) => `'${escapeLiteral(s)}'`;
+export const quoteKey = (s: string, forceQuote: boolean) =>
   forceQuote || needsQuote(s) ? strLit(s) : s;
 
-function smRecord(stateMachines: Record<string, string[]>): string {
+export function smRecord(stateMachines: Record<string, string[]>): string {
   const keys = Object.keys(stateMachines);
   const force = keys.some(needsQuote);
   return Object.entries(stateMachines)
@@ -166,7 +159,9 @@ function smRecord(stateMachines: Record<string, string[]>): string {
     .join('\n');
 }
 
-function vmRecord(viewModels: Record<string, Record<string, string>>): string {
+export function vmRecord(
+  viewModels: Record<string, Record<string, string>>
+): string {
   const vmKeys = Object.keys(viewModels);
   const forceVmKeys = vmKeys.some(needsQuote);
   return Object.entries(viewModels)
@@ -184,7 +179,7 @@ function vmRecord(viewModels: Record<string, Record<string, string>>): string {
     .join('\n');
 }
 
-function schemaBody(schema: Schema): string {
+export function schemaBody(schema: Schema): string {
   // Always emit viewModels — omitting it would fail the RiveFileSchema
   // constraint and silently degrade the whole asset to untyped.
   const vmSection =
@@ -265,7 +260,23 @@ function findRivFiles(dir: string): string[] {
 
 // --- CLI ---
 
+/**
+ * Schema type string for an enum property. '|' is the separator in the
+ * 'enum:a|b' encoding — a value containing it cannot be represented, so fall
+ * back to an untyped enum.
+ */
+export function enumTypeString(propName: string, values: string[]): string {
+  if (values.some((v) => v.includes('|'))) {
+    process.stderr.write(
+      `Warning: enum property '${propName}' has a value containing '|'; emitting untyped 'enum'.\n`
+    );
+    return 'enum';
+  }
+  return values.length > 0 ? `enum:${values.join('|')}` : 'enum';
+}
+
 async function main() {
+  setupWasmShims();
   // noUncheckedIndexedAccess: slice gives string[], index access gives string | undefined
   const args: string[] = process.argv.slice(2);
 
@@ -339,7 +350,9 @@ async function main() {
   }
 }
 
-main().catch((err: Error) => {
-  process.stderr.write(err.message + '\n');
-  process.exit(1);
-});
+if (import.meta.main) {
+  main().catch((err: Error) => {
+    process.stderr.write(err.message + '\n');
+    process.exit(1);
+  });
+}
