@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.5.0-beta.1](https://github.com/rive-app/rive-nitro-react-native/compare/v0.5.0-beta...v0.5.0-beta.1) (2026-07-27)
+
+
+### Features
+
+* add onStop callback for animation lifecycle (iOS + Android) ([#353](https://github.com/rive-app/rive-nitro-react-native/issues/353)) ([184ddb8](https://github.com/rive-app/rive-nitro-react-native/commit/184ddb8313617b96b1072c5d3cc3dfe789096cc6))
+* onStop callback for RiveView animation lifecycle ([184ddb8](https://github.com/rive-app/rive-nitro-react-native/commit/184ddb8313617b96b1072c5d3cc3dfe789096cc6))
+
 ## [0.5.0-beta](https://github.com/rive-app/rive-nitro-react-native/compare/v0.4.19...v0.5.0-beta) (2026-07-21)
 
 
