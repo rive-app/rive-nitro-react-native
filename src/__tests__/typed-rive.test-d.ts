@@ -23,7 +23,7 @@ import type { UseRivePropertyResult } from '../../src/types';
 import { useRiveNumber } from '../../src/hooks/useRiveNumber';
 import { useRiveEnum } from '../../src/hooks/useRiveEnum';
 import { useViewModelInstance } from '../../src/hooks/useViewModelInstance';
-import type { RiveViewProps } from '../../src/core/RiveView';
+import { RiveView, type RiveViewProps } from '../../src/core/RiveView';
 import gradientBorderRiv from '../../example/assets/rive/GradientBorder.riv';
 import blinkoRiv from '../../example/assets/rive/blinko.riv';
 import rewardsRiv from '../../example/assets/rive/rewards.riv';
@@ -127,6 +127,28 @@ expectAssignable<RiveViewProps>({
   artboardName: 'anything',
   stateMachineName: 'anything',
 });
+
+// --- RiveView with an asset-annotated file (TypedRiveFile<typeof riv>) ---
+// The generic must accept the RiveAsset form, not just bare schemas —
+// otherwise inference silently falls back to the base schema and name
+// checking is disabled for the documented `TypedRiveFile<typeof riv>` pattern.
+
+declare const assetTypedFile: TypedRiveFile<typeof blinkoRiv>;
+
+RiveView({ file: assetTypedFile, artboardName: 'Main' });
+RiveView({
+  file: assetTypedFile,
+  artboardName: 'Main',
+  stateMachineName: 'State Machine 1',
+});
+expectError(RiveView({ file: assetTypedFile, artboardName: 'NotAnArtboard' }));
+expectError(
+  RiveView({
+    file: assetTypedFile,
+    artboardName: 'Main',
+    stateMachineName: 'Nonexistent SM',
+  })
+);
 
 // --- RiveAsset branding ---
 

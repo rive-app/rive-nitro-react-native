@@ -3,13 +3,22 @@ import { NitroRiveView } from './NitroRiveViewComponent';
 import { RiveErrorType, type RiveError } from './Errors';
 import { callDispose } from './callDispose';
 import type { RiveViewRef } from '../index';
-import type { RiveFileSchema, TypedRiveFile } from './TypedRiveFile';
+import type {
+  RiveAsset,
+  RiveFileSchema,
+  SchemaOf,
+  TypedRiveFile,
+} from './TypedRiveFile';
 
 type NitroRiveViewProps = ComponentProps<typeof NitroRiveView>;
 
+// T accepts a schema OR a RiveAsset (i.e. `typeof importedRiv`), matching
+// TypedRiveFile. A schema-only constraint would make inference silently fall
+// back to the base schema — and disable all name checking — whenever the file
+// is annotated as TypedRiveFile<typeof asset>.
 export interface RiveViewProps<
-  T extends RiveFileSchema = RiveFileSchema,
-  A extends T['artboards'] = T['defaultArtboard'],
+  T extends RiveFileSchema | RiveAsset = RiveFileSchema,
+  A extends SchemaOf<T>['artboards'] = SchemaOf<T>['defaultArtboard'],
 > extends Omit<
     NitroRiveViewProps,
     'onError' | 'onStop' | 'file' | 'artboardName' | 'stateMachineName'
@@ -29,7 +38,7 @@ export interface RiveViewProps<
    * Name of the state machine to play.
    * Constrained to the selected artboard's state machines, or the default artboard's if none is specified.
    */
-  stateMachineName?: T['stateMachines'][A];
+  stateMachineName?: SchemaOf<T>['stateMachines'][A];
 }
 
 const defaultOnError = (error: RiveError) =>
@@ -70,8 +79,8 @@ const defaultOnStop = () => {};
  * - pause(): Pauses the Rive graphic
  */
 export function RiveView<
-  T extends RiveFileSchema = RiveFileSchema,
-  A extends T['artboards'] = T['defaultArtboard'],
+  T extends RiveFileSchema | RiveAsset = RiveFileSchema,
+  A extends SchemaOf<T>['artboards'] = SchemaOf<T>['defaultArtboard'],
 >(props: RiveViewProps<T, A>) {
   const { onError, onStop, hybridRef: userHybridRef, ...rest } = props;
   const wrappedOnError = onError ?? defaultOnError;
