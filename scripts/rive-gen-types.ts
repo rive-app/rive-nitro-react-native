@@ -4,13 +4,13 @@
  * is automatically typed in TypeScript without any extra imports.
  *
  * Usage:
- *   bun scripts/rive-gen-types.ts <path-or-url>          # writes <file>.riv.d.ts next to the source
- *   bun scripts/rive-gen-types.ts <path> --out <out.ts>  # write a standalone schema .ts instead
- *   bun scripts/rive-gen-types.ts --all <directory>      # generate for every .riv in a directory
+ *   bun scripts/rive-gen-types.ts <path>                    # writes <file>.riv.d.ts next to the source
+ *   bun scripts/rive-gen-types.ts <path-or-url> --out <out> # write to an explicit path (required for URLs)
+ *   bun scripts/rive-gen-types.ts --all <directory>         # generate for every .riv in a directory
  *
  * After generation, TypeScript resolves the .riv.d.ts automatically:
- *   import gameRiv from './assets/game.riv';              // typed as RiveAsset<GameSchema>
- *   const file = await RiveFileFactory.fromSource(gameRiv); // TypedRiveFile<GameSchema> — T inferred
+ *   import gameRiv from './assets/game.riv';                       // typed as RiveAsset<GameSchema>
+ *   const file = await RiveFileFactory.fromSource(gameRiv, undefined); // TypedRiveFile<GameSchema> — T inferred
  */
 
 import {
@@ -59,10 +59,14 @@ async function getRuntime(): Promise<any> {
 const LOAD_TIMEOUT_MS = 30_000;
 
 async function extractSchema(input: string): Promise<Schema> {
-  const bytes =
-    input.startsWith('http://') || input.startsWith('https://')
-      ? new Uint8Array(await (await fetch(input)).arrayBuffer())
-      : new Uint8Array(readFileSync(input));
+  let bytes: Uint8Array;
+  if (input.startsWith('http://') || input.startsWith('https://')) {
+    const res = await fetch(input);
+    if (!res.ok) throw new Error(`HTTP ${res.status}: ${input}`);
+    bytes = new Uint8Array(await res.arrayBuffer());
+  } else {
+    bytes = new Uint8Array(readFileSync(input));
+  }
 
   const runtime = await getRuntime();
 
@@ -316,8 +320,8 @@ async function main() {
   if (!args.length || args[0]!.startsWith('--')) {
     process.stderr.write(
       'Usage:\n' +
-        '  rive-gen-types <path-or-url>               # writes <file>.riv.d.ts\n' +
-        '  rive-gen-types <path> --out <out.ts>        # standalone schema .ts\n' +
+        '  rive-gen-types <path>                       # writes <file>.riv.d.ts\n' +
+        '  rive-gen-types <path-or-url> --out <out.ts> # standalone schema .ts (required for URLs)\n' +
         '  rive-gen-types --all <directory>            # all .riv files in dir\n'
     );
     process.exit(1);
@@ -327,14 +331,24 @@ async function main() {
   const outIdx = args.indexOf('--out');
 
   if (outIdx !== -1) {
-    // Standalone mode: generate a named schema type, not a .d.ts
-    const outPath = resolve(process.cwd(), args[outIdx + 1]!);
-    const baseName = basename(input, '.riv').replace(/[^a-zA-Z0-9]/g, '_');
+    const outArg: string | undefined = args[outIdx + 1];
+    if (!outArg || outArg.startsWith('--')) {
+      process.stderr.write('Error: --out requires an output path.\n');
+      process.exit(1);
+    }
     const nameIdx = args.indexOf('--name');
+    const nameArg: string | undefined =
+      nameIdx !== -1 ? args[nameIdx + 1] : undefined;
+    if (nameIdx !== -1 && (!nameArg || nameArg.startsWith('--'))) {
+      process.stderr.write('Error: --name requires a type name.\n');
+      process.exit(1);
+    }
+    // Standalone mode: generate a named schema type, not a .d.ts
+    const outPath = resolve(process.cwd(), outArg);
+    const baseName = basename(input, '.riv').replace(/[^a-zA-Z0-9]/g, '_');
     const typeName =
-      nameIdx !== -1
-        ? args[nameIdx + 1]!
-        : baseName.charAt(0).toUpperCase() + baseName.slice(1) + 'Schema';
+      nameArg ??
+      baseName.charAt(0).toUpperCase() + baseName.slice(1) + 'Schema';
     await generate(input, outPath, 'standalone', typeName);
   } else {
     if (input.startsWith('http://') || input.startsWith('https://')) {
