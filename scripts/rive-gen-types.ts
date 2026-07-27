@@ -46,33 +46,13 @@ let runtimeReady: Promise<any> | null = null;
 
 async function getRuntime(): Promise<any> {
   if (!runtimeReady) {
-    runtimeReady = RuntimeLoader.awaitInstance().then((runtime) => {
-      // On headless Linux (no WebGL) the image-load counter (aa.total/aa.loaded)
-      // never resolves. Wrap img.decode to fire img.la() via queueMicrotask after
-      // K() returns so the Promise resolves with the actual file, not null.
-      const origMRI = (runtime.renderFactory as any).makeRenderImage.bind(
-        runtime.renderFactory
-      );
-      (runtime.renderFactory as any).makeRenderImage = function () {
-        const img = origMRI();
-        if (
-          img &&
-          typeof (img as any).la === 'function' &&
-          typeof (img as any).decode === 'function'
-        ) {
-          const origDecode = (img as any).decode.bind(img);
-          (img as any).decode = function (imgBytes: Uint8Array) {
-            origDecode(imgBytes);
-            queueMicrotask(() => (img as any).la());
-          };
-        }
-        return img;
-      };
-      return runtime;
-    });
+    runtimeReady = RuntimeLoader.awaitInstance();
   }
   return runtimeReady;
 }
+
+/** Per-file guard: a stalled WASM load() must fail loudly, never hang the batch. */
+const LOAD_TIMEOUT_MS = 30_000;
 
 async function extractSchema(input: string): Promise<Schema> {
   const bytes =
@@ -82,16 +62,24 @@ async function extractSchema(input: string): Promise<Schema> {
 
   const runtime = await getRuntime();
 
+  // Claim every referenced asset without decoding it. We only introspect
+  // names/schemas — decoding (images especially) goes through render paths
+  // that stall load() forever without WebGL, silently truncating the batch:
+  // a pending load() drains bun's event loop and the process exits 0.
   const assetLoader = new (runtime as any).CustomFileAssetLoader({
-    loadContents: (asset: any, embeddedBytes: Uint8Array) => {
-      if (embeddedBytes?.length && asset?.decode) {
-        asset.decode(embeddedBytes);
-      }
-      return true;
-    },
+    loadContents: () => true,
   });
 
-  const riveFile = await runtime.load(bytes, assetLoader, false);
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const riveFile = await Promise.race([
+    runtime.load(bytes, assetLoader, false),
+    new Promise((_, reject) => {
+      timer = setTimeout(
+        () => reject(new Error(`load() timed out after ${LOAD_TIMEOUT_MS}ms`)),
+        LOAD_TIMEOUT_MS
+      );
+    }),
+  ]).finally(() => clearTimeout(timer));
 
   const artboards: string[] = [];
   const stateMachines: Record<string, string[]> = {};
@@ -128,8 +116,17 @@ async function extractSchema(input: string): Promise<Schema> {
         try {
           const ep = inst.enum?.(p.name);
           const values: string[] = ep?.values ?? [];
-          props[p.name] =
-            values.length > 0 ? `enum:${values.join('|')}` : 'enum';
+          // '|' is the separator in the 'enum:a|b' encoding — a value containing
+          // it cannot be represented, so fall back to an untyped enum.
+          if (values.some((v) => v.includes('|'))) {
+            process.stderr.write(
+              `Warning: enum property '${p.name}' has a value containing '|'; emitting untyped 'enum'.\n`
+            );
+            props[p.name] = 'enum';
+          } else {
+            props[p.name] =
+              values.length > 0 ? `enum:${values.join('|')}` : 'enum';
+          }
         } catch {
           props[p.name] = 'enum';
         }
@@ -151,15 +148,19 @@ async function extractSchema(input: string): Promise<Schema> {
 // With prettier quoteProps:"consistent", if any key in an object needs quotes, all get quotes.
 const IDENTIFIER_RE = /^[a-zA-Z_$][a-zA-Z0-9_$]*$/;
 const needsQuote = (s: string) => !IDENTIFIER_RE.test(s);
+// Rive names are free-form editor strings — escape for a single-quoted literal.
+const escapeLiteral = (s: string) =>
+  s.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+const strLit = (s: string) => `'${escapeLiteral(s)}'`;
 const quoteKey = (s: string, forceQuote: boolean) =>
-  forceQuote || needsQuote(s) ? `'${s}'` : s;
+  forceQuote || needsQuote(s) ? strLit(s) : s;
 
 function smRecord(stateMachines: Record<string, string[]>): string {
   const keys = Object.keys(stateMachines);
   const force = keys.some(needsQuote);
   return Object.entries(stateMachines)
     .map(([ab, sms]) => {
-      const union = sms.length ? sms.map((s) => `'${s}'`).join(' | ') : 'never';
+      const union = sms.length ? sms.map(strLit).join(' | ') : 'never';
       return `    ${quoteKey(ab, force)}: ${union};`;
     })
     .join('\n');
@@ -175,7 +176,7 @@ function vmRecord(viewModels: Record<string, Record<string, string>>): string {
       const propLines = Object.entries(props)
         .map(
           ([propName, propType]) =>
-            `      ${quoteKey(propName, forcePropKeys)}: '${propType}';`
+            `      ${quoteKey(propName, forcePropKeys)}: ${strLit(propType)};`
         )
         .join('\n');
       return `    ${quoteKey(vmName, forceVmKeys)}: {\n${propLines}\n    };`;
@@ -184,13 +185,15 @@ function vmRecord(viewModels: Record<string, Record<string, string>>): string {
 }
 
 function schemaBody(schema: Schema): string {
+  // Always emit viewModels — omitting it would fail the RiveFileSchema
+  // constraint and silently degrade the whole asset to untyped.
   const vmSection =
     Object.keys(schema.viewModels).length > 0
       ? `\n  viewModels: {\n${vmRecord(schema.viewModels)}\n  };`
-      : '';
+      : '\n  viewModels: {};';
   return `\
-  artboards: ${schema.artboards.map((a) => `'${a}'`).join(' | ')};
-  defaultArtboard: '${schema.defaultArtboard}';
+  artboards: ${schema.artboards.map(strLit).join(' | ')};
+  defaultArtboard: ${strLit(schema.defaultArtboard)};
   stateMachines: {
 ${smRecord(schema.stateMachines)}
   };${vmSection}`;
@@ -199,7 +202,7 @@ ${smRecord(schema.stateMachines)}
 function dtsContent(input: string, schema: Schema): string {
   return `\
 // Generated by rive-gen-types — do not edit manually. @generated
-// eslint-disable
+/* eslint-disable */
 // Source: ${basename(input)}
 import type { RiveAsset } from '@rive-app/react-native';
 declare const asset: RiveAsset<{
@@ -231,19 +234,10 @@ async function generate(
   mode: 'dts' | 'standalone',
   typeName?: string
 ) {
-  let schema: Schema;
-  try {
-    schema = await extractSchema(input);
-  } catch (err) {
-    process.stderr.write(
-      `Failed to extract schema from ${input}: ${err instanceof Error ? err.message : String(err)}\n`
-    );
-    process.exit(1);
-  }
+  const schema = await extractSchema(input);
 
   if (!schema.artboards?.length) {
-    process.stderr.write(`No artboards found in ${input}.\n`);
-    process.exit(1);
+    throw new Error(`No artboards found in ${input}.`);
   }
 
   const content =
@@ -286,8 +280,24 @@ async function main() {
       process.stderr.write(`No .riv files found in ${dir}\n`);
       process.exit(1);
     }
+    // Process every file even if some fail, then report — a mid-batch abort
+    // would leave the remaining schemas silently unvalidated.
+    const failures: string[] = [];
     for (const file of files) {
-      await generate(file, `${file}.d.ts`, 'dts');
+      try {
+        await generate(file, `${file}.d.ts`, 'dts');
+      } catch (err) {
+        failures.push(file);
+        process.stderr.write(
+          `Failed: ${file}: ${err instanceof Error ? err.message : String(err)}\n`
+        );
+      }
+    }
+    if (failures.length) {
+      process.stderr.write(
+        `${failures.length}/${files.length} file(s) failed.\n`
+      );
+      process.exit(1);
     }
     return;
   }
