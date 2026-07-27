@@ -57,7 +57,9 @@ jobs:
       - name: Validate .riv schema files
         run: |
           yarn rive-gen-types --all example/assets/rive
-          if ! git diff --exit-code 'example/assets/rive/*.riv.d.ts'; then
+          # git status (not diff) also catches newly generated, untracked .riv.d.ts
+          if [ -n "$(git status --porcelain -- 'example/assets/rive/*.riv.d.ts')" ]; then
+            git status --porcelain -- 'example/assets/rive/*.riv.d.ts'
             echo "Error: .riv.d.ts files are out of date. Please run 'yarn rive-gen-types --all example/assets/rive' and commit the changes."
             exit 1
           fi
