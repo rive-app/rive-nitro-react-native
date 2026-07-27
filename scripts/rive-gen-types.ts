@@ -89,6 +89,11 @@ async function extractSchema(input: string): Promise<Schema> {
     }),
   ]).finally(() => clearTimeout(timer));
 
+  // load() resolves null (rather than rejecting) for unparseable bytes.
+  if (!riveFile) {
+    throw new Error('not a valid .riv file (load() returned null)');
+  }
+
   const artboards: string[] = [];
   const stateMachines: Record<string, string[]> = {};
   for (let i = 0; i < riveFile.artboardCount(); i++) {
@@ -145,9 +150,11 @@ async function extractSchema(input: string): Promise<Schema> {
 // With prettier quoteProps:"consistent", if any key in an object needs quotes, all get quotes.
 const IDENTIFIER_RE = /^[a-zA-Z_$][a-zA-Z0-9_$]*$/;
 const needsQuote = (s: string) => !IDENTIFIER_RE.test(s);
-// Rive names are free-form editor strings — escape for a single-quoted literal.
+// Rive names are free-form editor strings — escape for a single-quoted
+// literal. JSON.stringify handles backslashes, newlines, and all control
+// characters; then re-target the quoting from double to single quotes.
 const escapeLiteral = (s: string) =>
-  s.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+  JSON.stringify(s).slice(1, -1).replace(/\\"/g, '"').replace(/'/g, "\\'");
 export const strLit = (s: string) => `'${escapeLiteral(s)}'`;
 export const quoteKey = (s: string, forceQuote: boolean) =>
   forceQuote || needsQuote(s) ? strLit(s) : s;

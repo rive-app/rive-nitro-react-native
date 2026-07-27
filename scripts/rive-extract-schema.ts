@@ -79,6 +79,11 @@ async function main() {
     }),
   ]).finally(() => clearTimeout(timer));
 
+  // load() resolves null (rather than rejecting) for unparseable bytes.
+  if (!riveFile) {
+    throw new Error('not a valid .riv file (load() returned null)');
+  }
+
   const artboards: string[] = [];
   const stateMachines: Record<string, string[]> = {};
   for (let i = 0; i < riveFile.artboardCount(); i++) {
