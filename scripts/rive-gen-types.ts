@@ -117,14 +117,8 @@ async function extractSchema(input: string): Promise<Schema> {
     const inst = vm.instance?.() as any;
     const props: Record<string, string> = {};
     for (const p of properties) {
-      if (p.type === 'viewModel' && inst) {
-        try {
-          const nested = inst.viewModel?.(p.name);
-          const refName = nested?.getViewModelName?.();
-          props[p.name] = refName ? `viewModel:${refName}` : 'viewModel';
-        } catch {
-          props[p.name] = 'viewModel';
-        }
+      if (p.type === 'viewModel') {
+        props[p.name] = viewModelRefTypeString(inst, p.name);
       } else if (p.type === 'enumType' && inst) {
         try {
           const ep = inst.enum?.(p.name);
@@ -270,6 +264,29 @@ function findRivFiles(dir: string): string[] {
 }
 
 // --- CLI ---
+
+/**
+ * Schema type string for a `viewModel`-typed property: `'viewModel:<Name>'`.
+ *
+ * Workaround: rive-wasm (as of 2.39.0) does not expose the referenced
+ * ViewModel's name on `getProperties()` (unlike `enumName` for enums), so we
+ * create a default instance and ask the nested instance for its name. Falls
+ * back to untyped `'viewModel'` when no default instance is available.
+ * Replace with the property's own `viewModelName` once rive-wasm ships it.
+ */
+export function viewModelRefTypeString(
+  defaultInstance: any,
+  propName: string
+): string {
+  try {
+    const refName = defaultInstance
+      ?.viewModel?.(propName)
+      ?.getViewModelName?.();
+    return refName ? `viewModel:${refName}` : 'viewModel';
+  } catch {
+    return 'viewModel';
+  }
+}
 
 /**
  * Schema type string for an enum property. '|' is the separator in the
