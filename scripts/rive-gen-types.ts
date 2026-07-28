@@ -272,7 +272,9 @@ function findRivFiles(dir: string): string[] {
  * ViewModel's name on `getProperties()` (unlike `enumName` for enums), so we
  * create a default instance and ask the nested instance for its name. Falls
  * back to untyped `'viewModel'` when no default instance is available.
- * Replace with the property's own `viewModelName` once rive-wasm ships it.
+ * Replace with the property's own `viewModelName` once rive-wasm ships it —
+ * upstream PRs: https://github.com/rive-app/rive-wasm/pull/424 (bindings) and
+ * https://github.com/rive-app/rive-runtime/pull/116 (core PropertyData).
  */
 export function viewModelRefTypeString(
   defaultInstance: any,
