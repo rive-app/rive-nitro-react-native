@@ -7,6 +7,7 @@ import {
   vmRecord,
   schemaBody,
   enumTypeString,
+  viewModelRefTypeString,
   type Schema,
 } from '../rive-gen-types';
 
@@ -104,5 +105,35 @@ describe('enumTypeString', () => {
 
   test("a value containing the '|' separator falls back to untyped enum", () => {
     expect(enumTypeString('p', ['a|b', 'c'])).toBe('enum');
+  });
+});
+
+describe('viewModelRefTypeString', () => {
+  test('resolves the referenced ViewModel name via a nested instance', () => {
+    const inst = {
+      viewModel: (name: string) =>
+        name === 'Coin'
+          ? { getViewModelName: () => 'Item_Icon_Value' }
+          : undefined,
+    };
+    expect(viewModelRefTypeString(inst, 'Coin')).toBe(
+      'viewModel:Item_Icon_Value'
+    );
+  });
+
+  test('falls back to untyped viewModel without a default instance', () => {
+    expect(viewModelRefTypeString(undefined, 'Coin')).toBe('viewModel');
+    expect(viewModelRefTypeString({ viewModel: () => undefined }, 'x')).toBe(
+      'viewModel'
+    );
+  });
+
+  test('falls back to untyped viewModel when introspection throws', () => {
+    const inst = {
+      viewModel: () => {
+        throw new Error('boom');
+      },
+    };
+    expect(viewModelRefTypeString(inst, 'Coin')).toBe('viewModel');
   });
 });

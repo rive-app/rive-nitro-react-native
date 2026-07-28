@@ -11,6 +11,7 @@
 
 import { readFileSync } from 'fs';
 import { RuntimeLoader } from '@rive-app/canvas';
+import { enumTypeString, viewModelRefTypeString } from './rive-gen-types';
 
 // noUncheckedIndexedAccess: process.argv destructuring yields string | undefined
 const input: string | undefined = process.argv[2];
@@ -108,29 +109,12 @@ async function main() {
     const inst = vm.instance?.() as any;
     const props: Record<string, string> = {};
     for (const p of properties) {
-      if (p.type === 'viewModel' && inst) {
-        try {
-          const nested = inst.viewModel?.(p.name);
-          const refName = nested?.getViewModelName?.();
-          props[p.name] = refName ? `viewModel:${refName}` : 'viewModel';
-        } catch {
-          props[p.name] = 'viewModel';
-        }
+      if (p.type === 'viewModel') {
+        props[p.name] = viewModelRefTypeString(inst, p.name);
       } else if (p.type === 'enumType' && inst) {
         try {
           const ep = inst.enum?.(p.name);
-          const values: string[] = ep?.values ?? [];
-          // '|' is the separator in the 'enum:a|b' encoding — a value containing
-          // it cannot be represented, so fall back to an untyped enum.
-          if (values.some((v) => v.includes('|'))) {
-            process.stderr.write(
-              `Warning: enum property '${p.name}' has a value containing '|'; emitting untyped 'enum'.\n`
-            );
-            props[p.name] = 'enum';
-          } else {
-            props[p.name] =
-              values.length > 0 ? `enum:${values.join('|')}` : 'enum';
-          }
+          props[p.name] = enumTypeString(p.name, ep?.values ?? []);
         } catch {
           props[p.name] = 'enum';
         }
