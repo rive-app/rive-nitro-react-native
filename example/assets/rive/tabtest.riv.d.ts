@@ -13,5 +13,6 @@ declare const asset: RiveAsset<{
       enumProperty: 'enum:All|Parent|Child';
     };
   };
+  assets: {};
 }>;
 export default asset;

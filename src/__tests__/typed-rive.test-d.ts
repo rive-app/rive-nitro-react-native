@@ -24,7 +24,10 @@ import { useRiveNumber } from '../../src/hooks/useRiveNumber';
 import { useRiveEnum } from '../../src/hooks/useRiveEnum';
 import { useViewModelInstance } from '../../src/hooks/useViewModelInstance';
 import { RiveView, type RiveViewProps } from '../../src/core/RiveView';
+import { useRiveFile } from '../../src/hooks/useRiveFile';
+import type { RiveImage } from '../../src/specs/RiveImage.nitro';
 import gradientBorderRiv from '../../example/assets/rive/GradientBorder.riv';
+import outOfBandRiv from '../../example/assets/rive/out_of_band.riv';
 import blinkoRiv from '../../example/assets/rive/blinko.riv';
 import rewardsRiv from '../../example/assets/rive/rewards.riv';
 import fallbackFontsRiv from '../../example/assets/rive/fallback_fonts.riv';
@@ -451,3 +454,59 @@ expectAssignable<ViewModelNumberProperty | undefined>(
   rewardsVM.numberProperty('Item_Value_Icon/Item_Value')
 );
 expectError(rewardsVM.numberProperty('Item_Value_Icon/DoesNotExist'));
+
+
+// ============================================================
+// Typed referencedAssets (out-of-band assets from the schema)
+// ============================================================
+
+declare const riveImage: RiveImage;
+
+// Valid keys with correct types compile; RiveImage allowed for image assets
+useRiveFile(outOfBandRiv, {
+  referencedAssets: {
+    'Inter-594377': { source: 1, type: 'font' },
+    'referenced-image-2929282': { source: { uri: 'https://x/i.png' } },
+    'hosted_audio-2989208': { source: 2, type: 'audio' },
+  },
+});
+useRiveFile(outOfBandRiv, {
+  referencedAssets: { 'cdn-image-2989123': riveImage },
+});
+
+// Unknown asset key is a hard error (must not fall through to the untyped
+// number-input signature)
+expectError(
+  useRiveFile(outOfBandRiv, {
+    referencedAssets: { 'Inter-59437': { source: 1, type: 'font' } },
+  })
+);
+
+// Declared type must match the asset's actual kind
+expectError(
+  useRiveFile(outOfBandRiv, {
+    referencedAssets: { 'Inter-594377': { source: 1, type: 'image' } },
+  })
+);
+
+// RiveImage objects are only accepted for image assets
+expectError(
+  useRiveFile(outOfBandRiv, {
+    referencedAssets: { 'Inter-594377': riveImage },
+  })
+);
+
+// A schema with no referenced assets accepts no keys at all
+expectError(
+  useRiveFile(rewardsRiv, {
+    referencedAssets: { anything: { source: 1, type: 'font' } },
+  })
+);
+
+// Untyped inputs keep accepting arbitrary keys (backward compat)
+useRiveFile('https://example.com/a.riv', {
+  referencedAssets: { anything: { source: 1, type: 'font' } },
+});
+useRiveFile({ uri: 'file:///a.riv' }, {
+  referencedAssets: { whatever: { source: 1 } },
+});

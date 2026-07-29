@@ -13,5 +13,6 @@ declare const asset: RiveAsset<{
       ypos: 'number';
     };
   };
+  assets: {};
 }>;
 export default asset;

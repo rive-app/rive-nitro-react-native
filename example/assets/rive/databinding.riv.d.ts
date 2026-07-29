@@ -24,5 +24,6 @@ declare const asset: RiveAsset<{
       name: 'string';
     };
   };
+  assets: {};
 }>;
 export default asset;

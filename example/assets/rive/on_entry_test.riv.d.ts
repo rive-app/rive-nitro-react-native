@@ -14,5 +14,8 @@ declare const asset: RiveAsset<{
       inputOnEntry: 'number';
     };
   };
+  assets: {
+    'Inter-4228759': 'font';
+  };
 }>;
 export default asset;

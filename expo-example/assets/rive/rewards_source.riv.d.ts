@@ -47,5 +47,6 @@ declare const asset: RiveAsset<{
       Item_Selection: 'enum:Coin|Gem';
     };
   };
+  assets: {};
 }>;
 export default asset;

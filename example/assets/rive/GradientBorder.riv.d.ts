@@ -13,5 +13,6 @@ declare const asset: RiveAsset<{
       isFocused: 'boolean';
     };
   };
+  assets: {};
 }>;
 export default asset;
