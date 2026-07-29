@@ -354,4 +354,17 @@ describe('Image Properties', () => {
     const imageProp = instance.imageProperty('bound_image');
     expectDefined(imageProp);
   });
+
+  it('imageProperty.set(undefined) clears without throwing', async () => {
+    const file = await loadFile(DATABINDING_IMAGES);
+    const vm = file.viewModelByName('MyViewModel');
+    expectDefined(vm);
+    const instance = vm.createInstanceByIndex(0);
+    expectDefined(instance);
+
+    const imageProp = instance.imageProperty('bound_image');
+    expectDefined(imageProp);
+
+    expect(() => imageProp.set(undefined)).not.toThrow();
+  });
 });
