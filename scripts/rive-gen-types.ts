@@ -1,4 +1,3 @@
-#!/usr/bin/env bun
 /**
  * Generates .riv.d.ts declaration files so that `import asset from './file.riv'`
  * is automatically typed in TypeScript without any extra imports.
