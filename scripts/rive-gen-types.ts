@@ -8,6 +8,10 @@
  *   bun scripts/rive-gen-types.ts <path-or-url> --out <out> # write to an explicit path (required for URLs)
  *   bun scripts/rive-gen-types.ts --all <directory>         # generate for every .riv in a directory
  *
+ * Bun is not required — the scripts are erasable TypeScript and also run
+ * under plain Node >= 23.6 (or 22.6+ with --experimental-strip-types):
+ *   node scripts/rive-gen-types.ts <path>
+ *
  * After generation, TypeScript resolves the .riv.d.ts automatically:
  *   import gameRiv from './assets/game.riv';                       // typed as RiveAsset<GameSchema>
  *   const file = await RiveFileFactory.fromSource(gameRiv, undefined); // TypedRiveFile<GameSchema> — T inferred
@@ -21,7 +25,11 @@ import {
   statSync,
 } from 'fs';
 import { dirname, resolve, basename, extname } from 'path';
-import { RuntimeLoader } from '@rive-app/canvas';
+import { pathToFileURL } from 'url';
+// Default-import + destructure: @rive-app/canvas is CJS, and Node's ESM
+// loader cannot statically see its named exports (bun's interop can).
+import riveCanvas from '@rive-app/canvas';
+const { RuntimeLoader } = riveCanvas;
 
 // Called from main() so that importing this module (for unit-testing the
 // exported emit helpers) has no global side effects.
@@ -390,7 +398,14 @@ async function main() {
   }
 }
 
-if (import.meta.main) {
+// Portable "is this the entry module" check: import.meta.main is true under
+// bun and Node >= 24.2, the argv comparison covers older Node.
+const isMain =
+  import.meta.main ||
+  (process.argv[1] != null &&
+    import.meta.url === pathToFileURL(process.argv[1]).href);
+
+if (isMain) {
   main().catch((err: Error) => {
     process.stderr.write(err.message + '\n');
     process.exit(1);
