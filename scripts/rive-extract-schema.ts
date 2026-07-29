@@ -10,8 +10,11 @@
  */
 
 import { readFileSync } from 'fs';
-import { RuntimeLoader } from '@rive-app/canvas';
-import { enumTypeString, viewModelRefTypeString } from './rive-gen-types';
+// Default-import + destructure: @rive-app/canvas is CJS, and Node's ESM
+// loader cannot statically see its named exports (bun's interop can).
+import riveCanvas from '@rive-app/canvas';
+const { RuntimeLoader } = riveCanvas;
+import { enumTypeString, viewModelRefTypeString } from './rive-gen-types.ts';
 
 // noUncheckedIndexedAccess: process.argv destructuring yields string | undefined
 const input: string | undefined = process.argv[2];
