@@ -1,4 +1,3 @@
-#!/usr/bin/env bun
 /**
  * Extracts artboard names and state machines from a .riv file and prints JSON to stdout.
  *
