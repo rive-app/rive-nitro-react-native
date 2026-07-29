@@ -7032,6 +7032,7 @@ __metadata:
     babel-plugin-react-compiler: ^1.0.0
     commitlint: ^19.6.1
     del-cli: ^5.1.0
+    esbuild: ^0.27.7
     eslint: ^9.22.0
     eslint-config-prettier: ^10.1.1
     eslint-plugin-jest: ^29.1.0
@@ -7049,9 +7050,15 @@ __metadata:
     turbo: ^1.10.7
     typescript: ^5.2.2
   peerDependencies:
+    "@rive-app/canvas": ^2.39.0
     react: "*"
     react-native: "*"
     react-native-nitro-modules: ">=0.35.10 <0.36"
+  peerDependenciesMeta:
+    "@rive-app/canvas":
+      optional: true
+  bin:
+    rive-gen-types: cli/rive-gen-types.js
   languageName: unknown
   linkType: soft
 
@@ -11130,7 +11137,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"esbuild@npm:^0.27.0":
+"esbuild@npm:^0.27.0, esbuild@npm:^0.27.7":
   version: 0.27.7
   resolution: "esbuild@npm:0.27.7"
   dependencies:
