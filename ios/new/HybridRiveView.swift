@@ -183,7 +183,7 @@ class HybridRiveView: HybridRiveViewSpec {
     // must run on main (mirrors the legacy backend's dispose()).
     let riveView = view as? RiveReactNativeView
     DispatchQueue.main.async {
-      riveView?.detach()
+      riveView?.detachWhenNotVisible()
     }
   }
 

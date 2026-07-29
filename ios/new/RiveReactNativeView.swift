@@ -27,6 +27,7 @@ class RiveReactNativeView: UIView {
   private var pendingBindInstance: ViewModelInstance?
   private var viewReadyContinuations: [CheckedContinuation<Bool, Never>] = []
   private var isViewReady = false
+  private let deferredTeardown = DeferredTeardown()
   private var configTask: Task<Void, Never>?
   private var settledTask: Task<Void, Never>?
   private var stopNotifyTask: Task<Void, Never>?
@@ -273,6 +274,7 @@ class RiveReactNativeView: UIView {
 
   private func cleanup() {
     dispatchPrecondition(condition: .onQueue(.main))
+    deferredTeardown.cancel()
     configTask?.cancel()
     configTask = nil
     settledTask?.cancel()
@@ -283,6 +285,14 @@ class RiveReactNativeView: UIView {
     riveUIView = nil
     riveInstance = nil
     pendingBindInstance = nil
+  }
+
+  /// Teardown, held back until it can't be seen. See `DeferredTeardown`.
+  func detachWhenNotVisible() {
+    dispatchPrecondition(condition: .onQueue(.main))
+    deferredTeardown.schedule { [weak self] in
+      self?.detach()
+    }
   }
 
   /// Final teardown, called from HybridRiveView.dispose() (always on main).
