@@ -50,5 +50,6 @@ declare const asset: RiveAsset<{
       Item_Selection: 'enum:Item_Selection';
     };
   };
+  assets: {};
 }>;
 export default asset;

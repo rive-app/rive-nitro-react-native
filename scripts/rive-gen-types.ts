@@ -49,6 +49,45 @@ export interface Schema {
   /** File-level enum definitions, name → values. */
   enums: Record<string, string[]>;
   viewModels: Record<string, Record<string, string>>;
+  /** Non-embedded (referenced or CDN) assets: unique identifier → kind. */
+  assets: Record<string, string>;
+}
+
+/**
+ * Classify a file asset reported by the WASM asset loader. Only non-embedded
+ * assets (referenced or CDN-hosted) are schema-relevant: they are the ones an
+ * app must supply via `referencedAssets` — the new runtime does not fetch CDN
+ * assets itself. The key is the unique identifier (uniqueFilename minus
+ * extension, e.g. 'Inter-594377'), the form the runtime documents as the
+ * recommended `referencedAssets` key.
+ */
+export function classifyAsset(
+  asset: {
+    name?: string;
+    uniqueFilename?: string;
+    fileExtension?: string;
+    isImage?: boolean;
+    isFont?: boolean;
+    isAudio?: boolean;
+  },
+  embeddedByteCount: number
+): { id: string; kind: string } | null {
+  if (embeddedByteCount > 0) return null;
+  const kind = asset.isImage
+    ? 'image'
+    : asset.isFont
+      ? 'font'
+      : asset.isAudio
+        ? 'audio'
+        : null;
+  if (!kind) return null;
+  const unique = asset.uniqueFilename ?? '';
+  const ext = asset.fileExtension ?? '';
+  const id =
+    ext && unique.endsWith(`.${ext}`)
+      ? unique.slice(0, -(ext.length + 1))
+      : unique || (asset.name ?? '');
+  return id ? { id, kind } : null;
 }
 
 export interface RuntimeProperty {
@@ -103,8 +142,15 @@ async function extractSchema(input: string): Promise<Schema> {
   // names/schemas — decoding (images especially) goes through render paths
   // that stall load() forever without WebGL, silently truncating the batch:
   // a pending load() drains bun's event loop and the process exits 0.
+  // The load() callbacks are also the only place asset metadata is visible,
+  // so record it here.
+  const assets: Record<string, string> = {};
   const assetLoader = new (runtime as any).CustomFileAssetLoader({
-    loadContents: () => true,
+    loadContents: (asset: any, embeddedBytes: Uint8Array | undefined) => {
+      const classified = classifyAsset(asset ?? {}, embeddedBytes?.length ?? 0);
+      if (classified) assets[classified.id] = classified.kind;
+      return true;
+    },
   });
 
   let timer: ReturnType<typeof setTimeout> | undefined;
@@ -162,6 +208,7 @@ async function extractSchema(input: string): Promise<Schema> {
     stateMachines,
     enums,
     viewModels,
+    assets,
   };
 }
 
@@ -209,23 +256,35 @@ export function vmRecord(
     .join('\n');
 }
 
+export function assetsRecord(assets: Record<string, string>): string {
+  const keys = Object.keys(assets);
+  const force = keys.some(needsQuote);
+  return Object.entries(assets)
+    .map(([id, kind]) => `    ${quoteKey(id, force)}: ${strLit(kind)};`)
+    .join('\n');
+}
+
 export function schemaBody(schema: Schema): string {
   const enumSection =
     Object.keys(schema.enums).length > 0
       ? `\n  enums: {\n${unionRecord(schema.enums)}\n  };`
       : '\n  enums: {};';
-  // Always emit viewModels — omitting it would fail the RiveFileSchema
-  // constraint and silently degrade the whole asset to untyped.
+  // Always emit viewModels/assets — omitting either would fail the
+  // RiveFileSchema constraint and silently degrade the whole asset to untyped.
   const vmSection =
     Object.keys(schema.viewModels).length > 0
       ? `\n  viewModels: {\n${vmRecord(schema.viewModels)}\n  };`
       : '\n  viewModels: {};';
+  const assetSection =
+    Object.keys(schema.assets).length > 0
+      ? `\n  assets: {\n${assetsRecord(schema.assets)}\n  };`
+      : '\n  assets: {};';
   return `\
   artboards: ${schema.artboards.map(strLit).join(' | ')};
   defaultArtboard: ${strLit(schema.defaultArtboard)};
   stateMachines: {
 ${unionRecord(schema.stateMachines)}
-  };${enumSection}${vmSection}`;
+  };${enumSection}${vmSection}${assetSection}`;
 }
 
 function dtsContent(input: string, schema: Schema): string {

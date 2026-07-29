@@ -15,6 +15,12 @@ export interface RiveFileSchema {
   /** File-level enum definitions, name → value union. */
   enums: Record<string, string>;
   viewModels: Record<string, Record<string, string>>;
+  /**
+   * Non-embedded (referenced or CDN) assets that the app must supply via
+   * `referencedAssets`: unique asset identifier (e.g. 'Inter-594377') →
+   * 'image' | 'font' | 'audio'.
+   */
+  assets: Record<string, string>;
 }
 
 /**

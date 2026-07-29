@@ -10,5 +10,13 @@ declare const asset: RiveAsset<{
   };
   enums: {};
   viewModels: {};
+  assets: {
+    'Inter-594377': 'font';
+    'referenced-image-2929282': 'image';
+    'referenced_audio-2929340': 'audio';
+    'hosted_audio-2989208': 'audio';
+    'Damion-593587': 'font';
+    'cdn-image-2989123': 'image';
+  };
 }>;
 export default asset;

@@ -10,5 +10,6 @@ declare const asset: RiveAsset<{
   };
   enums: {};
   viewModels: {};
+  assets: {};
 }>;
 export default asset;
