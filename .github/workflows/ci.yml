@@ -116,7 +116,7 @@ jobs:
         if: steps.build-cache-check.outputs.cache-hit != 'true'
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version-file: .nvmrc
 
       - name: Install JDK
         if: steps.build-cache-check.outputs.cache-hit != 'true'
@@ -199,13 +199,12 @@ jobs:
           key: ${{ runner.os }}-ios-build-expo57-${{ env.XCODE_VERSION }}-${{ hashFiles('package.json', 'yarn.lock', 'ios/**', 'nitrogen/generated/ios/**', '*.podspec', 'src/specs/*.nitro.ts', 'expo57-example/package.json', 'expo57-example/app.json', 'expo57-example/app.config.js', 'expo57-example/assets/**', 'expo57-example/app/**', 'expo57-example/babel.config.js', 'expo57-example/metro.config.js') }}
           lookup-only: true
 
-      # react-native 0.86 requires node ^20.19.4; .nvmrc (20.19.0) is too old
       # for expo prebuild/codegen, so override node here only.
       - name: Use Node 22
         if: steps.build-cache-check.outputs.cache-hit != 'true'
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version-file: .nvmrc
 
       - name: Use appropriate Xcode version
         if: steps.build-cache-check.outputs.cache-hit != 'true'
@@ -291,7 +290,7 @@ jobs:
       - name: Use Node 22
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version-file: .nvmrc
 
       - name: Use appropriate Xcode version
         uses: maxim-lobanov/setup-xcode@v1
@@ -525,7 +524,7 @@ jobs:
       - name: Use Node 22
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version-file: .nvmrc
 
       - name: Install JDK
         uses: actions/setup-java@v4
@@ -627,7 +626,7 @@ jobs:
       - name: Use Node 22
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version-file: .nvmrc
 
       - name: Use appropriate Xcode version
         uses: maxim-lobanov/setup-xcode@v1
@@ -861,7 +860,7 @@ jobs:
       - name: Use Node 22
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version-file: .nvmrc
 
       - name: Install JDK
         uses: actions/setup-java@v4
