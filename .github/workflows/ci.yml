@@ -110,14 +110,6 @@ jobs:
           key: ${{ runner.os }}-android-build-expo57-${{ env.ANDROID_API_LEVEL }}-${{ hashFiles('package.json', 'yarn.lock', 'android/**', 'nitrogen/generated/android/**', 'expo57-example/package.json', 'expo57-example/app.json', 'expo57-example/app.config.js', 'expo57-example/assets/**') }}
           lookup-only: true
 
-      # react-native 0.86 requires node ^20.19.4 — see build-ios. Gradle also
-      # shells out to node for autolinking.
-      - name: Use Node 22
-        if: steps.build-cache-check.outputs.cache-hit != 'true'
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: .nvmrc
-
       - name: Install JDK
         if: steps.build-cache-check.outputs.cache-hit != 'true'
         uses: actions/setup-java@v4
@@ -199,13 +191,6 @@ jobs:
           key: ${{ runner.os }}-ios-build-expo57-${{ env.XCODE_VERSION }}-${{ hashFiles('package.json', 'yarn.lock', 'ios/**', 'nitrogen/generated/ios/**', '*.podspec', 'src/specs/*.nitro.ts', 'expo57-example/package.json', 'expo57-example/app.json', 'expo57-example/app.config.js', 'expo57-example/assets/**', 'expo57-example/app/**', 'expo57-example/babel.config.js', 'expo57-example/metro.config.js') }}
           lookup-only: true
 
-      # for expo prebuild/codegen, so override node here only.
-      - name: Use Node 22
-        if: steps.build-cache-check.outputs.cache-hit != 'true'
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: .nvmrc
-
       - name: Use appropriate Xcode version
         if: steps.build-cache-check.outputs.cache-hit != 'true'
         uses: maxim-lobanov/setup-xcode@v1
@@ -285,12 +270,6 @@ jobs:
 
       - name: Setup
         uses: ./.github/actions/setup
-
-      # react-native 0.86 requires node ^20.19.4 — see build-ios.
-      - name: Use Node 22
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: .nvmrc
 
       - name: Use appropriate Xcode version
         uses: maxim-lobanov/setup-xcode@v1
@@ -519,13 +498,6 @@ jobs:
       - name: Setup
         uses: ./.github/actions/setup
 
-      # react-native 0.86 requires node ^20.19.4 — see build-ios. Gradle also
-      # shells out to node for autolinking.
-      - name: Use Node 22
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: .nvmrc
-
       - name: Install JDK
         uses: actions/setup-java@v4
         with:
@@ -621,12 +593,6 @@ jobs:
 
       - name: Setup
         uses: ./.github/actions/setup
-
-      # react-native 0.86 requires node ^20.19.4 — see build-ios.
-      - name: Use Node 22
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: .nvmrc
 
       - name: Use appropriate Xcode version
         uses: maxim-lobanov/setup-xcode@v1
@@ -854,13 +820,6 @@ jobs:
 
       - name: Setup
         uses: ./.github/actions/setup
-
-      # react-native 0.86 requires node ^20.19.4 — see build-ios. Gradle also
-      # shells out to node for autolinking.
-      - name: Use Node 22
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: .nvmrc
 
       - name: Install JDK
         uses: actions/setup-java@v4
