@@ -49,6 +49,7 @@ namespace margelo::nitro::rive { enum class RiveEventType; }
 #include "JFrameRateRange.hpp"
 #include "OffscreenBehavior.hpp"
 #include "JOffscreenBehavior.hpp"
+#include "JVariant_Boolean_String.hpp"
 #include "Semantics.hpp"
 #include "JSemantics.hpp"
 #include "HybridViewModelInstanceSpec.hpp"
@@ -188,14 +189,14 @@ namespace margelo::nitro::rive {
     static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<JOffscreenBehavior> /* offscreenBehavior */)>("setOffscreenBehavior");
     method(_javaPart, offscreenBehavior.has_value() ? JOffscreenBehavior::fromCpp(offscreenBehavior.value()) : nullptr);
   }
-  std::optional<bool> JHybridRiveViewSpec::getRenderEnabled() {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<jni::JBoolean>()>("getRenderEnabled");
+  std::optional<std::variant<bool, std::string>> JHybridRiveViewSpec::getRenderEnabled() {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JVariant_Boolean_String>()>("getRenderEnabled");
     auto __result = method(_javaPart);
-    return __result != nullptr ? std::make_optional(static_cast<bool>(__result->value())) : std::nullopt;
+    return __result != nullptr ? std::make_optional(__result->toCpp()) : std::nullopt;
   }
-  void JHybridRiveViewSpec::setRenderEnabled(std::optional<bool> renderEnabled) {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<jni::JBoolean> /* renderEnabled */)>("setRenderEnabled");
-    method(_javaPart, renderEnabled.has_value() ? jni::JBoolean::valueOf(renderEnabled.value()) : nullptr);
+  void JHybridRiveViewSpec::setRenderEnabled(const std::optional<std::variant<bool, std::string>>& renderEnabled) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<JVariant_Boolean_String> /* renderEnabled */)>("setRenderEnabled");
+    method(_javaPart, renderEnabled.has_value() ? JVariant_Boolean_String::fromCpp(renderEnabled.value()) : nullptr);
   }
   std::optional<Semantics> JHybridRiveViewSpec::getSemantics() {
     static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JSemantics>()>("getSemantics");

@@ -91,17 +91,30 @@ export interface RiveViewProps extends HybridViewProps {
    */
   offscreenBehavior?: OffscreenBehavior;
   /**
-   * When false, the view stops drawing frames while the state machine keeps
-   * advancing (events, data binding, and playback time stay live). Use it
-   * when the app knows the view can't be seen — e.g. covered by a Modal or a
-   * bottom sheet — which automatic visibility detection cannot observe. The
-   * view repaints on the next frame after re-enabling. Defaults to true.
+   * Manual control over rendering, for occlusion the view cannot detect
+   * itself — e.g. covered by a Modal or a bottom sheet. Use
+   * offscreenBehavior instead for visibility the view can detect (scrolling,
+   * hiding). Defaults to true.
    *
-   * Only the new (default) Android runtime skips draws; iOS ignores it for
-   * now (the upstream runtime couples advancing and drawing, and its
-   * fullscreen modals already hide the covered hierarchy).
+   * - true (default): render normally.
+   * - false: stop drawing frames while the state machine keeps advancing
+   *   (events, data binding, and playback time stay live). The view repaints
+   *   on the next frame after re-enabling.
+   * - 'pause': also stop advancing the state machine, like an imperative
+   *   pause(); playback resumes where it left off when the prop changes
+   *   back. Unlike pause()/play() this doesn't touch the playback state the
+   *   ref methods control — the two combine.
+   *
+   * Only supported on the new (default) runtimes; the legacy backends ignore
+   * it. On iOS the upstream runtime couples advancing and drawing, so false
+   * behaves like true there ('pause' is fully supported, and fullscreen iOS
+   * modals already hide the covered hierarchy).
+   *
+   * Typed as `boolean | string` because Nitro cannot mix string literals
+   * into a variant; the public RiveView component narrows it to
+   * `boolean | 'pause'`. Strings other than 'pause' render normally.
    */
-  renderEnabled?: boolean;
+  renderEnabled?: boolean | string;
   /**
    * Exposes accessibility semantics authored in the Rive editor to the
    * platform screen reader (VoiceOver). Defaults to Semantics.Off.

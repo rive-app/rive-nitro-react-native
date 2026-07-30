@@ -5,7 +5,10 @@ import { callDispose } from './callDispose';
 import type { RiveViewRef } from '../index';
 
 export interface RiveViewProps
-  extends Omit<ComponentProps<typeof NitroRiveView>, 'onError' | 'onStop'> {
+  extends Omit<
+    ComponentProps<typeof NitroRiveView>,
+    'onError' | 'onStop' | 'renderEnabled'
+  > {
   onError?: (error: RiveError) => void;
   /**
    * Called when the animation/state machine stops playing, e.g. when a
@@ -14,6 +17,15 @@ export interface RiveViewProps
    * animations where you want to navigate away once playback finishes.
    */
   onStop?: () => void;
+  /**
+   * Manual control over rendering, for occlusion the view cannot detect
+   * itself (e.g. covered by a Modal or a bottom sheet): false skips draws
+   * while the state machine keeps advancing, 'pause' also stops advancing —
+   * like an imperative pause() that composes with the ref methods. Defaults
+   * to true. New runtimes only; on iOS false behaves like true ('pause' is
+   * fully supported).
+   */
+  renderEnabled?: boolean | 'pause';
 }
 
 const defaultOnError = (error: RiveError) =>
@@ -46,7 +58,7 @@ const defaultOnStop = () => {};
  * @property {Fit} [fit] - How the Rive graphic should fit within its container
  * @property {number | FrameRateRange} [frameRate] - Preferred frame rate for the render loop (new runtimes only)
  * @property {OffscreenBehavior} [offscreenBehavior='none'] - What to do while the view is outside the visible viewport: keep running, keep advancing but skip draws, or pause (new runtimes only)
- * @property {boolean} [renderEnabled=true] - Set false to skip drawing while the state machine keeps advancing, for views covered by UI the view can't detect (new Android runtime only)
+ * @property {boolean | 'pause'} [renderEnabled=true] - false skips drawing while the state machine keeps advancing; 'pause' also stops advancing, for views covered by UI the view can't detect (new runtimes only)
  * @property {Object} [style] - React Native style object for container customization
  * @property {(error: RiveError) => void} [onError] - Callback function that is called when an error occurs
  * @property {() => void} [onStop] - Callback function that is called when the animation/state machine stops playing (e.g. reaches the end of a non-looping animation)

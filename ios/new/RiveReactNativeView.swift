@@ -18,6 +18,7 @@ struct ViewConfiguration {
   let semantics: RiveRuntime.Semantics
   let frameRate: RiveRuntime.FrameRate
   let offscreenBehavior: OffscreenBehavior
+  let renderPaused: Bool
   let bindData: BindData
 }
 
@@ -59,6 +60,16 @@ class RiveReactNativeView: UIView {
       applyPauseState()
     }
   }
+
+  // renderEnabled='pause': a declarative full stop for occlusion the view
+  // can't detect. Kept separate from isPaused so it composes with the
+  // pause()/play() ref methods instead of overwriting their state.
+  private var renderPaused = false {
+    didSet {
+      guard renderPaused != oldValue else { return }
+      applyPauseState()
+    }
+  }
   private var visibilityTimer: Timer?
 
   private func updateVisibilityPolling() {
@@ -94,7 +105,8 @@ class RiveReactNativeView: UIView {
   }
 
   private func applyPauseState() {
-    riveUIView?.isPaused = isPaused || (offscreenBehavior == .pause && isOffscreen)
+    riveUIView?.isPaused =
+      isPaused || renderPaused || (offscreenBehavior == .pause && isOffscreen)
   }
 
   override func didMoveToWindow() {
@@ -132,6 +144,7 @@ class RiveReactNativeView: UIView {
     semantics = config.semantics
     frameRate = config.frameRate
     offscreenBehavior = config.offscreenBehavior
+    renderPaused = config.renderPaused
 
     if reload {
       cleanup()

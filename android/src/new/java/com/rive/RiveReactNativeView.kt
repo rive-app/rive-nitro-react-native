@@ -36,6 +36,10 @@ import kotlinx.coroutines.withContext
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.nanoseconds
 
+// The renderEnabled prop (boolean | 'pause') resolved into what the render
+// loop should do: draw normally, keep advancing but skip draws, or stop both.
+enum class RenderMode { Enabled, SkipDraws, Paused }
+
 sealed class BindData {
   data object None : BindData()
   data object Auto : BindData()
@@ -81,8 +85,10 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
   var offscreenBehavior: OffscreenBehavior = OffscreenBehavior.NONE
 
   // Manual counterpart to offscreenBehavior for occlusion the view can't
-  // detect (RN Modal, bottom sheets): false = skip draws, keep advancing.
-  var renderEnabled: Boolean = true
+  // detect (RN Modal, bottom sheets): SkipDraws keeps the state machine
+  // advancing, Paused stops it too (composes with the pause()/play() state
+  // rather than overwriting it).
+  var renderMode: RenderMode = RenderMode.Enabled
 
   private val visibleRectBuffer = Rect()
 
@@ -192,8 +198,9 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
 
       val offscreen = offscreenBehavior != OffscreenBehavior.NONE && !isInVisibleViewport()
       val pausedOffscreen = offscreen && offscreenBehavior == OffscreenBehavior.PAUSE
+      val renderPaused = renderMode == RenderMode.Paused
 
-      if ((paused || pausedOffscreen) && !needsRedraw) {
+      if ((paused || pausedOffscreen || renderPaused) && !needsRedraw) {
         // Keep the timebase fresh so resuming advances by one frame, not by
         // the whole pause span.
         lastFrameTimeNs = frameTimeNanos
@@ -230,11 +237,11 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
       // is the dominant part of the offscreen cost. needsRedraw still forces
       // a draw so pending content (initial frame, resize, rebinding) isn't
       // lost while invisible.
-      val skipDraw = !renderEnabled || offscreen
+      val skipDraw = renderMode != RenderMode.Enabled || offscreen
 
       if (worker != null && art != null && sm != null && rs != null) {
         try {
-          if (!paused && !settled && !pausedOffscreen) {
+          if (!paused && !settled && !pausedOffscreen && !renderPaused) {
             worker.advanceStateMachine(sm, deltaTime)
           }
           if (!skipDraw || needsRedraw) {

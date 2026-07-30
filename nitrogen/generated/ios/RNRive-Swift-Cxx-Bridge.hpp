@@ -1023,6 +1023,50 @@ namespace margelo::nitro::rive::bridge::swift {
     return optional.value();
   }
   
+  // pragma MARK: std::variant<bool, std::string>
+  /**
+   * Wrapper struct for `std::variant<bool, std::string>`.
+   * std::variant cannot be used in Swift because of a Swift bug.
+   * Not even specializing it works. So we create a wrapper struct.
+   */
+  struct std__variant_bool__std__string_ final {
+    std::variant<bool, std::string> variant;
+    std__variant_bool__std__string_(std::variant<bool, std::string> variant): variant(variant) { }
+    operator std::variant<bool, std::string>() const noexcept {
+      return variant;
+    }
+    inline size_t index() const noexcept {
+      return variant.index();
+    }
+    inline bool get_0() const noexcept {
+      return std::get<0>(variant);
+    }
+    inline std::string get_1() const noexcept {
+      return std::get<1>(variant);
+    }
+  };
+  inline std__variant_bool__std__string_ create_std__variant_bool__std__string_(bool value) noexcept {
+    return std__variant_bool__std__string_(value);
+  }
+  inline std__variant_bool__std__string_ create_std__variant_bool__std__string_(const std::string& value) noexcept {
+    return std__variant_bool__std__string_(value);
+  }
+  
+  // pragma MARK: std::optional<std::variant<bool, std::string>>
+  /**
+   * Specialized version of `std::optional<std::variant<bool, std::string>>`.
+   */
+  using std__optional_std__variant_bool__std__string__ = std::optional<std::variant<bool, std::string>>;
+  inline std::optional<std::variant<bool, std::string>> create_std__optional_std__variant_bool__std__string__(const std::variant<bool, std::string>& value) noexcept {
+    return std::optional<std::variant<bool, std::string>>(value);
+  }
+  inline bool has_value_std__optional_std__variant_bool__std__string__(const std::optional<std::variant<bool, std::string>>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline std::variant<bool, std::string> get_std__optional_std__variant_bool__std__string__(const std::optional<std::variant<bool, std::string>>& optional) noexcept {
+    return optional.value();
+  }
+  
   // pragma MARK: std::optional<Semantics>
   /**
    * Specialized version of `std::optional<Semantics>`.

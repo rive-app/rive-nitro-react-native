@@ -85,7 +85,7 @@ abstract class HybridRiveViewSpec: HybridView() {
   @get:Keep
   @set:DoNotStrip
   @set:Keep
-  abstract var renderEnabled: Boolean?
+  abstract var renderEnabled: Variant_Boolean_String?
   
   @get:DoNotStrip
   @get:Keep

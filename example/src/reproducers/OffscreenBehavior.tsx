@@ -33,8 +33,8 @@ import { type Metadata } from '../shared/metadata';
  * With offscreenBehavior 'skip-draws' or 'pause' the offscreen scenario
  * should drop close to the paused cost; scrolling back must resume the
  * animation. The modal scenario is invisible to automatic detection — the
- * renderEnabled←modal toggle wires renderEnabled to it, which is the pattern
- * that prop exists for.
+ * renderEnabled←modal toggle wires renderEnabled to it (false or 'pause'
+ * while covered), which is the pattern that prop exists for.
  */
 
 type Scenario = 'onscreen' | 'offscreen' | 'modal' | 'paused' | 'unmounted';
@@ -49,10 +49,15 @@ const SCENARIOS: { key: Scenario; label: string }[] = [
 
 const BEHAVIORS: OffscreenBehavior[] = ['none', 'skip-draws', 'pause'];
 
+// What renderEnabled is set to while the modal covers the view: not wired at
+// all, draw skipping only, or a declarative full pause.
+const RENDER_WIRINGS = ['off', 'skip-draws', 'pause'] as const;
+type RenderWiring = (typeof RENDER_WIRINGS)[number];
+
 export default function OffscreenBehaviorPage() {
   const [scenario, setScenario] = useState<Scenario>('onscreen');
   const [behavior, setBehavior] = useState<OffscreenBehavior>('none');
-  const [wireRenderEnabled, setWireRenderEnabled] = useState(false);
+  const [renderWiring, setRenderWiring] = useState<RenderWiring>('off');
   const viewRef = useRef<RiveViewRef | null>(null);
   const scrollRef = useRef<ScrollView | null>(null);
   const { riveFile } = useRiveFile(require('../../assets/rive/rewards.riv'));
@@ -80,7 +85,9 @@ export default function OffscreenBehaviorPage() {
     <View style={styles.container}>
       <Text style={styles.status} testID="offscreen-status">
         {scenario.toUpperCase()} · {behavior}
-        {wireRenderEnabled ? ' +renderEnabled←modal' : ''}
+        {renderWiring !== 'off'
+          ? ` +renderEnabled←modal (${renderWiring})`
+          : ''}
       </Text>
       <View style={styles.buttonRow}>
         {SCENARIOS.map(({ key, label }) => (
@@ -121,16 +128,23 @@ export default function OffscreenBehaviorPage() {
         ))}
         <Pressable
           testID="offscreen-renderenabled-toggle"
-          style={[styles.button, wireRenderEnabled && styles.buttonActive]}
-          onPress={() => setWireRenderEnabled((v) => !v)}
+          style={[styles.button, renderWiring !== 'off' && styles.buttonActive]}
+          onPress={() =>
+            setRenderWiring(
+              (v) =>
+                RENDER_WIRINGS[
+                  (RENDER_WIRINGS.indexOf(v) + 1) % RENDER_WIRINGS.length
+                ]!
+            )
+          }
         >
           <Text
             style={[
               styles.buttonText,
-              wireRenderEnabled && styles.buttonTextActive,
+              renderWiring !== 'off' && styles.buttonTextActive,
             ]}
           >
-            renderEnabled←modal
+            renderEnabled←modal: {renderWiring}
           </Text>
         </Pressable>
       </View>
@@ -142,7 +156,13 @@ export default function OffscreenBehaviorPage() {
               fit={Fit.Contain}
               autoPlay={true}
               offscreenBehavior={behavior}
-              renderEnabled={wireRenderEnabled ? scenario !== 'modal' : true}
+              renderEnabled={
+                renderWiring === 'off' || scenario !== 'modal'
+                  ? true
+                  : renderWiring === 'skip-draws'
+                    ? false
+                    : 'pause'
+              }
               hybridRef={{ f: (ref) => (viewRef.current = ref) }}
               style={styles.rive}
             />

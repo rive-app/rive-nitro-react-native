@@ -68,8 +68,8 @@ namespace margelo::nitro::rive {
     void setFrameRate(const std::optional<std::variant<double, FrameRateRange>>& frameRate) override;
     std::optional<OffscreenBehavior> getOffscreenBehavior() override;
     void setOffscreenBehavior(std::optional<OffscreenBehavior> offscreenBehavior) override;
-    std::optional<bool> getRenderEnabled() override;
-    void setRenderEnabled(std::optional<bool> renderEnabled) override;
+    std::optional<std::variant<bool, std::string>> getRenderEnabled() override;
+    void setRenderEnabled(const std::optional<std::variant<bool, std::string>>& renderEnabled) override;
     std::optional<Semantics> getSemantics() override;
     void setSemantics(std::optional<Semantics> semantics) override;
     std::optional<std::variant<std::shared_ptr<HybridViewModelInstanceSpec>, DataBindMode, DataBindByName>> getDataBind() override;

@@ -124,13 +124,13 @@ namespace margelo::nitro::rive::views {
         throw std::runtime_error(std::string("RiveView.offscreenBehavior: ") + exc.what());
       }
     }()),
-    renderEnabled([&]() -> CachedProp<std::optional<bool>> {
+    renderEnabled([&]() -> CachedProp<std::optional<std::variant<bool, std::string>>> {
       try {
         const react::RawValue* rawValue = rawProps.at("renderEnabled", nullptr, nullptr);
         if (rawValue == nullptr) return sourceProps.renderEnabled;
         const auto& [runtime, value] = (std::pair<jsi::Runtime*, jsi::Value>)*rawValue;
-        if (value.isNull()) return CachedProp<std::optional<bool>>::fromRawValue(*runtime, jsi::Value::undefined(), sourceProps.renderEnabled);
-        return CachedProp<std::optional<bool>>::fromRawValue(*runtime, value, sourceProps.renderEnabled);
+        if (value.isNull()) return CachedProp<std::optional<std::variant<bool, std::string>>>::fromRawValue(*runtime, jsi::Value::undefined(), sourceProps.renderEnabled);
+        return CachedProp<std::optional<std::variant<bool, std::string>>>::fromRawValue(*runtime, value, sourceProps.renderEnabled);
       } catch (const std::exception& exc) {
         throw std::runtime_error(std::string("RiveView.renderEnabled: ") + exc.what());
       }

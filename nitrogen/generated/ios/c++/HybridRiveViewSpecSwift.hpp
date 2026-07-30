@@ -169,11 +169,11 @@ namespace margelo::nitro::rive {
     inline void setOffscreenBehavior(std::optional<OffscreenBehavior> offscreenBehavior) noexcept override {
       _swiftPart.setOffscreenBehavior(offscreenBehavior);
     }
-    inline std::optional<bool> getRenderEnabled() noexcept override {
+    inline std::optional<std::variant<bool, std::string>> getRenderEnabled() noexcept override {
       auto __result = _swiftPart.getRenderEnabled();
       return __result;
     }
-    inline void setRenderEnabled(std::optional<bool> renderEnabled) noexcept override {
+    inline void setRenderEnabled(const std::optional<std::variant<bool, std::string>>& renderEnabled) noexcept override {
       _swiftPart.setRenderEnabled(renderEnabled);
     }
     inline std::optional<Semantics> getSemantics() noexcept override {
