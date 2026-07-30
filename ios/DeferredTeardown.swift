@@ -28,6 +28,16 @@ final class DeferredTeardown {
     guard pendingWork == nil else { return }
     pendingWork = work
 
+    backgroundObserver = NotificationCenter.default.addObserver(
+      forName: UIApplication.didEnterBackgroundNotification,
+      object: nil,
+      queue: .main
+    ) { [weak self] _ in
+      MainActor.assumeIsolated {
+        self?.flush()
+      }
+    }
+
     // Nothing on screen to protect, and no frames are coming.
     if UIApplication.shared.applicationState == .background {
       flush()
@@ -38,16 +48,6 @@ final class DeferredTeardown {
     let link = CADisplayLink(target: self, selector: #selector(tick))
     link.add(to: .main, forMode: .common)
     self.link = link
-
-    backgroundObserver = NotificationCenter.default.addObserver(
-      forName: UIApplication.didEnterBackgroundNotification,
-      object: nil,
-      queue: .main
-    ) { [weak self] _ in
-      MainActor.assumeIsolated {
-        self?.flush()
-      }
-    }
   }
 
   /// Runs any pending work immediately.
