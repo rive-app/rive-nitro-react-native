@@ -355,7 +355,9 @@ describe('Image Properties', () => {
     expectDefined(imageProp);
   });
 
-  it('imageProperty.set(undefined) clears without throwing', async () => {
+  // Guards the iOS new backend, which threw "Invalid image type" on undefined. Image
+  // properties are write-only, so whether the clear took effect is only visible in pixels.
+  it('imageProperty.set(undefined) does not throw', async () => {
     const file = await loadFile(DATABINDING_IMAGES);
     const vm = file.viewModelByName('MyViewModel');
     expectDefined(vm);
