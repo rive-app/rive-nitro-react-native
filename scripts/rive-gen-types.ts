@@ -25,10 +25,6 @@ import {
 } from 'fs';
 import { dirname, resolve, basename, extname } from 'path';
 import { pathToFileURL } from 'url';
-// Default-import + destructure: @rive-app/canvas is CJS, and Node's ESM
-// loader cannot statically see its named exports (bun's interop can).
-import riveCanvas from '@rive-app/canvas';
-const { RuntimeLoader } = riveCanvas;
 
 // Called from main() so that importing this module (for unit-testing the
 // exported emit helpers) has no global side effects.
@@ -57,7 +53,24 @@ let runtimeReady: Promise<any> | null = null;
 
 async function getRuntime(): Promise<any> {
   if (!runtimeReady) {
-    runtimeReady = RuntimeLoader.awaitInstance();
+    runtimeReady = (async () => {
+      let riveCanvas: any;
+      try {
+        // Dynamic import: when shipped as a bin, @rive-app/canvas is an
+        // optional (dev-time only) peer — users who run codegen install it,
+        // everyone else never downloads the wasm.
+        riveCanvas = await import('@rive-app/canvas');
+      } catch {
+        throw new Error(
+          "rive-gen-types needs '@rive-app/canvas' to inspect .riv files.\n" +
+            'Install it as a devDependency:\n' +
+            '  yarn add -D @rive-app/canvas   (or npm install -D @rive-app/canvas)'
+        );
+      }
+      // CJS/ESM interop: named exports may only be visible on .default.
+      const mod = riveCanvas.default ?? riveCanvas;
+      return mod.RuntimeLoader.awaitInstance();
+    })();
   }
   return runtimeReady;
 }
@@ -403,6 +416,11 @@ const isMain =
   import.meta.main ||
   (process.argv[1] != null &&
     import.meta.url === pathToFileURL(process.argv[1]).href);
+
+/** Entry point for the published `rive-gen-types` bin (see cli/). */
+export function runCli(): Promise<void> {
+  return main();
+}
 
 if (isMain) {
   main().catch((err: Error) => {
