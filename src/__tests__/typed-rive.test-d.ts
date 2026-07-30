@@ -503,10 +503,19 @@ expectError(
   })
 );
 
-// Untyped inputs keep accepting arbitrary keys (backward compat)
+// Untyped inputs keep accepting arbitrary keys (backward compat) — every
+// legacy input form: url string, uri object, require() (any), plain number.
 useRiveFile('https://example.com/a.riv', {
   referencedAssets: { anything: { source: 1, type: 'font' } },
 });
 useRiveFile({ uri: 'file:///a.riv' }, {
   referencedAssets: { whatever: { source: 1 } },
+});
+declare const requireResult: any;
+useRiveFile(requireResult, {
+  referencedAssets: { anything: { source: 1, type: 'font' } },
+});
+declare const plainAssetId: number;
+useRiveFile(plainAssetId, {
+  referencedAssets: { anything: { source: 1, type: 'audio' } },
 });
