@@ -21,6 +21,8 @@ namespace margelo::nitro::rive { enum class Alignment; }
 namespace margelo::nitro::rive { enum class Fit; }
 // Forward declaration of `FrameRateRange` to properly resolve imports.
 namespace margelo::nitro::rive { struct FrameRateRange; }
+// Forward declaration of `OffscreenBehavior` to properly resolve imports.
+namespace margelo::nitro::rive { enum class OffscreenBehavior; }
 // Forward declaration of `Semantics` to properly resolve imports.
 namespace margelo::nitro::rive { enum class Semantics; }
 // Forward declaration of `HybridViewModelInstanceSpec` to properly resolve imports.
@@ -42,6 +44,7 @@ namespace margelo::nitro::rive { struct UnifiedRiveEvent; }
 #include "Fit.hpp"
 #include "FrameRateRange.hpp"
 #include <variant>
+#include "OffscreenBehavior.hpp"
 #include "Semantics.hpp"
 #include "HybridViewModelInstanceSpec.hpp"
 #include "DataBindMode.hpp"
@@ -94,6 +97,10 @@ namespace margelo::nitro::rive {
       virtual void setLayoutScaleFactor(std::optional<double> layoutScaleFactor) = 0;
       virtual std::optional<std::variant<double, FrameRateRange>> getFrameRate() = 0;
       virtual void setFrameRate(const std::optional<std::variant<double, FrameRateRange>>& frameRate) = 0;
+      virtual std::optional<OffscreenBehavior> getOffscreenBehavior() = 0;
+      virtual void setOffscreenBehavior(std::optional<OffscreenBehavior> offscreenBehavior) = 0;
+      virtual std::optional<bool> getRenderEnabled() = 0;
+      virtual void setRenderEnabled(std::optional<bool> renderEnabled) = 0;
       virtual std::optional<Semantics> getSemantics() = 0;
       virtual void setSemantics(std::optional<Semantics> semantics) = 0;
       virtual std::optional<std::variant<std::shared_ptr<HybridViewModelInstanceSpec>, DataBindMode, DataBindByName>> getDataBind() = 0;

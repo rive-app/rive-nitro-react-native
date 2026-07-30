@@ -12,6 +12,8 @@
     "fit": true,
     "layoutScaleFactor": true,
     "frameRate": true,
+    "offscreenBehavior": true,
+    "renderEnabled": true,
     "semantics": true,
     "dataBind": true,
     "onError": true,

@@ -17,6 +17,7 @@ struct ViewConfiguration {
   let fit: RiveRuntime.Fit
   let semantics: RiveRuntime.Semantics
   let frameRate: RiveRuntime.FrameRate
+  let offscreenBehavior: OffscreenBehavior
   let bindData: BindData
 }
 
@@ -38,6 +39,68 @@ class RiveReactNativeView: UIView {
     didSet { riveUIView?.frameRate = frameRate }
   }
   var autoPlay: Bool = true
+
+  // The upstream runtime couples advancing and drawing behind a single
+  // isPaused flag, so only .pause is implementable here — .skipDraws behaves
+  // like .none (iOS already throttles most offscreen rendering on its own).
+  // Never automatic — data-binding consumers may rely on the state machine
+  // advancing while offscreen. Scrolling produces no callback on this view,
+  // so visibility is polled on a low-frequency timer that only runs while
+  // opted in.
+  private var offscreenBehavior: OffscreenBehavior = .none {
+    didSet {
+      guard offscreenBehavior != oldValue else { return }
+      updateVisibilityPolling()
+    }
+  }
+  private var isOffscreen = false {
+    didSet {
+      guard isOffscreen != oldValue else { return }
+      applyPauseState()
+    }
+  }
+  private var visibilityTimer: Timer?
+
+  private func updateVisibilityPolling() {
+    visibilityTimer?.invalidate()
+    visibilityTimer = nil
+    guard offscreenBehavior == .pause else {
+      isOffscreen = false
+      return
+    }
+    guard window != nil else {
+      isOffscreen = true
+      return
+    }
+    isOffscreen = !isInVisibleViewport()
+    let timer = Timer(timeInterval: 0.25, repeats: true) { [weak self] _ in
+      MainActor.assumeIsolated {
+        guard let self else { return }
+        self.isOffscreen = !self.isInVisibleViewport()
+      }
+    }
+    // .common so polling continues while the user is dragging a scroll view —
+    // that's exactly when visibility changes.
+    RunLoop.main.add(timer, forMode: .common)
+    visibilityTimer = timer
+  }
+
+  private func isInVisibleViewport() -> Bool {
+    guard let window, !isHidden, alpha > 0, bounds.width > 0, bounds.height > 0 else {
+      return false
+    }
+    let frameInWindow = convert(bounds, to: window)
+    return frameInWindow.intersects(window.bounds)
+  }
+
+  private func applyPauseState() {
+    riveUIView?.isPaused = isPaused || (offscreenBehavior == .pause && isOffscreen)
+  }
+
+  override func didMoveToWindow() {
+    super.didMoveToWindow()
+    updateVisibilityPolling()
+  }
 
   /// Configure failures are reported here (wired to the onError prop).
   var onLoadError: ((String) -> Void)?
@@ -68,6 +131,7 @@ class RiveReactNativeView: UIView {
 
     semantics = config.semantics
     frameRate = config.frameRate
+    offscreenBehavior = config.offscreenBehavior
 
     if reload {
       cleanup()
@@ -168,12 +232,12 @@ class RiveReactNativeView: UIView {
 
   func play() {
     isPaused = false
-    riveUIView?.isPaused = false
+    applyPauseState()
   }
 
   func pause() {
     isPaused = true
-    riveUIView?.isPaused = true
+    applyPauseState()
   }
 
   func reset() {
@@ -184,7 +248,7 @@ class RiveReactNativeView: UIView {
   func playIfNeeded() {
     if isPaused {
       isPaused = false
-      riveUIView?.isPaused = false
+      applyPauseState()
     }
   }
 
@@ -252,9 +316,9 @@ class RiveReactNativeView: UIView {
       // reconfigure, which previously caused orphaned draw calls ("state machine
       // not found") from the old MTKView after removeFromSuperview.
       existing.rive = rive
-      existing.isPaused = isPaused
       existing.semantics = semantics
       existing.frameRate = frameRate
+      applyPauseState()
     } else {
       let uiView = RiveUIView(rive: rive, isPaused: isPaused)
       uiView.semantics = semantics
@@ -268,6 +332,7 @@ class RiveReactNativeView: UIView {
         uiView.bottomAnchor.constraint(equalTo: bottomAnchor),
       ])
       self.riveUIView = uiView
+      applyPauseState()
     }
   }
 
@@ -290,6 +355,8 @@ class RiveReactNativeView: UIView {
   /// awaitViewReady() callers so their promises (which retain this view)
   /// don't hang forever.
   func detach() {
+    visibilityTimer?.invalidate()
+    visibilityTimer = nil
     resumeViewReadyContinuations(false)
     cleanup()
   }
@@ -302,13 +369,16 @@ class RiveReactNativeView: UIView {
     let settled = settledTask
     let stopNotify = stopNotifyTask
     let uiView = riveUIView
+    let timer = visibilityTimer
     if Thread.isMainThread {
+      timer?.invalidate()
       task?.cancel()
       settled?.cancel()
       stopNotify?.cancel()
       uiView?.removeFromSuperview()
     } else {
       DispatchQueue.main.async {
+        timer?.invalidate()
         task?.cancel()
         settled?.cancel()
         stopNotify?.cancel()

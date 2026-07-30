@@ -113,6 +113,28 @@ namespace margelo::nitro::rive::views {
         throw std::runtime_error(std::string("RiveView.frameRate: ") + exc.what());
       }
     }()),
+    offscreenBehavior([&]() -> CachedProp<std::optional<OffscreenBehavior>> {
+      try {
+        const react::RawValue* rawValue = rawProps.at("offscreenBehavior", nullptr, nullptr);
+        if (rawValue == nullptr) return sourceProps.offscreenBehavior;
+        const auto& [runtime, value] = (std::pair<jsi::Runtime*, jsi::Value>)*rawValue;
+        if (value.isNull()) return CachedProp<std::optional<OffscreenBehavior>>::fromRawValue(*runtime, jsi::Value::undefined(), sourceProps.offscreenBehavior);
+        return CachedProp<std::optional<OffscreenBehavior>>::fromRawValue(*runtime, value, sourceProps.offscreenBehavior);
+      } catch (const std::exception& exc) {
+        throw std::runtime_error(std::string("RiveView.offscreenBehavior: ") + exc.what());
+      }
+    }()),
+    renderEnabled([&]() -> CachedProp<std::optional<bool>> {
+      try {
+        const react::RawValue* rawValue = rawProps.at("renderEnabled", nullptr, nullptr);
+        if (rawValue == nullptr) return sourceProps.renderEnabled;
+        const auto& [runtime, value] = (std::pair<jsi::Runtime*, jsi::Value>)*rawValue;
+        if (value.isNull()) return CachedProp<std::optional<bool>>::fromRawValue(*runtime, jsi::Value::undefined(), sourceProps.renderEnabled);
+        return CachedProp<std::optional<bool>>::fromRawValue(*runtime, value, sourceProps.renderEnabled);
+      } catch (const std::exception& exc) {
+        throw std::runtime_error(std::string("RiveView.renderEnabled: ") + exc.what());
+      }
+    }()),
     semantics([&]() -> CachedProp<std::optional<Semantics>> {
       try {
         const react::RawValue* rawValue = rawProps.at("semantics", nullptr, nullptr);
@@ -176,6 +198,8 @@ namespace margelo::nitro::rive::views {
       case hashString("fit"): return true;
       case hashString("layoutScaleFactor"): return true;
       case hashString("frameRate"): return true;
+      case hashString("offscreenBehavior"): return true;
+      case hashString("renderEnabled"): return true;
       case hashString("semantics"): return true;
       case hashString("dataBind"): return true;
       case hashString("onError"): return true;

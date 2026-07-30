@@ -99,6 +99,10 @@ class HybridRiveView: HybridRiveViewSpec {
   var fit: Fit?
   var layoutScaleFactor: Double?
   var frameRate: Variant_Double_FrameRateRange?
+  var offscreenBehavior: OffscreenBehavior?
+  // Accepted for API parity; the upstream iOS runtime couples advancing and
+  // drawing, so draw-only skipping isn't implementable yet.
+  var renderEnabled: Bool?
   var semantics: Semantics?
   var onError: (RiveError) -> Void = { _ in }
   var onStop: () -> Void = {}
@@ -216,6 +220,7 @@ class HybridRiveView: HybridRiveViewSpec {
         fit: toRiveFit(fit, alignment: alignment, layoutScaleFactor: layoutScaleFactor),
         semantics: toRiveSemantics(semantics),
         frameRate: toRiveFrameRate(frameRate),
+        offscreenBehavior: offscreenBehavior ?? .none,
         bindData: try dataBind.toBindData()
       )
 

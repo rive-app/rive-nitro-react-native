@@ -312,6 +312,47 @@ open class HybridRiveViewSpec_cxx {
     }
   }
   
+  public final var offscreenBehavior: bridge.std__optional_OffscreenBehavior_ {
+    @inline(__always)
+    get {
+      return { () -> bridge.std__optional_OffscreenBehavior_ in
+        if let __unwrappedValue = self.__implementation.offscreenBehavior {
+          return bridge.create_std__optional_OffscreenBehavior_(__unwrappedValue)
+        } else {
+          return .init()
+        }
+      }()
+    }
+    @inline(__always)
+    set {
+      self.__implementation.offscreenBehavior = newValue.value
+    }
+  }
+  
+  public final var renderEnabled: bridge.std__optional_bool_ {
+    @inline(__always)
+    get {
+      return { () -> bridge.std__optional_bool_ in
+        if let __unwrappedValue = self.__implementation.renderEnabled {
+          return bridge.create_std__optional_bool_(__unwrappedValue)
+        } else {
+          return .init()
+        }
+      }()
+    }
+    @inline(__always)
+    set {
+      self.__implementation.renderEnabled = { () -> Bool? in
+        if bridge.has_value_std__optional_bool_(newValue) {
+          let __unwrapped = bridge.get_std__optional_bool_(newValue)
+          return __unwrapped
+        } else {
+          return nil
+        }
+      }()
+    }
+  }
+  
   public final var semantics: bridge.std__optional_Semantics_ {
     @inline(__always)
     get {

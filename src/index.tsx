@@ -19,7 +19,7 @@ export { NitroRiveView } from './core/NitroRiveViewComponent';
 export { RiveView, type RiveViewProps } from './core/RiveView';
 export type { RiveViewMethods };
 export type RiveViewRef = HybridView<NativeRiveViewProps, RiveViewTSMethods>;
-export type { FrameRateRange } from './specs/RiveView.nitro';
+export type { FrameRateRange, OffscreenBehavior } from './specs/RiveView.nitro';
 export type {
   RiveFile,
   RiveEnumDefinition,

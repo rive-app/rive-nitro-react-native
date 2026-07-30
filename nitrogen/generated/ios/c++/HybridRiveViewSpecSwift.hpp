@@ -20,6 +20,8 @@ namespace margelo::nitro::rive { enum class Alignment; }
 namespace margelo::nitro::rive { enum class Fit; }
 // Forward declaration of `FrameRateRange` to properly resolve imports.
 namespace margelo::nitro::rive { struct FrameRateRange; }
+// Forward declaration of `OffscreenBehavior` to properly resolve imports.
+namespace margelo::nitro::rive { enum class OffscreenBehavior; }
 // Forward declaration of `Semantics` to properly resolve imports.
 namespace margelo::nitro::rive { enum class Semantics; }
 // Forward declaration of `HybridViewModelInstanceSpec` to properly resolve imports.
@@ -45,6 +47,7 @@ namespace margelo::nitro::rive { enum class RiveEventType; }
 #include "Fit.hpp"
 #include "FrameRateRange.hpp"
 #include <variant>
+#include "OffscreenBehavior.hpp"
 #include "Semantics.hpp"
 #include "HybridViewModelInstanceSpec.hpp"
 #include "DataBindMode.hpp"
@@ -158,6 +161,20 @@ namespace margelo::nitro::rive {
     }
     inline void setFrameRate(const std::optional<std::variant<double, FrameRateRange>>& frameRate) noexcept override {
       _swiftPart.setFrameRate(frameRate);
+    }
+    inline std::optional<OffscreenBehavior> getOffscreenBehavior() noexcept override {
+      auto __result = _swiftPart.getOffscreenBehavior();
+      return __result;
+    }
+    inline void setOffscreenBehavior(std::optional<OffscreenBehavior> offscreenBehavior) noexcept override {
+      _swiftPart.setOffscreenBehavior(offscreenBehavior);
+    }
+    inline std::optional<bool> getRenderEnabled() noexcept override {
+      auto __result = _swiftPart.getRenderEnabled();
+      return __result;
+    }
+    inline void setRenderEnabled(std::optional<bool> renderEnabled) noexcept override {
+      _swiftPart.setRenderEnabled(renderEnabled);
     }
     inline std::optional<Semantics> getSemantics() noexcept override {
       auto __result = _swiftPart.getSemantics();

@@ -111,6 +111,18 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
       )
     }
 
+  override var offscreenBehavior: OffscreenBehavior? = null
+    set(value) {
+      field = value
+      view.offscreenBehavior = value ?: OffscreenBehavior.NONE
+    }
+
+  override var renderEnabled: Boolean? = null
+    set(value) {
+      field = value
+      view.renderEnabled = value ?: true
+    }
+
   // Accepted for API parity; semantics support is pending in the upstream
   // rive-android runtime (iOS-only for now).
   override var semantics: Semantics? = null
