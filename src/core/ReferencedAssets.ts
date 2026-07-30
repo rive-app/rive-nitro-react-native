@@ -37,9 +37,12 @@ export type TypedReferencedAssets<S extends RiveFileSchema> =
   string extends Extract<keyof S['assets'], string>
     ? ReferencedAssets
     : [Extract<keyof S['assets'], string>] extends [never]
-      ? // No referenced assets in the file — an empty mapped type would be
-        // `{}`, which accepts any object; `never` values reject every entry.
-        Record<string, never>
+      ? // No referenced assets in the file. An empty mapped type would be
+        // `{}`, which accepts any object — and a `never` value would reject
+        // entries with an unexplained "not assignable to never". The literal
+        // string type below rejects real entries too, but surfaces the reason
+        // in the compiler error itself.
+        Record<string, 'this .riv file has no referenced (out-of-band) assets'>
       : {
           [K in Extract<
             keyof S['assets'],
@@ -59,7 +62,7 @@ export type TypedResolvedReferencedAssets<S extends RiveFileSchema> =
   string extends Extract<keyof S['assets'], string>
     ? ResolvedReferencedAssets
     : [Extract<keyof S['assets'], string>] extends [never]
-      ? Record<string, never>
+      ? Record<string, 'this .riv file has no referenced (out-of-band) assets'>
       : {
           [K in Extract<keyof S['assets'], string>]?: ResolvedReferencedAsset;
         };
