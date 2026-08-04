@@ -99,6 +99,11 @@ class HybridRiveView: HybridRiveViewSpec {
   var fit: Fit?
   var layoutScaleFactor: Double?
   var frameRate: Variant_Double_FrameRateRange?
+  var offscreenBehavior: OffscreenBehavior?
+  // 'pause' is honored; the boolean (draw-only skipping) is accepted for API
+  // parity — the upstream iOS runtime couples advancing and drawing, so
+  // false behaves like true.
+  var renderEnabled: Variant_Bool_String?
   var semantics: Semantics?
   var onError: (RiveError) -> Void = { _ in }
   var onStop: () -> Void = {}
@@ -216,6 +221,8 @@ class HybridRiveView: HybridRiveViewSpec {
         fit: toRiveFit(fit, alignment: alignment, layoutScaleFactor: layoutScaleFactor),
         semantics: toRiveSemantics(semantics),
         frameRate: toRiveFrameRate(frameRate),
+        offscreenBehavior: offscreenBehavior ?? .none,
+        renderPaused: toRenderPaused(renderEnabled),
         bindData: try dataBind.toBindData()
       )
 
@@ -279,6 +286,13 @@ class HybridRiveView: HybridRiveViewSpec {
     case nil:
       return RiveUIView.Constants.Defaults.frameRate
     }
+  }
+
+  private func toRenderPaused(_ renderEnabled: Variant_Bool_String?) -> Bool {
+    if case .some(.second("pause")) = renderEnabled {
+      return true
+    }
+    return false
   }
 
   private func toRiveSemantics(_ semantics: Semantics?) -> RiveRuntime.Semantics {

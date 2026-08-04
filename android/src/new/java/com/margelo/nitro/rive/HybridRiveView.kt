@@ -6,6 +6,7 @@ import com.facebook.react.bridge.UiThreadUtil
 import com.facebook.react.uimanager.ThemedReactContext
 import com.margelo.nitro.core.Promise
 import com.rive.BindData
+import com.rive.RenderMode
 import com.rive.RiveReactNativeView
 import com.rive.ViewConfiguration
 import app.rive.Fit as RiveFit
@@ -109,6 +110,24 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
         first = { it },
         second = { range -> range.preferred ?: range.maximum }
       )
+    }
+
+  override var offscreenBehavior: OffscreenBehavior? = null
+    set(value) {
+      field = value
+      view.offscreenBehavior = value ?: OffscreenBehavior.NONE
+    }
+
+  override var renderEnabled: Variant_Boolean_String? = null
+    set(value) {
+      field = value
+      view.renderMode = when {
+        value == null -> RenderMode.Enabled
+        value.asSecondOrNull() == "pause" -> RenderMode.Paused
+        value.asFirstOrNull() == false -> RenderMode.SkipDraws
+        // true, or an unrecognized string (the public API narrows to 'pause')
+        else -> RenderMode.Enabled
+      }
     }
 
   // Accepted for API parity; semantics support is pending in the upstream

@@ -69,6 +69,14 @@ void JHybridRiveViewStateUpdater::updateViewProps(jni::alias_ref<jni::JClass> /*
     hybridView->setFrameRate(props->frameRate.value);
     props->frameRate.isDirty = false;
   }
+  if (props->offscreenBehavior.isDirty) {
+    hybridView->setOffscreenBehavior(props->offscreenBehavior.value);
+    props->offscreenBehavior.isDirty = false;
+  }
+  if (props->renderEnabled.isDirty) {
+    hybridView->setRenderEnabled(props->renderEnabled.value);
+    props->renderEnabled.isDirty = false;
+  }
   if (props->semantics.isDirty) {
     hybridView->setSemantics(props->semantics.value);
     props->semantics.isDirty = false;

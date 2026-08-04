@@ -94,6 +94,11 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
   // experimental backends.
   override var frameRate: Variant_Double_FrameRateRange? = null
 
+  // Accepted for API parity; offscreen handling and draw skipping are only
+  // implemented on the new runtimes.
+  override var offscreenBehavior: OffscreenBehavior? = null
+  override var renderEnabled: Variant_Boolean_String? = null
+
   // Accepted for API parity; semantics are only available in the new Rive
   // runtime, and Android support is pending upstream (iOS-only for now).
   override var semantics: Semantics? = null

@@ -79,6 +79,18 @@ abstract class HybridRiveViewSpec: HybridView() {
   @get:Keep
   @set:DoNotStrip
   @set:Keep
+  abstract var offscreenBehavior: OffscreenBehavior?
+  
+  @get:DoNotStrip
+  @get:Keep
+  @set:DoNotStrip
+  @set:Keep
+  abstract var renderEnabled: Variant_Boolean_String?
+  
+  @get:DoNotStrip
+  @get:Keep
+  @set:DoNotStrip
+  @set:Keep
   abstract var semantics: Semantics?
   
   @get:DoNotStrip

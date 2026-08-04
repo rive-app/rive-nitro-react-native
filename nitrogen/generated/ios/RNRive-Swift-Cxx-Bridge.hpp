@@ -66,6 +66,8 @@ namespace margelo::nitro::rive { class HybridViewModelSpec; }
 namespace margelo::nitro::rive { class HybridViewModelStringPropertySpec; }
 // Forward declaration of `HybridViewModelTriggerPropertySpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridViewModelTriggerPropertySpec; }
+// Forward declaration of `OffscreenBehavior` to properly resolve imports.
+namespace margelo::nitro::rive { enum class OffscreenBehavior; }
 // Forward declaration of `ReferencedAssetsType` to properly resolve imports.
 namespace margelo::nitro::rive { struct ReferencedAssetsType; }
 // Forward declaration of `ResolvedReferencedAsset` to properly resolve imports.
@@ -165,6 +167,7 @@ namespace RNRive { class HybridViewModelTriggerPropertySpec_cxx; }
 #include "HybridViewModelSpec.hpp"
 #include "HybridViewModelStringPropertySpec.hpp"
 #include "HybridViewModelTriggerPropertySpec.hpp"
+#include "OffscreenBehavior.hpp"
 #include "ReferencedAssetsType.hpp"
 #include "ResolvedReferencedAsset.hpp"
 #include "RiveAssetType.hpp"
@@ -1002,6 +1005,65 @@ namespace margelo::nitro::rive::bridge::swift {
     return optional.has_value();
   }
   inline std::variant<double, FrameRateRange> get_std__optional_std__variant_double__FrameRateRange__(const std::optional<std::variant<double, FrameRateRange>>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::optional<OffscreenBehavior>
+  /**
+   * Specialized version of `std::optional<OffscreenBehavior>`.
+   */
+  using std__optional_OffscreenBehavior_ = std::optional<OffscreenBehavior>;
+  inline std::optional<OffscreenBehavior> create_std__optional_OffscreenBehavior_(const OffscreenBehavior& value) noexcept {
+    return std::optional<OffscreenBehavior>(value);
+  }
+  inline bool has_value_std__optional_OffscreenBehavior_(const std::optional<OffscreenBehavior>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline OffscreenBehavior get_std__optional_OffscreenBehavior_(const std::optional<OffscreenBehavior>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::variant<bool, std::string>
+  /**
+   * Wrapper struct for `std::variant<bool, std::string>`.
+   * std::variant cannot be used in Swift because of a Swift bug.
+   * Not even specializing it works. So we create a wrapper struct.
+   */
+  struct std__variant_bool__std__string_ final {
+    std::variant<bool, std::string> variant;
+    std__variant_bool__std__string_(std::variant<bool, std::string> variant): variant(variant) { }
+    operator std::variant<bool, std::string>() const noexcept {
+      return variant;
+    }
+    inline size_t index() const noexcept {
+      return variant.index();
+    }
+    inline bool get_0() const noexcept {
+      return std::get<0>(variant);
+    }
+    inline std::string get_1() const noexcept {
+      return std::get<1>(variant);
+    }
+  };
+  inline std__variant_bool__std__string_ create_std__variant_bool__std__string_(bool value) noexcept {
+    return std__variant_bool__std__string_(value);
+  }
+  inline std__variant_bool__std__string_ create_std__variant_bool__std__string_(const std::string& value) noexcept {
+    return std__variant_bool__std__string_(value);
+  }
+  
+  // pragma MARK: std::optional<std::variant<bool, std::string>>
+  /**
+   * Specialized version of `std::optional<std::variant<bool, std::string>>`.
+   */
+  using std__optional_std__variant_bool__std__string__ = std::optional<std::variant<bool, std::string>>;
+  inline std::optional<std::variant<bool, std::string>> create_std__optional_std__variant_bool__std__string__(const std::variant<bool, std::string>& value) noexcept {
+    return std::optional<std::variant<bool, std::string>>(value);
+  }
+  inline bool has_value_std__optional_std__variant_bool__std__string__(const std::optional<std::variant<bool, std::string>>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline std::variant<bool, std::string> get_std__optional_std__variant_bool__std__string__(const std::optional<std::variant<bool, std::string>>& optional) noexcept {
     return optional.value();
   }
   

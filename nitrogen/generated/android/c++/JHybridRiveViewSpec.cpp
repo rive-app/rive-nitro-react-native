@@ -15,6 +15,8 @@ namespace margelo::nitro::rive { enum class Alignment; }
 namespace margelo::nitro::rive { enum class Fit; }
 // Forward declaration of `FrameRateRange` to properly resolve imports.
 namespace margelo::nitro::rive { struct FrameRateRange; }
+// Forward declaration of `OffscreenBehavior` to properly resolve imports.
+namespace margelo::nitro::rive { enum class OffscreenBehavior; }
 // Forward declaration of `Semantics` to properly resolve imports.
 namespace margelo::nitro::rive { enum class Semantics; }
 // Forward declaration of `HybridViewModelInstanceSpec` to properly resolve imports.
@@ -45,6 +47,9 @@ namespace margelo::nitro::rive { enum class RiveEventType; }
 #include <variant>
 #include "JVariant_Double_FrameRateRange.hpp"
 #include "JFrameRateRange.hpp"
+#include "OffscreenBehavior.hpp"
+#include "JOffscreenBehavior.hpp"
+#include "JVariant_Boolean_String.hpp"
 #include "Semantics.hpp"
 #include "JSemantics.hpp"
 #include "HybridViewModelInstanceSpec.hpp"
@@ -174,6 +179,24 @@ namespace margelo::nitro::rive {
   void JHybridRiveViewSpec::setFrameRate(const std::optional<std::variant<double, FrameRateRange>>& frameRate) {
     static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<JVariant_Double_FrameRateRange> /* frameRate */)>("setFrameRate");
     method(_javaPart, frameRate.has_value() ? JVariant_Double_FrameRateRange::fromCpp(frameRate.value()) : nullptr);
+  }
+  std::optional<OffscreenBehavior> JHybridRiveViewSpec::getOffscreenBehavior() {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JOffscreenBehavior>()>("getOffscreenBehavior");
+    auto __result = method(_javaPart);
+    return __result != nullptr ? std::make_optional(__result->toCpp()) : std::nullopt;
+  }
+  void JHybridRiveViewSpec::setOffscreenBehavior(std::optional<OffscreenBehavior> offscreenBehavior) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<JOffscreenBehavior> /* offscreenBehavior */)>("setOffscreenBehavior");
+    method(_javaPart, offscreenBehavior.has_value() ? JOffscreenBehavior::fromCpp(offscreenBehavior.value()) : nullptr);
+  }
+  std::optional<std::variant<bool, std::string>> JHybridRiveViewSpec::getRenderEnabled() {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JVariant_Boolean_String>()>("getRenderEnabled");
+    auto __result = method(_javaPart);
+    return __result != nullptr ? std::make_optional(__result->toCpp()) : std::nullopt;
+  }
+  void JHybridRiveViewSpec::setRenderEnabled(const std::optional<std::variant<bool, std::string>>& renderEnabled) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<JVariant_Boolean_String> /* renderEnabled */)>("setRenderEnabled");
+    method(_javaPart, renderEnabled.has_value() ? JVariant_Boolean_String::fromCpp(renderEnabled.value()) : nullptr);
   }
   std::optional<Semantics> JHybridRiveViewSpec::getSemantics() {
     static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JSemantics>()>("getSemantics");

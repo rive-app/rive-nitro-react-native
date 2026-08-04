@@ -312,6 +312,66 @@ open class HybridRiveViewSpec_cxx {
     }
   }
   
+  public final var offscreenBehavior: bridge.std__optional_OffscreenBehavior_ {
+    @inline(__always)
+    get {
+      return { () -> bridge.std__optional_OffscreenBehavior_ in
+        if let __unwrappedValue = self.__implementation.offscreenBehavior {
+          return bridge.create_std__optional_OffscreenBehavior_(__unwrappedValue)
+        } else {
+          return .init()
+        }
+      }()
+    }
+    @inline(__always)
+    set {
+      self.__implementation.offscreenBehavior = newValue.value
+    }
+  }
+  
+  public final var renderEnabled: bridge.std__optional_std__variant_bool__std__string__ {
+    @inline(__always)
+    get {
+      return { () -> bridge.std__optional_std__variant_bool__std__string__ in
+        if let __unwrappedValue = self.__implementation.renderEnabled {
+          return bridge.create_std__optional_std__variant_bool__std__string__({ () -> bridge.std__variant_bool__std__string_ in
+            switch __unwrappedValue {
+              case .first(let __value):
+                return bridge.create_std__variant_bool__std__string_(__value)
+              case .second(let __value):
+                return bridge.create_std__variant_bool__std__string_(std.string(__value))
+            }
+          }().variant)
+        } else {
+          return .init()
+        }
+      }()
+    }
+    @inline(__always)
+    set {
+      self.__implementation.renderEnabled = { () -> Variant_Bool_String? in
+        if bridge.has_value_std__optional_std__variant_bool__std__string__(newValue) {
+          let __unwrapped = bridge.get_std__optional_std__variant_bool__std__string__(newValue)
+          return { () -> Variant_Bool_String in
+            let __variant = bridge.std__variant_bool__std__string_(__unwrapped)
+            switch __variant.index() {
+              case 0:
+                let __actual = __variant.get_0()
+                return .first(__actual)
+              case 1:
+                let __actual = __variant.get_1()
+                return .second(String(__actual))
+              default:
+                fatalError("Variant can never have index \(__variant.index())!")
+            }
+          }()
+        } else {
+          return nil
+        }
+      }()
+    }
+  }
+  
   public final var semantics: bridge.std__optional_Semantics_ {
     @inline(__always)
     get {

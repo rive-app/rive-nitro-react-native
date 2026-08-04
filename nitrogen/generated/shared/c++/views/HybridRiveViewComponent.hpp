@@ -24,6 +24,7 @@
 #include "Fit.hpp"
 #include "FrameRateRange.hpp"
 #include <variant>
+#include "OffscreenBehavior.hpp"
 #include "Semantics.hpp"
 #include "HybridViewModelInstanceSpec.hpp"
 #include "DataBindMode.hpp"
@@ -60,6 +61,8 @@ namespace margelo::nitro::rive::views {
     CachedProp<std::optional<Fit>> fit;
     CachedProp<std::optional<double>> layoutScaleFactor;
     CachedProp<std::optional<std::variant<double, FrameRateRange>>> frameRate;
+    CachedProp<std::optional<OffscreenBehavior>> offscreenBehavior;
+    CachedProp<std::optional<std::variant<bool, std::string>>> renderEnabled;
     CachedProp<std::optional<Semantics>> semantics;
     CachedProp<std::optional<std::variant<std::shared_ptr<HybridViewModelInstanceSpec>, DataBindMode, DataBindByName>>> dataBind;
     CachedProp<std::function<void(const RiveError& /* error */)>> onError;

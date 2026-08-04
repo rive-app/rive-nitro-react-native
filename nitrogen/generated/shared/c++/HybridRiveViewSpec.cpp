@@ -30,6 +30,10 @@ namespace margelo::nitro::rive {
       prototype.registerHybridSetter("layoutScaleFactor", &HybridRiveViewSpec::setLayoutScaleFactor);
       prototype.registerHybridGetter("frameRate", &HybridRiveViewSpec::getFrameRate);
       prototype.registerHybridSetter("frameRate", &HybridRiveViewSpec::setFrameRate);
+      prototype.registerHybridGetter("offscreenBehavior", &HybridRiveViewSpec::getOffscreenBehavior);
+      prototype.registerHybridSetter("offscreenBehavior", &HybridRiveViewSpec::setOffscreenBehavior);
+      prototype.registerHybridGetter("renderEnabled", &HybridRiveViewSpec::getRenderEnabled);
+      prototype.registerHybridSetter("renderEnabled", &HybridRiveViewSpec::setRenderEnabled);
       prototype.registerHybridGetter("semantics", &HybridRiveViewSpec::getSemantics);
       prototype.registerHybridSetter("semantics", &HybridRiveViewSpec::setSemantics);
       prototype.registerHybridGetter("dataBind", &HybridRiveViewSpec::getDataBind);

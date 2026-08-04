@@ -30,6 +30,12 @@ export interface FrameRateRange {
 }
 
 /**
+ * What to do while the view is outside the visible viewport (scrolled out of
+ * view, hidden, or detached from a window). See RiveViewProps.offscreenBehavior.
+ */
+export type OffscreenBehavior = 'none' | 'skip-draws' | 'pause';
+
+/**
  * Props interface for the RiveView component.
  * Extends HybridViewProps to include Rive-specific properties.
  */
@@ -63,6 +69,52 @@ export interface RiveViewProps extends HybridViewProps {
    * @see https://rive.app/docs/runtimes/apple/apple#frame-rate
    */
   frameRate?: number | FrameRateRange;
+  /**
+   * What to do while the view is outside the visible viewport (scrolled out
+   * of view, hidden, or detached from a window). Views covered by an overlay
+   * in the same window (e.g. a React Native Modal) still count as visible —
+   * use renderEnabled for occlusion the view cannot detect.
+   *
+   * - 'none' (default): keep advancing and drawing regardless of visibility.
+   * - 'skip-draws': keep advancing the state machine but skip drawing frames
+   *   while offscreen. Events, data binding and playback time stay live, so
+   *   this is safe even when other UI is driven from the state machine.
+   * - 'pause': stop advancing and drawing while offscreen; playback resumes
+   *   from where it left off when the view becomes visible again. The state
+   *   machine does not advance while offscreen, so don't use it when
+   *   data-binding consumers rely on it advancing regardless of visibility.
+   *
+   * Only supported on the new (default) runtimes; the legacy backends ignore
+   * it. On iOS the upstream runtime couples advancing and drawing, so
+   * 'skip-draws' behaves like 'none' there ('pause' is fully supported, and
+   * iOS already throttles most offscreen rendering on its own).
+   */
+  offscreenBehavior?: OffscreenBehavior;
+  /**
+   * Manual control over rendering, for occlusion the view cannot detect
+   * itself — e.g. covered by a Modal or a bottom sheet. Use
+   * offscreenBehavior instead for visibility the view can detect (scrolling,
+   * hiding). Defaults to true.
+   *
+   * - true (default): render normally.
+   * - false: stop drawing frames while the state machine keeps advancing
+   *   (events, data binding, and playback time stay live). The view repaints
+   *   on the next frame after re-enabling.
+   * - 'pause': also stop advancing the state machine, like an imperative
+   *   pause(); playback resumes where it left off when the prop changes
+   *   back. Unlike pause()/play() this doesn't touch the playback state the
+   *   ref methods control — the two combine.
+   *
+   * Only supported on the new (default) runtimes; the legacy backends ignore
+   * it. On iOS the upstream runtime couples advancing and drawing, so false
+   * behaves like true there ('pause' is fully supported, and fullscreen iOS
+   * modals already hide the covered hierarchy).
+   *
+   * Typed as `boolean | string` because Nitro cannot mix string literals
+   * into a variant; the public RiveView component narrows it to
+   * `boolean | 'pause'`. Strings other than 'pause' render normally.
+   */
+  renderEnabled?: boolean | string;
   /**
    * Exposes accessibility semantics authored in the Rive editor to the
    * platform screen reader (VoiceOver). Defaults to Semantics.Off.

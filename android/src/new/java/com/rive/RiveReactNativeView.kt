@@ -1,6 +1,7 @@
 package com.rive
 
 import android.annotation.SuppressLint
+import android.graphics.Rect
 import android.graphics.SurfaceTexture
 import android.os.Build
 import android.util.Log
@@ -21,6 +22,7 @@ import app.rive.core.RiveSurface
 import app.rive.core.StateMachineHandle
 import app.rive.core.SurfaceTextureSurface
 import com.facebook.react.uimanager.ThemedReactContext
+import com.margelo.nitro.rive.OffscreenBehavior
 import com.margelo.nitro.rive.RiveErrorLogger
 import com.margelo.nitro.rive.RiveLog
 import kotlinx.coroutines.CompletableDeferred
@@ -33,6 +35,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.nanoseconds
+
+// The renderEnabled prop (boolean | 'pause') resolved into what the render
+// loop should do: draw normally, keep advancing but skip draws, or stop both.
+enum class RenderMode { Enabled, SkipDraws, Paused }
 
 sealed class BindData {
   data object None : BindData()
@@ -70,6 +76,24 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
       field = value
       updateFrameRateHint()
     }
+
+  // What to do while the view is outside the visible viewport (scrolled out,
+  // hidden, or windowless): keep running, skip draws only, or pause fully.
+  // Never automatic — data-binding consumers may rely on the state machine
+  // advancing while offscreen. Overlays in the same window (e.g. RN Modal)
+  // don't count as covering the view.
+  var offscreenBehavior: OffscreenBehavior = OffscreenBehavior.NONE
+
+  // Manual counterpart to offscreenBehavior for occlusion the view can't
+  // detect (RN Modal, bottom sheets): SkipDraws keeps the state machine
+  // advancing, Paused stops it too (composes with the pause()/play() state
+  // rather than overwriting it).
+  var renderMode: RenderMode = RenderMode.Enabled
+
+  private val visibleRectBuffer = Rect()
+
+  private fun isInVisibleViewport(): Boolean =
+    isShown && getGlobalVisibleRect(visibleRectBuffer)
 
   var onError: ((String) -> Unit)? = null
 
@@ -172,7 +196,11 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
     override fun doFrame(frameTimeNanos: Long) {
       if (!renderLoopRunning || disposed) return
 
-      if (paused && !needsRedraw) {
+      val offscreen = offscreenBehavior != OffscreenBehavior.NONE && !isInVisibleViewport()
+      val pausedOffscreen = offscreen && offscreenBehavior == OffscreenBehavior.PAUSE
+      val renderPaused = renderMode == RenderMode.Paused
+
+      if ((paused || pausedOffscreen || renderPaused) && !needsRedraw) {
         // Keep the timebase fresh so resuming advances by one frame, not by
         // the whole pause span.
         lastFrameTimeNs = frameTimeNanos
@@ -204,17 +232,26 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
       val sm = stateMachineHandle
       val rs = riveSurface
 
+      // Offscreen views keep advancing the state machine (events and
+      // data-binding listeners stay live) and only skip the draw — the draw
+      // is the dominant part of the offscreen cost. needsRedraw still forces
+      // a draw so pending content (initial frame, resize, rebinding) isn't
+      // lost while invisible.
+      val skipDraw = renderMode != RenderMode.Enabled || offscreen
+
       if (worker != null && art != null && sm != null && rs != null) {
         try {
-          if (!paused && !settled) {
+          if (!paused && !settled && !pausedOffscreen && !renderPaused) {
             worker.advanceStateMachine(sm, deltaTime)
           }
-          worker.draw(art, sm, rs, activeFit)
-          needsRedraw = false
-          frameCount++
-          val isFirstFrame = frameCount == 1L
-          if (isFirstFrame) {
-            viewReadyDeferred.complete(true)
+          if (!skipDraw || needsRedraw) {
+            worker.draw(art, sm, rs, activeFit)
+            needsRedraw = false
+            frameCount++
+            val isFirstFrame = frameCount == 1L
+            if (isFirstFrame) {
+              viewReadyDeferred.complete(true)
+            }
           }
         } catch (e: Exception) {
           Log.e(TAG, "Render loop error", e)
