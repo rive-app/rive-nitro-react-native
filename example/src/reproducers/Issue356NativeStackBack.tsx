@@ -31,7 +31,7 @@ type ParamList = {
 };
 
 const Stack = createNativeStackNavigator<ParamList>();
-const TILES = [0, 1, 2, 3, 4, 5];
+const TILES = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
 
 function StartScreen({
   navigation,
@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
   grid: { flexDirection: 'row', flexWrap: 'wrap' },
   frame: {
     width: '33%',
-    height: 150,
+    height: 110,
     backgroundColor: '#ffd9d9',
     borderWidth: 2,
     borderColor: '#d33',
