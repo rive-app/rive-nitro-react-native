@@ -179,12 +179,10 @@ class HybridRiveView: HybridRiveViewSpec {
 
   // MARK: Lifecycle
   func dispose() {
-    // Nitro finalizes HybridObjects on the JS/GC thread; the view's teardown
-    // must run on main (mirrors the legacy backend's dispose()).
-    let riveView = view as? RiveReactNativeView
-    DispatchQueue.main.async {
-      riveView?.detachWhenNotVisible()
-    }
+    // Deliberately empty: the view tears itself down when Fabric drops it (see
+    // RiveReactNativeView.willMove(toSuperview:)). Doing it here instead would
+    // run in React's commit phase, ahead of the mounting transaction, which is
+    // what caused #356.
   }
 
   // MARK: Views

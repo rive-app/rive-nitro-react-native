@@ -27,7 +27,6 @@ class RiveReactNativeView: UIView {
   private var pendingBindInstance: ViewModelInstance?
   private var viewReadyContinuations: [CheckedContinuation<Bool, Never>] = []
   private var isViewReady = false
-  private let deferredTeardown = DeferredTeardown()
   private var configTask: Task<Void, Never>?
   private var settledTask: Task<Void, Never>?
   private var stopNotifyTask: Task<Void, Never>?
@@ -274,7 +273,6 @@ class RiveReactNativeView: UIView {
 
   private func cleanup() {
     dispatchPrecondition(condition: .onQueue(.main))
-    deferredTeardown.cancel()
     configTask?.cancel()
     configTask = nil
     settledTask?.cancel()
@@ -287,11 +285,21 @@ class RiveReactNativeView: UIView {
     pendingBindInstance = nil
   }
 
-  /// Teardown, held back until it can't be seen. See `DeferredTeardown`.
-  func detachWhenNotVisible() {
-    dispatchPrecondition(condition: .onQueue(.main))
-    deferredTeardown.schedule { [weak self] in
-      self?.detach()
+  /// Teardown runs when Fabric drops the view, not when the JS effect cleanup
+  /// calls dispose().
+  ///
+  /// The effect cleanup fires in React's commit phase, before the mounting
+  /// instructions reach native views — potentially a whole transaction early.
+  /// react-native-screens captures the outgoing screen during that transaction
+  /// (`unmountChildComponentView`), and a render-server composite landing in the
+  /// gap bakes our half-torn-down view into that capture, so the screen slides
+  /// away empty (#356). Fabric's own unmount happens inside the same transaction
+  /// as the capture, leaving no room for one — which is why plain RN views never
+  /// show this.
+  override func willMove(toSuperview newSuperview: UIView?) {
+    super.willMove(toSuperview: newSuperview)
+    if newSuperview == nil, riveUIView != nil {
+      detach()
     }
   }
 
