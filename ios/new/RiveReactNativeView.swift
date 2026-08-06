@@ -298,7 +298,9 @@ class RiveReactNativeView: UIView {
   /// show this.
   override func willMove(toSuperview newSuperview: UIView?) {
     super.willMove(toSuperview: newSuperview)
-    if newSuperview == nil, riveUIView != nil {
+    // Unconditional: a view whose configure failed has no riveUIView but can
+    // still have awaitViewReady() waiters, and detach() is what settles them.
+    if newSuperview == nil {
       detach()
     }
   }
