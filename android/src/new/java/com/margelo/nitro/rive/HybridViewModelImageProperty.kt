@@ -34,9 +34,10 @@ class HybridViewModelImageProperty(
   override fun set(image: HybridRiveImageSpec?) {
     if (image == null) {
       // rive-android's ViewModelInstance.setImage only accepts a non-null ImageAsset up to
-      // 11.7.2. The nullable overload that clears the property landed upstream in
-      // rive-app/rive-android#13261 and ships in the next release; until we bump the pin,
-      // dropping the call is all we can do here. Clearing works on legacy and on iOS.
+      // 11.7.2, which is what we pin. The nullable overload landed in 11.8.0
+      // (rive-app/rive-android#13261), but that release also dropped the public
+      // CommandQueue.settledFlow this backend needs for onStop — the replacement is
+      // internal — so we can't take it yet. Clearing works on legacy and on iOS.
       Log.w(TAG, "Clearing image property '$path' is not supported by this rive-android version")
       return
     }
