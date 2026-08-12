@@ -3,7 +3,10 @@ import type { RiveFileFactory as RiveFileFactoryInternal } from '../specs/RiveFi
 import type { RiveAsset, RiveFileSchema, TypedRiveFile } from './TypedRiveFile';
 
 import { Image } from 'react-native';
-import type { ResolvedReferencedAssets } from './ReferencedAssets';
+import type {
+  ResolvedReferencedAssets,
+  TypedResolvedReferencedAssets,
+} from './ReferencedAssets';
 
 const RiveFileInternal =
   NitroModules.createHybridObject<RiveFileFactoryInternal>('RiveFileFactory');
@@ -156,7 +159,7 @@ export namespace RiveFileFactory {
    */
   export async function fromSource<T extends RiveFileSchema>(
     source: RiveAsset<T>,
-    referencedAssets: ResolvedReferencedAssets | undefined,
+    referencedAssets: TypedResolvedReferencedAssets<T> | undefined,
     loadCdn?: boolean
   ): Promise<TypedRiveFile<T>>;
   export async function fromSource(

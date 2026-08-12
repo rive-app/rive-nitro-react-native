@@ -9,5 +9,6 @@ declare const asset: RiveAsset<{
     Artboard: 'State Machine 1';
   };
   viewModels: {};
+  assets: {};
 }>;
 export default asset;

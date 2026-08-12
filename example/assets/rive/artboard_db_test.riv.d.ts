@@ -17,5 +17,6 @@ declare const asset: RiveAsset<{
       artboard_2: 'artboard';
     };
   };
+  assets: {};
 }>;
 export default asset;

@@ -54,6 +54,24 @@ describe('rive-extract-schema', () => {
     expect(vms.Energy_Bar!.Bar_Color).toBe('color');
   });
 
+  test('extracts non-embedded assets with unique ids and kinds', () => {
+    const oob = extract(
+      resolve(import.meta.dirname, '../../example/assets/rive/out_of_band.riv')
+    );
+    expect(oob.assets).toEqual({
+      'Inter-594377': 'font',
+      'referenced-image-2929282': 'image',
+      'referenced_audio-2929340': 'audio',
+      'hosted_audio-2989208': 'audio',
+      'Damion-593587': 'font',
+      'cdn-image-2989123': 'image',
+    });
+  });
+
+  test('embedded-only files report no referenced assets', () => {
+    expect(schema.assets).toEqual({});
+  });
+
   test('extracts enum values as pipe-separated string', () => {
     const databinding = extract(
       resolve(import.meta.dirname, '../../example/assets/rive/databinding.riv')
