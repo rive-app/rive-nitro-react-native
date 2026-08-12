@@ -13,6 +13,7 @@
     "module": "ESNext",
     "moduleResolution": "bundler",
     "noEmit": true,
+    "allowImportingTsExtensions": true,
     "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,
     "noImplicitUseStrict": false,
@@ -24,7 +25,8 @@
     "skipLibCheck": true,
     "strict": true,
     "target": "ESNext",
-    "verbatimModuleSyntax": true
+    "verbatimModuleSyntax": true,
+    "allowArbitraryExtensions": true
   },
-  "exclude": ["expo-example", "expo55-example", "expo57-example", "**/*.test-d.ts"]
+"exclude": ["expo-example", "expo55-example", "expo57-example", "**/*.test-d.ts", "scripts/__tests__"]
 }

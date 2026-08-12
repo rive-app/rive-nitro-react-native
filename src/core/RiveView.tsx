@@ -3,9 +3,26 @@ import { NitroRiveView } from './NitroRiveViewComponent';
 import { RiveErrorType, type RiveError } from './Errors';
 import { callDispose } from './callDispose';
 import type { RiveViewRef } from '../index';
+import type {
+  RiveAsset,
+  RiveFileSchema,
+  SchemaOf,
+  TypedRiveFile,
+} from './TypedRiveFile';
 
-export interface RiveViewProps
-  extends Omit<ComponentProps<typeof NitroRiveView>, 'onError' | 'onStop'> {
+type NitroRiveViewProps = ComponentProps<typeof NitroRiveView>;
+
+// T accepts a schema OR a RiveAsset (i.e. `typeof importedRiv`), matching
+// TypedRiveFile. A schema-only constraint would make inference silently fall
+// back to the base schema — and disable all name checking — whenever the file
+// is annotated as TypedRiveFile<typeof asset>.
+export interface RiveViewProps<
+  T extends RiveFileSchema | RiveAsset = RiveFileSchema,
+  A extends SchemaOf<T>['artboards'] = SchemaOf<T>['defaultArtboard'],
+> extends Omit<
+    NitroRiveViewProps,
+    'onError' | 'onStop' | 'file' | 'artboardName' | 'stateMachineName'
+  > {
   onError?: (error: RiveError) => void;
   /**
    * Called when the animation/state machine stops playing, e.g. when a
@@ -14,6 +31,14 @@ export interface RiveViewProps
    * animations where you want to navigate away once playback finishes.
    */
   onStop?: () => void;
+  file: TypedRiveFile<T>;
+  /** Name of the artboard to display. When using a generated schema, only valid artboard names are accepted. */
+  artboardName?: A;
+  /**
+   * Name of the state machine to play.
+   * Constrained to the selected artboard's state machines, or the default artboard's if none is specified.
+   */
+  stateMachineName?: SchemaOf<T>['stateMachines'][A];
 }
 
 const defaultOnError = (error: RiveError) =>
@@ -53,7 +78,10 @@ const defaultOnStop = () => {};
  * - play(): Starts playing the Rive graphic
  * - pause(): Pauses the Rive graphic
  */
-export function RiveView(props: RiveViewProps) {
+export function RiveView<
+  T extends RiveFileSchema | RiveAsset = RiveFileSchema,
+  A extends SchemaOf<T>['artboards'] = SchemaOf<T>['defaultArtboard'],
+>(props: RiveViewProps<T, A>) {
   const { onError, onStop, hybridRef: userHybridRef, ...rest } = props;
   const wrappedOnError = onError ?? defaultOnError;
   const wrappedOnStop = onStop ?? defaultOnStop;

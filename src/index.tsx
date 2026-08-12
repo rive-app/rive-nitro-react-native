@@ -26,6 +26,21 @@ export type {
   RiveAssetType,
 } from './specs/RiveFile.nitro';
 export type {
+  RiveAsset,
+  RiveFileSchema,
+  SchemaOf,
+  TypedRiveFile,
+} from './core/TypedRiveFile';
+export type {
+  TypedViewModelInstance,
+  TypedViewModelOf,
+  UntypedViewModelInstance,
+  TypedViewModelEnumProperty,
+  PathsOfKind,
+  PropTypeAtPath,
+  EnumValuesOf,
+} from './core/TypedViewModelInstance';
+export type {
   ViewModel,
   ViewModelInstance,
   ViewModelNumberProperty,

@@ -69,6 +69,16 @@ export default function HomeScreen() {
         )}
       </ThemedView>
 
+      <TouchableOpacity
+        onPress={() => router.push('/typed-demo' as any)}
+        style={styles.typedDemoLink}
+        testID="typed-demo-link"
+      >
+        <ThemedText style={styles.typedDemoText}>
+          ✨ Typed Schema Demo (.riv.d.ts)
+        </ThemedText>
+      </TouchableOpacity>
+
       <HomeMenu lastOpened={lastOpened} onNavigate={handleNavigate} />
     </ThemedView>
   );
@@ -108,5 +118,17 @@ const styles = StyleSheet.create({
   menuItemText: {
     fontSize: 16,
     color: '#007AFF',
+  },
+  typedDemoLink: {
+    margin: 12,
+    marginBottom: 0,
+    padding: 12,
+    borderRadius: 8,
+    backgroundColor: '#EAF2FF',
+  },
+  typedDemoText: {
+    fontSize: 15,
+    color: '#007AFF',
+    fontWeight: '600',
   },
 });
