@@ -41,7 +41,7 @@
     "clean": "del-cli android/build example/android/build example/android/app/build example/ios/build lib",
     "prepare": "npx react-native-builder-bob@^0.40.0 build && yarn build:cli",
     "nitrogen": "nitrogen && npx tsx scripts/nitrogen-postprocess.ts",
-    "rive-gen-types": "bun scripts/rive-gen-types.ts",
+    "rive-gen-types": "node scripts/rive-gen-types.ts",
     "release": "release-it",
     "dev:ios": "cd example && xed ios",
     "dev:android": "cd example && open -a \"/Applications/Android Studio.app\" ./android",
@@ -51,7 +51,7 @@
     "lint:fix:kotlin": "./scripts/lint-fix-kotlin.sh",
     "lint:native": "yarn lint:swift && yarn lint:kotlin",
     "typetest": "tsd --typings src/index.tsx",
-    "test:scripts": "cd scripts/__tests__ && bun test --no-parallel",
+    "test:scripts": "node --test --test-concurrency=1 \"scripts/__tests__/*.test.ts\"",
     "build:cli": "esbuild scripts/rive-gen-types.ts --outfile=lib/cli/rive-gen-types.cjs --format=cjs --platform=node --target=node20 --log-override:empty-import-meta=silent"
   },
   "keywords": [
@@ -99,6 +99,7 @@
     "eslint-config-prettier": "^10.1.1",
     "eslint-plugin-jest": "^29.1.0",
     "eslint-plugin-prettier": "^5.2.3",
+    "expect": "29.7.0",
     "jest": "^29.7.0",
     "nitrogen": "0.35.0",
     "prettier": "^3.0.3",

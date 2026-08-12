@@ -1,18 +1,22 @@
-import { describe, test, expect, beforeAll } from 'bun:test';
+import { describe, test, before } from 'node:test';
+import { expect } from 'expect';
 import { spawnSync } from 'child_process';
 import { resolve } from 'path';
 import { readFileSync, existsSync } from 'fs';
 
-const GENERATOR = resolve(__dirname, '../rive-gen-types.ts');
-const REWARDS_RIV = resolve(__dirname, '../../example/assets/rive/rewards.riv');
+const GENERATOR = resolve(import.meta.dirname, '../rive-gen-types.ts');
+const REWARDS_RIV = resolve(
+  import.meta.dirname,
+  '../../example/assets/rive/rewards.riv'
+);
 const OUT_DTS = `${REWARDS_RIV}.d.ts`;
 
 describe('rive-gen-types', () => {
-  beforeAll(() => {
-    const result = spawnSync('bun', [GENERATOR, REWARDS_RIV], {
+  before(() => {
+    const result = spawnSync(process.execPath, [GENERATOR, REWARDS_RIV], {
       encoding: 'utf8',
       timeout: 30_000,
-      cwd: resolve(__dirname, '../..'),
+      cwd: resolve(import.meta.dirname, '../..'),
     });
     if (result.status !== 0)
       throw new Error(result.stderr ?? 'generator failed');

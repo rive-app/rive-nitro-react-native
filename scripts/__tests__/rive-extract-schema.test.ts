@@ -1,15 +1,19 @@
-import { describe, test, expect, beforeAll } from 'bun:test';
+import { describe, test, before } from 'node:test';
+import { expect } from 'expect';
 import { spawnSync } from 'child_process';
 import { resolve } from 'path';
 
-const EXTRACTOR = resolve(__dirname, '../rive-extract-schema.ts');
-const REWARDS_RIV = resolve(__dirname, '../../example/assets/rive/rewards.riv');
+const EXTRACTOR = resolve(import.meta.dirname, '../rive-extract-schema.ts');
+const REWARDS_RIV = resolve(
+  import.meta.dirname,
+  '../../example/assets/rive/rewards.riv'
+);
 
 function extract(path: string) {
-  const result = spawnSync('bun', [EXTRACTOR, path], {
+  const result = spawnSync(process.execPath, [EXTRACTOR, path], {
     encoding: 'utf8',
     timeout: 30_000,
-    cwd: resolve(__dirname, '../..'),
+    cwd: resolve(import.meta.dirname, '../..'),
   });
   if (result.status !== 0) throw new Error(result.stderr ?? 'extractor failed');
   return JSON.parse(result.stdout) as Record<string, unknown>;
@@ -18,7 +22,7 @@ function extract(path: string) {
 describe('rive-extract-schema', () => {
   let schema: ReturnType<typeof extract>;
 
-  beforeAll(() => {
+  before(() => {
     schema = extract(REWARDS_RIV);
   });
 
@@ -52,7 +56,7 @@ describe('rive-extract-schema', () => {
 
   test('extracts enum values as pipe-separated string', () => {
     const databinding = extract(
-      resolve(__dirname, '../../example/assets/rive/databinding.riv')
+      resolve(import.meta.dirname, '../../example/assets/rive/databinding.riv')
     );
     const vms = databinding.viewModels as Record<
       string,

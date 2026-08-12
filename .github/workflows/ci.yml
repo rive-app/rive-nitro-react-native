@@ -83,6 +83,9 @@ jobs:
       - name: Run unit tests
         run: yarn test --maxWorkers=2 --coverage
 
+      - name: Script tests (schema generator)
+        run: yarn test:scripts
+
   build-library:
     runs-on: ubuntu-latest
     steps:

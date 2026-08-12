@@ -3,9 +3,9 @@
  * is automatically typed in TypeScript without any extra imports.
  *
  * Usage:
- *   bun scripts/rive-gen-types.ts <path>                    # writes <file>.riv.d.ts next to the source
- *   bun scripts/rive-gen-types.ts <path-or-url> --out <out> # write to an explicit path (required for URLs)
- *   bun scripts/rive-gen-types.ts --all <directory>         # generate for every .riv in a directory
+ *   node scripts/rive-gen-types.ts <path>                    # writes <file>.riv.d.ts next to the source
+ *   node scripts/rive-gen-types.ts <path-or-url> --out <out> # write to an explicit path (required for URLs)
+ *   node scripts/rive-gen-types.ts --all <directory>         # generate for every .riv in a directory
  *
  * Bun is not required — the scripts are erasable TypeScript and also run
  * under plain Node >= 23.6 (or 22.6+ with --experimental-strip-types):

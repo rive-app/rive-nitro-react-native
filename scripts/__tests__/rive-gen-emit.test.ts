@@ -1,4 +1,5 @@
-import { describe, test, expect } from 'bun:test';
+import { describe, test } from 'node:test';
+import { expect } from 'expect';
 import ts from 'typescript';
 import {
   strLit,
@@ -9,7 +10,7 @@ import {
   enumTypeString,
   viewModelRefTypeString,
   type Schema,
-} from '../rive-gen-types';
+} from '../rive-gen-types.ts';
 
 describe('emit escaping', () => {
   test('strLit escapes quotes and backslashes', () => {

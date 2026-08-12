@@ -2,8 +2,8 @@
  * Extracts artboard names and state machines from a .riv file and prints JSON to stdout.
  *
  * Usage:
- *   bun scripts/rive-extract-schema.ts path/to/file.riv
- *   bun scripts/rive-extract-schema.ts https://example.com/file.riv
+ *   node scripts/rive-extract-schema.ts path/to/file.riv
+ *   node scripts/rive-extract-schema.ts https://example.com/file.riv
  *
  * Output: { "artboards": ["Main", "Intro"], "stateMachines": { "Main": ["State Machine 1"], "Intro": ["Idle"] } }
  */
