@@ -70,30 +70,41 @@ function FinishedView({
   );
 }
 
+// getPropertiesAsync is not implemented on the legacy backend, so the
+// introspection test only runs on the new runtime. The behavioral test below
+// runs on every backend.
+const isExperimental = RiveFileFactory.getBackend() === 'experimental';
+
 describe('finished-trigger.riv', () => {
-  it('loads and exposes a view model with a finished trigger', async () => {
-    const file = await RiveFileFactory.fromSource(FINISHED_TRIGGER, undefined);
-    expectDefined(file);
+  (isExperimental ? it : it.skip)(
+    'loads and exposes a view model with a finished trigger',
+    async () => {
+      const file = await RiveFileFactory.fromSource(
+        FINISHED_TRIGGER,
+        undefined
+      );
+      expectDefined(file);
 
-    const artboards = await file.getArtboardNamesAsync();
-    const vmNames = await file.getViewModelNamesAsync();
-    console.log(`artboards: ${JSON.stringify(artboards)}`);
-    console.log(`viewModels: ${JSON.stringify(vmNames)}`);
+      const artboards = await file.getArtboardNamesAsync();
+      const vmNames = await file.getViewModelNamesAsync();
+      console.log(`artboards: ${JSON.stringify(artboards)}`);
+      console.log(`viewModels: ${JSON.stringify(vmNames)}`);
 
-    for (const name of vmNames) {
-      const vm = await file.viewModelByNameAsync(name);
+      for (const name of vmNames) {
+        const vm = await file.viewModelByNameAsync(name);
+        expectDefined(vm);
+        const props = await vm.getPropertiesAsync();
+        console.log(`VM "${name}" properties: ${JSON.stringify(props)}`);
+      }
+
+      const vm = await file.defaultArtboardViewModelAsync();
       expectDefined(vm);
       const props = await vm.getPropertiesAsync();
-      console.log(`VM "${name}" properties: ${JSON.stringify(props)}`);
+      const finished = props.find((p) => p.name === 'finished');
+      expectDefined(finished);
+      cleanup();
     }
-
-    const vm = await file.defaultArtboardViewModelAsync();
-    expectDefined(vm);
-    const props = await vm.getPropertiesAsync();
-    const finished = props.find((p) => p.name === 'finished');
-    expectDefined(finished);
-    cleanup();
-  });
+  );
 
   it('fires the finished trigger exactly once when the animation completes', async () => {
     const file = await RiveFileFactory.fromSource(FINISHED_TRIGGER, undefined);
