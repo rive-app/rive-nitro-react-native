@@ -36,8 +36,6 @@ namespace margelo::nitro::rive {
       prototype.registerHybridSetter("dataBind", &HybridRiveViewSpec::setDataBind);
       prototype.registerHybridGetter("onError", &HybridRiveViewSpec::getOnError);
       prototype.registerHybridSetter("onError", &HybridRiveViewSpec::setOnError);
-      prototype.registerHybridGetter("onStop", &HybridRiveViewSpec::getOnStop);
-      prototype.registerHybridSetter("onStop", &HybridRiveViewSpec::setOnStop);
       prototype.registerHybridMethod("awaitViewReady", &HybridRiveViewSpec::awaitViewReady);
       prototype.registerHybridMethod("bindViewModelInstance", &HybridRiveViewSpec::bindViewModelInstance);
       prototype.registerHybridMethod("getViewModelInstance", &HybridRiveViewSpec::getViewModelInstance);

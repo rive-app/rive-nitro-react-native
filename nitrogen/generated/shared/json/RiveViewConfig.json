@@ -15,7 +15,6 @@
     "semantics": true,
     "dataBind": true,
     "onError": true,
-    "onStop": true,
     "hybridRef": true
   }
 }

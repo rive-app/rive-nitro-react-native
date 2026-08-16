@@ -40,10 +40,6 @@ Behavioral differences on the new runtime:
   handles; a bad path surfaces via the `getValueAsync()` rejection or the
   `useRive*` hooks' `error` result instead of an `undefined` return.
 - `updateReferencedAssets` (runtime asset swapping) is not supported.
-- The `onStop` prop is only wired up on the new runtime. The legacy backend
-  has no signal that reliably maps to "playback came to rest" (a settling
-  state machine reports `notifyPause`/`pausedWithModel`, not a stop), so
-  `onStop` is left as a no-op there rather than reporting an incorrect stop.
 
 ## Android render backend (new runtime only)
 
