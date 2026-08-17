@@ -250,7 +250,6 @@ The following table compares feature availability with the [previous Rive React 
 | `useRive()` hook                  | ✅     | Convenient hook to access the Rive View ref after load           |
 | `useRiveFile()` hook              | ✅     | Convenient hook to load a Rive file                              |
 | `RiveView` error handling         | ✅     | Error handler for failed view operations                         |
-| Playback lifecycle callbacks      | ⚠️     | No `onStop`/`onPause` props — fire a data-binding trigger instead |
 | `source` .riv file loading        | ✅     | Conveniently load .riv files from JS source                      |
 | Accessibility semantics           | ⚠️     | Editor-authored semantics → VoiceOver (iOS; Android in progress) |
 | Animation selection               | ❌     | Animation playback not planned, use state machines               |
