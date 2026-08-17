@@ -224,8 +224,6 @@ useRiveTrigger('finished', instance, {
 
 In the Rive editor: add a **Trigger** property (e.g. `finished`) to your artboard's View Model, then on the transition out of your one-shot animation state enable **Exit Time** and set it to **100%** (the value matters — an exit time of `0ms` fires immediately), and add a **Set property value** action targeting the trigger. See [this community file](https://rive.app/community/files/28526-53929-fire-a-trigger-when-timeline-finishes) for a working setup, and the "Finished Trigger" demo in the example app for the app-side wiring.
 
-This is also why there is no `onStop`-style view callback: whether a state machine has "stopped" (settled) is an internal render-loop optimization in the Rive runtimes, not a stable public signal — a state-machine-authored trigger fires exactly when the designer intends, on every backend.
-
 ## Feature Support
 
 This section provides a comprehensive overview of feature availability in `@rive-app/react-native`, comparing it with the [previous Rive React Native runtime](https://github.com/rive-app/rive-react-native) and outlining the development roadmap.
