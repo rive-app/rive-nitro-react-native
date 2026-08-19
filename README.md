@@ -213,7 +213,13 @@ import { RiveView, RiveErrorType } from '@rive-app/react-native';
 To run app logic when an animation completes — for example navigating away once a splash-screen animation finishes — fire a data-binding trigger from your state machine and listen for it with `useRiveTrigger`:
 
 ```tsx
-const { instance } = useViewModelInstance(riveFile);
+import {
+  RiveView,
+  useRiveTrigger,
+  useViewModelInstance,
+} from '@rive-app/react-native';
+
+const { instance } = useViewModelInstance(riveFile, { async: true });
 
 useRiveTrigger('finished', instance, {
   onTrigger: () => navigation.replace('Home'),
