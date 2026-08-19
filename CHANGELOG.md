@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.20](https://github.com/rive-app/rive-nitro-react-native/compare/v0.4.19...v0.4.20) (2026-08-19)
+
+
+### Bug Fixes
+
+* bump rive-android to 11.9.1 and rive-ios to 6.23.1 ([#370](https://github.com/rive-app/rive-nitro-react-native/issues/370)) ([ae1fdb9](https://github.com/rive-app/rive-nitro-react-native/commit/ae1fdb9acc7ef548423e72472352d232c4ef3d18))
+
 ## [0.4.19](https://github.com/rive-app/rive-nitro-react-native/compare/v0.4.18...v0.4.19) (2026-07-16)
 
 
