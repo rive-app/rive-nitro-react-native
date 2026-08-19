@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.5.0-beta.2](https://github.com/rive-app/rive-nitro-react-native/compare/v0.5.0-beta.1...v0.5.0-beta.2) (2026-08-19)
+
+
+### Features
+
+* type-safe .riv schema system ([#352](https://github.com/rive-app/rive-nitro-react-native/issues/352)) ([b3bb1cb](https://github.com/rive-app/rive-nitro-react-native/commit/b3bb1cbc97c681f462dea0b88b298b21bb1c7204))
+
+
+### Bug Fixes
+
+* bump rive-android to 11.9.1 and rive-ios to 6.23.1 ([#367](https://github.com/rive-app/rive-nitro-react-native/issues/367)) ([88b63ef](https://github.com/rive-app/rive-nitro-react-native/commit/88b63efee42712b1cb5d1ec074d7c07ba9cd9247))
+
 ## [0.5.0-beta.1](https://github.com/rive-app/rive-nitro-react-native/compare/v0.5.0-beta...v0.5.0-beta.1) (2026-07-27)
 
 
