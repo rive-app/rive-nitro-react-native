@@ -317,6 +317,9 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
     settled = false
     settledJob?.cancel()
     settledJob = viewScope.launch {
+      // Deprecated in rive-android >= 11.8 (removal planned for 12.0), kept as a
+      // compatibility shim. Revisit when 12.0 defines the long-term settling surface.
+      @Suppress("DEPRECATION")
       worker.settledFlow.collect { settledHandle ->
         if (settledHandle == handle && !settled) {
           settled = true

@@ -58,7 +58,7 @@ final class RiveRuntimeLogger: RiveRuntime.RiveLog.Logger, @unchecked Sendable {
         // first frame(s) have no drawable yet; the SDK logs that transient
         // condition at error level, which LogBox turns into a red screen in dev.
         // Rendering recovers on the next tick, so forward it as debug instead.
-        // https://github.com/rive-app/rive-ios/blob/6.21.1/Source/Concurrency/View/RiveUIView.swift#L449-L454
+        // https://github.com/rive-app/rive-ios/blob/6.23.1/Source/Concurrency/View/RiveUIView.swift#L448-L453
         if case .view = tag, text == "Draw failed: missing drawable" {
             RiveLog.d(name, "\(text)\(suffix)")
             return
