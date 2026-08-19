@@ -1,9 +1,12 @@
 name: Release Please
 
+# This copy lives on the release-v0.4 maintenance branch, which ships the stable
+# 0.4.x line to the npm `latest` tag. `main` runs its own copy for the 0.5.0-beta
+# prereleases; a push only ever triggers the workflow file on the branch pushed.
 on:
   push:
     branches:
-      - main
+      - release-v0.4
 
 permissions:
   contents: write
@@ -18,3 +21,6 @@ jobs:
           token: ${{ secrets.PAT_GITHUB }}
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
+          # Without this the action reads the config and manifest from the
+          # repository's default branch and would cut a 0.5.0-beta instead.
+          target-branch: release-v0.4
