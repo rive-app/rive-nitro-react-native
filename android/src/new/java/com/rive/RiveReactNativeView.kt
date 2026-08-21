@@ -73,10 +73,6 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
 
   var onError: ((String) -> Unit)? = null
 
-  // Fired when the state machine settles (reaches rest, e.g. a non-looping
-  // animation reaching its end); wired to the onStop prop.
-  var onStop: (() -> Unit)? = null
-
   private var settledJob: Job? = null
 
   // rive-runtime's command server emits a settle signal on every advance
@@ -321,9 +317,8 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
       // compatibility shim. Revisit when 12.0 defines the long-term settling surface.
       @Suppress("DEPRECATION")
       worker.settledFlow.collect { settledHandle ->
-        if (settledHandle == handle && !settled) {
+        if (settledHandle == handle) {
           settled = true
-          onStop?.invoke()
         }
       }
     }

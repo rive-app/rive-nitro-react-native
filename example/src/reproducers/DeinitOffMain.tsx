@@ -42,7 +42,6 @@ function RiveContent({ raw }: { raw: boolean }) {
         style={styles.rive}
         autoPlay={true}
         onError={{ f: (e) => console.log('raw onError', e.message) }}
-        onStop={{ f: () => console.log('raw onStop') }}
       />
     );
   }

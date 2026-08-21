@@ -27,13 +27,13 @@
 #include "JHybridRiveRuntimeSpec.hpp"
 #include "JHybridRiveViewSpec.hpp"
 #include "JFunc_void_RiveError.hpp"
-#include "JFunc_void.hpp"
 #include "JFunc_void_UnifiedRiveEvent.hpp"
 #include "views/JHybridRiveViewStateUpdater.hpp"
 #include "JHybridViewModelSpec.hpp"
 #include "JHybridViewModelInstanceSpec.hpp"
 #include "JHybridViewModelPropertySpec.hpp"
 #include "JHybridViewModelNumberPropertySpec.hpp"
+#include "JFunc_void.hpp"
 #include "JFunc_void_double.hpp"
 #include "JHybridViewModelStringPropertySpec.hpp"
 #include "JFunc_void_std__string.hpp"
@@ -129,13 +129,13 @@ void registerAllNatives() {
   margelo::nitro::rive::JHybridRiveRuntimeSpec::CxxPart::registerNatives();
   margelo::nitro::rive::JHybridRiveViewSpec::CxxPart::registerNatives();
   margelo::nitro::rive::JFunc_void_RiveError_cxx::registerNatives();
-  margelo::nitro::rive::JFunc_void_cxx::registerNatives();
   margelo::nitro::rive::JFunc_void_UnifiedRiveEvent_cxx::registerNatives();
   margelo::nitro::rive::views::JHybridRiveViewStateUpdater::registerNatives();
   margelo::nitro::rive::JHybridViewModelSpec::CxxPart::registerNatives();
   margelo::nitro::rive::JHybridViewModelInstanceSpec::CxxPart::registerNatives();
   margelo::nitro::rive::JHybridViewModelPropertySpec::CxxPart::registerNatives();
   margelo::nitro::rive::JHybridViewModelNumberPropertySpec::CxxPart::registerNatives();
+  margelo::nitro::rive::JFunc_void_cxx::registerNatives();
   margelo::nitro::rive::JFunc_void_double_cxx::registerNatives();
   margelo::nitro::rive::JHybridViewModelStringPropertySpec::CxxPart::registerNatives();
   margelo::nitro::rive::JFunc_void_std__string_cxx::registerNatives();

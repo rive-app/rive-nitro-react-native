@@ -145,16 +145,6 @@ namespace margelo::nitro::rive::views {
         throw std::runtime_error(std::string("RiveView.onError: ") + exc.what());
       }
     }()),
-    onStop([&]() -> CachedProp<std::function<void()>> {
-      try {
-        const react::RawValue* rawValue = rawProps.at("onStop", nullptr, nullptr);
-        if (rawValue == nullptr) return sourceProps.onStop;
-        const auto& [runtime, value] = (std::pair<jsi::Runtime*, jsi::Value>)*rawValue;
-        return CachedProp<std::function<void()>>::fromRawValue(*runtime, value.asObject(*runtime).getProperty(*runtime, PropNameIDCache::get(*runtime, "f")), sourceProps.onStop);
-      } catch (const std::exception& exc) {
-        throw std::runtime_error(std::string("RiveView.onStop: ") + exc.what());
-      }
-    }()),
     hybridRef([&]() -> CachedProp<std::optional<std::function<void(const std::shared_ptr<HybridRiveViewSpec>& /* ref */)>>> {
       try {
         const react::RawValue* rawValue = rawProps.at("hybridRef", nullptr, nullptr);
@@ -179,7 +169,6 @@ namespace margelo::nitro::rive::views {
       case hashString("semantics"): return true;
       case hashString("dataBind"): return true;
       case hashString("onError"): return true;
-      case hashString("onStop"): return true;
       case hashString("hybridRef"): return true;
       default: return false;
     }

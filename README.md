@@ -208,22 +208,27 @@ import { RiveView, RiveErrorType } from '@rive-app/react-native';
 
 > **Note**: If no `onError` handler is provided, errors will be logged to the console by default.
 
-## Animation Lifecycle
+## Reacting to an Animation Finishing
 
-The `RiveView` component provides an `onStop` callback prop, called when the animation/state machine stops playing — for example, when a non-looping animation reaches its end. This is useful for splash-screen-style animations where you want to navigate away once playback finishes:
+To run app logic when an animation completes — for example navigating away once a splash-screen animation finishes — fire a data-binding trigger from your state machine and listen for it with `useRiveTrigger`:
 
-```js
-<RiveView
-  file={riveFile}
-  autoPlay={true}
-  onStop={() => {
-    // The animation has finished playing
-    navigation.replace('Home');
-  }}
-/>
+```tsx
+import {
+  RiveView,
+  useRiveTrigger,
+  useViewModelInstance,
+} from '@rive-app/react-native';
+
+const { instance } = useViewModelInstance(riveFile, { async: true });
+
+useRiveTrigger('finished', instance, {
+  onTrigger: () => navigation.replace('Home'),
+});
+
+<RiveView file={riveFile} dataBind={instance} autoPlay={true} />;
 ```
 
-> **Note**: `onStop` is not called by `pause()` — only when playback naturally comes to rest (e.g. a one-shot animation or a state machine reaching a state with no further transitions).
+In the Rive editor: add a **Trigger** property (e.g. `finished`) to your artboard's View Model, then on the transition out of your one-shot animation state enable **Exit Time** and set it to **100%** (the value matters — an exit time of `0ms` fires immediately), and add a **Set property value** action targeting the trigger. See [this community file](https://rive.app/community/files/28526-53929-fire-a-trigger-when-timeline-finishes) for a working setup, and the "Finished Trigger" demo in the example app for the app-side wiring.
 
 ## Feature Support
 
@@ -251,7 +256,6 @@ The following table compares feature availability with the [previous Rive React 
 | `useRive()` hook                  | ✅     | Convenient hook to access the Rive View ref after load           |
 | `useRiveFile()` hook              | ✅     | Convenient hook to load a Rive file                              |
 | `RiveView` error handling         | ✅     | Error handler for failed view operations                         |
-| `RiveView` `onStop` callback      | ✅     | Callback fired when the animation/state machine stops playing    |
 | `source` .riv file loading        | ✅     | Conveniently load .riv files from JS source                      |
 | Accessibility semantics           | ⚠️     | Editor-authored semantics → VoiceOver (iOS; Android in progress) |
 | Animation selection               | ❌     | Animation playback not planned, use state machines               |

@@ -81,10 +81,6 @@ void JHybridRiveViewStateUpdater::updateViewProps(jni::alias_ref<jni::JClass> /*
     hybridView->setOnError(props->onError.value);
     props->onError.isDirty = false;
   }
-  if (props->onStop.isDirty) {
-    hybridView->setOnStop(props->onStop.value);
-    props->onStop.isDirty = false;
-  }
 
   // Update hybridRef if it changed
   if (props->hybridRef.isDirty) {

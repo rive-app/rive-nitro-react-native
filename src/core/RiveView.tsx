@@ -21,16 +21,9 @@ export interface RiveViewProps<
   A extends SchemaOf<T>['artboards'] = SchemaOf<T>['defaultArtboard'],
 > extends Omit<
     NitroRiveViewProps,
-    'onError' | 'onStop' | 'file' | 'artboardName' | 'stateMachineName'
+    'onError' | 'file' | 'artboardName' | 'stateMachineName'
   > {
   onError?: (error: RiveError) => void;
-  /**
-   * Called when the animation/state machine stops playing, e.g. when a
-   * non-looping animation reaches its end. Not called for pause() — only
-   * when playback naturally comes to rest. Useful for splash-screen-style
-   * animations where you want to navigate away once playback finishes.
-   */
-  onStop?: () => void;
   file: TypedRiveFile<T>;
   /** Name of the artboard to display. When using a generated schema, only valid artboard names are accepted. */
   artboardName?: A;
@@ -43,8 +36,6 @@ export interface RiveViewProps<
 
 const defaultOnError = (error: RiveError) =>
   console.error(`[${RiveErrorType[error.type]}] ${error.message}`);
-
-const defaultOnStop = () => {};
 
 /**
  * RiveView is a React Native component that renders Rive graphics.
@@ -72,7 +63,6 @@ const defaultOnStop = () => {};
  * @property {number | FrameRateRange} [frameRate] - Preferred frame rate for the render loop (new runtimes only)
  * @property {Object} [style] - React Native style object for container customization
  * @property {(error: RiveError) => void} [onError] - Callback function that is called when an error occurs
- * @property {() => void} [onStop] - Callback function that is called when the animation/state machine stops playing (e.g. reaches the end of a non-looping animation)
  *
  * The component also exposes methods for controlling playback:
  * - play(): Starts playing the Rive graphic
@@ -82,9 +72,8 @@ export function RiveView<
   T extends RiveFileSchema | RiveAsset = RiveFileSchema,
   A extends SchemaOf<T>['artboards'] = SchemaOf<T>['defaultArtboard'],
 >(props: RiveViewProps<T, A>) {
-  const { onError, onStop, hybridRef: userHybridRef, ...rest } = props;
+  const { onError, hybridRef: userHybridRef, ...rest } = props;
   const wrappedOnError = onError ?? defaultOnError;
-  const wrappedOnStop = onStop ?? defaultOnStop;
   const viewRef = useRef<RiveViewRef | null>(null);
 
   useEffect(() => {
@@ -107,7 +96,6 @@ export function RiveView<
     <NitroRiveView
       {...rest}
       onError={{ f: wrappedOnError }}
-      onStop={{ f: wrappedOnStop }}
       hybridRef={{ f: setRef }}
     />
   );

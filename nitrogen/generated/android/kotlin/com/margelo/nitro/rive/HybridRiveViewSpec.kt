@@ -100,20 +100,6 @@ abstract class HybridRiveViewSpec: HybridView() {
     set(value) {
       onError = value
     }
-  
-  abstract var onStop: () -> Unit
-  
-  private var onStop_cxx: Func_void
-    @Keep
-    @DoNotStrip
-    get() {
-      return Func_void_java(onStop)
-    }
-    @Keep
-    @DoNotStrip
-    set(value) {
-      onStop = value
-    }
 
   // Methods
   @DoNotStrip
