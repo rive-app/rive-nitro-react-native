@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.5.0-beta.3](https://github.com/rive-app/rive-nitro-react-native/compare/v0.5.0-beta.2...v0.5.0-beta.3) (2026-08-21)
+
+
+### ⚠ BREAKING CHANGES
+
+* remove onStop callback in favor of data-binding triggers ([#364](https://github.com/rive-app/rive-nitro-react-native/issues/364))
+
+### Features
+
+* remove onStop callback in favor of data-binding triggers ([#364](https://github.com/rive-app/rive-nitro-react-native/issues/364)) ([041e03b](https://github.com/rive-app/rive-nitro-react-native/commit/041e03ba71886826bd0d97840fc0bf1449b51bec))
+
 ## [0.5.0-beta.2](https://github.com/rive-app/rive-nitro-react-native/compare/v0.5.0-beta.1...v0.5.0-beta.2) (2026-08-19)
 
 
