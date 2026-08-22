@@ -61,13 +61,9 @@ function acceptNullForOptionalProps() {
   );
 
   if (content === updated) {
-    if (content.includes('value.isNull()')) {
-      console.log('HybridRiveViewComponent.cpp already accepts null props');
-    } else {
-      console.warn(
-        'No optional CachedProp parse sites found in HybridRiveViewComponent.cpp — nitrogen output may have changed shape'
-      );
-    }
+    console.warn(
+      'No optional CachedProp parse sites found in HybridRiveViewComponent.cpp — nitrogen output may have changed shape'
+    );
     return;
   }
 
