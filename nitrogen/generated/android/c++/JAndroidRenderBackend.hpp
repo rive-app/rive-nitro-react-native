@@ -15,11 +15,11 @@ namespace margelo::nitro::rive {
   using namespace facebook;
 
   /**
-   * The C++ JNI bridge between the C++ enum "AndroidRenderBackend" and the the Kotlin enum "AndroidRenderBackend".
+   * The C++ JNI bridge between the C++ enum "AndroidRenderBackend" and the Kotlin enum "AndroidRenderBackend".
    */
   struct JAndroidRenderBackend final: public jni::JavaClass<JAndroidRenderBackend> {
   public:
-    static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/rive/AndroidRenderBackend;";
+    static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/rive/AndroidRenderBackend;";
 
   public:
     /**

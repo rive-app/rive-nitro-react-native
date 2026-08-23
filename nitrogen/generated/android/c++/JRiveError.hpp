@@ -19,11 +19,11 @@ namespace margelo::nitro::rive {
   using namespace facebook;
 
   /**
-   * The C++ JNI bridge between the C++ struct "RiveError" and the the Kotlin data class "RiveError".
+   * The C++ JNI bridge between the C++ struct "RiveError" and the Kotlin data class "RiveError".
    */
   struct JRiveError final: public jni::JavaClass<JRiveError> {
   public:
-    static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/rive/RiveError;";
+    static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/rive/RiveError;";
 
   public:
     /**

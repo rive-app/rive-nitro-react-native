@@ -7,18 +7,35 @@
 
 #include "HybridRiveViewComponent.hpp"
 
-#include <string>
-#include <exception>
-#include <utility>
-#include <NitroModules/NitroDefines.hpp>
-#include <NitroModules/JSIConverter.hpp>
-#include <NitroModules/PropNameIDCache.hpp>
-#include <react/renderer/core/RawValue.h>
-#include <react/renderer/core/ShadowNode.h>
-#include <react/renderer/core/ComponentDescriptor.h>
-#include <react/renderer/components/view/ViewProps.h>
+#include <NitroModules/NitroHash.hpp>
+#include <NitroModules/ReactProp.hpp>
 
 namespace margelo::nitro::rive::views {
+
+  using namespace facebook;
+
+  template <typename T> struct RiveIsOptional final : std::false_type {};
+  template <typename T> struct RiveIsOptional<std::optional<T>> final : std::true_type {};
+
+  // Fabric sends `null` (not `undefined`) when a prop is removed, but Nitro's
+  // JSIConverter<std::optional<T>> only maps `undefined` to nullopt, so parsing
+  // a cleared optional prop throws. Parse a null-valued optional prop as a
+  // cleared prop instead. https://github.com/mrousavy/nitro/issues/1184
+  template <typename T>
+  nitro::ReactProp<T> parseNullAsCleared(const char* viewName, const char* propName,
+                                         const react::RawProps& rawProps,
+                                         const nitro::ReactProp<T>& sourceProp) {
+    if constexpr (RiveIsOptional<T>::value) {
+      const react::RawValue* rawValue = nitro::RawPropsCompat::at(rawProps, propName);
+      if (rawValue != nullptr) {
+        auto [runtime, value] = static_cast<std::pair<jsi::Runtime*, jsi::Value>>(*rawValue);
+        if (value.isNull() && !nitro::JSIConverter<T>::canConvert(*runtime, value)) {
+          return nitro::ReactProp<T>();
+        }
+      }
+    }
+    return nitro::ReactProp<T>::fromRawValue(viewName, propName, rawProps, sourceProp);
+  }
 
   extern const char HybridRiveViewComponentName[] = "RiveView";
 
@@ -26,145 +43,19 @@ namespace margelo::nitro::rive::views {
                                            const HybridRiveViewProps& sourceProps,
                                            const react::RawProps& rawProps):
     react::ViewProps(context, sourceProps, rawProps, filterObjectKeys),
-    artboardName([&]() -> CachedProp<std::optional<std::string>> {
-      try {
-        const react::RawValue* rawValue = rawProps.at("artboardName", nullptr, nullptr);
-        if (rawValue == nullptr) return sourceProps.artboardName;
-        const auto& [runtime, value] = (std::pair<jsi::Runtime*, jsi::Value>)*rawValue;
-        if (value.isNull()) return CachedProp<std::optional<std::string>>::fromRawValue(*runtime, jsi::Value::undefined(), sourceProps.artboardName);
-        return CachedProp<std::optional<std::string>>::fromRawValue(*runtime, value, sourceProps.artboardName);
-      } catch (const std::exception& exc) {
-        throw std::runtime_error(std::string("RiveView.artboardName: ") + exc.what());
-      }
-    }()),
-    stateMachineName([&]() -> CachedProp<std::optional<std::string>> {
-      try {
-        const react::RawValue* rawValue = rawProps.at("stateMachineName", nullptr, nullptr);
-        if (rawValue == nullptr) return sourceProps.stateMachineName;
-        const auto& [runtime, value] = (std::pair<jsi::Runtime*, jsi::Value>)*rawValue;
-        if (value.isNull()) return CachedProp<std::optional<std::string>>::fromRawValue(*runtime, jsi::Value::undefined(), sourceProps.stateMachineName);
-        return CachedProp<std::optional<std::string>>::fromRawValue(*runtime, value, sourceProps.stateMachineName);
-      } catch (const std::exception& exc) {
-        throw std::runtime_error(std::string("RiveView.stateMachineName: ") + exc.what());
-      }
-    }()),
-    autoPlay([&]() -> CachedProp<std::optional<bool>> {
-      try {
-        const react::RawValue* rawValue = rawProps.at("autoPlay", nullptr, nullptr);
-        if (rawValue == nullptr) return sourceProps.autoPlay;
-        const auto& [runtime, value] = (std::pair<jsi::Runtime*, jsi::Value>)*rawValue;
-        if (value.isNull()) return CachedProp<std::optional<bool>>::fromRawValue(*runtime, jsi::Value::undefined(), sourceProps.autoPlay);
-        return CachedProp<std::optional<bool>>::fromRawValue(*runtime, value, sourceProps.autoPlay);
-      } catch (const std::exception& exc) {
-        throw std::runtime_error(std::string("RiveView.autoPlay: ") + exc.what());
-      }
-    }()),
-    file([&]() -> CachedProp<std::shared_ptr<HybridRiveFileSpec>> {
-      try {
-        const react::RawValue* rawValue = rawProps.at("file", nullptr, nullptr);
-        if (rawValue == nullptr) return sourceProps.file;
-        const auto& [runtime, value] = (std::pair<jsi::Runtime*, jsi::Value>)*rawValue;
-        return CachedProp<std::shared_ptr<HybridRiveFileSpec>>::fromRawValue(*runtime, value, sourceProps.file);
-      } catch (const std::exception& exc) {
-        throw std::runtime_error(std::string("RiveView.file: ") + exc.what());
-      }
-    }()),
-    alignment([&]() -> CachedProp<std::optional<Alignment>> {
-      try {
-        const react::RawValue* rawValue = rawProps.at("alignment", nullptr, nullptr);
-        if (rawValue == nullptr) return sourceProps.alignment;
-        const auto& [runtime, value] = (std::pair<jsi::Runtime*, jsi::Value>)*rawValue;
-        if (value.isNull()) return CachedProp<std::optional<Alignment>>::fromRawValue(*runtime, jsi::Value::undefined(), sourceProps.alignment);
-        return CachedProp<std::optional<Alignment>>::fromRawValue(*runtime, value, sourceProps.alignment);
-      } catch (const std::exception& exc) {
-        throw std::runtime_error(std::string("RiveView.alignment: ") + exc.what());
-      }
-    }()),
-    fit([&]() -> CachedProp<std::optional<Fit>> {
-      try {
-        const react::RawValue* rawValue = rawProps.at("fit", nullptr, nullptr);
-        if (rawValue == nullptr) return sourceProps.fit;
-        const auto& [runtime, value] = (std::pair<jsi::Runtime*, jsi::Value>)*rawValue;
-        if (value.isNull()) return CachedProp<std::optional<Fit>>::fromRawValue(*runtime, jsi::Value::undefined(), sourceProps.fit);
-        return CachedProp<std::optional<Fit>>::fromRawValue(*runtime, value, sourceProps.fit);
-      } catch (const std::exception& exc) {
-        throw std::runtime_error(std::string("RiveView.fit: ") + exc.what());
-      }
-    }()),
-    layoutScaleFactor([&]() -> CachedProp<std::optional<double>> {
-      try {
-        const react::RawValue* rawValue = rawProps.at("layoutScaleFactor", nullptr, nullptr);
-        if (rawValue == nullptr) return sourceProps.layoutScaleFactor;
-        const auto& [runtime, value] = (std::pair<jsi::Runtime*, jsi::Value>)*rawValue;
-        if (value.isNull()) return CachedProp<std::optional<double>>::fromRawValue(*runtime, jsi::Value::undefined(), sourceProps.layoutScaleFactor);
-        return CachedProp<std::optional<double>>::fromRawValue(*runtime, value, sourceProps.layoutScaleFactor);
-      } catch (const std::exception& exc) {
-        throw std::runtime_error(std::string("RiveView.layoutScaleFactor: ") + exc.what());
-      }
-    }()),
-    frameRate([&]() -> CachedProp<std::optional<std::variant<double, FrameRateRange>>> {
-      try {
-        const react::RawValue* rawValue = rawProps.at("frameRate", nullptr, nullptr);
-        if (rawValue == nullptr) return sourceProps.frameRate;
-        const auto& [runtime, value] = (std::pair<jsi::Runtime*, jsi::Value>)*rawValue;
-        if (value.isNull()) return CachedProp<std::optional<std::variant<double, FrameRateRange>>>::fromRawValue(*runtime, jsi::Value::undefined(), sourceProps.frameRate);
-        return CachedProp<std::optional<std::variant<double, FrameRateRange>>>::fromRawValue(*runtime, value, sourceProps.frameRate);
-      } catch (const std::exception& exc) {
-        throw std::runtime_error(std::string("RiveView.frameRate: ") + exc.what());
-      }
-    }()),
-    semantics([&]() -> CachedProp<std::optional<Semantics>> {
-      try {
-        const react::RawValue* rawValue = rawProps.at("semantics", nullptr, nullptr);
-        if (rawValue == nullptr) return sourceProps.semantics;
-        const auto& [runtime, value] = (std::pair<jsi::Runtime*, jsi::Value>)*rawValue;
-        if (value.isNull()) return CachedProp<std::optional<Semantics>>::fromRawValue(*runtime, jsi::Value::undefined(), sourceProps.semantics);
-        return CachedProp<std::optional<Semantics>>::fromRawValue(*runtime, value, sourceProps.semantics);
-      } catch (const std::exception& exc) {
-        throw std::runtime_error(std::string("RiveView.semantics: ") + exc.what());
-      }
-    }()),
-    dataBind([&]() -> CachedProp<std::optional<std::variant<std::shared_ptr<HybridViewModelInstanceSpec>, DataBindMode, DataBindByName>>> {
-      try {
-        const react::RawValue* rawValue = rawProps.at("dataBind", nullptr, nullptr);
-        if (rawValue == nullptr) return sourceProps.dataBind;
-        const auto& [runtime, value] = (std::pair<jsi::Runtime*, jsi::Value>)*rawValue;
-        if (value.isNull()) return CachedProp<std::optional<std::variant<std::shared_ptr<HybridViewModelInstanceSpec>, DataBindMode, DataBindByName>>>::fromRawValue(*runtime, jsi::Value::undefined(), sourceProps.dataBind);
-        return CachedProp<std::optional<std::variant<std::shared_ptr<HybridViewModelInstanceSpec>, DataBindMode, DataBindByName>>>::fromRawValue(*runtime, value, sourceProps.dataBind);
-      } catch (const std::exception& exc) {
-        throw std::runtime_error(std::string("RiveView.dataBind: ") + exc.what());
-      }
-    }()),
-    onError([&]() -> CachedProp<std::function<void(const RiveError& /* error */)>> {
-      try {
-        const react::RawValue* rawValue = rawProps.at("onError", nullptr, nullptr);
-        if (rawValue == nullptr) return sourceProps.onError;
-        const auto& [runtime, value] = (std::pair<jsi::Runtime*, jsi::Value>)*rawValue;
-        return CachedProp<std::function<void(const RiveError& /* error */)>>::fromRawValue(*runtime, value.asObject(*runtime).getProperty(*runtime, PropNameIDCache::get(*runtime, "f")), sourceProps.onError);
-      } catch (const std::exception& exc) {
-        throw std::runtime_error(std::string("RiveView.onError: ") + exc.what());
-      }
-    }()),
-    onStop([&]() -> CachedProp<std::function<void()>> {
-      try {
-        const react::RawValue* rawValue = rawProps.at("onStop", nullptr, nullptr);
-        if (rawValue == nullptr) return sourceProps.onStop;
-        const auto& [runtime, value] = (std::pair<jsi::Runtime*, jsi::Value>)*rawValue;
-        return CachedProp<std::function<void()>>::fromRawValue(*runtime, value.asObject(*runtime).getProperty(*runtime, PropNameIDCache::get(*runtime, "f")), sourceProps.onStop);
-      } catch (const std::exception& exc) {
-        throw std::runtime_error(std::string("RiveView.onStop: ") + exc.what());
-      }
-    }()),
-    hybridRef([&]() -> CachedProp<std::optional<std::function<void(const std::shared_ptr<HybridRiveViewSpec>& /* ref */)>>> {
-      try {
-        const react::RawValue* rawValue = rawProps.at("hybridRef", nullptr, nullptr);
-        if (rawValue == nullptr) return sourceProps.hybridRef;
-        const auto& [runtime, value] = (std::pair<jsi::Runtime*, jsi::Value>)*rawValue;
-        return CachedProp<std::optional<std::function<void(const std::shared_ptr<HybridRiveViewSpec>& /* ref */)>>>::fromRawValue(*runtime, value.asObject(*runtime).getProperty(*runtime, PropNameIDCache::get(*runtime, "f")), sourceProps.hybridRef);
-      } catch (const std::exception& exc) {
-        throw std::runtime_error(std::string("RiveView.hybridRef: ") + exc.what());
-      }
-    }()) { }
+    artboardName(parseNullAsCleared<std::optional<std::string>>("RiveView", "artboardName", rawProps, sourceProps.artboardName)),
+    stateMachineName(parseNullAsCleared<std::optional<std::string>>("RiveView", "stateMachineName", rawProps, sourceProps.stateMachineName)),
+    autoPlay(parseNullAsCleared<std::optional<bool>>("RiveView", "autoPlay", rawProps, sourceProps.autoPlay)),
+    file(nitro::ReactProp<std::shared_ptr<HybridRiveFileSpec>>::fromRawValue("RiveView", "file", rawProps, sourceProps.file)),
+    alignment(parseNullAsCleared<std::optional<Alignment>>("RiveView", "alignment", rawProps, sourceProps.alignment)),
+    fit(parseNullAsCleared<std::optional<Fit>>("RiveView", "fit", rawProps, sourceProps.fit)),
+    layoutScaleFactor(parseNullAsCleared<std::optional<double>>("RiveView", "layoutScaleFactor", rawProps, sourceProps.layoutScaleFactor)),
+    frameRate(parseNullAsCleared<std::optional<std::variant<double, FrameRateRange>>>("RiveView", "frameRate", rawProps, sourceProps.frameRate)),
+    semantics(parseNullAsCleared<std::optional<Semantics>>("RiveView", "semantics", rawProps, sourceProps.semantics)),
+    dataBind(parseNullAsCleared<std::optional<std::variant<std::shared_ptr<HybridViewModelInstanceSpec>, DataBindMode, DataBindByName>>>("RiveView", "dataBind", rawProps, sourceProps.dataBind)),
+    onError(nitro::ReactProp<std::function<void(const RiveError& /* error */)>>::fromRawValue("RiveView", "onError", rawProps, sourceProps.onError)),
+    onStop(nitro::ReactProp<std::function<void()>>::fromRawValue("RiveView", "onStop", rawProps, sourceProps.onStop)),
+    hybridRef(parseNullAsCleared<std::optional<std::function<void(const std::shared_ptr<HybridRiveViewSpec>& /* ref */)>>>("RiveView", "hybridRef", rawProps, sourceProps.hybridRef)) { }
 
   bool HybridRiveViewProps::filterObjectKeys(const std::string& propName) {
     switch (hashString(propName)) {
@@ -184,30 +75,5 @@ namespace margelo::nitro::rive::views {
       default: return false;
     }
   }
-
-  HybridRiveViewComponentDescriptor::HybridRiveViewComponentDescriptor(const react::ComponentDescriptorParameters& parameters)
-    : ConcreteComponentDescriptor(parameters,
-                                  react::RawPropsParser(/* enableJsiParser */ true)) {}
-
-  std::shared_ptr<const react::Props> HybridRiveViewComponentDescriptor::cloneProps(const react::PropsParserContext& context,
-                                                                                    const std::shared_ptr<const react::Props>& props,
-                                                                                    react::RawProps rawProps) const {
-    // 1. Prepare raw props parser
-    rawProps.parse(rawPropsParser_);
-    // 2. Copy props with Nitro's cached copy constructor
-    return HybridRiveViewShadowNode::Props(context, /* & */ rawProps, props);
-  }
-
-#ifdef ANDROID
-  void HybridRiveViewComponentDescriptor::adopt(react::ShadowNode& shadowNode) const {
-    // This is called immediately after `ShadowNode` is created, cloned or in progress.
-    // On Android, we need to wrap props in our state, which gets routed through Java and later unwrapped in JNI/C++.
-    auto& concreteShadowNode = static_cast<HybridRiveViewShadowNode&>(shadowNode);
-    const std::shared_ptr<const HybridRiveViewProps>& constProps = concreteShadowNode.getConcreteSharedProps();
-    const std::shared_ptr<HybridRiveViewProps>& props = std::const_pointer_cast<HybridRiveViewProps>(constProps);
-    HybridRiveViewState state{props};
-    concreteShadowNode.setStateData(std::move(state));
-  }
-#endif
 
 } // namespace margelo::nitro::rive::views

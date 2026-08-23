@@ -23,11 +23,11 @@ namespace margelo::nitro::rive {
   using namespace facebook;
 
   /**
-   * The C++ JNI bridge between the C++ struct "UnifiedRiveEvent" and the the Kotlin data class "UnifiedRiveEvent".
+   * The C++ JNI bridge between the C++ struct "UnifiedRiveEvent" and the Kotlin data class "UnifiedRiveEvent".
    */
   struct JUnifiedRiveEvent final: public jni::JavaClass<JUnifiedRiveEvent> {
   public:
-    static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/rive/UnifiedRiveEvent;";
+    static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/rive/UnifiedRiveEvent;";
 
   public:
     /**
@@ -54,7 +54,7 @@ namespace margelo::nitro::rive {
         type->toCpp(),
         delay != nullptr ? std::make_optional(delay->value()) : std::nullopt,
         properties != nullptr ? std::make_optional([&]() {
-          std::unordered_map<std::string, std::variant<bool, std::string, double>> __map;
+          std::unordered_map<std::string, std::variant<bool, double, std::string>> __map;
           __map.reserve(properties->size());
           for (const auto& __entry : *properties) {
             __map.emplace(__entry.first->toStdString(), __entry.second->toCpp());

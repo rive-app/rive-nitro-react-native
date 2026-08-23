@@ -15,11 +15,11 @@ namespace margelo::nitro::rive {
   using namespace facebook;
 
   /**
-   * The C++ JNI bridge between the C++ enum "ArtboardByTypes" and the the Kotlin enum "ArtboardByTypes".
+   * The C++ JNI bridge between the C++ enum "ArtboardByTypes" and the Kotlin enum "ArtboardByTypes".
    */
   struct JArtboardByTypes final: public jni::JavaClass<JArtboardByTypes> {
   public:
-    static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/rive/ArtboardByTypes;";
+    static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/rive/ArtboardByTypes;";
 
   public:
     /**

@@ -1153,16 +1153,16 @@ namespace margelo::nitro::rive::bridge::swift {
     return optional.value();
   }
   
-  // pragma MARK: std::variant<bool, std::string, double>
+  // pragma MARK: std::variant<bool, double, std::string>
   /**
-   * Wrapper struct for `std::variant<bool, std::string, double>`.
+   * Wrapper struct for `std::variant<bool, double, std::string>`.
    * std::variant cannot be used in Swift because of a Swift bug.
    * Not even specializing it works. So we create a wrapper struct.
    */
-  struct std__variant_bool__std__string__double_ final {
-    std::variant<bool, std::string, double> variant;
-    std__variant_bool__std__string__double_(std::variant<bool, std::string, double> variant): variant(variant) { }
-    operator std::variant<bool, std::string, double>() const noexcept {
+  struct std__variant_bool__double__std__string_ final {
+    std::variant<bool, double, std::string> variant;
+    std__variant_bool__double__std__string_(std::variant<bool, double, std::string> variant): variant(variant) { }
+    operator std::variant<bool, double, std::string>() const noexcept {
       return variant;
     }
     inline size_t index() const noexcept {
@@ -1171,34 +1171,34 @@ namespace margelo::nitro::rive::bridge::swift {
     inline bool get_0() const noexcept {
       return std::get<0>(variant);
     }
-    inline std::string get_1() const noexcept {
+    inline double get_1() const noexcept {
       return std::get<1>(variant);
     }
-    inline double get_2() const noexcept {
+    inline std::string get_2() const noexcept {
       return std::get<2>(variant);
     }
   };
-  inline std__variant_bool__std__string__double_ create_std__variant_bool__std__string__double_(bool value) noexcept {
-    return std__variant_bool__std__string__double_(value);
+  inline std__variant_bool__double__std__string_ create_std__variant_bool__double__std__string_(bool value) noexcept {
+    return std__variant_bool__double__std__string_(value);
   }
-  inline std__variant_bool__std__string__double_ create_std__variant_bool__std__string__double_(const std::string& value) noexcept {
-    return std__variant_bool__std__string__double_(value);
+  inline std__variant_bool__double__std__string_ create_std__variant_bool__double__std__string_(double value) noexcept {
+    return std__variant_bool__double__std__string_(value);
   }
-  inline std__variant_bool__std__string__double_ create_std__variant_bool__std__string__double_(double value) noexcept {
-    return std__variant_bool__std__string__double_(value);
+  inline std__variant_bool__double__std__string_ create_std__variant_bool__double__std__string_(const std::string& value) noexcept {
+    return std__variant_bool__double__std__string_(value);
   }
   
-  // pragma MARK: std::unordered_map<std::string, std::variant<bool, std::string, double>>
+  // pragma MARK: std::unordered_map<std::string, std::variant<bool, double, std::string>>
   /**
-   * Specialized version of `std::unordered_map<std::string, std::variant<bool, std::string, double>>`.
+   * Specialized version of `std::unordered_map<std::string, std::variant<bool, double, std::string>>`.
    */
-  using std__unordered_map_std__string__std__variant_bool__std__string__double__ = std::unordered_map<std::string, std::variant<bool, std::string, double>>;
-  inline std::unordered_map<std::string, std::variant<bool, std::string, double>> create_std__unordered_map_std__string__std__variant_bool__std__string__double__(size_t size) noexcept {
-    std::unordered_map<std::string, std::variant<bool, std::string, double>> map;
+  using std__unordered_map_std__string__std__variant_bool__double__std__string__ = std::unordered_map<std::string, std::variant<bool, double, std::string>>;
+  inline std::unordered_map<std::string, std::variant<bool, double, std::string>> create_std__unordered_map_std__string__std__variant_bool__double__std__string__(size_t size) noexcept {
+    std::unordered_map<std::string, std::variant<bool, double, std::string>> map;
     map.reserve(size);
     return map;
   }
-  inline std::vector<std::string> get_std__unordered_map_std__string__std__variant_bool__std__string__double___keys(const std__unordered_map_std__string__std__variant_bool__std__string__double__& map) noexcept {
+  inline std::vector<std::string> get_std__unordered_map_std__string__std__variant_bool__double__std__string___keys(const std__unordered_map_std__string__std__variant_bool__double__std__string__& map) noexcept {
     std::vector<std::string> keys;
     keys.reserve(map.size());
     for (const auto& entry : map) {
@@ -1206,25 +1206,25 @@ namespace margelo::nitro::rive::bridge::swift {
     }
     return keys;
   }
-  inline std::variant<bool, std::string, double> get_std__unordered_map_std__string__std__variant_bool__std__string__double___value(const std__unordered_map_std__string__std__variant_bool__std__string__double__& map, const std::string& key) noexcept {
+  inline std::variant<bool, double, std::string> get_std__unordered_map_std__string__std__variant_bool__double__std__string___value(const std__unordered_map_std__string__std__variant_bool__double__std__string__& map, const std::string& key) noexcept {
     return map.find(key)->second;
   }
-  inline void emplace_std__unordered_map_std__string__std__variant_bool__std__string__double__(std__unordered_map_std__string__std__variant_bool__std__string__double__& map, const std::string& key, const std::variant<bool, std::string, double>& value) noexcept {
+  inline void emplace_std__unordered_map_std__string__std__variant_bool__double__std__string__(std__unordered_map_std__string__std__variant_bool__double__std__string__& map, const std::string& key, const std::variant<bool, double, std::string>& value) noexcept {
     map.emplace(key, value);
   }
   
-  // pragma MARK: std::optional<std::unordered_map<std::string, std::variant<bool, std::string, double>>>
+  // pragma MARK: std::optional<std::unordered_map<std::string, std::variant<bool, double, std::string>>>
   /**
-   * Specialized version of `std::optional<std::unordered_map<std::string, std::variant<bool, std::string, double>>>`.
+   * Specialized version of `std::optional<std::unordered_map<std::string, std::variant<bool, double, std::string>>>`.
    */
-  using std__optional_std__unordered_map_std__string__std__variant_bool__std__string__double___ = std::optional<std::unordered_map<std::string, std::variant<bool, std::string, double>>>;
-  inline std::optional<std::unordered_map<std::string, std::variant<bool, std::string, double>>> create_std__optional_std__unordered_map_std__string__std__variant_bool__std__string__double___(const std::unordered_map<std::string, std::variant<bool, std::string, double>>& value) noexcept {
-    return std::optional<std::unordered_map<std::string, std::variant<bool, std::string, double>>>(value);
+  using std__optional_std__unordered_map_std__string__std__variant_bool__double__std__string___ = std::optional<std::unordered_map<std::string, std::variant<bool, double, std::string>>>;
+  inline std::optional<std::unordered_map<std::string, std::variant<bool, double, std::string>>> create_std__optional_std__unordered_map_std__string__std__variant_bool__double__std__string___(const std::unordered_map<std::string, std::variant<bool, double, std::string>>& value) noexcept {
+    return std::optional<std::unordered_map<std::string, std::variant<bool, double, std::string>>>(value);
   }
-  inline bool has_value_std__optional_std__unordered_map_std__string__std__variant_bool__std__string__double___(const std::optional<std::unordered_map<std::string, std::variant<bool, std::string, double>>>& optional) noexcept {
+  inline bool has_value_std__optional_std__unordered_map_std__string__std__variant_bool__double__std__string___(const std::optional<std::unordered_map<std::string, std::variant<bool, double, std::string>>>& optional) noexcept {
     return optional.has_value();
   }
-  inline std::unordered_map<std::string, std::variant<bool, std::string, double>> get_std__optional_std__unordered_map_std__string__std__variant_bool__std__string__double___(const std::optional<std::unordered_map<std::string, std::variant<bool, std::string, double>>>& optional) noexcept {
+  inline std::unordered_map<std::string, std::variant<bool, double, std::string>> get_std__optional_std__unordered_map_std__string__std__variant_bool__double__std__string___(const std::optional<std::unordered_map<std::string, std::variant<bool, double, std::string>>>& optional) noexcept {
     return optional.value();
   }
   

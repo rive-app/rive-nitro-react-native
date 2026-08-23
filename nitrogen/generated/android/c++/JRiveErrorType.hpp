@@ -15,11 +15,11 @@ namespace margelo::nitro::rive {
   using namespace facebook;
 
   /**
-   * The C++ JNI bridge between the C++ enum "RiveErrorType" and the the Kotlin enum "RiveErrorType".
+   * The C++ JNI bridge between the C++ enum "RiveErrorType" and the Kotlin enum "RiveErrorType".
    */
   struct JRiveErrorType final: public jni::JavaClass<JRiveErrorType> {
   public:
-    static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/rive/RiveErrorType;";
+    static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/rive/RiveErrorType;";
 
   public:
     /**

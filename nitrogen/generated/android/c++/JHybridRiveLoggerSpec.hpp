@@ -21,11 +21,11 @@ namespace margelo::nitro::rive {
   class JHybridRiveLoggerSpec: public virtual HybridRiveLoggerSpec, public virtual JHybridObject {
   public:
     struct JavaPart: public jni::JavaClass<JavaPart, JHybridObject::JavaPart> {
-      static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/rive/HybridRiveLoggerSpec;";
+      static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/rive/HybridRiveLoggerSpec;";
       std::shared_ptr<JHybridRiveLoggerSpec> getJHybridRiveLoggerSpec();
     };
     struct CxxPart: public jni::HybridClass<CxxPart, JHybridObject::CxxPart> {
-      static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/rive/HybridRiveLoggerSpec$CxxPart;";
+      static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/rive/HybridRiveLoggerSpec$CxxPart;";
       static jni::local_ref<jhybriddata> initHybrid(jni::alias_ref<jhybridobject> jThis);
       static void registerNatives();
       using HybridBase::HybridBase;

@@ -15,11 +15,11 @@ namespace margelo::nitro::rive {
   using namespace facebook;
 
   /**
-   * The C++ JNI bridge between the C++ enum "Fit" and the the Kotlin enum "Fit".
+   * The C++ JNI bridge between the C++ enum "Fit" and the Kotlin enum "Fit".
    */
   struct JFit final: public jni::JavaClass<JFit> {
   public:
-    static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/rive/Fit;";
+    static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/rive/Fit;";
 
   public:
     /**

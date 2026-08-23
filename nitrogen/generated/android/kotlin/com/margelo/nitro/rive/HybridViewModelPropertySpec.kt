@@ -10,6 +10,7 @@ package com.margelo.nitro.rive
 import androidx.annotation.Keep
 import com.facebook.jni.HybridData
 import com.facebook.proguard.annotations.DoNotStrip
+import dalvik.annotation.optimization.FastNative
 import com.margelo.nitro.core.HybridObject
 
 /**
@@ -40,6 +41,7 @@ abstract class HybridViewModelPropertySpec: HybridObject() {
   @Keep
   protected open class CxxPart(javaPart: HybridViewModelPropertySpec): HybridObject.CxxPart(javaPart) {
     // C++ JHybridViewModelPropertySpec::CxxPart::initHybrid(...)
+    @FastNative
     external override fun initHybrid(): HybridData
   }
   override fun createCxxPart(): CxxPart {

@@ -10,6 +10,7 @@ package com.margelo.nitro.rive
 import androidx.annotation.Keep
 import com.facebook.jni.HybridData
 import com.facebook.proguard.annotations.DoNotStrip
+import dalvik.annotation.optimization.FastNative
 import com.margelo.nitro.core.Promise
 import com.margelo.nitro.core.ArrayBuffer
 import com.margelo.nitro.core.HybridObject
@@ -52,6 +53,7 @@ abstract class HybridRiveImageFactorySpec: HybridObject() {
   @Keep
   protected open class CxxPart(javaPart: HybridRiveImageFactorySpec): HybridObject.CxxPart(javaPart) {
     // C++ JHybridRiveImageFactorySpec::CxxPart::initHybrid(...)
+    @FastNative
     external override fun initHybrid(): HybridData
   }
   override fun createCxxPart(): CxxPart {

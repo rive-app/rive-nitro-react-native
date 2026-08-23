@@ -17,11 +17,11 @@ namespace margelo::nitro::rive {
   using namespace facebook;
 
   /**
-   * The C++ JNI bridge between the C++ struct "FrameRateRange" and the the Kotlin data class "FrameRateRange".
+   * The C++ JNI bridge between the C++ struct "FrameRateRange" and the Kotlin data class "FrameRateRange".
    */
   struct JFrameRateRange final: public jni::JavaClass<JFrameRateRange> {
   public:
-    static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/rive/FrameRateRange;";
+    static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/rive/FrameRateRange;";
 
   public:
     /**

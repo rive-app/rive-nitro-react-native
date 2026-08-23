@@ -26,11 +26,11 @@ namespace margelo::nitro::rive {
   using namespace facebook;
 
   /**
-   * The C++ JNI bridge between the C++ struct "ReferencedAssetsType" and the the Kotlin data class "ReferencedAssetsType".
+   * The C++ JNI bridge between the C++ struct "ReferencedAssetsType" and the Kotlin data class "ReferencedAssetsType".
    */
   struct JReferencedAssetsType final: public jni::JavaClass<JReferencedAssetsType> {
   public:
-    static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/rive/ReferencedAssetsType;";
+    static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/rive/ReferencedAssetsType;";
 
   public:
     /**

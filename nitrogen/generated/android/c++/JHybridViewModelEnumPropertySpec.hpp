@@ -22,11 +22,11 @@ namespace margelo::nitro::rive {
   class JHybridViewModelEnumPropertySpec: public virtual HybridViewModelEnumPropertySpec, public virtual JHybridViewModelPropertySpec {
   public:
     struct JavaPart: public jni::JavaClass<JavaPart, JHybridViewModelPropertySpec::JavaPart> {
-      static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/rive/HybridViewModelEnumPropertySpec;";
+      static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/rive/HybridViewModelEnumPropertySpec;";
       std::shared_ptr<JHybridViewModelEnumPropertySpec> getJHybridViewModelEnumPropertySpec();
     };
     struct CxxPart: public jni::HybridClass<CxxPart, JHybridViewModelPropertySpec::CxxPart> {
-      static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/rive/HybridViewModelEnumPropertySpec$CxxPart;";
+      static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/rive/HybridViewModelEnumPropertySpec$CxxPart;";
       static jni::local_ref<jhybriddata> initHybrid(jni::alias_ref<jhybridobject> jThis);
       static void registerNatives();
       using HybridBase::HybridBase;

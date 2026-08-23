@@ -1,4 +1,5 @@
 require "json"
+require_relative 'ios/rive_textual_glog'
 
 package = JSON.parse(File.read(File.join(__dir__, "package.json")))
 

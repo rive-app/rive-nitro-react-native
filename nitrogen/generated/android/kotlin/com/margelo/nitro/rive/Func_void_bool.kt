@@ -10,7 +10,6 @@ package com.margelo.nitro.rive
 import androidx.annotation.Keep
 import com.facebook.jni.HybridData
 import com.facebook.proguard.annotations.DoNotStrip
-import dalvik.annotation.optimization.FastNative
 
 
 /**
@@ -59,7 +58,6 @@ class Func_void_bool_cxx: Func_void_bool {
   override fun invoke(value: Boolean): Unit
     = invoke_cxx(value)
 
-  @FastNative
   private external fun invoke_cxx(value: Boolean): Unit
 }
 

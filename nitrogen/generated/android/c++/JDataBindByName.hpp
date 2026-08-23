@@ -17,11 +17,11 @@ namespace margelo::nitro::rive {
   using namespace facebook;
 
   /**
-   * The C++ JNI bridge between the C++ struct "DataBindByName" and the the Kotlin data class "DataBindByName".
+   * The C++ JNI bridge between the C++ struct "DataBindByName" and the Kotlin data class "DataBindByName".
    */
   struct JDataBindByName final: public jni::JavaClass<JDataBindByName> {
   public:
-    static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/rive/DataBindByName;";
+    static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/rive/DataBindByName;";
 
   public:
     /**

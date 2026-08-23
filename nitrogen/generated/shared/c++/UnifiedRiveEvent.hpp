@@ -47,13 +47,13 @@ namespace margelo::nitro::rive {
     std::string name     SWIFT_PRIVATE;
     RiveEventType type     SWIFT_PRIVATE;
     std::optional<double> delay     SWIFT_PRIVATE;
-    std::optional<std::unordered_map<std::string, std::variant<bool, std::string, double>>> properties     SWIFT_PRIVATE;
+    std::optional<std::unordered_map<std::string, std::variant<bool, double, std::string>>> properties     SWIFT_PRIVATE;
     std::optional<std::string> url     SWIFT_PRIVATE;
     std::optional<std::string> target     SWIFT_PRIVATE;
 
   public:
     UnifiedRiveEvent() = default;
-    explicit UnifiedRiveEvent(std::string name, RiveEventType type, std::optional<double> delay, std::optional<std::unordered_map<std::string, std::variant<bool, std::string, double>>> properties, std::optional<std::string> url, std::optional<std::string> target): name(name), type(type), delay(delay), properties(properties), url(url), target(target) {}
+    explicit UnifiedRiveEvent(std::string name, RiveEventType type, std::optional<double> delay, std::optional<std::unordered_map<std::string, std::variant<bool, double, std::string>>> properties, std::optional<std::string> url, std::optional<std::string> target): name(name), type(type), delay(delay), properties(properties), url(url), target(target) {}
 
   public:
     friend bool operator==(const UnifiedRiveEvent& lhs, const UnifiedRiveEvent& rhs) = default;
@@ -72,7 +72,7 @@ namespace margelo::nitro {
         JSIConverter<std::string>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "name"))),
         JSIConverter<margelo::nitro::rive::RiveEventType>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "type"))),
         JSIConverter<std::optional<double>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "delay"))),
-        JSIConverter<std::optional<std::unordered_map<std::string, std::variant<bool, std::string, double>>>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "properties"))),
+        JSIConverter<std::optional<std::unordered_map<std::string, std::variant<bool, double, std::string>>>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "properties"))),
         JSIConverter<std::optional<std::string>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "url"))),
         JSIConverter<std::optional<std::string>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "target")))
       );
@@ -82,7 +82,7 @@ namespace margelo::nitro {
       obj.setProperty(runtime, PropNameIDCache::get(runtime, "name"), JSIConverter<std::string>::toJSI(runtime, arg.name));
       obj.setProperty(runtime, PropNameIDCache::get(runtime, "type"), JSIConverter<margelo::nitro::rive::RiveEventType>::toJSI(runtime, arg.type));
       obj.setProperty(runtime, PropNameIDCache::get(runtime, "delay"), JSIConverter<std::optional<double>>::toJSI(runtime, arg.delay));
-      obj.setProperty(runtime, PropNameIDCache::get(runtime, "properties"), JSIConverter<std::optional<std::unordered_map<std::string, std::variant<bool, std::string, double>>>>::toJSI(runtime, arg.properties));
+      obj.setProperty(runtime, PropNameIDCache::get(runtime, "properties"), JSIConverter<std::optional<std::unordered_map<std::string, std::variant<bool, double, std::string>>>>::toJSI(runtime, arg.properties));
       obj.setProperty(runtime, PropNameIDCache::get(runtime, "url"), JSIConverter<std::optional<std::string>>::toJSI(runtime, arg.url));
       obj.setProperty(runtime, PropNameIDCache::get(runtime, "target"), JSIConverter<std::optional<std::string>>::toJSI(runtime, arg.target));
       return obj;
@@ -98,7 +98,7 @@ namespace margelo::nitro {
       if (!JSIConverter<std::string>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "name")))) return false;
       if (!JSIConverter<margelo::nitro::rive::RiveEventType>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "type")))) return false;
       if (!JSIConverter<std::optional<double>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "delay")))) return false;
-      if (!JSIConverter<std::optional<std::unordered_map<std::string, std::variant<bool, std::string, double>>>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "properties")))) return false;
+      if (!JSIConverter<std::optional<std::unordered_map<std::string, std::variant<bool, double, std::string>>>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "properties")))) return false;
       if (!JSIConverter<std::optional<std::string>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "url")))) return false;
       if (!JSIConverter<std::optional<std::string>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "target")))) return false;
       return true;

@@ -9,21 +9,21 @@
 
 namespace margelo::nitro::rive {
   /**
-   * Converts JEventPropertiesOutput to std::variant<bool, std::string, double>
+   * Converts JEventPropertiesOutput to std::variant<bool, double, std::string>
    */
-  std::variant<bool, std::string, double> JEventPropertiesOutput::toCpp() const {
+  std::variant<bool, double, std::string> JEventPropertiesOutput::toCpp() const {
     if (isInstanceOf(JEventPropertiesOutput_impl::First::javaClassStatic())) {
       // It's a `bool`
       auto jniValue = static_cast<const JEventPropertiesOutput_impl::First*>(this)->getValue();
       return static_cast<bool>(jniValue);
     } else if (isInstanceOf(JEventPropertiesOutput_impl::Second::javaClassStatic())) {
-      // It's a `std::string`
-      auto jniValue = static_cast<const JEventPropertiesOutput_impl::Second*>(this)->getValue();
-      return jniValue->toStdString();
-    } else if (isInstanceOf(JEventPropertiesOutput_impl::Third::javaClassStatic())) {
       // It's a `double`
-      auto jniValue = static_cast<const JEventPropertiesOutput_impl::Third*>(this)->getValue();
+      auto jniValue = static_cast<const JEventPropertiesOutput_impl::Second*>(this)->getValue();
       return jniValue;
+    } else if (isInstanceOf(JEventPropertiesOutput_impl::Third::javaClassStatic())) {
+      // It's a `std::string`
+      auto jniValue = static_cast<const JEventPropertiesOutput_impl::Third*>(this)->getValue();
+      return jniValue->toStdString();
     }
     throw std::invalid_argument("Variant is unknown Kotlin instance!");
   }

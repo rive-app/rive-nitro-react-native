@@ -11,7 +11,7 @@ import com.facebook.proguard.annotations.DoNotStrip
 
 
 /**
- * Represents the TypeScript variant "Boolean | String | Double".
+ * Represents the TypeScript variant "Boolean | Double | String".
  */
 @Suppress("ClassName")
 @DoNotStrip
@@ -19,9 +19,27 @@ sealed class EventPropertiesOutput {
   @DoNotStrip
   data class First(@DoNotStrip val value: Boolean): EventPropertiesOutput()
   @DoNotStrip
-  data class Second(@DoNotStrip val value: String): EventPropertiesOutput()
+  data class Second(@DoNotStrip val value: Double): EventPropertiesOutput()
   @DoNotStrip
-  data class Third(@DoNotStrip val value: Double): EventPropertiesOutput()
+  data class Third(@DoNotStrip val value: String): EventPropertiesOutput()
+
+  inline fun <reified T> asType(): T? {
+    return when (this) {
+      is First -> (value) as? T
+      is Second -> (value) as? T
+      is Third -> (value) as? T
+    }
+  }
+  inline fun <reified T> isType(): Boolean {
+    return asType<T>() != null
+  }
+  inline fun <R> match(first: (Boolean) -> R, second: (Double) -> R, third: (String) -> R): R {
+    return when (this) {
+      is First -> first(value)
+      is Second -> second(value)
+      is Third -> third(value)
+    }
+  }
 
   val isFirst: Boolean
     get() = this is First
@@ -34,21 +52,13 @@ sealed class EventPropertiesOutput {
     val value = (this as? First)?.value ?: return null
     return value
   }
-  fun asSecondOrNull(): String? {
+  fun asSecondOrNull(): Double? {
     val value = (this as? Second)?.value ?: return null
     return value
   }
-  fun asThirdOrNull(): Double? {
+  fun asThirdOrNull(): String? {
     val value = (this as? Third)?.value ?: return null
     return value
-  }
-
-  inline fun <R> match(first: (Boolean) -> R, second: (String) -> R, third: (Double) -> R): R {
-    return when (this) {
-      is First -> first(value)
-      is Second -> second(value)
-      is Third -> third(value)
-    }
   }
 
   companion object {
@@ -57,9 +67,9 @@ sealed class EventPropertiesOutput {
     fun create(value: Boolean): EventPropertiesOutput = First(value)
     @JvmStatic
     @DoNotStrip
-    fun create(value: String): EventPropertiesOutput = Second(value)
+    fun create(value: Double): EventPropertiesOutput = Second(value)
     @JvmStatic
     @DoNotStrip
-    fun create(value: Double): EventPropertiesOutput = Third(value)
+    fun create(value: String): EventPropertiesOutput = Third(value)
   }
 }

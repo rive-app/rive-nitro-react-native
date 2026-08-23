@@ -19,11 +19,11 @@ namespace margelo::nitro::rive {
   using namespace facebook;
 
   /**
-   * The C++ JNI bridge between the C++ struct "ViewModelPropertyInfo" and the the Kotlin data class "ViewModelPropertyInfo".
+   * The C++ JNI bridge between the C++ struct "ViewModelPropertyInfo" and the Kotlin data class "ViewModelPropertyInfo".
    */
   struct JViewModelPropertyInfo final: public jni::JavaClass<JViewModelPropertyInfo> {
   public:
-    static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/rive/ViewModelPropertyInfo;";
+    static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/rive/ViewModelPropertyInfo;";
 
   public:
     /**

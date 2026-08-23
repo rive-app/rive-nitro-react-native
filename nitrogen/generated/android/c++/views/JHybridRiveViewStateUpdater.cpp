@@ -15,85 +15,114 @@ namespace margelo::nitro::rive::views {
 using namespace facebook;
 using ConcreteStateData = react::ConcreteState<HybridRiveViewState>;
 
-void JHybridRiveViewStateUpdater::updateViewProps(jni::alias_ref<jni::JClass> /* class */,
-                                           jni::alias_ref<JHybridRiveViewSpec::JavaPart> javaView,
-                                           jni::alias_ref<JStateWrapper::javaobject> stateWrapperInterface) {
-  std::shared_ptr<JHybridRiveViewSpec> hybridView = javaView->getJHybridRiveViewSpec();
-
-  // Get concrete StateWrapperImpl from passed StateWrapper interface object
-  jobject rawStateWrapper = stateWrapperInterface.get();
-  if (!stateWrapperInterface->isInstanceOf(react::StateWrapperImpl::javaClassStatic())) [[unlikely]] {
-      throw std::runtime_error("StateWrapper is not a StateWrapperImpl");
+std::shared_ptr<const HybridRiveViewProps> JHybridRiveViewStateUpdater::getPropsFromStateWrapper(
+    jni::alias_ref<JStateWrapper::javaobject> stateWrapper) {
+  if (stateWrapper.get() == nullptr) {
+    return nullptr;
   }
-  auto stateWrapper = jni::alias_ref<react::StateWrapperImpl::javaobject>{
-            static_cast<react::StateWrapperImpl::javaobject>(rawStateWrapper)};
-  std::shared_ptr<const react::State> state = stateWrapper->cthis()->getState();
+  // Get concrete StateWrapperImpl from passed StateWrapper interface object
+  jobject rawStateWrapper = stateWrapper.get();
+  if (!stateWrapper->isInstanceOf(react::StateWrapperImpl::javaClassStatic())) [[unlikely]] {
+    throw std::runtime_error("StateWrapper is not a StateWrapperImpl");
+  }
+  auto stateWrapperImpl = jni::alias_ref<react::StateWrapperImpl::javaobject>{
+    static_cast<react::StateWrapperImpl::javaobject>(rawStateWrapper)
+  };
+  std::shared_ptr<const react::State> state = stateWrapperImpl->cthis()->getState();
+  if (state == nullptr) {
+    return nullptr;
+  }
   auto concreteState = std::static_pointer_cast<const ConcreteStateData>(state);
   const HybridRiveViewState& data = concreteState->getData();
-  const std::shared_ptr<HybridRiveViewProps>& props = data.getProps();
+  const std::shared_ptr<const HybridRiveViewProps>& props = data.getProps();
   if (props == nullptr) [[unlikely]] {
-    // Props aren't set yet!
     throw std::runtime_error("HybridRiveViewState's data doesn't contain any props!");
   }
+  return props;
+}
 
-  // Update all props if they are dirty
-  if (props->artboardName.isDirty) {
-    hybridView->setArtboardName(props->artboardName.value);
-    props->artboardName.isDirty = false;
+void JHybridRiveViewStateUpdater::updateViewProps(jni::alias_ref<jni::JClass> /* class */,
+                                           jni::alias_ref<JHybridRiveViewSpec::JavaPart> javaView,
+                                           jni::alias_ref<JStateWrapper::javaobject> newState,
+                                           jni::alias_ref<JStateWrapper::javaobject> oldState) {
+  std::shared_ptr<JHybridRiveViewSpec> hybridView = javaView->getJHybridRiveViewSpec();
+  std::shared_ptr<const HybridRiveViewProps> newProps = getPropsFromStateWrapper(newState);
+  std::shared_ptr<const HybridRiveViewProps> oldProps = getPropsFromStateWrapper(oldState);
+  if (newProps == nullptr) [[unlikely]] {
+    throw std::runtime_error("Current StateWrapper doesn't contain any props!");
   }
-  if (props->stateMachineName.isDirty) {
-    hybridView->setStateMachineName(props->stateMachineName.value);
-    props->stateMachineName.isDirty = false;
+
+  // Update only props that differ from the previous State snapshot.
+  if (oldProps == nullptr
+        ? newProps->artboardName.isProvided()
+        : !newProps->artboardName.hasSameValue(oldProps->artboardName)) {
+    hybridView->setArtboardName(newProps->artboardName.get());
   }
-  if (props->autoPlay.isDirty) {
-    hybridView->setAutoPlay(props->autoPlay.value);
-    props->autoPlay.isDirty = false;
+  if (oldProps == nullptr
+        ? newProps->stateMachineName.isProvided()
+        : !newProps->stateMachineName.hasSameValue(oldProps->stateMachineName)) {
+    hybridView->setStateMachineName(newProps->stateMachineName.get());
   }
-  if (props->file.isDirty) {
-    hybridView->setFile(props->file.value);
-    props->file.isDirty = false;
+  if (oldProps == nullptr
+        ? newProps->autoPlay.isProvided()
+        : !newProps->autoPlay.hasSameValue(oldProps->autoPlay)) {
+    hybridView->setAutoPlay(newProps->autoPlay.get());
   }
-  if (props->alignment.isDirty) {
-    hybridView->setAlignment(props->alignment.value);
-    props->alignment.isDirty = false;
+  if (oldProps == nullptr
+        ? newProps->file.isProvided()
+        : !newProps->file.hasSameValue(oldProps->file)) {
+    hybridView->setFile(newProps->file.get());
   }
-  if (props->fit.isDirty) {
-    hybridView->setFit(props->fit.value);
-    props->fit.isDirty = false;
+  if (oldProps == nullptr
+        ? newProps->alignment.isProvided()
+        : !newProps->alignment.hasSameValue(oldProps->alignment)) {
+    hybridView->setAlignment(newProps->alignment.get());
   }
-  if (props->layoutScaleFactor.isDirty) {
-    hybridView->setLayoutScaleFactor(props->layoutScaleFactor.value);
-    props->layoutScaleFactor.isDirty = false;
+  if (oldProps == nullptr
+        ? newProps->fit.isProvided()
+        : !newProps->fit.hasSameValue(oldProps->fit)) {
+    hybridView->setFit(newProps->fit.get());
   }
-  if (props->frameRate.isDirty) {
-    hybridView->setFrameRate(props->frameRate.value);
-    props->frameRate.isDirty = false;
+  if (oldProps == nullptr
+        ? newProps->layoutScaleFactor.isProvided()
+        : !newProps->layoutScaleFactor.hasSameValue(oldProps->layoutScaleFactor)) {
+    hybridView->setLayoutScaleFactor(newProps->layoutScaleFactor.get());
   }
-  if (props->semantics.isDirty) {
-    hybridView->setSemantics(props->semantics.value);
-    props->semantics.isDirty = false;
+  if (oldProps == nullptr
+        ? newProps->frameRate.isProvided()
+        : !newProps->frameRate.hasSameValue(oldProps->frameRate)) {
+    hybridView->setFrameRate(newProps->frameRate.get());
   }
-  if (props->dataBind.isDirty) {
-    hybridView->setDataBind(props->dataBind.value);
-    props->dataBind.isDirty = false;
+  if (oldProps == nullptr
+        ? newProps->semantics.isProvided()
+        : !newProps->semantics.hasSameValue(oldProps->semantics)) {
+    hybridView->setSemantics(newProps->semantics.get());
   }
-  if (props->onError.isDirty) {
-    hybridView->setOnError(props->onError.value);
-    props->onError.isDirty = false;
+  if (oldProps == nullptr
+        ? newProps->dataBind.isProvided()
+        : !newProps->dataBind.hasSameValue(oldProps->dataBind)) {
+    hybridView->setDataBind(newProps->dataBind.get());
   }
-  if (props->onStop.isDirty) {
-    hybridView->setOnStop(props->onStop.value);
-    props->onStop.isDirty = false;
+  if (oldProps == nullptr
+        ? newProps->onError.isProvided()
+        : !newProps->onError.hasSameValue(oldProps->onError)) {
+    hybridView->setOnError(newProps->onError.get());
+  }
+  if (oldProps == nullptr
+        ? newProps->onStop.isProvided()
+        : !newProps->onStop.hasSameValue(oldProps->onStop)) {
+    hybridView->setOnStop(newProps->onStop.get());
   }
 
   // Update hybridRef if it changed
-  if (props->hybridRef.isDirty) {
+  if (oldProps == nullptr
+        ? newProps->hybridRef.isProvided()
+        : !newProps->hybridRef.hasSameValue(oldProps->hybridRef)) {
     // hybridRef changed - call it with new this
-    const auto& maybeFunc = props->hybridRef.value;
+    const auto& maybeFunc = newProps->hybridRef.get();
     if (maybeFunc.has_value()) {
       maybeFunc.value()(hybridView);
     }
-    props->hybridRef.isDirty = false;
   }
 }
 

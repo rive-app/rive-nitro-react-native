@@ -7,14 +7,15 @@
 
 #pragma once
 
-#include <optional>
-#include <NitroModules/NitroDefines.hpp>
-#include <NitroModules/NitroHash.hpp>
-#include <NitroModules/CachedProp.hpp>
-#include <react/renderer/core/ConcreteComponentDescriptor.h>
-#include <react/renderer/core/PropsParserContext.h>
+#include <NitroModules/ReactProp.hpp>
+#include <NitroModules/ViewComponentDescriptor.hpp>
+#include <NitroModules/ViewPropsHolderState.hpp>
 #include <react/renderer/components/view/ConcreteViewShadowNode.h>
 #include <react/renderer/components/view/ViewProps.h>
+#include <react/renderer/core/PropsParserContext.h>
+#include <react/renderer/core/RawProps.h>
+
+#include <string>
 
 #include <string>
 #include <optional>
@@ -52,19 +53,53 @@ namespace margelo::nitro::rive::views {
                         const react::RawProps& rawProps);
 
   public:
-    CachedProp<std::optional<std::string>> artboardName;
-    CachedProp<std::optional<std::string>> stateMachineName;
-    CachedProp<std::optional<bool>> autoPlay;
-    CachedProp<std::shared_ptr<HybridRiveFileSpec>> file;
-    CachedProp<std::optional<Alignment>> alignment;
-    CachedProp<std::optional<Fit>> fit;
-    CachedProp<std::optional<double>> layoutScaleFactor;
-    CachedProp<std::optional<std::variant<double, FrameRateRange>>> frameRate;
-    CachedProp<std::optional<Semantics>> semantics;
-    CachedProp<std::optional<std::variant<std::shared_ptr<HybridViewModelInstanceSpec>, DataBindMode, DataBindByName>>> dataBind;
-    CachedProp<std::function<void(const RiveError& /* error */)>> onError;
-    CachedProp<std::function<void()>> onStop;
-    CachedProp<std::optional<std::function<void(const std::shared_ptr<HybridRiveViewSpec>& /* ref */)>>> hybridRef;
+    nitro::ReactProp<std::optional<std::string>> artboardName;
+    nitro::ReactProp<std::optional<std::string>> stateMachineName;
+    nitro::ReactProp<std::optional<bool>> autoPlay;
+    nitro::ReactProp<std::shared_ptr<HybridRiveFileSpec>> file;
+    nitro::ReactProp<std::optional<Alignment>> alignment;
+    nitro::ReactProp<std::optional<Fit>> fit;
+    nitro::ReactProp<std::optional<double>> layoutScaleFactor;
+    nitro::ReactProp<std::optional<std::variant<double, FrameRateRange>>> frameRate;
+    nitro::ReactProp<std::optional<Semantics>> semantics;
+    nitro::ReactProp<std::optional<std::variant<std::shared_ptr<HybridViewModelInstanceSpec>, DataBindMode, DataBindByName>>> dataBind;
+    nitro::ReactProp<std::function<void(const RiveError& /* error */)>> onError;
+    nitro::ReactProp<std::function<void()>> onStop;
+    nitro::ReactProp<std::optional<std::function<void(const std::shared_ptr<HybridRiveViewSpec>& /* ref */)>>> hybridRef;
+
+    [[nodiscard]]
+    bool hasSameProps(const HybridRiveViewProps& other) const noexcept {
+      return artboardName.hasSameValue(other.artboardName) &&
+             stateMachineName.hasSameValue(other.stateMachineName) &&
+             autoPlay.hasSameValue(other.autoPlay) &&
+             file.hasSameValue(other.file) &&
+             alignment.hasSameValue(other.alignment) &&
+             fit.hasSameValue(other.fit) &&
+             layoutScaleFactor.hasSameValue(other.layoutScaleFactor) &&
+             frameRate.hasSameValue(other.frameRate) &&
+             semantics.hasSameValue(other.semantics) &&
+             dataBind.hasSameValue(other.dataBind) &&
+             onError.hasSameValue(other.onError) &&
+             onStop.hasSameValue(other.onStop) &&
+             hybridRef.hasSameValue(other.hybridRef);
+    }
+
+    [[nodiscard]]
+    bool hasAnyProvidedProps() const noexcept {
+      return artboardName.isProvided() ||
+             stateMachineName.isProvided() ||
+             autoPlay.isProvided() ||
+             file.isProvided() ||
+             alignment.isProvided() ||
+             fit.isProvided() ||
+             layoutScaleFactor.isProvided() ||
+             frameRate.isProvided() ||
+             semantics.isProvided() ||
+             dataBind.isProvided() ||
+             onError.isProvided() ||
+             onStop.isProvided() ||
+             hybridRef.isProvided();
+    }
 
   private:
     static bool filterObjectKeys(const std::string& propName);
@@ -73,32 +108,7 @@ namespace margelo::nitro::rive::views {
   /**
    * State for the "RiveView" View.
    */
-  class HybridRiveViewState final {
-  public:
-    HybridRiveViewState() = default;
-    explicit HybridRiveViewState(const std::shared_ptr<HybridRiveViewProps>& props):
-      _props(props) {}
-
-  public:
-    [[nodiscard]]
-    const std::shared_ptr<HybridRiveViewProps>& getProps() const {
-      return _props;
-    }
-
-  public:
-#ifdef ANDROID
-  HybridRiveViewState(const HybridRiveViewState& /* previousState */, folly::dynamic /* data */) {}
-  folly::dynamic getDynamic() const {
-    throw std::runtime_error("HybridRiveViewState does not support folly!");
-  }
-  react::MapBuffer getMapBuffer() const {
-    throw std::runtime_error("HybridRiveViewState does not support MapBuffer!");
-  };
-#endif
-
-  private:
-    std::shared_ptr<HybridRiveViewProps> _props;
-  };
+  using HybridRiveViewState = nitro::ViewPropsHolderState<HybridRiveViewProps>;
 
   /**
    * The Shadow Node for the "RiveView" View.
@@ -111,21 +121,7 @@ namespace margelo::nitro::rive::views {
   /**
    * The Component Descriptor for the "RiveView" View.
    */
-  class HybridRiveViewComponentDescriptor final: public react::ConcreteComponentDescriptor<HybridRiveViewShadowNode> {
-  public:
-    explicit HybridRiveViewComponentDescriptor(const react::ComponentDescriptorParameters& parameters);
-
-  public:
-    /**
-     * A faster path for cloning props - reuses the caching logic from `HybridRiveViewProps`.
-     */
-    std::shared_ptr<const react::Props> cloneProps(const react::PropsParserContext& context,
-                                                   const std::shared_ptr<const react::Props>& props,
-                                                   react::RawProps rawProps) const override;
-#ifdef ANDROID
-    void adopt(react::ShadowNode& shadowNode) const override;
-#endif
-  };
+  using HybridRiveViewComponentDescriptor = nitro::ViewComponentDescriptor<HybridRiveViewShadowNode>;
 
   /* The actual view for "RiveView" needs to be implemented in platform-specific code. */
 

@@ -9,6 +9,7 @@ package com.margelo.nitro.rive
 
 import androidx.annotation.Keep
 import com.facebook.proguard.annotations.DoNotStrip
+import java.util.Objects
 
 
 /**
@@ -37,6 +38,28 @@ data class ResolvedReferencedAsset(
   val type: RiveAssetType?
 ) {
   /* primary constructor */
+
+  override fun equals(other: Any?): Boolean {
+    if (this === other) return true
+    if (other !is ResolvedReferencedAsset) return false
+    return Objects.deepEquals(this.sourceUrl, other.sourceUrl)
+      && Objects.deepEquals(this.sourceAsset, other.sourceAsset)
+      && Objects.deepEquals(this.sourceAssetId, other.sourceAssetId)
+      && Objects.deepEquals(this.path, other.path)
+      && Objects.deepEquals(this.image, other.image)
+      && Objects.deepEquals(this.type, other.type)
+  }
+
+  override fun hashCode(): Int {
+    return arrayOf<Any?>(
+      sourceUrl,
+      sourceAsset,
+      sourceAssetId,
+      path,
+      image,
+      type
+    ).contentDeepHashCode()
+  }
 
   companion object {
     /**

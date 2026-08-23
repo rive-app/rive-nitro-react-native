@@ -6,10 +6,10 @@ extension EventPropertiesOutput {
   }
 
   static func string(_ value: String) -> EventPropertiesOutput {
-    return .second(value)
+    return .third(value)
   }
 
   static func number(_ value: Double) -> EventPropertiesOutput {
-    return .third(value)
+    return .second(value)
   }
 }

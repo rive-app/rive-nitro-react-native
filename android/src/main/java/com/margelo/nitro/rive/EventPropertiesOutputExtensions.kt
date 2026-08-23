@@ -5,8 +5,8 @@ object EventPropertiesOutputExtensions {
     EventPropertiesOutput.First(value)
 
   fun string(value: String): EventPropertiesOutput =
-    EventPropertiesOutput.Second(value)
+    EventPropertiesOutput.Third(value)
 
   fun number(value: Double): EventPropertiesOutput =
-    EventPropertiesOutput.Third(value)
+    EventPropertiesOutput.Second(value)
 }

@@ -15,11 +15,11 @@ namespace margelo::nitro::rive {
   using namespace facebook;
 
   /**
-   * The C++ JNI bridge between the C++ enum "RiveAssetType" and the the Kotlin enum "RiveAssetType".
+   * The C++ JNI bridge between the C++ enum "RiveAssetType" and the Kotlin enum "RiveAssetType".
    */
   struct JRiveAssetType final: public jni::JavaClass<JRiveAssetType> {
   public:
-    static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/rive/RiveAssetType;";
+    static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/rive/RiveAssetType;";
 
   public:
     /**
