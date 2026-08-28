@@ -354,4 +354,23 @@ describe('Image Properties', () => {
     const imageProp = instance.imageProperty('bound_image');
     expectDefined(imageProp);
   });
+
+  // Guards the iOS new backend, which threw "Invalid image type" on undefined. It cannot
+  // assert that the property was actually cleared: image properties are write-only and
+  // addListener is a no-op on both new backends, so the effect is only observable in
+  // pixels. On Android's new backend this passes because the call is deliberately
+  // dropped — setImage is non-null through rive-android 11.7.2. Green here does not mean
+  // clearing works.
+  it('imageProperty.set(undefined) does not throw', async () => {
+    const file = await loadFile(DATABINDING_IMAGES);
+    const vm = file.viewModelByName('MyViewModel');
+    expectDefined(vm);
+    const instance = vm.createInstanceByIndex(0);
+    expectDefined(instance);
+
+    const imageProp = instance.imageProperty('bound_image');
+    expectDefined(imageProp);
+
+    expect(() => imageProp.set(undefined)).not.toThrow();
+  });
 });
