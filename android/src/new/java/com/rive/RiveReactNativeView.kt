@@ -1,6 +1,9 @@
+@file:OptIn(ExperimentalRiveSemantics::class)
+
 package com.rive
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.graphics.SurfaceTexture
 import android.os.Build
 import android.util.Log
@@ -8,11 +11,15 @@ import android.view.Choreographer
 import android.view.MotionEvent
 import android.view.TextureView
 import android.view.View
+import android.view.accessibility.AccessibilityManager
 import android.widget.FrameLayout
+import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.facebook.react.bridge.UiThreadUtil
 import app.rive.Artboard
+import app.rive.ExperimentalRiveSemantics
 import app.rive.Fit
 import app.rive.RiveFile
+import app.rive.RiveSemanticsMode
 import app.rive.ViewModelInstance
 import app.rive.ViewModelSource
 import app.rive.core.ArtboardHandle
@@ -20,6 +27,7 @@ import app.rive.core.CommandQueue
 import app.rive.core.RiveSurface
 import app.rive.core.StateMachineHandle
 import app.rive.core.SurfaceTextureSurface
+import app.rive.semantics.SemanticActionType
 import com.facebook.react.uimanager.ThemedReactContext
 import com.margelo.nitro.rive.RiveErrorLogger
 import com.margelo.nitro.rive.RiveLog
@@ -62,6 +70,22 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
     // (e.g. every 4th frame at 120Hz for a 30fps cap) instead of drifting past
     // it and halving the effective rate.
     private const val CAP_TOLERANCE_NS = 4_000_000L
+
+    // rive-android's TalkBack bridge compiles against androidx.core 1.17; an
+    // app that forces an older androidx.core (e.g. to stay on compileSdk 35)
+    // would otherwise crash with NoSuchMethodError on the first accessibility
+    // query. Probe one of the 1.17-only methods it calls.
+    private val semanticsSupported: Boolean by lazy {
+      runCatching {
+        AccessibilityNodeInfoCompat::class.java
+          .getMethod("setSupplementalDescription", CharSequence::class.java)
+      }.isSuccess
+    }
+
+    private const val SEMANTICS_UNSUPPORTED_MESSAGE =
+      "Rive semantics need androidx.core 1.17.0 or newer (compileSdk 36), but the app " +
+        "resolved an older version; check for a forced androidx.core:core version in " +
+        "build.gradle. Semantics stay disabled."
   }
 
   // Render at most this many frames per second; null = every vsync.
@@ -72,6 +96,28 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
     }
 
   var onError: ((String) -> Unit)? = null
+
+  var semantics: RiveSemanticsMode = RiveSemanticsMode.Off
+    set(value) {
+      if (field == value) return
+      field = value
+      resolveSemantics()
+    }
+
+  private val accessibilityManager =
+    context.getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager
+  private val accessibilityStateListener =
+    AccessibilityManager.AccessibilityStateChangeListener { resolveSemantics() }
+  private var observingAccessibilityState = false
+  private var semanticsEnabled = false
+  private var warnedSemanticsUnsupported = false
+  private var semanticsSyncJob: Job? = null
+  private val mainScope = CoroutineScope(Dispatchers.Main.immediate + SupervisorJob())
+
+  // Semantic input (TalkBack actions, accessibility focus) and viewport changes
+  // must reach the state machine even while it is paused or settled: the next
+  // frame advances by zero and drains the resulting diff.
+  private var semanticFrameRequested = false
 
   private var settledJob: Job? = null
 
@@ -121,7 +167,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
 
   private val viewScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
 
-  private val textureView = TextureView(context).apply {
+  private val textureView = RiveSemanticsTextureView.create(context).apply {
     layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
     surfaceTextureListener = object : TextureView.SurfaceTextureListener {
       override fun onSurfaceTextureAvailable(st: SurfaceTexture, w: Int, h: Int) {
@@ -154,6 +200,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
         // RiveSurface.resize() is internal to the SDK, so only the artboard
         // is resized here (same behavior as before the 11.7.2 bump).
         resizeArtboardIfLayout()
+        if (semanticsEnabled) requestSemanticFrame()
       }
 
       override fun onSurfaceTextureUpdated(st: SurfaceTexture) {}
@@ -202,8 +249,20 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
 
       if (worker != null && art != null && sm != null && rs != null) {
         try {
-          if (!paused && !settled) {
-            worker.advanceStateMachine(sm, deltaTime)
+          val advanced = when {
+            !paused && !settled -> {
+              worker.advanceStateMachine(sm, deltaTime)
+              true
+            }
+            semanticFrameRequested -> {
+              worker.advanceStateMachine(sm, Duration.ZERO)
+              true
+            }
+            else -> false
+          }
+          semanticFrameRequested = false
+          if (advanced && semanticsEnabled && surfaceWidth > 0 && surfaceHeight > 0) {
+            worker.drainSemanticsDiff(sm, activeFit, surfaceWidth.toFloat(), surfaceHeight.toFloat())
           }
           worker.draw(art, sm, rs, activeFit)
           needsRedraw = false
@@ -255,6 +314,13 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
   }
 
   fun configure(config: ViewConfiguration, dataBindingChanged: Boolean, reload: Boolean = false, initialUpdate: Boolean = false) {
+    // Reported here rather than from the semantics setter: props apply in
+    // declaration order, so onError is not wired yet when semantics is set.
+    if (semantics != RiveSemanticsMode.Off && !semanticsSupported && !warnedSemanticsUnsupported) {
+      warnedSemanticsUnsupported = true
+      Log.w(TAG, SEMANTICS_UNSUPPORTED_MESSAGE)
+      onError?.invoke(SEMANTICS_UNSUPPORTED_MESSAGE)
+    }
     riveWorker = config.riveWorker
     activeFit = config.fit
     needsRedraw = true
@@ -266,6 +332,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
     if (reload) {
       RiveErrorLogger.resetReportedErrors()
       RiveErrorLogger.addListener(errorListener)
+      if (semanticsEnabled) detachSemantics()
       stateMachineHandle?.let { old ->
         runCatching { config.riveWorker.deleteStateMachine(old) }
       }
@@ -289,6 +356,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
       }
       stateMachineHandle = newStateMachineHandle
       observeSettled(config.riveWorker, newStateMachineHandle)
+      if (semanticsEnabled) attachSemantics()
 
       if (surfaceTexture != null && riveSurface == null) {
         riveSurface = config.riveWorker.createRiveSurface(
@@ -467,6 +535,80 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
     }
   }
 
+  private fun resolveSemantics() {
+    val automatic = semantics == RiveSemanticsMode.Automatic
+    if (automatic && !observingAccessibilityState) {
+      accessibilityManager.addAccessibilityStateChangeListener(accessibilityStateListener)
+      observingAccessibilityState = true
+    } else if (!automatic && observingAccessibilityState) {
+      accessibilityManager.removeAccessibilityStateChangeListener(accessibilityStateListener)
+      observingAccessibilityState = false
+    }
+    val requested = when (semantics) {
+      RiveSemanticsMode.Off -> false
+      RiveSemanticsMode.On -> true
+      RiveSemanticsMode.Automatic -> accessibilityManager.isEnabled
+    }
+    val enabled = requested && semanticsSupported
+    if (enabled == semanticsEnabled) return
+    semanticsEnabled = enabled
+    if (enabled) attachSemantics() else detachSemantics()
+  }
+
+  // Core never stops producing semantics once enabled for a state machine;
+  // detaching only stops draining diffs and removes the TalkBack nodes.
+  private fun attachSemantics() {
+    val worker = riveWorker ?: return
+    val sm = stateMachineHandle ?: return
+    try {
+      worker.enableSemantics(sm)
+    } catch (e: Exception) {
+      Log.e(TAG, "Failed to enable semantics", e)
+      return
+    }
+    val tree = worker.semanticTree(sm)
+    RiveSemanticsTextureView.install(textureView, tree, object : RiveSemanticsTextureView.Listener {
+      override fun onSemanticAction(nodeId: Int, action: SemanticActionType) =
+        semanticInput { worker.fireSemanticAction(sm, nodeId, action) }
+
+      override fun onSemanticFocusRequested(nodeId: Int) =
+        semanticInput { worker.requestSemanticFocus(sm, nodeId) }
+
+      override fun onSemanticFocusCleared() =
+        semanticInput { worker.clearSemanticFocus(sm) }
+    })
+    semanticsSyncJob?.cancel()
+    semanticsSyncJob = mainScope.launch {
+      tree.versionFlow.collect { RiveSemanticsTextureView.synchronize(textureView) }
+    }
+    requestSemanticFrame()
+  }
+
+  private fun detachSemantics() {
+    semanticsSyncJob?.cancel()
+    semanticsSyncJob = null
+    RiveSemanticsTextureView.clear(textureView)
+    val worker = riveWorker ?: return
+    val sm = stateMachineHandle ?: return
+    runCatching { worker.clearSemanticFocus(sm) }
+  }
+
+  private fun semanticInput(block: () -> Unit) {
+    try {
+      block()
+    } catch (e: Exception) {
+      Log.e(TAG, "Semantic input failed", e)
+      return
+    }
+    requestSemanticFrame()
+  }
+
+  private fun requestSemanticFrame() {
+    semanticFrameRequested = true
+    needsRedraw = true
+    settled = false
+  }
+
   fun play() {
     paused = false
     settled = false
@@ -526,6 +668,12 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
     viewReadyDeferred.complete(false)
     settledJob?.cancel()
     viewScope.cancel()
+    if (semanticsEnabled) detachSemantics()
+    if (observingAccessibilityState) {
+      accessibilityManager.removeAccessibilityStateChangeListener(accessibilityStateListener)
+      observingAccessibilityState = false
+    }
+    mainScope.cancel()
     RiveErrorLogger.removeListener(errorListener)
     stopRenderLoop()
     // The command queue is FIFO, so deletes enqueued here run after any

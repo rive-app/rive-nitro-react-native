@@ -65,10 +65,10 @@ export interface RiveViewProps extends HybridViewProps {
   frameRate?: number | FrameRateRange;
   /**
    * Exposes accessibility semantics authored in the Rive editor to the
-   * platform screen reader (VoiceOver). Defaults to Semantics.Off.
+   * platform screen reader (VoiceOver, TalkBack). Defaults to Semantics.Off.
    *
-   * Only supported on the new (default) iOS runtime so far; ignored
-   * elsewhere. Android support is pending the upstream rive-android runtime.
+   * Only supported on the new (default) runtimes; the legacy backends
+   * ignore it.
    *
    * @see https://rive.app/docs/runtimes/apple/semantics
    */
