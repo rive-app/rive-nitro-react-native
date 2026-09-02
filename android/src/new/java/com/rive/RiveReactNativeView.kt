@@ -27,7 +27,6 @@ import app.rive.core.CommandQueue
 import app.rive.core.RiveSurface
 import app.rive.core.StateMachineHandle
 import app.rive.core.SurfaceTextureSurface
-import app.rive.semantics.SemanticActionType
 import com.facebook.react.uimanager.ThemedReactContext
 import com.margelo.nitro.rive.RiveErrorLogger
 import com.margelo.nitro.rive.RiveLog
@@ -71,10 +70,8 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
     // it and halving the effective rate.
     private const val CAP_TOLERANCE_NS = 4_000_000L
 
-    // rive-android's TalkBack bridge compiles against androidx.core 1.17; an
-    // app that forces an older androidx.core (e.g. to stay on compileSdk 35)
-    // would otherwise crash with NoSuchMethodError on the first accessibility
-    // query. Probe one of the 1.17-only methods it calls.
+    // rive-android's TalkBack bridge calls androidx.core 1.17 APIs; an app that
+    // forces an older androidx.core crashes on the first accessibility query.
     private val semanticsSupported: Boolean by lazy {
       runCatching {
         AccessibilityNodeInfoCompat::class.java
@@ -114,9 +111,8 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
   private var semanticsSyncJob: Job? = null
   private val mainScope = CoroutineScope(Dispatchers.Main.immediate + SupervisorJob())
 
-  // Semantic input (TalkBack actions, accessibility focus) and viewport changes
-  // must reach the state machine even while it is paused or settled: the next
-  // frame advances by zero and drains the resulting diff.
+  // Semantic input and viewport changes must be applied and drained even
+  // while paused or settled, which needs one zero-delta advance.
   private var semanticFrameRequested = false
 
   private var settledJob: Job? = null
@@ -249,16 +245,10 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
 
       if (worker != null && art != null && sm != null && rs != null) {
         try {
-          val advanced = when {
-            !paused && !settled -> {
-              worker.advanceStateMachine(sm, deltaTime)
-              true
-            }
-            semanticFrameRequested -> {
-              worker.advanceStateMachine(sm, Duration.ZERO)
-              true
-            }
-            else -> false
+          val playing = !paused && !settled
+          val advanced = playing || semanticFrameRequested
+          if (advanced) {
+            worker.advanceStateMachine(sm, if (playing) deltaTime else Duration.ZERO)
           }
           semanticFrameRequested = false
           if (advanced && semanticsEnabled && surfaceWidth > 0 && surfaceHeight > 0) {
@@ -314,8 +304,8 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
   }
 
   fun configure(config: ViewConfiguration, dataBindingChanged: Boolean, reload: Boolean = false, initialUpdate: Boolean = false) {
-    // Reported here rather than from the semantics setter: props apply in
-    // declaration order, so onError is not wired yet when semantics is set.
+    // Not reported from the semantics setter: props apply in declaration
+    // order, so onError is not wired yet when semantics is set.
     if (semantics != RiveSemanticsMode.Off && !semanticsSupported && !warnedSemanticsUnsupported) {
       warnedSemanticsUnsupported = true
       Log.w(TAG, SEMANTICS_UNSUPPORTED_MESSAGE)
@@ -555,8 +545,8 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
     if (enabled) attachSemantics() else detachSemantics()
   }
 
-  // Core never stops producing semantics once enabled for a state machine;
-  // detaching only stops draining diffs and removes the TalkBack nodes.
+  // Core keeps producing semantics once enabled; detaching only stops
+  // draining them.
   private fun attachSemantics() {
     val worker = riveWorker ?: return
     val sm = stateMachineHandle ?: return
@@ -567,16 +557,13 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
       return
     }
     val tree = worker.semanticTree(sm)
-    RiveSemanticsTextureView.install(textureView, tree, object : RiveSemanticsTextureView.Listener {
-      override fun onSemanticAction(nodeId: Int, action: SemanticActionType) =
-        semanticInput { worker.fireSemanticAction(sm, nodeId, action) }
-
-      override fun onSemanticFocusRequested(nodeId: Int) =
-        semanticInput { worker.requestSemanticFocus(sm, nodeId) }
-
-      override fun onSemanticFocusCleared() =
-        semanticInput { worker.clearSemanticFocus(sm) }
-    })
+    RiveSemanticsTextureView.install(
+      textureView,
+      tree,
+      { nodeId, action -> semanticInput { worker.fireSemanticAction(sm, nodeId, action) } },
+      { nodeId -> semanticInput { worker.requestSemanticFocus(sm, nodeId) } },
+      { semanticInput { worker.clearSemanticFocus(sm) } },
+    )
     semanticsSyncJob?.cancel()
     semanticsSyncJob = mainScope.launch {
       tree.versionFlow.collect { RiveSemanticsTextureView.synchronize(textureView) }

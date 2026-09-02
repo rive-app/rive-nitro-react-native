@@ -8,43 +8,34 @@ import app.rive.semantics.SemanticActionType;
 import app.rive.semantics.SemanticTreeModel;
 
 import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
+import kotlin.jvm.functions.Function1;
+import kotlin.jvm.functions.Function2;
 
 /**
- * Bridges to {@code app.rive.RiveTextureView}, the SDK's TalkBack host for a semantic tree.
- * It is Kotlin-internal in rive-android 11.10 (only the Compose entry point uses it), which
- * Java is not bound by; drop this shim once the SDK exposes it publicly.
+ * Reaches {@code app.rive.RiveTextureView}, the SDK's TalkBack host, which is Kotlin-internal
+ * in rive-android 11.10 (only its Compose entry point uses it); Java is not bound by that.
  */
 final class RiveSemanticsTextureView {
-  interface Listener {
-    void onSemanticAction(int nodeId, SemanticActionType action);
-
-    void onSemanticFocusRequested(int nodeId);
-
-    void onSemanticFocusCleared();
-  }
-
   private RiveSemanticsTextureView() {}
 
   static TextureView create(Context context) {
     return new RiveTextureView(context);
   }
 
-  static void install(TextureView view, SemanticTreeModel tree, Listener listener) {
-    ((RiveTextureView) view).installSemantics(
-        tree,
-        (nodeId, action) -> {
-          listener.onSemanticAction(nodeId, action);
-          return Unit.INSTANCE;
-        },
-        transition -> Unit.INSTANCE,
-        nodeId -> {
-          listener.onSemanticFocusRequested(nodeId);
-          return Unit.INSTANCE;
-        },
-        () -> {
-          listener.onSemanticFocusCleared();
-          return Unit.INSTANCE;
-        });
+  static void install(
+      TextureView view,
+      SemanticTreeModel tree,
+      Function2<Integer, SemanticActionType, Unit> onSemanticAction,
+      Function1<Integer, Unit> onSemanticFocusRequested,
+      Function0<Unit> onSemanticFocusCleared) {
+    ((RiveTextureView) view)
+        .installSemantics(
+            tree,
+            onSemanticAction,
+            transition -> Unit.INSTANCE,
+            onSemanticFocusRequested,
+            onSemanticFocusCleared);
   }
 
   static boolean synchronize(TextureView view) {
