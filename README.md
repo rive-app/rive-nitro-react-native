@@ -257,7 +257,7 @@ The following table compares feature availability with the [previous Rive React 
 | `useRiveFile()` hook              | ✅     | Convenient hook to load a Rive file                              |
 | `RiveView` error handling         | ✅     | Error handler for failed view operations                         |
 | `source` .riv file loading        | ✅     | Conveniently load .riv files from JS source                      |
-| Accessibility semantics           | ⚠️     | Editor-authored semantics → VoiceOver (iOS; Android in progress) |
+| Accessibility semantics           | ✅     | Editor-authored semantics → VoiceOver / TalkBack (new runtimes)  |
 | Animation selection               | ❌     | Animation playback not planned, use state machines               |
 | Renderer options                  | ❌     | Single renderer option available (Rive)                          |
 
