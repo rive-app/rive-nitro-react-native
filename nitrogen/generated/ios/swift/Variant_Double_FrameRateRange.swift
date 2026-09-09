@@ -16,3 +16,15 @@ public indirect enum Variant_Double_FrameRateRange {
   case first(Double)
   case second(FrameRateRange)
 }
+
+public extension Variant_Double_FrameRateRange {
+  func asType<T>(_ type: T.Type = T.self) -> T? {
+    switch self {
+      case .first(let value): return value as? T
+      case .second(let value): return value as? T
+    }
+  }
+  func isType<T>(_ type: T.Type = T.self) -> Bool {
+    return self.asType(type) != nil
+  }
+}

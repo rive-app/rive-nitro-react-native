@@ -5,11 +5,11 @@ extension EventPropertiesOutput {
     return .first(value)
   }
 
-  static func string(_ value: String) -> EventPropertiesOutput {
+  static func number(_ value: Double) -> EventPropertiesOutput {
     return .second(value)
   }
 
-  static func number(_ value: Double) -> EventPropertiesOutput {
+  static func string(_ value: String) -> EventPropertiesOutput {
     return .third(value)
   }
 }

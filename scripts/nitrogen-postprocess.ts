@@ -155,6 +155,104 @@ function forceApplyPropsOnFreshComponentView() {
   );
 }
 
+// nitrogen 0.36 constructs the component descriptor with a plain
+// `RawPropsParser()`, which only keeps props as jsi::Values on React Native
+// >= 0.85 (older versions default the useRawPropsJsiValue flag to false and
+// convert every prop to folly::dynamic). The generated Props constructor then
+// casts each RawValue to a jsi::Value pair, which aborts on a dynamic-backed
+// value, so mounting any RiveView crashes on RN < 0.85. Force the JSI parser
+// where the flag still exists; nitro 0.37 ships the same guard in
+// RawPropsCompat::makePropsParser().
+function forceJsiPropsParserOnOlderReactNative() {
+  if (!existsSync(COMPONENT_FILE)) {
+    console.warn('HybridRiveViewComponent.cpp not found, skipping');
+    return;
+  }
+
+  const content = readFileSync(COMPONENT_FILE, 'utf-8');
+  if (content.includes('RN_HAS_ALWAYS_ON_JSI_PROPS_PARSER')) {
+    console.log(
+      'HybridRiveViewComponent.cpp already forces the JSI props parser'
+    );
+    return;
+  }
+
+  const ctorPattern = /^( *)react::RawPropsParser\(\)\) \{\}$/m;
+  const includePattern = /^#include "HybridRiveViewComponent\.hpp"$/m;
+  if (!ctorPattern.test(content) || !includePattern.test(content)) {
+    console.warn(
+      'RawPropsParser() call site not found in HybridRiveViewComponent.cpp — nitrogen output may have changed shape'
+    );
+    return;
+  }
+
+  const updated = content
+    .replace(
+      includePattern,
+      `$&
+
+#if __has_include(<cxxreact/ReactNativeVersion.h>)
+#include <cxxreact/ReactNativeVersion.h>
+#endif
+#if defined(REACT_NATIVE_VERSION_MINOR) && (REACT_NATIVE_VERSION_MAJOR > 0 || REACT_NATIVE_VERSION_MINOR >= 85)
+#define RN_HAS_ALWAYS_ON_JSI_PROPS_PARSER 1
+#else
+#define RN_HAS_ALWAYS_ON_JSI_PROPS_PARSER 0
+#endif`
+    )
+    .replace(
+      ctorPattern,
+      (match, indent) =>
+        `#if RN_HAS_ALWAYS_ON_JSI_PROPS_PARSER
+${match}
+#else
+${indent}react::RawPropsParser(/* useRawPropsJsiValue */ true)) {}
+#endif`
+    );
+
+  writeFileSync(COMPONENT_FILE, updated);
+  console.log(
+    'Patched HybridRiveViewComponent.cpp to force the JSI props parser on RN < 0.85'
+  );
+}
+
+// RCTViewComponentView asserts in updateProps that a subclass replaced the
+// base ViewProps default in its constructor; React Native 0.87 turns that
+// assertion into an uncaught NSInternalInconsistencyException, so every
+// RiveView mount aborts on a debug build. nitrogen 0.36 leaves `_props` at the
+// base default; nitrogen 0.37 emits this same assignment.
+function defaultPropsInComponentViewInit() {
+  if (!existsSync(IOS_COMPONENT_FILE)) {
+    console.warn('HybridRiveViewComponent.mm not found, skipping');
+    return;
+  }
+
+  const content = readFileSync(IOS_COMPONENT_FILE, 'utf-8');
+  if (content.includes('defaultSharedProps()')) {
+    console.log('HybridRiveViewComponent.mm already initializes _props');
+    return;
+  }
+
+  const pattern = /^( *)if \(self = \[super init\]\) \{$/m;
+  if (!pattern.test(content)) {
+    console.warn(
+      'init not found in HybridRiveViewComponent.mm — nitrogen output may have changed shape'
+    );
+    return;
+  }
+
+  const updated = content.replace(
+    pattern,
+    (match, indent) =>
+      `${match}\n${indent}  _props = HybridRiveViewShadowNode::defaultSharedProps();`
+  );
+
+  writeFileSync(IOS_COMPONENT_FILE, updated);
+  console.log('Patched HybridRiveViewComponent.mm to initialize _props');
+}
+
 makeHybridRiveViewManagerOpen();
 acceptNullForOptionalProps();
 forceApplyPropsOnFreshComponentView();
+forceJsiPropsParserOnOlderReactNative();
+defaultPropsInComponentViewInit();

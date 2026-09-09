@@ -9,6 +9,7 @@ package com.margelo.nitro.rive
 
 import androidx.annotation.Keep
 import com.facebook.proguard.annotations.DoNotStrip
+import java.util.Objects
 
 
 /**
@@ -25,6 +26,20 @@ data class RiveError(
   val type: RiveErrorType
 ) {
   /* primary constructor */
+
+  override fun equals(other: Any?): Boolean {
+    if (this === other) return true
+    if (other !is RiveError) return false
+    return Objects.deepEquals(this.message, other.message)
+      && Objects.deepEquals(this.type, other.type)
+  }
+
+  override fun hashCode(): Int {
+    return arrayOf<Any?>(
+      message,
+      type
+    ).contentDeepHashCode()
+  }
 
   companion object {
     /**

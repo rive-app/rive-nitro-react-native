@@ -18,11 +18,11 @@ namespace margelo::nitro::rive {
   using namespace facebook;
 
   /**
-   * The C++ JNI bridge between the C++ struct "RiveEnumDefinition" and the the Kotlin data class "RiveEnumDefinition".
+   * The C++ JNI bridge between the C++ struct "RiveEnumDefinition" and the Kotlin data class "RiveEnumDefinition".
    */
   struct JRiveEnumDefinition final: public jni::JavaClass<JRiveEnumDefinition> {
   public:
-    static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/rive/RiveEnumDefinition;";
+    static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/rive/RiveEnumDefinition;";
 
   public:
     /**
@@ -38,16 +38,16 @@ namespace margelo::nitro::rive {
       jni::local_ref<jni::JArrayClass<jni::JString>> values = this->getFieldValue(fieldValues);
       return RiveEnumDefinition(
         name->toStdString(),
-        [&]() {
-          size_t __size = values->size();
+        [&](auto&& __input) {
+          size_t __size = __input->size();
           std::vector<std::string> __vector;
           __vector.reserve(__size);
           for (size_t __i = 0; __i < __size; __i++) {
-            auto __element = values->getElement(__i);
+            auto __element = __input->getElement(__i);
             __vector.push_back(__element->toStdString());
           }
           return __vector;
-        }()
+        }(values)
       );
     }
 
@@ -63,16 +63,16 @@ namespace margelo::nitro::rive {
       return create(
         clazz,
         jni::make_jstring(value.name),
-        [&]() {
-          size_t __size = value.values.size();
+        [&](auto&& __input) {
+          size_t __size = __input.size();
           jni::local_ref<jni::JArrayClass<jni::JString>> __array = jni::JArrayClass<jni::JString>::newArray(__size);
           for (size_t __i = 0; __i < __size; __i++) {
-            const auto& __element = value.values[__i];
+            const auto& __element = __input[__i];
             auto __elementJni = jni::make_jstring(__element);
             __array->setElement(__i, *__elementJni);
           }
           return __array;
-        }()
+        }(value.values)
       );
     }
   };

@@ -34,6 +34,7 @@ npm install @rive-app/react-native react-native-nitro-modules
 ```
 
 > `react-native-nitro-modules` is required as this library relies on [Nitro Modules](https://nitro.margelo.com/).
+> React Native 0.87 and newer need `react-native-nitro-modules` 0.36.2 or newer; older releases of Nitro cannot install on RN 0.87 (see [#378](https://github.com/rive-app/rive-nitro-react-native/issues/378)).
 
 ## Usage
 

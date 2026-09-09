@@ -9,6 +9,7 @@ package com.margelo.nitro.rive
 
 import androidx.annotation.Keep
 import com.facebook.proguard.annotations.DoNotStrip
+import java.util.Objects
 
 
 /**
@@ -22,6 +23,18 @@ data class DataBindByName(
   val byName: String
 ) {
   /* primary constructor */
+
+  override fun equals(other: Any?): Boolean {
+    if (this === other) return true
+    if (other !is DataBindByName) return false
+    return Objects.deepEquals(this.byName, other.byName)
+  }
+
+  override fun hashCode(): Int {
+    return arrayOf<Any?>(
+      byName
+    ).contentDeepHashCode()
+  }
 
   companion object {
     /**

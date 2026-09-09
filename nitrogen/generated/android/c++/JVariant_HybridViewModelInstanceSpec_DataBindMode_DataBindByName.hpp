@@ -29,7 +29,7 @@ namespace margelo::nitro::rive {
    */
   class JVariant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName: public jni::JavaClass<JVariant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName> {
   public:
-    static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/rive/Variant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName;";
+    static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/rive/Variant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName;";
 
     static jni::local_ref<JVariant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName> create_0(jni::alias_ref<JHybridViewModelInstanceSpec::JavaPart> value) {
       static const auto method = javaClassStatic()->getStaticMethod<JVariant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName(jni::alias_ref<JHybridViewModelInstanceSpec::JavaPart>)>("create");
@@ -59,7 +59,7 @@ namespace margelo::nitro::rive {
   namespace JVariant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName_impl {
     class First final: public jni::JavaClass<First, JVariant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName> {
     public:
-      static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/rive/Variant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName$First;";
+      static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/rive/Variant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName$First;";
     
       [[nodiscard]] jni::local_ref<JHybridViewModelInstanceSpec::JavaPart> getValue() const {
         static const auto field = javaClassStatic()->getField<JHybridViewModelInstanceSpec::JavaPart>("value");
@@ -69,7 +69,7 @@ namespace margelo::nitro::rive {
     
     class Second final: public jni::JavaClass<Second, JVariant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName> {
     public:
-      static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/rive/Variant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName$Second;";
+      static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/rive/Variant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName$Second;";
     
       [[nodiscard]] jni::local_ref<JDataBindMode> getValue() const {
         static const auto field = javaClassStatic()->getField<JDataBindMode>("value");
@@ -79,7 +79,7 @@ namespace margelo::nitro::rive {
     
     class Third final: public jni::JavaClass<Third, JVariant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName> {
     public:
-      static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/rive/Variant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName$Third;";
+      static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/rive/Variant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName$Third;";
     
       [[nodiscard]] jni::local_ref<JDataBindByName> getValue() const {
         static const auto field = javaClassStatic()->getField<JDataBindByName>("value");

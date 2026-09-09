@@ -15,11 +15,11 @@ namespace margelo::nitro::rive {
   using namespace facebook;
 
   /**
-   * The C++ JNI bridge between the C++ enum "Semantics" and the the Kotlin enum "Semantics".
+   * The C++ JNI bridge between the C++ enum "Semantics" and the Kotlin enum "Semantics".
    */
   struct JSemantics final: public jni::JavaClass<JSemantics> {
   public:
-    static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/rive/Semantics;";
+    static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/rive/Semantics;";
 
   public:
     /**

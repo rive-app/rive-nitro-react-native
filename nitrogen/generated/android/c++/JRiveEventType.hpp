@@ -15,11 +15,11 @@ namespace margelo::nitro::rive {
   using namespace facebook;
 
   /**
-   * The C++ JNI bridge between the C++ enum "RiveEventType" and the the Kotlin enum "RiveEventType".
+   * The C++ JNI bridge between the C++ enum "RiveEventType" and the Kotlin enum "RiveEventType".
    */
   struct JRiveEventType final: public jni::JavaClass<JRiveEventType> {
   public:
-    static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/rive/RiveEventType;";
+    static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/rive/RiveEventType;";
 
   public:
     /**

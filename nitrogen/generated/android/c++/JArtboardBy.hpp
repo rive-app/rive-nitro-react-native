@@ -20,11 +20,11 @@ namespace margelo::nitro::rive {
   using namespace facebook;
 
   /**
-   * The C++ JNI bridge between the C++ struct "ArtboardBy" and the the Kotlin data class "ArtboardBy".
+   * The C++ JNI bridge between the C++ struct "ArtboardBy" and the Kotlin data class "ArtboardBy".
    */
   struct JArtboardBy final: public jni::JavaClass<JArtboardBy> {
   public:
-    static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/rive/ArtboardBy;";
+    static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/rive/ArtboardBy;";
 
   public:
     /**

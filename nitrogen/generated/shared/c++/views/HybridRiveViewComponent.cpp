@@ -7,6 +7,15 @@
 
 #include "HybridRiveViewComponent.hpp"
 
+#if __has_include(<cxxreact/ReactNativeVersion.h>)
+#include <cxxreact/ReactNativeVersion.h>
+#endif
+#if defined(REACT_NATIVE_VERSION_MINOR) && (REACT_NATIVE_VERSION_MAJOR > 0 || REACT_NATIVE_VERSION_MINOR >= 85)
+#define RN_HAS_ALWAYS_ON_JSI_PROPS_PARSER 1
+#else
+#define RN_HAS_ALWAYS_ON_JSI_PROPS_PARSER 0
+#endif
+
 #include <string>
 #include <exception>
 #include <utility>
@@ -176,7 +185,11 @@ namespace margelo::nitro::rive::views {
 
   HybridRiveViewComponentDescriptor::HybridRiveViewComponentDescriptor(const react::ComponentDescriptorParameters& parameters)
     : ConcreteComponentDescriptor(parameters,
-                                  react::RawPropsParser(/* enableJsiParser */ true)) {}
+#if RN_HAS_ALWAYS_ON_JSI_PROPS_PARSER
+                                  react::RawPropsParser()) {}
+#else
+                                  react::RawPropsParser(/* useRawPropsJsiValue */ true)) {}
+#endif
 
   std::shared_ptr<const react::Props> HybridRiveViewComponentDescriptor::cloneProps(const react::PropsParserContext& context,
                                                                                     const std::shared_ptr<const react::Props>& props,

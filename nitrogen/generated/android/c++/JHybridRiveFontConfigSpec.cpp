@@ -92,16 +92,16 @@ namespace margelo::nitro::rive {
   }
   void JHybridRiveFontConfigSpec::setFontsForWeight(double weight, const std::vector<std::shared_ptr<HybridFallbackFontSpec>>& fonts) {
     static const auto method = _javaPart->javaClassStatic()->getMethod<void(double /* weight */, jni::alias_ref<jni::JArrayClass<JHybridFallbackFontSpec::JavaPart>> /* fonts */)>("setFontsForWeight");
-    method(_javaPart, weight, [&]() {
-      size_t __size = fonts.size();
+    method(_javaPart, weight, [&](auto&& __input) {
+      size_t __size = __input.size();
       jni::local_ref<jni::JArrayClass<JHybridFallbackFontSpec::JavaPart>> __array = jni::JArrayClass<JHybridFallbackFontSpec::JavaPart>::newArray(__size);
       for (size_t __i = 0; __i < __size; __i++) {
-        const auto& __element = fonts[__i];
+        const auto& __element = __input[__i];
         auto __elementJni = std::dynamic_pointer_cast<JHybridFallbackFontSpec>(__element)->getJavaPart();
         __array->setElement(__i, *__elementJni);
       }
       return __array;
-    }());
+    }(fonts));
   }
   std::shared_ptr<Promise<void>> JHybridRiveFontConfigSpec::applyFallbackFonts() {
     static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>()>("applyFallbackFonts");

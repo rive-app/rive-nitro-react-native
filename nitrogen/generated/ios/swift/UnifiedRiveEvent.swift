@@ -25,19 +25,19 @@ public extension UnifiedRiveEvent {
       } else {
         return .init()
       }
-    }(), { () -> bridge.std__optional_std__unordered_map_std__string__std__variant_bool__std__string__double___ in
+    }(), { () -> bridge.std__optional_std__unordered_map_std__string__std__variant_bool__double__std__string___ in
       if let __unwrappedValue = properties {
-        return bridge.create_std__optional_std__unordered_map_std__string__std__variant_bool__std__string__double___({ () -> bridge.std__unordered_map_std__string__std__variant_bool__std__string__double__ in
-          var __map = bridge.create_std__unordered_map_std__string__std__variant_bool__std__string__double__(__unwrappedValue.count)
+        return bridge.create_std__optional_std__unordered_map_std__string__std__variant_bool__double__std__string___({ () -> bridge.std__unordered_map_std__string__std__variant_bool__double__std__string__ in
+          var __map = bridge.create_std__unordered_map_std__string__std__variant_bool__double__std__string__(__unwrappedValue.count)
           for (__k, __v) in __unwrappedValue {
-            bridge.emplace_std__unordered_map_std__string__std__variant_bool__std__string__double__(&__map, std.string(__k), { () -> bridge.std__variant_bool__std__string__double_ in
+            bridge.emplace_std__unordered_map_std__string__std__variant_bool__double__std__string__(&__map, std.string(__k), { () -> bridge.std__variant_bool__double__std__string_ in
               switch __v {
                 case .first(let __value):
-                  return bridge.create_std__variant_bool__std__string__double_(__value)
+                  return bridge.create_std__variant_bool__double__std__string_(__value)
                 case .second(let __value):
-                  return bridge.create_std__variant_bool__std__string__double_(std.string(__value))
+                  return bridge.create_std__variant_bool__double__std__string_(__value)
                 case .third(let __value):
-                  return bridge.create_std__variant_bool__std__string__double_(__value)
+                  return bridge.create_std__variant_bool__double__std__string_(std.string(__value))
               }
             }().variant)
           }
@@ -86,25 +86,25 @@ public extension UnifiedRiveEvent {
   @inline(__always)
   var properties: Dictionary<String, EventPropertiesOutput>? {
     return { () -> Dictionary<String, EventPropertiesOutput>? in
-      if bridge.has_value_std__optional_std__unordered_map_std__string__std__variant_bool__std__string__double___(self.__properties) {
-        let __unwrapped = bridge.get_std__optional_std__unordered_map_std__string__std__variant_bool__std__string__double___(self.__properties)
+      if bridge.has_value_std__optional_std__unordered_map_std__string__std__variant_bool__double__std__string___(self.__properties) {
+        let __unwrapped = bridge.get_std__optional_std__unordered_map_std__string__std__variant_bool__double__std__string___(self.__properties)
         return { () -> Dictionary<String, EventPropertiesOutput> in
           var __dictionary = Dictionary<String, EventPropertiesOutput>(minimumCapacity: __unwrapped.size())
-          let __keys = bridge.get_std__unordered_map_std__string__std__variant_bool__std__string__double___keys(__unwrapped)
+          let __keys = bridge.get_std__unordered_map_std__string__std__variant_bool__double__std__string___keys(__unwrapped)
           for __key in __keys {
-            let __value = bridge.get_std__unordered_map_std__string__std__variant_bool__std__string__double___value(__unwrapped, __key)
+            let __value = bridge.get_std__unordered_map_std__string__std__variant_bool__double__std__string___value(__unwrapped, __key)
             __dictionary[String(__key)] = { () -> EventPropertiesOutput in
-              let __variant = bridge.std__variant_bool__std__string__double_(__value)
+              let __variant = bridge.std__variant_bool__double__std__string_(__value)
               switch __variant.index() {
                 case 0:
                   let __actual = __variant.get_0()
                   return .first(__actual)
                 case 1:
                   let __actual = __variant.get_1()
-                  return .second(String(__actual))
+                  return .second(__actual)
                 case 2:
                   let __actual = __variant.get_2()
-                  return .third(__actual)
+                  return .third(String(__actual))
                 default:
                   fatalError("Variant can never have index \(__variant.index())!")
               }

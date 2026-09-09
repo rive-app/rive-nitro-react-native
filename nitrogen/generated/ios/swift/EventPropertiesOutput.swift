@@ -9,11 +9,24 @@
 
 /**
  * An Swift enum with associated values representing a Variant/Union type.
- * JS type: `boolean | string | number`
+ * JS type: `boolean | number | string`
  */
 @frozen
 public enum EventPropertiesOutput {
   case first(Bool)
-  case second(String)
-  case third(Double)
+  case second(Double)
+  case third(String)
+}
+
+public extension EventPropertiesOutput {
+  func asType<T>(_ type: T.Type = T.self) -> T? {
+    switch self {
+      case .first(let value): return value as? T
+      case .second(let value): return value as? T
+      case .third(let value): return value as? T
+    }
+  }
+  func isType<T>(_ type: T.Type = T.self) -> Bool {
+    return self.asType(type) != nil
+  }
 }
