@@ -30,6 +30,12 @@ using namespace margelo::nitro::rive::views;
 
 @implementation HybridRiveViewComponent {
   std::shared_ptr<HybridRiveViewSpecSwift> _hybridView;
+  // The cached props' isDirty flags were already consumed by the previous
+  // view instance when Fabric recreates this view from an unchanged
+  // ShadowNode, so updateProps would apply nothing and the fresh view would
+  // stay unconfigured (issue #365). Track whether this instance applied its
+  // props at least once.
+  BOOL _didApplyInitialProps;
 }
 
 + (void) load {
@@ -69,61 +75,66 @@ using namespace margelo::nitro::rive::views;
   auto& newViewProps = const_cast<HybridRiveViewProps&>(newViewPropsConst);
   RNRive::HybridRiveViewSpec_cxx& swiftPart = _hybridView->getSwiftPart();
 
+  // Force-apply all props the first time this view instance updates (see
+  // _didApplyInitialProps above).
+  const bool force = !_didApplyInitialProps;
+  _didApplyInitialProps = YES;
+
   // 2. Update each prop individually
   swiftPart.beforeUpdate();
 
   // artboardName: optional
-  if (newViewProps.artboardName.isDirty) {
+  if (force || newViewProps.artboardName.isDirty) {
     swiftPart.setArtboardName(newViewProps.artboardName.value);
     newViewProps.artboardName.isDirty = false;
   }
   // stateMachineName: optional
-  if (newViewProps.stateMachineName.isDirty) {
+  if (force || newViewProps.stateMachineName.isDirty) {
     swiftPart.setStateMachineName(newViewProps.stateMachineName.value);
     newViewProps.stateMachineName.isDirty = false;
   }
   // autoPlay: optional
-  if (newViewProps.autoPlay.isDirty) {
+  if (force || newViewProps.autoPlay.isDirty) {
     swiftPart.setAutoPlay(newViewProps.autoPlay.value);
     newViewProps.autoPlay.isDirty = false;
   }
   // file: hybrid-object
-  if (newViewProps.file.isDirty) {
+  if (force || newViewProps.file.isDirty) {
     swiftPart.setFile(newViewProps.file.value);
     newViewProps.file.isDirty = false;
   }
   // alignment: optional
-  if (newViewProps.alignment.isDirty) {
+  if (force || newViewProps.alignment.isDirty) {
     swiftPart.setAlignment(newViewProps.alignment.value);
     newViewProps.alignment.isDirty = false;
   }
   // fit: optional
-  if (newViewProps.fit.isDirty) {
+  if (force || newViewProps.fit.isDirty) {
     swiftPart.setFit(newViewProps.fit.value);
     newViewProps.fit.isDirty = false;
   }
   // layoutScaleFactor: optional
-  if (newViewProps.layoutScaleFactor.isDirty) {
+  if (force || newViewProps.layoutScaleFactor.isDirty) {
     swiftPart.setLayoutScaleFactor(newViewProps.layoutScaleFactor.value);
     newViewProps.layoutScaleFactor.isDirty = false;
   }
   // frameRate: optional
-  if (newViewProps.frameRate.isDirty) {
+  if (force || newViewProps.frameRate.isDirty) {
     swiftPart.setFrameRate(newViewProps.frameRate.value);
     newViewProps.frameRate.isDirty = false;
   }
   // semantics: optional
-  if (newViewProps.semantics.isDirty) {
+  if (force || newViewProps.semantics.isDirty) {
     swiftPart.setSemantics(newViewProps.semantics.value);
     newViewProps.semantics.isDirty = false;
   }
   // dataBind: optional
-  if (newViewProps.dataBind.isDirty) {
+  if (force || newViewProps.dataBind.isDirty) {
     swiftPart.setDataBind(newViewProps.dataBind.value);
     newViewProps.dataBind.isDirty = false;
   }
   // onError: function
-  if (newViewProps.onError.isDirty) {
+  if (force || newViewProps.onError.isDirty) {
     swiftPart.setOnError(newViewProps.onError.value);
     newViewProps.onError.isDirty = false;
   }
@@ -131,7 +142,7 @@ using namespace margelo::nitro::rive::views;
   swiftPart.afterUpdate();
 
   // 3. Update hybridRef if it changed
-  if (newViewProps.hybridRef.isDirty) {
+  if (force || newViewProps.hybridRef.isDirty) {
     // hybridRef changed - call it with new this
     const auto& maybeFunc = newViewProps.hybridRef.value;
     if (maybeFunc.has_value()) {
@@ -150,6 +161,7 @@ using namespace margelo::nitro::rive::views;
 
 - (void)prepareForRecycle {
   [super prepareForRecycle];
+  _didApplyInitialProps = NO;
   RNRive::HybridRiveViewSpec_cxx& swiftPart = _hybridView->getSwiftPart();
   swiftPart.maybePrepareForRecycle();
 }
