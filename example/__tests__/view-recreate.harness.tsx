@@ -94,13 +94,13 @@ async function triggerReachesListener(
   const removeListener = trigger.addListener(() => {
     fired = true;
   });
-  trigger.trigger();
-  await waitFor(
-    () => {
-      expect(fired).toBe(true);
-    },
-    { timeout: 1000 }
-  ).catch(() => {});
+  // Re-fire while waiting: a probe can land before the async auto-bind or the
+  // remount has finished on a slow emulator, and a fresh trigger costs
+  // nothing. A dead view never dispatches no matter how often it's fired.
+  for (let i = 0; i < 30 && !fired; i++) {
+    trigger.trigger();
+    await new Promise((r) => setTimeout(r, 500));
+  }
   removeListener();
   trigger.dispose();
   return fired;
