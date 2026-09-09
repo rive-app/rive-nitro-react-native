@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.0-beta.4](https://github.com/rive-app/rive-nitro-react-native/compare/v0.5.0-beta.3...v0.5.0-beta.4) (2026-09-09)
+
+
+### Bug Fixes
+
+* force-apply props when Fabric recreates a RiveView ([#375](https://github.com/rive-app/rive-nitro-react-native/issues/375)) ([f769761](https://github.com/rive-app/rive-nitro-react-native/commit/f7697611554c2169b0c44edba0e7197d178bd42f))
+
 ## [0.5.0-beta.3](https://github.com/rive-app/rive-nitro-react-native/compare/v0.5.0-beta.2...v0.5.0-beta.3) (2026-08-21)
 
 
