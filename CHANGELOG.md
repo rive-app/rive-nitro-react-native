@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.0-beta.5](https://github.com/rive-app/rive-nitro-react-native/compare/v0.5.0-beta.4...v0.5.0-beta.5) (2026-09-10)
+
+
+### Bug Fixes
+
+* bump nitro to 0.36.5 so the library works on React Native 0.87 ([#380](https://github.com/rive-app/rive-nitro-react-native/issues/380)) ([2951455](https://github.com/rive-app/rive-nitro-react-native/commit/2951455ec71c652cb14692e41ce9befd3e396249))
+
 ## [0.5.0-beta.4](https://github.com/rive-app/rive-nitro-react-native/compare/v0.5.0-beta.3...v0.5.0-beta.4) (2026-09-09)
 
 
