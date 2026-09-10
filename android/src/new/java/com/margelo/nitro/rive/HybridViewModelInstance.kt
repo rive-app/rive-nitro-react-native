@@ -2,12 +2,14 @@ package com.margelo.nitro.rive
 
 import android.util.Log
 import androidx.annotation.Keep
+import app.rive.RiveViewModelInstanceException
 import app.rive.ViewModelInstance
 import app.rive.ViewModelInstanceSource
 import app.rive.runtime.kotlin.core.ViewModel
 import app.rive.core.CommandQueue
 import com.facebook.proguard.annotations.DoNotStrip
 import com.margelo.nitro.core.Promise
+import java.util.concurrent.ConcurrentHashMap
 
 @Keep
 @DoNotStrip
@@ -68,18 +70,42 @@ class HybridViewModelInstance(
   override fun booleanProperty(path: String) =
     HybridViewModelBooleanProperty(viewModelInstance, path, ::hasBooleanProperty)
 
+  private val booleanPathCache = ConcurrentHashMap<String, Boolean>()
+
   // rive-android 11.10+ answers a boolean read of an unknown path with an
   // uninitialized byte as the jboolean, which CheckJNI turns into a process
-  // abort in debuggable builds. Reject such paths up front whenever the
-  // ViewModel metadata is known; null means unknown (nested path or an
-  // instance without ViewModel metadata) and the read proceeds unguarded.
+  // abort in debuggable builds (rive-app/rive-android#470). Resolve the path
+  // against ViewModel metadata first; null means the lookup itself failed and
+  // the read proceeds unguarded.
   internal suspend fun hasBooleanProperty(path: String): Boolean? {
-    val name = viewModelName ?: return null
+    booleanPathCache[path]?.let { return it }
     val file = parentFile.riveFile ?: return null
-    if (path.contains('/')) return null
-    return file.getViewModelProperties(name).any {
-      it.name == path && it.type == ViewModel.PropertyDataType.BOOLEAN
+    val parentPath = path.substringBeforeLast('/', "")
+    val leaf = path.substringAfterLast('/')
+    val result = try {
+      val vmName = if (parentPath.isEmpty()) {
+        viewModelName ?: viewModelInstance.getViewModelName()
+      } else {
+        val parent = try {
+          ViewModelInstance.create(file, ViewModelInstanceSource.Reference(viewModelInstance, parentPath))
+        } catch (e: RiveViewModelInstanceException) {
+          return false.also { booleanPathCache[path] = it }
+        }
+        try {
+          parent.getViewModelName()
+        } finally {
+          parent.close()
+        }
+      }
+      file.getViewModelProperties(vmName).any {
+        it.name == leaf && it.type == ViewModel.PropertyDataType.BOOLEAN
+      }
+    } catch (e: Exception) {
+      RiveLog.w(TAG, "Could not resolve boolean property '$path': ${e.message}")
+      return null
     }
+    booleanPathCache[path] = result
+    return result
   }
 
   override fun colorProperty(path: String) =
