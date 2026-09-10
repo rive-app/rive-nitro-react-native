@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.annotation.Keep
 import app.rive.ViewModelInstance
 import app.rive.ViewModelInstanceSource
+import app.rive.runtime.kotlin.core.ViewModel
 import app.rive.core.CommandQueue
 import com.facebook.proguard.annotations.DoNotStrip
 import com.margelo.nitro.core.Promise
@@ -65,7 +66,21 @@ class HybridViewModelInstance(
     HybridViewModelStringProperty(viewModelInstance, path)
 
   override fun booleanProperty(path: String) =
-    HybridViewModelBooleanProperty(viewModelInstance, path)
+    HybridViewModelBooleanProperty(viewModelInstance, path, ::hasBooleanProperty)
+
+  // rive-android 11.10+ answers a boolean read of an unknown path with an
+  // uninitialized byte as the jboolean, which CheckJNI turns into a process
+  // abort in debuggable builds. Reject such paths up front whenever the
+  // ViewModel metadata is known; null means unknown (nested path or an
+  // instance without ViewModel metadata) and the read proceeds unguarded.
+  internal suspend fun hasBooleanProperty(path: String): Boolean? {
+    val name = viewModelName ?: return null
+    val file = parentFile.riveFile ?: return null
+    if (path.contains('/')) return null
+    return file.getViewModelProperties(name).any {
+      it.name == path && it.type == ViewModel.PropertyDataType.BOOLEAN
+    }
+  }
 
   override fun colorProperty(path: String) =
     HybridViewModelColorProperty(viewModelInstance, path)
