@@ -16,8 +16,10 @@ namespace margelo::nitro::rive {
     registerHybrids(this, [](Prototype& prototype) {
       prototype.registerHybridGetter("isInitialized", &HybridRiveRuntimeSpec::getIsInitialized);
       prototype.registerHybridGetter("initError", &HybridRiveRuntimeSpec::getInitError);
+      prototype.registerHybridGetter("isGPUCanvasEnabled", &HybridRiveRuntimeSpec::getIsGPUCanvasEnabled);
       prototype.registerHybridMethod("initialize", &HybridRiveRuntimeSpec::initialize);
       prototype.registerHybridMethod("setAndroidRenderBackend", &HybridRiveRuntimeSpec::setAndroidRenderBackend);
+      prototype.registerHybridMethod("setGPUCanvasEnabled", &HybridRiveRuntimeSpec::setGPUCanvasEnabled);
     });
   }
 

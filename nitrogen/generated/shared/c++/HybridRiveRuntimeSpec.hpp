@@ -50,11 +50,13 @@ namespace margelo::nitro::rive {
       // Properties
       virtual bool getIsInitialized() = 0;
       virtual std::optional<std::string> getInitError() = 0;
+      virtual bool getIsGPUCanvasEnabled() = 0;
 
     public:
       // Methods
       virtual std::shared_ptr<Promise<void>> initialize() = 0;
       virtual void setAndroidRenderBackend(AndroidRenderBackend backend) = 0;
+      virtual void setGPUCanvasEnabled(bool enabled) = 0;
 
     protected:
       // Hybrid Setup
