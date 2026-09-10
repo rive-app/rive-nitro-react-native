@@ -10,7 +10,7 @@ final class HybridRiveFileFactory: HybridRiveFileFactorySpec, @unchecked Sendabl
     if !(RiveRuntime.RiveLog.logger is RiveRuntimeLogger) {
       RiveRuntime.RiveLog.logger = RiveRuntimeLogger()
     }
-    return try await Worker()
+    return try await Worker(configuration: RiveWorkerConfig.resolveForWorker())
   }
 
   func fromURL(url: String, loadCdn: Bool, referencedAssets: ReferencedAssetsType?) throws

@@ -12,10 +12,12 @@ public protocol HybridRiveRuntimeSpec_protocol: HybridObject {
   // Properties
   var isInitialized: Bool { get }
   var initError: String? { get }
+  var isGPUCanvasEnabled: Bool { get }
 
   // Methods
   func initialize() throws -> Promise<Void>
   func setAndroidRenderBackend(backend: AndroidRenderBackend) throws -> Void
+  func setGPUCanvasEnabled(enabled: Bool) throws -> Void
 }
 
 public extension HybridRiveRuntimeSpec_protocol {

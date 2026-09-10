@@ -57,3 +57,23 @@ render worker is created (a later call logs a warning and is ignored).
 Vulkan requires Android 10 (API 29) or newer; rive-android automatically
 falls back to OpenGL when Vulkan is unavailable or fails to initialize. The
 call is a no-op on iOS and on the legacy Android backend.
+
+## GPU Canvas (new runtime only)
+
+Rive's GPU Canvas renderer is required for 3D content and is disabled by
+default. Opt in per process, before loading any Rive files:
+
+```ts
+import { RiveRuntime } from '@rive-app/react-native';
+
+RiveRuntime.setGPUCanvasEnabled(true);
+```
+
+The choice is fixed once the shared render worker is created (a later call
+logs a warning and is ignored); `RiveRuntime.isGPUCanvasEnabled()` reports the
+setting in effect. On iOS this maps to
+[`Worker(configuration: .init(enableGPUCanvas: true))`](https://rive.app/docs/runtimes/apple/gpu-canvas)
+(rive-ios 6.25+). On Android it maps to rive-android 11.12's experimental
+deferred renderer (`RiveWorker.createDeferred()`), which upstream describes as
+temporary scaffolding on its way to becoming the default. The call is a no-op
+on the legacy runtime.

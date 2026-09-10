@@ -140,6 +140,13 @@ open class HybridRiveRuntimeSpec_cxx {
       }()
     }
   }
+  
+  public final var isGPUCanvasEnabled: Bool {
+    @inline(__always)
+    get {
+      return self.__implementation.isGPUCanvasEnabled
+    }
+  }
 
   // Methods
   @inline(__always)
@@ -165,6 +172,17 @@ open class HybridRiveRuntimeSpec_cxx {
   public final func setAndroidRenderBackend(backend: Int32) -> bridge.Result_void_ {
     do {
       try self.__implementation.setAndroidRenderBackend(backend: margelo.nitro.rive.AndroidRenderBackend(rawValue: backend)!)
+      return bridge.create_Result_void_()
+    } catch (let __error) {
+      let __exceptionPtr = __error.toCpp()
+      return bridge.create_Result_void_(__exceptionPtr)
+    }
+  }
+  
+  @inline(__always)
+  public final func setGPUCanvasEnabled(enabled: Bool) -> bridge.Result_void_ {
+    do {
+      try self.__implementation.setGPUCanvasEnabled(enabled: enabled)
       return bridge.create_Result_void_()
     } catch (let __error) {
       let __exceptionPtr = __error.toCpp()
