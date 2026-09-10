@@ -24,7 +24,7 @@ namespace margelo::nitro::rive {
    */
   class JVariant_Double_FrameRateRange: public jni::JavaClass<JVariant_Double_FrameRateRange> {
   public:
-    static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/rive/Variant_Double_FrameRateRange;";
+    static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/rive/Variant_Double_FrameRateRange;";
 
     static jni::local_ref<JVariant_Double_FrameRateRange> create_0(double value) {
       static const auto method = javaClassStatic()->getStaticMethod<JVariant_Double_FrameRateRange(double)>("create");
@@ -49,7 +49,7 @@ namespace margelo::nitro::rive {
   namespace JVariant_Double_FrameRateRange_impl {
     class First final: public jni::JavaClass<First, JVariant_Double_FrameRateRange> {
     public:
-      static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/rive/Variant_Double_FrameRateRange$First;";
+      static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/rive/Variant_Double_FrameRateRange$First;";
     
       [[nodiscard]] double getValue() const {
         static const auto field = javaClassStatic()->getField<double>("value");
@@ -59,7 +59,7 @@ namespace margelo::nitro::rive {
     
     class Second final: public jni::JavaClass<Second, JVariant_Double_FrameRateRange> {
     public:
-      static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/rive/Variant_Double_FrameRateRange$Second;";
+      static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/rive/Variant_Double_FrameRateRange$Second;";
     
       [[nodiscard]] jni::local_ref<JFrameRateRange> getValue() const {
         static const auto field = javaClassStatic()->getField<JFrameRateRange>("value");

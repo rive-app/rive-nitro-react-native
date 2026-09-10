@@ -9,6 +9,7 @@ package com.margelo.nitro.rive
 
 import androidx.annotation.Keep
 import com.facebook.proguard.annotations.DoNotStrip
+import java.util.Objects
 
 
 /**
@@ -25,6 +26,20 @@ data class RiveEnumDefinition(
   val values: Array<String>
 ) {
   /* primary constructor */
+
+  override fun equals(other: Any?): Boolean {
+    if (this === other) return true
+    if (other !is RiveEnumDefinition) return false
+    return Objects.deepEquals(this.name, other.name)
+      && Objects.deepEquals(this.values, other.values)
+  }
+
+  override fun hashCode(): Int {
+    return arrayOf<Any?>(
+      name,
+      values
+    ).contentDeepHashCode()
+  }
 
   companion object {
     /**

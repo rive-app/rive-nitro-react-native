@@ -9,6 +9,7 @@ package com.margelo.nitro.rive
 
 import androidx.annotation.Keep
 import com.facebook.proguard.annotations.DoNotStrip
+import java.util.Objects
 
 
 /**
@@ -37,6 +38,28 @@ data class UnifiedRiveEvent(
   val target: String?
 ) {
   /* primary constructor */
+
+  override fun equals(other: Any?): Boolean {
+    if (this === other) return true
+    if (other !is UnifiedRiveEvent) return false
+    return Objects.deepEquals(this.name, other.name)
+      && Objects.deepEquals(this.type, other.type)
+      && Objects.deepEquals(this.delay, other.delay)
+      && Objects.deepEquals(this.properties, other.properties)
+      && Objects.deepEquals(this.url, other.url)
+      && Objects.deepEquals(this.target, other.target)
+  }
+
+  override fun hashCode(): Int {
+    return arrayOf<Any?>(
+      name,
+      type,
+      delay,
+      properties,
+      url,
+      target
+    ).contentDeepHashCode()
+  }
 
   companion object {
     /**

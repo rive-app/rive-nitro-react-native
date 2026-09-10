@@ -10,7 +10,6 @@ package com.margelo.nitro.rive
 import androidx.annotation.Keep
 import com.facebook.jni.HybridData
 import com.facebook.proguard.annotations.DoNotStrip
-import dalvik.annotation.optimization.FastNative
 
 
 /**
@@ -59,7 +58,6 @@ class Func_void_RiveError_cxx: Func_void_RiveError {
   override fun invoke(error: RiveError): Unit
     = invoke_cxx(error)
 
-  @FastNative
   private external fun invoke_cxx(error: RiveError): Unit
 }
 

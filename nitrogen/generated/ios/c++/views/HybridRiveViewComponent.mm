@@ -17,6 +17,13 @@
 #import "HybridRiveViewSpecSwift.hpp"
 #import "RNRive-Swift-Cxx-Umbrella.hpp"
 
+#if __has_include(<cxxreact/ReactNativeVersion.h>)
+#include <cxxreact/ReactNativeVersion.h>
+#if REACT_NATIVE_VERSION_MINOR >= 82
+#define ENABLE_RCT_COMPONENT_VIEW_INVALIDATE
+#endif
+#endif
+
 using namespace facebook;
 using namespace margelo::nitro::rive;
 using namespace margelo::nitro::rive::views;
@@ -49,6 +56,7 @@ using namespace margelo::nitro::rive::views;
 
 - (instancetype) init {
   if (self = [super init]) {
+    _props = HybridRiveViewShadowNode::defaultSharedProps();
     std::shared_ptr<HybridRiveViewSpec> hybridView = RNRive::RNRiveAutolinking::createRiveView();
     _hybridView = std::dynamic_pointer_cast<HybridRiveViewSpecSwift>(hybridView);
     [self updateView];
@@ -165,5 +173,13 @@ using namespace margelo::nitro::rive::views;
   RNRive::HybridRiveViewSpec_cxx& swiftPart = _hybridView->getSwiftPart();
   swiftPart.maybePrepareForRecycle();
 }
+
+#ifdef ENABLE_RCT_COMPONENT_VIEW_INVALIDATE
+- (void)invalidate {
+  RNRive::HybridRiveViewSpec_cxx& swiftPart = _hybridView->getSwiftPart();
+  swiftPart.onDropView();
+  [super invalidate];
+}
+#endif
 
 @end

@@ -15,11 +15,11 @@ namespace margelo::nitro::rive {
   using namespace facebook;
 
   /**
-   * The C++ JNI bridge between the C++ enum "ViewModelPropertyType" and the the Kotlin enum "ViewModelPropertyType".
+   * The C++ JNI bridge between the C++ enum "ViewModelPropertyType" and the Kotlin enum "ViewModelPropertyType".
    */
   struct JViewModelPropertyType final: public jni::JavaClass<JViewModelPropertyType> {
   public:
-    static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/rive/ViewModelPropertyType;";
+    static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/rive/ViewModelPropertyType;";
 
   public:
     /**

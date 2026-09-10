@@ -17,3 +17,16 @@ public indirect enum Variant__any_HybridViewModelInstanceSpec__DataBindMode_Data
   case second(DataBindMode)
   case third(DataBindByName)
 }
+
+public extension Variant__any_HybridViewModelInstanceSpec__DataBindMode_DataBindByName {
+  func asType<T>(_ type: T.Type = T.self) -> T? {
+    switch self {
+      case .first(let value): return value as? T
+      case .second(let value): return value as? T
+      case .third(let value): return value as? T
+    }
+  }
+  func isType<T>(_ type: T.Type = T.self) -> Bool {
+    return self.asType(type) != nil
+  }
+}

@@ -9,6 +9,7 @@ package com.margelo.nitro.rive
 
 import androidx.annotation.Keep
 import com.facebook.proguard.annotations.DoNotStrip
+import java.util.Objects
 
 
 /**
@@ -28,6 +29,22 @@ data class ArtboardBy(
   val name: String?
 ) {
   /* primary constructor */
+
+  override fun equals(other: Any?): Boolean {
+    if (this === other) return true
+    if (other !is ArtboardBy) return false
+    return Objects.deepEquals(this.type, other.type)
+      && Objects.deepEquals(this.index, other.index)
+      && Objects.deepEquals(this.name, other.name)
+  }
+
+  override fun hashCode(): Int {
+    return arrayOf<Any?>(
+      type,
+      index,
+      name
+    ).contentDeepHashCode()
+  }
 
   companion object {
     /**

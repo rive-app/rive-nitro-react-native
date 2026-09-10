@@ -15,11 +15,11 @@ namespace margelo::nitro::rive {
   using namespace facebook;
 
   /**
-   * The C++ JNI bridge between the C++ enum "DataBindMode" and the the Kotlin enum "DataBindMode".
+   * The C++ JNI bridge between the C++ enum "DataBindMode" and the Kotlin enum "DataBindMode".
    */
   struct JDataBindMode final: public jni::JavaClass<JDataBindMode> {
   public:
-    static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/rive/DataBindMode;";
+    static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/rive/DataBindMode;";
 
   public:
     /**

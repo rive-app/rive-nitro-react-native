@@ -9,6 +9,7 @@ package com.margelo.nitro.rive
 
 import androidx.annotation.Keep
 import com.facebook.proguard.annotations.DoNotStrip
+import java.util.Objects
 
 
 /**
@@ -28,6 +29,22 @@ data class FrameRateRange(
   val preferred: Double?
 ) {
   /* primary constructor */
+
+  override fun equals(other: Any?): Boolean {
+    if (this === other) return true
+    if (other !is FrameRateRange) return false
+    return Objects.deepEquals(this.minimum, other.minimum)
+      && Objects.deepEquals(this.maximum, other.maximum)
+      && Objects.deepEquals(this.preferred, other.preferred)
+  }
+
+  override fun hashCode(): Int {
+    return arrayOf<Any?>(
+      minimum,
+      maximum,
+      preferred
+    ).contentDeepHashCode()
+  }
 
   companion object {
     /**
