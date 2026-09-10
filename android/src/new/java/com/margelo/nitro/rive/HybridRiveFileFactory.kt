@@ -12,7 +12,8 @@ import app.rive.core.CommandQueue
 import com.facebook.proguard.annotations.DoNotStrip
 import com.margelo.nitro.core.ArrayBuffer
 import com.margelo.nitro.core.Promise
-import com.rive.RiveRenderBackendConfig
+import com.rive.DeferredRiveWorker
+import com.rive.RiveWorkerConfig
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -89,10 +90,15 @@ class HybridRiveFileFactory : HybridRiveFileFactorySpec() {
         Log.d(TAG, "RiveErrorLogger installed")
       }
       return sharedWorker ?: run {
-        val renderBackend = RiveRenderBackendConfig.resolveForWorker()
-        CommandQueue(renderBackend).also {
+        val config = RiveWorkerConfig.resolveForWorker()
+        val queue = if (config.gpuCanvasEnabled) {
+          DeferredRiveWorker.create(config.renderBackend)
+        } else {
+          CommandQueue(config.renderBackend)
+        }
+        queue.also {
           sharedWorker = it
-          Log.d(TAG, "Created CommandQueue (renderBackend=$renderBackend), refCount=${it.refCount}")
+          Log.d(TAG, "Created CommandQueue ($config), refCount=${it.refCount}")
           startPolling(it)
         }
       }

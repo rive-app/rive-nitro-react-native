@@ -260,6 +260,7 @@ The following table compares feature availability with the [previous Rive React 
 | Accessibility semantics           | ⚠️     | Editor-authored semantics → VoiceOver (iOS; Android in progress) |
 | Animation selection               | ❌     | Animation playback not planned, use state machines               |
 | Renderer options                  | ❌     | Single renderer option available (Rive)                          |
+| GPU Canvas (3D content)           | ⚠️     | Opt-in via `RiveRuntime.setGPUCanvasEnabled()` (new runtime only) |
 
 > **Note**: Several features in the table above (state machine inputs, text runs, and events) represent legacy approaches to runtime control. We recommend using data binding instead, as it provides a more maintainable way to control your Rive graphics (both at edit time and runtime).
 

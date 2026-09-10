@@ -36,4 +36,26 @@ export namespace RiveRuntime {
   export function setAndroidRenderBackend(backend: AndroidRenderBackend) {
     RiveRuntimeInternal.setAndroidRenderBackend(backend);
   }
+
+  /**
+   * Enables Rive's GPU Canvas renderer, which is required to render 3D
+   * content. Applies process-wide and must be called before any Rive file is
+   * loaded — once the shared render worker exists the choice is fixed and a
+   * later call is ignored with a warning.
+   *
+   * Disabled by default. Backed by `Worker(configuration:)` on iOS and by
+   * rive-android's experimental deferred renderer on Android. No-op on the
+   * legacy runtime.
+   */
+  export function setGPUCanvasEnabled(enabled: boolean) {
+    RiveRuntimeInternal.setGPUCanvasEnabled(enabled);
+  }
+
+  /**
+   * Whether GPU Canvas is in effect: the setting the shared render worker was
+   * created with, or the requested setting while no worker exists yet.
+   */
+  export function isGPUCanvasEnabled(): boolean {
+    return RiveRuntimeInternal.isGPUCanvasEnabled;
+  }
 }

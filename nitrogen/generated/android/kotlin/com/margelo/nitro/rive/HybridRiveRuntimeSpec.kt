@@ -33,6 +33,10 @@ abstract class HybridRiveRuntimeSpec: HybridObject() {
   @get:DoNotStrip
   @get:Keep
   abstract val initError: String?
+  
+  @get:DoNotStrip
+  @get:Keep
+  abstract val isGPUCanvasEnabled: Boolean
 
   // Methods
   @DoNotStrip
@@ -42,6 +46,10 @@ abstract class HybridRiveRuntimeSpec: HybridObject() {
   @DoNotStrip
   @Keep
   abstract fun setAndroidRenderBackend(backend: AndroidRenderBackend): Unit
+  
+  @DoNotStrip
+  @Keep
+  abstract fun setGPUCanvasEnabled(enabled: Boolean): Unit
 
   // Default implementation of `HybridObject.toString()`
   override fun toString(): String {

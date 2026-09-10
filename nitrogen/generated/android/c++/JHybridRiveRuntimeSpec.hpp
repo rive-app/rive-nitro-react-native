@@ -52,11 +52,13 @@ namespace margelo::nitro::rive {
     // Properties
     bool getIsInitialized() override;
     std::optional<std::string> getInitError() override;
+    bool getIsGPUCanvasEnabled() override;
 
   public:
     // Methods
     std::shared_ptr<Promise<void>> initialize() override;
     void setAndroidRenderBackend(AndroidRenderBackend backend) override;
+    void setGPUCanvasEnabled(bool enabled) override;
 
   private:
     jni::global_ref<JHybridRiveRuntimeSpec::JavaPart> _javaPart;

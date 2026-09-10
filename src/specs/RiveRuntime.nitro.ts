@@ -11,4 +11,6 @@ export interface RiveRuntime
   readonly isInitialized: boolean;
   readonly initError: string | undefined;
   setAndroidRenderBackend(backend: AndroidRenderBackend): void;
+  setGPUCanvasEnabled(enabled: boolean): void;
+  readonly isGPUCanvasEnabled: boolean;
 }
