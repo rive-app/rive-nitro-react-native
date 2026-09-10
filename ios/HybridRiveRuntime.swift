@@ -12,4 +12,10 @@ final class HybridRiveRuntime: HybridRiveRuntimeSpec {
   func setAndroidRenderBackend(backend: AndroidRenderBackend) throws {
     // Android-only setting; nothing to do on iOS.
   }
+
+  var isGPUCanvasEnabled: Bool { RiveWorkerConfig.isGPUCanvasEnabled }
+
+  func setGPUCanvasEnabled(enabled: Bool) throws {
+    RiveWorkerConfig.setGPUCanvasEnabled(enabled)
+  }
 }

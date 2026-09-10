@@ -73,6 +73,9 @@ namespace margelo::nitro::rive {
       auto __result = _swiftPart.getInitError();
       return __result;
     }
+    inline bool getIsGPUCanvasEnabled() noexcept override {
+      return _swiftPart.isGPUCanvasEnabled();
+    }
 
   public:
     // Methods
@@ -86,6 +89,12 @@ namespace margelo::nitro::rive {
     }
     inline void setAndroidRenderBackend(AndroidRenderBackend backend) override {
       auto __result = _swiftPart.setAndroidRenderBackend(static_cast<int>(backend));
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+    }
+    inline void setGPUCanvasEnabled(bool enabled) override {
+      auto __result = _swiftPart.setGPUCanvasEnabled(std::forward<decltype(enabled)>(enabled));
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }
