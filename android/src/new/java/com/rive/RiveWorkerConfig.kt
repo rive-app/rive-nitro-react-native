@@ -54,4 +54,8 @@ object RiveWorkerConfig {
   @Synchronized
   fun resolveForWorker(): Resolved =
     resolved ?: Resolved(requestedBackend, requestedGPUCanvas).also { resolved = it }
+
+  @Synchronized
+  fun markGPUCanvasUnavailable(): Resolved =
+    resolveForWorker().copy(gpuCanvasEnabled = false).also { resolved = it }
 }

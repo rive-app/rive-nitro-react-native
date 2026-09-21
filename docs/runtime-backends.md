@@ -75,5 +75,8 @@ setting in effect. On iOS this maps to
 [`Worker(configuration: .init(enableGPUCanvas: true))`](https://rive.app/docs/runtimes/apple/gpu-canvas)
 (rive-ios 6.25+). On Android it maps to rive-android's experimental
 deferred renderer (`RiveWorker.createDeferred()`), which upstream describes as
-temporary scaffolding on its way to becoming the default. The call is a no-op
-on the legacy runtime.
+temporary scaffolding on its way to becoming the default. If the rive-android
+in use has no deferred worker (e.g. an overridden `Rive_RiveRuntimeAndroidVersion`),
+the worker is created without GPU Canvas, a warning is logged through `RiveLog`,
+and `isGPUCanvasEnabled()` reports `false` from then on. The call is a no-op on
+the legacy runtime.
