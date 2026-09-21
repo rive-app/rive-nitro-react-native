@@ -53,7 +53,8 @@ export namespace RiveRuntime {
 
   /**
    * Whether GPU Canvas is in effect: the setting the shared render worker was
-   * created with, or the requested setting while no worker exists yet.
+   * created with, or the requested setting while no worker exists yet. Turns
+   * `false` after the first file load if the native SDK cannot provide it.
    */
   export function isGPUCanvasEnabled(): boolean {
     return RiveRuntimeInternal.isGPUCanvasEnabled;

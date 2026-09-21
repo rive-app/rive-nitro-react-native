@@ -90,13 +90,17 @@ class HybridRiveFileFactory : HybridRiveFileFactorySpec() {
         Log.d(TAG, "RiveErrorLogger installed")
       }
       return sharedWorker ?: run {
-        val config = RiveWorkerConfig.resolveForWorker()
-        val queue = if (config.gpuCanvasEnabled) {
-          DeferredRiveWorker.create(config.renderBackend)
-        } else {
-          CommandQueue(config.renderBackend)
+        var config = RiveWorkerConfig.resolveForWorker()
+        val deferred = if (config.gpuCanvasEnabled) DeferredRiveWorker.createOrNull(config.renderBackend) else null
+        if (config.gpuCanvasEnabled && deferred == null) {
+          RiveLog.w(
+            TAG,
+            "GPU Canvas is not available in this rive-android version; rendering without it. " +
+              "3D content will not draw."
+          )
+          config = RiveWorkerConfig.markGPUCanvasUnavailable()
         }
-        queue.also {
+        (deferred ?: CommandQueue(config.renderBackend)).also {
           sharedWorker = it
           Log.d(TAG, "Created CommandQueue ($config), refCount=${it.refCount}")
           startPolling(it)
