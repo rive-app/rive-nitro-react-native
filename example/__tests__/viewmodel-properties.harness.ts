@@ -186,8 +186,8 @@ describe('ViewModel Properties', () => {
     ).rejects.toBeDefined();
 
     // Nested misses: bad leaf under a real nested view model, and a bad
-    // parent segment. Both aborted the process on rive-android 11.10+
-    // before the metadata guard.
+    // parent segment. rive-android 11.10.0-11.12.0 aborted the process on
+    // these (rive-app/rive-android#470).
     await expect(
       instance.booleanProperty('pet/nonexistent')!.getValueAsync()
     ).rejects.toBeDefined();
