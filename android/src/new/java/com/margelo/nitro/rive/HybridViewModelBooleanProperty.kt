@@ -1,31 +1,21 @@
 package com.margelo.nitro.rive
 
 import androidx.annotation.Keep
-import app.rive.RiveViewModelInstanceException
 import app.rive.ViewModelInstance
 import com.facebook.proguard.annotations.DoNotStrip
 import com.margelo.nitro.core.Promise
-import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.runBlocking
 
 @Keep
 @DoNotStrip
 class HybridViewModelBooleanProperty(
   private val instance: ViewModelInstance,
-  private val path: String,
-  private val hasProperty: suspend (String) -> Boolean? = { null }
+  private val path: String
 ) : HybridViewModelBooleanPropertySpec(),
   BaseHybridViewModelProperty<Boolean> by BaseHybridViewModelPropertyImpl() {
   companion object {
     private const val TAG = "HybridViewModelBooleanProperty"
-  }
-
-  private suspend fun requireProperty() {
-    if (hasProperty(path) == false) {
-      throw RiveViewModelInstanceException("Boolean property not found at path '$path'")
-    }
   }
 
   // Deprecated: Use getValueAsync (read) or set(value) (write) instead
@@ -33,10 +23,7 @@ class HybridViewModelBooleanProperty(
     get() {
       DeprecationWarning.warn("BooleanProperty.value", "getValueAsync")
       return try {
-        runBlocking {
-          requireProperty()
-          instance.getBooleanFlow(path).first()
-        }
+        runBlocking { instance.getBooleanFlow(path).first() }
       } catch (e: Exception) {
         RiveLog.e(TAG, "getValue failed for path '$path': ${e.message}")
         false
@@ -55,23 +42,12 @@ class HybridViewModelBooleanProperty(
   }
 
   override fun getValueAsync(): Promise<Boolean> {
-    return Promise.async {
-      requireProperty()
-      instance.getBooleanFlow(path).first()
-    }
+    return Promise.async { instance.getBooleanFlow(path).first() }
   }
 
   override fun addListener(onChanged: (value: Boolean) -> Unit): () -> Unit {
     val remover = addListenerInternal(onChanged)
-    ensureValueListenerJob(
-      flow {
-        if (hasProperty(path) == false) {
-          RiveLog.e(TAG, "addListener: boolean property not found at path '$path'")
-          return@flow
-        }
-        emitAll(instance.getBooleanFlow(path))
-      }
-    )
+    ensureValueListenerJob(instance.getBooleanFlow(path))
     return remover
   }
 }
