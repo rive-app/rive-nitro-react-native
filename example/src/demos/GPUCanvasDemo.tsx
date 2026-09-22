@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import {
   Fit,
@@ -11,20 +11,37 @@ import type { Metadata } from '../shared/metadata';
 // ore.riv is the GPU Canvas sample shipped with rive-android's example app.
 const ORE = require('../../assets/rive/ore.riv');
 
+type Status = 'enabled' | 'ignored' | 'unavailable';
+
+const STATUS_TEXT: Record<Status, string> = {
+  enabled: 'GPU Canvas enabled',
+  ignored:
+    'GPU Canvas request ignored: a Rive file was already loaded in this process. Restart the app and open this page first.',
+  unavailable:
+    'GPU Canvas is not available in this native SDK version; the scene below renders without it.',
+};
+
 export default function GPUCanvasDemo() {
-  const [gpuCanvas] = useState(() => {
+  const [status, setStatus] = useState<Status>(() => {
     RiveRuntime.setGPUCanvasEnabled(true);
-    return RiveRuntime.isGPUCanvasEnabled();
+    return RiveRuntime.isGPUCanvasEnabled() ? 'enabled' : 'ignored';
   });
   const { riveFile, error: fileError } = useRiveFile(ORE);
   const [viewError, setViewError] = useState<string | null>(null);
 
+  // The worker exists once the file has loaded; only then is the flag final.
+  useEffect(() => {
+    if (riveFile && !RiveRuntime.isGPUCanvasEnabled()) {
+      setStatus((s) => (s === 'enabled' ? 'unavailable' : s));
+    }
+  }, [riveFile]);
+
   return (
     <View style={styles.container}>
-      <Text style={[styles.status, gpuCanvas ? styles.ok : styles.warn]}>
-        {gpuCanvas
-          ? 'GPU Canvas enabled'
-          : 'GPU Canvas request ignored: a Rive file was already loaded in this process. Restart the app and open this page first.'}
+      <Text
+        style={[styles.status, status === 'enabled' ? styles.ok : styles.warn]}
+      >
+        {STATUS_TEXT[status]}
       </Text>
       {fileError && <Text style={styles.error}>{fileError.message}</Text>}
       {viewError && <Text style={styles.error}>{viewError}</Text>}
