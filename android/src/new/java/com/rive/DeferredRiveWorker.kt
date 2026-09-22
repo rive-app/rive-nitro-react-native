@@ -8,8 +8,7 @@ import java.lang.reflect.InvocationTargetException
  * rive-android only exposes its deferred (GPU Canvas) worker through the
  * Compose-only `rememberDeferredRiveWorker`; `CommandQueue.createDeferred` is
  * Kotlin-internal. Reflection reaches it under either its mangled JVM name or
- * a plain `createDeferred`, and a rive-android without it degrades to "GPU
- * Canvas unavailable" at runtime instead of failing the build.
+ * a plain `createDeferred`.
  */
 internal object DeferredRiveWorker {
   private val factory by lazy {
