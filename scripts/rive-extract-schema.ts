@@ -14,8 +14,10 @@ import { readFileSync } from 'fs';
 import riveCanvas from '@rive-app/canvas';
 const { RuntimeLoader } = riveCanvas;
 import {
+  collectEnums,
   enumPropTypeString,
   viewModelRefTypeString,
+  type RuntimeProperty,
 } from './rive-gen-types.ts';
 
 // noUncheckedIndexedAccess: process.argv destructuring yields string | undefined
@@ -102,23 +104,13 @@ async function main() {
     stateMachines[artboard.name] = sms;
   }
 
-  const enums: Record<string, string[]> = {};
-  for (const e of ((riveFile as any).enums?.() ?? []) as Array<{
-    name: string;
-    values: string[];
-  }>) {
-    enums[e.name] = e.values;
-  }
+  const enums = collectEnums(riveFile);
 
   const viewModels: Record<string, Record<string, string>> = {};
   const vmCount = (riveFile as any).viewModelCount() as number;
   for (let i = 0; i < vmCount; i++) {
     const vm = (riveFile as any).viewModelByIndex(i);
-    const properties = vm.getProperties() as Array<{
-      name: string;
-      type: string;
-      enumName?: string;
-    }>;
+    const properties = vm.getProperties() as RuntimeProperty[];
     // Create a blank instance to resolve viewModel property references
     const inst = vm.instance?.() as any;
     const props: Record<string, string> = {};

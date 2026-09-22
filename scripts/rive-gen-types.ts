@@ -51,7 +51,7 @@ export interface Schema {
   viewModels: Record<string, Record<string, string>>;
 }
 
-interface RuntimeProperty {
+export interface RuntimeProperty {
   name: string;
   type: string;
   /** Which file-level enum an `enumType` property uses (rive-wasm >= 2.39). */
@@ -135,13 +135,7 @@ async function extractSchema(input: string): Promise<Schema> {
     stateMachines[artboard.name] = sms;
   }
 
-  const enums: Record<string, string[]> = {};
-  for (const e of ((riveFile as any).enums?.() ?? []) as Array<{
-    name: string;
-    values: string[];
-  }>) {
-    enums[e.name] = e.values;
-  }
+  const enums = collectEnums(riveFile);
 
   const viewModels: Record<string, Record<string, string>> = {};
   const vmCount = (riveFile as any).viewModelCount() as number;
@@ -183,13 +177,14 @@ export const strLit = (s: string) => `'${escapeLiteral(s)}'`;
 export const quoteKey = (s: string, forceQuote: boolean) =>
   forceQuote || needsQuote(s) ? strLit(s) : s;
 
-export function smRecord(stateMachines: Record<string, string[]>): string {
-  const keys = Object.keys(stateMachines);
+/** Emit `key: 'a' | 'b';` members (never for an empty list), used for stateMachines and enums. */
+export function unionRecord(record: Record<string, string[]>): string {
+  const keys = Object.keys(record);
   const force = keys.some(needsQuote);
-  return Object.entries(stateMachines)
-    .map(([ab, sms]) => {
-      const union = sms.length ? sms.map(strLit).join(' | ') : 'never';
-      return `    ${quoteKey(ab, force)}: ${union};`;
+  return Object.entries(record)
+    .map(([key, values]) => {
+      const union = values.length ? values.map(strLit).join(' | ') : 'never';
+      return `    ${quoteKey(key, force)}: ${union};`;
     })
     .join('\n');
 }
@@ -214,21 +209,10 @@ export function vmRecord(
     .join('\n');
 }
 
-export function enumsRecord(enums: Record<string, string[]>): string {
-  const keys = Object.keys(enums);
-  const force = keys.some(needsQuote);
-  return Object.entries(enums)
-    .map(([name, values]) => {
-      const union = values.length ? values.map(strLit).join(' | ') : 'never';
-      return `    ${quoteKey(name, force)}: ${union};`;
-    })
-    .join('\n');
-}
-
 export function schemaBody(schema: Schema): string {
   const enumSection =
     Object.keys(schema.enums).length > 0
-      ? `\n  enums: {\n${enumsRecord(schema.enums)}\n  };`
+      ? `\n  enums: {\n${unionRecord(schema.enums)}\n  };`
       : '\n  enums: {};';
   // Always emit viewModels — omitting it would fail the RiveFileSchema
   // constraint and silently degrade the whole asset to untyped.
@@ -240,7 +224,7 @@ export function schemaBody(schema: Schema): string {
   artboards: ${schema.artboards.map(strLit).join(' | ')};
   defaultArtboard: ${strLit(schema.defaultArtboard)};
   stateMachines: {
-${smRecord(schema.stateMachines)}
+${unionRecord(schema.stateMachines)}
   };${enumSection}${vmSection}`;
 }
 
@@ -335,11 +319,18 @@ export function viewModelRefTypeString(
   }
 }
 
-/**
- * Schema type string for an enum property. '|' is the separator in the
- * 'enum:a|b' encoding — a value containing it cannot be represented, so fall
- * back to an untyped enum.
- */
+/** File-level enum definitions, name → values. */
+export function collectEnums(riveFile: any): Record<string, string[]> {
+  const enums: Record<string, string[]> = {};
+  for (const e of (riveFile.enums?.() ?? []) as Array<{
+    name: string;
+    values: string[];
+  }>) {
+    enums[e.name] = e.values;
+  }
+  return enums;
+}
+
 /**
  * Schema type string for an enum property: a reference to a file-level enum
  * (`'enum:Pets'`) when the runtime reports which enum the property uses.
@@ -362,7 +353,11 @@ export function enumPropTypeString(
   }
 }
 
-/** Inline enum encoding used when no file-level enum name is available. */
+/**
+ * Inline enum encoding used when no file-level enum name is available. '|' is
+ * the separator, so a value containing it cannot be represented and the
+ * property falls back to an untyped enum.
+ */
 export function enumTypeString(propName: string, values: string[]): string {
   if (values.some((v) => v.includes('|'))) {
     process.stderr.write(

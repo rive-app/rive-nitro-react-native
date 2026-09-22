@@ -4,12 +4,11 @@ import ts from 'typescript';
 import {
   strLit,
   quoteKey,
-  smRecord,
+  unionRecord,
   vmRecord,
   schemaBody,
   enumTypeString,
   enumPropTypeString,
-  enumsRecord,
   viewModelRefTypeString,
   type Schema,
 } from '../rive-gen-types.ts';
@@ -29,8 +28,8 @@ describe('emit escaping', () => {
     expect(quoteKey('Identifier_1', true)).toBe("'Identifier_1'");
   });
 
-  test('smRecord escapes artboard and state machine names', () => {
-    const out = smRecord({ "Art'board": ["State'Machine"] });
+  test('unionRecord escapes keys and values', () => {
+    const out = unionRecord({ "Art'board": ["State'Machine"] });
     expect(out).toBe("    'Art\\'board': 'State\\'Machine';");
   });
 
@@ -108,9 +107,9 @@ describe('schemaBody', () => {
   });
 });
 
-describe('enumsRecord', () => {
-  test('emits one union per enum, never for an empty enum', () => {
-    expect(enumsRecord({ Pets: ['cat', 'dog'], Empty: [] })).toBe(
+describe('unionRecord', () => {
+  test('emits one union per key, never for an empty list', () => {
+    expect(unionRecord({ Pets: ['cat', 'dog'], Empty: [] })).toBe(
       "    Pets: 'cat' | 'dog';\n    Empty: never;"
     );
   });
