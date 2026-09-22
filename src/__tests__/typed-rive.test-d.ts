@@ -274,6 +274,26 @@ expectType<'cat' | 'dog'>(
 declare const legacyVM: TypedViewModelInstance<LegacySchema, 'VM'>;
 expectType<UseRivePropertyResult<'cat' | 'dog'>>(useRiveEnum('pet', legacyVM));
 
+// A named reference missing from `enums` is never — not the enum's name.
+type DanglingSchema = {
+  artboards: 'Main';
+  defaultArtboard: 'Main';
+  stateMachines: { Main: 'SM' };
+  enums: {};
+  viewModels: { VM: { pet: 'enum:Pets' } };
+};
+expectType<never>(null as unknown as EnumValuesOf<DanglingSchema, 'enum:Pets'>);
+
+// An enum with no values degrades to an untyped (string) property.
+type EmptyEnumSchema = {
+  artboards: 'Main';
+  defaultArtboard: 'Main';
+  stateMachines: { Main: 'SM' };
+  enums: { E: never };
+  viewModels: { VM: { pet: 'enum:E' } };
+};
+expectType<string>(null as unknown as EnumValuesOf<EmptyEnumSchema, 'enum:E'>);
+
 // Non-enum property rejected for enumProperty()
 expectError(storeVM.enumProperty('xbuttonClick'));
 

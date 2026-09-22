@@ -28,9 +28,10 @@ type UnionFromPipe<S extends string> = S extends `${infer A}|${infer B}`
 
 /**
  * Enum value union for a schema property type string. A named reference
- * (`'enum:Pets'`) resolves through the schema's `enums`; the inline form
- * (`'enum:cat|dog'`) is still accepted so schemas generated before named
- * enums keep working until regenerated.
+ * (`'enum:Pets'`) resolves through the schema's `enums`: a name missing from
+ * it is `never`, an enum with no values is `string`. The inline form
+ * (`'enum:cat|dog'`) is used only by schemas generated before named enums
+ * (no `enums` key), so they keep working until regenerated.
  */
 export type EnumValuesOf<T extends RiveFileSchema, S extends string> =
   IsBaseSchema<T> extends true
@@ -38,9 +39,13 @@ export type EnumValuesOf<T extends RiveFileSchema, S extends string> =
     : string extends S
       ? string
       : S extends `enum:${infer Ref}`
-        ? Ref extends Extract<keyof NonNullable<T['enums']>, string>
-          ? NonNullable<T['enums']>[Ref]
-          : UnionFromPipe<Ref>
+        ? unknown extends T['enums']
+          ? UnionFromPipe<Ref>
+          : Ref extends Extract<keyof NonNullable<T['enums']>, string>
+            ? [NonNullable<T['enums']>[Ref]] extends [never]
+              ? string
+              : NonNullable<T['enums']>[Ref]
+            : never
         : never;
 
 /**
