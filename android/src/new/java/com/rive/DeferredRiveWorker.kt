@@ -14,12 +14,10 @@ import java.lang.reflect.InvocationTargetException
 internal object DeferredRiveWorker {
   private val factory by lazy {
     val signature = arrayOf(RenderBackend::class.java, Boolean::class.javaPrimitiveType)
-    val method = CommandQueue.Companion::class.java.declaredMethods.firstOrNull {
+    CommandQueue.Companion::class.java.declaredMethods.firstOrNull {
       (it.name == "createDeferred" || it.name.startsWith("createDeferred$")) &&
         it.parameterTypes.contentEquals(signature)
     }
-    method?.isAccessible = true
-    method
   }
 
   /** Null when this rive-android has no deferred worker entry point. */
