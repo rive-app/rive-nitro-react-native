@@ -23,7 +23,7 @@ export function useRiveEnum<
 >(
   path: P,
   viewModelInstance?: TypedViewModelInstance<T, N> | null
-): UseRivePropertyResult<EnumValuesOf<PropTypeAtPath<T, N, P>>>;
+): UseRivePropertyResult<EnumValuesOf<T, PropTypeAtPath<T, N, P>>>;
 
 export function useRiveEnum(
   path: string,

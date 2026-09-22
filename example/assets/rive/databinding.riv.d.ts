@@ -8,19 +8,22 @@ declare const asset: RiveAsset<{
   stateMachines: {
     Artboard: 'State Machine 1';
   };
+  enums: {
+    Pets: 'chipmunk' | 'rat' | 'frog' | 'owl' | 'cat' | 'dog';
+  };
   viewModels: {
     Person: {
       pet: 'viewModel:Pet';
       jump: 'trigger';
       likes_popcorn: 'boolean';
-      favourite_pet: 'enum:chipmunk|rat|frog|owl|cat|dog';
+      favourite_pet: 'enum:Pets';
       favourite_color: 'color';
       age: 'number';
       website: 'string';
       name: 'string';
     };
     Pet: {
-      type: 'enum:chipmunk|rat|frog|owl|cat|dog';
+      type: 'enum:Pets';
       name: 'string';
     };
   };

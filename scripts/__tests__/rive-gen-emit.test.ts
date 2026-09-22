@@ -8,6 +8,8 @@ import {
   vmRecord,
   schemaBody,
   enumTypeString,
+  enumPropTypeString,
+  enumsRecord,
   viewModelRefTypeString,
   type Schema,
 } from '../rive-gen-types.ts';
@@ -45,14 +47,17 @@ describe('emit escaping', () => {
       artboards: ["O'Brien", 'back\\slash'],
       defaultArtboard: "O'Brien",
       stateMachines: { "O'Brien": ["It's SM"], 'back\\slash': [] },
+      enums: { "Pet's": ["cat's", 'a|b'] },
       viewModels: {
-        "It's VM": { "quote'": "enum:a'b" },
+        "It's VM": { "quote'": "enum:Pet's" },
       },
     };
     const body = schemaBody(schema);
     expect(parseErrors(`declare const asset: {\n${body}\n};`)).toEqual([]);
     expect(body).toContain("'O\\'Brien'");
     expect(body).toContain("'back\\\\slash'");
+    // Named enums carry '|' inside a real union member, no encoding hazard.
+    expect(body).toContain("'Pet\\'s': 'cat\\'s' | 'a|b';");
 
     // Unescaped, the same names produce a syntactically broken declaration —
     // this is what the generator used to emit.
@@ -78,11 +83,19 @@ describe('schemaBody', () => {
     artboards: ['Main'],
     defaultArtboard: 'Main',
     stateMachines: { Main: ['SM'] },
+    enums: {},
     viewModels: {},
   };
 
   test('always emits viewModels, empty object when none', () => {
     expect(schemaBody(base)).toContain('viewModels: {};');
+  });
+
+  test('always emits enums, empty object when none', () => {
+    expect(schemaBody(base)).toContain('enums: {};');
+    expect(schemaBody({ ...base, enums: { Pets: ['cat'] } })).toContain(
+      "  enums: {\n    Pets: 'cat';\n  };"
+    );
   });
 
   test('emits viewModels record when present', () => {
@@ -92,6 +105,48 @@ describe('schemaBody', () => {
     });
     expect(body).toContain("count: 'number';");
     expect(body).not.toContain('viewModels: {};');
+  });
+});
+
+describe('enumsRecord', () => {
+  test('emits one union per enum, never for an empty enum', () => {
+    expect(enumsRecord({ Pets: ['cat', 'dog'], Empty: [] })).toBe(
+      "    Pets: 'cat' | 'dog';\n    Empty: never;"
+    );
+  });
+});
+
+describe('enumPropTypeString', () => {
+  const enums = { Pets: ['cat', 'dog'] };
+  test('references the file-level enum when enumName is known', () => {
+    expect(
+      enumPropTypeString(
+        { name: 'pet', type: 'enumType', enumName: 'Pets' },
+        enums,
+        undefined
+      )
+    ).toBe('enum:Pets');
+  });
+  test('inlines instance values when enumName is missing', () => {
+    const inst = { enum: () => ({ values: ['a', 'b'] }) };
+    expect(
+      enumPropTypeString({ name: 'pet', type: 'enumType' }, enums, inst)
+    ).toBe('enum:a|b');
+  });
+  test('inlines instance values when enumName is not a file enum', () => {
+    const inst = { enum: () => ({ values: ['x'] }) };
+    expect(
+      enumPropTypeString(
+        { name: 'pet', type: 'enumType', enumName: 'Nope' },
+        enums,
+        inst
+      )
+    ).toBe('enum:x');
+  });
+  test('falls back to untyped enum without any source', () => {
+    expect(
+      enumPropTypeString({ name: 'pet', type: 'enumType' }, enums, undefined)
+    ).toBe('enum');
   });
 });
 

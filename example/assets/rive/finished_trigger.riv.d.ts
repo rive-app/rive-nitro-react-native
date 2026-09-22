@@ -8,6 +8,7 @@ declare const asset: RiveAsset<{
   stateMachines: {
     Artboard: 'State Machine 1';
   };
+  enums: {};
   viewModels: {
     ViewModel1: {
       finished: 'trigger';

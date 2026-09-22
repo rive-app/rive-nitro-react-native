@@ -10,6 +10,8 @@ import type {
   TypedViewModelInstance,
   TypedViewModelEnumProperty,
   UntypedViewModelInstance,
+  EnumValues,
+  EnumValuesOf,
 } from '../../src/core/TypedViewModelInstance';
 import type {
   ViewModelInstance,
@@ -230,7 +232,8 @@ expectError(
 
 // --- Enum property ---
 
-// pegVM.pegType is 'enum:normal|multiplier' — returns typed enum property
+// pegVM.pegType is 'enum:pegType', resolved through the file's enums —
+// returns typed enum property
 expectAssignable<
   TypedViewModelEnumProperty<'normal' | 'multiplier'> | undefined
 >(storeVM.viewModel('property of pegVM')?.enumProperty('pegType'));
@@ -246,6 +249,30 @@ pegTypeProp.set('normal');
 expectType<Promise<void>>(pegTypeProp.setValueAsync('multiplier'));
 expectError(pegTypeProp.set('bogus'));
 expectError(pegTypeProp.setValueAsync('bogus'));
+
+// --- Named enums are addressable by name ---
+
+expectType<'normal' | 'multiplier'>(
+  null as unknown as EnumValues<typeof blinkoRiv, 'pegType'>
+);
+expectType<'Coin' | 'Gem'>(
+  null as unknown as EnumValues<typeof rewardsRiv, 'Item_Selection'>
+);
+expectError(null as unknown as EnumValues<typeof rewardsRiv, 'NotAnEnum'>);
+
+// Schemas generated before named enums (inline values, no `enums` key)
+// still resolve, so nothing breaks until they are regenerated.
+type LegacySchema = {
+  artboards: 'Main';
+  defaultArtboard: 'Main';
+  stateMachines: { Main: 'SM' };
+  viewModels: { VM: { pet: 'enum:cat|dog' } };
+};
+expectType<'cat' | 'dog'>(
+  null as unknown as EnumValuesOf<LegacySchema, 'enum:cat|dog'>
+);
+declare const legacyVM: TypedViewModelInstance<LegacySchema, 'VM'>;
+expectType<UseRivePropertyResult<'cat' | 'dog'>>(useRiveEnum('pet', legacyVM));
 
 // Non-enum property rejected for enumProperty()
 expectError(storeVM.enumProperty('xbuttonClick'));

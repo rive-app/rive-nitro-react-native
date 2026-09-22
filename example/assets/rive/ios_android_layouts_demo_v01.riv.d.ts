@@ -8,6 +8,7 @@ declare const asset: RiveAsset<{
   stateMachines: {
     iOS_Android_Layouts_demo_v01: 'State Machine 1';
   };
+  enums: {};
   viewModels: {};
 }>;
 export default asset;

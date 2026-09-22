@@ -11,6 +11,7 @@ declare const asset: RiveAsset<{
     ArtboardBlue: 'State Machine 1';
     ArtboardRed: 'State Machine 1';
   };
+  enums: {};
   viewModels: {
     MainViewModel: {
       artboard_1: 'artboard';

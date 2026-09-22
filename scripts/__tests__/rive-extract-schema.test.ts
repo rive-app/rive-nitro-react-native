@@ -54,7 +54,7 @@ describe('rive-extract-schema', () => {
     expect(vms.Energy_Bar!.Bar_Color).toBe('color');
   });
 
-  test('extracts enum values as pipe-separated string', () => {
+  test('enum properties reference a file-level enum definition', () => {
     const databinding = extract(
       resolve(import.meta.dirname, '../../example/assets/rive/databinding.riv')
     );
@@ -62,8 +62,17 @@ describe('rive-extract-schema', () => {
       string,
       Record<string, string>
     >;
-    expect(vms.Person!.favourite_pet).toMatch(/^enum:/);
-    expect(vms.Person!.favourite_pet).toContain('chipmunk');
-    expect(vms.Person!.favourite_pet).toContain('dog');
+    const enums = databinding.enums as Record<string, string[]>;
+    // Person.favourite_pet and Pet.type share the same enum — declared once.
+    expect(vms.Person!.favourite_pet).toBe('enum:Pets');
+    expect(vms.Pet!.type).toBe('enum:Pets');
+    expect(enums.Pets).toEqual([
+      'chipmunk',
+      'rat',
+      'frog',
+      'owl',
+      'cat',
+      'dog',
+    ]);
   });
 });

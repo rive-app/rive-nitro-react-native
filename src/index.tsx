@@ -39,6 +39,7 @@ export type {
   PathsOfKind,
   PropTypeAtPath,
   EnumValuesOf,
+  EnumValues,
 } from './core/TypedViewModelInstance';
 export type {
   ViewModel,

@@ -43,6 +43,12 @@ describe('rive-gen-types', () => {
     expect(content).toContain("'viewModel:Item_Icon_Value'");
   });
 
+  test('generated file declares named enums and references them', () => {
+    const content = readFileSync(OUT_DTS, 'utf8');
+    expect(content).toContain("Item_Selection: 'Coin' | 'Gem';");
+    expect(content).toContain("Item_Selection: 'enum:Item_Selection';");
+  });
+
   test('generated file has eslint-disable header', () => {
     const content = readFileSync(OUT_DTS, 'utf8');
     expect(content).toContain('eslint-disable');

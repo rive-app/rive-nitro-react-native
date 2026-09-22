@@ -8,6 +8,7 @@ declare const asset: RiveAsset<{
   stateMachines: {
     Layout: 'State';
   };
+  enums: {};
   viewModels: {
     ViewModel: {
       isFocused: 'boolean';

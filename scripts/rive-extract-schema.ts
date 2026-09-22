@@ -13,7 +13,10 @@ import { readFileSync } from 'fs';
 // loader cannot statically see its named exports (bun's interop can).
 import riveCanvas from '@rive-app/canvas';
 const { RuntimeLoader } = riveCanvas;
-import { enumTypeString, viewModelRefTypeString } from './rive-gen-types.ts';
+import {
+  enumPropTypeString,
+  viewModelRefTypeString,
+} from './rive-gen-types.ts';
 
 // noUncheckedIndexedAccess: process.argv destructuring yields string | undefined
 const input: string | undefined = process.argv[2];
@@ -99,6 +102,14 @@ async function main() {
     stateMachines[artboard.name] = sms;
   }
 
+  const enums: Record<string, string[]> = {};
+  for (const e of ((riveFile as any).enums?.() ?? []) as Array<{
+    name: string;
+    values: string[];
+  }>) {
+    enums[e.name] = e.values;
+  }
+
   const viewModels: Record<string, Record<string, string>> = {};
   const vmCount = (riveFile as any).viewModelCount() as number;
   for (let i = 0; i < vmCount; i++) {
@@ -106,6 +117,7 @@ async function main() {
     const properties = vm.getProperties() as Array<{
       name: string;
       type: string;
+      enumName?: string;
     }>;
     // Create a blank instance to resolve viewModel property references
     const inst = vm.instance?.() as any;
@@ -113,13 +125,8 @@ async function main() {
     for (const p of properties) {
       if (p.type === 'viewModel') {
         props[p.name] = viewModelRefTypeString(inst, p.name);
-      } else if (p.type === 'enumType' && inst) {
-        try {
-          const ep = inst.enum?.(p.name);
-          props[p.name] = enumTypeString(p.name, ep?.values ?? []);
-        } catch {
-          props[p.name] = 'enum';
-        }
+      } else if (p.type === 'enumType') {
+        props[p.name] = enumPropTypeString(p, enums, inst);
       } else {
         props[p.name] = p.type;
       }
@@ -130,7 +137,7 @@ async function main() {
   const defaultArtboard = artboards[0] ?? '';
   process.stdout.write(
     JSON.stringify(
-      { artboards, defaultArtboard, stateMachines, viewModels },
+      { artboards, defaultArtboard, stateMachines, enums, viewModels },
       null,
       2
     ) + '\n'

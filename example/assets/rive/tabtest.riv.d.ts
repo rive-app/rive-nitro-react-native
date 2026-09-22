@@ -8,9 +8,12 @@ declare const asset: RiveAsset<{
   stateMachines: {
     Artboard: 'State Machine 1';
   };
+  enums: {
+    Selected: 'All' | 'Parent' | 'Child';
+  };
   viewModels: {
     ViewModel1: {
-      enumProperty: 'enum:All|Parent|Child';
+      enumProperty: 'enum:Selected';
     };
   };
 }>;

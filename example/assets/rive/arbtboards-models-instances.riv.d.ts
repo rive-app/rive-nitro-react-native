@@ -11,6 +11,7 @@ declare const asset: RiveAsset<{
     artboard2: 'sm23' | 'sm22' | 'sm21';
     artboardc1: 'State Machine 1';
   };
+  enums: {};
   viewModels: {
     viewmodel1: {
       _id: 'string';

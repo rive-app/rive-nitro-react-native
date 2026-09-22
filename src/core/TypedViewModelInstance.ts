@@ -26,12 +26,31 @@ type UnionFromPipe<S extends string> = S extends `${infer A}|${infer B}`
   ? A | UnionFromPipe<B>
   : S;
 
-/** Extract the enum value union from a schema type string like 'enum:cat|dog|frog' */
-export type EnumValuesOf<S extends string> = string extends S
-  ? string
-  : S extends `enum:${infer V}`
-    ? UnionFromPipe<V>
-    : never;
+/**
+ * Enum value union for a schema property type string. A named reference
+ * (`'enum:Pets'`) resolves through the schema's `enums`; the inline form
+ * (`'enum:cat|dog'`) is still accepted so schemas generated before named
+ * enums keep working until regenerated.
+ */
+export type EnumValuesOf<T extends RiveFileSchema, S extends string> =
+  IsBaseSchema<T> extends true
+    ? string
+    : string extends S
+      ? string
+      : S extends `enum:${infer Ref}`
+        ? Ref extends Extract<keyof NonNullable<T['enums']>, string>
+          ? NonNullable<T['enums']>[Ref]
+          : UnionFromPipe<Ref>
+        : never;
+
+/**
+ * Value union of a named enum in a file, e.g.
+ * `EnumValues<typeof rewardsRiv, 'Item_Selection'>` → `'Coin' | 'Gem'`.
+ */
+export type EnumValues<
+  T extends RiveFileSchema | RiveAsset,
+  Name extends Extract<keyof NonNullable<SchemaOf<T>['enums']>, string>,
+> = NonNullable<SchemaOf<T>['enums']>[Name];
 
 /**
  * A typed enum property whose value and setter are constrained to the specific enum values
@@ -52,7 +71,7 @@ export interface TypedViewModelEnumProperty<Values extends string = string>
 
 /**
  * Property names whose type matches the given Kind.
- * Use kind `'enum'` to match any enum property (stored as `'enum:val1|val2'` in the schema).
+ * Use kind `'enum'` to match any enum property (stored as `'enum:<EnumName>'` in the schema).
  * Degrades to `string` when the ViewModel shape is not statically known.
  */
 export type VMPropsOfKind<
@@ -137,7 +156,7 @@ export type PathsOfKind<
 
 /**
  * The schema type string found at a (possibly nested) property path,
- * e.g. `'number'` or `'enum:Coin|Gem'`. `string` when the schema is not
+ * e.g. `'number'` or `'enum:Item_Selection'`. `string` when the schema is not
  * statically known.
  */
 export type PropTypeAtPath<
@@ -208,7 +227,7 @@ export interface TypedViewModelInstance<
   enumProperty<P extends PathsOfKind<T, VMName, 'enum'>>(
     path: P
   ):
-    | TypedViewModelEnumProperty<EnumValuesOf<PropTypeAtPath<T, VMName, P>>>
+    | TypedViewModelEnumProperty<EnumValuesOf<T, PropTypeAtPath<T, VMName, P>>>
     | undefined;
 
   imageProperty(

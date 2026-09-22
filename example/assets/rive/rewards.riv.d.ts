@@ -14,6 +14,9 @@ declare const asset: RiveAsset<{
     'Heart': 'State Machine 1';
     'Item': 'State Machine 1';
   };
+  enums: {
+    Item_Selection: 'Coin' | 'Gem';
+  };
   viewModels: {
     Item_Icon_Value: {
       Icon_React: 'trigger';
@@ -44,7 +47,7 @@ declare const asset: RiveAsset<{
       Pressed: 'trigger';
     };
     Item: {
-      Item_Selection: 'enum:Coin|Gem';
+      Item_Selection: 'enum:Item_Selection';
     };
   };
 }>;

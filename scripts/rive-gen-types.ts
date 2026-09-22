@@ -46,7 +46,16 @@ export interface Schema {
   artboards: string[];
   defaultArtboard: string;
   stateMachines: Record<string, string[]>;
+  /** File-level enum definitions, name → values. */
+  enums: Record<string, string[]>;
   viewModels: Record<string, Record<string, string>>;
+}
+
+interface RuntimeProperty {
+  name: string;
+  type: string;
+  /** Which file-level enum an `enumType` property uses (rive-wasm >= 2.39). */
+  enumName?: string;
 }
 
 let runtimeReady: Promise<any> | null = null;
@@ -126,26 +135,26 @@ async function extractSchema(input: string): Promise<Schema> {
     stateMachines[artboard.name] = sms;
   }
 
+  const enums: Record<string, string[]> = {};
+  for (const e of ((riveFile as any).enums?.() ?? []) as Array<{
+    name: string;
+    values: string[];
+  }>) {
+    enums[e.name] = e.values;
+  }
+
   const viewModels: Record<string, Record<string, string>> = {};
   const vmCount = (riveFile as any).viewModelCount() as number;
   for (let i = 0; i < vmCount; i++) {
     const vm = (riveFile as any).viewModelByIndex(i);
-    const properties = vm.getProperties() as Array<{
-      name: string;
-      type: string;
-    }>;
+    const properties = vm.getProperties() as RuntimeProperty[];
     const inst = vm.instance?.() as any;
     const props: Record<string, string> = {};
     for (const p of properties) {
       if (p.type === 'viewModel') {
         props[p.name] = viewModelRefTypeString(inst, p.name);
-      } else if (p.type === 'enumType' && inst) {
-        try {
-          const ep = inst.enum?.(p.name);
-          props[p.name] = enumTypeString(p.name, ep?.values ?? []);
-        } catch {
-          props[p.name] = 'enum';
-        }
+      } else if (p.type === 'enumType') {
+        props[p.name] = enumPropTypeString(p, enums, inst);
       } else {
         props[p.name] = p.type;
       }
@@ -157,6 +166,7 @@ async function extractSchema(input: string): Promise<Schema> {
     artboards,
     defaultArtboard: artboards[0] ?? '',
     stateMachines,
+    enums,
     viewModels,
   };
 }
@@ -204,7 +214,22 @@ export function vmRecord(
     .join('\n');
 }
 
+export function enumsRecord(enums: Record<string, string[]>): string {
+  const keys = Object.keys(enums);
+  const force = keys.some(needsQuote);
+  return Object.entries(enums)
+    .map(([name, values]) => {
+      const union = values.length ? values.map(strLit).join(' | ') : 'never';
+      return `    ${quoteKey(name, force)}: ${union};`;
+    })
+    .join('\n');
+}
+
 export function schemaBody(schema: Schema): string {
+  const enumSection =
+    Object.keys(schema.enums).length > 0
+      ? `\n  enums: {\n${enumsRecord(schema.enums)}\n  };`
+      : '\n  enums: {};';
   // Always emit viewModels — omitting it would fail the RiveFileSchema
   // constraint and silently degrade the whole asset to untyped.
   const vmSection =
@@ -216,7 +241,7 @@ export function schemaBody(schema: Schema): string {
   defaultArtboard: ${strLit(schema.defaultArtboard)};
   stateMachines: {
 ${smRecord(schema.stateMachines)}
-  };${vmSection}`;
+  };${enumSection}${vmSection}`;
 }
 
 function dtsContent(input: string, schema: Schema): string {
@@ -315,6 +340,29 @@ export function viewModelRefTypeString(
  * 'enum:a|b' encoding — a value containing it cannot be represented, so fall
  * back to an untyped enum.
  */
+/**
+ * Schema type string for an enum property: a reference to a file-level enum
+ * (`'enum:Pets'`) when the runtime reports which enum the property uses.
+ * Without `enumName` the values are read from a default instance and inlined
+ * as `'enum:a|b'`.
+ */
+export function enumPropTypeString(
+  prop: RuntimeProperty,
+  enums: Record<string, string[]>,
+  defaultInstance: any
+): string {
+  if (prop.enumName && Object.hasOwn(enums, prop.enumName)) {
+    return `enum:${prop.enumName}`;
+  }
+  try {
+    const values: string[] = defaultInstance?.enum?.(prop.name)?.values ?? [];
+    return enumTypeString(prop.name, values);
+  } catch {
+    return 'enum';
+  }
+}
+
+/** Inline enum encoding used when no file-level enum name is available. */
 export function enumTypeString(propName: string, values: string[]): string {
   if (values.some((v) => v.includes('|'))) {
     process.stderr.write(

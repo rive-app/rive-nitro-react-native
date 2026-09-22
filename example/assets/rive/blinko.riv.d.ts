@@ -15,6 +15,10 @@ declare const asset: RiveAsset<{
     Peg: 'State Machine 1';
     scoreBox: 'State Machine 1';
   };
+  enums: {
+    slotType: 'addToken' | 'normal';
+    pegType: 'normal' | 'multiplier';
+  };
   viewModels: {
     IndicatorVM: {
       purchased: 'boolean';
@@ -58,7 +62,7 @@ declare const asset: RiveAsset<{
     pegVM: {
       blink: 'trigger';
       multiplierValue: 'number';
-      pegType: 'enum:normal|multiplier';
+      pegType: 'enum:pegType';
       pegBounced: 'trigger';
     };
     gameLogicVM: {
@@ -74,7 +78,7 @@ declare const asset: RiveAsset<{
     };
     scoreBox: {
       Token: 'viewModel:TokenVM';
-      slotType: 'enum:addToken|normal';
+      slotType: 'enum:slotType';
       landed: 'trigger';
       scoreValue: 'number';
     };

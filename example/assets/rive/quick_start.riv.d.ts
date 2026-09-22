@@ -8,6 +8,7 @@ declare const asset: RiveAsset<{
   stateMachines: {
     health_bar_v01: 'State Machine 1';
   };
+  enums: {};
   viewModels: {
     health_bar_01: {
       gameOver: 'trigger';

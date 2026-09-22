@@ -8,6 +8,7 @@ declare const asset: RiveAsset<{
   stateMachines: {
     'New Artboard': 'State Machine 1';
   };
+  enums: {};
   viewModels: {};
 }>;
 export default asset;
