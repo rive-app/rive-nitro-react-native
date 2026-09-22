@@ -12,7 +12,6 @@ import app.rive.core.CommandQueue
 import com.facebook.proguard.annotations.DoNotStrip
 import com.margelo.nitro.core.ArrayBuffer
 import com.margelo.nitro.core.Promise
-import com.rive.DeferredRiveWorker
 import com.rive.RiveWorkerConfig
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -89,22 +88,10 @@ class HybridRiveFileFactory : HybridRiveFileFactorySpec() {
         app.rive.RiveLog.logger = RiveErrorLogger
         Log.d(TAG, "RiveErrorLogger installed")
       }
-      return sharedWorker ?: run {
-        var config = RiveWorkerConfig.resolveForWorker()
-        val deferred = if (config.gpuCanvasEnabled) DeferredRiveWorker.createOrNull(config.renderBackend) else null
-        if (config.gpuCanvasEnabled && deferred == null) {
-          RiveLog.w(
-            TAG,
-            "GPU Canvas is not available in this rive-android version; rendering without it. " +
-              "3D content will not draw."
-          )
-          config = RiveWorkerConfig.markGPUCanvasUnavailable()
-        }
-        (deferred ?: CommandQueue(config.renderBackend)).also {
-          sharedWorker = it
-          Log.d(TAG, "Created CommandQueue ($config), refCount=${it.refCount}")
-          startPolling(it)
-        }
+      return sharedWorker ?: RiveWorkerConfig.createWorker().also {
+        sharedWorker = it
+        Log.d(TAG, "Created CommandQueue (${RiveWorkerConfig.current}), refCount=${it.refCount}")
+        startPolling(it)
       }
     }
 
