@@ -52,11 +52,13 @@ describe('rive-extract-schema on the RML fixture', () => {
           'mode': 'enum:Status',
           'weird': 'enum:Weird',
           'page title': 'string',
+          // A built-in enum: the runtime reports no enum name for it.
+          'blend': 'enum',
         },
       },
-      // Keys are the runtime's unique ids. The embedded image is omitted, and
-      // the hosted image counts toward the ids even though it has no sidecar.
-      assets: {
+      // Keys are the runtime's uniqueNames. The embedded image is omitted, and
+      // the hosted image counts toward the numbering though it has no sidecar.
+      referencedAssets: {
         'ref_image-1': 'image',
         'hosted_image-2': 'image',
         'beep-3': 'audio',

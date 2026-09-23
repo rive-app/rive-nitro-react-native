@@ -682,6 +682,7 @@ expectAssignable<ViewModelNumberProperty | undefined>(
   rmlScreen.numberProperty('card/count')
 );
 rmlScreen.stringProperty('page title');
+expectType<UseRivePropertyResult<string>>(useRiveEnum('blend', rmlScreen));
 
 // Referenced assets are keyed by the runtime's unique ids. The embedded image
 // is not a key, and neither is the CLI's sidecar name for the audio
