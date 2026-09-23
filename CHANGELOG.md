@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.0-beta.6](https://github.com/rive-app/rive-nitro-react-native/compare/v0.5.0-beta.5...v0.5.0-beta.6) (2026-09-23)
+
+
+### Features
+
+* **schema:** named enums in generated .riv.d.ts ([#385](https://github.com/rive-app/rive-nitro-react-native/issues/385)) ([ed406ad](https://github.com/rive-app/rive-nitro-react-native/commit/ed406ad9e4b0ba492a120046e7c488aabff0d9b3))
+
 ## [0.5.0-beta.5](https://github.com/rive-app/rive-nitro-react-native/compare/v0.5.0-beta.4...v0.5.0-beta.5) (2026-09-10)
 
 
