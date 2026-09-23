@@ -102,13 +102,12 @@ export type UseRiveFileResult =
  * Result of {@link useRiveFile}: typed when the input is a generated
  * RiveAsset, the plain untyped result otherwise.
  */
-type UseRiveFileResultFor<T extends RiveFileSchema> =
-  string extends T['artboards']
-    ? UseRiveFileResult
-    :
-        | { riveFile: TypedRiveFile<T>; isLoading: false; error: null }
-        | { riveFile: null; isLoading: false; error: Error }
-        | { riveFile: undefined; isLoading: true; error: null };
+type UseRiveFileResultFor<T extends RiveFileSchema> = RiveFileSchema extends T
+  ? UseRiveFileResult
+  :
+      | { riveFile: TypedRiveFile<T>; isLoading: false; error: null }
+      | { riveFile: null; isLoading: false; error: Error }
+      | { riveFile: undefined; isLoading: true; error: null };
 
 // Single generic signature (not a typed + untyped overload pair): an invalid
 // referencedAssets key or type on a schema-typed asset must be a hard error

@@ -27,6 +27,7 @@ import { useRiveEnum } from '../../src/hooks/useRiveEnum';
 import { useViewModelInstance } from '../../src/hooks/useViewModelInstance';
 import { RiveView, type RiveViewProps } from '../../src/core/RiveView';
 import { useRiveFile } from '../../src/hooks/useRiveFile';
+import { RiveFileFactory } from '../../src/core/RiveFile';
 import type { RiveImage } from '../../src/specs/RiveImage.nitro';
 import gradientBorderRiv from '../../example/assets/rive/GradientBorder.riv';
 import outOfBandRiv from '../../example/assets/rive/out_of_band.riv';
@@ -566,3 +567,52 @@ declare const plainAssetId: number;
 useRiveFile(plainAssetId, {
   referencedAssets: { anything: { source: 1, type: 'audio' } },
 });
+
+// RiveFileFactory.fromSource applies the same checks (resolved asset form)
+// instead of falling through to an untyped overload.
+expectError(
+  RiveFileFactory.fromSource(outOfBandRiv, {
+    'Inter-59437': { sourceUrl: 'https://x/f.ttf' },
+  })
+);
+expectError(
+  RiveFileFactory.fromSource(outOfBandRiv, {
+    'Inter-594377': { sourceUrl: 'https://x/f.ttf', type: 'image' },
+  })
+);
+expectError(
+  RiveFileFactory.fromSource(outOfBandRiv, {
+    'Inter-594377': { image: riveImage },
+  })
+);
+expectError(
+  RiveFileFactory.fromSource(rewardsRiv, {
+    anything: { sourceUrl: 'https://x/f.ttf' },
+  })
+);
+expectType<Promise<TypedRiveFile<typeof outOfBandRiv>>>(
+  RiveFileFactory.fromSource(outOfBandRiv, {
+    'Inter-594377': { sourceUrl: 'https://x/f.ttf', type: 'font' },
+    'cdn-image-2989123': { image: riveImage },
+  })
+);
+RiveFileFactory.fromSource(plainAssetId, { anything: { sourceUrl: 'x' } });
+RiveFileFactory.fromSource({ uri: 'https://x/a.riv' }, { anything: {} });
+
+// A standalone hand-written schema (literal ViewModels, string artboards)
+// keeps its ViewModel typing through useRiveFile.
+type HandWrittenSchema = {
+  artboards: string;
+  defaultArtboard: string;
+  stateMachines: Record<string, string>;
+  enums: {};
+  assets: {};
+  viewModels: { VM: { n: 'number' } };
+};
+declare const handWrittenAsset: RiveAsset<HandWrittenSchema>;
+{
+  const { riveFile } = useRiveFile(handWrittenAsset);
+  expectError(
+    useViewModelInstance(riveFile, { viewModelName: 'NotAVM', async: true })
+  );
+}

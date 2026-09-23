@@ -157,21 +157,17 @@ export namespace RiveFileFactory {
    * config.resolver.assetExts = [...config.resolver.assetExts, 'riv'];
    * ```
    */
-  export async function fromSource<T extends RiveFileSchema>(
-    source: RiveAsset<T>,
-    referencedAssets: TypedResolvedReferencedAssets<T> | undefined,
-    loadCdn?: boolean
-  ): Promise<TypedRiveFile<T>>;
-  export async function fromSource(
-    source: number | { uri: string },
-    referencedAssets: ResolvedReferencedAssets | undefined,
-    loadCdn?: boolean
-  ): Promise<TypedRiveFile>;
+  // Single generic signature for the same reason as useRiveFile: with a
+  // typed + untyped overload pair, a bad key on a typed asset falls through to
+  // the untyped overload instead of erroring.
   export async function fromSource<T extends RiveFileSchema = RiveFileSchema>(
-    source: number | { uri: string },
-    referencedAssets: ResolvedReferencedAssets | undefined,
+    source: RiveAsset<T> | { uri: string },
+    typedReferencedAssets: TypedResolvedReferencedAssets<T> | undefined,
     loadCdn?: boolean
   ): Promise<TypedRiveFile<T>> {
+    const referencedAssets = typedReferencedAssets as
+      | ResolvedReferencedAssets
+      | undefined;
     const assetID = typeof source === 'number' ? source : null;
     const sourceURI = typeof source === 'object' ? source.uri : null;
 
