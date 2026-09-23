@@ -14,5 +14,6 @@ declare const asset: RiveAsset<{
       finished: 'trigger';
     };
   };
+  assets: {};
 }>;
 export default asset;

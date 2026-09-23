@@ -270,6 +270,7 @@ type BuiltInEnumSchema = {
   stateMachines: { Main: 'SM' };
   enums: {};
   viewModels: { VM: { blend: 'enum' } };
+  assets: {};
 };
 declare const builtInVM: TypedViewModelInstance<BuiltInEnumSchema, 'VM'>;
 expectType<UseRivePropertyResult<string>>(useRiveEnum('blend', builtInVM));
@@ -279,6 +280,7 @@ type DanglingSchema = {
   artboards: 'Main';
   defaultArtboard: 'Main';
   stateMachines: { Main: 'SM' };
+  assets: {};
   enums: {};
   viewModels: { VM: { pet: 'enum:Pets' } };
 };
@@ -289,6 +291,7 @@ type EmptyEnumSchema = {
   artboards: 'Main';
   defaultArtboard: 'Main';
   stateMachines: { Main: 'SM' };
+  assets: {};
   enums: { E: never };
   viewModels: { VM: { pet: 'enum:E' } };
 };
