@@ -14,8 +14,8 @@ import { readFileSync } from 'fs';
 import riveCanvas from '@rive-app/canvas';
 const { RuntimeLoader } = riveCanvas;
 import {
-  classifyAsset,
   collectEnums,
+  createAssetCollector,
   enumPropTypeString,
   nameMap,
   viewModelRefTypeString,
@@ -74,14 +74,7 @@ async function main() {
   // names/schemas — decoding (images especially) goes through render paths
   // that stall load() forever without WebGL; a pending load() then drains the
   // event loop and the process exits 0 without output.
-  const assets: Record<string, string> = {};
-  const assetLoader = new (runtime as any).CustomFileAssetLoader({
-    loadContents: (asset: any, embeddedBytes: Uint8Array | undefined) => {
-      const classified = classifyAsset(asset ?? {}, embeddedBytes?.length ?? 0);
-      if (classified) assets[classified.id] = classified.kind;
-      return true;
-    },
-  });
+  const { assetLoader, assets } = createAssetCollector(runtime);
 
   let timer: ReturnType<typeof setTimeout> | undefined;
   const riveFile = await Promise.race([

@@ -142,16 +142,7 @@ async function extractSchema(input: string): Promise<Schema> {
   // names/schemas — decoding (images especially) goes through render paths
   // that stall load() forever without WebGL, silently truncating the batch:
   // a pending load() drains bun's event loop and the process exits 0.
-  // The load() callbacks are also the only place asset metadata is visible,
-  // so record it here.
-  const assets: Record<string, string> = {};
-  const assetLoader = new (runtime as any).CustomFileAssetLoader({
-    loadContents: (asset: any, embeddedBytes: Uint8Array | undefined) => {
-      const classified = classifyAsset(asset ?? {}, embeddedBytes?.length ?? 0);
-      if (classified) assets[classified.id] = classified.kind;
-      return true;
-    },
-  });
+  const { assetLoader, assets } = createAssetCollector(runtime);
 
   let timer: ReturnType<typeof setTimeout> | undefined;
   const riveFile = await Promise.race([
@@ -254,6 +245,26 @@ export function vmRecord(
       return `    ${quoteKey(vmName, forceVmKeys)}: {\n${propLines}\n    };`;
     })
     .join('\n');
+}
+
+/**
+ * Asset loader that claims every asset without decoding it and records the
+ * non-embedded ones — load() callbacks are the only place asset metadata is
+ * visible.
+ */
+export function createAssetCollector(runtime: any): {
+  assetLoader: any;
+  assets: Record<string, string>;
+} {
+  const assets: Record<string, string> = {};
+  const assetLoader = new runtime.CustomFileAssetLoader({
+    loadContents: (asset: any, embeddedBytes: Uint8Array | undefined) => {
+      const classified = classifyAsset(asset ?? {}, embeddedBytes?.length ?? 0);
+      if (classified) assets[classified.id] = classified.kind;
+      return true;
+    },
+  });
+  return { assetLoader, assets };
 }
 
 export function assetsRecord(assets: Record<string, string>): string {
