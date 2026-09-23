@@ -27,9 +27,10 @@ declare const asset: RiveAsset<{
       'mode': 'enum:Status';
       'weird': 'enum:Weird';
       'page title': 'string';
+      'blend': 'enum';
     };
   };
-  assets: {
+  referencedAssets: {
     'ref_image-1': 'image';
     'hosted_image-2': 'image';
     'beep-3': 'audio';

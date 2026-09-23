@@ -41,6 +41,10 @@
     <ImageAsset exportTypeValue="hosted" cdnUuid="AAECAwQFBgcICQoLDA0ODw==" name="hosted_image" id="0:62"/>
     <AudioAsset file="beep.wav" exportTypeValue="referenced" name="beep" id="0:64"/>
 
+    <DataEnumSystem enumType="1" id="0:72">
+        <DataEnumValue key="screen" value="Screen"/>
+        <DataEnumValue key="normal" value="Normal"/>
+    </DataEnumSystem>
     <DataEnumCustom name="Status" id="0:70">
         <DataEnumValue key="idle" value="Idle"/>
         <DataEnumValue key="running" value="Running"/>
@@ -68,6 +72,7 @@
         <ViewModelPropertyEnumCustom enumId="0:70" name="mode" id="0:46"/>
         <ViewModelPropertyEnumCustom enumId="0:71" name="weird" id="0:47"/>
         <ViewModelPropertyString name="page title" id="0:48"/>
+        <ViewModelPropertyEnumSystem enumId="0:72" name="blend" id="0:49"/>
         <ViewModelInstance exports="true" name="Default" id="0:41">
             <ViewModelInstanceViewModel propertyValue="0:51" viewModelPropertyId="0:45"/>
         </ViewModelInstance>
