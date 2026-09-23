@@ -23,6 +23,6 @@ declare const asset: RiveAsset<{
       _id: 'string';
     };
   };
-  assets: {};
+  referencedAssets: {};
 }>;
 export default asset;

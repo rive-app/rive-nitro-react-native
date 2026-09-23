@@ -18,6 +18,6 @@ declare const asset: RiveAsset<{
       health: 'number';
     };
   };
-  assets: {};
+  referencedAssets: {};
 }>;
 export default asset;

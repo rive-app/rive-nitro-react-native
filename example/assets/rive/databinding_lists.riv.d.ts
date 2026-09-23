@@ -17,6 +17,6 @@ declare const asset: RiveAsset<{
       team: 'list';
     };
   };
-  assets: {};
+  referencedAssets: {};
 }>;
 export default asset;

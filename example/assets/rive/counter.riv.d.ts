@@ -14,6 +14,6 @@ declare const asset: RiveAsset<{
       cnt: 'number';
     };
   };
-  assets: {};
+  referencedAssets: {};
 }>;
 export default asset;

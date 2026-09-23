@@ -14,6 +14,6 @@ declare const asset: RiveAsset<{
       posY: 'number';
     };
   };
-  assets: {};
+  referencedAssets: {};
 }>;
 export default asset;

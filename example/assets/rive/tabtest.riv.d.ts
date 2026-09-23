@@ -16,6 +16,6 @@ declare const asset: RiveAsset<{
       enumProperty: 'enum:Selected';
     };
   };
-  assets: {};
+  referencedAssets: {};
 }>;
 export default asset;

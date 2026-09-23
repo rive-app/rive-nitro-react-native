@@ -52,7 +52,7 @@ describe('emit escaping', () => {
       viewModels: {
         "It's VM": { "quote'": "enum:Pet's" },
       },
-      assets: { "Font's-123": 'font' },
+      referencedAssets: { "Font's-123": 'font' },
     };
     const body = schemaBody(schema);
     expect(parseErrors(`declare const asset: {\n${body}\n};`)).toEqual([]);
@@ -87,18 +87,18 @@ describe('schemaBody', () => {
     stateMachines: { Main: ['SM'] },
     enums: {},
     viewModels: {},
-    assets: {},
+    referencedAssets: {},
   };
 
-  test('always emits viewModels and assets, empty objects when none', () => {
+  test('always emits viewModels and referencedAssets, empty objects when none', () => {
     expect(schemaBody(base)).toContain('viewModels: {};');
-    expect(schemaBody(base)).toContain('assets: {};');
+    expect(schemaBody(base)).toContain('referencedAssets: {};');
   });
 
-  test('emits assets record when present', () => {
+  test('emits referencedAssets record when present', () => {
     const body = schemaBody({
       ...base,
-      assets: { 'Inter-594377': 'font', 'img-1': 'image' },
+      referencedAssets: { 'Inter-594377': 'font', 'img-1': 'image' },
     });
     expect(body).toContain("'Inter-594377': 'font';");
     expect(body).toContain("'img-1': 'image';");

@@ -135,7 +135,7 @@ async function main() {
         stateMachines,
         enums,
         viewModels,
-        assets,
+        referencedAssets: assets,
       },
       null,
       2

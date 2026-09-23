@@ -10,7 +10,7 @@ declare const asset: RiveAsset<{
   };
   enums: {};
   viewModels: {};
-  assets: {
+  referencedAssets: {
     'Inter-594377': 'font';
     'referenced-image-2929282': 'image';
     'referenced_audio-2929340': 'audio';

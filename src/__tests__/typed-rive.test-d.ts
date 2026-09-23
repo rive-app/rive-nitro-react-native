@@ -271,7 +271,7 @@ type BuiltInEnumSchema = {
   stateMachines: { Main: 'SM' };
   enums: {};
   viewModels: { VM: { blend: 'enum' } };
-  assets: {};
+  referencedAssets: {};
 };
 declare const builtInVM: TypedViewModelInstance<BuiltInEnumSchema, 'VM'>;
 expectType<UseRivePropertyResult<string>>(useRiveEnum('blend', builtInVM));
@@ -281,7 +281,7 @@ type DanglingSchema = {
   artboards: 'Main';
   defaultArtboard: 'Main';
   stateMachines: { Main: 'SM' };
-  assets: {};
+  referencedAssets: {};
   enums: {};
   viewModels: { VM: { pet: 'enum:Pets' } };
 };
@@ -292,7 +292,7 @@ type EmptyEnumSchema = {
   artboards: 'Main';
   defaultArtboard: 'Main';
   stateMachines: { Main: 'SM' };
-  assets: {};
+  referencedAssets: {};
   enums: { E: never };
   viewModels: { VM: { pet: 'enum:E' } };
 };
@@ -606,7 +606,7 @@ type HandWrittenSchema = {
   defaultArtboard: string;
   stateMachines: Record<string, string>;
   enums: {};
-  assets: {};
+  referencedAssets: {};
   viewModels: { VM: { n: 'number' } };
 };
 declare const handWrittenAsset: RiveAsset<HandWrittenSchema>;

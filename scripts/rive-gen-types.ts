@@ -49,17 +49,17 @@ export interface Schema {
   /** File-level enum definitions, name → values. */
   enums: Record<string, string[]>;
   viewModels: Record<string, Record<string, string>>;
-  /** Non-embedded (referenced or CDN) assets: unique identifier → kind. */
-  assets: Record<string, string>;
+  /** Non-embedded (referenced or hosted) assets: runtime `uniqueName` → kind. */
+  referencedAssets: Record<string, string>;
 }
 
 /**
  * Classify a file asset reported by the WASM asset loader. Only non-embedded
- * assets (referenced or CDN-hosted) are schema-relevant: they are the ones an
- * app must supply via `referencedAssets` — the new runtime does not fetch CDN
- * assets itself. The key is the unique identifier (uniqueFilename minus
- * extension, e.g. 'Inter-594377'), the form the runtime documents as the
- * recommended `referencedAssets` key.
+ * assets (referenced or hosted) are schema-relevant: they are the ones an
+ * app must supply via `referencedAssets` — the new runtime does not fetch
+ * hosted assets itself. The key is the asset's `uniqueName` (`uniqueFilename`
+ * minus extension, e.g. 'Inter-594377'), the recommended `referencedAssets`
+ * key.
  */
 export function classifyAsset(
   asset: {
@@ -199,7 +199,7 @@ async function extractSchema(input: string): Promise<Schema> {
     stateMachines,
     enums,
     viewModels,
-    assets,
+    referencedAssets: assets,
   };
 }
 
@@ -280,16 +280,16 @@ export function schemaBody(schema: Schema): string {
     Object.keys(schema.enums).length > 0
       ? `\n  enums: {\n${unionRecord(schema.enums)}\n  };`
       : '\n  enums: {};';
-  // Always emit viewModels/assets — omitting either would fail the
+  // Always emit viewModels/referencedAssets — omitting either would fail the
   // RiveFileSchema constraint and silently degrade the whole asset to untyped.
   const vmSection =
     Object.keys(schema.viewModels).length > 0
       ? `\n  viewModels: {\n${vmRecord(schema.viewModels)}\n  };`
       : '\n  viewModels: {};';
   const assetSection =
-    Object.keys(schema.assets).length > 0
-      ? `\n  assets: {\n${assetsRecord(schema.assets)}\n  };`
-      : '\n  assets: {};';
+    Object.keys(schema.referencedAssets).length > 0
+      ? `\n  referencedAssets: {\n${assetsRecord(schema.referencedAssets)}\n  };`
+      : '\n  referencedAssets: {};';
   return `\
   artboards: ${schema.artboards.map(strLit).join(' | ')};
   defaultArtboard: ${strLit(schema.defaultArtboard)};

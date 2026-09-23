@@ -27,7 +27,7 @@ export type ResolvedReferencedAssets = {
 };
 
 type SchemaAssetKeys<S extends RiveFileSchema> = Extract<
-  keyof S['assets'],
+  keyof S['referencedAssets'],
   string
 >;
 
@@ -47,7 +47,7 @@ type ForSchemaAssets<S extends RiveFileSchema, Untyped, Typed> =
 
 /**
  * `referencedAssets` constrained to a generated schema: keys must be asset
- * unique identifiers from the .riv file, and each entry's declared `type`
+ * `uniqueName`s from the .riv file, and each entry's declared `type`
  * must match the asset's actual kind. `RiveImage` objects are only accepted
  * for image assets. Degrades to the untyped {@link ReferencedAssets} when the
  * schema is not statically known.
@@ -56,9 +56,11 @@ export type TypedReferencedAssets<S extends RiveFileSchema> = ForSchemaAssets<
   S,
   ReferencedAssets,
   {
-    [K in SchemaAssetKeys<S>]?: S['assets'][K] extends 'image'
+    [K in SchemaAssetKeys<S>]?: S['referencedAssets'][K] extends 'image'
       ? (ReferencedAssetSource & { type?: 'image' }) | RiveImage
-      : ReferencedAssetSource & { type?: S['assets'][K] & RiveAssetType };
+      : ReferencedAssetSource & {
+          type?: S['referencedAssets'][K] & RiveAssetType;
+        };
   }
 >;
 
@@ -71,10 +73,10 @@ export type TypedResolvedReferencedAssets<S extends RiveFileSchema> =
     S,
     ResolvedReferencedAssets,
     {
-      [K in SchemaAssetKeys<S>]?: S['assets'][K] extends 'image'
+      [K in SchemaAssetKeys<S>]?: S['referencedAssets'][K] extends 'image'
         ? ResolvedReferencedAsset & { type?: 'image' }
         : Omit<ResolvedReferencedAsset, 'image' | 'type'> & {
-            type?: S['assets'][K] & RiveAssetType;
+            type?: S['referencedAssets'][K] & RiveAssetType;
           };
     }
   >;

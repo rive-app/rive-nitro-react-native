@@ -14,6 +14,6 @@ declare const asset: RiveAsset<{
 
     };
   };
-  assets: {};
+  referencedAssets: {};
 }>;
 export default asset;

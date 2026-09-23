@@ -14,6 +14,6 @@ declare const asset: RiveAsset<{
       clickCount: 'number';
     };
   };
-  assets: {};
+  referencedAssets: {};
 }>;
 export default asset;

@@ -97,6 +97,6 @@ declare const asset: RiveAsset<{
       'property of gameLogicVM': 'viewModel:gameLogicVM';
     };
   };
-  assets: {};
+  referencedAssets: {};
 }>;
 export default asset;

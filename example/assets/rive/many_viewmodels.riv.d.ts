@@ -16,6 +16,6 @@ declare const asset: RiveAsset<{
       textValue: 'string';
     };
   };
-  assets: {};
+  referencedAssets: {};
 }>;
 export default asset;

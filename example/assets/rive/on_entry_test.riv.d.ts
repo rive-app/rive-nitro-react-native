@@ -15,7 +15,7 @@ declare const asset: RiveAsset<{
       inputOnEntry: 'number';
     };
   };
-  assets: {
+  referencedAssets: {
     'Inter-4228759': 'font';
   };
 }>;

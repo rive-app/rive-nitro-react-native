@@ -14,6 +14,6 @@ declare const asset: RiveAsset<{
       bound_image: 'image';
     };
   };
-  assets: {};
+  referencedAssets: {};
 }>;
 export default asset;

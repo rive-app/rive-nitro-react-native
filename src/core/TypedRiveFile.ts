@@ -16,11 +16,11 @@ export interface RiveFileSchema {
   enums: Record<string, string>;
   viewModels: Record<string, Record<string, string>>;
   /**
-   * Non-embedded (referenced or CDN) assets that the app must supply via
-   * `referencedAssets`: unique asset identifier (e.g. 'Inter-594377') →
-   * 'image' | 'font' | 'audio'.
+   * Non-embedded (referenced or hosted) assets that the app must supply via
+   * the `referencedAssets` option: the asset's runtime `uniqueName`
+   * (e.g. 'Inter-594377') → 'image' | 'font' | 'audio'.
    */
-  assets: Record<string, string>;
+  referencedAssets: Record<string, string>;
 }
 
 /**
