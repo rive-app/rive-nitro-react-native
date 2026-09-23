@@ -256,7 +256,7 @@ export function createAssetCollector(runtime: any): {
   assetLoader: any;
   assets: Record<string, string>;
 } {
-  const assets: Record<string, string> = {};
+  const assets = nameMap<string>();
   const assetLoader = new runtime.CustomFileAssetLoader({
     loadContents: (asset: any, embeddedBytes: Uint8Array | undefined) => {
       const classified = classifyAsset(asset ?? {}, embeddedBytes?.length ?? 0);
