@@ -150,6 +150,18 @@ describe('collectEnums', () => {
     };
     expect(collectEnums(file)).toEqual({ Status: ['idle'] });
   });
+
+  test('keeps an enum named __proto__ as an own key', () => {
+    const file = { enums: () => [{ name: '__proto__', values: ['a'] }] };
+    const enums = collectEnums(file);
+    expect(Object.keys(enums)).toEqual(['__proto__']);
+    expect(
+      enumPropTypeString(
+        { name: 'p', type: 'enumType', enumName: '__proto__' },
+        enums
+      )
+    ).toBe('enum:__proto__');
+  });
 });
 
 describe('viewModelRefTypeString', () => {

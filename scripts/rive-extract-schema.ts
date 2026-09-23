@@ -16,6 +16,7 @@ const { RuntimeLoader } = riveCanvas;
 import {
   collectEnums,
   enumPropTypeString,
+  nameMap,
   viewModelRefTypeString,
   type RuntimeProperty,
 } from './rive-gen-types.ts';
@@ -93,7 +94,7 @@ async function main() {
   }
 
   const artboards: string[] = [];
-  const stateMachines: Record<string, string[]> = {};
+  const stateMachines = nameMap<string[]>();
   for (let i = 0; i < riveFile.artboardCount(); i++) {
     const artboard = riveFile.artboardByIndex(i);
     artboards.push(artboard.name);
@@ -106,14 +107,14 @@ async function main() {
 
   const enums = collectEnums(riveFile);
 
-  const viewModels: Record<string, Record<string, string>> = {};
+  const viewModels = nameMap<Record<string, string>>();
   const vmCount = (riveFile as any).viewModelCount() as number;
   for (let i = 0; i < vmCount; i++) {
     const vm = (riveFile as any).viewModelByIndex(i);
     const properties = vm.getProperties() as RuntimeProperty[];
     // Create a blank instance to resolve viewModel property references
     const inst = vm.instance?.() as any;
-    const props: Record<string, string> = {};
+    const props = nameMap<string>();
     for (const p of properties) {
       if (p.type === 'viewModel') {
         props[p.name] = viewModelRefTypeString(inst, p.name);
