@@ -5,7 +5,7 @@ import {
   expectDeprecated,
   expectNotDeprecated,
 } from 'tsd';
-import type { TypedRiveFile, RiveAsset } from '../../src/core/TypedRiveFile';
+import type { TypedRiveFile, RiveFileSource } from '../../src/core/TypedRiveFile';
 import type {
   TypedViewModelInstance,
   TypedViewModelEnumProperty,
@@ -37,10 +37,10 @@ import fallbackFontsRiv from '../../example/assets/rive/fallback_fonts.riv';
 import databindingImagesRiv from '../../example/assets/rive/databinding_images.riv';
 
 // Infer schemas from the generated .riv.d.ts assets
-type GradientBorderSchema = typeof gradientBorderRiv extends RiveAsset<infer T>
+type GradientBorderSchema = typeof gradientBorderRiv extends RiveFileSource<infer T>
   ? T
   : never;
-type BlinkoSchema = typeof blinkoRiv extends RiveAsset<infer T> ? T : never;
+type BlinkoSchema = typeof blinkoRiv extends RiveFileSource<infer T> ? T : never;
 
 declare const gradientFile: TypedRiveFile<GradientBorderSchema>;
 declare const blinkoFile: TypedRiveFile<BlinkoSchema>;
@@ -136,7 +136,7 @@ expectAssignable<RiveViewProps>({
 });
 
 // --- RiveView with an asset-annotated file (TypedRiveFile<typeof riv>) ---
-// The generic must accept the RiveAsset form, not just bare schemas —
+// The generic must accept the RiveFileSource form, not just bare schemas —
 // otherwise inference silently falls back to the base schema and name
 // checking is disabled for the documented `TypedRiveFile<typeof riv>` pattern.
 
@@ -157,17 +157,17 @@ expectError(
   })
 );
 
-// --- RiveAsset branding ---
+// --- RiveFileSource branding ---
 
-declare const gradientAsset: RiveAsset<GradientBorderSchema>;
+declare const gradientAsset: RiveFileSource<GradientBorderSchema>;
 
-// RiveAsset is a branded number
+// RiveFileSource is a branded number
 expectType<number & { readonly __riveSchema?: GradientBorderSchema }>(
   gradientAsset
 );
 
-// RiveAsset with wrong schema is not assignable to a different typed asset
-expectError<RiveAsset<BlinkoSchema>>(gradientAsset);
+// RiveFileSource with wrong schema is not assignable to a different typed asset
+expectError<RiveFileSource<BlinkoSchema>>(gradientAsset);
 
 // ============================================================
 // TypedViewModelInstance
@@ -455,7 +455,7 @@ expectNotDeprecated(
 // ============================================================
 
 type FallbackFontsSchema =
-  typeof fallbackFontsRiv extends RiveAsset<infer T> ? T : never;
+  typeof fallbackFontsRiv extends RiveFileSource<infer T> ? T : never;
 declare const fontsFile: TypedRiveFile<FallbackFontsSchema>;
 
 expectAssignable<RiveViewProps<FallbackFontsSchema>>({
@@ -476,7 +476,7 @@ expectError(
 // useRiveEnum — nested paths (parity with the sibling hooks)
 // ============================================================
 
-type RewardsSchema = typeof rewardsRiv extends RiveAsset<infer T> ? T : never;
+type RewardsSchema = typeof rewardsRiv extends RiveFileSource<infer T> ? T : never;
 declare const rewardsVM: TypedViewModelInstance<RewardsSchema, 'Rewards'>;
 
 // Direct enum path on the owning VM
@@ -610,7 +610,7 @@ type HandWrittenSchema = {
   referencedAssets: {};
   viewModels: { VM: { n: 'number' } };
 };
-declare const handWrittenAsset: RiveAsset<HandWrittenSchema>;
+declare const handWrittenAsset: RiveFileSource<HandWrittenSchema>;
 {
   const { riveFile } = useRiveFile(handWrittenAsset);
   expectError(
@@ -621,7 +621,7 @@ declare const handWrittenAsset: RiveAsset<HandWrittenSchema>;
 // Image properties are 'assetImage' (RML ViewModelPropertyAssetImage), distinct
 // from the 'image' referenced-asset kind.
 type ImagesSchema =
-  typeof databindingImagesRiv extends RiveAsset<infer T> ? T : never;
+  typeof databindingImagesRiv extends RiveFileSource<infer T> ? T : never;
 declare const imagesVM: TypedViewModelInstance<ImagesSchema, 'MyViewModel'>;
 imagesVM.imageProperty('bound_image');
 expectError(imagesVM.numberProperty('bound_image'));

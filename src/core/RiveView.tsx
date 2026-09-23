@@ -4,7 +4,7 @@ import { RiveErrorType, type RiveError } from './Errors';
 import { callDispose } from './callDispose';
 import type { RiveViewRef } from '../index';
 import type {
-  RiveAsset,
+  RiveFileSource,
   RiveFileSchema,
   SchemaOf,
   TypedRiveFile,
@@ -12,12 +12,12 @@ import type {
 
 type NitroRiveViewProps = ComponentProps<typeof NitroRiveView>;
 
-// T accepts a schema OR a RiveAsset (i.e. `typeof importedRiv`), matching
+// T accepts a schema OR a RiveFileSource (i.e. `typeof importedRiv`), matching
 // TypedRiveFile. A schema-only constraint would make inference silently fall
 // back to the base schema — and disable all name checking — whenever the file
 // is annotated as TypedRiveFile<typeof asset>.
 export interface RiveViewProps<
-  T extends RiveFileSchema | RiveAsset = RiveFileSchema,
+  T extends RiveFileSchema | RiveFileSource = RiveFileSchema,
   A extends SchemaOf<T>['artboards'] = SchemaOf<T>['defaultArtboard'],
 > extends Omit<
     NitroRiveViewProps,
@@ -69,7 +69,7 @@ const defaultOnError = (error: RiveError) =>
  * - pause(): Pauses the Rive graphic
  */
 export function RiveView<
-  T extends RiveFileSchema | RiveAsset = RiveFileSchema,
+  T extends RiveFileSchema | RiveFileSource = RiveFileSchema,
   A extends SchemaOf<T>['artboards'] = SchemaOf<T>['defaultArtboard'],
 >(props: RiveViewProps<T, A>) {
   const { onError, hybridRef: userHybridRef, ...rest } = props;

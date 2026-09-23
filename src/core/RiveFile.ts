@@ -1,6 +1,10 @@
 import { NitroModules } from 'react-native-nitro-modules';
 import type { RiveFileFactory as RiveFileFactoryInternal } from '../specs/RiveFile.nitro';
-import type { RiveAsset, RiveFileSchema, TypedRiveFile } from './TypedRiveFile';
+import type {
+  RiveFileSource,
+  RiveFileSchema,
+  TypedRiveFile,
+} from './TypedRiveFile';
 
 import { Image } from 'react-native';
 import type {
@@ -161,7 +165,7 @@ export namespace RiveFileFactory {
   // typed + untyped overload pair, a bad key on a typed asset falls through to
   // the untyped overload instead of erroring.
   export async function fromSource<T extends RiveFileSchema = RiveFileSchema>(
-    source: RiveAsset<T> | { uri: string },
+    source: RiveFileSource<T> | { uri: string },
     typedReferencedAssets: TypedResolvedReferencedAssets<T> | undefined,
     loadCdn?: boolean
   ): Promise<TypedRiveFile<T>> {
