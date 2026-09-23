@@ -649,7 +649,7 @@ expectError(RiveFileFactory.fromSource(staleAsset, undefined));
 // in one file built with the Rive CLI, including names that need escaping.
 // ============================================================
 
-type RmlSchema = typeof rmlFixtureRiv extends RiveAsset<infer T> ? T : never;
+type RmlSchema = typeof rmlFixtureRiv extends RiveFileSource<infer T> ? T : never;
 declare const rmlFile: TypedRiveFile<RmlSchema>;
 
 // Quotes survive escaping; '|' inside a state machine name is not a separator.
