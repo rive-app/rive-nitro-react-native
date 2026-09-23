@@ -10,6 +10,7 @@ import {
   assetsRecord,
   classifyAsset,
   enumPropTypeString,
+  propertyTypeString,
   collectEnums,
   viewModelRefTypeString,
   type Schema,
@@ -254,5 +255,13 @@ describe('classifyAsset', () => {
 describe('assetsRecord', () => {
   test('escapes hostile identifiers', () => {
     expect(assetsRecord({ "It's-1": 'font' })).toBe("    'It\\'s-1': 'font';");
+  });
+});
+
+describe('propertyTypeString', () => {
+  test("names image properties 'assetImage', passes the rest through", () => {
+    expect(propertyTypeString('image')).toBe('assetImage');
+    expect(propertyTypeString('number')).toBe('number');
+    expect(propertyTypeString('artboard')).toBe('artboard');
   });
 });

@@ -11,7 +11,7 @@ declare const asset: RiveAsset<{
   enums: {};
   viewModels: {
     MyViewModel: {
-      bound_image: 'image';
+      bound_image: 'assetImage';
     };
   };
   referencedAssets: {};

@@ -230,7 +230,7 @@ export interface TypedViewModelInstance<
     | undefined;
 
   imageProperty(
-    path: PathsOfKind<T, VMName, 'image'>
+    path: PathsOfKind<T, VMName, 'assetImage'>
   ): ViewModelImageProperty | undefined;
 
   listProperty(

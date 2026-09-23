@@ -11,7 +11,7 @@ declare const asset: RiveAsset<{
   enums: {};
   viewModels: {
     First: {
-      imageValue: 'image';
+      imageValue: 'assetImage';
       colorValue: 'color';
       textValue: 'string';
     };

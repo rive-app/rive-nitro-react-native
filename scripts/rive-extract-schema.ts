@@ -18,6 +18,7 @@ import {
   createAssetCollector,
   enumPropTypeString,
   nameMap,
+  propertyTypeString,
   viewModelRefTypeString,
   type RuntimeProperty,
 } from './rive-gen-types.ts';
@@ -120,7 +121,7 @@ async function main() {
       } else if (p.type === 'enumType') {
         props[p.name] = enumPropTypeString(p, enums);
       } else {
-        props[p.name] = p.type;
+        props[p.name] = propertyTypeString(p.type);
       }
     }
     viewModels[vm.name] = props;

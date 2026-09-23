@@ -34,6 +34,7 @@ import outOfBandRiv from '../../example/assets/rive/out_of_band.riv';
 import blinkoRiv from '../../example/assets/rive/blinko.riv';
 import rewardsRiv from '../../example/assets/rive/rewards.riv';
 import fallbackFontsRiv from '../../example/assets/rive/fallback_fonts.riv';
+import databindingImagesRiv from '../../example/assets/rive/databinding_images.riv';
 
 // Infer schemas from the generated .riv.d.ts assets
 type GradientBorderSchema = typeof gradientBorderRiv extends RiveAsset<infer T>
@@ -616,3 +617,11 @@ declare const handWrittenAsset: RiveAsset<HandWrittenSchema>;
     useViewModelInstance(riveFile, { viewModelName: 'NotAVM', async: true })
   );
 }
+
+// Image properties are 'assetImage' (RML ViewModelPropertyAssetImage), distinct
+// from the 'image' referenced-asset kind.
+type ImagesSchema =
+  typeof databindingImagesRiv extends RiveAsset<infer T> ? T : never;
+declare const imagesVM: TypedViewModelInstance<ImagesSchema, 'MyViewModel'>;
+imagesVM.imageProperty('bound_image');
+expectError(imagesVM.numberProperty('bound_image'));

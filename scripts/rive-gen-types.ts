@@ -187,7 +187,7 @@ async function extractSchema(input: string): Promise<Schema> {
       } else if (p.type === 'enumType') {
         props[p.name] = enumPropTypeString(p, enums);
       } else {
-        props[p.name] = p.type;
+        props[p.name] = propertyTypeString(p.type);
       }
     }
     viewModels[vm.name] = props;
@@ -412,6 +412,16 @@ export function collectEnums(riveFile: any): Record<string, string[]> {
     if (e.name) enums[e.name] = e.values;
   }
   return enums;
+}
+
+/**
+ * Schema type string for a primitive property. The web runtime reports image
+ * properties as `'image'`; the schema uses `'assetImage'`, matching RML's
+ * `ViewModelPropertyAssetImage` and the native `ViewModelPropertyType`, and
+ * keeping it distinct from the `'image'` referenced-asset kind.
+ */
+export function propertyTypeString(runtimeType: string): string {
+  return runtimeType === 'image' ? 'assetImage' : runtimeType;
 }
 
 /**
