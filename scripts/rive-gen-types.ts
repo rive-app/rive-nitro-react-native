@@ -148,7 +148,7 @@ async function extractSchema(input: string): Promise<Schema> {
       if (p.type === 'viewModel') {
         props[p.name] = viewModelRefTypeString(inst, p.name);
       } else if (p.type === 'enumType') {
-        props[p.name] = enumPropTypeString(p, enums, inst);
+        props[p.name] = enumPropTypeString(p, enums);
       } else {
         props[p.name] = p.type;
       }
@@ -319,53 +319,34 @@ export function viewModelRefTypeString(
   }
 }
 
-/** File-level enum definitions, name → values. */
+/**
+ * File-level custom enum definitions, name → values. Built-in (system) enums
+ * are listed by the runtime with an empty name; properties using them stay
+ * untyped.
+ */
 export function collectEnums(riveFile: any): Record<string, string[]> {
   const enums: Record<string, string[]> = {};
   for (const e of (riveFile.enums?.() ?? []) as Array<{
     name: string;
     values: string[];
   }>) {
-    enums[e.name] = e.values;
+    if (e.name) enums[e.name] = e.values;
   }
   return enums;
 }
 
 /**
- * Schema type string for an enum property: a reference to a file-level enum
- * (`'enum:Pets'`) when the runtime reports which enum the property uses.
- * Without `enumName` the values are read from a default instance and inlined
- * as `'enum:a|b'`.
+ * Schema type string for an enum property: a reference to the file-level
+ * enum it uses (`'enum:Pets'`), or untyped `'enum'` when the runtime reports
+ * none (built-in enums).
  */
 export function enumPropTypeString(
   prop: RuntimeProperty,
-  enums: Record<string, string[]>,
-  defaultInstance: any
+  enums: Record<string, string[]>
 ): string {
-  if (prop.enumName && Object.hasOwn(enums, prop.enumName)) {
-    return `enum:${prop.enumName}`;
-  }
-  try {
-    const values: string[] = defaultInstance?.enum?.(prop.name)?.values ?? [];
-    return enumTypeString(prop.name, values);
-  } catch {
-    return 'enum';
-  }
-}
-
-/**
- * Inline enum encoding used when no file-level enum name is available. '|' is
- * the separator, so a value containing it cannot be represented and the
- * property falls back to an untyped enum.
- */
-export function enumTypeString(propName: string, values: string[]): string {
-  if (values.some((v) => v.includes('|'))) {
-    process.stderr.write(
-      `Warning: enum property '${propName}' has a value containing '|'; emitting untyped 'enum'.\n`
-    );
-    return 'enum';
-  }
-  return values.length > 0 ? `enum:${values.join('|')}` : 'enum';
+  return prop.enumName && Object.hasOwn(enums, prop.enumName)
+    ? `enum:${prop.enumName}`
+    : 'enum';
 }
 
 async function main() {

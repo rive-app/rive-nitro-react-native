@@ -118,7 +118,7 @@ async function main() {
       if (p.type === 'viewModel') {
         props[p.name] = viewModelRefTypeString(inst, p.name);
       } else if (p.type === 'enumType') {
-        props[p.name] = enumPropTypeString(p, enums, inst);
+        props[p.name] = enumPropTypeString(p, enums);
       } else {
         props[p.name] = p.type;
       }

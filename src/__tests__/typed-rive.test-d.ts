@@ -260,19 +260,16 @@ expectType<'Coin' | 'Gem'>(
 );
 expectError(null as unknown as EnumValues<typeof rewardsRiv, 'NotAnEnum'>);
 
-// Schemas generated before named enums (inline values, no `enums` key)
-// still resolve, so nothing breaks until they are regenerated.
-type LegacySchema = {
+// An untyped 'enum' property (a built-in enum) accepts any string.
+type BuiltInEnumSchema = {
   artboards: 'Main';
   defaultArtboard: 'Main';
   stateMachines: { Main: 'SM' };
-  viewModels: { VM: { pet: 'enum:cat|dog' } };
+  enums: {};
+  viewModels: { VM: { blend: 'enum' } };
 };
-expectType<'cat' | 'dog'>(
-  null as unknown as EnumValuesOf<LegacySchema, 'enum:cat|dog'>
-);
-declare const legacyVM: TypedViewModelInstance<LegacySchema, 'VM'>;
-expectType<UseRivePropertyResult<'cat' | 'dog'>>(useRiveEnum('pet', legacyVM));
+declare const builtInVM: TypedViewModelInstance<BuiltInEnumSchema, 'VM'>;
+expectType<UseRivePropertyResult<string>>(useRiveEnum('blend', builtInVM));
 
 // A named reference missing from `enums` is never — not the enum's name.
 type DanglingSchema = {

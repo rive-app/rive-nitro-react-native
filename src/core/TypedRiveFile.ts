@@ -15,12 +15,8 @@ export interface RiveFileSchema {
   artboards: string;
   defaultArtboard: string;
   stateMachines: Record<string, string>;
-  /**
-   * File-level enum definitions, name → value union. Optional so that
-   * schemas generated before named enums (which inline the values on the
-   * property instead) still satisfy the constraint until regenerated.
-   */
-  enums?: Record<string, string>;
+  /** File-level enum definitions, name → value union. */
+  enums: Record<string, string>;
   viewModels: Record<string, Record<string, string>>;
 }
 

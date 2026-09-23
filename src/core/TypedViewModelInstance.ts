@@ -21,17 +21,10 @@ import type { RiveAsset, RiveFileSchema, SchemaOf } from './TypedRiveFile';
 export type IsBaseSchema<T extends RiveFileSchema> =
   string extends Extract<keyof T['viewModels'], string> ? true : false;
 
-/** Split a pipe-separated string literal into a union: 'a|b|c' → 'a' | 'b' | 'c' */
-type UnionFromPipe<S extends string> = S extends `${infer A}|${infer B}`
-  ? A | UnionFromPipe<B>
-  : S;
-
 /**
- * Enum value union for a schema property type string. A named reference
- * (`'enum:Pets'`) resolves through the schema's `enums`: a name missing from
- * it is `never`, an enum with no values is `string`. The inline form
- * (`'enum:cat|dog'`) is used only by schemas generated before named enums
- * (no `enums` key), so they keep working until regenerated.
+ * Enum value union for a schema property type string (`'enum:Pets'`),
+ * resolved through the schema's `enums`: a name missing from it is `never`,
+ * an enum with no values, or an untyped `'enum'`, is `string`.
  */
 export type EnumValuesOf<T extends RiveFileSchema, S extends string> =
   IsBaseSchema<T> extends true
@@ -39,23 +32,24 @@ export type EnumValuesOf<T extends RiveFileSchema, S extends string> =
     : string extends S
       ? string
       : S extends `enum:${infer Ref}`
-        ? unknown extends T['enums']
-          ? UnionFromPipe<Ref>
-          : Ref extends Extract<keyof NonNullable<T['enums']>, string>
-            ? [NonNullable<T['enums']>[Ref]] extends [never]
-              ? string
-              : NonNullable<T['enums']>[Ref]
-            : never
-        : never;
+        ? Ref extends Extract<keyof T['enums'], string>
+          ? [T['enums'][Ref]] extends [never]
+            ? string
+            : T['enums'][Ref]
+          : never
+        : S extends 'enum'
+          ? string
+          : never;
 
 /**
  * Value union of a named enum in a file, e.g.
  * `EnumValues<typeof rewardsRiv, 'Item_Selection'>` → `'Coin' | 'Gem'`.
+ * These are the enum's keys (RML `DataEnumValue key`), not its display labels.
  */
 export type EnumValues<
   T extends RiveFileSchema | RiveAsset,
-  Name extends Extract<keyof NonNullable<SchemaOf<T>['enums']>, string>,
-> = NonNullable<SchemaOf<T>['enums']>[Name];
+  Name extends Extract<keyof SchemaOf<T>['enums'], string>,
+> = SchemaOf<T>['enums'][Name];
 
 /**
  * A typed enum property whose value and setter are constrained to the specific enum values
@@ -87,7 +81,7 @@ export type VMPropsOfKind<
     ? string
     : {
         [K in keyof VM]: Kind extends 'enum'
-          ? VM[K] extends `enum:${string}`
+          ? VM[K] extends 'enum' | `enum:${string}`
             ? K
             : never
           : VM[K] extends Kind

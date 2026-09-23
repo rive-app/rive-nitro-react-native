@@ -7,8 +7,8 @@ import {
   unionRecord,
   vmRecord,
   schemaBody,
-  enumTypeString,
   enumPropTypeString,
+  collectEnums,
   viewModelRefTypeString,
   type Schema,
 } from '../rive-gen-types.ts';
@@ -121,45 +121,34 @@ describe('enumPropTypeString', () => {
     expect(
       enumPropTypeString(
         { name: 'pet', type: 'enumType', enumName: 'Pets' },
-        enums,
-        undefined
+        enums
       )
     ).toBe('enum:Pets');
   });
-  test('inlines instance values when enumName is missing', () => {
-    const inst = { enum: () => ({ values: ['a', 'b'] }) };
-    expect(
-      enumPropTypeString({ name: 'pet', type: 'enumType' }, enums, inst)
-    ).toBe('enum:a|b');
+  test('is untyped without an enumName (built-in enums)', () => {
+    expect(enumPropTypeString({ name: 'pet', type: 'enumType' }, enums)).toBe(
+      'enum'
+    );
   });
-  test('inlines instance values when enumName is not a file enum', () => {
-    const inst = { enum: () => ({ values: ['x'] }) };
+  test('is untyped when enumName is not a file enum', () => {
     expect(
       enumPropTypeString(
         { name: 'pet', type: 'enumType', enumName: 'Nope' },
-        enums,
-        inst
+        enums
       )
-    ).toBe('enum:x');
-  });
-  test('falls back to untyped enum without any source', () => {
-    expect(
-      enumPropTypeString({ name: 'pet', type: 'enumType' }, enums, undefined)
     ).toBe('enum');
   });
 });
 
-describe('enumTypeString', () => {
-  test('joins values with |', () => {
-    expect(enumTypeString('p', ['a', 'b'])).toBe('enum:a|b');
-  });
-
-  test('empty values fall back to untyped enum', () => {
-    expect(enumTypeString('p', [])).toBe('enum');
-  });
-
-  test("a value containing the '|' separator falls back to untyped enum", () => {
-    expect(enumTypeString('p', ['a|b', 'c'])).toBe('enum');
+describe('collectEnums', () => {
+  test('skips the unnamed built-in enums the runtime lists', () => {
+    const file = {
+      enums: () => [
+        { name: '', values: ['screen', 'normal'] },
+        { name: 'Status', values: ['idle'] },
+      ],
+    };
+    expect(collectEnums(file)).toEqual({ Status: ['idle'] });
   });
 });
 
