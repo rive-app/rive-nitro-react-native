@@ -28,7 +28,7 @@ import { pathToFileURL } from 'url';
 
 // Called from main() so that importing this module (for unit-testing the
 // exported emit helpers) has no global side effects.
-function setupWasmShims(): void {
+export function setupWasmShims(): void {
   // Browser shims required by the @rive-app/canvas WASM runtime.
   (globalThis as any).document = {
     createElement: () => ({ getContext: () => null }),
@@ -126,7 +126,7 @@ async function getRuntime(): Promise<any> {
 /** Per-file guard: a stalled WASM load() must fail loudly, never hang the batch. */
 const LOAD_TIMEOUT_MS = 30_000;
 
-async function extractSchema(input: string): Promise<Schema> {
+export async function extractSchema(input: string): Promise<Schema> {
   let bytes: Uint8Array;
   if (input.startsWith('http://') || input.startsWith('https://')) {
     const res = await fetch(input);
