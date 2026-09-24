@@ -1,3 +1,4 @@
+import MetalKit
 import NitroModules
 import RiveRuntime
 import UIKit
@@ -230,6 +231,8 @@ class RiveReactNativeView: UIView, RiveStateMachineDelegate {
     riveView = baseViewModel?.createRiveView()
 
     if let riveView = riveView {
+      // The drawable is sized by `syncDrawableSize()` instead.
+      riveView.autoResizeDrawable = false
       riveView.translatesAutoresizingMaskIntoConstraints = false
       addSubview(riveView)
       riveView.stateMachineDelegate = self
@@ -239,6 +242,37 @@ class RiveReactNativeView: UIView, RiveStateMachineDelegate {
         riveView.topAnchor.constraint(equalTo: topAnchor),
         riveView.bottomAnchor.constraint(equalTo: bottomAnchor)
       ])
+      setNeedsLayout()
+    }
+  }
+
+  override func layoutSubviews() {
+    super.layoutSubviews()
+    syncDrawableSize()
+  }
+
+  override func didMoveToWindow() {
+    super.didMoveToWindow()
+    syncDrawableSize()
+  }
+
+  /// MTKView's automatic resize scales the bounds by per-axis factors it
+  /// computes once, on its first window attach when `nativeScale != scale`
+  /// (Display Zoom, mini and Plus iPhones), by converting the screen bounds
+  /// through every ancestor transform. A rotated ancestor at that moment
+  /// leaves a non-uniform drawable for the view's lifetime, so `contain`
+  /// squashes the artboard; a zero-scale ancestor leaves it blank. Sizing
+  /// from the view's own bounds ignores ancestor transforms.
+  private func syncDrawableSize() {
+    guard let riveView = riveView, let screen = window?.screen else { return }
+    let pointSize = riveView.bounds.size
+    guard pointSize.width > 0, pointSize.height > 0 else { return }
+    let size = CGSize(
+      width: (pointSize.width * screen.nativeScale).rounded(),
+      height: (pointSize.height * screen.nativeScale).rounded()
+    )
+    if riveView.drawableSize != size {
+      riveView.drawableSize = size
     }
   }
 
