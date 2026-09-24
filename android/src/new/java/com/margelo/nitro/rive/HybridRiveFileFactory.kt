@@ -12,7 +12,7 @@ import app.rive.core.CommandQueue
 import com.facebook.proguard.annotations.DoNotStrip
 import com.margelo.nitro.core.ArrayBuffer
 import com.margelo.nitro.core.Promise
-import com.rive.RiveRenderBackendConfig
+import com.rive.RiveWorkerConfig
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -88,13 +88,10 @@ class HybridRiveFileFactory : HybridRiveFileFactorySpec() {
         app.rive.RiveLog.logger = RiveErrorLogger
         Log.d(TAG, "RiveErrorLogger installed")
       }
-      return sharedWorker ?: run {
-        val renderBackend = RiveRenderBackendConfig.resolveForWorker()
-        CommandQueue(renderBackend).also {
-          sharedWorker = it
-          Log.d(TAG, "Created CommandQueue (renderBackend=$renderBackend), refCount=${it.refCount}")
-          startPolling(it)
-        }
+      return sharedWorker ?: RiveWorkerConfig.createWorker().also {
+        sharedWorker = it
+        Log.d(TAG, "Created CommandQueue (${RiveWorkerConfig.current}), refCount=${it.refCount}")
+        startPolling(it)
       }
     }
 

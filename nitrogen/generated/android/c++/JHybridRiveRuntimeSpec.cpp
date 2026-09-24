@@ -58,6 +58,11 @@ namespace margelo::nitro::rive {
     auto __result = method(_javaPart);
     return __result != nullptr ? std::make_optional(__result->toStdString()) : std::nullopt;
   }
+  bool JHybridRiveRuntimeSpec::getIsGPUCanvasEnabled() {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jboolean()>("isGPUCanvasEnabled");
+    auto __result = method(_javaPart);
+    return static_cast<bool>(__result);
+  }
 
   // Methods
   std::shared_ptr<Promise<void>> JHybridRiveRuntimeSpec::initialize() {
@@ -78,6 +83,10 @@ namespace margelo::nitro::rive {
   void JHybridRiveRuntimeSpec::setAndroidRenderBackend(AndroidRenderBackend backend) {
     static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<JAndroidRenderBackend> /* backend */)>("setAndroidRenderBackend");
     method(_javaPart, JAndroidRenderBackend::fromCpp(backend));
+  }
+  void JHybridRiveRuntimeSpec::setGPUCanvasEnabled(bool enabled) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jboolean /* enabled */)>("setGPUCanvasEnabled");
+    method(_javaPart, enabled);
   }
 
 } // namespace margelo::nitro::rive
