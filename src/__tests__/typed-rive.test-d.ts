@@ -267,6 +267,7 @@ expectError(null as unknown as EnumValues<typeof rewardsRiv, 'NotAnEnum'>);
 
 // An untyped 'enum' property (a built-in enum) accepts any string.
 type BuiltInEnumSchema = {
+  schemaVersion: 1;
   artboards: 'Main';
   defaultArtboard: 'Main';
   stateMachines: { Main: 'SM' };
@@ -279,6 +280,7 @@ expectType<UseRivePropertyResult<string>>(useRiveEnum('blend', builtInVM));
 
 // A named reference missing from `enums` is never — not the enum's name.
 type DanglingSchema = {
+  schemaVersion: 1;
   artboards: 'Main';
   defaultArtboard: 'Main';
   stateMachines: { Main: 'SM' };
@@ -290,6 +292,7 @@ expectType<never>(null as unknown as EnumValuesOf<DanglingSchema, 'enum:Pets'>);
 
 // An enum with no values degrades to an untyped (string) property.
 type EmptyEnumSchema = {
+  schemaVersion: 1;
   artboards: 'Main';
   defaultArtboard: 'Main';
   stateMachines: { Main: 'SM' };
@@ -603,6 +606,7 @@ RiveFileFactory.fromSource({ uri: 'https://x/a.riv' }, { anything: {} });
 // A standalone hand-written schema (literal ViewModels, string artboards)
 // keeps its ViewModel typing through useRiveFile.
 type HandWrittenSchema = {
+  schemaVersion: 1;
   artboards: string;
   defaultArtboard: string;
   stateMachines: Record<string, string>;
@@ -625,3 +629,16 @@ type ImagesSchema =
 declare const imagesVM: TypedViewModelInstance<ImagesSchema, 'MyViewModel'>;
 imagesVM.imageProperty('bound_image');
 expectError(imagesVM.numberProperty('bound_image'));
+
+// A .riv.d.ts from an older generator (no or a different schemaVersion)
+// fails at the use site instead of silently turning untyped.
+declare const staleAsset: RiveAsset<{
+  artboards: 'Main';
+  defaultArtboard: 'Main';
+  stateMachines: { Main: 'SM' };
+  enums: {};
+  viewModels: {};
+  referencedAssets: {};
+}>;
+expectError(useRiveFile(staleAsset));
+expectError(RiveFileFactory.fromSource(staleAsset, undefined));

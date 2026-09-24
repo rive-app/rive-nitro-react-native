@@ -275,13 +275,16 @@ export function assetsRecord(assets: Record<string, string>): string {
     .join('\n');
 }
 
+/** Must match `RiveFileSchema['schemaVersion']` in src/core/TypedRiveFile.ts. */
+export const SCHEMA_VERSION = 1;
+
 export function schemaBody(schema: Schema): string {
   const enumSection =
     Object.keys(schema.enums).length > 0
       ? `\n  enums: {\n${unionRecord(schema.enums)}\n  };`
       : '\n  enums: {};';
-  // Always emit viewModels/referencedAssets — omitting either would fail the
-  // RiveFileSchema constraint and silently degrade the whole asset to untyped.
+  // Always emit viewModels/referencedAssets — omitting either fails the
+  // RiveFileSchema check, and the import turns into an "out of date" error.
   const vmSection =
     Object.keys(schema.viewModels).length > 0
       ? `\n  viewModels: {\n${vmRecord(schema.viewModels)}\n  };`
@@ -291,6 +294,7 @@ export function schemaBody(schema: Schema): string {
       ? `\n  referencedAssets: {\n${assetsRecord(schema.referencedAssets)}\n  };`
       : '\n  referencedAssets: {};';
   return `\
+  schemaVersion: ${SCHEMA_VERSION};
   artboards: ${schema.artboards.map(strLit).join(' | ')};
   defaultArtboard: ${strLit(schema.defaultArtboard)};
   stateMachines: {

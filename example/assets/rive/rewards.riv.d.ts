@@ -3,6 +3,7 @@
 // Source: rewards.riv
 import type { RiveAsset } from '@rive-app/react-native';
 declare const asset: RiveAsset<{
+  schemaVersion: 1;
   artboards: 'Main' | 'Lives 2' | 'Item Value' | 'Chest' | 'Button' | 'Heart' | 'Item';
   defaultArtboard: 'Main';
   stateMachines: {

@@ -3,6 +3,7 @@
 // Source: blinko.riv
 import type { RiveAsset } from '@rive-app/react-native';
 declare const asset: RiveAsset<{
+  schemaVersion: 1;
   artboards: 'Main' | 'StoreItem' | 'Token' | 'Indicator' | 'Puck' | 'StoreIcon' | 'Peg' | 'scoreBox';
   defaultArtboard: 'Main';
   stateMachines: {

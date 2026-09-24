@@ -3,6 +3,7 @@
 // Source: quick_start.riv
 import type { RiveAsset } from '@rive-app/react-native';
 declare const asset: RiveAsset<{
+  schemaVersion: 1;
   artboards: 'health_bar_v01';
   defaultArtboard: 'health_bar_v01';
   stateMachines: {

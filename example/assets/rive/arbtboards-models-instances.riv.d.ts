@@ -3,6 +3,7 @@
 // Source: arbtboards-models-instances.riv
 import type { RiveAsset } from '@rive-app/react-native';
 declare const asset: RiveAsset<{
+  schemaVersion: 1;
   artboards: 'artboard1' | 'artboard3' | 'artboard2' | 'artboardc1';
   defaultArtboard: 'artboard1';
   stateMachines: {

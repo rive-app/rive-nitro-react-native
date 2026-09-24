@@ -14,9 +14,9 @@ import type {
   TypedReferencedAssets,
 } from '../core/ReferencedAssets';
 import type {
-  RiveAsset,
   RiveFileSchema,
   TypedRiveFile,
+  SchemaBranded,
 } from '../core/TypedRiveFile';
 
 export type { ReferencedAssets, ResolvedReferencedAssets };
@@ -114,7 +114,7 @@ type UseRiveFileResultFor<T extends RiveFileSchema> = RiveFileSchema extends T
 // here — with separate overloads it would silently fall through to the
 // untyped one, because a RiveAsset is assignable to the plain number input.
 export function useRiveFile<T extends RiveFileSchema = RiveFileSchema>(
-  input: RiveAsset<T> | Exclude<RiveFileInput, number> | undefined,
+  input: SchemaBranded<T> | Exclude<RiveFileInput, number> | undefined,
   options?: { referencedAssets?: TypedReferencedAssets<T> }
 ): UseRiveFileResultFor<T>;
 export function useRiveFile(

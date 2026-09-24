@@ -9,6 +9,12 @@ import type { RiveFile } from '../specs/RiveFile.nitro';
  * signatures make every artboard, view model and enum name valid.
  */
 export interface RiveFileSchema {
+  /**
+   * Format version of generated schemas. Bumped on every breaking format
+   * change, so a `.riv.d.ts` from an older generator is reported as out of
+   * date instead of silently checking the wrong thing.
+   */
+  schemaVersion: 1;
   artboards: string;
   defaultArtboard: string;
   stateMachines: Record<string, string>;
@@ -32,9 +38,17 @@ export interface RiveFileSchema {
  *
  * Pass to `RiveFileFactory.fromSource(asset)` — TypeScript infers `T` automatically.
  */
-export type RiveAsset<T extends RiveFileSchema = RiveFileSchema> = number & {
-  readonly __riveSchema?: T;
-};
+// An outdated schema resolves to an object keyed by the fix, so the message
+// shows up in the compiler error at the use site; `skipLibCheck` hides the
+// schema's own mismatch inside the `.d.ts`.
+export type RiveAsset<T = RiveFileSchema> = [T] extends [RiveFileSchema]
+  ? SchemaBranded<T>
+  : {
+      readonly 'This .riv.d.ts is out of date: regenerate it with npx rive-gen-types': true;
+    };
+
+/** A Metro asset number carrying schema `T` as a phantom property. */
+export type SchemaBranded<T> = number & { readonly __riveSchema?: T };
 
 /**
  * Extracts the RiveFileSchema from a RiveAsset, TypedRiveFile, or a bare RiveFileSchema.

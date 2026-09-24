@@ -3,6 +3,7 @@
 // Source: layouts_demo.riv
 import type { RiveAsset } from '@rive-app/react-native';
 declare const asset: RiveAsset<{
+  schemaVersion: 1;
   artboards: 'iOS_Android_Layouts_demo_v01';
   defaultArtboard: 'iOS_Android_Layouts_demo_v01';
   stateMachines: {

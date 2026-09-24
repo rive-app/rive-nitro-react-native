@@ -3,6 +3,7 @@
 // Source: out_of_band.riv
 import type { RiveAsset } from '@rive-app/react-native';
 declare const asset: RiveAsset<{
+  schemaVersion: 1;
   artboards: 'Artboard';
   defaultArtboard: 'Artboard';
   stateMachines: {
