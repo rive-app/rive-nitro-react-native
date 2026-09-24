@@ -26,7 +26,7 @@ export type {
   RiveAssetType,
 } from './specs/RiveFile.nitro';
 export type {
-  RiveAsset,
+  RiveFileSource,
   RiveFileSchema,
   SchemaOf,
   TypedRiveFile,
