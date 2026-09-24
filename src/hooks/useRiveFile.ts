@@ -100,7 +100,7 @@ export type UseRiveFileResult =
 
 /**
  * Result of {@link useRiveFile}: typed when the input is a generated
- * RiveAsset, the plain untyped result otherwise.
+ * RiveFileSource, the plain untyped result otherwise.
  */
 type UseRiveFileResultFor<T extends RiveFileSchema> = RiveFileSchema extends T
   ? UseRiveFileResult
@@ -112,7 +112,7 @@ type UseRiveFileResultFor<T extends RiveFileSchema> = RiveFileSchema extends T
 // Single generic signature (not a typed + untyped overload pair): an invalid
 // referencedAssets key or type on a schema-typed asset must be a hard error
 // here — with separate overloads it would silently fall through to the
-// untyped one, because a RiveAsset is assignable to the plain number input.
+// untyped one, because a RiveFileSource is assignable to the plain number input.
 export function useRiveFile<T extends RiveFileSchema = RiveFileSchema>(
   input: SchemaBranded<T> | Exclude<RiveFileInput, number> | undefined,
   options?: { referencedAssets?: TypedReferencedAssets<T> }

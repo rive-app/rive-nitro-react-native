@@ -26,9 +26,9 @@ describe('rive-gen-types', () => {
     expect(existsSync(OUT_DTS)).toBe(true);
   });
 
-  test('generated file declares a RiveAsset default export', () => {
+  test('generated file declares a RiveFileSource default export', () => {
     const content = readFileSync(OUT_DTS, 'utf8');
-    expect(content).toContain('declare const asset: RiveAsset<');
+    expect(content).toContain('declare const asset: RiveFileSource<');
     expect(content).toContain('export default asset');
   });
 

@@ -9,7 +9,7 @@ import type {
   ViewModelImageProperty,
   ViewModelListProperty,
 } from '../specs/ViewModel.nitro';
-import type { RiveAsset, RiveFileSchema, SchemaOf } from './TypedRiveFile';
+import type { RiveFileSource, RiveFileSchema, SchemaOf } from './TypedRiveFile';
 
 /**
  * True when nothing is statically known about `T`'s ViewModels — i.e. `T` is
@@ -47,7 +47,7 @@ export type EnumValuesOf<T extends RiveFileSchema, S extends string> =
  * These are the enum's keys (RML `DataEnumValue key`), not its display labels.
  */
 export type EnumValues<
-  T extends RiveFileSchema | RiveAsset,
+  T extends RiveFileSchema | RiveFileSource,
   Name extends Extract<keyof SchemaOf<T>['enums'], string>,
 > = SchemaOf<T>['enums'][Name];
 
@@ -271,13 +271,13 @@ export type UntypedViewModelInstance = ViewModelInstance & {
 };
 
 /**
- * Convenience alias: infer the ViewModel instance type directly from a RiveAsset import.
+ * Convenience alias: infer the ViewModel instance type directly from a RiveFileSource import.
  *
  * @example
  * import rewardsRiv from './rewards.riv';
  * type RewardsInstance = TypedViewModelOf<typeof rewardsRiv, 'Rewards'>;
  */
 export type TypedViewModelOf<
-  T extends RiveFileSchema | RiveAsset,
+  T extends RiveFileSchema | RiveFileSource,
   VMName extends Extract<keyof SchemaOf<T>['viewModels'], string>,
 > = TypedViewModelInstance<SchemaOf<T>, VMName>;

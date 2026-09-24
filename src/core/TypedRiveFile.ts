@@ -30,7 +30,7 @@ export interface RiveFileSchema {
 }
 
 /**
- * A Metro asset (number) branded with a schema type `T`.
+ * A `.riv` import (a Metro asset number) branded with a schema type `T`.
  * The `__riveSchema` field is purely phantom — it never exists at runtime.
  *
  * Created automatically when you `import asset from './file.riv'` and a
@@ -41,7 +41,7 @@ export interface RiveFileSchema {
 // An outdated schema resolves to an object keyed by the fix, so the message
 // shows up in the compiler error at the use site; `skipLibCheck` hides the
 // schema's own mismatch inside the `.d.ts`.
-export type RiveAsset<T = RiveFileSchema> = [T] extends [RiveFileSchema]
+export type RiveFileSource<T = RiveFileSchema> = [T] extends [RiveFileSchema]
   ? SchemaBranded<T>
   : {
       readonly 'This .riv.d.ts is out of date: regenerate it with npx rive-gen-types': true;
@@ -51,7 +51,7 @@ export type RiveAsset<T = RiveFileSchema> = [T] extends [RiveFileSchema]
 export type SchemaBranded<T> = number & { readonly __riveSchema?: T };
 
 /**
- * Extracts the RiveFileSchema from a RiveAsset, TypedRiveFile, or a bare RiveFileSchema.
+ * Extracts the RiveFileSchema from a RiveFileSource, TypedRiveFile, or a bare RiveFileSchema.
  *
  * @example
  * import rewardsRiv from './rewards.riv';
@@ -71,13 +71,13 @@ export type SchemaOf<T> = T extends {
  * A RiveFile branded with a schema type `T`.
  * The `__schema` field is purely a phantom type — it never exists at runtime.
  *
- * Accepts either a `RiveFileSchema` or a `RiveAsset<T>` (i.e. `typeof myRiv`).
+ * Accepts either a `RiveFileSchema` or a `RiveFileSource<T>` (i.e. `typeof myRiv`).
  *
  * Obtain one via `RiveFileFactory.fromURL<MySchema>(...)` or
  * `RiveFileFactory.fromSource(typedAsset)`.
  */
 export type TypedRiveFile<
-  T extends RiveFileSchema | RiveAsset = RiveFileSchema,
+  T extends RiveFileSchema | RiveFileSource = RiveFileSchema,
 > = RiveFile & {
   readonly __schema?: SchemaOf<T>;
 };
