@@ -3,6 +3,7 @@
 // Source: artboard_db_test.riv
 import type { RiveAsset } from '@rive-app/react-native';
 declare const asset: RiveAsset<{
+  schemaVersion: 1;
   artboards: 'Main' | 'ArtboardGreen' | 'ArtboardBlue' | 'ArtboardRed';
   defaultArtboard: 'Main';
   stateMachines: {
@@ -18,5 +19,6 @@ declare const asset: RiveAsset<{
       artboard_2: 'artboard';
     };
   };
+  referencedAssets: {};
 }>;
 export default asset;

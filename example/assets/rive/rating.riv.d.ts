@@ -3,6 +3,7 @@
 // Source: rating.riv
 import type { RiveAsset } from '@rive-app/react-native';
 declare const asset: RiveAsset<{
+  schemaVersion: 1;
   artboards: 'New Artboard';
   defaultArtboard: 'New Artboard';
   stateMachines: {
@@ -10,5 +11,6 @@ declare const asset: RiveAsset<{
   };
   enums: {};
   viewModels: {};
+  referencedAssets: {};
 }>;
 export default asset;

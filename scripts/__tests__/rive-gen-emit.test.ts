@@ -7,7 +7,10 @@ import {
   unionRecord,
   vmRecord,
   schemaBody,
+  assetsRecord,
+  classifyAsset,
   enumPropTypeString,
+  propertyTypeString,
   collectEnums,
   viewModelRefTypeString,
   type Schema,
@@ -50,6 +53,7 @@ describe('emit escaping', () => {
       viewModels: {
         "It's VM": { "quote'": "enum:Pet's" },
       },
+      referencedAssets: { "Font's-123": 'font' },
     };
     const body = schemaBody(schema);
     expect(parseErrors(`declare const asset: {\n${body}\n};`)).toEqual([]);
@@ -84,10 +88,21 @@ describe('schemaBody', () => {
     stateMachines: { Main: ['SM'] },
     enums: {},
     viewModels: {},
+    referencedAssets: {},
   };
 
-  test('always emits viewModels, empty object when none', () => {
+  test('always emits viewModels and referencedAssets, empty objects when none', () => {
     expect(schemaBody(base)).toContain('viewModels: {};');
+    expect(schemaBody(base)).toContain('referencedAssets: {};');
+  });
+
+  test('emits referencedAssets record when present', () => {
+    const body = schemaBody({
+      ...base,
+      referencedAssets: { 'Inter-594377': 'font', 'img-1': 'image' },
+    });
+    expect(body).toContain("'Inter-594377': 'font';");
+    expect(body).toContain("'img-1': 'image';");
   });
 
   test('always emits enums, empty object when none', () => {
@@ -191,5 +206,62 @@ describe('viewModelRefTypeString', () => {
       },
     };
     expect(viewModelRefTypeString(inst, 'Coin')).toBe('viewModel');
+  });
+});
+
+describe('classifyAsset', () => {
+  const font = {
+    name: 'Inter',
+    uniqueFilename: 'Inter-594377.ttf',
+    fileExtension: 'ttf',
+    isFont: true,
+  };
+
+  test('referenced asset → unique id (extension stripped) + kind', () => {
+    expect(classifyAsset(font, 0)).toEqual({
+      id: 'Inter-594377',
+      kind: 'font',
+    });
+    expect(
+      classifyAsset(
+        { uniqueFilename: 'pic-1.png', fileExtension: 'png', isImage: true },
+        0
+      )
+    ).toEqual({ id: 'pic-1', kind: 'image' });
+    expect(
+      classifyAsset(
+        { uniqueFilename: 'a-2.wav', fileExtension: 'wav', isAudio: true },
+        0
+      )
+    ).toEqual({ id: 'a-2', kind: 'audio' });
+  });
+
+  test('embedded assets are excluded', () => {
+    expect(classifyAsset(font, 8680)).toBeNull();
+  });
+
+  test('unknown asset kinds are excluded', () => {
+    expect(classifyAsset({ uniqueFilename: 'x-1.bin' }, 0)).toBeNull();
+  });
+
+  test('falls back to name when uniqueFilename is missing', () => {
+    expect(classifyAsset({ name: 'Inter', isFont: true }, 0)).toEqual({
+      id: 'Inter',
+      kind: 'font',
+    });
+  });
+});
+
+describe('assetsRecord', () => {
+  test('escapes hostile identifiers', () => {
+    expect(assetsRecord({ "It's-1": 'font' })).toBe("    'It\\'s-1': 'font';");
+  });
+});
+
+describe('propertyTypeString', () => {
+  test("names image properties 'assetImage', passes the rest through", () => {
+    expect(propertyTypeString('image')).toBe('assetImage');
+    expect(propertyTypeString('number')).toBe('number');
+    expect(propertyTypeString('artboard')).toBe('artboard');
   });
 });

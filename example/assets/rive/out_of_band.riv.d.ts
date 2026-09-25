@@ -3,6 +3,7 @@
 // Source: out_of_band.riv
 import type { RiveAsset } from '@rive-app/react-native';
 declare const asset: RiveAsset<{
+  schemaVersion: 1;
   artboards: 'Artboard';
   defaultArtboard: 'Artboard';
   stateMachines: {
@@ -10,5 +11,13 @@ declare const asset: RiveAsset<{
   };
   enums: {};
   viewModels: {};
+  referencedAssets: {
+    'Inter-594377': 'font';
+    'referenced-image-2929282': 'image';
+    'referenced_audio-2929340': 'audio';
+    'hosted_audio-2989208': 'audio';
+    'Damion-593587': 'font';
+    'cdn-image-2989123': 'image';
+  };
 }>;
 export default asset;

@@ -13,30 +13,30 @@ import {
 } from '@rive-app/react-native';
 import { Picker } from '@react-native-picker/picker';
 import { type Metadata } from '../shared/metadata';
+// Typed via the generated out_of_band.riv.d.ts — the referencedAssets keys
+// and each entry's `type` below are checked against the file's actual assets.
+import outOfBandRiv from '../../assets/rive/out_of_band.riv';
 
 export default function OutOfBandAssetsExample() {
   const [uri, setUri] = React.useState('https://picsum.photos/id/372/500/500');
-  const { riveFile, isLoading, error } = useRiveFile(
-    require('../../assets/rive/out_of_band.riv'),
-    {
-      referencedAssets: {
-        'Inter-594377': {
-          source: require('../../assets/fonts/Inter-594377.ttf'),
-          type: 'font',
-        },
-        'referenced-image-2929282': {
-          source: {
-            uri: uri,
-          },
-          type: 'image',
-        },
-        'referenced_audio-2929340': {
-          source: require('../../assets/audio/referenced_audio-2929340.wav'),
-          type: 'audio',
-        },
+  const { riveFile, isLoading, error } = useRiveFile(outOfBandRiv, {
+    referencedAssets: {
+      'Inter-594377': {
+        source: require('../../assets/fonts/Inter-594377.ttf'),
+        type: 'font',
       },
-    }
-  );
+      'referenced-image-2929282': {
+        source: {
+          uri: uri,
+        },
+        type: 'image',
+      },
+      'referenced_audio-2929340': {
+        source: require('../../assets/audio/referenced_audio-2929340.wav'),
+        type: 'audio',
+      },
+    },
+  });
 
   if (isLoading) {
     return <ActivityIndicator />;

@@ -3,6 +3,7 @@
 // Source: ios_android_layouts_demo_v01.riv
 import type { RiveAsset } from '@rive-app/react-native';
 declare const asset: RiveAsset<{
+  schemaVersion: 1;
   artboards: 'iOS_Android_Layouts_demo_v01';
   defaultArtboard: 'iOS_Android_Layouts_demo_v01';
   stateMachines: {
@@ -10,5 +11,6 @@ declare const asset: RiveAsset<{
   };
   enums: {};
   viewModels: {};
+  referencedAssets: {};
 }>;
 export default asset;

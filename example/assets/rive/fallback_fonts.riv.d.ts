@@ -3,6 +3,7 @@
 // Source: fallback_fonts.riv
 import type { RiveAsset } from '@rive-app/react-native';
 declare const asset: RiveAsset<{
+  schemaVersion: 1;
   artboards: 'Artboard';
   defaultArtboard: 'Artboard';
   stateMachines: {
@@ -10,5 +11,6 @@ declare const asset: RiveAsset<{
   };
   enums: {};
   viewModels: {};
+  referencedAssets: {};
 }>;
 export default asset;

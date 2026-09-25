@@ -26,10 +26,15 @@ import { useRiveNumber } from '../../src/hooks/useRiveNumber';
 import { useRiveEnum } from '../../src/hooks/useRiveEnum';
 import { useViewModelInstance } from '../../src/hooks/useViewModelInstance';
 import { RiveView, type RiveViewProps } from '../../src/core/RiveView';
+import { useRiveFile } from '../../src/hooks/useRiveFile';
+import { RiveFileFactory } from '../../src/core/RiveFile';
+import type { RiveImage } from '../../src/specs/RiveImage.nitro';
 import gradientBorderRiv from '../../example/assets/rive/GradientBorder.riv';
+import outOfBandRiv from '../../example/assets/rive/out_of_band.riv';
 import blinkoRiv from '../../example/assets/rive/blinko.riv';
 import rewardsRiv from '../../example/assets/rive/rewards.riv';
 import fallbackFontsRiv from '../../example/assets/rive/fallback_fonts.riv';
+import databindingImagesRiv from '../../example/assets/rive/databinding_images.riv';
 
 // Infer schemas from the generated .riv.d.ts assets
 type GradientBorderSchema = typeof gradientBorderRiv extends RiveAsset<infer T>
@@ -262,20 +267,24 @@ expectError(null as unknown as EnumValues<typeof rewardsRiv, 'NotAnEnum'>);
 
 // An untyped 'enum' property (a built-in enum) accepts any string.
 type BuiltInEnumSchema = {
+  schemaVersion: 1;
   artboards: 'Main';
   defaultArtboard: 'Main';
   stateMachines: { Main: 'SM' };
   enums: {};
   viewModels: { VM: { blend: 'enum' } };
+  referencedAssets: {};
 };
 declare const builtInVM: TypedViewModelInstance<BuiltInEnumSchema, 'VM'>;
 expectType<UseRivePropertyResult<string>>(useRiveEnum('blend', builtInVM));
 
 // A named reference missing from `enums` is never — not the enum's name.
 type DanglingSchema = {
+  schemaVersion: 1;
   artboards: 'Main';
   defaultArtboard: 'Main';
   stateMachines: { Main: 'SM' };
+  referencedAssets: {};
   enums: {};
   viewModels: { VM: { pet: 'enum:Pets' } };
 };
@@ -283,9 +292,11 @@ expectType<never>(null as unknown as EnumValuesOf<DanglingSchema, 'enum:Pets'>);
 
 // An enum with no values degrades to an untyped (string) property.
 type EmptyEnumSchema = {
+  schemaVersion: 1;
   artboards: 'Main';
   defaultArtboard: 'Main';
   stateMachines: { Main: 'SM' };
+  referencedAssets: {};
   enums: { E: never };
   viewModels: { VM: { pet: 'enum:E' } };
 };
@@ -495,3 +506,139 @@ expectAssignable<ViewModelNumberProperty | undefined>(
   rewardsVM.numberProperty('Item_Value_Icon/Item_Value')
 );
 expectError(rewardsVM.numberProperty('Item_Value_Icon/DoesNotExist'));
+
+
+// ============================================================
+// Typed referencedAssets (out-of-band assets from the schema)
+// ============================================================
+
+declare const riveImage: RiveImage;
+
+// Valid keys with correct types compile; RiveImage allowed for image assets
+useRiveFile(outOfBandRiv, {
+  referencedAssets: {
+    'Inter-594377': { source: 1, type: 'font' },
+    'referenced-image-2929282': { source: { uri: 'https://x/i.png' } },
+    'hosted_audio-2989208': { source: 2, type: 'audio' },
+  },
+});
+useRiveFile(outOfBandRiv, {
+  referencedAssets: { 'cdn-image-2989123': riveImage },
+});
+
+// Unknown asset key is a hard error (must not fall through to the untyped
+// number-input signature)
+expectError(
+  useRiveFile(outOfBandRiv, {
+    referencedAssets: { 'Inter-59437': { source: 1, type: 'font' } },
+  })
+);
+
+// Declared type must match the asset's actual kind
+expectError(
+  useRiveFile(outOfBandRiv, {
+    referencedAssets: { 'Inter-594377': { source: 1, type: 'image' } },
+  })
+);
+
+// RiveImage objects are only accepted for image assets
+expectError(
+  useRiveFile(outOfBandRiv, {
+    referencedAssets: { 'Inter-594377': riveImage },
+  })
+);
+
+// A schema with no referenced assets accepts no keys at all
+expectError(
+  useRiveFile(rewardsRiv, {
+    referencedAssets: { anything: { source: 1, type: 'font' } },
+  })
+);
+
+// Untyped inputs keep accepting arbitrary keys (backward compat) — every
+// legacy input form: url string, uri object, require() (any), plain number.
+useRiveFile('https://example.com/a.riv', {
+  referencedAssets: { anything: { source: 1, type: 'font' } },
+});
+useRiveFile({ uri: 'file:///a.riv' }, {
+  referencedAssets: { whatever: { source: 1 } },
+});
+declare const requireResult: any;
+useRiveFile(requireResult, {
+  referencedAssets: { anything: { source: 1, type: 'font' } },
+});
+declare const plainAssetId: number;
+useRiveFile(plainAssetId, {
+  referencedAssets: { anything: { source: 1, type: 'audio' } },
+});
+
+// RiveFileFactory.fromSource applies the same checks (resolved asset form)
+// instead of falling through to an untyped overload.
+expectError(
+  RiveFileFactory.fromSource(outOfBandRiv, {
+    'Inter-59437': { sourceUrl: 'https://x/f.ttf' },
+  })
+);
+expectError(
+  RiveFileFactory.fromSource(outOfBandRiv, {
+    'Inter-594377': { sourceUrl: 'https://x/f.ttf', type: 'image' },
+  })
+);
+expectError(
+  RiveFileFactory.fromSource(outOfBandRiv, {
+    'Inter-594377': { image: riveImage },
+  })
+);
+expectError(
+  RiveFileFactory.fromSource(rewardsRiv, {
+    anything: { sourceUrl: 'https://x/f.ttf' },
+  })
+);
+expectType<Promise<TypedRiveFile<typeof outOfBandRiv>>>(
+  RiveFileFactory.fromSource(outOfBandRiv, {
+    'Inter-594377': { sourceUrl: 'https://x/f.ttf', type: 'font' },
+    'cdn-image-2989123': { image: riveImage },
+  })
+);
+RiveFileFactory.fromSource(plainAssetId, { anything: { sourceUrl: 'x' } });
+RiveFileFactory.fromSource({ uri: 'https://x/a.riv' }, { anything: {} });
+
+// A standalone hand-written schema (literal ViewModels, string artboards)
+// keeps its ViewModel typing through useRiveFile.
+type HandWrittenSchema = {
+  schemaVersion: 1;
+  artboards: string;
+  defaultArtboard: string;
+  stateMachines: Record<string, string>;
+  enums: {};
+  referencedAssets: {};
+  viewModels: { VM: { n: 'number' } };
+};
+declare const handWrittenAsset: RiveAsset<HandWrittenSchema>;
+{
+  const { riveFile } = useRiveFile(handWrittenAsset);
+  expectError(
+    useViewModelInstance(riveFile, { viewModelName: 'NotAVM', async: true })
+  );
+}
+
+// Image properties are 'assetImage' (RML ViewModelPropertyAssetImage), distinct
+// from the 'image' referenced-asset kind.
+type ImagesSchema =
+  typeof databindingImagesRiv extends RiveAsset<infer T> ? T : never;
+declare const imagesVM: TypedViewModelInstance<ImagesSchema, 'MyViewModel'>;
+imagesVM.imageProperty('bound_image');
+expectError(imagesVM.numberProperty('bound_image'));
+
+// A .riv.d.ts from an older generator (no or a different schemaVersion)
+// fails at the use site instead of silently turning untyped.
+declare const staleAsset: RiveAsset<{
+  artboards: 'Main';
+  defaultArtboard: 'Main';
+  stateMachines: { Main: 'SM' };
+  enums: {};
+  viewModels: {};
+  referencedAssets: {};
+}>;
+expectError(useRiveFile(staleAsset));
+expectError(RiveFileFactory.fromSource(staleAsset, undefined));

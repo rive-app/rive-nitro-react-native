@@ -3,6 +3,7 @@
 // Source: tabtest.riv
 import type { RiveAsset } from '@rive-app/react-native';
 declare const asset: RiveAsset<{
+  schemaVersion: 1;
   artboards: 'Artboard';
   defaultArtboard: 'Artboard';
   stateMachines: {
@@ -16,5 +17,6 @@ declare const asset: RiveAsset<{
       enumProperty: 'enum:Selected';
     };
   };
+  referencedAssets: {};
 }>;
 export default asset;

@@ -3,6 +3,7 @@
 // Source: GradientBorder.riv
 import type { RiveAsset } from '@rive-app/react-native';
 declare const asset: RiveAsset<{
+  schemaVersion: 1;
   artboards: 'Layout';
   defaultArtboard: 'Layout';
   stateMachines: {
@@ -14,5 +15,6 @@ declare const asset: RiveAsset<{
       isFocused: 'boolean';
     };
   };
+  referencedAssets: {};
 }>;
 export default asset;

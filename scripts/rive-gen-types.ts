@@ -28,7 +28,7 @@ import { pathToFileURL } from 'url';
 
 // Called from main() so that importing this module (for unit-testing the
 // exported emit helpers) has no global side effects.
-function setupWasmShims(): void {
+export function setupWasmShims(): void {
   // Browser shims required by the @rive-app/canvas WASM runtime.
   (globalThis as any).document = {
     createElement: () => ({ getContext: () => null }),
@@ -49,6 +49,45 @@ export interface Schema {
   /** File-level enum definitions, name → values. */
   enums: Record<string, string[]>;
   viewModels: Record<string, Record<string, string>>;
+  /** Non-embedded (referenced or hosted) assets: runtime `uniqueName` → kind. */
+  referencedAssets: Record<string, string>;
+}
+
+/**
+ * Classify a file asset reported by the WASM asset loader. Only non-embedded
+ * assets (referenced or hosted) are schema-relevant: they are the ones an
+ * app must supply via `referencedAssets` — the new runtime does not fetch
+ * hosted assets itself. The key is the asset's `uniqueName` (`uniqueFilename`
+ * minus extension, e.g. 'Inter-594377'), the recommended `referencedAssets`
+ * key.
+ */
+export function classifyAsset(
+  asset: {
+    name?: string;
+    uniqueFilename?: string;
+    fileExtension?: string;
+    isImage?: boolean;
+    isFont?: boolean;
+    isAudio?: boolean;
+  },
+  embeddedByteCount: number
+): { id: string; kind: string } | null {
+  if (embeddedByteCount > 0) return null;
+  const kind = asset.isImage
+    ? 'image'
+    : asset.isFont
+      ? 'font'
+      : asset.isAudio
+        ? 'audio'
+        : null;
+  if (!kind) return null;
+  const unique = asset.uniqueFilename ?? '';
+  const ext = asset.fileExtension ?? '';
+  const id =
+    ext && unique.endsWith(`.${ext}`)
+      ? unique.slice(0, -(ext.length + 1))
+      : unique || (asset.name ?? '');
+  return id ? { id, kind } : null;
 }
 
 export interface RuntimeProperty {
@@ -87,7 +126,7 @@ async function getRuntime(): Promise<any> {
 /** Per-file guard: a stalled WASM load() must fail loudly, never hang the batch. */
 const LOAD_TIMEOUT_MS = 30_000;
 
-async function extractSchema(input: string): Promise<Schema> {
+export async function extractSchema(input: string): Promise<Schema> {
   let bytes: Uint8Array;
   if (input.startsWith('http://') || input.startsWith('https://')) {
     const res = await fetch(input);
@@ -103,9 +142,7 @@ async function extractSchema(input: string): Promise<Schema> {
   // names/schemas — decoding (images especially) goes through render paths
   // that stall load() forever without WebGL, silently truncating the batch:
   // a pending load() drains bun's event loop and the process exits 0.
-  const assetLoader = new (runtime as any).CustomFileAssetLoader({
-    loadContents: () => true,
-  });
+  const { assetLoader, assets } = createAssetCollector(runtime);
 
   let timer: ReturnType<typeof setTimeout> | undefined;
   const riveFile = await Promise.race([
@@ -150,7 +187,7 @@ async function extractSchema(input: string): Promise<Schema> {
       } else if (p.type === 'enumType') {
         props[p.name] = enumPropTypeString(p, enums);
       } else {
-        props[p.name] = p.type;
+        props[p.name] = propertyTypeString(p.type);
       }
     }
     viewModels[vm.name] = props;
@@ -162,6 +199,7 @@ async function extractSchema(input: string): Promise<Schema> {
     stateMachines,
     enums,
     viewModels,
+    referencedAssets: assets,
   };
 }
 
@@ -209,23 +247,59 @@ export function vmRecord(
     .join('\n');
 }
 
+/**
+ * Asset loader that claims every asset without decoding it and records the
+ * non-embedded ones — load() callbacks are the only place asset metadata is
+ * visible.
+ */
+export function createAssetCollector(runtime: any): {
+  assetLoader: any;
+  assets: Record<string, string>;
+} {
+  const assets = nameMap<string>();
+  const assetLoader = new runtime.CustomFileAssetLoader({
+    loadContents: (asset: any, embeddedBytes: Uint8Array | undefined) => {
+      const classified = classifyAsset(asset ?? {}, embeddedBytes?.length ?? 0);
+      if (classified) assets[classified.id] = classified.kind;
+      return true;
+    },
+  });
+  return { assetLoader, assets };
+}
+
+export function assetsRecord(assets: Record<string, string>): string {
+  const keys = Object.keys(assets);
+  const force = keys.some(needsQuote);
+  return Object.entries(assets)
+    .map(([id, kind]) => `    ${quoteKey(id, force)}: ${strLit(kind)};`)
+    .join('\n');
+}
+
+/** Must match `RiveFileSchema['schemaVersion']` in src/core/TypedRiveFile.ts. */
+export const SCHEMA_VERSION = 1;
+
 export function schemaBody(schema: Schema): string {
   const enumSection =
     Object.keys(schema.enums).length > 0
       ? `\n  enums: {\n${unionRecord(schema.enums)}\n  };`
       : '\n  enums: {};';
-  // Always emit viewModels — omitting it would fail the RiveFileSchema
-  // constraint and silently degrade the whole asset to untyped.
+  // Always emit viewModels/referencedAssets — omitting either fails the
+  // RiveFileSchema check, and the import turns into an "out of date" error.
   const vmSection =
     Object.keys(schema.viewModels).length > 0
       ? `\n  viewModels: {\n${vmRecord(schema.viewModels)}\n  };`
       : '\n  viewModels: {};';
+  const assetSection =
+    Object.keys(schema.referencedAssets).length > 0
+      ? `\n  referencedAssets: {\n${assetsRecord(schema.referencedAssets)}\n  };`
+      : '\n  referencedAssets: {};';
   return `\
+  schemaVersion: ${SCHEMA_VERSION};
   artboards: ${schema.artboards.map(strLit).join(' | ')};
   defaultArtboard: ${strLit(schema.defaultArtboard)};
   stateMachines: {
 ${unionRecord(schema.stateMachines)}
-  };${enumSection}${vmSection}`;
+  };${enumSection}${vmSection}${assetSection}`;
 }
 
 function dtsContent(input: string, schema: Schema): string {
@@ -342,6 +416,16 @@ export function collectEnums(riveFile: any): Record<string, string[]> {
     if (e.name) enums[e.name] = e.values;
   }
   return enums;
+}
+
+/**
+ * Schema type string for a primitive property. The web runtime reports image
+ * properties as `'image'`; the schema uses `'assetImage'`, matching RML's
+ * `ViewModelPropertyAssetImage` and the native `ViewModelPropertyType`, and
+ * keeping it distinct from the `'image'` referenced-asset kind.
+ */
+export function propertyTypeString(runtimeType: string): string {
+  return runtimeType === 'image' ? 'assetImage' : runtimeType;
 }
 
 /**

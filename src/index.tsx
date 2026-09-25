@@ -89,6 +89,10 @@ export {
   type UseViewModelInstanceRequiredResult,
 } from './hooks/useViewModelInstance';
 export { useRiveFile, type UseRiveFileResult } from './hooks/useRiveFile';
+export type {
+  TypedReferencedAssets,
+  TypedResolvedReferencedAssets,
+} from './core/ReferencedAssets';
 export { type RiveFileInput } from './hooks/useRiveFile';
 export { type SetValueAction } from './types';
 export { RiveRuntime } from './core/RiveRuntime';

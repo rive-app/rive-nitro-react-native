@@ -3,6 +3,7 @@
 // Source: many_viewmodels.riv
 import type { RiveAsset } from '@rive-app/react-native';
 declare const asset: RiveAsset<{
+  schemaVersion: 1;
   artboards: 'Artboard';
   defaultArtboard: 'Artboard';
   stateMachines: {
@@ -11,10 +12,11 @@ declare const asset: RiveAsset<{
   enums: {};
   viewModels: {
     First: {
-      imageValue: 'image';
+      imageValue: 'assetImage';
       colorValue: 'color';
       textValue: 'string';
     };
   };
+  referencedAssets: {};
 }>;
 export default asset;

@@ -3,6 +3,7 @@
 // Source: vm_value_change_test.riv
 import type { RiveAsset } from '@rive-app/react-native';
 declare const asset: RiveAsset<{
+  schemaVersion: 1;
   artboards: 'Artboard';
   defaultArtboard: 'Artboard';
   stateMachines: {
@@ -15,5 +16,6 @@ declare const asset: RiveAsset<{
       textValue: 'string';
     };
   };
+  referencedAssets: {};
 }>;
 export default asset;

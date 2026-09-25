@@ -11,11 +11,12 @@ import type {
   ReferencedAsset,
   ReferencedAssets,
   ResolvedReferencedAssets,
+  TypedReferencedAssets,
 } from '../core/ReferencedAssets';
 import type {
-  RiveAsset,
   RiveFileSchema,
   TypedRiveFile,
+  SchemaBranded,
 } from '../core/TypedRiveFile';
 
 export type { ReferencedAssets, ResolvedReferencedAssets };
@@ -97,17 +98,25 @@ export type UseRiveFileResult =
   | { riveFile: null; isLoading: false; error: Error }
   | { riveFile: undefined; isLoading: true; error: null };
 
-export function useRiveFile<T extends RiveFileSchema>(
-  input: RiveAsset<T>,
-  options?: UseRiveFileOptions
-):
-  | { riveFile: TypedRiveFile<T>; isLoading: false; error: null }
-  | { riveFile: null; isLoading: false; error: Error }
-  | { riveFile: undefined; isLoading: true; error: null };
-export function useRiveFile(
-  input: RiveFileInput | undefined,
-  options?: UseRiveFileOptions
-): UseRiveFileResult;
+/**
+ * Result of {@link useRiveFile}: typed when the input is a generated
+ * RiveAsset, the plain untyped result otherwise.
+ */
+type UseRiveFileResultFor<T extends RiveFileSchema> = RiveFileSchema extends T
+  ? UseRiveFileResult
+  :
+      | { riveFile: TypedRiveFile<T>; isLoading: false; error: null }
+      | { riveFile: null; isLoading: false; error: Error }
+      | { riveFile: undefined; isLoading: true; error: null };
+
+// Single generic signature (not a typed + untyped overload pair): an invalid
+// referencedAssets key or type on a schema-typed asset must be a hard error
+// here — with separate overloads it would silently fall through to the
+// untyped one, because a RiveAsset is assignable to the plain number input.
+export function useRiveFile<T extends RiveFileSchema = RiveFileSchema>(
+  input: SchemaBranded<T> | Exclude<RiveFileInput, number> | undefined,
+  options?: { referencedAssets?: TypedReferencedAssets<T> }
+): UseRiveFileResultFor<T>;
 export function useRiveFile(
   input: RiveFileInput | undefined,
   options: UseRiveFileOptions = {}

@@ -3,6 +3,7 @@
 // Source: rewards_source.riv
 import type { RiveAsset } from '@rive-app/react-native';
 declare const asset: RiveAsset<{
+  schemaVersion: 1;
   artboards: 'Main' | 'Lives 2' | 'Item Value' | 'Chest' | 'Button' | 'Heart' | 'Item';
   defaultArtboard: 'Main';
   stateMachines: {
@@ -50,5 +51,6 @@ declare const asset: RiveAsset<{
       Item_Selection: 'enum:Item_Selection';
     };
   };
+  referencedAssets: {};
 }>;
 export default asset;

@@ -3,6 +3,7 @@
 // Source: databinding_lists.riv
 import type { RiveAsset } from '@rive-app/react-native';
 declare const asset: RiveAsset<{
+  schemaVersion: 1;
   artboards: 'Artboard';
   defaultArtboard: 'Artboard';
   stateMachines: {
@@ -17,5 +18,6 @@ declare const asset: RiveAsset<{
       team: 'list';
     };
   };
+  referencedAssets: {};
 }>;
 export default asset;

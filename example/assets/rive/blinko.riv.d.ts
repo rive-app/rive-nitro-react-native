@@ -3,6 +3,7 @@
 // Source: blinko.riv
 import type { RiveAsset } from '@rive-app/react-native';
 declare const asset: RiveAsset<{
+  schemaVersion: 1;
   artboards: 'Main' | 'StoreItem' | 'Token' | 'Indicator' | 'Puck' | 'StoreIcon' | 'Peg' | 'scoreBox';
   defaultArtboard: 'Main';
   stateMachines: {
@@ -97,5 +98,6 @@ declare const asset: RiveAsset<{
       'property of gameLogicVM': 'viewModel:gameLogicVM';
     };
   };
+  referencedAssets: {};
 }>;
 export default asset;
