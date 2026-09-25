@@ -42,6 +42,7 @@
     "prepare": "npx react-native-builder-bob@^0.40.0 build && yarn build:cli",
     "nitrogen": "nitrogen && npx tsx scripts/nitrogen-postprocess.ts",
     "rive-gen-types": "node scripts/rive-gen-types.ts",
+    "build:riv-fixture": "rive scripts/__tests__/fixtures/riv-schema --once && cp scripts/__tests__/fixtures/riv-schema/build/riv-schema.riv scripts/__tests__/fixtures/riv-schema/ && node scripts/rive-gen-types.ts scripts/__tests__/fixtures/riv-schema/riv-schema.riv",
     "release": "release-it",
     "dev:ios": "cd example && xed ios",
     "dev:android": "cd example && open -a \"/Applications/Android Studio.app\" ./android",

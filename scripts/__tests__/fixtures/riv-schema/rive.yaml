@@ -1,0 +1,4 @@
+# Test fixture authored in RML. Rebuild with `yarn build:riv-fixture`
+# (needs the Rive CLI: https://rive.app/docs/cli/getting-started).
+name: riv-schema
+main: Main
