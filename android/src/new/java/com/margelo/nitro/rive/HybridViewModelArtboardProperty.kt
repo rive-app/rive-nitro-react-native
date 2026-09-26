@@ -18,6 +18,10 @@ class HybridViewModelArtboardProperty(
   }
 
   override fun set(artboard: HybridBindableArtboardSpec?) {
+    if (artboard == null) {
+      instance.setArtboard(path, null)
+      return
+    }
     val hybridArtboard = artboard as? HybridBindableArtboard ?: return
     val sourceFile = hybridArtboard.file.riveFile ?: return
     try {
