@@ -247,6 +247,26 @@ class RiveReactNativeView: UIView {
     pendingBindInstance = nil
   }
 
+  /// Teardown runs when Fabric drops the view, not when the JS effect cleanup
+  /// calls dispose().
+  ///
+  /// The effect cleanup fires in React's commit phase, before the mounting
+  /// instructions reach native views — potentially a whole transaction early.
+  /// react-native-screens captures the outgoing screen during that transaction
+  /// (`unmountChildComponentView`), and a render-server composite landing in the
+  /// gap bakes our half-torn-down view into that capture, so the screen slides
+  /// away empty (#356). Fabric's own unmount happens inside the same transaction
+  /// as the capture, leaving no room for one — which is why plain RN views never
+  /// show this.
+  override func willMove(toSuperview newSuperview: UIView?) {
+    super.willMove(toSuperview: newSuperview)
+    // Unconditional: a view whose configure failed has no riveUIView but can
+    // still have awaitViewReady() waiters, and detach() is what settles them.
+    if newSuperview == nil {
+      detach()
+    }
+  }
+
   /// Final teardown, called from HybridRiveView.dispose() (always on main).
   /// Unlike the reload-path cleanup(), this also settles any pending
   /// awaitViewReady() callers so their promises (which retain this view)
