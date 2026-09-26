@@ -149,7 +149,18 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
         // Create the state machine without advancing Entry transitions.
         // The first Choreographer frame will advance it with the user's
         // VM instance already bound via applyDataBinding() below.
-        riveAnimationView?.play(settleInitialState = false)
+        //
+        // Start the configured state machine explicitly: on a cold start the
+        // no-arg play() also starts the artboard's first raw timeline
+        // animation (same class of bug as #332), which plays on top of the
+        // data-bound state machine and shows the wrong state.
+        val smName = config.stateMachineName
+          ?: riveAnimationView?.controller?.activeArtboard?.stateMachineNames?.firstOrNull()
+        if (smName != null) {
+          riveAnimationView?.play(smName, isStateMachine = true, settleInitialState = false)
+        } else {
+          riveAnimationView?.play(settleInitialState = false)
+        }
       }
       _activeStateMachineName = getSafeStateMachineName()
       configuredStateMachineName = config.stateMachineName
