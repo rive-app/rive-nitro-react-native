@@ -4,12 +4,12 @@ import { RiveView, useRiveFile, Semantics } from '@rive-app/react-native';
 import type { Metadata } from '../shared/metadata';
 
 /*
-  Semantics — editor-authored accessibility exposed to VoiceOver.
+  Semantics — editor-authored accessibility exposed to VoiceOver / TalkBack.
 
   tabtest.riv (from rive-runtime's semantics test assets) authors a tab bar
   with roles, labels and selection state. With semantics enabled, each tab
-  becomes an accessibility element: VoiceOver reads them and can activate
-  them. iOS new (default) backend only; see
+  becomes an accessibility element: the screen reader reads them and can
+  activate them. New (default) backends only; see
   https://rive.app/docs/runtimes/apple/semantics
 */
 
@@ -36,8 +36,8 @@ export default function SemanticsExample() {
   return (
     <View style={styles.container}>
       <Text style={styles.subtitle}>
-        With semantics On (or Automatic + VoiceOver running), the tabs below are
-        exposed to VoiceOver as selectable accessibility elements.
+        With semantics On (or Automatic + a screen reader running), the tabs
+        below are exposed to VoiceOver / TalkBack as selectable elements.
       </Text>
       <View style={styles.modeRow}>
         {MODES.map(({ label, value }) => (
@@ -71,9 +71,9 @@ export default function SemanticsExample() {
 }
 
 SemanticsExample.metadata = {
-  name: 'Semantics (VoiceOver)',
+  name: 'Semantics (VoiceOver / TalkBack)',
   description:
-    'Editor-authored accessibility semantics exposed to VoiceOver (iOS new backend)',
+    'Editor-authored accessibility semantics exposed to the screen reader (new backends)',
   order: 3,
 } satisfies Metadata;
 

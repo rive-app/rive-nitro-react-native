@@ -8,7 +8,9 @@ import com.margelo.nitro.core.Promise
 import com.rive.BindData
 import com.rive.RiveReactNativeView
 import com.rive.ViewConfiguration
+import app.rive.ExperimentalRiveSemantics
 import app.rive.Fit as RiveFit
+import app.rive.RiveSemanticsMode
 import app.rive.Alignment as RiveAlignment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -108,9 +110,16 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
       )
     }
 
-  // Accepted for API parity; semantics support is pending in the upstream
-  // rive-android runtime (iOS-only for now).
+  @OptIn(ExperimentalRiveSemantics::class)
   override var semantics: Semantics? = null
+    set(value) {
+      field = value
+      view.semantics = when (value) {
+        Semantics.ON -> RiveSemanticsMode.On
+        Semantics.AUTOMATIC -> RiveSemanticsMode.Automatic
+        Semantics.OFF, null -> RiveSemanticsMode.Off
+      }
+    }
   override var dataBind: Variant_HybridViewModelInstanceSpec_DataBindMode_DataBindByName? = null
     set(value) {
       if (field != value) {
