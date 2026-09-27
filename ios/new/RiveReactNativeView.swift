@@ -1,6 +1,7 @@
 import RiveRuntime
 import NitroModules
 import UIKit
+import MetalKit
 
 enum BindData {
   case none
@@ -23,6 +24,7 @@ struct ViewConfiguration {
 @MainActor
 class RiveReactNativeView: UIView {
   private var riveUIView: RiveUIView?
+  private var mtkViewObservation: NSKeyValueObservation?
   private var riveInstance: RiveRuntime.Rive?
   private var pendingBindInstance: ViewModelInstance?
   private var viewReadyContinuations: [CheckedContinuation<Bool, Never>] = []
@@ -210,7 +212,42 @@ class RiveReactNativeView: UIView {
     throw RuntimeError.error(withMessage: "Text runs are not supported by the new runtime — use data binding")
   }
 
+  override func layoutSubviews() {
+    super.layoutSubviews()
+    syncDrawableSize()
+  }
+
+  override func didMoveToWindow() {
+    super.didMoveToWindow()
+    syncDrawableSize()
+  }
+
   // MARK: - Internal
+
+  private var riveMTKView: MTKView? {
+    riveUIView?.subviews.lazy.compactMap { $0 as? MTKView }.first
+  }
+
+  /// MTKView's automatic resize derives per-axis factors through ancestor
+  /// transforms when `nativeScale != scale` (Display Zoom, mini and Plus
+  /// iPhones), which squashes the artboard under a rotated parent and blanks
+  /// it under a zero-scale one (#393). Size the drawable from the view's bounds.
+  private func syncDrawableSize() {
+    guard let riveUIView, let mtkView = riveMTKView,
+          let nativeScale = window?.windowScene?.screen.nativeScale
+    else { return }
+    mtkView.autoResizeDrawable = false
+    riveUIView.layoutIfNeeded()
+    let pointSize = mtkView.bounds.size
+    guard pointSize.width > 0, pointSize.height > 0 else { return }
+    let size = CGSize(
+      width: (pointSize.width * nativeScale).rounded(),
+      height: (pointSize.height * nativeScale).rounded()
+    )
+    if mtkView.drawableSize != size {
+      mtkView.drawableSize = size
+    }
+  }
 
   private func setupRiveUIView(with rive: RiveRuntime.Rive) {
     if let existing = riveUIView {
@@ -234,6 +271,15 @@ class RiveReactNativeView: UIView {
         uiView.bottomAnchor.constraint(equalTo: bottomAnchor),
       ])
       self.riveUIView = uiView
+      // RiveUIView adds its MTKView asynchronously. This fires before the MTKView
+      // reaches the window, where it would compute the broken resize factors.
+      mtkViewObservation = uiView.layer.observe(\.sublayers) { [weak self] _, _ in
+        MainActor.assumeIsolated {
+          guard let self else { return }
+          self.riveMTKView?.autoResizeDrawable = false
+          self.setNeedsLayout()
+        }
+      }
     }
   }
 
@@ -241,6 +287,7 @@ class RiveReactNativeView: UIView {
     dispatchPrecondition(condition: .onQueue(.main))
     configTask?.cancel()
     configTask = nil
+    mtkViewObservation = nil
     riveUIView?.removeFromSuperview()
     riveUIView = nil
     riveInstance = nil
