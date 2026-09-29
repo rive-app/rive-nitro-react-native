@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.5.0](https://github.com/rive-app/rive-nitro-react-native/compare/v0.5.0-beta.6...v0.5.0) (2026-09-29)
+
+
+### ⚠ BREAKING CHANGES
+
+* rename RiveAsset to RiveFileSource ([#391](https://github.com/rive-app/rive-nitro-react-native/issues/391))
+* generate referenced asset names in .riv schemas, type referencedAssets ([#359](https://github.com/rive-app/rive-nitro-react-native/issues/359))
+
+### Features
+
+* generate referenced asset names in .riv schemas, type referencedAssets ([#359](https://github.com/rive-app/rive-nitro-react-native/issues/359)) ([dad0bf0](https://github.com/rive-app/rive-nitro-react-native/commit/dad0bf07043af8cebf4eae613d3279eba075cc07))
+
+
+### Bug Fixes
+
+* bump rive-android to 11.12.1 and rive-ios to 6.26.0 ([#397](https://github.com/rive-app/rive-nitro-react-native/issues/397)) ([24f3df0](https://github.com/rive-app/rive-nitro-react-native/commit/24f3df05afe8598657834857fb111ce429b80f52))
+
+
+### Code Refactoring
+
+* rename RiveAsset to RiveFileSource ([#391](https://github.com/rive-app/rive-nitro-react-native/issues/391)) ([7e9786a](https://github.com/rive-app/rive-nitro-react-native/commit/7e9786a7549f92843cc85c4ee39449462fdd9afa))
+
 ## [0.5.0-beta.6](https://github.com/rive-app/rive-nitro-react-native/compare/v0.5.0-beta.5...v0.5.0-beta.6) (2026-09-23)
 
 
