@@ -5,7 +5,9 @@
 module RiveSPMEmbed
   FRAMEWORK = '${PODS_CONFIGURATION_BUILD_DIR}/RNRive/RiveRuntime.framework'
   INSTALL_LINE = %(install_framework "#{FRAMEWORK}")
-  ALREADY_EMBEDDED = %r{^\s*install_framework "[^"]*/RiveRuntime\.framework"}
+  # A react-native whose spm_dependency embeds package frameworks calls
+  # `install_spm_frameworks "${PODS_CONFIGURATION_BUILD_DIR}/RNRive" ...`.
+  ALREADY_EMBEDDED = %r{install_framework "[^"]*/RiveRuntime\.framework"|install_spm_frameworks "\$\{PODS_CONFIGURATION_BUILD_DIR\}/RNRive"}
   PARALLEL_SIGN_WAIT = /^if \[ "\$\{COCOAPODS_PARALLEL_CODE_SIGN\}" == "true" \]; then$/
 
   def perform_post_install_actions
