@@ -74,7 +74,8 @@ Pod::Spec.new do |s|
   s.script_phase = {
     :name => '[RNRive] Remove duplicate RiveRuntime.xcframework signature',
     :script => 'rm -rf "${CONFIGURATION_BUILD_DIR}/RiveRuntime.xcframework-ios.signature"',
-    :execution_position => :after_compile
+    :execution_position => :after_compile,
+    :always_out_of_date => '1'
   }
 
  install_modules_dependencies(s)
