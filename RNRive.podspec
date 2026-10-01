@@ -69,11 +69,12 @@ Pod::Spec.new do |s|
     products: ['RiveRuntime']
   )
   # Xcode 26 archives collect xcframework signatures into one flat folder; RiveRuntime's is written
-  # both at the app level and under this pod's build dir, and the duplicate fails the archive with
+  # both to the shared products dir and to this pod's build dir, and the duplicate fails the archive with
   # "RiveRuntime.xcframework-ios.signature ... already exists" (same fix as maplibre-react-native#1490).
+  # On react-native 0.87+ static library pods build into the shared dir, which holds the only copy.
   s.script_phase = {
     :name => '[RNRive] Remove duplicate RiveRuntime.xcframework signature',
-    :script => 'rm -rf "${CONFIGURATION_BUILD_DIR}/RiveRuntime.xcframework-ios.signature"',
+    :script => '[ "${CONFIGURATION_BUILD_DIR}" = "${PODS_CONFIGURATION_BUILD_DIR}" ] || rm -f "${CONFIGURATION_BUILD_DIR}/RiveRuntime.xcframework-ios.signature"',
     :execution_position => :after_compile,
     :always_out_of_date => '1'
   }

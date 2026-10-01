@@ -3,7 +3,9 @@
 # unless something already embeds it. Runs after user-project integration, which rewrites the
 # embed xcfilelists after the Podfile's post_install hooks.
 module RiveSPMEmbed
-  FRAMEWORK = '${PODS_CONFIGURATION_BUILD_DIR}/RNRive/RiveRuntime.framework'
+  # Xcode copies a binary target's framework into the shared products dir whether RNRive builds into its own
+  # directory or, on react-native 0.87+, into that shared one.
+  FRAMEWORK = '${PODS_CONFIGURATION_BUILD_DIR}/RiveRuntime.framework'
   INSTALL_LINE = %(install_framework "#{FRAMEWORK}")
   # A react-native whose spm_dependency embeds package frameworks calls
   # `install_spm_framework "RiveRuntime" ...`.
