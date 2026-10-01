@@ -6,8 +6,7 @@
   "packages": {
     ".": {
       "changelog-path": "CHANGELOG.md",
-      "include-component-in-tag": false,
-      "release-as": "0.5.0"
+      "include-component-in-tag": false
     }
   }
 }
