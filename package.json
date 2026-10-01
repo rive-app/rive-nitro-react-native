@@ -70,7 +70,7 @@
   },
   "homepage": "https://github.com/rive-app/rive-nitro-react-native#readme",
   "runtimeVersions": {
-    "ios": "6.26.0",
+    "ios": "6.28.0",
     "android": "11.12.1"
   },
   "publishConfig": {
