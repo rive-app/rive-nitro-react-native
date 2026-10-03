@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.2](https://github.com/rive-app/rive-nitro-react-native/compare/v0.5.1...v0.5.2) (2026-10-03)
+
+
+### Bug Fixes
+
+* **ios:** tear down the Rive view when Fabric drops it, not on JS unmount ([#358](https://github.com/rive-app/rive-nitro-react-native/issues/358)) ([8616405](https://github.com/rive-app/rive-nitro-react-native/commit/86164057b31a471a52238c4f915efe1ad8d05eec))
+
 ## [0.5.1](https://github.com/rive-app/rive-nitro-react-native/compare/v0.5.0...v0.5.1) (2026-10-01)
 
 
