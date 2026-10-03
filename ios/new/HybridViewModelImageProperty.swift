@@ -5,6 +5,11 @@ class HybridViewModelImageProperty: HybridViewModelImagePropertySpec {
   private var instance: ViewModelInstance?
   private var prop: ImageProperty?
   private var worker: Worker?
+
+  /// Bumped by every set(). Decoding is async, so a slow decode can finish after a later
+  /// set() has already applied — the generation it captured lets it detect that and bail.
+  @MainActor private var generation: UInt64 = 0
+
   init(instance: ViewModelInstance, path: String, worker: Worker) {
     self.instance = instance
     self.prop = ImageProperty(path: path)
@@ -20,13 +25,23 @@ class HybridViewModelImageProperty: HybridViewModelImagePropertySpec {
     guard let instance = instance, let prop = prop, let worker = worker else {
       throw RuntimeError.error(withMessage: "ImageProperty not properly initialized")
     }
+    guard let image = image else {
+      Task { @MainActor in
+        self.generation &+= 1
+        instance.setValue(of: prop, to: nil)
+      }
+      return
+    }
     guard let hybridImage = image as? HybridRiveImage else {
       throw RuntimeError.error(withMessage: "Invalid image type - expected HybridRiveImage")
     }
 
     Task { @MainActor in
+      self.generation &+= 1
+      let generation = self.generation
       do {
         let experimentalImage = try await worker.decodeImage(from: hybridImage.rawData)
+        guard generation == self.generation else { return }
         instance.setValue(of: prop, to: experimentalImage)
       } catch {
         RCTLogError("HybridViewModelImageProperty: Failed to decode/set image: \(error)")
