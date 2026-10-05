@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.3](https://github.com/rive-app/rive-nitro-react-native/compare/v0.5.2...v0.5.3) (2026-10-05)
+
+
+### Features
+
+* expose GPU Canvas (3D) on iOS and Android ([#381](https://github.com/rive-app/rive-nitro-react-native/issues/381)) ([d9439a9](https://github.com/rive-app/rive-nitro-react-native/commit/d9439a982b62442364692a7a42ab1fd607ec69f8))
+
 ## [0.5.2](https://github.com/rive-app/rive-nitro-react-native/compare/v0.5.1...v0.5.2) (2026-10-03)
 
 
