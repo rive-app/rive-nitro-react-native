@@ -50,12 +50,13 @@ export function useRiveList(
     });
 
     return () => {
+      // The property may already be disposed here, and calling one of its
+      // methods then crashes release builds (#407); dispose() removes the
+      // native listeners itself.
       try {
         removeListener();
-        property.removeListeners();
       } catch {
-        // Property may already be disposed by useDisposableMemo (deps change).
-        // Native dispose() handles listener cleanup, so this is safe to ignore.
+        // Already disposed by useDisposableMemo.
       }
     };
   }, [property]);
