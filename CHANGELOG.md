@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.4](https://github.com/rive-app/rive-nitro-react-native/compare/v0.5.3...v0.5.4) (2026-10-07)
+
+
+### Bug Fixes
+
+* **android:** render transparent artboard areas as transparent ([#411](https://github.com/rive-app/rive-nitro-react-native/issues/411)) ([029fab1](https://github.com/rive-app/rive-nitro-react-native/commit/029fab11d319c4d25e52e3410d2889f4afbd3b0d)), closes [#409](https://github.com/rive-app/rive-nitro-react-native/issues/409)
+
 ## [0.5.3](https://github.com/rive-app/rive-nitro-react-native/compare/v0.5.2...v0.5.3) (2026-10-05)
 
 
