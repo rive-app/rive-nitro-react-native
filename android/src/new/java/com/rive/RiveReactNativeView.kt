@@ -122,6 +122,8 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
   private val viewScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
 
   private val textureView = TextureView(context).apply {
+    // TextureView composites as opaque by default, turning transparent pixels black (#409).
+    isOpaque = false
     layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
     surfaceTextureListener = object : TextureView.SurfaceTextureListener {
       override fun onSurfaceTextureAvailable(st: SurfaceTexture, w: Int, h: Int) {
