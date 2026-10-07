@@ -122,6 +122,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
   private val viewScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
 
   private val textureView = TextureView(context).apply {
+    isOpaque = false
     layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
     surfaceTextureListener = object : TextureView.SurfaceTextureListener {
       override fun onSurfaceTextureAvailable(st: SurfaceTexture, w: Int, h: Int) {
