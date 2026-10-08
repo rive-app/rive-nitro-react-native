@@ -1,5 +1,8 @@
-import { useCallback, useEffect, useState } from 'react';
-import type { ViewModelInstance } from '../specs/ViewModel.nitro';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import type {
+  ViewModelInstance,
+  ViewModelListProperty,
+} from '../specs/ViewModel.nitro';
 import type { UseRiveListResult } from '../types';
 import { useDisposableMemo } from './useDisposableMemo';
 
@@ -25,13 +28,17 @@ export function useRiveList(
     setError(null);
   }, [path, viewModelInstance]);
 
+  // Cleared when the property is disposed; calling into a disposed list
+  // crashes release builds (#407), so the operations read it from here.
+  const liveRef = useRef<ViewModelListProperty | undefined>(undefined);
   const property = useDisposableMemo(
     () => {
       if (!viewModelInstance) return undefined;
       return viewModelInstance.listProperty(path);
     },
     (p) => p?.dispose(),
-    [viewModelInstance, path]
+    [viewModelInstance, path],
+    liveRef
   );
 
   useEffect(() => {
@@ -50,13 +57,9 @@ export function useRiveList(
     });
 
     return () => {
-      try {
-        removeListener();
-        property.removeListeners();
-      } catch {
-        // Property may already be disposed by useDisposableMemo (deps change).
-        // Native dispose() handles listener cleanup, so this is safe to ignore.
-      }
+      // Only the unsubscribe function is safe here: the property may already
+      // be disposed.
+      removeListener();
     };
   }, [property]);
 
@@ -96,58 +99,59 @@ export function useRiveList(
     });
   }, []);
 
-  const getInstanceAt = useCallback(
-    (index: number) => {
-      return property
-        ? property.getInstanceAtAsync(index)
-        : Promise.resolve(undefined);
-    },
-    [property]
-  );
+  const getInstanceAt = useCallback((index: number) => {
+    const list = liveRef.current;
+    return list ? list.getInstanceAtAsync(index) : Promise.resolve(undefined);
+  }, []);
 
   const addInstance = useCallback(
     (instance: ViewModelInstance) => {
-      return property
-        ? afterMutation(property.addInstanceAsync(instance))
+      const list = liveRef.current;
+      return list
+        ? afterMutation(list.addInstanceAsync(instance))
         : Promise.resolve();
     },
-    [property, afterMutation]
+    [afterMutation]
   );
 
   const addInstanceAt = useCallback(
     (instance: ViewModelInstance, index: number) => {
-      return property
-        ? afterMutation(property.addInstanceAtAsync(instance, index))
+      const list = liveRef.current;
+      return list
+        ? afterMutation(list.addInstanceAtAsync(instance, index))
         : Promise.resolve();
     },
-    [property, afterMutation]
+    [afterMutation]
   );
 
   const removeInstance = useCallback(
     (instance: ViewModelInstance) => {
-      return property
-        ? afterMutation(property.removeInstanceAsync(instance))
+      const list = liveRef.current;
+      return list
+        ? afterMutation(list.removeInstanceAsync(instance))
         : Promise.resolve();
     },
-    [property, afterMutation]
+    [afterMutation]
   );
 
   const removeInstanceAt = useCallback(
     (index: number) => {
-      return property
-        ? afterMutation(property.removeInstanceAtAsync(index))
+      const list = liveRef.current;
+      return list
+        ? afterMutation(list.removeInstanceAtAsync(index))
         : Promise.resolve();
     },
-    [property, afterMutation]
+    [afterMutation]
   );
 
   const swap = useCallback(
     (index1: number, index2: number) => {
-      return property
-        ? afterMutation(property.swapAsync(index1, index2))
+      const list = liveRef.current;
+      return list
+        ? afterMutation(list.swapAsync(index1, index2))
         : Promise.resolve();
     },
-    [property, afterMutation]
+    [afterMutation]
   );
 
   return {
