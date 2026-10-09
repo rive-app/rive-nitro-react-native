@@ -38,6 +38,8 @@ else
   Pod::UI.puts "@rive-app/react-native: Using experimental Rive runtime backend"
 end
 
+require_relative 'ios/rive_spm_embed'
+
 Pod::Spec.new do |s|
   s.name         = "RNRive"
   s.version      = package["version"]
@@ -61,7 +63,21 @@ Pod::Spec.new do |s|
   load 'nitrogen/generated/ios/RNRive+autolinking.rb'
   add_nitrogen_files(s)
 
-  s.dependency 'RiveRuntime', rive_ios_version
+  spm_dependency(s,
+    url: 'https://github.com/rive-app/rive-ios.git',
+    requirement: { kind: 'exactVersion', version: rive_ios_version },
+    products: ['RiveRuntime']
+  )
+  # Xcode 26 archives collect xcframework signatures into one flat folder; RiveRuntime's is written
+  # both to the shared products dir and to this pod's build dir, and the duplicate fails the archive with
+  # "RiveRuntime.xcframework-ios.signature ... already exists" (same fix as maplibre-react-native#1490).
+  # On react-native 0.87+ static library pods build into the shared dir, which holds the only copy.
+  s.script_phase = {
+    :name => '[RNRive] Remove duplicate RiveRuntime.xcframework signature',
+    :script => '[ "${CONFIGURATION_BUILD_DIR}" = "${PODS_CONFIGURATION_BUILD_DIR}" ] || rm -f "${CONFIGURATION_BUILD_DIR}/RiveRuntime.xcframework-ios.signature"',
+    :execution_position => :after_compile,
+    :always_out_of_date => '1'
+  }
 
  install_modules_dependencies(s)
 
