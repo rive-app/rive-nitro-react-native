@@ -88,7 +88,6 @@ class RiveReactNativeView: UIView {
         guard let self else { return }
         do {
           let artboard = try await config.file.createArtboard(config.artboardName)
-          let stateMachine = try await artboard.createStateMachine(config.stateMachineName)
 
           let dataBind: RiveRuntime.DataBind
           switch config.bindData {
@@ -112,6 +111,13 @@ class RiveReactNativeView: UIView {
           }
 
           guard !Task.isCancelled else { return }
+
+          let stateMachine: StateMachine
+          if case .instance(let vmi) = dataBind {
+            stateMachine = try await artboard.createStateMachine(config.stateMachineName, binding: vmi)
+          } else {
+            stateMachine = try await artboard.createStateMachine(config.stateMachineName)
+          }
 
           let rive = try await RiveRuntime.Rive(
             file: config.file,
