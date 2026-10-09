@@ -112,7 +112,6 @@ class RiveReactNativeView: UIView {
 
           guard !Task.isCancelled else { return }
 
-          // Scripts read their view model when the state machine is created (#414).
           let stateMachine: StateMachine
           if case .instance(let vmi) = dataBind {
             stateMachine = try await artboard.createStateMachine(config.stateMachineName, binding: vmi)
