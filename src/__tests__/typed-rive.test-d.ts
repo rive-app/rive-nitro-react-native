@@ -35,6 +35,7 @@ import blinkoRiv from '../../example/assets/rive/blinko.riv';
 import rewardsRiv from '../../example/assets/rive/rewards.riv';
 import fallbackFontsRiv from '../../example/assets/rive/fallback_fonts.riv';
 import databindingImagesRiv from '../../example/assets/rive/databinding_images.riv';
+import rmlFixtureRiv from '../../scripts/__tests__/fixtures/riv-schema/riv-schema.riv';
 
 // Infer schemas from the generated .riv.d.ts assets
 type GradientBorderSchema = typeof gradientBorderRiv extends RiveFileSource<infer T>
@@ -642,3 +643,69 @@ declare const staleAsset: RiveFileSource<{
 }>;
 expectError(useRiveFile(staleAsset));
 expectError(RiveFileFactory.fromSource(staleAsset, undefined));
+
+// ============================================================
+// RML fixture (scripts/__tests__/fixtures/riv-schema): every schema feature
+// in one file built with the Rive CLI, including names that need escaping.
+// ============================================================
+
+type RmlSchema = typeof rmlFixtureRiv extends RiveFileSource<infer T> ? T : never;
+declare const rmlFile: TypedRiveFile<RmlSchema>;
+
+// Quotes survive escaping; '|' inside a state machine name is not a separator.
+expectAssignable<RiveViewProps<RmlSchema>>({
+  file: rmlFile,
+  stateMachineName: 'Hover|Press',
+});
+expectError<RiveViewProps<RmlSchema>>({ file: rmlFile, stateMachineName: 'Hover' });
+expectAssignable<RiveViewProps<RmlSchema, "O'Brien's Board">>({
+  file: rmlFile,
+  artboardName: "O'Brien's Board",
+  stateMachineName: "It's SM",
+});
+
+// Named enums keep '|' and quotes inside values.
+expectType<'a|b' | "it's">(
+  null as unknown as EnumValues<typeof rmlFixtureRiv, 'Weird'>
+);
+
+// One enum shared by two view models resolves the same through both paths.
+declare const rmlScreen: TypedViewModelInstance<RmlSchema, 'Screen'>;
+type Status = 'idle' | 'running' | 'failed';
+expectType<UseRivePropertyResult<Status>>(useRiveEnum('mode', rmlScreen));
+expectType<UseRivePropertyResult<Status>>(useRiveEnum('card/status', rmlScreen));
+expectType<UseRivePropertyResult<'a|b' | "it's">>(
+  useRiveEnum('weird', rmlScreen)
+);
+expectError(useRiveEnum('card/title', rmlScreen));
+expectAssignable<ViewModelNumberProperty | undefined>(
+  rmlScreen.numberProperty('card/count')
+);
+rmlScreen.stringProperty('page title');
+expectType<UseRivePropertyResult<string>>(useRiveEnum('blend', rmlScreen));
+
+// Referenced assets are keyed by the runtime's unique ids. The embedded image
+// is not a key, and neither is the CLI's sidecar name for the audio
+// ('beep-2', while the runtime asks for 'beep-3').
+useRiveFile(rmlFixtureRiv, {
+  referencedAssets: {
+    'ref_image-1': riveImage,
+    'hosted_image-2': { source: 1, type: 'image' },
+    'beep-3': { source: 1, type: 'audio' },
+  },
+});
+expectError(
+  useRiveFile(rmlFixtureRiv, {
+    referencedAssets: { 'embedded_image-0': riveImage },
+  })
+);
+expectError(
+  useRiveFile(rmlFixtureRiv, {
+    referencedAssets: { 'beep-2': { source: 1, type: 'audio' } },
+  })
+);
+expectError(
+  useRiveFile(rmlFixtureRiv, {
+    referencedAssets: { 'beep-3': { source: 1, type: 'image' } },
+  })
+);
