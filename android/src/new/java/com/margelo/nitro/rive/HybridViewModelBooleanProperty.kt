@@ -5,7 +5,7 @@ import app.rive.ViewModelInstance
 import com.facebook.proguard.annotations.DoNotStrip
 import com.margelo.nitro.core.Promise
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
+import com.rive.RiveReactNativeView
 
 @Keep
 @DoNotStrip
@@ -23,7 +23,7 @@ class HybridViewModelBooleanProperty(
     get() {
       DeprecationWarning.warn("BooleanProperty.value", "getValueAsync")
       return try {
-        runBlocking { instance.getBooleanFlow(path).first() }
+        runBlockingAwaitingReply { instance.getBooleanFlow(path).first() }
       } catch (e: Exception) {
         RiveLog.e(TAG, "getValue failed for path '$path': ${e.message}")
         false
@@ -35,6 +35,7 @@ class HybridViewModelBooleanProperty(
 
   override fun set(value: Boolean) {
     instance.setBoolean(path, value)
+    RiveReactNativeView.onViewModelChanged()
   }
 
   override fun setValueAsync(value: Boolean): Promise<Unit> {
@@ -42,12 +43,12 @@ class HybridViewModelBooleanProperty(
   }
 
   override fun getValueAsync(): Promise<Boolean> {
-    return Promise.async { instance.getBooleanFlow(path).first() }
+    return promiseAwaitingReply { instance.getBooleanFlow(path).first() }
   }
 
   override fun addListener(onChanged: (value: Boolean) -> Unit): () -> Unit {
     val remover = addListenerInternal(onChanged)
-    ensureValueListenerJob(instance.getBooleanFlow(path))
+    ensureValueListenerJob(CommandQueuePolling.whileCollected(instance.getBooleanFlow(path)))
     return remover
   }
 }

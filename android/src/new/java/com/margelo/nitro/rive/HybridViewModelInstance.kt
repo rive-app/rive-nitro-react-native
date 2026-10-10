@@ -49,7 +49,7 @@ class HybridViewModelInstance(
     )
     val file = parentFile.riveFile
       ?: return Promise.rejected(RuntimeException("The RiveFile backing this instance was disposed"))
-    return Promise.async {
+    return promiseAwaitingReply {
       file
         .getViewModelProperties(name)
         .map { prop ->
@@ -122,7 +122,7 @@ class HybridViewModelInstance(
   }
 
   override fun viewModelAsync(path: String): Promise<HybridViewModelInstanceSpec?> {
-    return Promise.async { viewModelImpl(path) }
+    return promiseAwaitingReply { viewModelImpl(path) }
   }
 
   override fun replaceViewModel(path: String, instance: HybridViewModelInstanceSpec) {

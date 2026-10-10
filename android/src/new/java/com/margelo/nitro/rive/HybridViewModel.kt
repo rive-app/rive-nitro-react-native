@@ -9,7 +9,6 @@ import app.rive.core.CommandQueue
 import app.rive.runtime.kotlin.core.ViewModel
 import com.facebook.proguard.annotations.DoNotStrip
 import com.margelo.nitro.core.Promise
-import kotlinx.coroutines.runBlocking
 
 @Keep
 @DoNotStrip
@@ -33,7 +32,7 @@ class HybridViewModel(
   }
 
   override fun getPropertiesAsync(): Promise<Array<ViewModelPropertyInfo>> {
-    return Promise.async {
+    return promiseAwaitingReply {
       riveFile
         .getViewModelProperties(viewModelName)
         .map { prop ->
@@ -46,7 +45,7 @@ class HybridViewModel(
     get() {
       DeprecationWarning.warn("propertyCount", "getPropertyCountAsync")
       return try {
-        runBlocking { riveFile.getViewModelProperties(viewModelName) }.size.toDouble()
+        runBlockingAwaitingReply { riveFile.getViewModelProperties(viewModelName) }.size.toDouble()
       } catch (e: Exception) {
         RiveLog.e(TAG, "propertyCount failed: ${e.message}")
         0.0
@@ -57,7 +56,7 @@ class HybridViewModel(
     get() {
       DeprecationWarning.warn("instanceCount", "getInstanceCountAsync")
       return try {
-        runBlocking { riveFile.getViewModelInstanceNames(viewModelName) }.size.toDouble()
+        runBlockingAwaitingReply { riveFile.getViewModelInstanceNames(viewModelName) }.size.toDouble()
       } catch (e: Exception) {
         RiveLog.e(TAG, "instanceCount failed: ${e.message}")
         0.0
@@ -68,11 +67,11 @@ class HybridViewModel(
     get() = viewModelName
 
   override fun getPropertyCountAsync(): Promise<Double> {
-    return Promise.async { riveFile.getViewModelProperties(viewModelName).size.toDouble() }
+    return promiseAwaitingReply { riveFile.getViewModelProperties(viewModelName).size.toDouble() }
   }
 
   override fun getInstanceCountAsync(): Promise<Double> {
-    return Promise.async { riveFile.getViewModelInstanceNames(viewModelName).size.toDouble() }
+    return promiseAwaitingReply { riveFile.getViewModelInstanceNames(viewModelName).size.toDouble() }
   }
 
   // Deprecated: Use createInstanceByNameAsync instead
@@ -80,10 +79,10 @@ class HybridViewModel(
     DeprecationWarning.warn("createInstanceByIndex", "createInstanceByNameAsync")
     return try {
       val idx = index.toInt()
-      val instanceNames = runBlocking { riveFile.getViewModelInstanceNames(viewModelName) }
+      val instanceNames = runBlockingAwaitingReply { riveFile.getViewModelInstanceNames(viewModelName) }
       if (idx < 0 || idx >= instanceNames.size) return null
       val instanceName = instanceNames[idx]
-      runBlocking { createInstanceByNameImpl(instanceName) }
+      runBlockingAwaitingReply { createInstanceByNameImpl(instanceName) }
     } catch (e: Exception) {
       RiveLog.e(TAG, "createInstanceByIndex($index) failed: ${e.message}")
       null
@@ -102,7 +101,7 @@ class HybridViewModel(
   override fun createInstanceByName(name: String): HybridViewModelInstanceSpec? {
     DeprecationWarning.warn("createInstanceByName", "createInstanceByNameAsync")
     return try {
-      runBlocking { createInstanceByNameImpl(name) }
+      runBlockingAwaitingReply { createInstanceByNameImpl(name) }
     } catch (e: Exception) {
       RiveLog.e(TAG, "createInstanceByName('$name') failed: ${e.message}")
       null
@@ -110,7 +109,7 @@ class HybridViewModel(
   }
 
   override fun createInstanceByNameAsync(name: String): Promise<HybridViewModelInstanceSpec?> {
-    return Promise.async { createInstanceByNameImpl(name) }
+    return promiseAwaitingReply { createInstanceByNameImpl(name) }
   }
 
   // Deprecated: Use createDefaultInstanceAsync instead
@@ -127,7 +126,7 @@ class HybridViewModel(
   }
 
   override fun createDefaultInstanceAsync(): Promise<HybridViewModelInstanceSpec?> {
-    return Promise.async {
+    return promiseAwaitingReply {
       val source = vmSource.defaultInstance()
       val vmi = ViewModelInstance.fromFile(riveFile, source)
       HybridViewModelInstance(vmi, riveWorker, parentFile, viewModelName)
@@ -148,7 +147,7 @@ class HybridViewModel(
   }
 
   override fun createBlankInstanceAsync(): Promise<HybridViewModelInstanceSpec?> {
-    return Promise.async {
+    return promiseAwaitingReply {
       val source = vmSource.blankInstance()
       val vmi = ViewModelInstance.fromFile(riveFile, source)
       HybridViewModelInstance(vmi, riveWorker, parentFile, viewModelName)

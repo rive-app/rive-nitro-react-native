@@ -5,7 +5,7 @@ import app.rive.ViewModelInstance
 import com.facebook.proguard.annotations.DoNotStrip
 import com.margelo.nitro.core.Promise
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
+import com.rive.RiveReactNativeView
 
 @Keep
 @DoNotStrip
@@ -23,7 +23,7 @@ class HybridViewModelNumberProperty(
     get() {
       DeprecationWarning.warn("NumberProperty.value", "getValueAsync")
       return try {
-        runBlocking { instance.getNumberFlow(path).first() }.toDouble()
+        runBlockingAwaitingReply { instance.getNumberFlow(path).first() }.toDouble()
       } catch (e: Exception) {
         RiveLog.e(TAG, "getValue failed for path '$path': ${e.message}")
         0.0
@@ -35,6 +35,7 @@ class HybridViewModelNumberProperty(
 
   override fun set(value: Double) {
     instance.setNumber(path, value.toFloat())
+    RiveReactNativeView.onViewModelChanged()
   }
 
   override fun setValueAsync(value: Double): Promise<Unit> {
@@ -42,12 +43,12 @@ class HybridViewModelNumberProperty(
   }
 
   override fun getValueAsync(): Promise<Double> {
-    return Promise.async { instance.getNumberFlow(path).first().toDouble() }
+    return promiseAwaitingReply { instance.getNumberFlow(path).first().toDouble() }
   }
 
   override fun addListener(onChanged: (value: Double) -> Unit): () -> Unit {
     val remover = addListenerInternal { floatValue: Float -> onChanged(floatValue.toDouble()) }
-    ensureValueListenerJob(instance.getNumberFlow(path))
+    ensureValueListenerJob(CommandQueuePolling.whileCollected(instance.getNumberFlow(path)))
     return remover
   }
 }
