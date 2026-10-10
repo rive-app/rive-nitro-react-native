@@ -1,0 +1,121 @@
+<Rive version="1" kind="fragment">
+    <!-- Probe: setting `input` to 1 moves the machine from Idle to Hit, and 0
+         moves it back; their animations key Marker's x to 77 and 10. Marker's
+         x is bound back into `output` (target to source), so `output` only
+         follows a JS write of `input` if the host advances the state machine
+         afterwards. Both states rest on a held frame, so the machine settles
+         right after each transition. -->
+    <Artboard defaultStateMachineId="0:7" viewModelId="0:40" width="200" height="200" name="Probe" id="0:2">
+        <Fill name="Background">
+            <SolidColor colorValue="FF16181D" name="Color"/>
+        </Fill>
+
+        <Shape x="10" y="100" name="Marker" id="0:20">
+            <DataBindContext sourcePathIds="0:40-0:44" propertyKey="13" direction="true"/>
+            <Rectangle width="20" height="200" originX="0" originY="0.5" name="Path"/>
+            <Fill name="Fill">
+                <SolidColor colorValue="FF5FBDB2" name="Color"/>
+            </Fill>
+        </Shape>
+
+        <LinearAnimation fps="60" duration="1" name="Idle" id="0:30">
+            <KeyedObject objectId="0:20">
+                <KeyedProperty propertyKey="13">
+                    <KeyFrameDouble value="10" frame="0" interpolationType="hold"/>
+                </KeyedProperty>
+            </KeyedObject>
+        </LinearAnimation>
+        <LinearAnimation fps="60" duration="1" name="Hit" id="0:31">
+            <KeyedObject objectId="0:20">
+                <KeyedProperty propertyKey="13">
+                    <KeyFrameDouble value="77" frame="0" interpolationType="hold"/>
+                </KeyedProperty>
+            </KeyedObject>
+        </LinearAnimation>
+
+        <StateMachine name="State Machine 1" id="0:7">
+            <StateMachineLayer name="Layer 1" id="0:8">
+                <AnyState x="200" y="-120"/>
+                <ExitState x="400" y="-120"/>
+                <EntryState x="0" y="0">
+                    <StateTransition stateToId="0:12"/>
+                </EntryState>
+                <AnimationState x="200" y="0" animationId="0:30" id="0:12">
+                    <StateTransition stateToId="0:13">
+                        <TransitionViewModelCondition opValue="equal">
+                            <TransitionPropertyViewModelComparator>
+                                <BindablePropertyNumber>
+                                    <DataBindContext sourcePathIds="0:40-0:43" propertyKey="636"/>
+                                </BindablePropertyNumber>
+                            </TransitionPropertyViewModelComparator>
+                            <TransitionValueNumberComparator value="1"/>
+                        </TransitionViewModelCondition>
+                    </StateTransition>
+                </AnimationState>
+                <AnimationState x="400" y="0" animationId="0:31" id="0:13">
+                    <StateTransition stateToId="0:12">
+                        <TransitionViewModelCondition opValue="equal">
+                            <TransitionPropertyViewModelComparator>
+                                <BindablePropertyNumber>
+                                    <DataBindContext sourcePathIds="0:40-0:43" propertyKey="636"/>
+                                </BindablePropertyNumber>
+                            </TransitionPropertyViewModelComparator>
+                            <TransitionValueNumberComparator value="0"/>
+                        </TransitionViewModelCondition>
+                    </StateTransition>
+                </AnimationState>
+            </StateMachineLayer>
+        </StateMachine>
+    </Artboard>
+
+    <ViewModel defaultInstanceId="0:41" name="Probe" id="0:40">
+        <ViewModelPropertyNumber name="input" id="0:43"/>
+        <ViewModelPropertyNumber name="output" id="0:44"/>
+        <ViewModelInstance exports="true" name="Instance" id="0:41">
+            <ViewModelInstanceNumber propertyValue="0" viewModelPropertyId="0:43"/>
+            <ViewModelInstanceNumber propertyValue="0" viewModelPropertyId="0:44"/>
+        </ViewModelInstance>
+    </ViewModel>
+    <!-- Ticker: a looping animation keys Dot's x, bound back into `phase`, so
+         `phase` changes on every advance and never settles. -->
+    <Artboard defaultStateMachineId="0:107" viewModelId="0:140" width="200" height="200" name="Ticker" id="0:102">
+        <Fill name="Background">
+            <SolidColor colorValue="FF16181D" name="Color"/>
+        </Fill>
+
+        <Shape x="20" y="100" name="Dot" id="0:120">
+            <DataBindContext sourcePathIds="0:140-0:143" propertyKey="13" direction="true"/>
+            <Ellipse width="30" height="30" originX="0.5" originY="0.5" name="Path"/>
+            <Fill name="Fill">
+                <SolidColor colorValue="FFE8B04B" name="Color"/>
+            </Fill>
+        </Shape>
+
+        <LinearAnimation loopValue="pingPong" fps="60" duration="60" name="Sweep" id="0:130">
+            <KeyedObject objectId="0:120">
+                <KeyedProperty propertyKey="13">
+                    <KeyFrameDouble value="20" frame="0" interpolationType="linear"/>
+                    <KeyFrameDouble value="180" frame="60" interpolationType="linear"/>
+                </KeyedProperty>
+            </KeyedObject>
+        </LinearAnimation>
+
+        <StateMachine name="State Machine 1" id="0:107">
+            <StateMachineLayer name="Layer 1" id="0:108">
+                <AnyState x="200" y="-120"/>
+                <ExitState x="400" y="-120"/>
+                <EntryState x="0" y="0">
+                    <StateTransition stateToId="0:112"/>
+                </EntryState>
+                <AnimationState x="200" y="0" animationId="0:130" id="0:112"/>
+            </StateMachineLayer>
+        </StateMachine>
+    </Artboard>
+
+    <ViewModel defaultInstanceId="0:141" name="Ticker" id="0:140">
+        <ViewModelPropertyNumber name="phase" id="0:143"/>
+        <ViewModelInstance exports="true" name="Instance" id="0:141">
+            <ViewModelInstanceNumber propertyValue="0" viewModelPropertyId="0:143"/>
+        </ViewModelInstance>
+    </ViewModel>
+</Rive>
