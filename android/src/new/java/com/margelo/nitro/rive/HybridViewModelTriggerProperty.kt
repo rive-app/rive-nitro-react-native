@@ -3,6 +3,7 @@ package com.margelo.nitro.rive
 import androidx.annotation.Keep
 import app.rive.ViewModelInstance
 import com.facebook.proguard.annotations.DoNotStrip
+import com.rive.RiveReactNativeView
 
 @Keep
 @DoNotStrip
@@ -14,6 +15,7 @@ class HybridViewModelTriggerProperty(
 
   override fun trigger() {
     instance.fireTrigger(path)
+    RiveReactNativeView.onViewModelChanged()
   }
 
   override fun addListener(onChanged: () -> Unit): () -> Unit {

@@ -8,6 +8,7 @@ import app.rive.core.CommandQueue
 import com.facebook.proguard.annotations.DoNotStrip
 import com.margelo.nitro.core.Promise
 import kotlinx.coroutines.runBlocking
+import com.rive.RiveReactNativeView
 
 @Keep
 @DoNotStrip
@@ -77,6 +78,7 @@ class HybridViewModelListProperty(
     DeprecationWarning.warn("ListProperty.addInstance", "addInstanceAsync")
     val hybridInstance = instance as? HybridViewModelInstance ?: return
     this.instance.appendToList(path, hybridInstance.viewModelInstance)
+    RiveReactNativeView.onViewModelChanged()
   }
 
   override fun addInstanceAt(instance: HybridViewModelInstanceSpec, index: Double): Boolean {
@@ -84,6 +86,7 @@ class HybridViewModelListProperty(
     val hybridInstance = instance as? HybridViewModelInstance ?: return false
     return try {
       this.instance.insertToListAtIndex(path, index.toInt(), hybridInstance.viewModelInstance)
+      RiveReactNativeView.onViewModelChanged()
       true
     } catch (e: Exception) {
       Log.e(TAG, "addInstanceAt failed", e)
@@ -95,17 +98,20 @@ class HybridViewModelListProperty(
     DeprecationWarning.warn("ListProperty.removeInstance", "removeInstanceAsync")
     val hybridInstance = instance as? HybridViewModelInstance ?: return
     this.instance.removeFromList(path, hybridInstance.viewModelInstance)
+    RiveReactNativeView.onViewModelChanged()
   }
 
   override fun removeInstanceAt(index: Double) {
     DeprecationWarning.warn("ListProperty.removeInstanceAt", "removeInstanceAtAsync")
     this.instance.removeFromListAtIndex(path, index.toInt())
+    RiveReactNativeView.onViewModelChanged()
   }
 
   override fun swap(index1: Double, index2: Double): Boolean {
     DeprecationWarning.warn("ListProperty.swap", "swapAsync")
     return try {
       this.instance.swapListItems(path, index1.toInt(), index2.toInt())
+      RiveReactNativeView.onViewModelChanged()
       true
     } catch (e: Exception) {
       Log.e(TAG, "swap failed", e)
@@ -118,6 +124,7 @@ class HybridViewModelListProperty(
       ?: return Promise.rejected(RuntimeException("Expected HybridViewModelInstance"))
     return Promise.async {
       this.instance.appendToList(path, hybridInstance.viewModelInstance)
+      RiveReactNativeView.onViewModelChanged()
     }
   }
 
@@ -127,6 +134,7 @@ class HybridViewModelListProperty(
     return Promise.async {
       requireIndexInBounds(index.toInt(), allowEnd = true)
       this.instance.insertToListAtIndex(path, index.toInt(), hybridInstance.viewModelInstance)
+      RiveReactNativeView.onViewModelChanged()
     }
   }
 
@@ -135,6 +143,7 @@ class HybridViewModelListProperty(
       ?: return Promise.rejected(RuntimeException("Expected HybridViewModelInstance"))
     return Promise.async {
       this.instance.removeFromList(path, hybridInstance.viewModelInstance)
+      RiveReactNativeView.onViewModelChanged()
     }
   }
 
@@ -142,6 +151,7 @@ class HybridViewModelListProperty(
     return Promise.async {
       requireIndexInBounds(index.toInt())
       this.instance.removeFromListAtIndex(path, index.toInt())
+      RiveReactNativeView.onViewModelChanged()
     }
   }
 
@@ -150,6 +160,7 @@ class HybridViewModelListProperty(
       requireIndexInBounds(index1.toInt())
       requireIndexInBounds(index2.toInt())
       this.instance.swapListItems(path, index1.toInt(), index2.toInt())
+      RiveReactNativeView.onViewModelChanged()
     }
   }
 
