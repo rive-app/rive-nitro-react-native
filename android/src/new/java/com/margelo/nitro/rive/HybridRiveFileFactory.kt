@@ -1,10 +1,7 @@
 package com.margelo.nitro.rive
 
 import android.annotation.SuppressLint
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
-import android.view.Choreographer
 import androidx.annotation.Keep
 import app.rive.RiveFile
 import app.rive.RiveFileSource
@@ -80,7 +77,6 @@ class HybridRiveFileFactory : HybridRiveFileFactorySpec() {
 
     @Volatile
     private var sharedWorker: CommandQueue? = null
-    private var pollingStarted = false
 
     @Synchronized
     fun getSharedWorker(): CommandQueue {
@@ -91,30 +87,7 @@ class HybridRiveFileFactory : HybridRiveFileFactorySpec() {
       return sharedWorker ?: RiveWorkerConfig.createWorker().also {
         sharedWorker = it
         Log.d(TAG, "Created CommandQueue (${RiveWorkerConfig.current}), refCount=${it.refCount}")
-        startPolling(it)
-      }
-    }
-
-    /**
-     * The experimental Rive SDK's CommandQueue needs to be polled every frame
-     * to process responses from the C++ command server. Without polling,
-     * all suspend functions (like RiveFile.fromSource) hang indefinitely.
-     */
-    private fun startPolling(worker: CommandQueue) {
-      if (pollingStarted) return
-      pollingStarted = true
-      Handler(Looper.getMainLooper()).post {
-        val callback = object : Choreographer.FrameCallback {
-          override fun doFrame(frameTimeNanos: Long) {
-            try {
-              worker.pollMessages()
-            } catch (e: Exception) {
-              Log.e(TAG, "pollMessages error", e)
-            }
-            Choreographer.getInstance().postFrameCallback(this)
-          }
-        }
-        Choreographer.getInstance().postFrameCallback(callback)
+        CommandQueuePolling.start(it)
       }
     }
   }
@@ -140,7 +113,7 @@ class HybridRiveFileFactory : HybridRiveFileFactorySpec() {
   }
 
   override fun fromURL(url: String, loadCdn: Boolean, referencedAssets: ReferencedAssetsType?): Promise<HybridRiveFileSpec> {
-    return Promise.async {
+    return promiseAwaitingReply {
       val data = withContext(Dispatchers.IO) {
         HTTPDataLoader.downloadBytes(url)
       }
@@ -153,7 +126,7 @@ class HybridRiveFileFactory : HybridRiveFileFactorySpec() {
       throw IllegalArgumentException("fromFileURL: URL must be a file URL: $fileURL")
     }
 
-    return Promise.async {
+    return promiseAwaitingReply {
       val uri = java.net.URI(fileURL)
       val path = uri.path ?: throw IllegalArgumentException("fromFileURL: Invalid URL: $fileURL")
       val data = withContext(Dispatchers.IO) {
@@ -165,7 +138,7 @@ class HybridRiveFileFactory : HybridRiveFileFactorySpec() {
 
   @SuppressLint("DiscouragedApi")
   override fun fromResource(resource: String, loadCdn: Boolean, referencedAssets: ReferencedAssetsType?): Promise<HybridRiveFileSpec> {
-    return Promise.async {
+    return promiseAwaitingReply {
       val data = withContext(Dispatchers.IO) {
         ResourceDataLoader.loadBytes(resource)
       }
@@ -175,7 +148,7 @@ class HybridRiveFileFactory : HybridRiveFileFactorySpec() {
 
   override fun fromBytes(bytes: ArrayBuffer, loadCdn: Boolean, referencedAssets: ReferencedAssetsType?): Promise<HybridRiveFileSpec> {
     val buffer = bytes.getBuffer(false)
-    return Promise.async {
+    return promiseAwaitingReply {
       val byteArray = ByteArray(buffer.remaining())
       buffer.get(byteArray)
       buildRiveFile(byteArray, referencedAssets)

@@ -5,7 +5,7 @@ import app.rive.ViewModelInstance
 import com.facebook.proguard.annotations.DoNotStrip
 import com.margelo.nitro.core.Promise
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
+import com.rive.RiveReactNativeView
 
 @Keep
 @DoNotStrip
@@ -23,7 +23,7 @@ class HybridViewModelStringProperty(
     get() {
       DeprecationWarning.warn("StringProperty.value", "getValueAsync")
       return try {
-        runBlocking { instance.getStringFlow(path).first() }
+        runBlockingAwaitingReply { instance.getStringFlow(path).first() }
       } catch (e: Exception) {
         RiveLog.e(TAG, "getValue failed for path '$path': ${e.message}")
         ""
@@ -35,6 +35,7 @@ class HybridViewModelStringProperty(
 
   override fun set(value: String) {
     instance.setString(path, value)
+    RiveReactNativeView.onViewModelChanged()
   }
 
   override fun setValueAsync(value: String): Promise<Unit> {
@@ -42,12 +43,12 @@ class HybridViewModelStringProperty(
   }
 
   override fun getValueAsync(): Promise<String> {
-    return Promise.async { instance.getStringFlow(path).first() }
+    return promiseAwaitingReply { instance.getStringFlow(path).first() }
   }
 
   override fun addListener(onChanged: (value: String) -> Unit): () -> Unit {
     val remover = addListenerInternal(onChanged)
-    ensureValueListenerJob(instance.getStringFlow(path))
+    ensureValueListenerJob(CommandQueuePolling.whileCollected(instance.getStringFlow(path)))
     return remover
   }
 }

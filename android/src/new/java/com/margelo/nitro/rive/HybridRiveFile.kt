@@ -8,7 +8,6 @@ import app.rive.core.CommandQueue
 import com.facebook.proguard.annotations.DoNotStrip
 import com.margelo.nitro.core.Promise
 import java.lang.ref.WeakReference
-import kotlinx.coroutines.runBlocking
 
 @Keep
 @DoNotStrip
@@ -29,7 +28,7 @@ class HybridRiveFile(
       DeprecationWarning.warn("viewModelCount", "getViewModelNamesAsync")
       val file = riveFile ?: return null
       return try {
-        runBlocking { file.getViewModelNames() }.size.toDouble()
+        runBlockingAwaitingReply { file.getViewModelNames() }.size.toDouble()
       } catch (e: Exception) {
         RiveLog.e(TAG, "viewModelCount failed: ${e.message}")
         null
@@ -38,7 +37,7 @@ class HybridRiveFile(
 
   override fun getViewModelNamesAsync(): Promise<Array<String>> {
     val file = riveFile ?: return Promise.resolved(emptyArray())
-    return Promise.async {
+    return promiseAwaitingReply {
       file.getViewModelNames().toTypedArray()
     }
   }
@@ -48,7 +47,7 @@ class HybridRiveFile(
     DeprecationWarning.warn("viewModelByIndex", "getViewModelNamesAsync + viewModelByNameAsync")
     val file = riveFile ?: return null
     return try {
-      val names = runBlocking { file.getViewModelNames() }
+      val names = runBlockingAwaitingReply { file.getViewModelNames() }
       val idx = index.toInt()
       if (idx < 0 || idx >= names.size) return null
       HybridViewModel(file, riveWorker, names[idx], this, ViewModelSource.Named(names[idx]))
@@ -71,7 +70,7 @@ class HybridRiveFile(
   override fun viewModelByName(name: String): HybridViewModelSpec? {
     DeprecationWarning.warn("viewModelByName", "viewModelByNameAsync")
     return try {
-      runBlocking { viewModelByNameImpl(name, validate = true) }
+      runBlockingAwaitingReply { viewModelByNameImpl(name, validate = true) }
     } catch (e: Exception) {
       RiveLog.e(TAG, "viewModelByName('$name') failed: ${e.message}")
       null
@@ -80,7 +79,7 @@ class HybridRiveFile(
 
   override fun viewModelByNameAsync(name: String, validate: Boolean?): Promise<HybridViewModelSpec?> {
     val shouldValidate = validate ?: true
-    return Promise.async { viewModelByNameImpl(name, validate = shouldValidate) }
+    return promiseAwaitingReply { viewModelByNameImpl(name, validate = shouldValidate) }
   }
 
   private suspend fun defaultArtboardViewModelImpl(artboardBy: ArtboardBy?): HybridViewModelSpec? {
@@ -123,7 +122,7 @@ class HybridRiveFile(
   override fun defaultArtboardViewModel(artboardBy: ArtboardBy?): HybridViewModelSpec? {
     DeprecationWarning.warn("defaultArtboardViewModel", "defaultArtboardViewModelAsync")
     return try {
-      runBlocking { defaultArtboardViewModelImpl(artboardBy) }
+      runBlockingAwaitingReply { defaultArtboardViewModelImpl(artboardBy) }
     } catch (e: Exception) {
       RiveLog.e(TAG, "defaultArtboardViewModel failed: ${e.message}")
       null
@@ -131,7 +130,7 @@ class HybridRiveFile(
   }
 
   override fun defaultArtboardViewModelAsync(artboardBy: ArtboardBy?): Promise<HybridViewModelSpec?> {
-    return Promise.async { defaultArtboardViewModelImpl(artboardBy) }
+    return promiseAwaitingReply { defaultArtboardViewModelImpl(artboardBy) }
   }
 
   // Deprecated: Use getArtboardCountAsync instead
@@ -140,7 +139,7 @@ class HybridRiveFile(
       DeprecationWarning.warn("artboardCount", "getArtboardCountAsync")
       val file = riveFile ?: return 0.0
       return try {
-        runBlocking { file.getArtboardNames() }.size.toDouble()
+        runBlockingAwaitingReply { file.getArtboardNames() }.size.toDouble()
       } catch (e: Exception) {
         RiveLog.e(TAG, "artboardCount failed: ${e.message}")
         0.0
@@ -149,7 +148,7 @@ class HybridRiveFile(
 
   override fun getArtboardCountAsync(): Promise<Double> {
     val file = riveFile ?: return Promise.resolved(0.0)
-    return Promise.async {
+    return promiseAwaitingReply {
       file.getArtboardNames().size.toDouble()
     }
   }
@@ -160,7 +159,7 @@ class HybridRiveFile(
       DeprecationWarning.warn("artboardNames", "getArtboardNamesAsync")
       val file = riveFile ?: return emptyArray()
       return try {
-        runBlocking { file.getArtboardNames() }.toTypedArray()
+        runBlockingAwaitingReply { file.getArtboardNames() }.toTypedArray()
       } catch (e: Exception) {
         RiveLog.e(TAG, "artboardNames failed: ${e.message}")
         emptyArray()
@@ -169,7 +168,7 @@ class HybridRiveFile(
 
   override fun getArtboardNamesAsync(): Promise<Array<String>> {
     val file = riveFile ?: return Promise.resolved(emptyArray())
-    return Promise.async {
+    return promiseAwaitingReply {
       file.getArtboardNames().toTypedArray()
     }
   }
@@ -180,7 +179,7 @@ class HybridRiveFile(
 
   override fun getEnums(): Promise<Array<RiveEnumDefinition>> {
     val file = riveFile ?: return Promise.resolved(emptyArray())
-    return Promise.async {
+    return promiseAwaitingReply {
       val enums = file.getEnums()
       enums
         .map { enum ->

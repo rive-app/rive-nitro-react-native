@@ -1,0 +1,6 @@
+# Test fixture authored in RML. Rebuild with `yarn build:settle-probe`
+# (needs the Rive CLI: https://rive.app/docs/cli/getting-started).
+name: settle_probe
+logs:
+  file: build/rive.log
+  problems: build/problems.log

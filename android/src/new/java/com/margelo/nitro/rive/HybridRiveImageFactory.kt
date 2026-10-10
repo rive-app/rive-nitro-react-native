@@ -10,7 +10,7 @@ import com.margelo.nitro.core.Promise
 class HybridRiveImageFactory : HybridRiveImageFactorySpec() {
 
   private fun loadFromDataSource(source: DataSource): Promise<HybridRiveImageSpec> {
-    return Promise.async {
+    return promiseAwaitingReply {
       val loader = source.createLoader()
       val data = loader.load(source)
       HybridRiveImage(data)
