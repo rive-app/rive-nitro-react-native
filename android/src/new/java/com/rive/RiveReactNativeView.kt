@@ -58,11 +58,6 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
   companion object {
     private const val TAG = "RiveReactNativeView"
 
-    // Half of a 120Hz vsync: lets a cap land on the nearest vsync multiple
-    // (e.g. every 4th frame at 120Hz for a 30fps cap) instead of drifting past
-    // it and halving the effective rate.
-    private const val CAP_TOLERANCE_NS = 4_000_000L
-
     // Main thread only.
     private val liveViews = mutableSetOf<RiveReactNativeView>()
 
@@ -78,8 +73,11 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
   var frameRate: Double? = null
     set(value) {
       field = value
+      framePacer = RiveFramePacer(value)
       updateFrameRateHint()
     }
+
+  private var framePacer = RiveFramePacer(null)
 
   var onError: ((String) -> Unit)? = null
 
@@ -184,16 +182,11 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
     override fun doFrame(frameTimeNanos: Long) {
       frameScheduled = false
       if (disposed || !canRender() || !hasWork()) {
-        lastFrameTimeNs = 0L
+        resetTimebase()
         return
       }
 
-      val capPeriodNs = frameRate
-        ?.takeIf { it > 0 }
-        ?.let { (1_000_000_000.0 / it).toLong() }
-      if (capPeriodNs != null && lastFrameTimeNs != 0L &&
-        frameTimeNanos - lastFrameTimeNs < capPeriodNs - CAP_TOLERANCE_NS
-      ) {
+      if (!framePacer.tryScheduleFrame(frameTimeNanos)) {
         // Skip without touching lastFrameTimeNs: the eventual advance must
         // cover the full elapsed time so capped playback keeps wall-clock speed.
         requestFrame()
@@ -205,7 +198,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
       val sm = stateMachineHandle
       val rs = riveSurface
       if (worker == null || art == null || sm == null || rs == null) {
-        lastFrameTimeNs = 0L
+        resetTimebase()
         return
       }
 
@@ -234,7 +227,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
       if (hasWork()) {
         requestFrame()
       } else {
-        lastFrameTimeNs = 0L
+        resetTimebase()
       }
     }
   }
@@ -250,7 +243,13 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
   private fun postFrame() {
     if (disposed || frameScheduled || !canRender() || !hasWork()) return
     frameScheduled = true
-    Choreographer.getInstance().postFrameCallback(renderCallback)
+    val delayMs = framePacer.delayBeforeNextFrameNs(System.nanoTime()) / 1_000_000
+    Choreographer.getInstance().postFrameCallbackDelayed(renderCallback, delayMs)
+  }
+
+  private fun resetTimebase() {
+    lastFrameTimeNs = 0L
+    framePacer.reset()
   }
 
   private fun cancelFrame() {
@@ -258,7 +257,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
       Choreographer.getInstance().removeFrameCallback(renderCallback)
       frameScheduled = false
     }
-    lastFrameTimeNs = 0L
+    resetTimebase()
   }
 
   private fun onVisibilityMaybeChanged() {
