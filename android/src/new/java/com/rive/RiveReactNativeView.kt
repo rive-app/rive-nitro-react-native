@@ -151,9 +151,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
         this@RiveReactNativeView.surfaceWidth = w
         this@RiveReactNativeView.surfaceHeight = h
         this@RiveReactNativeView.needsRedraw = true
-        // Since 11.7.x the render target keeps its creation-time size and
-        // RiveSurface.resize() is internal to the SDK, so only the artboard
-        // is resized here (same behavior as before the 11.7.2 bump).
+        this@RiveReactNativeView.riveSurface?.let { RiveSurfaceResize.resize(it, w, h) }
         resizeArtboardIfLayout()
       }
 
@@ -331,6 +329,10 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
       val rs = riveSurface ?: return
       val art = artboard ?: return
       art.resizeArtboard(rs, fit.scaleFactor)
+      // The resize applies on the next advance, which the render loop skips once settled or paused.
+      val worker = riveWorker ?: return
+      val sm = stateMachineHandle ?: return
+      worker.advanceStateMachine(sm, Duration.ZERO)
     }
   }
 
