@@ -99,10 +99,16 @@ export function useRiveList(
     });
   }, []);
 
-  const getInstanceAt = useCallback((index: number) => {
-    const list = liveRef.current;
-    return list ? list.getInstanceAtAsync(index) : Promise.resolve(undefined);
-  }, []);
+  // The operations read liveRef rather than `property`, but keep `property` in
+  // deps so their identity changes with the list and consumers' effects re-run.
+  const getInstanceAt = useCallback(
+    (index: number) => {
+      const list = liveRef.current;
+      return list ? list.getInstanceAtAsync(index) : Promise.resolve(undefined);
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [property]
+  );
 
   const addInstance = useCallback(
     (instance: ViewModelInstance) => {
@@ -111,7 +117,8 @@ export function useRiveList(
         ? afterMutation(list.addInstanceAsync(instance))
         : Promise.resolve();
     },
-    [afterMutation]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [property, afterMutation]
   );
 
   const addInstanceAt = useCallback(
@@ -121,7 +128,8 @@ export function useRiveList(
         ? afterMutation(list.addInstanceAtAsync(instance, index))
         : Promise.resolve();
     },
-    [afterMutation]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [property, afterMutation]
   );
 
   const removeInstance = useCallback(
@@ -131,7 +139,8 @@ export function useRiveList(
         ? afterMutation(list.removeInstanceAsync(instance))
         : Promise.resolve();
     },
-    [afterMutation]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [property, afterMutation]
   );
 
   const removeInstanceAt = useCallback(
@@ -141,7 +150,8 @@ export function useRiveList(
         ? afterMutation(list.removeInstanceAtAsync(index))
         : Promise.resolve();
     },
-    [afterMutation]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [property, afterMutation]
   );
 
   const swap = useCallback(
@@ -151,7 +161,8 @@ export function useRiveList(
         ? afterMutation(list.swapAsync(index1, index2))
         : Promise.resolve();
     },
-    [afterMutation]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [property, afterMutation]
   );
 
   return {

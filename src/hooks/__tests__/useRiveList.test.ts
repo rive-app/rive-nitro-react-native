@@ -53,10 +53,10 @@ describe('useRiveList', () => {
 
   it('does not call into the list property after it is disposed on unmount', async () => {
     const property = createMockListProperty();
-    const { unmount } = renderHook(() =>
-      useRiveList('team', createMockViewModelInstance(property))
-    );
+    const instance = createMockViewModelInstance(property);
+    const { unmount } = renderHook(() => useRiveList('team', instance));
     await act(async () => {});
+    expect(property.dispose).not.toHaveBeenCalled();
     unmount();
 
     expect(property.dispose).toHaveBeenCalled();
@@ -83,11 +83,11 @@ describe('useRiveList', () => {
 
   it('turns operations called after unmount into no-ops', async () => {
     const property = createMockListProperty();
-    const { result, unmount } = renderHook(() =>
-      useRiveList('team', createMockViewModelInstance(property))
-    );
+    const instance = createMockViewModelInstance(property);
+    const { result, unmount } = renderHook(() => useRiveList('team', instance));
     await act(async () => {});
     const { getInstanceAt, addInstance, swap } = result.current;
+    expect(property.dispose).not.toHaveBeenCalled();
     unmount();
 
     await expect(getInstanceAt(0)).resolves.toBeUndefined();
@@ -95,5 +95,27 @@ describe('useRiveList', () => {
     await swap(0, 1);
 
     expect(property.callsAfterDispose).toEqual([]);
+  });
+
+  it('changes operation identity when the list property changes', async () => {
+    const { result, rerender, unmount } = renderHook(
+      ({ instance }: { instance: ViewModelInstance }) =>
+        useRiveList('team', instance),
+      {
+        initialProps: {
+          instance: createMockViewModelInstance(createMockListProperty()),
+        },
+      }
+    );
+    await act(async () => {});
+    const { getInstanceAt, swap } = result.current;
+    rerender({
+      instance: createMockViewModelInstance(createMockListProperty()),
+    });
+    await act(async () => {});
+
+    expect(result.current.getInstanceAt).not.toBe(getInstanceAt);
+    expect(result.current.swap).not.toBe(swap);
+    unmount();
   });
 });
