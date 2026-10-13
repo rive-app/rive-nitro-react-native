@@ -65,6 +65,13 @@ export default function Issue414ScriptBinding() {
     onInit,
   });
   const [generation, setGeneration] = useState(0);
+  const remount = useCallback(() => {
+    // The instance is reused, so clear the script's outputs; otherwise a
+    // remount that binds the wrong instance would still show the old PASS.
+    instance?.numberProperty('isReady')?.set(0);
+    instance?.numberProperty('observedSeed')?.set(0);
+    setGeneration((g) => g + 1);
+  }, [instance]);
 
   return (
     <View style={styles.container}>
@@ -74,10 +81,7 @@ export default function Issue414ScriptBinding() {
       ) : (
         <Text>Loading…</Text>
       )}
-      <Pressable
-        style={styles.button}
-        onPress={() => setGeneration((g) => g + 1)}
-      >
+      <Pressable style={styles.button} onPress={remount}>
         <Text style={styles.buttonText}>Remount</Text>
       </Pressable>
     </View>
