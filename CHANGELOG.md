@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.5.5](https://github.com/rive-app/rive-nitro-react-native/compare/v0.5.4...v0.5.5) (2026-10-13)
+
+
+### Bug Fixes
+
+* don't call into a disposed list property when useRiveList unmounts ([#408](https://github.com/rive-app/rive-nitro-react-native/issues/408)) ([bfa7aab](https://github.com/rive-app/rive-nitro-react-native/commit/bfa7aab544ece7ad9a78a5e6d5e15edd292d3e61)), closes [#407](https://github.com/rive-app/rive-nitro-react-native/issues/407)
+* **ios:** bind the view model at state machine creation, including DataBindMode.Auto ([#420](https://github.com/rive-app/rive-nitro-react-native/issues/420)) ([d606620](https://github.com/rive-app/rive-nitro-react-native/commit/d6066204aa9ace89ff67b5256a5969c0f9f15e83))
+* **ios:** bind the view model instance when creating the state machine ([#415](https://github.com/rive-app/rive-nitro-react-native/issues/415)) ([d49a09a](https://github.com/rive-app/rive-nitro-react-native/commit/d49a09a8199057326c7b9861ca3975851573149e)), closes [#414](https://github.com/rive-app/rive-nitro-react-native/issues/414)
+* **ios:** bump rive-ios to 6.28.1 ([#422](https://github.com/rive-app/rive-nitro-react-native/issues/422)) ([628e5d5](https://github.com/rive-app/rive-nitro-react-native/commit/628e5d5299b159a513dc48f90cae0bf9f131be22))
+
 ## [0.5.4](https://github.com/rive-app/rive-nitro-react-native/compare/v0.5.3...v0.5.4) (2026-10-07)
 
 
