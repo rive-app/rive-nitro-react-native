@@ -1,11 +1,12 @@
 package com.margelo.nitro.rive
 
 import android.annotation.SuppressLint
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
-import android.view.Choreographer
 import androidx.annotation.Keep
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LifecycleRegistry
+import androidx.lifecycle.ProcessLifecycleOwner
 import app.rive.RiveFile
 import app.rive.RiveFileSource
 import app.rive.core.CommandQueue
@@ -13,7 +14,10 @@ import com.facebook.proguard.annotations.DoNotStrip
 import com.margelo.nitro.core.ArrayBuffer
 import com.margelo.nitro.core.Promise
 import com.rive.RiveWorkerConfig
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 /**
@@ -99,24 +103,37 @@ class HybridRiveFileFactory : HybridRiveFileFactorySpec() {
      * The experimental Rive SDK's CommandQueue needs to be polled every frame
      * to process responses from the C++ command server. Without polling,
      * all suspend functions (like RiveFile.fromSource) hang indefinitely.
+     * Polls only while the app is resumed, like rive-android's own hosts, so a
+     * backgrounded app gets no frame callbacks (issue #413).
      */
     private fun startPolling(worker: CommandQueue) {
       if (pollingStarted) return
       pollingStarted = true
-      Handler(Looper.getMainLooper()).post {
-        val callback = object : Choreographer.FrameCallback {
-          override fun doFrame(frameTimeNanos: Long) {
-            try {
-              worker.pollMessages()
-            } catch (e: Exception) {
-              Log.e(TAG, "pollMessages error", e)
-            }
-            Choreographer.getInstance().postFrameCallback(this)
+      CoroutineScope(Dispatchers.Main).launch {
+        val processLifecycle = ProcessLifecycleOwner.get().lifecycle
+        // INITIALIZED means the app disabled ProcessLifecycleOwner's
+        // initializer, so it would never report RESUMED.
+        val lifecycle = if (processLifecycle.currentState == Lifecycle.State.INITIALIZED) {
+          AlwaysResumed.lifecycle
+        } else {
+          processLifecycle
+        }
+        while (true) {
+          try {
+            worker.beginPolling(lifecycle)
+            return@launch
+          } catch (e: CancellationException) {
+            throw e
+          } catch (e: Exception) {
+            Log.e(TAG, "pollMessages error", e)
           }
         }
-        Choreographer.getInstance().postFrameCallback(callback)
       }
     }
+  }
+
+  private object AlwaysResumed : LifecycleOwner {
+    override val lifecycle = LifecycleRegistry(this).apply { currentState = Lifecycle.State.RESUMED }
   }
 
   private suspend fun buildRiveFile(
