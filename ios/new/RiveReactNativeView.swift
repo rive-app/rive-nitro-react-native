@@ -25,6 +25,9 @@ class RiveReactNativeView: UIView {
   private var riveUIView: RiveUIView?
   private var riveInstance: RiveRuntime.Rive?
   private var pendingBindInstance: ViewModelInstance?
+  // The runtime can't hand back what a state machine has bound, so we keep it.
+  private var boundInstance: ViewModelInstance?
+  private var bindTask: Task<Void, Never>?
   private var viewReadyContinuations: [CheckedContinuation<Bool, Never>] = []
   private var isViewReady = false
   private var configTask: Task<Void, Never>?
@@ -70,10 +73,10 @@ class RiveReactNativeView: UIView {
     // A dataBind-only change with a live instance re-binds the running state
     // machine instead of rebuilding artboard + state machine, which would
     // visually restart the animation. Only the .instance case can bind
-    // without async resolution; the other modes fall through to the rebuild.
+    // without resolving an instance first; the other modes fall through to the rebuild.
     if !reload, !initialUpdate, dataBindingChanged,
        let rive = riveInstance, case .instance(let vmi) = config.bindData {
-      rive.stateMachine.bindViewModelInstance(vmi)
+      bind(vmi, to: rive)
       rive.fit = config.fit
       return
     }
@@ -112,7 +115,6 @@ class RiveReactNativeView: UIView {
           }
 
           let stateMachine = try await artboard.createStateMachine(config.stateMachineName, binding: bindingInstance)
-          let dataBind: RiveRuntime.DataBind = bindingInstance.map { .instance($0) } ?? .none
 
           guard !Task.isCancelled else { return }
 
@@ -120,16 +122,16 @@ class RiveReactNativeView: UIView {
             file: config.file,
             artboard: artboard,
             stateMachine: stateMachine,
-            dataBind: dataBind,
             fit: config.fit
           )
 
           guard !Task.isCancelled else { return }
 
           self.riveInstance = rive
+          self.boundInstance = bindingInstance
           if let pending = self.pendingBindInstance {
             self.pendingBindInstance = nil
-            rive.stateMachine.bindViewModelInstance(pending)
+            self.bind(pending, to: rive)
           }
           self.setupRiveUIView(with: rive)
 
@@ -152,7 +154,7 @@ class RiveReactNativeView: UIView {
 
   func bindViewModelInstance(viewModelInstance: ViewModelInstance) {
     if let rive = riveInstance {
-      rive.stateMachine.bindViewModelInstance(viewModelInstance)
+      bind(viewModelInstance, to: rive)
     } else {
       // configTask hasn't finished yet — queue it to apply once riveInstance is set
       pendingBindInstance = viewModelInstance
@@ -160,7 +162,7 @@ class RiveReactNativeView: UIView {
   }
 
   func getViewModelInstance() -> ViewModelInstance? {
-    return riveInstance?.viewModelInstance
+    return boundInstance
   }
 
   func play() {
@@ -215,6 +217,22 @@ class RiveReactNativeView: UIView {
 
   // MARK: - Internal
 
+  /// boundInstance is updated right away so getViewModelInstance() reflects the
+  /// request; the task drops the bind if a newer bind or a reconfigure superseded it.
+  private func bind(_ instance: ViewModelInstance, to rive: RiveRuntime.Rive) {
+    boundInstance = instance
+    bindTask?.cancel()
+    bindTask = Task { [weak self] in
+      guard let self, self.riveInstance === rive, self.boundInstance === instance else { return }
+      do {
+        try await rive.stateMachine.bindViewModelInstances(main: instance)
+      } catch {
+        guard !Task.isCancelled else { return }
+        RiveLog.e("RiveReactNativeView", "Failed to bind view model instance: \(error.localizedDescription)")
+      }
+    }
+  }
+
   private func setupRiveUIView(with rive: RiveRuntime.Rive) {
     if let existing = riveUIView {
       // Reuse the existing view — avoids tearing down the MTKView on every
@@ -244,9 +262,12 @@ class RiveReactNativeView: UIView {
     dispatchPrecondition(condition: .onQueue(.main))
     configTask?.cancel()
     configTask = nil
+    bindTask?.cancel()
+    bindTask = nil
     riveUIView?.removeFromSuperview()
     riveUIView = nil
     riveInstance = nil
+    boundInstance = nil
     pendingBindInstance = nil
   }
 
@@ -284,13 +305,16 @@ class RiveReactNativeView: UIView {
     // main thread (JS/GC thread); cleanup() must run on main. Capture the
     // resources, not self.
     let task = configTask
+    let bindTask = bindTask
     let uiView = riveUIView
     if Thread.isMainThread {
       task?.cancel()
+      bindTask?.cancel()
       uiView?.removeFromSuperview()
     } else {
       DispatchQueue.main.async {
         task?.cancel()
+        bindTask?.cancel()
         uiView?.removeFromSuperview()
       }
     }
