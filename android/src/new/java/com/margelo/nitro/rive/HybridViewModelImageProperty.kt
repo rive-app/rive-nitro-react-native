@@ -22,15 +22,21 @@ class HybridViewModelImageProperty(
     private const val TAG = "HybridViewModelImageProperty"
   }
 
-  private val imageScope = CoroutineScope(Dispatchers.Default)
+  // Single-threaded so sets (including clears) apply in call order.
+  private val imageScope = CoroutineScope(Dispatchers.Default.limitedParallelism(1))
 
   override fun set(image: HybridRiveImageSpec?) {
-    val hybridImage = image as? HybridRiveImage ?: return
+    val hybridImage = image as? HybridRiveImage
     imageScope.launch {
       try {
+        if (hybridImage == null) {
+          instance.setImage(path, null)
+          return@launch
+        }
         val result = ImageAsset.fromBytes(riveWorker, hybridImage.rawData)
         if (result is app.rive.Result.Success) {
-          instance.setImage(path, result.value)
+          // The property keeps its own ref, so close ours right away.
+          result.value.use { instance.setImage(path, it) }
         } else {
           Log.e(TAG, "Failed to decode image for path '$path'")
         }
