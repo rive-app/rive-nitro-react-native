@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'react-native-harness';
+import { Platform } from 'react-native';
 import { RiveFileFactory, RiveImages } from '@rive-app/react-native';
 
 const DATABINDING_IMAGES = require('../assets/rive/databinding_images.riv');
@@ -26,11 +27,15 @@ describe('ViewModelImageProperty', () => {
     const prop = instance?.imageProperty('bound_image');
     expect(prop).toBeDefined();
 
+    // The new iOS runtime can't clear image properties yet (#360)
+    const canClear =
+      Platform.OS !== 'ios' || RiveFileFactory.getBackend() !== 'experimental';
+
     const image = await RiveImages.loadFromBytesAsync(pngBytes());
     for (let i = 0; i < 10; i++) prop!.set(image);
-    prop!.set(undefined);
+    if (canClear) prop!.set(undefined);
     prop!.set(image);
-    prop!.set(undefined);
+    if (canClear) prop!.set(undefined);
 
     prop!.dispose();
     instance!.dispose();
