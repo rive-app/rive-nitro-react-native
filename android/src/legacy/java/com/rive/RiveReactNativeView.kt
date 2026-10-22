@@ -9,6 +9,7 @@ import app.rive.runtime.kotlin.RiveAnimationView
 import app.rive.runtime.kotlin.RiveViewLifecycleObserver
 import app.rive.runtime.kotlin.controllers.RiveFileController
 import app.rive.runtime.kotlin.core.RefCount
+import com.facebook.react.bridge.UiThreadUtil
 import com.facebook.react.uimanager.ThemedReactContext
 import app.rive.runtime.kotlin.core.Alignment
 import app.rive.runtime.kotlin.core.File
@@ -97,6 +98,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
   private var _activeStateMachineName: String? = null
   private var configuredStateMachineName: String? = null
   private var willDispose = false
+  private var released = false
 
   init {
     riveAnimationView = ReactNativeRiveAnimationView(context)
@@ -105,17 +107,26 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
 
   fun dispose() {
     willDispose = true
+    // Fabric can detach the view before dispose() arrives; onDetachedFromWindow
+    // won't run again then, and the controller would pin its File forever.
+    UiThreadUtil.runOnUiThread {
+      if (!isAttachedToWindow) releaseResources()
+    }
   }
 
   override fun onDetachedFromWindow() {
-    if (willDispose) {
-      riveAnimationView?.dispose()
-      removeEventListeners()
-      // Post-dispose reads must resolve null, not the retained (released)
-      // instance; also stops pinning it for the view's remaining lifetime.
-      lastKnownViewModelInstance = null
-    }
+    if (willDispose) releaseResources()
     super.onDetachedFromWindow()
+  }
+
+  private fun releaseResources() {
+    if (released) return
+    released = true
+    riveAnimationView?.dispose()
+    removeEventListeners()
+    // Post-dispose reads must resolve null, not the retained (released)
+    // instance; also stops pinning it for the view's remaining lifetime.
+    lastKnownViewModelInstance = null
   }
 
   //region Public Methods (API)

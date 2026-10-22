@@ -15,16 +15,17 @@ class ReferencedAssetLoader {
   }
 
   private fun processAssetBytes(bytes: ByteArray, asset: FileAsset) {
-    when (asset) {
-      is ImageAsset -> asset.image = RiveRenderImage.fromEncoded(bytes)
-      is FontAsset -> asset.font = RiveFont.make(bytes)
-      is AudioAsset -> asset.audio = RiveAudio.make(bytes)
+    // decode() hands the asset the only ref; assigning a RiveRenderImage /
+    // RiveFont / RiveAudio here would leak the wrapper's own ref.
+    if (!asset.decode(bytes)) {
+      logError("Failed to decode asset: ${asset.name}")
     }
   }
 
   private fun handlePreloadedImage(image: HybridRiveImageSpec, asset: FileAsset) {
-    if (asset is ImageAsset && image is HybridRiveImage) {
-      asset.image = image.renderImage
+    val renderImage = (image as? HybridRiveImage)?.renderImage ?: return
+    if (asset is ImageAsset) {
+      asset.image = renderImage
     }
   }
 
