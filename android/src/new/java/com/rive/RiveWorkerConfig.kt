@@ -4,7 +4,6 @@ import android.util.Log
 import app.rive.RenderBackend
 import app.rive.core.CommandQueue
 import com.margelo.nitro.rive.AndroidRenderBackend
-import com.margelo.nitro.rive.RiveLog
 
 /**
  * Process-wide options for the new runtime's shared CommandQueue. They only
@@ -58,23 +57,13 @@ object RiveWorkerConfig {
   val current: Resolved?
     @Synchronized get() = resolved
 
-  /**
-   * Builds the shared worker from the requested options. GPU Canvas falls back
-   * to a regular worker when this rive-android has no deferred entry point.
-   */
+  /** Builds the shared worker from the requested options. */
   @Synchronized
   fun createWorker(): CommandQueue {
     val backend = requestedBackend
-    val deferred = if (requestedGPUCanvas) DeferredRiveWorker.createOrNull(backend) else null
-    if (requestedGPUCanvas && deferred == null) {
-      RiveLog.w(
-        TAG,
-        "GPU Canvas is not available in this rive-android version; rendering without it. " +
-          "3D content will not draw."
-      )
-    }
-    val worker = deferred ?: CommandQueue(backend)
-    resolved = Resolved(backend, gpuCanvasEnabled = deferred != null)
+    val worker =
+      if (requestedGPUCanvas) DeferredRiveWorker.create(backend) else CommandQueue(backend)
+    resolved = Resolved(backend, gpuCanvasEnabled = requestedGPUCanvas)
     return worker
   }
 }

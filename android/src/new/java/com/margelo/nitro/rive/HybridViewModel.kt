@@ -170,4 +170,6 @@ internal fun mapPropertyType(type: ViewModel.PropertyDataType): ViewModelPropert
   ViewModel.PropertyDataType.SYMBOL_LIST_INDEX -> ViewModelPropertyType.SYMBOLLISTINDEX
   ViewModel.PropertyDataType.ASSET_IMAGE -> ViewModelPropertyType.ASSETIMAGE
   ViewModel.PropertyDataType.ARTBOARD -> ViewModelPropertyType.ARTBOARD
+  ViewModel.PropertyDataType.ASSET_FONT -> ViewModelPropertyType.NONE
+  ViewModel.PropertyDataType.ASSET_BLOB -> ViewModelPropertyType.NONE
 }
