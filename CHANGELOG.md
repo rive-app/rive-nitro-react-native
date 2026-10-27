@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.6](https://github.com/rive-app/rive-nitro-react-native/compare/v0.5.5...v0.5.6) (2026-10-27)
+
+
+### Features
+
+* **ios:** consume rive-ios through Swift Package Manager ([#400](https://github.com/rive-app/rive-nitro-react-native/issues/400)) ([72c7c6c](https://github.com/rive-app/rive-nitro-react-native/commit/72c7c6c61a25932144c7be70bf559f5b3d5c0181))
+
 ## [0.5.5](https://github.com/rive-app/rive-nitro-react-native/compare/v0.5.4...v0.5.5) (2026-10-13)
 
 
