@@ -22,8 +22,9 @@ class HybridRiveFontConfig : HybridRiveFontConfigSpec() {
     private val fontsByWeight: MutableMap<Int, List<HybridFallbackFontSpec>> =
       java.util.Collections.synchronizedMap(mutableMapOf())
 
-    // rive-android holds FontFallbackStrategy.stylePicker only in a WeakReference (#369).
-    @Volatile
+    // rive-android holds FontFallbackStrategy.stylePicker only in a WeakReference (#369),
+    // so both fields must be written together under pickerLock.
+    private val pickerLock = Any()
     private var strongStylePicker: FontFallbackStrategy? = null
 
     private fun resetFontCache() {
@@ -124,9 +125,11 @@ class HybridRiveFontConfig : HybridRiveFontConfigSpec() {
           }
         }
       }
-      strongStylePicker = picker
-      FontFallbackStrategy.stylePicker = picker
-      resetFontCache()
+      synchronized(pickerLock) {
+        strongStylePicker = picker
+        FontFallbackStrategy.stylePicker = picker
+        resetFontCache()
+      }
     }
   }
 
@@ -135,9 +138,11 @@ class HybridRiveFontConfig : HybridRiveFontConfigSpec() {
       synchronized(fontsByWeight) {
         fontsByWeight.clear()
       }
-      FontFallbackStrategy.stylePicker = null
-      strongStylePicker = null
-      resetFontCache()
+      synchronized(pickerLock) {
+        FontFallbackStrategy.stylePicker = null
+        strongStylePicker = null
+        resetFontCache()
+      }
     }
   }
 }
