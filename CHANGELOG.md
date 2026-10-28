@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.7](https://github.com/rive-app/rive-nitro-react-native/compare/v0.5.6...v0.5.7) (2026-10-28)
+
+
+### Bug Fixes
+
+* **android:** bump rive-android to 11.14.3 so GPU Canvas content renders ([#425](https://github.com/rive-app/rive-nitro-react-native/issues/425)) ([a294876](https://github.com/rive-app/rive-nitro-react-native/commit/a2948766b4077ba39c6be3f84effb8c140ccdd34))
+
 ## [0.5.6](https://github.com/rive-app/rive-nitro-react-native/compare/v0.5.5...v0.5.6) (2026-10-27)
 
 
