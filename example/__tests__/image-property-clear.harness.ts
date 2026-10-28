@@ -16,7 +16,7 @@ function pngBytes(): ArrayBuffer {
 }
 
 describe('ViewModelImageProperty', () => {
-  it('set(undefined) after set(image) clears without throwing', async () => {
+  it('repeated set(image) and set(undefined) do not throw', async () => {
     const file = await RiveFileFactory.fromSource(
       DATABINDING_IMAGES,
       undefined
