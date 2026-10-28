@@ -23,10 +23,8 @@ class ReferencedAssetLoader {
   }
 
   private fun handlePreloadedImage(image: HybridRiveImageSpec, asset: FileAsset) {
-    val renderImage = (image as? HybridRiveImage)?.renderImage ?: return
-    if (asset is ImageAsset) {
-      asset.image = renderImage
-    }
+    if (asset !is ImageAsset || image !is HybridRiveImage) return
+    image.withRenderImage { asset.image = it }
   }
 
   private fun loadAsset(assetData: ResolvedReferencedAsset, asset: FileAsset): Deferred<Unit> {

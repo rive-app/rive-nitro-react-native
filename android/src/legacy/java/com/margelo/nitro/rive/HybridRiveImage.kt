@@ -24,6 +24,10 @@ class HybridRiveImage(
   override val memorySize: Long
     get() = decodedSize
 
+  /** Runs [block] with the image held so a concurrent [dispose] can't release it mid-use. */
+  internal fun <T> withRenderImage(block: (RiveRenderImage) -> T): T? =
+    synchronized(this) { renderImage?.let(block) }
+
   override fun dispose() {
     synchronized(this) {
       renderImage?.release()
