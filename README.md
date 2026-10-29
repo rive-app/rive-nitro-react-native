@@ -26,6 +26,16 @@
 ## Known Issues
 
 - Error messages on Android in React Native 0.78-0.79 may not be descriptive, this is a [known issue](https://github.com/mrousavy/nitro/issues/382) in React Native and is fixed in RN 0.80
+- Apps built with Xcode 27 using `use_frameworks! :linkage => :dynamic` crash at launch on iOS 17 and older with `Symbol not found: __ZNSt13exception_ptr31__from_native_exception_pointerEPv` ([margelo/nitro#1652](https://github.com/margelo/nitro/issues/1652)). Static linkage, the default, is handled by this library. For dynamic frameworks, add this to your Podfile's `post_install` until Nitro ships the fix:
+
+  ```ruby
+  installer.pods_project.targets.each do |target|
+    next unless target.name == 'NitroModules'
+    target.build_configurations.each do |config|
+      config.build_settings['SWIFT_ENABLE_EXPLICIT_MODULES'] = 'NO'
+    end
+  end
+  ```
 
 ## Installation
 
