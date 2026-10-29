@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.5.8](https://github.com/rive-app/rive-nitro-react-native/compare/v0.5.7...v0.5.8) (2026-10-29)
+
+
+### Bug Fixes
+
+* **android:** free decoded images on the new backend ([#427](https://github.com/rive-app/rive-nitro-react-native/issues/427)) ([0dd9b17](https://github.com/rive-app/rive-nitro-react-native/commit/0dd9b17d8126fe4035fe6834cff81e7031d827f8))
+* dispose a RiveFile that finishes loading after unmount ([#428](https://github.com/rive-app/rive-nitro-react-native/issues/428)) ([b42ab4c](https://github.com/rive-app/rive-nitro-react-native/commit/b42ab4c596ea520dc990224fafc51bcae3ebaa83))
+
 ## [0.5.7](https://github.com/rive-app/rive-nitro-react-native/compare/v0.5.6...v0.5.7) (2026-10-28)
 
 
