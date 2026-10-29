@@ -31,41 +31,57 @@ const FONT = 'kanit_regular.ttf';
 const THAI = 'สวัสดี โลก';
 const CHURN_LOADS = 250;
 
-type Phase = 'idle' | 'fallback set' | 'churning' | 'mounted';
+type Phase = 'idle' | 'churning' | 'mounted';
+
+let fontOps: Promise<unknown> = Promise.resolve();
+
+// Fallback fonts are global native state, so set/clear must not interleave across runs.
+function serializeFontOp<T>(op: () => Promise<T>): Promise<T> {
+  const next = fontOps.then(op);
+  fontOps = next.catch(() => {});
+  return next;
+}
 
 export default function Issue369FontPickerGC() {
   const [phase, setPhase] = useState<Phase>('idle');
   const [churned, setChurned] = useState(0);
-  const running = useRef(false);
+  const runId = useRef(0);
 
   const start = useCallback(async () => {
-    if (running.current) return;
-    running.current = true;
+    const id = ++runId.current;
+    const isCurrent = () => runId.current === id;
     setChurned(0);
     const kanit = await RiveFonts.loadFont(FONT);
-    await RiveFonts.setFallbackFonts({ default: [kanit] });
+    if (!isCurrent()) return;
+    await serializeFontOp(async () => {
+      if (isCurrent()) await RiveFonts.setFallbackFonts({ default: [kanit] });
+    });
+    if (!isCurrent()) return;
     setPhase('churning');
-    for (let i = 1; i <= CHURN_LOADS && running.current; i++) {
+    for (let i = 1; i <= CHURN_LOADS; i++) {
       await RiveFonts.loadFont(FONT);
+      if (!isCurrent()) return;
       if (i % 10 === 0) setChurned(i);
     }
     setChurned(CHURN_LOADS);
-    if (running.current) setPhase('mounted');
+    setPhase('mounted');
+  }, []);
+
+  const cancel = useCallback(() => {
+    runId.current++;
   }, []);
 
   const reset = useCallback(async () => {
-    running.current = false;
+    cancel();
     setPhase('idle');
     setChurned(0);
-    await RiveFonts.clearFallbackFonts();
-  }, []);
+    await serializeFontOp(() => RiveFonts.clearFallbackFonts());
+  }, [cancel]);
 
   useEffect(() => {
     start();
-    return () => {
-      running.current = false;
-    };
-  }, [start]);
+    return cancel;
+  }, [start, cancel]);
 
   return (
     <View style={styles.container}>
