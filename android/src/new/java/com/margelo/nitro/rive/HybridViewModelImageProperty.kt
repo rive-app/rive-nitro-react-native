@@ -11,28 +11,32 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.concurrent.atomic.AtomicInteger
 
+// Shared by every wrapper for one instance path, since JS may look the property up again per set.
+internal class ImagePropertySequencer {
+  // Single-threaded so a clear cannot run between the generation check and setImage.
+  val scope = CoroutineScope(Dispatchers.Default.limitedParallelism(1))
+
+  // Decoding suspends, so a decode that finishes after a newer set or clear must be dropped.
+  val generation = AtomicInteger()
+}
+
 @Keep
 @DoNotStrip
-class HybridViewModelImageProperty(
+class HybridViewModelImageProperty internal constructor(
   private val instance: ViewModelInstance,
   private val path: String,
-  private val riveWorker: CommandQueue
+  private val riveWorker: CommandQueue,
+  private val sequencer: ImagePropertySequencer
 ) : HybridViewModelImagePropertySpec(),
   BaseHybridViewModelProperty<Unit> by BaseHybridViewModelPropertyImpl() {
   companion object {
     private const val TAG = "HybridViewModelImageProperty"
   }
 
-  // Single-threaded so a clear cannot run between the generation check and setImage.
-  private val imageScope = CoroutineScope(Dispatchers.Default.limitedParallelism(1))
-
-  // Decoding suspends, so a decode that finishes after a newer set or clear must be dropped.
-  private val generation = AtomicInteger()
-
   override fun set(image: HybridRiveImageSpec?) {
     val hybridImage = image as? HybridRiveImage
-    val gen = generation.incrementAndGet()
-    imageScope.launch {
+    val gen = sequencer.generation.incrementAndGet()
+    sequencer.scope.launch {
       try {
         if (hybridImage == null) {
           instance.setImage(path, null)
@@ -41,7 +45,7 @@ class HybridViewModelImageProperty(
         val result = ImageAsset.fromBytes(riveWorker, hybridImage.rawData)
         if (result is app.rive.Result.Success) {
           // The property keeps its own ref, so close ours right away.
-          result.value.use { if (generation.get() == gen) instance.setImage(path, it) }
+          result.value.use { if (sequencer.generation.get() == gen) instance.setImage(path, it) }
         } else {
           Log.e(TAG, "Failed to decode image for path '$path'")
         }
