@@ -304,6 +304,8 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
       return
     }
     if (disposed) return
+    // A capped callback queued before the settle would otherwise advance over the idle span.
+    if (settled) cancelFrame()
     val worker = riveWorker
     val sm = stateMachineHandle
     if (worker != null && sm != null) StateMachineSettling.unsettle(worker, sm)
