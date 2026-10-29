@@ -26,9 +26,9 @@ import com.margelo.nitro.rive.RiveLog
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.time.Duration
@@ -83,13 +83,14 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
 
   var onError: ((String) -> Unit)? = null
 
-  private var settledJob: Job? = null
-
   // Once the state machine is at rest we stop advancing it. Re-armed by
   // whatever could move it again: pointer input, resuming playback, a
-  // data-binding change, or a view-model write from JS.
-  @Volatile
-  private var settled = false
+  // data-binding change, or a view-model write from JS. The worker drops
+  // settle callbacks from advances made before the latest unsettle, so a
+  // stale one cannot cancel a newer wake.
+  private var settledState: StateFlow<Boolean>? = null
+
+  private val settled get() = settledState?.value ?: false
 
   private val errorListener: (String) -> Unit = { msg ->
     onError?.invoke(msg)
@@ -242,7 +243,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
 
   private fun canRender() = isAttachedToWindow && windowVisibility == View.VISIBLE && isShown
 
-  // Callers may be off-main (play() and settled updates run on coroutines).
+  // Callers may be off-main (play() runs on a coroutine).
   private fun requestFrame() {
     if (UiThreadUtil.isOnUiThread()) postFrame() else UiThreadUtil.runOnUiThread { postFrame() }
   }
@@ -294,7 +295,6 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
     val worker = riveWorker
     val sm = stateMachineHandle
     if (worker != null && sm != null) StateMachineSettling.unsettle(worker, sm)
-    settled = false
     requestFrame()
   }
 
@@ -349,7 +349,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
         config.riveWorker.createDefaultStateMachine(newArtboard.artboardHandle)
       }
       stateMachineHandle = newStateMachineHandle
-      observeSettled(config.riveWorker, newStateMachineHandle)
+      settledState = StateMachineSettling.settledState(config.riveWorker, newStateMachineHandle)
 
       if (surfaceTexture != null && riveSurface == null) {
         riveSurface = config.riveWorker.createRiveSurface(
@@ -369,21 +369,6 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
       applyDataBinding(config.bindData, config.riveFile)
     }
     requestFrame()
-  }
-
-  private fun observeSettled(worker: CommandQueue, handle: StateMachineHandle) {
-    settled = false
-    settledJob?.cancel()
-    settledJob = viewScope.launch {
-      // Deprecated in rive-android >= 11.8 (removal planned for 12.0), kept as a
-      // compatibility shim. Revisit when 12.0 defines the long-term settling surface.
-      @Suppress("DEPRECATION")
-      worker.settledFlow.collect { settledHandle ->
-        if (settledHandle == handle) {
-          settled = true
-        }
-      }
-    }
   }
 
   private fun resizeArtboardIfLayout() {
@@ -586,7 +571,6 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
     if (disposed) return
     disposed = true
     viewReadyDeferred.complete(false)
-    settledJob?.cancel()
     viewScope.cancel()
     RiveErrorLogger.removeListener(errorListener)
     liveViews.remove(this)
