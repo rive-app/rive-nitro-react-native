@@ -73,8 +73,16 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
   var frameRate: Double? = null
     set(value) {
       field = value
-      framePacer = RiveFramePacer(value)
       updateFrameRateHint()
+      UiThreadUtil.runOnUiThread {
+        framePacer = RiveFramePacer(value)
+        // A callback already delayed for the old cap would hold back a faster one.
+        if (frameScheduled) {
+          Choreographer.getInstance().removeFrameCallback(renderCallback)
+          frameScheduled = false
+          postFrame()
+        }
+      }
     }
 
   private var framePacer = RiveFramePacer(null)
@@ -527,6 +535,12 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
   fun pause() {
     paused = true
     updateFrameRateHint()
+    // A capped callback can be delayed past a quick resume, so drop it and the
+    // timebase now rather than advancing over the paused span.
+    UiThreadUtil.runOnUiThread {
+      cancelFrame()
+      postFrame()
+    }
   }
 
   // Deprecated: the experimental Rive runtime has no reset primitive.
