@@ -355,6 +355,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
       needsRedraw = true
     } else {
       appliedLayout = null
+      layoutAdvancePending = false
     }
   }
 
