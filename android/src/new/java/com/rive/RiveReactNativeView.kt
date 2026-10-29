@@ -26,9 +26,9 @@ import com.margelo.nitro.rive.RiveLog
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.time.Duration
@@ -62,6 +62,16 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
     // (e.g. every 4th frame at 120Hz for a 30fps cap) instead of drifting past
     // it and halving the effective rate.
     private const val CAP_TOLERANCE_NS = 4_000_000L
+
+    // Main thread only.
+    private val liveViews = mutableSetOf<RiveReactNativeView>()
+
+    // A view-model write from JS only reaches the state machine when it
+    // advances, and a settled one no longer does, so every write wakes all
+    // live views; each settles again within a few frames.
+    fun onViewModelChanged() {
+      UiThreadUtil.runOnUiThread { liveViews.forEach { it.unsettle() } }
+    }
   }
 
   // Render at most this many frames per second; null = every vsync.
@@ -73,15 +83,14 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
 
   var onError: ((String) -> Unit)? = null
 
-  private var settledJob: Job? = null
+  // Once the state machine is at rest we stop advancing it. Re-armed by
+  // whatever could move it again: pointer input, resuming playback, a
+  // data-binding change, or a view-model write from JS. The worker drops
+  // settle callbacks from advances made before the latest unsettle, so a
+  // stale one cannot cancel a newer wake.
+  private var settledState: StateFlow<Boolean>? = null
 
-  // rive-runtime's command server emits a settle signal on every advance
-  // whose advanceAndApply returns false, not just on the settle edge — so
-  // once the state machine is at rest we simply stop advancing it (also
-  // saves CPU). Re-armed by whatever could actually move the state machine
-  // again: pointer input, resuming playback, or a data-binding change.
-  @Volatile
-  private var settled = false
+  private val settled get() = settledState?.value ?: false
 
   private val errorListener: (String) -> Unit = { msg ->
     onError?.invoke(msg)
@@ -106,14 +115,13 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
   private var surfaceWidth = 0
   private var surfaceHeight = 0
 
-  private var renderLoopRunning = false
+  private var frameScheduled = false
   private var disposed = false
   private var lastFrameTimeNs = 0L
   private var frameCount = 0L
 
-  // While paused the loop still ticks, but only draws when something changed
-  // (initial content, resize, rebinding) — otherwise a paused view would keep
-  // re-rendering identical frames at full refresh rate.
+  // Draw on the next frame even if the state machine doesn't advance: initial
+  // content, a new or resized surface, rebinding, or becoming visible again.
   private var needsRedraw = true
 
   @Volatile
@@ -135,6 +143,8 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
             this@RiveReactNativeView.riveSurface = worker.createRiveSurface(SurfaceTextureSurface(st, w, h))
             Log.d(TAG, "onSurfaceTextureAvailable: surface created")
             resizeArtboardIfLayout()
+            this@RiveReactNativeView.needsRedraw = true
+            requestFrame()
           }
         }
       }
@@ -155,6 +165,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
         // RiveSurface.resize() is internal to the SDK, so only the artboard
         // is resized here (same behavior as before the 11.7.2 bump).
         resizeArtboardIfLayout()
+        requestFrame()
       }
 
       override fun onSurfaceTextureUpdated(st: SurfaceTexture) {}
@@ -163,17 +174,17 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
 
   init {
     addView(textureView, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
+    liveViews.add(this)
   }
 
+  // Frames are requested one at a time and only while there is something to
+  // advance or draw, so a paused, settled or hidden view costs no frame
+  // callbacks (issue #413).
   private val renderCallback = object : Choreographer.FrameCallback {
     override fun doFrame(frameTimeNanos: Long) {
-      if (!renderLoopRunning || disposed) return
-
-      if (paused && !needsRedraw) {
-        // Keep the timebase fresh so resuming advances by one frame, not by
-        // the whole pause span.
-        lastFrameTimeNs = frameTimeNanos
-        Choreographer.getInstance().postFrameCallback(this)
+      frameScheduled = false
+      if (disposed || !canRender() || !hasWork()) {
+        lastFrameTimeNs = 0L
         return
       }
 
@@ -185,7 +196,16 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
       ) {
         // Skip without touching lastFrameTimeNs: the eventual advance must
         // cover the full elapsed time so capped playback keeps wall-clock speed.
-        Choreographer.getInstance().postFrameCallback(this)
+        requestFrame()
+        return
+      }
+
+      val worker = riveWorker
+      val art = artboardHandle
+      val sm = stateMachineHandle
+      val rs = riveSurface
+      if (worker == null || art == null || sm == null || rs == null) {
+        lastFrameTimeNs = 0L
         return
       }
 
@@ -196,46 +216,91 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
       }
       lastFrameTimeNs = frameTimeNanos
 
-      val worker = riveWorker
-      val art = artboardHandle
-      val sm = stateMachineHandle
-      val rs = riveSurface
-
-      if (worker != null && art != null && sm != null && rs != null) {
-        try {
-          if (!paused && !settled) {
-            worker.advanceStateMachine(sm, deltaTime)
-          }
-          worker.draw(art, sm, rs, activeFit)
-          needsRedraw = false
-          frameCount++
-          val isFirstFrame = frameCount == 1L
-          if (isFirstFrame) {
-            viewReadyDeferred.complete(true)
-          }
-        } catch (e: Exception) {
-          Log.e(TAG, "Render loop error", e)
+      try {
+        if (!paused && !settled) {
+          worker.advanceStateMachine(sm, deltaTime)
         }
+        worker.draw(art, sm, rs, activeFit)
+        needsRedraw = false
+        frameCount++
+        val isFirstFrame = frameCount == 1L
+        if (isFirstFrame) {
+          viewReadyDeferred.complete(true)
+        }
+      } catch (e: Exception) {
+        Log.e(TAG, "Render loop error", e)
       }
 
-      if (!disposed) {
-        Choreographer.getInstance().postFrameCallback(this)
+      if (hasWork()) {
+        requestFrame()
+      } else {
+        lastFrameTimeNs = 0L
       }
     }
   }
 
-  private fun startRenderLoop() {
-    if (renderLoopRunning) return
-    renderLoopRunning = true
-    lastFrameTimeNs = 0L
-    updateFrameRateHint()
+  private fun hasWork() = needsRedraw || (!paused && !settled)
+
+  private fun canRender() = isAttachedToWindow && windowVisibility == View.VISIBLE && isShown
+
+  private fun requestFrame() {
+    if (UiThreadUtil.isOnUiThread()) postFrame() else UiThreadUtil.runOnUiThread { postFrame() }
+  }
+
+  private fun postFrame() {
+    if (disposed || frameScheduled || !canRender() || !hasWork()) return
+    frameScheduled = true
     Choreographer.getInstance().postFrameCallback(renderCallback)
   }
 
-  private fun stopRenderLoop() {
-    renderLoopRunning = false
-    updateFrameRateHint()
-    Choreographer.getInstance().removeFrameCallback(renderCallback)
+  private fun cancelFrame() {
+    if (frameScheduled) {
+      Choreographer.getInstance().removeFrameCallback(renderCallback)
+      frameScheduled = false
+    }
+    lastFrameTimeNs = 0L
+  }
+
+  private fun onVisibilityMaybeChanged() {
+    if (canRender()) {
+      needsRedraw = true
+      requestFrame()
+    } else {
+      cancelFrame()
+    }
+  }
+
+  override fun onAttachedToWindow() {
+    super.onAttachedToWindow()
+    onVisibilityMaybeChanged()
+  }
+
+  override fun onDetachedFromWindow() {
+    cancelFrame()
+    super.onDetachedFromWindow()
+  }
+
+  override fun onVisibilityAggregated(isVisible: Boolean) {
+    super.onVisibilityAggregated(isVisible)
+    onVisibilityMaybeChanged()
+  }
+
+  override fun onWindowVisibilityChanged(visibility: Int) {
+    super.onWindowVisibilityChanged(visibility)
+    onVisibilityMaybeChanged()
+  }
+
+  // On the UI thread so the handle can't be deleted by a reload or dispose mid-call.
+  private fun unsettle() {
+    if (!UiThreadUtil.isOnUiThread()) {
+      UiThreadUtil.runOnUiThread { unsettle() }
+      return
+    }
+    if (disposed) return
+    val worker = riveWorker
+    val sm = stateMachineHandle
+    if (worker != null && sm != null) StateMachineSettling.unsettle(worker, sm)
+    postFrame()
   }
 
   // Advisory platform hint (upstream applies the same one inside its Compose
@@ -245,7 +310,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
   private fun updateFrameRateHint() {
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.VANILLA_ICE_CREAM) return
     UiThreadUtil.runOnUiThread {
-      val fps = frameRate?.takeIf { it > 0 && renderLoopRunning && !paused }
+      val fps = frameRate?.takeIf { it > 0 && !disposed && !paused }
       textureView.requestedFrameRate =
         fps?.toFloat() ?: View.REQUESTED_FRAME_RATE_CATEGORY_NO_PREFERENCE
     }
@@ -289,7 +354,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
         config.riveWorker.createDefaultStateMachine(newArtboard.artboardHandle)
       }
       stateMachineHandle = newStateMachineHandle
-      observeSettled(config.riveWorker, newStateMachineHandle)
+      settledState = StateMachineSettling.settledState(config.riveWorker, newStateMachineHandle)
 
       if (surfaceTexture != null && riveSurface == null) {
         riveSurface = config.riveWorker.createRiveSurface(
@@ -300,7 +365,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
       Log.d(TAG, "configure: artboard=${artboardHandle != null} sm=${stateMachineHandle != null} surface=${riveSurface != null}")
 
       paused = !config.autoPlay
-      startRenderLoop()
+      updateFrameRateHint()
     }
 
     resizeArtboardIfLayout()
@@ -308,21 +373,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
     if (dataBindingChanged || initialUpdate || reload) {
       applyDataBinding(config.bindData, config.riveFile)
     }
-  }
-
-  private fun observeSettled(worker: CommandQueue, handle: StateMachineHandle) {
-    settled = false
-    settledJob?.cancel()
-    settledJob = viewScope.launch {
-      // Deprecated in rive-android >= 11.8 (removal planned for 12.0), kept as a
-      // compatibility shim. Revisit when 12.0 defines the long-term settling surface.
-      @Suppress("DEPRECATION")
-      worker.settledFlow.collect { settledHandle ->
-        if (settledHandle == handle) {
-          settled = true
-        }
-      }
-    }
+    requestFrame()
   }
 
   private fun resizeArtboardIfLayout() {
@@ -381,7 +432,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
       }
       // A pointer event may move the state machine off rest; resume advancing
       // so the render loop actually applies its effect.
-      settled = false
+      unsettle()
     } catch (e: Exception) {
       Log.e(TAG, "Pointer event failed", e)
     }
@@ -462,7 +513,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
     if (worker != null && smHandle != null) {
       worker.bindViewModelInstance(smHandle, instance.instanceHandle)
       needsRedraw = true
-      settled = false
+      unsettle()
     } else {
       Log.w(TAG, "Cannot bind VMI: worker or state machine handle not available")
     }
@@ -470,8 +521,8 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
 
   fun play() {
     paused = false
-    settled = false
     updateFrameRateHint()
+    unsettle()
   }
 
   fun pause() {
@@ -486,8 +537,8 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
 
   fun playIfNeeded() {
     paused = false
-    settled = false
     updateFrameRateHint()
+    unsettle()
   }
 
   fun setNumberInputValue(name: String, value: Double, path: String?) {
@@ -525,10 +576,11 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
     if (disposed) return
     disposed = true
     viewReadyDeferred.complete(false)
-    settledJob?.cancel()
     viewScope.cancel()
     RiveErrorLogger.removeListener(errorListener)
-    stopRenderLoop()
+    liveViews.remove(this)
+    cancelFrame()
+    updateFrameRateHint()
     // The command queue is FIFO, so deletes enqueued here run after any
     // still-pending draw commands that reference these handles.
     setBoundInstance(null, owns = false)

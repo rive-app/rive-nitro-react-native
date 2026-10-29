@@ -9,6 +9,7 @@ import com.facebook.proguard.annotations.DoNotStrip
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import com.rive.RiveReactNativeView
 
 @Keep
 @DoNotStrip
@@ -31,6 +32,7 @@ class HybridViewModelImageProperty(
         val result = ImageAsset.fromBytes(riveWorker, hybridImage.rawData)
         if (result is app.rive.Result.Success) {
           instance.setImage(path, result.value)
+          RiveReactNativeView.onViewModelChanged()
         } else {
           Log.e(TAG, "Failed to decode image for path '$path'")
         }
