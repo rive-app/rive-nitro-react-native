@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.util.Log
 import androidx.annotation.Keep
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
 import androidx.lifecycle.ProcessLifecycleOwner
@@ -103,8 +104,8 @@ class HybridRiveFileFactory : HybridRiveFileFactorySpec() {
      * The experimental Rive SDK's CommandQueue needs to be polled every frame
      * to process responses from the C++ command server. Without polling,
      * all suspend functions (like RiveFile.fromSource) hang indefinitely.
-     * Polls only while the app is resumed, like rive-android's own hosts, so a
-     * backgrounded app gets no frame callbacks (issue #413).
+     * Polls only while the app is visible, so a backgrounded app gets no frame
+     * callbacks (issue #413).
      */
     private fun startPolling(worker: CommandQueue) {
       if (pollingStarted) return
@@ -116,7 +117,7 @@ class HybridRiveFileFactory : HybridRiveFileFactorySpec() {
         val lifecycle = if (processLifecycle.currentState == Lifecycle.State.INITIALIZED) {
           AlwaysResumed.lifecycle
         } else {
-          processLifecycle
+          VisibleProcess.follow(processLifecycle)
         }
         while (true) {
           try {
@@ -134,6 +135,25 @@ class HybridRiveFileFactory : HybridRiveFileFactorySpec() {
 
   private object AlwaysResumed : LifecycleOwner {
     override val lifecycle = LifecycleRegistry(this).apply { currentState = Lifecycle.State.RESUMED }
+  }
+
+  // beginPolling() only polls while RESUMED, but a paused activity can still be
+  // visible and rendering (picture-in-picture), so report STARTED as RESUMED.
+  private object VisibleProcess : LifecycleOwner {
+    override val lifecycle = LifecycleRegistry(this)
+
+    fun follow(process: Lifecycle): Lifecycle {
+      process.addObserver(
+        LifecycleEventObserver { _, _ ->
+          lifecycle.currentState = if (process.currentState.isAtLeast(Lifecycle.State.STARTED)) {
+            Lifecycle.State.RESUMED
+          } else {
+            Lifecycle.State.CREATED
+          }
+        }
+      )
+      return lifecycle
+    }
   }
 
   private suspend fun buildRiveFile(
