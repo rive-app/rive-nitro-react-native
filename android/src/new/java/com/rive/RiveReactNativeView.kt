@@ -279,6 +279,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
     )
 
     if (reload) {
+      layoutAdvancePending = false
       RiveErrorLogger.resetReportedErrors()
       RiveErrorLogger.addListener(errorListener)
       stateMachineHandle?.let { old ->
