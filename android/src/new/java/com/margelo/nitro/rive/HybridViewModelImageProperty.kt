@@ -9,6 +9,7 @@ import com.facebook.proguard.annotations.DoNotStrip
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.util.concurrent.atomic.AtomicInteger
 
 @Keep
 @DoNotStrip
@@ -22,11 +23,15 @@ class HybridViewModelImageProperty(
     private const val TAG = "HybridViewModelImageProperty"
   }
 
-  // Single-threaded so sets (including clears) apply in call order.
+  // Single-threaded so a clear cannot run between the generation check and setImage.
   private val imageScope = CoroutineScope(Dispatchers.Default.limitedParallelism(1))
+
+  // Decoding suspends, so a decode that finishes after a newer set or clear must be dropped.
+  private val generation = AtomicInteger()
 
   override fun set(image: HybridRiveImageSpec?) {
     val hybridImage = image as? HybridRiveImage
+    val gen = generation.incrementAndGet()
     imageScope.launch {
       try {
         if (hybridImage == null) {
@@ -36,7 +41,7 @@ class HybridViewModelImageProperty(
         val result = ImageAsset.fromBytes(riveWorker, hybridImage.rawData)
         if (result is app.rive.Result.Success) {
           // The property keeps its own ref, so close ours right away.
-          result.value.use { instance.setImage(path, it) }
+          result.value.use { if (generation.get() == gen) instance.setImage(path, it) }
         } else {
           Log.e(TAG, "Failed to decode image for path '$path'")
         }
