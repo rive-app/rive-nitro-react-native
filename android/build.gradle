@@ -47,6 +47,7 @@ android {
     minSdkVersion getExtOrIntegerDefault("minSdkVersion")
     targetSdkVersion getExtOrIntegerDefault("targetSdkVersion")
     buildConfigField "boolean", "RIVE_SKIP_SETUP", "$skipSetup"
+    buildConfigField "String", "RIVE_ANDROID_VERSION", "\"${getRiveAndroidVersion()}\""
 
     externalNativeBuild {
       cmake {
