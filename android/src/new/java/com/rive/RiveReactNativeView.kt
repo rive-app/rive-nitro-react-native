@@ -243,7 +243,6 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
 
   private fun canRender() = isAttachedToWindow && windowVisibility == View.VISIBLE && isShown
 
-  // Callers may be off-main (play() runs on a coroutine).
   private fun requestFrame() {
     if (UiThreadUtil.isOnUiThread()) postFrame() else UiThreadUtil.runOnUiThread { postFrame() }
   }
@@ -291,11 +290,17 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
     onVisibilityMaybeChanged()
   }
 
+  // On the UI thread so the handle can't be deleted by a reload or dispose mid-call.
   private fun unsettle() {
+    if (!UiThreadUtil.isOnUiThread()) {
+      UiThreadUtil.runOnUiThread { unsettle() }
+      return
+    }
+    if (disposed) return
     val worker = riveWorker
     val sm = stateMachineHandle
     if (worker != null && sm != null) StateMachineSettling.unsettle(worker, sm)
-    requestFrame()
+    postFrame()
   }
 
   // Advisory platform hint (upstream applies the same one inside its Compose
