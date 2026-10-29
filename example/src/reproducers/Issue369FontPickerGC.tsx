@@ -67,20 +67,27 @@ export default function Issue369FontPickerGC() {
     setPhase('mounted');
   }, []);
 
-  const cancel = useCallback(() => {
-    runId.current++;
-  }, []);
+  const cancel = useCallback(() => ++runId.current, []);
 
   const reset = useCallback(async () => {
-    cancel();
+    const id = cancel();
     setPhase('idle');
     setChurned(0);
     await serializeFontOp(() => RiveFonts.clearFallbackFonts());
+    return id;
   }, [cancel]);
+
+  const restart = useCallback(async () => {
+    const id = await reset();
+    if (runId.current === id) start();
+  }, [reset, start]);
 
   useEffect(() => {
     start();
-    return cancel;
+    return () => {
+      cancel();
+      serializeFontOp(() => RiveFonts.clearFallbackFonts());
+    };
   }, [start, cancel]);
 
   return (
@@ -96,13 +103,7 @@ export default function Issue369FontPickerGC() {
         fallback picker was garbage-collected.
       </Text>
       <View style={styles.buttons}>
-        <Pressable
-          style={styles.button}
-          onPress={async () => {
-            await reset();
-            start();
-          }}
-        >
+        <Pressable style={styles.button} onPress={restart}>
           <Text style={styles.buttonText}>Start</Text>
         </Pressable>
         <Pressable style={styles.button} onPress={reset}>
