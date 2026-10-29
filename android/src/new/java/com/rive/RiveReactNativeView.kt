@@ -116,6 +116,19 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
   // re-rendering identical frames at full refresh rate.
   private var needsRedraw = true
 
+  private data class LayoutSize(
+    val artboard: Artboard,
+    val surface: RiveSurface,
+    val width: Int,
+    val height: Int,
+    val fit: Fit.Layout
+  )
+
+  private var appliedLayout: LayoutSize? = null
+
+  // A resize only takes effect on an advance, so a paused or settled view needs one zero advance.
+  private var layoutAdvancePending = false
+
   @Volatile
   private var paused = false
 
@@ -203,7 +216,10 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
         try {
           if (!paused && !settled) {
             worker.advanceStateMachine(sm, deltaTime)
+          } else if (layoutAdvancePending) {
+            worker.advanceStateMachine(sm, Duration.ZERO)
           }
+          layoutAdvancePending = false
           worker.draw(art, sm, rs, activeFit)
           needsRedraw = false
           frameCount++
@@ -328,11 +344,16 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
     if (fit is Fit.Layout) {
       val rs = riveSurface ?: return
       val art = artboard ?: return
+      val layout = LayoutSize(art, rs, surfaceWidth, surfaceHeight, fit)
+      if (layout == appliedLayout) return
+      appliedLayout = layout
       art.resizeArtboard(rs, fit.scaleFactor)
-      // The resize applies on the next advance, which the render loop skips once settled or paused.
-      val worker = riveWorker ?: return
-      val sm = stateMachineHandle ?: return
-      worker.advanceStateMachine(sm, Duration.ZERO)
+      // A responsive layout may start animating, so resume advancing like upstream's unsettle().
+      settled = false
+      layoutAdvancePending = true
+      needsRedraw = true
+    } else {
+      appliedLayout = null
     }
   }
 
