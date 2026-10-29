@@ -19,7 +19,13 @@ class HybridViewModelImageProperty(private val viewModelImage: ViewModelImagePro
     get() = VIEW_MODEL_HYBRID_MEMORY_SIZE
 
   override fun set(image: HybridRiveImageSpec?) {
-    viewModelImage.set((image as? HybridRiveImage)?.renderImage)
+    val img = image as? HybridRiveImage
+    if (img == null) {
+      viewModelImage.set(null)
+      return
+    }
+    img.withRenderImage { viewModelImage.set(it) }
+      ?: throw IllegalStateException("RiveImage has been disposed")
   }
 
   override fun addListener(onChanged: () -> Unit): () -> Unit {

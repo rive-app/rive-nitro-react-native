@@ -165,8 +165,11 @@ class HybridRiveFile : HybridRiveFileSpec() {
     weakViews.clear()
     assetLoader?.dispose()
     assetLoader = null
-    riveFile?.release()
+    // Release on main, where the asset loader sets decoded assets, so the File
+    // isn't freed under a set already in progress.
+    val file = riveFile
     riveFile = null
+    riveMainScope.launch { file?.release() }
     referencedAssetCache?.clear()
     referencedAssetCache = null
   }
