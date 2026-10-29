@@ -1,6 +1,8 @@
 // With Xcode 27, Swift-compiled Nitro code references these iOS 18+ libc++ symbols even for older deployment
 // targets, so dyld aborts at launch on iOS < 18 (#433, margelo/nitro#1652). These fallbacks build the exception
 // the way libc++ does for iOS < 18: throw it, then capture it with `std::current_exception`.
+// Delete this file once the react-native-nitro-modules peer range starts at a release with margelo/nitro#1824
+// (expected 0.37.2); scripts/__tests__/libcxx-backport-removal.test.ts fails as a reminder.
 #import <Foundation/Foundation.h>
 
 #include <algorithm>
