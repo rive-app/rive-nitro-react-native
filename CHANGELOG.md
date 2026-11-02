@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.5.10](https://github.com/rive-app/rive-nitro-react-native/compare/v0.5.9...v0.5.10) (2026-11-02)
+
+
+### Bug Fixes
+
+* **android:** release images and views on the legacy backend ([#426](https://github.com/rive-app/rive-nitro-react-native/issues/426)) ([c69af59](https://github.com/rive-app/rive-nitro-react-native/commit/c69af59ea0cae114a720712f986e11530c03185a))
+* **android:** resize the render surface when the view size changes ([#419](https://github.com/rive-app/rive-nitro-react-native/issues/419)) ([c47782b](https://github.com/rive-app/rive-nitro-react-native/commit/c47782bbd1fd3ae31b1ff3777155b4053fffb64b)), closes [#418](https://github.com/rive-app/rive-nitro-react-native/issues/418)
+* **ios:** bump rive-ios to 6.29.0 ([#437](https://github.com/rive-app/rive-nitro-react-native/issues/437)) ([5c01d49](https://github.com/rive-app/rive-nitro-react-native/commit/5c01d4940a4bc14c2b08310ba42bfe31b6483d07))
+* **ios:** launch on iOS 17 and older when built with Xcode 27 ([#434](https://github.com/rive-app/rive-nitro-react-native/issues/434)) ([d77f844](https://github.com/rive-app/rive-nitro-react-native/commit/d77f844ea731e285594ff62eb5201cebe2f96c6e))
+
 ## [0.5.9](https://github.com/rive-app/rive-nitro-react-native/compare/v0.5.8...v0.5.9) (2026-10-29)
 
 
