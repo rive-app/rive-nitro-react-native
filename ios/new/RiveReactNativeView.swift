@@ -135,6 +135,11 @@ class RiveReactNativeView: UIView {
           }
           self.setupRiveUIView(with: rive)
 
+          // rive-ios 6.29 skips the first advance until the view has a drawable size,
+          // so a trigger fired on view-ready would reach the machine before it ever advanced
+          // and be dropped. Advancing here restores 6.28's order for everything sent after ready.
+          stateMachine.advance(by: 0)
+
           if !self.isViewReady {
             self.isViewReady = true
             self.resumeViewReadyContinuations(true)
