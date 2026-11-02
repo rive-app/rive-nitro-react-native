@@ -1,5 +1,6 @@
 package com.margelo.nitro.rive
 
+import android.graphics.BitmapFactory
 import androidx.annotation.Keep
 import app.rive.runtime.kotlin.core.RiveRenderImage
 import com.facebook.proguard.annotations.DoNotStrip
@@ -12,7 +13,13 @@ class HybridRiveImageFactory : HybridRiveImageFactorySpec() {
   private fun loadFromDataSource(source: DataSource): Promise<HybridRiveImageSpec> = Promise.async {
     val imageData = source.createLoader().load(source)
     val renderImage = RiveRenderImage.fromEncoded(imageData)
-    HybridRiveImage(renderImage, imageData.size)
+    HybridRiveImage(renderImage, imageData.size, decodedByteSize(imageData))
+  }
+
+  private fun decodedByteSize(imageData: ByteArray): Long {
+    val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+    BitmapFactory.decodeByteArray(imageData, 0, imageData.size, bounds)
+    return maxOf(bounds.outWidth.toLong() * bounds.outHeight * 4, imageData.size.toLong())
   }
 
   override fun loadFromURLAsync(url: String) = loadFromDataSource(DataSource.fromURL(url))
