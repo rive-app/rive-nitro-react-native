@@ -197,3 +197,75 @@ describe('useRiveFile - updateReferencedAssets', () => {
     expect(mockRiveFile.updateReferencedAssets).not.toHaveBeenCalled();
   });
 });
+
+describe('useRiveFile - disposal', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  function deferredFile() {
+    let resolve!: (file: RiveFile) => void;
+    const promise = new Promise<RiveFile>((r) => (resolve = r));
+    return { promise, resolve };
+  }
+
+  it('disposes a file that finishes loading after unmount', async () => {
+    const pending = deferredFile();
+    (global as any).mockRiveFileFactory.fromURL.mockReturnValue(
+      pending.promise
+    );
+    const file = createMockRiveFile();
+
+    const { unmount } = renderHook(() =>
+      useRiveFile('https://example.com/animation.riv')
+    );
+    unmount();
+
+    await act(async () => {
+      pending.resolve(file);
+    });
+
+    expect(file.dispose).toHaveBeenCalledTimes(1);
+  });
+
+  it('disposes a stale file when the input changes mid-load', async () => {
+    const first = deferredFile();
+    const firstFile = createMockRiveFile();
+    const secondFile = createMockRiveFile();
+    (global as any).mockRiveFileFactory.fromURL
+      .mockReturnValueOnce(first.promise)
+      .mockResolvedValueOnce(secondFile);
+
+    const { result, rerender } = renderHook(
+      (props: { url: string }) => useRiveFile(props.url),
+      { initialProps: { url: 'https://example.com/a.riv' } }
+    );
+    rerender({ url: 'https://example.com/b.riv' });
+
+    await waitFor(() => {
+      expect(result.current.riveFile).toBe(secondFile);
+    });
+    await act(async () => {
+      first.resolve(firstFile);
+    });
+
+    expect(firstFile.dispose).toHaveBeenCalledTimes(1);
+    expect(secondFile.dispose).not.toHaveBeenCalled();
+    expect(result.current.riveFile).toBe(secondFile);
+  });
+
+  it('disposes a loaded file on unmount', async () => {
+    const file = createMockRiveFile();
+    (global as any).mockRiveFileFactory.fromURL.mockResolvedValue(file);
+
+    const { result, unmount } = renderHook(() =>
+      useRiveFile('https://example.com/animation.riv')
+    );
+    await waitFor(() => {
+      expect(result.current.riveFile).toBe(file);
+    });
+    unmount();
+
+    expect(file.dispose).toHaveBeenCalledTimes(1);
+  });
+});

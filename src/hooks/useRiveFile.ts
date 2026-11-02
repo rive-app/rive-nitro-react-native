@@ -137,6 +137,7 @@ export function useRiveFile(
 
   useEffect(() => {
     let currentFile: RiveFile | null = null;
+    let cancelled = false;
 
     const loadRiveFile = async () => {
       try {
@@ -180,8 +181,13 @@ export function useRiveFile(
           );
         }
 
+        if (cancelled) {
+          if (currentFile) callDispose(currentFile);
+          return;
+        }
         setResult({ riveFile: currentFile!, isLoading: false, error: null });
       } catch (err) {
+        if (cancelled) return;
         console.error(err);
         setResult({
           riveFile: null,
@@ -195,6 +201,7 @@ export function useRiveFile(
     loadRiveFile();
 
     return () => {
+      cancelled = true;
       if (currentFile) {
         callDispose(currentFile);
       }
