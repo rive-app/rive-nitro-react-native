@@ -7,6 +7,7 @@ import app.rive.ViewModelInstanceSource
 import app.rive.core.CommandQueue
 import com.facebook.proguard.annotations.DoNotStrip
 import com.margelo.nitro.core.Promise
+import java.util.concurrent.ConcurrentHashMap
 
 @Keep
 @DoNotStrip
@@ -23,6 +24,8 @@ class HybridViewModelInstance(
   companion object {
     private const val TAG = "HybridViewModelInstance"
   }
+
+  private val imageSequencers = ConcurrentHashMap<String, ImagePropertySequencer>()
 
   override fun dispose() {
     if (ownsInstance) {
@@ -78,7 +81,8 @@ class HybridViewModelInstance(
 
   override fun imageProperty(path: String): HybridViewModelImagePropertySpec? {
     return try {
-      HybridViewModelImageProperty(viewModelInstance, path, riveWorker)
+      val sequencer = imageSequencers.getOrPut(path) { ImagePropertySequencer() }
+      HybridViewModelImageProperty(viewModelInstance, path, riveWorker, sequencer)
     } catch (e: Exception) {
       Log.e(TAG, "imageProperty failed for path '$path'", e)
       null
