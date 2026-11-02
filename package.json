@@ -42,6 +42,7 @@
     "prepare": "npx react-native-builder-bob@^0.40.0 build && yarn build:cli",
     "nitrogen": "nitrogen && npx tsx scripts/nitrogen-postprocess.ts",
     "rive-gen-types": "node scripts/rive-gen-types.ts",
+    "build:settle-probe": "rive example/assets/rive-src/settle_probe --once && cp example/assets/rive-src/settle_probe/build/settle_probe.riv example/assets/rive/ && node scripts/rive-gen-types.ts example/assets/rive/settle_probe.riv",
     "release": "release-it",
     "dev:ios": "cd example && xed ios",
     "dev:android": "cd example && open -a \"/Applications/Android Studio.app\" ./android",
