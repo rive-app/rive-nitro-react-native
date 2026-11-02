@@ -116,6 +116,19 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
   // re-rendering identical frames at full refresh rate.
   private var needsRedraw = true
 
+  private data class LayoutSize(
+    val artboard: Artboard,
+    val surface: RiveSurface,
+    val width: Int,
+    val height: Int,
+    val fit: Fit.Layout
+  )
+
+  private var appliedLayout: LayoutSize? = null
+
+  // A resize only takes effect on an advance, so a paused or settled view needs one zero advance.
+  private var layoutAdvancePending = false
+
   @Volatile
   private var paused = false
 
@@ -151,9 +164,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
         this@RiveReactNativeView.surfaceWidth = w
         this@RiveReactNativeView.surfaceHeight = h
         this@RiveReactNativeView.needsRedraw = true
-        // Since 11.7.x the render target keeps its creation-time size and
-        // RiveSurface.resize() is internal to the SDK, so only the artboard
-        // is resized here (same behavior as before the 11.7.2 bump).
+        this@RiveReactNativeView.riveSurface?.let { RiveSurfaceResize.resize(it, w, h) }
         resizeArtboardIfLayout()
       }
 
@@ -205,7 +216,10 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
         try {
           if (!paused && !settled) {
             worker.advanceStateMachine(sm, deltaTime)
+          } else if (layoutAdvancePending) {
+            worker.advanceStateMachine(sm, Duration.ZERO)
           }
+          layoutAdvancePending = false
           worker.draw(art, sm, rs, activeFit)
           needsRedraw = false
           frameCount++
@@ -265,6 +279,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
     )
 
     if (reload) {
+      layoutAdvancePending = false
       RiveErrorLogger.resetReportedErrors()
       RiveErrorLogger.addListener(errorListener)
       stateMachineHandle?.let { old ->
@@ -330,7 +345,17 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
     if (fit is Fit.Layout) {
       val rs = riveSurface ?: return
       val art = artboard ?: return
+      val layout = LayoutSize(art, rs, surfaceWidth, surfaceHeight, fit)
+      if (layout == appliedLayout) return
+      appliedLayout = layout
       art.resizeArtboard(rs, fit.scaleFactor)
+      // A responsive layout may start animating, so resume advancing like upstream's unsettle().
+      settled = false
+      layoutAdvancePending = true
+      needsRedraw = true
+    } else {
+      appliedLayout = null
+      layoutAdvancePending = false
     }
   }
 
