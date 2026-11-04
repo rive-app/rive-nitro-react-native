@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.11](https://github.com/rive-app/rive-nitro-react-native/compare/v0.5.10...v0.5.11) (2026-11-04)
+
+
+### Bug Fixes
+
+* **ios:** advance the state machine before resolving view-ready ([#440](https://github.com/rive-app/rive-nitro-react-native/issues/440)) ([0c37189](https://github.com/rive-app/rive-nitro-react-native/commit/0c371892f89282fc15e3163529b722640b886713))
+
 ## [0.5.10](https://github.com/rive-app/rive-nitro-react-native/compare/v0.5.9...v0.5.10) (2026-11-02)
 
 
