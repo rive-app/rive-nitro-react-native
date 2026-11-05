@@ -9,6 +9,7 @@ import com.facebook.proguard.annotations.DoNotStrip
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import com.rive.RiveReactNativeView
 import java.util.concurrent.atomic.AtomicInteger
 
 // Shared by every wrapper for one instance path, since JS may look the property up again per set.
@@ -40,12 +41,18 @@ class HybridViewModelImageProperty internal constructor(
       try {
         if (hybridImage == null) {
           instance.setImage(path, null)
+          RiveReactNativeView.onViewModelChanged()
           return@launch
         }
         val result = ImageAsset.fromBytes(riveWorker, hybridImage.rawData)
         if (result is app.rive.Result.Success) {
           // The property keeps its own ref, so close ours right away.
-          result.value.use { if (sequencer.generation.get() == gen) instance.setImage(path, it) }
+          result.value.use {
+            if (sequencer.generation.get() == gen) {
+              instance.setImage(path, it)
+              RiveReactNativeView.onViewModelChanged()
+            }
+          }
         } else {
           Log.e(TAG, "Failed to decode image for path '$path'")
         }
