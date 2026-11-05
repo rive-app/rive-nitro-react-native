@@ -21,7 +21,10 @@ def reactNativeArchitectures() {
 }
 
 apply plugin: "com.android.library"
-apply plugin: "kotlin-android"
+// AGP 9's built-in Kotlin already registers the `kotlin` extension; applying kotlin-android again fails.
+if (project.extensions.findByName('kotlin') == null) {
+  apply plugin: "kotlin-android"
+}
 apply from: '../nitrogen/generated/android/rive+autolinking.gradle'
 apply plugin: "com.facebook.react"
 
@@ -122,13 +125,15 @@ android {
 
   sourceSets {
     main {
+      def riveSrcDir = useLegacy ? "src/legacy/java" : "src/new/java"
       java.srcDirs += ["generated/java",
-                       "generated/jni"]
-      if (useLegacy) {
-        java.srcDirs += ["src/legacy/java"]
-      } else {
-        java.srcDirs += ["src/new/java"]
-      }
+                       "generated/jni",
+                       riveSrcDir]
+      // AGP 9 built-in Kotlin only compiles kotlin.srcDirs (plus the default
+      // src/main/java), so register the Kotlin dirs that are only on java.srcDirs,
+      // including the Nitrogen-generated ones added by rive+autolinking.gradle.
+      kotlin.srcDirs += [riveSrcDir,
+                         "${project.projectDir}/../nitrogen/generated/android/kotlin"]
     }
   }
 }
