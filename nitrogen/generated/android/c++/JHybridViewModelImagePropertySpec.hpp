@@ -57,6 +57,7 @@ namespace margelo::nitro::rive {
   public:
     // Methods
     void set(const std::optional<std::shared_ptr<HybridRiveImageSpec>>& image) override;
+    std::shared_ptr<Promise<void>> setAsync(const std::optional<std::shared_ptr<HybridRiveImageSpec>>& image) override;
     std::function<void()> addListener(const std::function<void()>& onChanged) override;
     void removeListeners() override;
 

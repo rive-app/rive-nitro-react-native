@@ -7,6 +7,8 @@ class HybridViewModelInstance: HybridViewModelInstanceSpec {
   private let _instanceName: String
   private let file: File?
   private let vmName: String?
+  private let imageSequencersLock = NSLock()
+  private var imageSequencers: [String: ImagePropertySequencer] = [:]
 
   init(viewModelInstance: ViewModelInstance, worker: Worker, instanceName: String = "", file: File? = nil, vmName: String? = nil) {
     self.viewModelInstance = viewModelInstance
@@ -65,7 +67,17 @@ class HybridViewModelInstance: HybridViewModelInstanceSpec {
   }
 
   func imageProperty(path: String) throws -> (any HybridViewModelImagePropertySpec)? {
-    return HybridViewModelImageProperty(instance: viewModelInstance, path: path, worker: worker)
+    return HybridViewModelImageProperty(
+      instance: viewModelInstance, path: path, worker: worker, sequencer: imageSequencer(for: path))
+  }
+
+  private func imageSequencer(for path: String) -> ImagePropertySequencer {
+    imageSequencersLock.lock()
+    defer { imageSequencersLock.unlock() }
+    if let sequencer = imageSequencers[path] { return sequencer }
+    let sequencer = ImagePropertySequencer()
+    imageSequencers[path] = sequencer
+    return sequencer
   }
 
   func listProperty(path: String) throws -> (any HybridViewModelListPropertySpec)? {
