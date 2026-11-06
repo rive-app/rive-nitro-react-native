@@ -21,15 +21,28 @@ class HybridViewModel(
   private val vmSource: ViewModelSource,
   // Artboard created solely to resolve this view model (DefaultForArtboard
   // sources) — owned by this wrapper and closed with it.
-  private val ownedArtboard: Artboard? = null
+  private var ownedArtboard: Artboard? = null
 ) : HybridViewModelSpec() {
   companion object {
     private const val TAG = "HybridViewModel"
   }
 
+  private fun closeArtboard() {
+    ownedArtboard?.let { artboard ->
+      ownedArtboard = null
+      runCatching { artboard.close() }
+        .onFailure { RiveLog.e(TAG, "Closing the artboard failed: ${it.message}") }
+    }
+  }
+
   override fun dispose() {
-    ownedArtboard?.let { runCatching { it.close() } }
+    closeArtboard()
     super.dispose()
+  }
+
+  // The deprecated synchronous instance path never disposes this wrapper.
+  protected fun finalize() {
+    closeArtboard()
   }
 
   override fun getPropertiesAsync(): Promise<Array<ViewModelPropertyInfo>> {

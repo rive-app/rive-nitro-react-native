@@ -1,7 +1,8 @@
-import { useEffect, useRef, type ComponentProps } from 'react';
+import { useRef, type ComponentProps } from 'react';
 import { NitroRiveView } from './NitroRiveViewComponent';
 import { RiveErrorType, type RiveError } from './Errors';
 import { callDispose } from './callDispose';
+import { useUnmountEffect } from '../hooks/useUnmountEffect';
 import type { RiveViewRef } from '../index';
 import type {
   RiveFileSource,
@@ -76,14 +77,12 @@ export function RiveView<
   const wrappedOnError = onError ?? defaultOnError;
   const viewRef = useRef<RiveViewRef | null>(null);
 
-  useEffect(() => {
-    return () => {
-      if (viewRef.current) {
-        callDispose(viewRef.current);
-        viewRef.current = null;
-      }
-    };
-  }, []);
+  useUnmountEffect(() => {
+    if (viewRef.current) {
+      callDispose(viewRef.current);
+      viewRef.current = null;
+    }
+  });
 
   const setRef = (ref: RiveViewRef) => {
     viewRef.current = ref;

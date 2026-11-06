@@ -3,16 +3,17 @@ package com.margelo.nitro.rive
 import android.util.Log
 import androidx.annotation.Keep
 import app.rive.Artboard
-import app.rive.ViewModelInstance
 import com.facebook.proguard.annotations.DoNotStrip
 
 @Keep
 @DoNotStrip
 class HybridViewModelArtboardProperty(
-  private val instance: ViewModelInstance,
+  private val owner: HybridViewModelInstance,
   private val path: String,
   private val riveFile: HybridRiveFile
 ) : HybridViewModelArtboardPropertySpec() {
+  private val instance get() = owner.viewModelInstance
+
   companion object {
     private const val TAG = "HybridViewModelArtboardProperty"
   }

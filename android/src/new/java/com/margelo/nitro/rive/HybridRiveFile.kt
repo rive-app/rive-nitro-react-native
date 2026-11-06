@@ -213,4 +213,11 @@ class HybridRiveFile(
     riveFile?.close()
     riveFile = null
   }
+
+  // React before 19.3 gives no unmount signal for a hidden subtree (#448), and
+  // only close() frees a RiveFile's native memory.
+  protected fun finalize() {
+    runCatching { dispose() }
+      .onFailure { RiveLog.e(TAG, "Closing the file failed: ${it.message}") }
+  }
 }

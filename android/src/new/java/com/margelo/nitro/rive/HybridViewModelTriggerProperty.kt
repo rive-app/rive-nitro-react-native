@@ -1,16 +1,16 @@
 package com.margelo.nitro.rive
 
 import androidx.annotation.Keep
-import app.rive.ViewModelInstance
 import com.facebook.proguard.annotations.DoNotStrip
 
 @Keep
 @DoNotStrip
 class HybridViewModelTriggerProperty(
-  private val instance: ViewModelInstance,
+  private val owner: HybridViewModelInstance,
   private val path: String
 ) : HybridViewModelTriggerPropertySpec(),
   BaseHybridViewModelProperty<Unit> by BaseHybridViewModelPropertyImpl() {
+  private val instance get() = owner.viewModelInstance
 
   override fun trigger() {
     instance.fireTrigger(path)

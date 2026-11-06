@@ -27,16 +27,9 @@ import {
 import { type Metadata } from '../shared/metadata';
 
 /**
- * Issue #448: <Activity mode="hidden"> runs passive effect cleanups without
- * unmounting. The hooks disposed their native objects there, and the reveal
- * re-ran the effects on the same dead objects. Release builds skip Nitro's
- * null-NativeState check, so the next native call segfaults.
- *
- * Needs React 19.2+ (the expo57 example) and a Release build for the native
- * crash. Hide, Reveal, then Call instance / Call property / Play. "effects"
- * logs the real renderer's insertion, layout and passive order; the counters
- * show when the native objects were really released, so Unmount and
- * Hide + Unmount show whether a real unmount still releases eagerly.
+ * Issue #448: hiding and revealing a Rive subtree under <Activity> crashed
+ * release builds; needs React 19.2+ (expo57-example), and the counters show when
+ * the native objects are released.
  */
 
 const SOURCE = require('../../assets/rive/databinding.riv');
@@ -286,8 +279,7 @@ export default function Issue448ActivityHideReveal() {
       return instance?.numberProperty(PATH)?.set(Date.now() % 100);
     });
 
-  // Not wrapped by callDispose, so this is the raw native call the issue's
-  // stacks show. A try/catch can't save it from a segfault.
+  // A raw native call: callDispose doesn't wrap it, and a segfault skips catch.
   const propertyRef = useRef<ReturnType<
     ViewModelInstance['numberProperty']
   > | null>(null);

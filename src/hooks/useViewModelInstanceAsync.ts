@@ -1,9 +1,10 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import type { ViewModel, ViewModelInstance } from '../specs/ViewModel.nitro';
 import type { RiveFile } from '../specs/RiveFile.nitro';
 import type { RiveViewRef } from '../index';
 import { callDispose } from '../core/callDispose';
 import { ArtboardByName } from '../specs/ArtboardBy';
+import { useRetainedEffect } from './useRetainedEffect';
 import type {
   UseViewModelInstanceFileParams,
   UseViewModelInstanceViewModelParams,
@@ -350,7 +351,7 @@ export function useViewModelInstanceAsync(
     setResult((prev) => (prev.isLoading ? prev : LOADING_RESULT));
   }
 
-  useEffect(() => {
+  useRetainedEffect(() => {
     if (source === null) {
       // Source resolved to absent/failed rather than pending. `useRiveFile`
       // returns `riveFile: null` on load error (vs `undefined` while loading),
