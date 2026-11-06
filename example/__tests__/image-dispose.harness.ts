@@ -1,5 +1,4 @@
 import { describe, it, expect } from 'react-native-harness';
-import { Platform } from 'react-native';
 import { RiveFileFactory, RiveImages } from '@rive-app/react-native';
 
 const DATABINDING_IMAGES = require('../assets/rive/databinding_images.riv');
@@ -35,13 +34,7 @@ describe('RiveImage disposal', () => {
     const second = await RiveImages.loadFromBytesAsync(pngBytes());
     prop.set(second);
     second.dispose();
-    // The new iOS runtime can't clear image properties yet (#360)
-    if (
-      Platform.OS !== 'ios' ||
-      RiveFileFactory.getBackend() !== 'experimental'
-    ) {
-      prop.set(undefined);
-    }
+    prop.set(undefined);
 
     prop.dispose();
     instance.dispose();
