@@ -150,6 +150,36 @@ open class HybridViewModelImagePropertySpec_cxx : HybridViewModelPropertySpec_cx
   }
   
   @inline(__always)
+  public final func setAsync(image: bridge.std__optional_std__shared_ptr_HybridRiveImageSpec__) -> bridge.Result_std__shared_ptr_Promise_void___ {
+    do {
+      let __result = try self.__implementation.setAsync(image: { () -> (any HybridRiveImageSpec)? in
+        if bridge.has_value_std__optional_std__shared_ptr_HybridRiveImageSpec__(image) {
+          let __unwrapped = bridge.get_std__optional_std__shared_ptr_HybridRiveImageSpec__(image)
+          return { () -> any HybridRiveImageSpec in
+            let __unsafePointer = bridge.get_std__shared_ptr_HybridRiveImageSpec_(__unwrapped)
+            let __instance = HybridRiveImageSpec_cxx.fromUnsafe(__unsafePointer)
+            return __instance.getHybridRiveImageSpec()
+          }()
+        } else {
+          return nil
+        }
+      }())
+      let __resultCpp = { () -> bridge.std__shared_ptr_Promise_void__ in
+        let __promise = bridge.create_std__shared_ptr_Promise_void__()
+        let __promiseHolder = bridge.wrap_std__shared_ptr_Promise_void__(__promise)
+        __result
+          .then({ __result in __promiseHolder.resolve() })
+          .catch({ __error in __promiseHolder.reject(__error.toCpp()) })
+        return __promise
+      }()
+      return bridge.create_Result_std__shared_ptr_Promise_void___(__resultCpp)
+    } catch (let __error) {
+      let __exceptionPtr = __error.toCpp()
+      return bridge.create_Result_std__shared_ptr_Promise_void___(__exceptionPtr)
+    }
+  }
+  
+  @inline(__always)
   public final func addListener(onChanged: bridge.Func_void) -> bridge.Result_std__function_void____ {
     do {
       let __result = try self.__implementation.addListener(onChanged: { () -> () -> Void in

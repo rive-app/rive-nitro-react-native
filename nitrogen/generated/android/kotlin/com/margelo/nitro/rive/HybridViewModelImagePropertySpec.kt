@@ -11,6 +11,7 @@ import androidx.annotation.Keep
 import com.facebook.jni.HybridData
 import com.facebook.proguard.annotations.DoNotStrip
 import dalvik.annotation.optimization.FastNative
+import com.margelo.nitro.core.Promise
 import com.margelo.nitro.core.HybridObject
 
 /**
@@ -32,6 +33,10 @@ abstract class HybridViewModelImagePropertySpec: HybridViewModelPropertySpec() {
   @DoNotStrip
   @Keep
   abstract fun set(image: HybridRiveImageSpec?): Unit
+  
+  @DoNotStrip
+  @Keep
+  abstract fun setAsync(image: HybridRiveImageSpec?): Promise<Unit>
   
   abstract fun addListener(onChanged: () -> Unit): () -> Unit
   

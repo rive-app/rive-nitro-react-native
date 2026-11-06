@@ -20,6 +20,7 @@ namespace margelo::nitro::rive { class HybridViewModelPropertySpecSwift; }
 #include <memory>
 #include "HybridRiveImageSpec.hpp"
 #include <optional>
+#include <NitroModules/Promise.hpp>
 #include <functional>
 #include "HybridViewModelPropertySpecSwift.hpp"
 
@@ -79,6 +80,14 @@ namespace margelo::nitro::rive {
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }
+    }
+    inline std::shared_ptr<Promise<void>> setAsync(const std::optional<std::shared_ptr<HybridRiveImageSpec>>& image) override {
+      auto __result = _swiftPart.setAsync(image);
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
     }
     inline std::function<void()> addListener(const std::function<void()>& onChanged) override {
       auto __result = _swiftPart.addListener(onChanged);
