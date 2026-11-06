@@ -1,7 +1,6 @@
 package com.margelo.nitro.rive
 
 import androidx.annotation.Keep
-import app.rive.ViewModelInstance
 import com.facebook.proguard.annotations.DoNotStrip
 import com.margelo.nitro.core.Promise
 import kotlinx.coroutines.flow.first
@@ -10,10 +9,12 @@ import kotlinx.coroutines.runBlocking
 @Keep
 @DoNotStrip
 class HybridViewModelBooleanProperty(
-  private val instance: ViewModelInstance,
+  private val owner: HybridViewModelInstance,
   private val path: String
 ) : HybridViewModelBooleanPropertySpec(),
   BaseHybridViewModelProperty<Boolean> by BaseHybridViewModelPropertyImpl() {
+  private val instance get() = owner.viewModelInstance
+
   companion object {
     private const val TAG = "HybridViewModelBooleanProperty"
   }

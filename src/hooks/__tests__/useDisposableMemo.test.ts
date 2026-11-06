@@ -88,7 +88,7 @@ describe('useDisposableMemo', () => {
     expect(result.current.isAlive).toBe(true);
   });
 
-  it('disposes on unmount (via deferred timeout in dev)', () => {
+  it('disposes on unmount', () => {
     const { result, unmount } = renderHook(() =>
       useDisposableMemo(
         () => createDisposable('A'),
@@ -101,13 +101,6 @@ describe('useDisposableMemo', () => {
     expect(obj.isAlive).toBe(true);
 
     unmount();
-
-    // Not yet disposed — waiting for setTimeout(0)
-    expect(obj.isAlive).toBe(true);
-
-    act(() => {
-      jest.runAllTimers();
-    });
 
     expect(obj.isAlive).toBe(false);
   });
@@ -283,7 +276,7 @@ describe('useDisposableMemo', () => {
       expect(liveRef.current!.isAlive).toBe(true);
     });
 
-    it('clears liveRef on unmount (deferred in dev)', () => {
+    it('clears liveRef on unmount', () => {
       const liveRef: RefObject<Disposable | undefined> = { current: undefined };
 
       const { unmount } = renderHook(() =>
@@ -298,13 +291,6 @@ describe('useDisposableMemo', () => {
       expect(liveRef.current).toBeDefined();
 
       unmount();
-
-      // Deferred in dev — still set before timer fires
-      expect(liveRef.current).toBeDefined();
-
-      act(() => {
-        jest.runAllTimers();
-      });
 
       expect(liveRef.current).toBeUndefined();
     });

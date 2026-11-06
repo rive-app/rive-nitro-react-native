@@ -12,12 +12,14 @@ import kotlinx.coroutines.runBlocking
 @Keep
 @DoNotStrip
 class HybridViewModelListProperty(
-  private val instance: ViewModelInstance,
+  private val owner: HybridViewModelInstance,
   private val path: String,
   private val riveWorker: CommandQueue,
   private val parentFile: HybridRiveFile
 ) : HybridViewModelListPropertySpec(),
   BaseHybridViewModelProperty<Unit> by BaseHybridViewModelPropertyImpl() {
+  private val instance get() = owner.viewModelInstance
+
   companion object {
     private const val TAG = "HybridViewModelListProperty"
   }

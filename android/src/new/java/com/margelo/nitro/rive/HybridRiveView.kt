@@ -73,6 +73,9 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
   private var initialUpdate = true
   private var registeredFile: HybridRiveFile? = null
 
+  // The view keeps only the raw instance, which the wrapper closes when collected.
+  private var boundViewModelInstance: HybridViewModelInstance? = null
+
   override var artboardName: String? = null
     set(value) {
       changed(field, value) { field = it }
@@ -131,6 +134,7 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
   override fun bindViewModelInstance(viewModelInstance: HybridViewModelInstanceSpec) =
     executeOnUiThread {
       val hybridVmi = viewModelInstance as? HybridViewModelInstance ?: return@executeOnUiThread
+      boundViewModelInstance = hybridVmi
       view.bindViewModelInstance(hybridVmi.viewModelInstance)
     }
 

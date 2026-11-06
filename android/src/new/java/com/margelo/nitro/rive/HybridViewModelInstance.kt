@@ -27,11 +27,24 @@ class HybridViewModelInstance(
 
   private val imageSequencers = ConcurrentHashMap<String, ImagePropertySequencer>()
 
+  private var closed = false
+
+  private fun closeInstance() {
+    if (!ownsInstance || closed) return
+    closed = true
+    runCatching { viewModelInstance.close() }
+      .onFailure { RiveLog.e(TAG, "Closing the instance failed: ${it.message}") }
+  }
+
   override fun dispose() {
-    if (ownsInstance) {
-      runCatching { viewModelInstance.close() }
-    }
+    closeInstance()
     super.dispose()
+  }
+
+  // Properties and views keep this wrapper reachable while they use the
+  // instance, so it can't be collected out from under them.
+  protected fun finalize() {
+    closeInstance()
   }
 
   // TODO: Workaround — rive-android experimental SDK doesn't expose ViewModelInstance.name.
@@ -62,27 +75,27 @@ class HybridViewModelInstance(
   }
 
   override fun numberProperty(path: String) =
-    HybridViewModelNumberProperty(viewModelInstance, path)
+    HybridViewModelNumberProperty(this, path)
 
   override fun stringProperty(path: String) =
-    HybridViewModelStringProperty(viewModelInstance, path)
+    HybridViewModelStringProperty(this, path)
 
   override fun booleanProperty(path: String) =
-    HybridViewModelBooleanProperty(viewModelInstance, path)
+    HybridViewModelBooleanProperty(this, path)
 
   override fun colorProperty(path: String) =
-    HybridViewModelColorProperty(viewModelInstance, path)
+    HybridViewModelColorProperty(this, path)
 
   override fun enumProperty(path: String) =
-    HybridViewModelEnumProperty(viewModelInstance, path)
+    HybridViewModelEnumProperty(this, path)
 
   override fun triggerProperty(path: String) =
-    HybridViewModelTriggerProperty(viewModelInstance, path)
+    HybridViewModelTriggerProperty(this, path)
 
   override fun imageProperty(path: String): HybridViewModelImagePropertySpec? {
     return try {
       val sequencer = imageSequencers.getOrPut(path) { ImagePropertySequencer() }
-      HybridViewModelImageProperty(viewModelInstance, path, riveWorker, sequencer)
+      HybridViewModelImageProperty(this, path, riveWorker, sequencer)
     } catch (e: Exception) {
       Log.e(TAG, "imageProperty failed for path '$path'", e)
       null
@@ -91,7 +104,7 @@ class HybridViewModelInstance(
 
   override fun listProperty(path: String): HybridViewModelListPropertySpec? {
     return try {
-      HybridViewModelListProperty(viewModelInstance, path, riveWorker, parentFile)
+      HybridViewModelListProperty(this, path, riveWorker, parentFile)
     } catch (e: Exception) {
       Log.e(TAG, "listProperty failed for path '$path'", e)
       null
@@ -100,7 +113,7 @@ class HybridViewModelInstance(
 
   override fun artboardProperty(path: String): HybridViewModelArtboardPropertySpec? {
     return try {
-      HybridViewModelArtboardProperty(viewModelInstance, path, parentFile)
+      HybridViewModelArtboardProperty(this, path, parentFile)
     } catch (e: Exception) {
       Log.e(TAG, "artboardProperty failed for path '$path'", e)
       null
