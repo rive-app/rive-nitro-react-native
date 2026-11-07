@@ -71,7 +71,12 @@ const SCENARIOS: Scenario[] = [
   { id: 'ref+100', fireAt: { afterRefMs: 100 } },
   { id: 'ref+200', fireAt: { afterRefMs: 200 } },
   { id: 'ref-jpg4096-imgfirst', fireAt: 'ref', image: '4096' },
-  { id: 'ref-jpg4096-trigfirst', fireAt: 'ref', image: '4096', triggerFirst: true },
+  {
+    id: 'ref-jpg4096-trigfirst',
+    fireAt: 'ref',
+    image: '4096',
+    triggerFirst: true,
+  },
   { id: 'ref-jpg1024-imgfirst', fireAt: 'ref', image: '1024' },
   { id: 'ref+33-jpg4096', fireAt: { afterRefMs: 33 }, image: '4096' },
   { id: 'ready', fireAt: 'ready' },
