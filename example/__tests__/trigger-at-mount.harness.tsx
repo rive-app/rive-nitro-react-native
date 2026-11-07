@@ -6,8 +6,9 @@ import {
   waitFor,
   cleanup,
 } from 'react-native-harness';
-import { View } from 'react-native';
+import { Image, View } from 'react-native';
 import {
+  RiveImages,
   RiveView,
   RiveFileFactory,
   Fit,
@@ -19,17 +20,22 @@ import {
 // `fire` moves the state machine into a state that stays, and that state's x
 // flows back to `firedX`: -400 until fired, 0 after.
 const PROBE = require('../assets/rive/issue445_probe.riv');
+const LARGE_IMAGE = require('../assets/rive/trigger-at-mount-4096.png');
 
 function expectDefined<T>(value: T): asserts value is NonNullable<T> {
   expect(value).toBeDefined();
 }
 
-async function mount(onRef: (instance: ViewModelInstance) => void) {
+async function mount(
+  onRef: (instance: ViewModelInstance) => void,
+  beforeRender?: (instance: ViewModelInstance) => void
+) {
   const file: RiveFile = await RiveFileFactory.fromSource(PROBE, undefined);
   const viewModel = file.viewModelByName('Probe');
   expectDefined(viewModel);
   const instance = viewModel.createDefaultInstance();
   expectDefined(instance);
+  beforeRender?.(instance);
 
   let ref: RiveViewRef | null = null;
   await render(
@@ -68,6 +74,20 @@ describe('trigger fired around mount', () => {
     const { instance } = await mount((vmi) => {
       vmi.triggerProperty('fire')!.trigger();
     });
+    await expectFired(instance);
+    cleanup();
+  });
+
+  it('reaches a state machine delayed by a decode on the worker', async () => {
+    const image = await RiveImages.loadFromURLAsync(
+      Image.resolveAssetSource(LARGE_IMAGE).uri
+    );
+    // The queued decode holds back the view's state machine, which keeps the
+    // window between mount and machine creation open past the ref callback.
+    const { instance } = await mount(
+      (vmi) => vmi.triggerProperty('fire')!.trigger(),
+      (vmi) => vmi.imageProperty('art')!.set(image)
+    );
     await expectFired(instance);
     cleanup();
   });

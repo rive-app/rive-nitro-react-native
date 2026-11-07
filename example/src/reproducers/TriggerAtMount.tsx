@@ -49,6 +49,9 @@ type Scenario = {
   image?: '1024' | '4096';
   // The image write comes first unless this is set.
   triggerFirst?: boolean;
+  // Queues the decode on the shared worker before mounting, which delays the
+  // view's state machine for as long as the decode runs.
+  decodeBeforeMount?: boolean;
   artboard?: 'Loop' | 'Still';
   autoPlay?: boolean;
   pauseBeforeFire?: boolean;
@@ -79,6 +82,24 @@ const SCENARIOS: Scenario[] = [
   },
   { id: 'ref-jpg1024-imgfirst', fireAt: 'ref', image: '1024' },
   { id: 'ref+33-jpg4096', fireAt: { afterRefMs: 33 }, image: '4096' },
+  {
+    id: 'busy-ref',
+    fireAt: 'ref',
+    image: '4096',
+    decodeBeforeMount: true,
+  },
+  {
+    id: 'busy-ref+33',
+    fireAt: { afterRefMs: 33 },
+    image: '4096',
+    decodeBeforeMount: true,
+  },
+  {
+    id: 'busy-ref+66',
+    fireAt: { afterRefMs: 66 },
+    image: '4096',
+    decodeBeforeMount: true,
+  },
   { id: 'ready', fireAt: 'ready' },
   { id: 'ready-still', fireAt: 'ready', artboard: 'Still' },
   { id: 'ready-jpg4096', fireAt: 'ready', image: '4096' },
@@ -148,13 +169,16 @@ export default function TriggerAtMount() {
       const write = () => {
         fireMs = performance.now() - start;
         vmi.stringProperty('label')!.set(LABEL);
-        if (image && !scenario.triggerFirst) setImage();
+        if (image && !scenario.triggerFirst && !scenario.decodeBeforeMount) {
+          setImage();
+        }
         vmi.triggerProperty('fire')!.trigger();
         if (image && scenario.triggerFirst) setImage();
       };
 
       start = performance.now();
       if (fireAt === 'beforeMount') write();
+      if (scenario.decodeBeforeMount) setImage();
 
       const viewPromise = new Promise<RiveViewRef>((resolve) => {
         onRef.current = (view) => {
@@ -162,7 +186,7 @@ export default function TriggerAtMount() {
           if (fireAt === 'ref') write();
           if (typeof fireAt === 'object' && 'afterRefMs' in fireAt) {
             // Keeps the worker decoding, which delays the state machine.
-            if (image) setImage();
+            if (image && !scenario.decodeBeforeMount) setImage();
             setTimeout(write, fireAt.afterRefMs);
           }
           resolve(view);
