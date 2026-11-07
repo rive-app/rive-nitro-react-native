@@ -5,23 +5,30 @@ import NitroModules
 /// async hops on iOS, so fires sent meanwhile wait until no view is still creating its machine.
 @MainActor
 enum TriggerFireGate {
-  private static var configuringViews = 0
+  private static let configureTimeoutNanoseconds: UInt64 = 5_000_000_000
+  private static var configuringViews = Set<UUID>()
   private static var heldFires: [() -> Void] = []
 
-  static func viewWillConfigure() {
-    configuringViews += 1
+  /// A configure stops counting after the timeout, so a hung one can't hold fires forever.
+  static func viewWillConfigure() -> UUID {
+    let configuration = UUID()
+    configuringViews.insert(configuration)
+    Task {
+      try? await Task.sleep(nanoseconds: configureTimeoutNanoseconds)
+      viewDidConfigure(configuration)
+    }
+    return configuration
   }
 
-  static func viewDidConfigure() {
-    configuringViews -= 1
-    guard configuringViews == 0 else { return }
+  static func viewDidConfigure(_ configuration: UUID) {
+    guard configuringViews.remove(configuration) != nil, configuringViews.isEmpty else { return }
     let fires = heldFires
     heldFires.removeAll()
     fires.forEach { $0() }
   }
 
   static func fire(_ trigger: TriggerProperty, on instance: ViewModelInstance) {
-    if configuringViews > 0 {
+    if !configuringViews.isEmpty {
       heldFires.append { instance.fire(trigger: trigger) }
     } else {
       instance.fire(trigger: trigger)
