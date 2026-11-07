@@ -431,7 +431,7 @@ jobs:
           for attempt in 1 2 3; do
             echo "=== Attempt $attempt of 3 ==="
             start_monitor
-            yarn test:harness:ios --verbose --testTimeout 120000 &
+            yarn test:harness:ios --verbose &
             test_pid=$!
             ( sleep 600; echo "  WATCHDOG: attempt $attempt exceeded 600s, killing harness"; kill -9 $test_pid 2>/dev/null ) &
             watchdog_pid=$!
@@ -583,7 +583,7 @@ jobs:
           script: |
             adb install expo57-example/android/app/build/outputs/apk/debug/app-debug.apk
             sleep 10
-            cd expo57-example && for attempt in 1 2 3; do echo "Attempt $attempt of 3"; if timeout 600 env ANDROID_AVD=test yarn test:harness:android --verbose --testTimeout 120000; then echo "Tests passed on attempt $attempt"; exit 0; fi; echo "Attempt $attempt failed (exit $?), retrying..."; ../scripts/collect-android-crash-logs.sh "$attempt" ../crash-logs; sleep 5; done; ../scripts/collect-android-crash-logs.sh final ../crash-logs; echo "All attempts failed"; exit 1
+            cd expo57-example && for attempt in 1 2 3; do echo "Attempt $attempt of 3"; if timeout 600 env ANDROID_AVD=test yarn test:harness:android --verbose; then echo "Tests passed on attempt $attempt"; exit 0; fi; echo "Attempt $attempt failed (exit $?), retrying..."; ../scripts/collect-android-crash-logs.sh "$attempt" ../crash-logs; sleep 5; done; ../scripts/collect-android-crash-logs.sh final ../crash-logs; echo "All attempts failed"; exit 1
 
       - name: Upload Android crash logs
         if: failure() || cancelled()
@@ -754,7 +754,7 @@ jobs:
           for attempt in 1 2 3; do
             echo "=== Attempt $attempt of 3 ==="
             start_monitor
-            yarn test:harness:ios --verbose --testTimeout 120000 &
+            yarn test:harness:ios --verbose &
             test_pid=$!
             ( sleep 600; echo "  WATCHDOG: attempt $attempt exceeded 600s, killing harness"; kill -9 $test_pid 2>/dev/null ) &
             watchdog_pid=$!
@@ -913,7 +913,7 @@ jobs:
           script: |
             adb install expo57-example/android/app/build/outputs/apk/debug/app-debug.apk
             sleep 10
-            cd expo57-example && for attempt in 1 2 3; do echo "Attempt $attempt of 3"; if timeout 600 env ANDROID_AVD=test yarn test:harness:android --verbose --testTimeout 120000; then echo "Tests passed on attempt $attempt"; exit 0; fi; echo "Attempt $attempt failed (exit $?), retrying..."; ../scripts/collect-android-crash-logs.sh "$attempt" ../crash-logs; sleep 5; done; ../scripts/collect-android-crash-logs.sh final ../crash-logs; echo "All attempts failed"; exit 1
+            cd expo57-example && for attempt in 1 2 3; do echo "Attempt $attempt of 3"; if timeout 600 env ANDROID_AVD=test yarn test:harness:android --verbose; then echo "Tests passed on attempt $attempt"; exit 0; fi; echo "Attempt $attempt failed (exit $?), retrying..."; ../scripts/collect-android-crash-logs.sh "$attempt" ../crash-logs; sleep 5; done; ../scripts/collect-android-crash-logs.sh final ../crash-logs; echo "All attempts failed"; exit 1
 
       - name: Upload Android crash logs
         if: failure() || cancelled()
