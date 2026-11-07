@@ -36,15 +36,20 @@ class HybridViewModelImageProperty internal constructor(
 
   override fun set(image: HybridRiveImageSpec?) {
     val hybridImage = image as? HybridRiveImage
+    // Read now, since JS may dispose the image while the decode is still queued.
+    val bytes = hybridImage?.let {
+      it.rawData ?: throw IllegalStateException("RiveImage has been disposed")
+    }
     val gen = sequencer.generation.incrementAndGet()
     sequencer.scope.launch {
       try {
-        if (hybridImage == null) {
+        if (bytes == null) {
           instance.setImage(path, null)
           RiveReactNativeView.onViewModelChanged()
           return@launch
         }
-        val result = ImageAsset.fromBytes(riveWorker, hybridImage.rawData)
+        AssetLoader.ensureHeapFits(bytes)
+        val result = ImageAsset.fromBytes(riveWorker, bytes)
         if (result is app.rive.Result.Success) {
           // The property keeps its own ref, so close ours right away.
           result.value.use {
