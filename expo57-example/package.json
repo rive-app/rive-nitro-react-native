@@ -43,14 +43,14 @@
     "rive-debug-utils": "workspace:*"
   },
   "devDependencies": {
-    "@react-native-harness/platform-android": "1.4.0-rc.1",
-    "@react-native-harness/platform-apple": "1.4.0-rc.1",
+    "@react-native-harness/platform-android": "1.7.0",
+    "@react-native-harness/platform-apple": "1.7.0",
     "@types/react": "~19.2.2",
     "babel-preset-expo": "~57.0.2",
     "eslint": "^9.25.0",
     "eslint-config-expo": "~57.0.0",
     "eslint-import-resolver-typescript": "^4.4.4",
-    "react-native-harness": "1.4.0-rc.1",
+    "react-native-harness": "1.7.0",
     "typescript": "~6.0.3"
   },
   "private": true

@@ -64,6 +64,8 @@ export default {
   // CI cold runs bundle through the harness's own Metro on first app boot;
   // allow overriding the bridge timeout there.
   bridgeTimeout: Number(process.env.HARNESS_BRIDGE_TIMEOUT) || 90000,
+  // Harness defaults this to 5s and ignores jest's --testTimeout.
+  testTimeout: 120000,
   maxAppRestarts: 3,
   forwardClientLogs: true,
   runners: [
