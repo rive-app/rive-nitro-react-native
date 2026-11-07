@@ -1,0 +1,179 @@
+<Rive version="1" kind="fragment">
+    <!-- Probe for issue #445. Every binding has its own pixels: Art fills the top
+         half with whatever `art` holds, Level moves with `level`, Label shows
+         `label`, and `fire` slides the orange Fired bar in, and its x flows back to `firedX` so JS can read the machine's state. Sweep moves on every
+         advance of Loop, so a frozen bar means no frames. Still has no Sweep
+         animation, so its state machine settles. -->
+    <Artboard x="0" defaultStateMachineId="0:17" viewModelId="0:40" width="400" height="400" name="Loop" id="0:12">
+        <Fill name="Background"><SolidColor colorValue="FF16181D" name="Color"/></Fill>
+        <Shape x="0" y="240" name="Sweep" id="0:120">
+            <Rectangle width="40" height="40" originX="0" originY="0.5" name="Path"/>
+            <Fill name="Fill"><SolidColor colorValue="FFE8B04B" name="Color"/></Fill>
+        </Shape>
+        <Shape x="0" y="280" name="Level" id="0:121">
+            <DataBindContext sourcePathIds="0:40-0:45" propertyKey="13"/>
+            <Rectangle width="40" height="40" originX="0" originY="0.5" name="Path"/>
+            <Fill name="Fill"><SolidColor colorValue="FF5FBDB2" name="Color"/></Fill>
+        </Shape>
+        <Text x="200" y="335" sizingValue="autoWidth" originX="0.5" originY="0.5" name="Label" id="0:122">
+            <TextStylePaint fontSize="56" fontAssetId="0:60" name="Style" id="0:123">
+                <Fill name="Fill"><SolidColor colorValue="FFFFFFFF" name="Color"/></Fill>
+            </TextStylePaint>
+            <TextValueRun styleId="0:123" text="BAKED" name="Run">
+                <DataBindContext sourcePathIds="0:40-0:44" propertyKey="268"/>
+            </TextValueRun>
+        </Text>
+        <Shape x="-400" y="380" name="Fired" id="0:124">
+            <DataBindContext sourcePathIds="0:40-0:47" propertyKey="13" direction="true"/>
+            <Rectangle width="400" height="40" originX="0" originY="0.5" name="Path"/>
+            <Fill name="Fill"><SolidColor colorValue="FFFF7A00" name="Color"/></Fill>
+        </Shape>
+        <Shape x="200" y="300" name="StripBackground" id="0:125">
+            <Rectangle width="400" height="200" originX="0.5" originY="0.5" name="Path"/>
+            <Fill name="Fill"><SolidColor colorValue="FF23262E" name="Color"/></Fill>
+        </Shape>
+        <Image x="200" y="100" assetId="0:61" name="Art" id="0:126">
+            <DataBindContext sourcePathIds="0:40-0:43" propertyKey="206"/>
+        </Image>
+
+        <LinearAnimation loopValue="pingPong" fps="60" duration="60" name="SweepLoop" id="0:130">
+            <KeyedObject objectId="0:120">
+                <KeyedProperty propertyKey="13">
+                    <KeyFrameDouble value="0" frame="0" interpolationType="linear"/>
+                    <KeyFrameDouble value="360" frame="60" interpolationType="linear"/>
+                </KeyedProperty>
+            </KeyedObject>
+        </LinearAnimation>
+        <LinearAnimation fps="60" duration="1" name="Waiting" id="0:131">
+            <KeyedObject objectId="0:124">
+                <KeyedProperty propertyKey="13">
+                    <KeyFrameDouble value="-400" frame="0" interpolationType="hold"/>
+                </KeyedProperty>
+            </KeyedObject>
+        </LinearAnimation>
+        <LinearAnimation fps="60" duration="1" name="Triggered" id="0:132">
+            <KeyedObject objectId="0:124">
+                <KeyedProperty propertyKey="13">
+                    <KeyFrameDouble value="0" frame="0" interpolationType="hold"/>
+                </KeyedProperty>
+            </KeyedObject>
+        </LinearAnimation>
+        <StateMachine name="State Machine 1" id="0:17">
+            <StateMachineLayer name="Trigger" id="0:18">
+                <AnyState x="200" y="-120"/>
+                <ExitState x="400" y="-120"/>
+                <EntryState x="0" y="0">
+                    <StateTransition stateToId="0:112"/>
+                </EntryState>
+                <AnimationState x="200" y="0" animationId="0:131" id="0:112">
+                    <StateTransition stateToId="0:113">
+                        <TransitionViewModelCondition opValue="equal">
+                            <TransitionPropertyViewModelComparator>
+                                <BindablePropertyTrigger>
+                                    <DataBindContext sourcePathIds="0:40-0:46" propertyKey="686"/>
+                                </BindablePropertyTrigger>
+                            </TransitionPropertyViewModelComparator>
+                            <TransitionValueTriggerComparator/>
+                        </TransitionViewModelCondition>
+                    </StateTransition>
+                </AnimationState>
+                <AnimationState x="400" y="0" animationId="0:132" id="0:113"/>
+            </StateMachineLayer>
+            <StateMachineLayer name="Sweep" id="0:19">
+                <AnyState x="200" y="-120"/>
+                <ExitState x="400" y="-120"/>
+                <EntryState x="0" y="0">
+                    <StateTransition stateToId="0:114"/>
+                </EntryState>
+                <AnimationState x="200" y="0" animationId="0:130" id="0:114"/>
+            </StateMachineLayer>
+        </StateMachine>
+    </Artboard>
+    <Artboard x="500" defaultStateMachineId="0:27" viewModelId="0:40" width="400" height="400" name="Still" id="0:22">
+        <Fill name="Background"><SolidColor colorValue="FF16181D" name="Color"/></Fill>
+        <Shape x="0" y="240" name="Sweep" id="0:220">
+            <Rectangle width="40" height="40" originX="0" originY="0.5" name="Path"/>
+            <Fill name="Fill"><SolidColor colorValue="FFE8B04B" name="Color"/></Fill>
+        </Shape>
+        <Shape x="0" y="280" name="Level" id="0:221">
+            <DataBindContext sourcePathIds="0:40-0:45" propertyKey="13"/>
+            <Rectangle width="40" height="40" originX="0" originY="0.5" name="Path"/>
+            <Fill name="Fill"><SolidColor colorValue="FF5FBDB2" name="Color"/></Fill>
+        </Shape>
+        <Text x="200" y="335" sizingValue="autoWidth" originX="0.5" originY="0.5" name="Label" id="0:222">
+            <TextStylePaint fontSize="56" fontAssetId="0:60" name="Style" id="0:223">
+                <Fill name="Fill"><SolidColor colorValue="FFFFFFFF" name="Color"/></Fill>
+            </TextStylePaint>
+            <TextValueRun styleId="0:223" text="BAKED" name="Run">
+                <DataBindContext sourcePathIds="0:40-0:44" propertyKey="268"/>
+            </TextValueRun>
+        </Text>
+        <Shape x="-400" y="380" name="Fired" id="0:224">
+            <DataBindContext sourcePathIds="0:40-0:47" propertyKey="13" direction="true"/>
+            <Rectangle width="400" height="40" originX="0" originY="0.5" name="Path"/>
+            <Fill name="Fill"><SolidColor colorValue="FFFF7A00" name="Color"/></Fill>
+        </Shape>
+        <Shape x="200" y="300" name="StripBackground" id="0:225">
+            <Rectangle width="400" height="200" originX="0.5" originY="0.5" name="Path"/>
+            <Fill name="Fill"><SolidColor colorValue="FF23262E" name="Color"/></Fill>
+        </Shape>
+        <Image x="200" y="100" assetId="0:61" name="Art" id="0:226">
+            <DataBindContext sourcePathIds="0:40-0:43" propertyKey="206"/>
+        </Image>
+
+        <LinearAnimation fps="60" duration="1" name="Waiting" id="0:231">
+            <KeyedObject objectId="0:224">
+                <KeyedProperty propertyKey="13">
+                    <KeyFrameDouble value="-400" frame="0" interpolationType="hold"/>
+                </KeyedProperty>
+            </KeyedObject>
+        </LinearAnimation>
+        <LinearAnimation fps="60" duration="1" name="Triggered" id="0:232">
+            <KeyedObject objectId="0:224">
+                <KeyedProperty propertyKey="13">
+                    <KeyFrameDouble value="0" frame="0" interpolationType="hold"/>
+                </KeyedProperty>
+            </KeyedObject>
+        </LinearAnimation>
+        <StateMachine name="State Machine 1" id="0:27">
+            <StateMachineLayer name="Trigger" id="0:28">
+                <AnyState x="200" y="-120"/>
+                <ExitState x="400" y="-120"/>
+                <EntryState x="0" y="0">
+                    <StateTransition stateToId="0:212"/>
+                </EntryState>
+                <AnimationState x="200" y="0" animationId="0:231" id="0:212">
+                    <StateTransition stateToId="0:213">
+                        <TransitionViewModelCondition opValue="equal">
+                            <TransitionPropertyViewModelComparator>
+                                <BindablePropertyTrigger>
+                                    <DataBindContext sourcePathIds="0:40-0:46" propertyKey="686"/>
+                                </BindablePropertyTrigger>
+                            </TransitionPropertyViewModelComparator>
+                            <TransitionValueTriggerComparator/>
+                        </TransitionViewModelCondition>
+                    </StateTransition>
+                </AnimationState>
+                <AnimationState x="400" y="0" animationId="0:232" id="0:213"/>
+            </StateMachineLayer>
+        </StateMachine>
+    </Artboard>
+
+    <ImageAsset file="baked.png" name="baked" id="0:61"/>
+    <FontAsset file="Montserrat.ttf" name="Montserrat" id="0:60"/>
+
+    <ViewModel defaultInstanceId="0:41" name="Probe" id="0:40">
+        <ViewModelPropertyAssetImage name="art" id="0:43"/>
+        <ViewModelPropertyString name="label" id="0:44"/>
+        <ViewModelPropertyNumber name="level" id="0:45"/>
+        <ViewModelPropertyTrigger name="fire" id="0:46"/>
+        <ViewModelPropertyNumber name="firedX" id="0:47"/>
+        <ViewModelInstance exports="true" name="Instance" id="0:41">
+            <ViewModelInstanceAssetImage viewModelPropertyId="0:43"/>
+            <ViewModelInstanceString propertyValue="BAKED" viewModelPropertyId="0:44"/>
+            <ViewModelInstanceNumber propertyValue="0" viewModelPropertyId="0:45"/>
+            <ViewModelInstanceTrigger viewModelPropertyId="0:46"/>
+            <ViewModelInstanceNumber propertyValue="-400" viewModelPropertyId="0:47"/>
+        </ViewModelInstance>
+    </ViewModel>
+</Rive>

@@ -87,7 +87,9 @@ class RiveReactNativeView: UIView {
       // reads the then-current isPaused instead of recomputing it.
       isPaused = !config.autoPlay
       configTask?.cancel()
+      let gateConfiguration = TriggerFireGate.viewWillConfigure()
       configTask = Task { [weak self] in
+        defer { TriggerFireGate.viewDidConfigure(gateConfiguration) }
         guard let self else { return }
         do {
           let artboard = try await config.file.createArtboard(config.artboardName)
