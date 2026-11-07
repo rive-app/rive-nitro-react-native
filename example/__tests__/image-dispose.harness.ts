@@ -59,4 +59,21 @@ describe('RiveImage disposal', () => {
     instance.dispose();
     file.dispose();
   });
+
+  it('disposing an image frees its bytes', async () => {
+    // Only the new Android backend keeps the bytes and decodes them later.
+    if (
+      Platform.OS !== 'android' ||
+      RiveFileFactory.getBackend() !== 'experimental'
+    ) {
+      return;
+    }
+    // 600 MB in total, more than any Android Java heap limit.
+    const bytes = new ArrayBuffer(10 * 1024 * 1024);
+    for (let i = 0; i < 60; i++) {
+      const image = await RiveImages.loadFromBytesAsync(bytes);
+      expect(image.byteSize).toBe(bytes.byteLength);
+      image.dispose();
+    }
+  });
 });
