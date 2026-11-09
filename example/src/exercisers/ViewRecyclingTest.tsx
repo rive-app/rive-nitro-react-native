@@ -13,6 +13,9 @@ import { useState } from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { RiveView, useRiveFile, Fit } from '@rive-app/react-native';
 import { type Metadata } from '../shared/metadata';
+import outOfBandRiv from '../../assets/rive/out_of_band.riv';
+import quickStartRiv from '../../assets/rive/quick_start.riv';
+import swapCharacterMainRiv from '../../assets/swap_character_main.riv';
 
 type Screen = 'A' | 'B' | 'C';
 
@@ -38,9 +41,7 @@ const screens: Record<
 };
 
 function ScreenA() {
-  const { riveFile } = useRiveFile(
-    require('../../assets/rive/out_of_band.riv')
-  );
+  const { riveFile } = useRiveFile(outOfBandRiv);
   if (!riveFile) return <Text>Loading...</Text>;
   return (
     <RiveView
@@ -54,9 +55,7 @@ function ScreenA() {
 }
 
 function ScreenB() {
-  const { riveFile } = useRiveFile(
-    require('../../assets/rive/quick_start.riv')
-  );
+  const { riveFile } = useRiveFile(quickStartRiv);
   if (!riveFile) return <Text>Loading...</Text>;
   return (
     <RiveView
@@ -69,9 +68,7 @@ function ScreenB() {
 }
 
 function ScreenC() {
-  const { riveFile } = useRiveFile(
-    require('../../assets/swap_character_main.riv')
-  );
+  const { riveFile } = useRiveFile(swapCharacterMainRiv);
   if (!riveFile) return <Text>Loading...</Text>;
   return (
     <RiveView

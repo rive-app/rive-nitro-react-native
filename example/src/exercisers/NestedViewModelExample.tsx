@@ -19,11 +19,10 @@ import {
   type RiveViewRef,
 } from '@rive-app/react-native';
 import { type Metadata } from '../shared/metadata';
+import viewmodelpropertyRiv from '../../assets/rive/viewmodelproperty.riv';
 
 export default function NestedViewModelExample() {
-  const { riveFile, isLoading, error } = useRiveFile(
-    require('../../assets/rive/viewmodelproperty.riv')
-  );
+  const { riveFile, isLoading, error } = useRiveFile(viewmodelpropertyRiv);
 
   return (
     <View style={styles.container}>

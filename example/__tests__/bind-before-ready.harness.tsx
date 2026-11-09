@@ -17,7 +17,7 @@ import {
 } from '@rive-app/react-native';
 
 // bouncing_ball has a 'ypos' ViewModel property driven by the state machine
-const BOUNCING_BALL = require('../assets/rive/bouncing_ball.riv');
+import BOUNCING_BALL from '../assets/rive/bouncing_ball.riv';
 
 function expectDefined<T>(value: T): asserts value is NonNullable<T> {
   expect(value).toBeDefined();

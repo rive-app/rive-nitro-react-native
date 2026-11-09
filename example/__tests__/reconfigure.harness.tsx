@@ -17,8 +17,8 @@ import {
   type ViewModelNumberProperty,
 } from '@rive-app/react-native';
 
-const BOUNCING_BALL = require('../assets/rive/bouncing_ball.riv');
-const COUNTER = require('../assets/rive/counter.riv');
+import BOUNCING_BALL from '../assets/rive/bouncing_ball.riv';
+import COUNTER from '../assets/rive/counter.riv';
 
 const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
 

@@ -3,9 +3,9 @@ import { useState } from 'react';
 import { View } from 'react-native';
 import { RiveView, useRiveFile, Fit } from '@rive-app/react-native';
 
-const BOUNCING_BALL = require('../assets/rive/bouncing_ball.riv');
-const COUNTER = require('../assets/rive/counter.riv');
-const RATING = require('../assets/rive/rating.riv');
+import BOUNCING_BALL from '../assets/rive/bouncing_ball.riv';
+import COUNTER from '../assets/rive/counter.riv';
+import RATING from '../assets/rive/rating.riv';
 
 const FILES = [BOUNCING_BALL, COUNTER, RATING];
 

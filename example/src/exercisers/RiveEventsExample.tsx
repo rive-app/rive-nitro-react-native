@@ -10,6 +10,7 @@ import {
   RiveEventType,
 } from '@rive-app/react-native';
 import { type Metadata } from '../shared/metadata';
+import ratingRiv from '../../assets/rive/rating.riv';
 
 /**
  * @deprecated Rive events at runtime is deprecated. Use data binding instead.
@@ -20,9 +21,7 @@ import { type Metadata } from '../shared/metadata';
  */
 export default function EventsExample() {
   const { riveViewRef, setHybridRef } = useRive();
-  const { riveFile, isLoading, error } = useRiveFile(
-    require('../../assets/rive/rating.riv')
-  );
+  const { riveFile, isLoading, error } = useRiveFile(ratingRiv);
   const [lastEvent, setLastEvent] = useState<RiveEvent | null>(null);
 
   const handleRiveEvent = (event: any) => {

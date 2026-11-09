@@ -8,6 +8,7 @@ import {
   type RiveViewRef,
 } from '@rive-app/react-native';
 import { type Metadata } from '../shared/metadata';
+import rewardsRiv from '../../assets/rive/rewards.riv';
 
 /**
  * Manual verifier for the frameRate prop (issue #332).
@@ -41,7 +42,7 @@ export default function FrameRateCap() {
   const [paused, setPaused] = useState(false);
   const [mounted, setMounted] = useState(true);
   const viewRef = useRef<RiveViewRef | null>(null);
-  const { riveFile } = useRiveFile(require('../../assets/rive/rewards.riv'));
+  const { riveFile } = useRiveFile(rewardsRiv);
 
   const selected = OPTIONS[optionIndex]!;
 

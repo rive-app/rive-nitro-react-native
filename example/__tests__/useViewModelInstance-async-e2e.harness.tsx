@@ -25,11 +25,11 @@ import {
 // mock the *Async APIs, but the backends genuinely diverge — the new backend
 // *rejects* on a bad artboard/instance name while the legacy backend resolves
 // null/undefined. These pin the hook's contract across both.
-const MULTI_AB = require('../assets/rive/arbtboards-models-instances.riv');
+import MULTI_AB from '../assets/rive/arbtboards-models-instances.riv';
 // ViewModels exist but no artboard default (issue #189 fixture).
-const NO_DEFAULT_VM = require('../assets/rive/nodefaultbouncing.riv');
+import NO_DEFAULT_VM from '../assets/rive/nodefaultbouncing.riv';
 // Default artboard auto-binds a default ViewModel.
-const BOUNCING_BALL = require('../assets/rive/bouncing_ball.riv');
+import BOUNCING_BALL from '../assets/rive/bouncing_ball.riv';
 
 function expectDefined<T>(value: T): asserts value is NonNullable<T> {
   // toBeDefined() alone passes for null, which would betray the NonNullable

@@ -15,7 +15,7 @@ import {
   type RiveViewRef,
 } from '@rive-app/react-native';
 
-const QUICK_START = require('../assets/rive/quick_start.riv');
+import QUICK_START from '../assets/rive/quick_start.riv';
 const isExperimental = RiveFileFactory.getBackend() === 'experimental';
 
 type TestContext = { ref: RiveViewRef | null; errors: string[] };

@@ -18,9 +18,9 @@ import {
 } from '@rive-app/react-native';
 import type { ViewModelInstance } from '@rive-app/react-native';
 
-const QUICK_START = require('../assets/rive/quick_start.riv');
-const DATABINDING = require('../assets/rive/databinding.riv');
-const FONT_FALLBACK = require('../assets/rive/font_fallback.riv');
+import QUICK_START from '../assets/rive/quick_start.riv';
+import DATABINDING from '../assets/rive/databinding.riv';
+import FONT_FALLBACK from '../assets/rive/font_fallback.riv';
 
 type UseRiveNumberContext = {
   value: number | undefined;

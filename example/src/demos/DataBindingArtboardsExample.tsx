@@ -15,6 +15,8 @@ import {
   type BindableArtboard,
 } from '@rive-app/react-native';
 import { type Metadata } from '../shared/metadata';
+import swapCharacterMainRiv from '../../assets/swap_character_main.riv';
+import swapCharacterAssetsRiv from '../../assets/swap_character_assets.riv';
 
 /**
  * Data Binding Artboards Example
@@ -37,14 +39,14 @@ export default function DataBindingArtboardsExample() {
     riveFile: mainFile,
     isLoading: mainLoading,
     error: mainError,
-  } = useRiveFile(require('../../assets/swap_character_main.riv'));
+  } = useRiveFile(swapCharacterMainRiv);
 
   // Assets file - contains "Character 1" and "Character 2" artboards
   const {
     riveFile: assetsFile,
     isLoading: assetsLoading,
     error: assetsError,
-  } = useRiveFile(require('../../assets/swap_character_assets.riv'));
+  } = useRiveFile(swapCharacterAssetsRiv);
 
   const isLoading = mainLoading || assetsLoading;
   const error = mainError || assetsError;

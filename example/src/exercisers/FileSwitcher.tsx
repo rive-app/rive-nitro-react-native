@@ -18,27 +18,34 @@ import {
 } from 'react-native';
 import { Fit, RiveView, useRiveFile } from '@rive-app/react-native';
 import { type Metadata } from '../shared/metadata';
+import layoutTestRiv from '../../assets/rive/layout_test.riv';
+import inputglowRiv from '../../assets/rive/inputglow.riv';
+import gradientBorderRiv from '../../assets/rive/GradientBorder.riv';
+import layoutsDemoRiv from '../../assets/rive/layouts_demo.riv';
+import bouncingBallRiv from '../../assets/rive/bouncing_ball.riv';
+import counterRiv from '../../assets/rive/counter.riv';
+import ratingRiv from '../../assets/rive/rating.riv';
 
 const FILES = [
   {
     label: 'layout_test',
-    source: require('../../assets/rive/layout_test.riv'),
+    source: layoutTestRiv,
   },
-  { label: 'inputglow', source: require('../../assets/rive/inputglow.riv') },
+  { label: 'inputglow', source: inputglowRiv },
   {
     label: 'GradientBorder',
-    source: require('../../assets/rive/GradientBorder.riv'),
+    source: gradientBorderRiv,
   },
   {
     label: 'layouts_demo',
-    source: require('../../assets/rive/layouts_demo.riv'),
+    source: layoutsDemoRiv,
   },
   {
     label: 'bouncing_ball',
-    source: require('../../assets/rive/bouncing_ball.riv'),
+    source: bouncingBallRiv,
   },
-  { label: 'counter', source: require('../../assets/rive/counter.riv') },
-  { label: 'rating', source: require('../../assets/rive/rating.riv') },
+  { label: 'counter', source: counterRiv },
+  { label: 'rating', source: ratingRiv },
 ] as const;
 
 const FITS = [
