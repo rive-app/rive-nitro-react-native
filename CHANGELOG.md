@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.12](https://github.com/rive-app/rive-nitro-react-native/compare/v0.5.11...v0.5.12) (2026-11-05)
+
+
+### Bug Fixes
+
+* **android:** bump rive-android to 11.16.0 ([#444](https://github.com/rive-app/rive-nitro-react-native/issues/444)) ([a743282](https://github.com/rive-app/rive-nitro-react-native/commit/a743282422be651dc18ee2eb655d5847d7a6c0ad))
+
 ## [0.5.11](https://github.com/rive-app/rive-nitro-react-native/compare/v0.5.10...v0.5.11) (2026-11-04)
 
 

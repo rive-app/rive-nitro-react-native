@@ -1,6 +1,6 @@
 {
   "name": "@rive-app/react-native",
-  "version": "0.5.11",
+  "version": "0.5.12",
   "description": "React Native runtime for Rive. Rive is an agent-native 2D and 3D engine for games, apps, and interactive UI.",
   "main": "./lib/module/index.js",
   "types": "./lib/typescript/src/index.d.ts",
@@ -78,7 +78,7 @@
   "homepage": "https://github.com/rive-app/rive-nitro-react-native#readme",
   "runtimeVersions": {
     "ios": "6.29.0",
-    "android": "11.14.3"
+    "android": "11.16.0"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
