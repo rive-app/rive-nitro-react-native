@@ -1,7 +1,11 @@
-import { useRef, type DependencyList, type RefObject } from 'react';
-import { useUnmountEffect } from './useUnmountEffect';
-
-const UNINITIALIZED = Symbol('UNINITIALIZED');
+import {
+  useEffect,
+  useInsertionEffect,
+  useRef,
+  type DependencyList,
+  type RefObject,
+} from 'react';
+import { Retainer } from './useUnmountEffect';
 
 export function depsEqual(a: DependencyList, b: DependencyList): boolean {
   if (a.length !== b.length) return false;
@@ -11,13 +15,16 @@ export function depsEqual(a: DependencyList, b: DependencyList): boolean {
   return true;
 }
 
+type Entry<T> = { value: T; deps: DependencyList; retainer: Retainer };
+
 /**
  * Like `useMemo`, but with a cleanup callback for disposable native resources.
  *
  * - Value is created synchronously during render (available on first render).
- * - When deps change, the old value is cleaned up during render and a new one
- *   is created.
- * - On a real unmount the value is cleaned up in the passive cleanup phase; see
+ * - When deps change, a new value is created during render; the old one is
+ *   cleaned up only once the render that replaces it commits.
+ * - A value from a render that never commits is left to GC.
+ * - On a real unmount the value is cleaned up after the passive cleanups; see
  *   {@link useUnmountEffect} for what counts and the cases left to GC.
  *
  * Replaces the common `useMemo` + dispose-in-`useEffect`-cleanup pattern that
@@ -44,6 +51,9 @@ export function depsEqual(a: DependencyList, b: DependencyList): boolean {
  *   return () => unsub?.();  // only unsubscribe, no dispose
  * }, [property]);
  * ```
+ *
+ * `liveRef` holds the committed value and is cleared when that value is
+ * cleaned up.
  */
 export function useDisposableMemo<T>(
   factory: () => T,
@@ -51,42 +61,41 @@ export function useDisposableMemo<T>(
   deps: DependencyList,
   liveRef?: RefObject<T | undefined>
 ): T {
-  const ref = useRef<{
-    value: T;
-    deps: DependencyList | typeof UNINITIALIZED;
-  }>({
-    value: undefined as T,
-    deps: UNINITIALIZED,
-  });
+  const state = useRef<{ candidate?: Entry<T>; committed?: Entry<T> }>({});
   const cleanupRef = useRef(cleanup);
   cleanupRef.current = cleanup;
   const liveRefRef = useRef(liveRef);
   liveRefRef.current = liveRef;
 
-  if (
-    ref.current.deps === UNINITIALIZED ||
-    !depsEqual(ref.current.deps, deps)
-  ) {
-    if (ref.current.deps !== UNINITIALIZED) {
-      if (liveRefRef.current) liveRefRef.current.current = undefined;
-      try {
-        cleanupRef.current(ref.current.value);
-      } catch {
-        // Swallow cleanup errors — the old value is being replaced regardless.
-      }
-    }
-    ref.current = { value: factory(), deps };
-    if (liveRefRef.current) liveRefRef.current.current = ref.current.value;
+  const reusable = (e: Entry<T> | undefined) =>
+    e && !e.retainer.released && depsEqual(e.deps, deps) ? e : undefined;
+  let entry = reusable(state.current.candidate);
+  entry ??= reusable(state.current.committed);
+  if (!entry) {
+    const value = factory();
+    entry = {
+      value,
+      deps,
+      retainer: new Retainer(() => {
+        const live = liveRefRef.current;
+        if (live && live.current === value) live.current = undefined;
+        try {
+          cleanupRef.current(value);
+        } catch {
+          // Swallow — object may already be in a bad state.
+        }
+      }),
+    };
   }
+  state.current.candidate = entry;
 
-  useUnmountEffect(() => {
-    if (liveRefRef.current) liveRefRef.current.current = undefined;
-    try {
-      cleanupRef.current(ref.current.value);
-    } catch {
-      // Swallow — object may already be in a bad state.
-    }
-  });
+  const committed = entry;
+  useInsertionEffect(() => {
+    state.current.committed = committed;
+    if (liveRefRef.current) liveRefRef.current.current = committed.value;
+    return committed.retainer.retain();
+  }, [committed]);
+  useEffect(() => committed.retainer.retain(), [committed]);
 
-  return ref.current.value;
+  return entry.value;
 }

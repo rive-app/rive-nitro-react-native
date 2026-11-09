@@ -48,7 +48,7 @@ export function useRiveProperty<P extends ViewModelProperty, T>(
     liveRef
   );
 
-  if (liveRef.current) {
+  if (property) {
     wasEverLive.current = true;
   }
 

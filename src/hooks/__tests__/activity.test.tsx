@@ -2,11 +2,13 @@
 import {
   Activity,
   act,
+  startTransition,
   StrictMode,
   Suspense,
   useEffect,
   useLayoutEffect,
   useRef,
+  useState,
   version,
   type ReactElement,
 } from 'react';
@@ -19,6 +21,7 @@ import { useRiveFile } from '../useRiveFile';
 import { useRiveList } from '../useRiveList';
 import { useRiveNumber } from '../useRiveNumber';
 import { useRiveTrigger } from '../useRiveTrigger';
+import { Retainer, useUnmountEffect } from '../useUnmountEffect';
 import { useViewModelInstance } from '../useViewModelInstance';
 
 jest.mock('react-native/Libraries/Image/Image', () => ({
@@ -493,5 +496,147 @@ describe('RiveView under <Activity>', () => {
     await unmount(renderer);
     expect(view.play).toBeUndefined();
     expect(view.dispose).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('release after passive cleanups', () => {
+  function Child({ owner, log }: { owner: Resource; log: string[] }) {
+    useEffect(
+      () => () => {
+        log.push(
+          `${owner.label} used after ${owner.dispose.mock.calls.length} disposes`
+        );
+      },
+      [owner, log]
+    );
+    return null;
+  }
+
+  it('useUnmountEffect frees an object after the passive cleanup of a child that uses it', async () => {
+    const log: string[] = [];
+    let owned: Resource | undefined;
+    const Owner = () => {
+      const [value] = useState(() => resource('A'));
+      owned = value;
+      useUnmountEffect(() => value.dispose());
+      return <Child owner={value} log={log} />;
+    };
+    const renderer = await mount(<Owner />);
+    await unmount(renderer);
+    expect(log).toEqual(['A used after 0 disposes']);
+    expect(owned!.dispose).toHaveBeenCalledTimes(1);
+  });
+
+  function MemoOwner({ dep, log }: { dep: string; log: string[] }) {
+    const value = useDisposableMemo(
+      () => resource(dep),
+      (r) => r.dispose(),
+      [dep]
+    );
+    order.value = value;
+    return <Child owner={value} log={log} />;
+  }
+
+  it('useDisposableMemo frees on unmount after the passive cleanup of a child', async () => {
+    const log: string[] = [];
+    const renderer = await mount(<MemoOwner dep="A" log={log} />);
+    const value = order.value!;
+    await unmount(renderer);
+    expect(log).toEqual(['A used after 0 disposes']);
+    expect(value.dispose).toHaveBeenCalledTimes(1);
+  });
+
+  it('useDisposableMemo frees a replaced value after the passive cleanup of a child', async () => {
+    const log: string[] = [];
+    const renderer = await mount(<MemoOwner dep="A" log={log} />);
+    const first = order.value!;
+    await update(renderer, <MemoOwner dep="B" log={log} />);
+    expect(log).toEqual(['A used after 0 disposes']);
+    expect(first.dispose).toHaveBeenCalledTimes(1);
+    expect(order.value!.dispose).not.toHaveBeenCalled();
+    await unmount(renderer);
+  });
+});
+
+describe('useDisposableMemo with transitions', () => {
+  it('keeps the on-screen value while a transition to new deps suspends', async () => {
+    const created: Resource[] = [];
+    const seen = (r: Resource) => {
+      if (!created.includes(r)) created.push(r);
+    };
+    let ready = false;
+    let resolve = () => {};
+    const pending = new Promise<void>((r) => (resolve = r));
+    const Gate = ({ dep }: { dep: string }) => {
+      if (dep === 'B' && !ready) throw pending;
+      return dep;
+    };
+    let setDep: (dep: string) => void = () => {};
+    const App = () => {
+      const [dep, set] = useState('A');
+      setDep = set;
+      return (
+        <Suspense fallback="fallback">
+          <Memo dep={dep} seen={seen} />
+          <Gate dep={dep} />
+        </Suspense>
+      );
+    };
+    const renderer = await mount(<App />);
+    await act(async () => startTransition(() => setDep('B')));
+    expect(renderer.toJSON()).toBe('A');
+    expect(created.map((r) => r.label)).toContain('B');
+    created.forEach((r) => expect(r.dispose).not.toHaveBeenCalled());
+
+    ready = true;
+    await act(async () => resolve());
+    expect(renderer.toJSON()).toBe('B');
+    const a = created.find((r) => r.label === 'A')!;
+    const b = created.filter((r) => r.label === 'B');
+    expect(a.dispose).toHaveBeenCalledTimes(1);
+    expect(b.filter((r) => r.dispose.mock.calls.length === 0)).toHaveLength(1);
+    await unmount(renderer);
+  });
+});
+
+describe('useUnmountEffect dev canary', () => {
+  it('reports an object retained again after it was released', async () => {
+    const error = jest.spyOn(console, 'error').mockImplementation(() => {});
+    const onRelease = jest.fn();
+    const retainer = new Retainer(onRelease);
+    retainer.retain()();
+    await Promise.resolve();
+    expect(onRelease).toHaveBeenCalledTimes(1);
+    retainer.retain();
+    expect(error).toHaveBeenCalledWith(
+      expect.stringContaining(
+        'shown again after its native objects were released'
+      )
+    );
+    error.mockRestore();
+  });
+
+  it('stays quiet and releases once across Strict Mode and Activity hide and reveal', async () => {
+    const error = jest.spyOn(console, 'error');
+    const onUnmount = jest.fn();
+    const Owner = () => {
+      useUnmountEffect(onUnmount);
+      return null;
+    };
+    const tree = (mode: 'visible' | 'hidden') => (
+      <StrictMode>
+        <Activity mode={mode}>
+          <Owner />
+        </Activity>
+      </StrictMode>
+    );
+    const renderer = await mount(tree('visible'));
+    await update(renderer, tree('hidden'));
+    await update(renderer, tree('visible'));
+    expect(onUnmount).not.toHaveBeenCalled();
+    await unmount(renderer);
+    expect(onUnmount).toHaveBeenCalledTimes(1);
+    expect(error).not.toHaveBeenCalled();
+    error.mockRestore();
   });
 });
