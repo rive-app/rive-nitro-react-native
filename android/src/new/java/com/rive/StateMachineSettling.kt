@@ -29,9 +29,10 @@ internal object StateMachineSettling {
     return method
   }
 
-  /** Returns null when this rive-android has no settled state, so the view never settles. */
+  /** Returns null unless both members resolve, since a view that settles without `unsettle` is never re-armed. */
   @Suppress("UNCHECKED_CAST")
   fun settledState(worker: CommandQueue, handle: StateMachineHandle): StateFlow<Boolean>? {
+    if (unsettleMethod == null) return null
     val method = settledMethod ?: return null
     return try {
       method.invoke(worker, handle.handle) as? StateFlow<Boolean>
