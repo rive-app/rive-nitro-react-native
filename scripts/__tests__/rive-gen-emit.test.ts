@@ -53,6 +53,7 @@ describe('emit escaping', () => {
       viewModels: {
         "It's VM": { "quote'": "enum:Pet's" },
       },
+      artboardViewModels: { "O'Brien": "It's VM" },
       referencedAssets: { "Font's-123": 'font' },
     };
     const body = schemaBody(schema);
@@ -61,6 +62,7 @@ describe('emit escaping', () => {
     expect(body).toContain("'back\\\\slash'");
     // Named enums carry '|' inside a real union member, no encoding hazard.
     expect(body).toContain("'Pet\\'s': 'cat\\'s' | 'a|b';");
+    expect(body).toContain("'O\\'Brien': 'It\\'s VM';");
 
     // Unescaped, the same names produce a syntactically broken declaration —
     // this is what the generator used to emit.
@@ -88,11 +90,13 @@ describe('schemaBody', () => {
     stateMachines: { Main: ['SM'] },
     enums: {},
     viewModels: {},
+    artboardViewModels: {},
     referencedAssets: {},
   };
 
   test('always emits viewModels and referencedAssets, empty objects when none', () => {
     expect(schemaBody(base)).toContain('viewModels: {};');
+    expect(schemaBody(base)).toContain('artboardViewModels: {};');
     expect(schemaBody(base)).toContain('referencedAssets: {};');
   });
 
@@ -103,6 +107,18 @@ describe('schemaBody', () => {
     });
     expect(body).toContain("'Inter-594377': 'font';");
     expect(body).toContain("'img-1': 'image';");
+  });
+
+  test('emits artboardViewModels record when present', () => {
+    const body = schemaBody({
+      ...base,
+      artboards: ['Main', 'Other Board'],
+      viewModels: { VM: { count: 'number' } },
+      artboardViewModels: { 'Main': 'VM', 'Other Board': 'VM' },
+    });
+    expect(body).toContain(
+      "  artboardViewModels: {\n    'Main': 'VM';\n    'Other Board': 'VM';\n  };"
+    );
   });
 
   test('always emits enums, empty object when none', () => {

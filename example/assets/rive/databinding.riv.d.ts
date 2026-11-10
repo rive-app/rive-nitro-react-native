@@ -28,6 +28,9 @@ declare const asset: RiveFileSource<{
       name: 'string';
     };
   };
+  artboardViewModels: {
+    Artboard: 'Person';
+  };
   referencedAssets: {};
 }>;
 export default asset;

@@ -36,11 +36,21 @@ export function setupWasmShims(): void {
   (globalThis as any).Image = class {};
 
   // Silence WASM warnings (e.g. "No WebGL support") so they don't pollute output.
-  console.log = (...args: unknown[]) =>
-    process.stderr.write(args.join(' ') + '\n');
-  console.warn = (...args: unknown[]) =>
-    process.stderr.write(args.join(' ') + '\n');
+  const toStderr = (...args: unknown[]) => {
+    const line = args.join(' ');
+    if (!EXPECTED_WASM_NOISE.test(line)) process.stderr.write(line + '\n');
+  };
+  console.log = toStderr;
+  console.warn = toStderr;
+  const error = console.error;
+  console.error = (...args: unknown[]) => {
+    if (!EXPECTED_WASM_NOISE.test(args.join(' '))) error(...args);
+  };
 }
+
+// Logged by defaultArtboardViewModel() for every artboard without a bound
+// ViewModel, which extractSchema probes on purpose.
+const EXPECTED_WASM_NOISE = /^Could not find a View Model linked to Artboard /;
 
 export interface Schema {
   artboards: string[];
@@ -49,6 +59,8 @@ export interface Schema {
   /** File-level enum definitions, name → values. */
   enums: Record<string, string[]>;
   viewModels: Record<string, Record<string, string>>;
+  /** Artboard name → the ViewModel bound to it; artboards without one are omitted. */
+  artboardViewModels: Record<string, string>;
   /** Non-embedded (referenced or hosted) assets: runtime `uniqueName` → kind. */
   referencedAssets: Record<string, string>;
 }
@@ -160,8 +172,11 @@ export async function extractSchema(input: string): Promise<Schema> {
     throw new Error('not a valid .riv file (load() returned null)');
   }
 
+  const vmCount = (riveFile as any).viewModelCount() as number;
+
   const artboards: string[] = [];
   const stateMachines = nameMap<string[]>();
+  const artboardViewModels = nameMap<string>();
   for (let i = 0; i < riveFile.artboardCount(); i++) {
     const artboard = riveFile.artboardByIndex(i);
     artboards.push(artboard.name);
@@ -170,12 +185,15 @@ export async function extractSchema(input: string): Promise<Schema> {
       sms.push(artboard.stateMachineByIndex(j).name);
     }
     stateMachines[artboard.name] = sms;
+    if (vmCount > 0) {
+      const boundVM = boundViewModelName(riveFile, artboard);
+      if (boundVM) artboardViewModels[artboard.name] = boundVM;
+    }
   }
 
   const enums = collectEnums(riveFile);
 
   const viewModels = nameMap<Record<string, string>>();
-  const vmCount = (riveFile as any).viewModelCount() as number;
   for (let i = 0; i < vmCount; i++) {
     const vm = (riveFile as any).viewModelByIndex(i);
     const properties = vm.getProperties() as RuntimeProperty[];
@@ -199,8 +217,24 @@ export async function extractSchema(input: string): Promise<Schema> {
     stateMachines,
     enums,
     viewModels,
+    artboardViewModels,
     referencedAssets: assets,
   };
+}
+
+/**
+ * The ViewModel bound to an artboard — what the native runtimes'
+ * `defaultArtboardViewModel` resolves when no ViewModel name is given.
+ */
+export function boundViewModelName(
+  riveFile: any,
+  artboard: any
+): string | undefined {
+  try {
+    return riveFile.defaultArtboardViewModel?.(artboard)?.name || undefined;
+  } catch {
+    return undefined;
+  }
 }
 
 // With prettier quoteProps:"consistent", if any key in an object needs quotes, all get quotes.
@@ -267,13 +301,16 @@ export function createAssetCollector(runtime: any): {
   return { assetLoader, assets };
 }
 
-export function assetsRecord(assets: Record<string, string>): string {
-  const keys = Object.keys(assets);
+/** Emit `key: 'value';` members, used for referencedAssets and artboardViewModels. */
+export function literalRecord(record: Record<string, string>): string {
+  const keys = Object.keys(record);
   const force = keys.some(needsQuote);
-  return Object.entries(assets)
-    .map(([id, kind]) => `    ${quoteKey(id, force)}: ${strLit(kind)};`)
+  return Object.entries(record)
+    .map(([key, value]) => `    ${quoteKey(key, force)}: ${strLit(value)};`)
     .join('\n');
 }
+
+export const assetsRecord = literalRecord;
 
 /** Must match `RiveFileSchema['schemaVersion']` in src/core/TypedRiveFile.ts. */
 export const SCHEMA_VERSION = 1;
@@ -289,9 +326,13 @@ export function schemaBody(schema: Schema): string {
     Object.keys(schema.viewModels).length > 0
       ? `\n  viewModels: {\n${vmRecord(schema.viewModels)}\n  };`
       : '\n  viewModels: {};';
+  const artboardVMSection =
+    Object.keys(schema.artboardViewModels).length > 0
+      ? `\n  artboardViewModels: {\n${literalRecord(schema.artboardViewModels)}\n  };`
+      : '\n  artboardViewModels: {};';
   const assetSection =
     Object.keys(schema.referencedAssets).length > 0
-      ? `\n  referencedAssets: {\n${assetsRecord(schema.referencedAssets)}\n  };`
+      ? `\n  referencedAssets: {\n${literalRecord(schema.referencedAssets)}\n  };`
       : '\n  referencedAssets: {};';
   return `\
   schemaVersion: ${SCHEMA_VERSION};
@@ -299,7 +340,7 @@ export function schemaBody(schema: Schema): string {
   defaultArtboard: ${strLit(schema.defaultArtboard)};
   stateMachines: {
 ${unionRecord(schema.stateMachines)}
-  };${enumSection}${vmSection}${assetSection}`;
+  };${enumSection}${vmSection}${artboardVMSection}${assetSection}`;
 }
 
 function dtsContent(input: string, schema: Schema): string {

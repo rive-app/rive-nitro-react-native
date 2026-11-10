@@ -15,6 +15,7 @@ declare const asset: RiveFileSource<{
 
     };
   };
+  artboardViewModels: {};
   referencedAssets: {};
 }>;
 export default asset;

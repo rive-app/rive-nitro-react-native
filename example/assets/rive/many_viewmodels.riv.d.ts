@@ -17,6 +17,9 @@ declare const asset: RiveFileSource<{
       textValue: 'string';
     };
   };
+  artboardViewModels: {
+    Artboard: 'First';
+  };
   referencedAssets: {};
 }>;
 export default asset;

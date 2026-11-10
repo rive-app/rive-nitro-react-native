@@ -11,6 +11,7 @@ declare const asset: RiveFileSource<{
   };
   enums: {};
   viewModels: {};
+  artboardViewModels: {};
   referencedAssets: {
     'Inter-594377': 'font';
     'referenced-image-2929282': 'image';

@@ -426,10 +426,12 @@ expectError(
   })
 );
 
-// --- Typed file without viewModelName → untyped result (default instance) ---
+// --- Typed file without viewModelName → the default artboard's ViewModel ---
 {
   const { instance } = useViewModelInstance(blinkoFile, { async: true });
-  expectType<ViewModelInstance | null | undefined>(instance);
+  expectType<TypedViewModelInstance<BlinkoSchema, 'main'> | null | undefined>(
+    instance
+  );
 }
 
 // --- required: true keeps its narrowing on the typed overload ---
@@ -644,7 +646,7 @@ expectError(useRiveFile(staleAsset));
 expectError(RiveFileFactory.fromSource(staleAsset, undefined));
 
 // ============================================================
-// useViewModelInstance — onInit
+// useViewModelInstance — onInit and artboard-bound ViewModels
 // ============================================================
 
 declare const rewardsFile: TypedRiveFile<RewardsSchema>;
@@ -682,20 +684,97 @@ useViewModelInstance(rewardsFile, {
   onInit: untypedOnInit,
 });
 useViewModelInstance(rewardsFile, { async: true, onInit: untypedOnInit });
-
-// Without viewModelName, onInit stays untyped like the returned instance
 useViewModelInstance(rewardsFile, {
   async: true,
-  onInit: (vmi) => {
-    expectType<ViewModelInstance>(vmi);
-    vmi.numberProperty('anything');
-  },
+  onInit: (vmi: ViewModelInstance) => vmi.numberProperty('anything'),
 });
 
-// Files without a generated schema: onInit stays untyped
+// No viewModelName: the default artboard's bound ViewModel ('Main' → 'Rewards')
+{
+  const { instance } = useViewModelInstance(rewardsFile, {
+    async: true,
+    onInit: (vmi) => {
+      expectType<TypedViewModelInstance<RewardsSchema, 'Rewards'>>(vmi);
+      expectError(vmi.numberProperty('healthX'));
+    },
+  });
+  expectType<
+    TypedViewModelInstance<RewardsSchema, 'Rewards'> | null | undefined
+  >(instance);
+  expectError(instance?.numberProperty('healthX'));
+}
+{
+  const { instance } = useViewModelInstance(rewardsFile, {
+    async: true,
+    required: true,
+  });
+  expectType<TypedViewModelInstance<RewardsSchema, 'Rewards'> | undefined>(
+    instance
+  );
+}
+
+// artboardName: that artboard's bound ViewModel ('Lives 2' → 'Energy_Bar')
+{
+  const { instance } = useViewModelInstance(rewardsFile, {
+    async: true,
+    artboardName: 'Lives 2',
+    onInit: (vmi) => {
+      expectType<TypedViewModelInstance<RewardsSchema, 'Energy_Bar'>>(vmi);
+      expectError(vmi.numberProperty('Price_Value'));
+    },
+  });
+  expectType<
+    TypedViewModelInstance<RewardsSchema, 'Energy_Bar'> | null | undefined
+  >(instance);
+  expectError(instance?.numberProperty('Price_Value'));
+}
+
+// An artboard without a bound ViewModel stays untyped
+{
+  const { instance } = useViewModelInstance(rewardsFile, {
+    async: true,
+    artboardName: 'Heart',
+  });
+  expectType<ViewModelInstance | null | undefined>(instance);
+}
+
+// artboardName must be one of the file's artboards
+expectError(
+  useViewModelInstance(rewardsFile, { async: true, artboardName: 'NotAnArtboard' })
+);
+
+// A schema from a generator that predates artboardViewModels keeps its
+// typing: viewModelName is typed, the default and artboardName cases are not.
+type PreArtboardVMSchema = {
+  schemaVersion: 1;
+  artboards: 'Main';
+  defaultArtboard: 'Main';
+  stateMachines: { Main: 'SM' };
+  enums: {};
+  referencedAssets: {};
+  viewModels: { VM: { n: 'number' } };
+};
+declare const preArtboardVMAsset: RiveFileSource<PreArtboardVMSchema>;
+{
+  const { riveFile } = useRiveFile(preArtboardVMAsset);
+  const { instance } = useViewModelInstance(riveFile, { async: true });
+  expectType<ViewModelInstance | null | undefined>(instance);
+  const byName = useViewModelInstance(riveFile, {
+    async: true,
+    viewModelName: 'VM',
+    onInit: (vmi) => {
+      expectError(vmi.numberProperty('x'));
+    },
+  });
+  expectType<
+    TypedViewModelInstance<PreArtboardVMSchema, 'VM'> | null | undefined
+  >(byName.instance);
+}
+
+// Files without a generated schema: onInit and artboardName stay untyped
 useViewModelInstance(plainFile, {
   async: true,
-  viewModelName: 'AnyViewModel',
+  artboardName: 'AnyArtboard',
   onInit: (vmi) => {
     expectType<ViewModelInstance>(vmi);
     vmi.numberProperty('anything');

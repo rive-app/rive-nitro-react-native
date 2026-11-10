@@ -23,6 +23,10 @@ declare const asset: RiveFileSource<{
 
     };
   };
+  artboardViewModels: {
+    'Binding Probe': 'ProbeModel';
+    'Watermark': 'RiveCLIBootUp';
+  };
   referencedAssets: {};
 }>;
 export default asset;

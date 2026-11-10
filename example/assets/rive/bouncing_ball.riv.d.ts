@@ -15,6 +15,9 @@ declare const asset: RiveFileSource<{
       ypos: 'number';
     };
   };
+  artboardViewModels: {
+    Artboard: 'vm';
+  };
   referencedAssets: {};
 }>;
 export default asset;

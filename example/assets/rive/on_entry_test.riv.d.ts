@@ -16,6 +16,9 @@ declare const asset: RiveFileSource<{
       inputOnEntry: 'number';
     };
   };
+  artboardViewModels: {
+    Artboard: 'vm';
+  };
   referencedAssets: {
     'Inter-4228759': 'font';
   };

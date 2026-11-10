@@ -18,6 +18,9 @@ declare const asset: RiveFileSource<{
       team: 'list';
     };
   };
+  artboardViewModels: {
+    Artboard: 'DevRel';
+  };
   referencedAssets: {};
 }>;
 export default asset;
