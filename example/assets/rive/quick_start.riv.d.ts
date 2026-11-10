@@ -19,6 +19,9 @@ declare const asset: RiveFileSource<{
       health: 'number';
     };
   };
+  artboardViewModels: {
+    health_bar_v01: 'health_bar_01';
+  };
   referencedAssets: {};
 }>;
 export default asset;

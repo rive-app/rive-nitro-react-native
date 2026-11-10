@@ -68,6 +68,27 @@ describe('rive-extract-schema', () => {
     });
   });
 
+  test('maps each artboard to its bound ViewModel, omitting unbound ones', () => {
+    expect(schema.artboardViewModels).toEqual({
+      'Main': 'Rewards',
+      'Lives 2': 'Energy_Bar',
+      'Item Value': 'Item_Icon_Value',
+      'Chest': 'Rewards',
+      'Button': 'Rewards',
+      'Item': 'Item',
+    });
+  });
+
+  test('files without ViewModels bind no artboards', () => {
+    const fonts = extract(
+      resolve(
+        import.meta.dirname,
+        '../../example/assets/rive/fallback_fonts.riv'
+      )
+    );
+    expect(fonts.artboardViewModels).toEqual({});
+  });
+
   test('embedded-only files report no referenced assets', () => {
     expect(schema.referencedAssets).toEqual({});
   });

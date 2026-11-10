@@ -17,6 +17,9 @@ declare const asset: RiveFileSource<{
       enumProperty: 'enum:Selected';
     };
   };
+  artboardViewModels: {
+    Artboard: 'ViewModel1';
+  };
   referencedAssets: {};
 }>;
 export default asset;

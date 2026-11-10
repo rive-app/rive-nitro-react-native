@@ -15,6 +15,9 @@ declare const asset: RiveFileSource<{
       finished: 'trigger';
     };
   };
+  artboardViewModels: {
+    Artboard: 'ViewModel1';
+  };
   referencedAssets: {};
 }>;
 export default asset;

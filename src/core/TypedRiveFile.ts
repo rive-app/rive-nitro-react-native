@@ -22,6 +22,12 @@ export interface RiveFileSchema {
   enums: Record<string, string>;
   viewModels: Record<string, Record<string, string>>;
   /**
+   * Artboard name → the ViewModel bound to it, used when no `viewModelName`
+   * is given. Artboards without one are omitted. Optional so schemas from
+   * generators that predate it stay valid (those cases are then untyped).
+   */
+  artboardViewModels?: Record<string, string>;
+  /**
    * Non-embedded (referenced or hosted) assets that the app must supply via
    * the `referencedAssets` option: the asset's runtime `uniqueName`
    * (e.g. 'Inter-594377') → 'image' | 'font' | 'audio'.

@@ -24,6 +24,11 @@ declare const asset: RiveFileSource<{
       _id: 'string';
     };
   };
+  artboardViewModels: {
+    artboard1: 'viewmodel1';
+    artboard3: 'viewmodel3';
+    artboard2: 'viewmodel2';
+  };
   referencedAssets: {};
 }>;
 export default asset;

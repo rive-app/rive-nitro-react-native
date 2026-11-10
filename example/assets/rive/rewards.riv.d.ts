@@ -51,6 +51,14 @@ declare const asset: RiveFileSource<{
       Item_Selection: 'enum:Item_Selection';
     };
   };
+  artboardViewModels: {
+    'Main': 'Rewards';
+    'Lives 2': 'Energy_Bar';
+    'Item Value': 'Item_Icon_Value';
+    'Chest': 'Rewards';
+    'Button': 'Rewards';
+    'Item': 'Item';
+  };
   referencedAssets: {};
 }>;
 export default asset;

@@ -19,6 +19,12 @@ declare const asset: RiveFileSource<{
       artboard_2: 'artboard';
     };
   };
+  artboardViewModels: {
+    Main: 'MainViewModel';
+    ArtboardGreen: 'MainViewModel';
+    ArtboardBlue: 'MainViewModel';
+    ArtboardRed: 'MainViewModel';
+  };
   referencedAssets: {};
 }>;
 export default asset;

@@ -98,6 +98,16 @@ declare const asset: RiveFileSource<{
       'property of gameLogicVM': 'viewModel:gameLogicVM';
     };
   };
+  artboardViewModels: {
+    Main: 'main';
+    StoreItem: 'StoreItemVM';
+    Token: 'TokenVM';
+    Indicator: 'IndicatorVM';
+    Puck: 'PuckVM';
+    StoreIcon: 'storeIconVM';
+    Peg: 'pegVM';
+    scoreBox: 'scoreBox';
+  };
   referencedAssets: {};
 }>;
 export default asset;

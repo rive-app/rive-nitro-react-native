@@ -15,6 +15,9 @@ declare const asset: RiveFileSource<{
       isFocused: 'boolean';
     };
   };
+  artboardViewModels: {
+    Layout: 'ViewModel';
+  };
   referencedAssets: {};
 }>;
 export default asset;
