@@ -642,3 +642,62 @@ declare const staleAsset: RiveFileSource<{
 }>;
 expectError(useRiveFile(staleAsset));
 expectError(RiveFileFactory.fromSource(staleAsset, undefined));
+
+// ============================================================
+// useViewModelInstance — onInit
+// ============================================================
+
+declare const rewardsFile: TypedRiveFile<RewardsSchema>;
+
+// onInit receives the same typed instance the hook returns
+useViewModelInstance(rewardsFile, {
+  async: true,
+  viewModelName: 'Rewards',
+  onInit: (vmi) => {
+    expectType<TypedViewModelInstance<RewardsSchema, 'Rewards'>>(vmi);
+    vmi.numberProperty('Price_Value');
+    expectError(vmi.numberProperty('healthX'));
+  },
+});
+useViewModelInstance(rewardsFile, {
+  async: true,
+  viewModelName: 'Rewards',
+  required: true,
+  onInit: (vmi) => {
+    expectError(vmi.numberProperty('healthX'));
+  },
+});
+useViewModelInstance(rewardsFile, {
+  viewModelName: 'Rewards',
+  onInit: (vmi) => {
+    expectError(vmi.numberProperty('healthX'));
+  },
+});
+
+// An onInit written against the untyped instance keeps compiling
+declare const untypedOnInit: (instance: ViewModelInstance) => void;
+useViewModelInstance(rewardsFile, {
+  async: true,
+  viewModelName: 'Rewards',
+  onInit: untypedOnInit,
+});
+useViewModelInstance(rewardsFile, { async: true, onInit: untypedOnInit });
+
+// Without viewModelName, onInit stays untyped like the returned instance
+useViewModelInstance(rewardsFile, {
+  async: true,
+  onInit: (vmi) => {
+    expectType<ViewModelInstance>(vmi);
+    vmi.numberProperty('anything');
+  },
+});
+
+// Files without a generated schema: onInit stays untyped
+useViewModelInstance(plainFile, {
+  async: true,
+  viewModelName: 'AnyViewModel',
+  onInit: (vmi) => {
+    expectType<ViewModelInstance>(vmi);
+    vmi.numberProperty('anything');
+  },
+});
