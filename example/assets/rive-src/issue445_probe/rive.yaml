@@ -1,0 +1,7 @@
+# Test fixture authored in RML. Rebuild with `yarn build:issue445-probe`
+# (needs the Rive CLI: https://rive.app/docs/cli/getting-started).
+name: issue445_probe
+main: Loop
+logs:
+  file: build/rive.log
+  problems: build/problems.log

@@ -52,6 +52,7 @@
     "lint:native": "yarn lint:swift && yarn lint:kotlin",
     "typetest": "tsd --typings src/index.tsx",
     "test:scripts": "node --test --test-concurrency=1 \"scripts/__tests__/*.test.ts\"",
+    "build:issue445-probe": "rive example/assets/rive-src/issue445_probe --once && cp example/assets/rive-src/issue445_probe/build/issue445_probe.riv example/assets/rive/ && node scripts/rive-gen-types.ts example/assets/rive/issue445_probe.riv",
     "build:cli": "esbuild scripts/rive-gen-types.ts --outfile=lib/cli/rive-gen-types.cjs --format=cjs --platform=node --target=node20 --log-override:empty-import-meta=silent"
   },
   "keywords": [

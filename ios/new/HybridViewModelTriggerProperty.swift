@@ -1,6 +1,41 @@
 import RiveRuntime
 import NitroModules
 
+/// The runtime ignores fires older than a state machine, and creating one takes several
+/// async hops on iOS, so fires sent meanwhile wait until no view is still creating its machine.
+@MainActor
+enum TriggerFireGate {
+  private static let configureTimeoutNanoseconds: UInt64 = 5_000_000_000
+  private static var configuringViews = Set<UUID>()
+  private static var heldFires: [() -> Void] = []
+
+  /// A configure stops counting after the timeout, so a hung one can't hold fires forever.
+  static func viewWillConfigure() -> UUID {
+    let configuration = UUID()
+    configuringViews.insert(configuration)
+    Task {
+      try? await Task.sleep(nanoseconds: configureTimeoutNanoseconds)
+      viewDidConfigure(configuration)
+    }
+    return configuration
+  }
+
+  static func viewDidConfigure(_ configuration: UUID) {
+    guard configuringViews.remove(configuration) != nil, configuringViews.isEmpty else { return }
+    let fires = heldFires
+    heldFires.removeAll()
+    fires.forEach { $0() }
+  }
+
+  static func fire(_ trigger: TriggerProperty, on instance: ViewModelInstance) {
+    if !configuringViews.isEmpty {
+      heldFires.append { instance.fire(trigger: trigger) }
+    } else {
+      instance.fire(trigger: trigger)
+    }
+  }
+}
+
 class HybridViewModelTriggerProperty: HybridViewModelTriggerPropertySpec {
   private let instance: ViewModelInstance
   private let prop: TriggerProperty
@@ -16,7 +51,7 @@ class HybridViewModelTriggerProperty: HybridViewModelTriggerPropertySpec {
     let inst = instance
     let p = prop
     Task { @MainActor in
-      inst.fire(trigger: p)
+      TriggerFireGate.fire(p, on: inst)
     }
   }
 
