@@ -3,11 +3,6 @@ package com.margelo.nitro.rive
 import android.annotation.SuppressLint
 import android.util.Log
 import androidx.annotation.Keep
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LifecycleRegistry
-import androidx.lifecycle.ProcessLifecycleOwner
 import app.rive.RiveFile
 import app.rive.RiveFileSource
 import app.rive.core.CommandQueue
@@ -15,10 +10,7 @@ import com.facebook.proguard.annotations.DoNotStrip
 import com.margelo.nitro.core.ArrayBuffer
 import com.margelo.nitro.core.Promise
 import com.rive.RiveWorkerConfig
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 /**
@@ -85,7 +77,6 @@ class HybridRiveFileFactory : HybridRiveFileFactorySpec() {
 
     @Volatile
     private var sharedWorker: CommandQueue? = null
-    private var pollingStarted = false
 
     @Synchronized
     fun getSharedWorker(): CommandQueue {
@@ -96,63 +87,7 @@ class HybridRiveFileFactory : HybridRiveFileFactorySpec() {
       return sharedWorker ?: RiveWorkerConfig.createWorker().also {
         sharedWorker = it
         Log.d(TAG, "Created CommandQueue (${RiveWorkerConfig.current}), refCount=${it.refCount}")
-        startPolling(it)
       }
-    }
-
-    /**
-     * The experimental Rive SDK's CommandQueue needs to be polled every frame
-     * to process responses from the C++ command server. Without polling,
-     * all suspend functions (like RiveFile.fromSource) hang indefinitely.
-     * Polls only while the app is visible, so a backgrounded app gets no frame
-     * callbacks (issue #413).
-     */
-    private fun startPolling(worker: CommandQueue) {
-      if (pollingStarted) return
-      pollingStarted = true
-      CoroutineScope(Dispatchers.Main).launch {
-        val processLifecycle = ProcessLifecycleOwner.get().lifecycle
-        // INITIALIZED means the app disabled ProcessLifecycleOwner's
-        // initializer, so it would never report RESUMED.
-        val lifecycle = if (processLifecycle.currentState == Lifecycle.State.INITIALIZED) {
-          AlwaysResumed.lifecycle
-        } else {
-          VisibleProcess.follow(processLifecycle)
-        }
-        while (true) {
-          try {
-            worker.beginPolling(lifecycle)
-            return@launch
-          } catch (e: CancellationException) {
-            throw e
-          } catch (e: Exception) {
-            Log.e(TAG, "pollMessages error", e)
-          }
-        }
-      }
-    }
-  }
-
-  private object AlwaysResumed : LifecycleOwner {
-    override val lifecycle = LifecycleRegistry(this).apply { currentState = Lifecycle.State.RESUMED }
-  }
-
-  // beginPolling() only polls while RESUMED, but a paused activity can still be
-  // visible and rendering (picture-in-picture), so report STARTED as RESUMED.
-  private object VisibleProcess : LifecycleOwner {
-    override val lifecycle = LifecycleRegistry(this)
-
-    fun follow(process: Lifecycle): Lifecycle {
-      process.addObserver(
-        LifecycleEventObserver { _, _ ->
-          lifecycle.currentState = if (process.currentState.isAtLeast(Lifecycle.State.STARTED)) {
-            Lifecycle.State.RESUMED
-          } else {
-            Lifecycle.State.CREATED
-          }
-        }
-      )
-      return lifecycle
     }
   }
 

@@ -13,6 +13,7 @@ import com.facebook.react.bridge.UiThreadUtil
 import app.rive.Artboard
 import app.rive.Fit
 import app.rive.RiveFile
+import app.rive.RiveImplementationApi
 import app.rive.ViewModelInstance
 import app.rive.ViewModelSource
 import app.rive.core.ArtboardHandle
@@ -176,11 +177,16 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
         return false
       }
 
+      @OptIn(RiveImplementationApi::class)
       override fun onSurfaceTextureSizeChanged(st: SurfaceTexture, w: Int, h: Int) {
         this@RiveReactNativeView.surfaceWidth = w
         this@RiveReactNativeView.surfaceHeight = h
         this@RiveReactNativeView.needsRedraw = true
-        this@RiveReactNativeView.riveSurface?.let { RiveSurfaceResize.resize(it, w, h) }
+        val surface = this@RiveReactNativeView.riveSurface
+        if (surface != null && w > 0 && h > 0) {
+          runCatching { surface.resize(w, h) }
+            .onFailure { Log.w(TAG, "RiveSurface.resize(${w}x$h) failed", it) }
+        }
         resizeArtboardIfLayout()
         requestFrame()
       }
