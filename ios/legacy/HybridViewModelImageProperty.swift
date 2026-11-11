@@ -1,3 +1,4 @@
+import NitroModules
 import RiveRuntime
 
 class HybridViewModelImageProperty: HybridViewModelImagePropertySpec, ValuedPropertyProtocol {
@@ -29,5 +30,10 @@ class HybridViewModelImageProperty: HybridViewModelImagePropertySpec, ValuedProp
         property.setValue(nil)
       }
     }
+  }
+
+  func setAsync(image: HybridRiveImageSpec?) throws -> Promise<Void> {
+    try set(image: image)
+    return Promise.resolved(withResult: ())
   }
 }

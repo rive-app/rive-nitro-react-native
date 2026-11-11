@@ -3,6 +3,7 @@ package com.margelo.nitro.rive
 import androidx.annotation.Keep
 import app.rive.runtime.kotlin.core.ViewModelImageProperty
 import com.facebook.proguard.annotations.DoNotStrip
+import com.margelo.nitro.core.Promise
 import kotlinx.coroutines.flow.map
 
 @Keep
@@ -26,6 +27,15 @@ class HybridViewModelImageProperty(private val viewModelImage: ViewModelImagePro
     }
     img.withRenderImage { viewModelImage.set(it) }
       ?: throw IllegalStateException("RiveImage has been disposed")
+  }
+
+  override fun setAsync(image: HybridRiveImageSpec?): Promise<Unit> {
+    return try {
+      set(image)
+      Promise.resolved(Unit)
+    } catch (e: Exception) {
+      Promise.rejected(e)
+    }
   }
 
   override fun addListener(onChanged: () -> Unit): () -> Unit {
