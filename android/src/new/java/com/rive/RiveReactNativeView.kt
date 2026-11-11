@@ -13,6 +13,8 @@ import com.facebook.react.bridge.UiThreadUtil
 import app.rive.Artboard
 import app.rive.Fit
 import app.rive.RiveFile
+import app.rive.RiveFramePacer
+import app.rive.RiveFrameRate
 import app.rive.RiveImplementationApi
 import app.rive.ViewModelInstance
 import app.rive.ViewModelSource
@@ -54,6 +56,7 @@ data class ViewConfiguration(
   val bindData: BindData
 )
 
+@OptIn(RiveImplementationApi::class)
 @SuppressLint("ViewConstructor")
 class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
   companion object {
@@ -76,7 +79,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
       field = value
       updateFrameRateHint()
       UiThreadUtil.runOnUiThread {
-        framePacer = RiveFramePacer(value)
+        framePacer = framePacer(value)
         // A callback already delayed for the old cap would hold back a faster one.
         if (frameScheduled) {
           Choreographer.getInstance().removeFrameCallback(renderCallback)
@@ -86,7 +89,11 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
       }
     }
 
-  private var framePacer = RiveFramePacer(null)
+  private var framePacer = framePacer(null)
+
+  private fun framePacer(fps: Double?) = RiveFramePacer(
+    fps?.takeIf { it.isFinite() && it > 0 }?.let { RiveFrameRate.Capped(it.toFloat()) } ?: RiveFrameRate.Unbounded
+  )
 
   var onError: ((String) -> Unit)? = null
 
@@ -177,7 +184,6 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
         return false
       }
 
-      @OptIn(RiveImplementationApi::class)
       override fun onSurfaceTextureSizeChanged(st: SurfaceTexture, w: Int, h: Int) {
         this@RiveReactNativeView.surfaceWidth = w
         this@RiveReactNativeView.surfaceHeight = h
@@ -271,7 +277,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
   private fun postFrame() {
     if (disposed || frameScheduled || !canRender() || !hasWork()) return
     frameScheduled = true
-    val delayMs = framePacer.delayBeforeNextFrameNs(System.nanoTime()) / 1_000_000
+    val delayMs = framePacer.delayBeforeNextFrame(System.nanoTime()).inWholeMilliseconds
     Choreographer.getInstance().postFrameCallbackDelayed(renderCallback, delayMs)
   }
 
@@ -328,7 +334,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
     if (settled) cancelFrame()
     val worker = riveWorker
     val sm = stateMachineHandle
-    if (worker != null && sm != null) StateMachineSettling.unsettle(worker, sm)
+    if (worker != null && sm != null) worker.unsettleStateMachine(sm)
     postFrame()
   }
 
@@ -384,7 +390,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
         config.riveWorker.createDefaultStateMachine(newArtboard.artboardHandle)
       }
       stateMachineHandle = newStateMachineHandle
-      settledState = StateMachineSettling.settledState(config.riveWorker, newStateMachineHandle)
+      settledState = config.riveWorker.stateMachineSettled(newStateMachineHandle)
 
       if (surfaceTexture != null && riveSurface == null) {
         riveSurface = config.riveWorker.createRiveSurface(
