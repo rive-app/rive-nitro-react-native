@@ -62,9 +62,17 @@ object RiveErrorLogger : app.rive.RiveLog.Logger {
   }
   override fun e(tag: String, t: Throwable?, msg: () -> String) {
     val message = msg()
+    // Our default-ViewModel probes treat this failure as "no default ViewModel" (issue #189), so it isn't a view error.
+    if (message.contains(NO_DEFAULT_VIEW_MODEL_ERROR)) {
+      RiveLog.d(tag, message)
+      return
+    }
     RiveLog.e(tag, message)
     broadcastError(tag, message)
   }
+
+  private const val NO_DEFAULT_VIEW_MODEL_ERROR =
+    "Could not find default view model for artboard when getting default view model info"
 }
 
 @Keep
