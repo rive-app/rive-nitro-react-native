@@ -1,10 +1,7 @@
 package com.margelo.nitro.rive
 
 import android.annotation.SuppressLint
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
-import android.view.Choreographer
 import androidx.annotation.Keep
 import app.rive.RiveFile
 import app.rive.RiveFileSource
@@ -65,9 +62,16 @@ object RiveErrorLogger : app.rive.RiveLog.Logger {
   }
   override fun e(tag: String, t: Throwable?, msg: () -> String) {
     val message = msg()
+    // Our default-ViewModel probes treat this failure as "no default ViewModel" (issue #189), so it isn't a view error.
+    if (message.contains(NO_DEFAULT_VIEW_MODEL_ERROR)) {
+      RiveLog.d(tag, message)
+      return
+    }
     RiveLog.e(tag, message)
     broadcastError(tag, message)
   }
+
+  private const val NO_DEFAULT_VIEW_MODEL_ERROR = "Could not find default view model"
 }
 
 @Keep
@@ -80,7 +84,6 @@ class HybridRiveFileFactory : HybridRiveFileFactorySpec() {
 
     @Volatile
     private var sharedWorker: CommandQueue? = null
-    private var pollingStarted = false
 
     @Synchronized
     fun getSharedWorker(): CommandQueue {
@@ -91,30 +94,6 @@ class HybridRiveFileFactory : HybridRiveFileFactorySpec() {
       return sharedWorker ?: RiveWorkerConfig.createWorker().also {
         sharedWorker = it
         Log.d(TAG, "Created CommandQueue (${RiveWorkerConfig.current}), refCount=${it.refCount}")
-        startPolling(it)
-      }
-    }
-
-    /**
-     * The experimental Rive SDK's CommandQueue needs to be polled every frame
-     * to process responses from the C++ command server. Without polling,
-     * all suspend functions (like RiveFile.fromSource) hang indefinitely.
-     */
-    private fun startPolling(worker: CommandQueue) {
-      if (pollingStarted) return
-      pollingStarted = true
-      Handler(Looper.getMainLooper()).post {
-        val callback = object : Choreographer.FrameCallback {
-          override fun doFrame(frameTimeNanos: Long) {
-            try {
-              worker.pollMessages()
-            } catch (e: Exception) {
-              Log.e(TAG, "pollMessages error", e)
-            }
-            Choreographer.getInstance().postFrameCallback(this)
-          }
-        }
-        Choreographer.getInstance().postFrameCallback(callback)
       }
     }
   }
