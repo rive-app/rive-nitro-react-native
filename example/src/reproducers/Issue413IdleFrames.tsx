@@ -15,10 +15,9 @@ import { type Metadata } from '../shared/metadata';
  * frame callback running every vsync forever, even paused, settled,
  * unmounted or backgrounded.
  *
- * Ticker's `phase` changes on every state machine advance and is only
- * delivered while the command queue is polled, so "phase updates/s" is a live
- * count of advances: one per display frame while playing, 0 when paused,
- * unmounted or in the background. Probe checks that a JS write still reaches
+ * Ticker's `phase` changes on every state machine advance, so "phase
+ * updates/s" is a live count of advances: one per display frame while
+ * playing, 0 when paused, unmounted or in the background. Probe checks that a JS write still reaches
  * a settled state machine: "Set input = 1" must turn output from 10 into 77.
  *
  * Frame callbacks themselves are counted with (app in background):
