@@ -71,8 +71,7 @@ object RiveErrorLogger : app.rive.RiveLog.Logger {
     broadcastError(tag, message)
   }
 
-  private const val NO_DEFAULT_VIEW_MODEL_ERROR =
-    "Could not find default view model for artboard when getting default view model info"
+  private const val NO_DEFAULT_VIEW_MODEL_ERROR = "Could not find default view model"
 }
 
 @Keep
