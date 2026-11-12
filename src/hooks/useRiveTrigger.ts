@@ -62,7 +62,7 @@ export function useRiveTrigger(
     liveRef
   );
 
-  if (liveRef.current) {
+  if (property) {
     wasEverLive.current = true;
   }
 

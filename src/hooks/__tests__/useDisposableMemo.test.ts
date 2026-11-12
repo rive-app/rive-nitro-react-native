@@ -22,6 +22,12 @@ function createDisposable(label: string) {
 
 type Disposable = ReturnType<typeof createDisposable>;
 
+function flush() {
+  act(() => {
+    jest.runAllTicks();
+  });
+}
+
 describe('useDisposableMemo', () => {
   beforeEach(() => {
     jest.useFakeTimers();
@@ -83,12 +89,14 @@ describe('useDisposableMemo', () => {
 
     rerender({ dep: 'B' });
 
+    flush();
+
     expect(first.isAlive).toBe(false);
     expect(result.current.label).toBe('B');
     expect(result.current.isAlive).toBe(true);
   });
 
-  it('disposes on unmount (via deferred timeout in dev)', () => {
+  it('disposes on unmount', () => {
     const { result, unmount } = renderHook(() =>
       useDisposableMemo(
         () => createDisposable('A'),
@@ -101,13 +109,7 @@ describe('useDisposableMemo', () => {
     expect(obj.isAlive).toBe(true);
 
     unmount();
-
-    // Not yet disposed — waiting for setTimeout(0)
-    expect(obj.isAlive).toBe(true);
-
-    act(() => {
-      jest.runAllTimers();
-    });
+    flush();
 
     expect(obj.isAlive).toBe(false);
   });
@@ -131,10 +133,14 @@ describe('useDisposableMemo', () => {
     const first = result.current;
 
     rerender({ dep: 'B' });
+
+    flush();
     expect(disposed).toEqual(['A']);
     const second = result.current;
 
     rerender({ dep: 'A' });
+
+    flush();
     expect(disposed).toEqual(['A', 'B']);
 
     // New 'A' is a fresh instance, not the original
@@ -160,6 +166,8 @@ describe('useDisposableMemo', () => {
 
     rerender({ dep: 'B' });
 
+    flush();
+
     // cleanup called with undefined — should not throw
     expect(cleanup).toHaveBeenCalledWith(undefined);
   });
@@ -181,6 +189,7 @@ describe('useDisposableMemo', () => {
 
     // Deps change — cleanup throws but new value is still created
     rerender({ dep: 'B' });
+    flush();
 
     expect(result.current.label).toBe('B');
     expect(result.current.isAlive).toBe(true);
@@ -203,8 +212,12 @@ describe('useDisposableMemo', () => {
     );
 
     rerender({ dep: 'B' });
+
+    flush();
     rerender({ dep: 'C' });
+    flush();
     rerender({ dep: 'D' });
+    flush();
 
     expect(disposed).toEqual(['A', 'B', 'C']);
     expect(result.current.label).toBe('D');
@@ -278,12 +291,14 @@ describe('useDisposableMemo', () => {
 
       rerender({ dep: 'B' });
 
+      flush();
+
       expect(first!.isAlive).toBe(false);
       expect(liveRef.current!.label).toBe('B');
       expect(liveRef.current!.isAlive).toBe(true);
     });
 
-    it('clears liveRef on unmount (deferred in dev)', () => {
+    it('clears liveRef on unmount', () => {
       const liveRef: RefObject<Disposable | undefined> = { current: undefined };
 
       const { unmount } = renderHook(() =>
@@ -298,13 +313,7 @@ describe('useDisposableMemo', () => {
       expect(liveRef.current).toBeDefined();
 
       unmount();
-
-      // Deferred in dev — still set before timer fires
-      expect(liveRef.current).toBeDefined();
-
-      act(() => {
-        jest.runAllTimers();
-      });
+      flush();
 
       expect(liveRef.current).toBeUndefined();
     });
@@ -323,6 +332,8 @@ describe('useDisposableMemo', () => {
       expect(result.current.label).toBe('A');
 
       rerender({ dep: 'B' });
+
+      flush();
       expect(result.current.label).toBe('B');
 
       unmount();

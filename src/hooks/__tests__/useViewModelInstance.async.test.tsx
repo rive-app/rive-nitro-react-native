@@ -546,6 +546,7 @@ describe('useViewModelInstance async - disposal', () => {
 
     await waitFor(() => expect(result.current.instance).toBe(defaultInstance));
     unmount();
+    await act(async () => {});
     expect(defaultInstance.dispose).toHaveBeenCalled();
   });
 
