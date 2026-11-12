@@ -421,7 +421,12 @@ jobs:
             sudo pkill -9 -f CoreSimulatorService 2>/dev/null || true
             sleep 5
             if [ -n "$BOOTED_UDID" ]; then
-              xcrun simctl bootstatus "$BOOTED_UDID" -b || true
+              # bootstatus can wait on BackBoard forever, so cap it and cold-boot once if it does.
+              if ! perl -e 'alarm shift; exec @ARGV' 180 xcrun simctl bootstatus "$BOOTED_UDID" -b; then
+                echo "  simulator did not finish booting in 180s, shutting it down and booting again"
+                xcrun simctl shutdown "$BOOTED_UDID" 2>/dev/null || true
+                perl -e 'alarm shift; exec @ARGV' 180 xcrun simctl bootstatus "$BOOTED_UDID" -b || true
+              fi
             fi
           }
 
@@ -744,7 +749,12 @@ jobs:
             sudo pkill -9 -f CoreSimulatorService 2>/dev/null || true
             sleep 5
             if [ -n "$BOOTED_UDID" ]; then
-              xcrun simctl bootstatus "$BOOTED_UDID" -b || true
+              # bootstatus can wait on BackBoard forever, so cap it and cold-boot once if it does.
+              if ! perl -e 'alarm shift; exec @ARGV' 180 xcrun simctl bootstatus "$BOOTED_UDID" -b; then
+                echo "  simulator did not finish booting in 180s, shutting it down and booting again"
+                xcrun simctl shutdown "$BOOTED_UDID" 2>/dev/null || true
+                perl -e 'alarm shift; exec @ARGV' 180 xcrun simctl bootstatus "$BOOTED_UDID" -b || true
+              fi
             fi
           }
 
