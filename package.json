@@ -1,6 +1,6 @@
 {
   "name": "@rive-app/react-native",
-  "version": "0.5.13",
+  "version": "0.5.14",
   "description": "React Native runtime for Rive. Rive is an agent-native 2D and 3D engine for games, apps, and interactive UI.",
   "main": "./lib/module/index.js",
   "types": "./lib/typescript/src/index.d.ts",

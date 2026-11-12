@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.14](https://github.com/rive-app/rive-nitro-react-native/compare/v0.5.13...v0.5.14) (2026-11-12)
+
+
+### Bug Fixes
+
+* **android:** stop idle frame callbacks on the new backend ([#416](https://github.com/rive-app/rive-nitro-react-native/issues/416)) ([809e060](https://github.com/rive-app/rive-nitro-react-native/commit/809e060b6de5e1704d7dcc67a5f39ccbf9c19801))
+
 ## [0.5.13](https://github.com/rive-app/rive-nitro-react-native/compare/v0.5.12...v0.5.13) (2026-11-11)
 
 
