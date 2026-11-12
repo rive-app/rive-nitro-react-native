@@ -19,14 +19,13 @@ import {
   type RiveViewRef,
 } from '@rive-app/react-native';
 import type { ViewModelInstance } from '@rive-app/react-native';
+import MULTI_AB from '../assets/rive/arbtboards-models-instances.riv';
 
 // rive-android experimental SDK doesn't expose the ViewModel name from
 // DefaultForArtboard yet — pending rive-app/rive-android#443 which adds
 // getDefaultViewModelInfo(). Once merged and released, remove these guards.
 const isAndroidExperimental =
   Platform.OS === 'android' && RiveFileFactory.getBackend() === 'experimental';
-
-const MULTI_AB = require('../assets/rive/arbtboards-models-instances.riv');
 
 function expectDefined<T>(value: T): asserts value is NonNullable<T> {
   expect(value).toBeDefined();

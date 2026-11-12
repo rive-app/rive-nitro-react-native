@@ -17,7 +17,7 @@ import {
  * these from the JS thread is a data race. Always green; under a TSan build
  * (HARNESS_TSAN=1) TSan should report the race on the unfixed runtime.
  */
-const DATABINDING = require('../../assets/rive/databinding.riv');
+import DATABINDING from '../../assets/rive/databinding.riv';
 const ROUNDS = 100;
 
 function Repro({

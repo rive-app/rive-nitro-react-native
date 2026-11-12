@@ -18,7 +18,7 @@ import {
  * `null`" — fatal when uncaught in release. The liveRef guard in
  * useRiveProperty must turn it into a no-op.
  */
-const DATABINDING = require('../../assets/rive/databinding.riv');
+import DATABINDING from '../../assets/rive/databinding.riv';
 const WRITES = 50;
 
 type Ctx = {

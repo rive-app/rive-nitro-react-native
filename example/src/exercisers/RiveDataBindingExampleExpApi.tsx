@@ -12,11 +12,10 @@ import {
   useRiveFile,
 } from '@rive-app/react-native';
 import { type Metadata } from '../shared/metadata';
+import rewardsRiv from '../../assets/rive/rewards.riv';
 
 export default function WithRiveFile() {
-  const { riveFile, isLoading, error } = useRiveFile(
-    require('../../assets/rive/rewards.riv')
-  );
+  const { riveFile, isLoading, error } = useRiveFile(rewardsRiv);
 
   return (
     <View style={styles.container}>

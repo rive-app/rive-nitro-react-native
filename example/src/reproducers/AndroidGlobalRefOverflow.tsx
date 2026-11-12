@@ -16,6 +16,7 @@ import {
   type RiveFile,
 } from '@rive-app/react-native';
 import { type Metadata } from '../shared/metadata';
+import viewmodelpropertyRiv from '../../assets/rive/viewmodelproperty.riv';
 
 /**
  * Manual reproducer for the Android JNI global-reference overflow.
@@ -136,9 +137,7 @@ function WithViewModelSetup({ file }: { file: RiveFile }) {
 }
 
 export default function AndroidGlobalRefOverflow() {
-  const { riveFile, isLoading, error } = useRiveFile(
-    require('../../assets/rive/viewmodelproperty.riv')
-  );
+  const { riveFile, isLoading, error } = useRiveFile(viewmodelpropertyRiv);
 
   return (
     <View style={styles.container}>

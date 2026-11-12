@@ -16,6 +16,7 @@ import {
 } from '@rive-app/react-native';
 import { Picker } from '@react-native-picker/picker';
 import { type Metadata } from '../shared/metadata';
+import outOfBandRiv from '../../assets/rive/out_of_band.riv';
 
 class ErrorBoundary extends React.Component<
   {
@@ -85,20 +86,17 @@ function getImagePromise(url: string): Promise<RiveImage> {
 function RiveContent({ imageUrl }: { imageUrl: ImageURLS }) {
   const riveImage = React.use(getImagePromise(imageUrl));
 
-  const { riveFile, isLoading, error } = useRiveFile(
-    require('../../assets/rive/out_of_band.riv'),
-    {
-      referencedAssets: {
-        'Inter-594377': {
-          source: require('../../assets/fonts/Inter-594377.ttf'),
-        },
-        'referenced-image-2929282': riveImage,
-        'referenced_audio-2929340': {
-          source: require('../../assets/audio/referenced_audio-2929340.wav'),
-        },
+  const { riveFile, isLoading, error } = useRiveFile(outOfBandRiv, {
+    referencedAssets: {
+      'Inter-594377': {
+        source: require('../../assets/fonts/Inter-594377.ttf'),
       },
-    }
-  );
+      'referenced-image-2929282': riveImage,
+      'referenced_audio-2929340': {
+        source: require('../../assets/audio/referenced_audio-2929340.wav'),
+      },
+    },
+  });
 
   if (isLoading) {
     return <ActivityIndicator />;

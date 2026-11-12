@@ -1,7 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
-import { RiveView, useRiveFile, Fit } from '@rive-app/react-native';
+import {
+  RiveView,
+  useRiveFile,
+  Fit,
+  type RiveFileSchema,
+} from '@rive-app/react-native';
 import { type Metadata } from '../shared/metadata';
+import artboardDbTestRiv from '../../assets/rive/artboard_db_test.riv';
 
 /**
  * Reproducer for review finding H4 (Android experimental backend).
@@ -22,9 +28,7 @@ export default function ReloadHandleLeak() {
   // artboard_db_test.riv has multiple artboards, so the reload stress can
   // alternate between two real names (setting artboardName back to undefined
   // currently throws in the Nitro prop layer).
-  const { riveFile } = useRiveFile(
-    require('../../assets/rive/artboard_db_test.riv')
-  );
+  const { riveFile } = useRiveFile<RiveFileSchema>(artboardDbTestRiv);
   const [running, setRunning] = useState(false);
   const [mode, setMode] = useState<'reload' | 'vmi'>('reload');
   const [iterations, setIterations] = useState(0);

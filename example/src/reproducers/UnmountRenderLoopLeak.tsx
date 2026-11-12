@@ -2,6 +2,7 @@ import { useRef, useState } from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { RiveView, useRiveFile, Fit } from '@rive-app/react-native';
 import { type Metadata } from '../shared/metadata';
+import quickStartRiv from '../../assets/rive/quick_start.riv';
 
 /**
  * Reproducer for the experimental-backend unmount leak (review finding C1).
@@ -19,9 +20,7 @@ import { type Metadata } from '../shared/metadata';
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 function RiveContent() {
-  const { riveFile } = useRiveFile(
-    require('../../assets/rive/quick_start.riv')
-  );
+  const { riveFile } = useRiveFile(quickStartRiv);
   if (!riveFile) return <Text>Loading...</Text>;
   return (
     <RiveView

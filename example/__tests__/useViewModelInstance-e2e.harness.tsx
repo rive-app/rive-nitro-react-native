@@ -16,8 +16,8 @@ import {
   type ViewModelInstance,
 } from '@rive-app/react-native';
 
-const MULTI_AB = require('../assets/rive/arbtboards-models-instances.riv');
-const DATABINDING = require('../assets/rive/databinding.riv');
+import MULTI_AB from '../assets/rive/arbtboards-models-instances.riv';
+import DATABINDING from '../assets/rive/databinding.riv';
 
 function expectDefined<T>(value: T): asserts value is NonNullable<T> {
   expect(value).toBeDefined();

@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-deprecated -- the race needs the sync API */
 import { it, expect } from 'react-native-harness';
 import { RiveFileFactory } from '@rive-app/react-native';
+import viewmodelpropertyRiv from '../../assets/rive/viewmodelproperty.riv';
 
 /**
  * Regression probe for the data-binding thread race in issue #297.
@@ -17,7 +18,7 @@ const ROUNDS = 10;
 
 it('issue #297: concurrent data-binding access does not race', async () => {
   const file = await RiveFileFactory.fromSource(
-    require('../../assets/rive/viewmodelproperty.riv'),
+    viewmodelpropertyRiv,
     undefined
   );
 

@@ -21,11 +21,10 @@
 import { View, StyleSheet, Text } from 'react-native';
 import { RiveView, useRiveFile } from '@rive-app/react-native';
 import { type Metadata } from '../shared/metadata';
+import nodefaultbouncingRiv from '../../assets/rive/nodefaultbouncing.riv';
 
 export default function Issue189Page() {
-  const { riveFile, error } = useRiveFile(
-    require('../../assets/rive/nodefaultbouncing.riv')
-  );
+  const { riveFile, error } = useRiveFile(nodefaultbouncingRiv);
 
   return (
     <View style={styles.container}>

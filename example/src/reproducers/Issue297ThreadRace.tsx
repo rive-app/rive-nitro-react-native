@@ -16,6 +16,7 @@ import {
   type RiveFile,
 } from '@rive-app/react-native';
 import { type Metadata } from '../shared/metadata';
+import viewmodelpropertyRiv from '../../assets/rive/viewmodelproperty.riv';
 
 /**
  * Manual reproducer for https://github.com/rive-app/rive-nitro-react-native/issues/297.
@@ -142,9 +143,7 @@ function WithViewModelSetup({ file }: { file: RiveFile }) {
 }
 
 export default function Issue297ThreadRace() {
-  const { riveFile, isLoading, error } = useRiveFile(
-    require('../../assets/rive/viewmodelproperty.riv')
-  );
+  const { riveFile, isLoading, error } = useRiveFile(viewmodelpropertyRiv);
 
   return (
     <View style={styles.container}>

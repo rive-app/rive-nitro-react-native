@@ -14,6 +14,7 @@ import {
   type RiveViewRef,
 } from '@rive-app/react-native';
 import { type Metadata } from '../shared/metadata';
+import layoutsDemoRiv from '../../assets/rive/layouts_demo.riv';
 
 /**
  * Demonstrates responsive layouts using Fit.Layout and layoutScaleFactor
@@ -21,9 +22,7 @@ import { type Metadata } from '../shared/metadata';
  * See https://rive.app/docs/runtimes/layout
  */
 export default function ResponsiveLayoutsExample() {
-  const { riveFile, isLoading, error } = useRiveFile(
-    require('../../assets/rive/layouts_demo.riv')
-  );
+  const { riveFile, isLoading, error } = useRiveFile(layoutsDemoRiv);
   const [scaleFactor, setScaleFactor] = useState(4.0);
   const riveRef = useRef<RiveViewRef>(null);
   const { width, height } = useWindowDimensions();

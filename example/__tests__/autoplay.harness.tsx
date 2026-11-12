@@ -19,11 +19,11 @@ import type { ViewModelInstance } from '@rive-app/react-native';
 
 // Bouncing ball .riv with a "ypos" ViewModel number property that changes during playback
 // Source: https://rive.app/community/files/25997-48571-demo-for-tracking-rive-property-in-react-native/
-const BOUNCING_BALL = require('../assets/rive/bouncing_ball.riv');
+import BOUNCING_BALL from '../assets/rive/bouncing_ball.riv';
 
 // Simple animation with ViewModels defined but no default ViewModel assigned to the artboard
 // Source: https://rive.app/community/files/27026-50856-no-default-vm-for-artboard/
-const NO_DEFAULT_VM = require('../assets/rive/nodefaultbouncing.riv');
+import NO_DEFAULT_VM from '../assets/rive/nodefaultbouncing.riv';
 
 function expectDefined<T>(value: T): asserts value is NonNullable<T> {
   expect(value).toBeDefined();

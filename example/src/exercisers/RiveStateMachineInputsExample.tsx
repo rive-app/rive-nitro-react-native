@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { useEffect } from 'react';
 import { Fit, RiveView, useRive, useRiveFile } from '@rive-app/react-native';
 import { type Metadata } from '../shared/metadata';
+import ratingRiv from '../../assets/rive/rating.riv';
 
 /**
  * @deprecated Setting state machine inputs at runtime is deprecated. Use data binding instead.
@@ -13,9 +14,7 @@ import { type Metadata } from '../shared/metadata';
  */
 export default function StateMachineInputsExample() {
   const { riveViewRef, setHybridRef } = useRive();
-  const { riveFile, isLoading, error } = useRiveFile(
-    require('../../assets/rive/rating.riv')
-  );
+  const { riveFile, isLoading, error } = useRiveFile(ratingRiv);
 
   useEffect(() => {
     if (riveViewRef) {

@@ -20,7 +20,7 @@ import {
 // context:viewModel() in init, sets isReady = 1 there, and copies seed into
 // observedSeed every advance.
 // Source: https://gist.github.com/luismolina13/693ab81ea35dd59136bdf8c94cb45c44
-const SCRIPT_BINDING_PROBE = require('../assets/rive/script_binding_probe.riv');
+import SCRIPT_BINDING_PROBE from '../assets/rive/script_binding_probe.riv';
 
 function expectDefined<T>(value: T): asserts value is NonNullable<T> {
   expect(value).toBeDefined();

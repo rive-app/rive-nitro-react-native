@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet } from 'react-native';
 import { RiveView, useRiveFile, Fit, Alignment } from '@rive-app/react-native';
 import { type Metadata } from '../shared/metadata';
+import quickStartRiv from '../../assets/rive/quick_start.riv';
 
 /**
  * Reproducer for review finding H8 (Android experimental backend).
@@ -14,9 +15,7 @@ import { type Metadata } from '../shared/metadata';
  */
 
 function Cell({ alignment, label }: { alignment: Alignment; label: string }) {
-  const { riveFile } = useRiveFile(
-    require('../../assets/rive/quick_start.riv')
-  );
+  const { riveFile } = useRiveFile(quickStartRiv);
   return (
     <View style={styles.cellOuter}>
       <Text style={styles.cellLabel}>{label}</Text>
