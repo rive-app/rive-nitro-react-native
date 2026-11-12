@@ -516,8 +516,8 @@ async function main() {
   } else {
     if (input.startsWith('http://') || input.startsWith('https://')) {
       process.stderr.write(
-        `Error: URL inputs require --out to specify the output path.\n` +
-          `  Example: rive-gen-types ${input} --out ./assets/file.riv.d.ts\n`
+        `Error: URL inputs require --out, which writes a standalone schema type to pass to useRiveFile or RiveFileFactory.fromURL.\n` +
+          `  Example: rive-gen-types ${input} --out ./src/rive/${basename(new URL(input).pathname, '.riv')}-schema.ts\n`
       );
       process.exit(1);
     }
