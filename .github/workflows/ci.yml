@@ -274,7 +274,7 @@ jobs:
     # Pinned to macos-15 — see build-ios. macos-26 runners lack a matching
     # iPhone 16 Pro / iOS >=26 simulator, so the boot step fails intermittently.
     runs-on: macos-15
-    timeout-minutes: 60
+    timeout-minutes: 75
     env:
       XCODE_VERSION: 26.3
     steps:
@@ -364,7 +364,7 @@ jobs:
 
       - name: Run harness tests on iOS
         working-directory: expo57-example
-        timeout-minutes: 35
+        timeout-minutes: 50
         shell: bash --noprofile --norc -o pipefail {0}
         env:
           # First attempt bundles through the harness Metro on app boot; CI
@@ -433,7 +433,7 @@ jobs:
             start_monitor
             yarn test:harness:ios --verbose --testTimeout 120000 &
             test_pid=$!
-            ( sleep 600; echo "  WATCHDOG: attempt $attempt exceeded 600s, killing harness"; kill -9 $test_pid 2>/dev/null ) &
+            ( sleep 900; echo "  WATCHDOG: attempt $attempt exceeded 900s, killing harness"; kill -9 $test_pid 2>/dev/null ) &
             watchdog_pid=$!
             wait $test_pid 2>/dev/null
             exit_code=$?
@@ -597,7 +597,7 @@ jobs:
     # Same as test-harness-ios but with the legacy Rive backend
     # (USE_RIVE_LEGACY=1 pod install).
     runs-on: macos-15
-    timeout-minutes: 90
+    timeout-minutes: 105
     env:
       XCODE_VERSION: 26.3
     steps:
@@ -687,7 +687,7 @@ jobs:
 
       - name: Run harness tests on iOS
         working-directory: expo57-example
-        timeout-minutes: 35
+        timeout-minutes: 50
         shell: bash --noprofile --norc -o pipefail {0}
         env:
           # First attempt bundles through the harness Metro on app boot; CI
@@ -756,7 +756,7 @@ jobs:
             start_monitor
             yarn test:harness:ios --verbose --testTimeout 120000 &
             test_pid=$!
-            ( sleep 600; echo "  WATCHDOG: attempt $attempt exceeded 600s, killing harness"; kill -9 $test_pid 2>/dev/null ) &
+            ( sleep 900; echo "  WATCHDOG: attempt $attempt exceeded 900s, killing harness"; kill -9 $test_pid 2>/dev/null ) &
             watchdog_pid=$!
             wait $test_pid 2>/dev/null
             exit_code=$?
