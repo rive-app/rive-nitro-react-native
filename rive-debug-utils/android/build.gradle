@@ -21,7 +21,10 @@ def reactNativeArchitectures() {
 }
 
 apply plugin: "com.android.library"
-apply plugin: "kotlin-android"
+// AGP 9's built-in Kotlin already registers the `kotlin` extension; applying kotlin-android again fails.
+if (project.extensions.findByName('kotlin') == null) {
+  apply plugin: "kotlin-android"
+}
 apply from: '../nitrogen/generated/android/RiveDebugUtils+autolinking.gradle'
 
 android {
