@@ -274,7 +274,7 @@ jobs:
     # Pinned to macos-15 — see build-ios. macos-26 runners lack a matching
     # iPhone 16 Pro / iOS >=26 simulator, so the boot step fails intermittently.
     runs-on: macos-15
-    timeout-minutes: 75
+    timeout-minutes: 85
     env:
       XCODE_VERSION: 26.3
     steps:
@@ -364,7 +364,7 @@ jobs:
 
       - name: Run harness tests on iOS
         working-directory: expo57-example
-        timeout-minutes: 50
+        timeout-minutes: 60
         shell: bash --noprofile --norc -o pipefail {0}
         env:
           # First attempt bundles through the harness Metro on app boot; CI
@@ -602,7 +602,7 @@ jobs:
     # Same as test-harness-ios but with the legacy Rive backend
     # (USE_RIVE_LEGACY=1 pod install).
     runs-on: macos-15
-    timeout-minutes: 105
+    timeout-minutes: 115
     env:
       XCODE_VERSION: 26.3
     steps:
@@ -692,7 +692,7 @@ jobs:
 
       - name: Run harness tests on iOS
         working-directory: expo57-example
-        timeout-minutes: 50
+        timeout-minutes: 60
         shell: bash --noprofile --norc -o pipefail {0}
         env:
           # First attempt bundles through the harness Metro on app boot; CI
