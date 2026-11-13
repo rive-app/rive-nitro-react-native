@@ -48,7 +48,6 @@ class HybridViewModelImageProperty internal constructor(
           RiveReactNativeView.onViewModelChanged()
           return@launch
         }
-        AssetLoader.ensureHeapFits(bytes)
         val result = ImageAsset.fromBytes(riveWorker, bytes)
         if (result is app.rive.Result.Success) {
           // The property keeps its own ref, so close ours right away.

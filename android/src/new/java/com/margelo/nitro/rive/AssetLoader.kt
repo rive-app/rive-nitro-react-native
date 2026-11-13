@@ -24,23 +24,6 @@ class RegisteredAsset(
 object AssetLoader {
   private const val TAG = "AssetLoader"
 
-  @Volatile
-  private var heapProbe: ByteArray? = null
-
-  /**
-   * Decoding copies [bytes] onto the Java heap from the Rive CmdServer thread, where an
-   * OutOfMemoryError ends the process, so claim that space first where it can be caught.
-   */
-  internal fun ensureHeapFits(bytes: ByteArray) {
-    try {
-      heapProbe = ByteArray(bytes.size)
-    } catch (e: OutOfMemoryError) {
-      throw IllegalStateException("Not enough Java heap to decode ${bytes.size} byte image", e)
-    } finally {
-      heapProbe = null
-    }
-  }
-
   /**
    * Registers the referenced assets and returns them so the owning file can
    * release (unregister + close) them on dispose — registration is global
@@ -107,7 +90,6 @@ object AssetLoader {
     when (type) {
       AssetType.IMAGE -> {
         riveWorker.unregisterImage(name)
-        ensureHeapFits(data)
         val result = ImageAsset.fromBytes(riveWorker, data)
         if (result is app.rive.Result.Success) {
           result.value.register(name)
