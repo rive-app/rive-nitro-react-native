@@ -26,7 +26,8 @@ describe('Asset loading with referencedAssets', () => {
     if (!isExperimental()) return;
     const file = await RiveFileFactory.fromSource(OUT_OF_BAND, {
       'referenced-image-2929282': {
-        sourceUrl: 'https://picsum.photos/id/237/200/200',
+        sourceUrl:
+          'https://raw.githubusercontent.com/rive-app/rive-nitro-react-native/test-assets/images/a.jpg',
         type: 'image',
       },
     });
@@ -42,7 +43,8 @@ describe('Asset loading with referencedAssets', () => {
         type: 'font',
       },
       'referenced-image-2929282': {
-        sourceUrl: 'https://picsum.photos/id/237/200/200',
+        sourceUrl:
+          'https://raw.githubusercontent.com/rive-app/rive-nitro-react-native/test-assets/images/a.jpg',
         type: 'image',
       },
     });

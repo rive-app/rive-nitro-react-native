@@ -134,7 +134,7 @@ export default function ManyViewModels() {
       }
 
       const riveImage = await RiveImages.loadFromURLAsync(
-        'https://picsum.photos/id/372/500/500'
+        'https://raw.githubusercontent.com/rive-app/rive-nitro-react-native/test-assets/images/b.png'
       );
       imgProp.set(riveImage);
       riveViewRef.current.play();

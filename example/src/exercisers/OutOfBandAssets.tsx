@@ -18,7 +18,9 @@ import { type Metadata } from '../shared/metadata';
 import outOfBandRiv from '../../assets/rive/out_of_band.riv';
 
 export default function OutOfBandAssetsExample() {
-  const [uri, setUri] = React.useState('https://picsum.photos/id/372/500/500');
+  const [uri, setUri] = React.useState(
+    'https://raw.githubusercontent.com/rive-app/rive-nitro-react-native/test-assets/images/b.png'
+  );
   const { riveFile, isLoading, error } = useRiveFile(outOfBandRiv, {
     referencedAssets: {
       'Inter-594377': {
@@ -90,8 +92,8 @@ export default function OutOfBandAssetsExample() {
               style={styles.picker}
             >
               {[
-                'https://picsum.photos/id/372/500/500',
-                'https://picsum.photos/id/373/500/500',
+                'https://raw.githubusercontent.com/rive-app/rive-nitro-react-native/test-assets/images/b.png',
+                'https://raw.githubusercontent.com/rive-app/rive-nitro-react-native/test-assets/images/c.png',
               ].map((key) => (
                 <Picker.Item key={key} value={key} label={key} />
               ))}
