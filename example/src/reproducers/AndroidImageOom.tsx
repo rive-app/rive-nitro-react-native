@@ -125,6 +125,9 @@ export default function AndroidImageOom() {
     stopRequested.current = false;
     setRunning(true);
     try {
+      if (scenario !== 'list' && !propRef.current) {
+        throw new Error('image property not ready yet');
+      }
       if (scenario === 'one') {
         propRef.current?.set(await load());
         report(`one ${imageName} set`);
