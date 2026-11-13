@@ -37,12 +37,7 @@ using namespace margelo::nitro::rive::views;
 
 @implementation HybridRiveViewComponent {
   std::shared_ptr<HybridRiveViewSpecSwift> _hybridView;
-  // The cached props' isDirty flags were already consumed by the previous
-  // view instance when Fabric recreates this view from an unchanged
-  // ShadowNode, so updateProps would apply nothing and the fresh view would
-  // stay unconfigured (issue #365). Track whether this instance applied its
-  // props at least once.
-  BOOL _didApplyInitialProps;
+  BOOL _didDropView;
 }
 
 + (void) load {
@@ -76,90 +71,115 @@ using namespace margelo::nitro::rive::views;
   [self setContentView:view];
 }
 
+- (void) notifyOnDropView {
+  // A recycled component can later be invalidated. Notify only once per mount.
+  if (_didDropView) {
+    return;
+  }
+  RNRive::HybridRiveViewSpec_cxx& swiftPart = _hybridView->getSwiftPart();
+  swiftPart.onDropView();
+  _didDropView = YES;
+}
+
 - (void) updateProps:(const std::shared_ptr<const react::Props>&)props
             oldProps:(const std::shared_ptr<const react::Props>&)oldProps {
+  // A props update marks a newly mounted or still-active component.
+  _didDropView = NO;
+
   // 1. Downcast props
-  const auto& newViewPropsConst = *std::static_pointer_cast<HybridRiveViewProps const>(props);
-  auto& newViewProps = const_cast<HybridRiveViewProps&>(newViewPropsConst);
+  const auto& newViewProps = *std::static_pointer_cast<const HybridRiveViewProps>(props);
+  const auto* oldViewProps = static_cast<const HybridRiveViewProps*>(oldProps.get());
   RNRive::HybridRiveViewSpec_cxx& swiftPart = _hybridView->getSwiftPart();
 
-  // Force-apply all props the first time this view instance updates (see
-  // _didApplyInitialProps above).
-  const bool force = !_didApplyInitialProps;
-  _didApplyInitialProps = YES;
+  // 2. Update only props that differ from the previous Props snapshot.
+  const bool hasTransactionPropChanges = oldViewProps == nullptr
+      ? newViewProps.hasAnyProvidedProps()
+      : !newViewProps.hasSameProps(*oldViewProps);
+  if (hasTransactionPropChanges) {
+    swiftPart.beforeUpdate();
 
-  // 2. Update each prop individually
-  swiftPart.beforeUpdate();
-
-  // artboardName: optional
-  if (force || newViewProps.artboardName.isDirty) {
-    swiftPart.setArtboardName(newViewProps.artboardName.value);
-    newViewProps.artboardName.isDirty = false;
-  }
-  // stateMachineName: optional
-  if (force || newViewProps.stateMachineName.isDirty) {
-    swiftPart.setStateMachineName(newViewProps.stateMachineName.value);
-    newViewProps.stateMachineName.isDirty = false;
-  }
-  // autoPlay: optional
-  if (force || newViewProps.autoPlay.isDirty) {
-    swiftPart.setAutoPlay(newViewProps.autoPlay.value);
-    newViewProps.autoPlay.isDirty = false;
-  }
-  // file: hybrid-object
-  if (force || newViewProps.file.isDirty) {
-    swiftPart.setFile(newViewProps.file.value);
-    newViewProps.file.isDirty = false;
-  }
-  // alignment: optional
-  if (force || newViewProps.alignment.isDirty) {
-    swiftPart.setAlignment(newViewProps.alignment.value);
-    newViewProps.alignment.isDirty = false;
-  }
-  // fit: optional
-  if (force || newViewProps.fit.isDirty) {
-    swiftPart.setFit(newViewProps.fit.value);
-    newViewProps.fit.isDirty = false;
-  }
-  // layoutScaleFactor: optional
-  if (force || newViewProps.layoutScaleFactor.isDirty) {
-    swiftPart.setLayoutScaleFactor(newViewProps.layoutScaleFactor.value);
-    newViewProps.layoutScaleFactor.isDirty = false;
-  }
-  // frameRate: optional
-  if (force || newViewProps.frameRate.isDirty) {
-    swiftPart.setFrameRate(newViewProps.frameRate.value);
-    newViewProps.frameRate.isDirty = false;
-  }
-  // semantics: optional
-  if (force || newViewProps.semantics.isDirty) {
-    swiftPart.setSemantics(newViewProps.semantics.value);
-    newViewProps.semantics.isDirty = false;
-  }
-  // dataBind: optional
-  if (force || newViewProps.dataBind.isDirty) {
-    swiftPart.setDataBind(newViewProps.dataBind.value);
-    newViewProps.dataBind.isDirty = false;
-  }
-  // onError: function
-  if (force || newViewProps.onError.isDirty) {
-    swiftPart.setOnError(newViewProps.onError.value);
-    newViewProps.onError.isDirty = false;
-  }
-
-  swiftPart.afterUpdate();
-
-  // 3. Update hybridRef if it changed
-  if (force || newViewProps.hybridRef.isDirty) {
-    // hybridRef changed - call it with new this
-    const auto& maybeFunc = newViewProps.hybridRef.value;
-    if (maybeFunc.has_value()) {
-      maybeFunc.value()(_hybridView);
+    // artboardName: optional
+    if (oldViewProps == nullptr
+          ? newViewProps.artboardName.isProvided()
+          : !newViewProps.artboardName.hasSameValue(oldViewProps->artboardName)) {
+      swiftPart.setArtboardName(newViewProps.artboardName.get());
     }
-    newViewProps.hybridRef.isDirty = false;
+    // stateMachineName: optional
+    if (oldViewProps == nullptr
+          ? newViewProps.stateMachineName.isProvided()
+          : !newViewProps.stateMachineName.hasSameValue(oldViewProps->stateMachineName)) {
+      swiftPart.setStateMachineName(newViewProps.stateMachineName.get());
+    }
+    // autoPlay: optional
+    if (oldViewProps == nullptr
+          ? newViewProps.autoPlay.isProvided()
+          : !newViewProps.autoPlay.hasSameValue(oldViewProps->autoPlay)) {
+      swiftPart.setAutoPlay(newViewProps.autoPlay.get());
+    }
+    // file: hybrid-object
+    if (oldViewProps == nullptr
+          ? newViewProps.file.isProvided()
+          : !newViewProps.file.hasSameValue(oldViewProps->file)) {
+      swiftPart.setFile(newViewProps.file.get());
+    }
+    // alignment: optional
+    if (oldViewProps == nullptr
+          ? newViewProps.alignment.isProvided()
+          : !newViewProps.alignment.hasSameValue(oldViewProps->alignment)) {
+      swiftPart.setAlignment(newViewProps.alignment.get());
+    }
+    // fit: optional
+    if (oldViewProps == nullptr
+          ? newViewProps.fit.isProvided()
+          : !newViewProps.fit.hasSameValue(oldViewProps->fit)) {
+      swiftPart.setFit(newViewProps.fit.get());
+    }
+    // layoutScaleFactor: optional
+    if (oldViewProps == nullptr
+          ? newViewProps.layoutScaleFactor.isProvided()
+          : !newViewProps.layoutScaleFactor.hasSameValue(oldViewProps->layoutScaleFactor)) {
+      swiftPart.setLayoutScaleFactor(newViewProps.layoutScaleFactor.get());
+    }
+    // frameRate: optional
+    if (oldViewProps == nullptr
+          ? newViewProps.frameRate.isProvided()
+          : !newViewProps.frameRate.hasSameValue(oldViewProps->frameRate)) {
+      swiftPart.setFrameRate(newViewProps.frameRate.get());
+    }
+    // semantics: optional
+    if (oldViewProps == nullptr
+          ? newViewProps.semantics.isProvided()
+          : !newViewProps.semantics.hasSameValue(oldViewProps->semantics)) {
+      swiftPart.setSemantics(newViewProps.semantics.get());
+    }
+    // dataBind: optional
+    if (oldViewProps == nullptr
+          ? newViewProps.dataBind.isProvided()
+          : !newViewProps.dataBind.hasSameValue(oldViewProps->dataBind)) {
+      swiftPart.setDataBind(newViewProps.dataBind.get());
+    }
+    // onError: function
+    if (oldViewProps == nullptr
+          ? newViewProps.onError.isProvided()
+          : !newViewProps.onError.hasSameValue(oldViewProps->onError)) {
+      swiftPart.setOnError(newViewProps.onError.get());
+    }
+
+    // Update hybridRef if it changed
+    if (oldViewProps == nullptr
+          ? newViewProps.hybridRef.isProvided()
+          : !newViewProps.hybridRef.hasSameValue(oldViewProps->hybridRef)) {
+      // hybridRef changed - call it with new this
+      const auto& maybeFunc = newViewProps.hybridRef.get();
+      if (maybeFunc.has_value()) {
+        maybeFunc.value()(_hybridView);
+      }
+    }
+
+    swiftPart.afterUpdate();
   }
 
-  // 4. Continue in base class
+  // 3. Continue in base class
   [super updateProps:props oldProps:oldProps];
 }
 
@@ -168,16 +188,15 @@ using namespace margelo::nitro::rive::views;
 }
 
 - (void)prepareForRecycle {
+  [self notifyOnDropView];
   [super prepareForRecycle];
-  _didApplyInitialProps = NO;
   RNRive::HybridRiveViewSpec_cxx& swiftPart = _hybridView->getSwiftPart();
   swiftPart.maybePrepareForRecycle();
 }
 
 #ifdef ENABLE_RCT_COMPONENT_VIEW_INVALIDATE
 - (void)invalidate {
-  RNRive::HybridRiveViewSpec_cxx& swiftPart = _hybridView->getSwiftPart();
-  swiftPart.onDropView();
+  [self notifyOnDropView];
   [super invalidate];
 }
 #endif
