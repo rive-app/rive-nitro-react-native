@@ -61,10 +61,12 @@ class ErrorBoundary extends React.Component<
 
 const delay = 1000;
 
-const ImageURL1 = `https://picsum.photos/id/372/500/500` as const;
-const ImageURL2 = `https://picsum.photos/id/373/500/500` as const;
+const ImageURL1 =
+  `https://raw.githubusercontent.com/rive-app/rive-nitro-react-native/test-assets/images/b.png` as const;
+const ImageURL2 =
+  `https://raw.githubusercontent.com/rive-app/rive-nitro-react-native/test-assets/images/c.png` as const;
 const ImageURLSlow =
-  `https://app.requestly.io/delay/${delay}/https://picsum.photos/id/374/500/500` as const;
+  `https://app.requestly.io/delay/${delay}/https://raw.githubusercontent.com/rive-app/rive-nitro-react-native/test-assets/images/d.png` as const;
 const ImageInvalidURL = 'not-a-valid-url' as const;
 
 type ImageURLS =
