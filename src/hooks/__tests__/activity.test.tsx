@@ -419,6 +419,74 @@ describe('useViewModelInstance({ async: true }) under <Activity>', () => {
     await unmount(renderer);
     expect(instance.dispose).toHaveBeenCalledTimes(1);
   });
+
+  function setupFiles() {
+    const files = ['a', 'b'].map((label) => {
+      const instance = nativeLike({ label });
+      const viewModel = nativeLike({
+        createDefaultInstanceAsync: jest.fn(async () => instance),
+      });
+      const file = {
+        defaultArtboardViewModelAsync: jest.fn(async () => viewModel),
+      } as unknown as RiveFile;
+      return { file, viewModel, instance };
+    });
+    const results: ReturnType<typeof useViewModelInstance>[] = [];
+    const Vmi = ({ file }: { file: RiveFile }) => {
+      results.push(useViewModelInstance(file, { async: true }));
+      return null;
+    };
+    const tree = (mode: 'visible' | 'hidden', file: RiveFile) => (
+      <Activity mode={mode}>
+        <Vmi file={file} />
+      </Activity>
+    );
+    const latest = () => results[results.length - 1]!;
+    return { files, tree, latest };
+  }
+
+  it('shows the kept instance when the source changes and changes back while hidden', async () => {
+    const { files, tree, latest } = setupFiles();
+    const [a, b] = files as [(typeof files)[0], (typeof files)[0]];
+    const renderer = await mount(tree('visible', a.file));
+    await update(renderer, tree('hidden', a.file));
+    await update(renderer, tree('hidden', b.file));
+    await update(renderer, tree('hidden', a.file));
+    await update(renderer, tree('visible', a.file));
+    expect(latest()).toEqual({
+      instance: a.instance,
+      isLoading: false,
+      error: null,
+    });
+    expect(a.viewModel.createDefaultInstanceAsync).toHaveBeenCalledTimes(1);
+    expect(b.viewModel.createDefaultInstanceAsync).not.toHaveBeenCalled();
+    expect(a.instance.dispose).not.toHaveBeenCalled();
+    await unmount(renderer);
+    expect(a.instance.dispose).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not show an instance for a source that changed while it loaded hidden', async () => {
+    const { files, tree, latest } = setupFiles();
+    const [a, b] = files as [(typeof files)[0], (typeof files)[0]];
+    let finish: (v: unknown) => void = () => {};
+    (a.viewModel.createDefaultInstanceAsync as jest.Mock).mockImplementation(
+      () => new Promise((resolve) => (finish = resolve))
+    );
+    const renderer = await mount(tree('visible', a.file));
+    await update(renderer, tree('hidden', a.file));
+    await update(renderer, tree('hidden', b.file));
+    await act(async () => finish(a.instance));
+    expect(latest().instance).not.toBe(a.instance);
+    await update(renderer, tree('visible', b.file));
+    expect(latest()).toEqual({
+      instance: b.instance,
+      isLoading: false,
+      error: null,
+    });
+    expect(a.instance.dispose).toHaveBeenCalledTimes(1);
+    await unmount(renderer);
+    expect(b.instance.dispose).toHaveBeenCalledTimes(1);
+  });
 });
 
 describe('property hooks under <Activity>', () => {

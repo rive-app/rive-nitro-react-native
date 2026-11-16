@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react';
+import { depsEqual } from './useDisposableMemo';
 import type { ViewModel, ViewModelInstance } from '../specs/ViewModel.nitro';
 import type { RiveFile } from '../specs/RiveFile.nitro';
 import type { RiveViewRef } from '../index';
@@ -329,29 +330,23 @@ export function useViewModelInstanceAsync(
   const onInitRef = useRef(onInit);
   onInitRef.current = onInit;
 
-  const [result, setResult] =
-    useState<UseViewModelInstanceAsyncResult>(LOADING_RESULT);
-
-  // Reset to the loading state during render (not in the effect) when the
-  // inputs change: an effect-time reset would let React commit one frame
-  // pairing the new source with the previous (about-to-be-disposed) instance
-  // at isLoading: false — a mismatch consumer guards cannot catch, and the
-  // old instance would be disposed while still committed as e.g. a view's
-  // dataBind. Resetting mid-render makes React re-render before committing.
-  const [prevDeps, setPrevDeps] = useState<readonly unknown[]>([
-    source,
-    instanceName,
-    artboardName,
-    viewModelName,
-    useNew,
-  ]);
+  // The result is keyed by the deps of the run that produced it and read back
+  // only while they match, so a render never pairs new inputs with another
+  // run's instance, and an `<Activity>` reveal after the inputs changed and
+  // changed back while hidden shows the run it kept.
   const deps = [source, instanceName, artboardName, viewModelName, useNew];
-  if (deps.some((d, i) => d !== prevDeps[i])) {
-    setPrevDeps(deps);
-    setResult((prev) => (prev.isLoading ? prev : LOADING_RESULT));
-  }
+  const [settled, setSettled] = useState<{
+    deps: readonly unknown[];
+    result: UseViewModelInstanceAsyncResult;
+  } | null>(null);
+  const result =
+    settled && depsEqual(settled.deps, deps) ? settled.result : LOADING_RESULT;
 
   useRetainedEffect(() => {
+    const setResult = (r: UseViewModelInstanceAsyncResult) =>
+      setSettled({ deps, result: r });
+    const clearResult = () => setSettled((s) => (s?.deps === deps ? null : s));
+
     if (source === null) {
       // Source resolved to absent/failed rather than pending. `useRiveFile`
       // returns `riveFile: null` on load error (vs `undefined` while loading),
@@ -359,7 +354,7 @@ export function useViewModelInstanceAsync(
       // consumer keying a spinner off `isLoading` hangs with no signal. The
       // file's own `error` carries the reason.
       setResult({ instance: null, isLoading: false, error: null });
-      return;
+      return clearResult;
     }
 
     if (!source) {
@@ -419,6 +414,7 @@ export function useViewModelInstanceAsync(
 
     return () => {
       cancelled = true;
+      clearResult();
       if (created?.needsDispose && created.instance) {
         callDispose(created.instance);
       }
