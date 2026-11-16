@@ -43,3 +43,5 @@ it('keeps the useDisposableMemo value when a component is Fast Refreshed', async
   await TestRenderer.act(async () => renderer.unmount());
   expect(created[0]!.dispose).toHaveBeenCalledTimes(1);
 });
+
+export {};

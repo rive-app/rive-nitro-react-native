@@ -24,7 +24,12 @@ function expectNoInsertionCleanup() {
 }
 
 function Probe({ name }: { name: string }) {
-  useInsertionEffect(() => () => void cleanups.push(name), [name]);
+  useInsertionEffect(
+    () => () => {
+      cleanups.push(name);
+    },
+    [name]
+  );
   return null;
 }
 
