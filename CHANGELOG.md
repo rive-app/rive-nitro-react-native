@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.5.15](https://github.com/rive-app/rive-nitro-react-native/compare/v0.5.14...v0.5.15) (2026-11-16)
+
+
+### Bug Fixes
+
+* **android:** survive running out of heap for image decoding ([#451](https://github.com/rive-app/rive-nitro-react-native/issues/451)) ([30c5923](https://github.com/rive-app/rive-nitro-react-native/commit/30c5923139adf6908e5fd011eed1a0a52581930b))
+
+## [0.5.14](https://github.com/rive-app/rive-nitro-react-native/compare/v0.5.13...v0.5.14) (2026-11-12)
+
+
+### Bug Fixes
+
+* **android:** stop idle frame callbacks on the new backend ([#416](https://github.com/rive-app/rive-nitro-react-native/issues/416)) ([809e060](https://github.com/rive-app/rive-nitro-react-native/commit/809e060b6de5e1704d7dcc67a5f39ccbf9c19801))
+
+## [0.5.13](https://github.com/rive-app/rive-nitro-react-native/compare/v0.5.12...v0.5.13) (2026-11-11)
+
+
+### Bug Fixes
+
+* **android:** bump rive-android to 11.16.3 ([#457](https://github.com/rive-app/rive-nitro-react-native/issues/457)) ([38acab8](https://github.com/rive-app/rive-nitro-react-native/commit/38acab86edb828232f94fa9b8310e5e32734e1a1))
+
 ## [0.5.12](https://github.com/rive-app/rive-nitro-react-native/compare/v0.5.11...v0.5.12) (2026-11-05)
 
 

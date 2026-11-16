@@ -8,6 +8,7 @@ import com.facebook.proguard.annotations.DoNotStrip
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import com.rive.RiveReactNativeView
 import java.util.concurrent.atomic.AtomicInteger
 
 // Shared by every wrapper for one instance path, since JS may look the property up again per set.
@@ -36,17 +37,27 @@ class HybridViewModelImageProperty internal constructor(
 
   override fun set(image: HybridRiveImageSpec?) {
     val hybridImage = image as? HybridRiveImage
+    // Read now, since JS may dispose the image while the decode is still queued.
+    val bytes = hybridImage?.let {
+      it.rawData ?: throw IllegalStateException("RiveImage has been disposed")
+    }
     val gen = sequencer.generation.incrementAndGet()
     sequencer.scope.launch {
       try {
-        if (hybridImage == null) {
+        if (bytes == null) {
           instance.setImage(path, null)
+          RiveReactNativeView.onViewModelChanged()
           return@launch
         }
-        val result = ImageAsset.fromBytes(riveWorker, hybridImage.rawData)
+        val result = ImageAsset.fromBytes(riveWorker, bytes)
         if (result is app.rive.Result.Success) {
           // The property keeps its own ref, so close ours right away.
-          result.value.use { if (sequencer.generation.get() == gen) instance.setImage(path, it) }
+          result.value.use {
+            if (sequencer.generation.get() == gen) {
+              instance.setImage(path, it)
+              RiveReactNativeView.onViewModelChanged()
+            }
+          }
         } else {
           Log.e(TAG, "Failed to decode image for path '$path'")
         }

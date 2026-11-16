@@ -27,6 +27,8 @@ type FrameRateOption = {
 
 const OPTIONS: FrameRateOption[] = [
   { label: 'Uncapped', value: undefined },
+  // Not a divisor of 60/120 Hz, like 60 fps on a 90 Hz display.
+  { label: '45 fps', value: 45 },
   { label: '30 fps', value: 30 },
   { label: '15 fps', value: 15 },
   { label: '5 fps', value: 5 },

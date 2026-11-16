@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.annotation.Keep
 import app.rive.Artboard
 import com.facebook.proguard.annotations.DoNotStrip
+import com.rive.RiveReactNativeView
 
 @Keep
 @DoNotStrip
@@ -24,6 +25,7 @@ class HybridViewModelArtboardProperty(
     try {
       val newArtboard = Artboard.fromFile(sourceFile, hybridArtboard.artboardName)
       instance.setArtboard(path, newArtboard)
+      RiveReactNativeView.onViewModelChanged()
     } catch (e: Exception) {
       Log.e(TAG, "Failed to set artboard for path '$path'", e)
     }

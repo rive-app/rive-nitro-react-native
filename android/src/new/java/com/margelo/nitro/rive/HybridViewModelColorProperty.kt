@@ -5,6 +5,7 @@ import com.facebook.proguard.annotations.DoNotStrip
 import com.margelo.nitro.core.Promise
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
+import com.rive.RiveReactNativeView
 
 @Keep
 @DoNotStrip
@@ -36,6 +37,7 @@ class HybridViewModelColorProperty(
 
   override fun set(value: Double) {
     instance.setColor(path, value.toLong().toInt())
+    RiveReactNativeView.onViewModelChanged()
   }
 
   override fun setValueAsync(value: Double): Promise<Unit> {
