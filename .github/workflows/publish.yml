@@ -32,12 +32,12 @@ jobs:
         run: |
           PKG=$(node -p "require('./package.json').name")
           VERSION=$(node -p "require('./package.json').version")
-          for i in $(seq 1 10); do
-            if npm view "$PKG@$VERSION" version > /dev/null 2>&1; then
+          for i in $(seq 1 30); do
+            if npm view --prefer-online "$PKG@$VERSION" version > /dev/null 2>&1; then
               echo "$PKG@$VERSION is live on npm"
               exit 0
             fi
-            echo "$PKG@$VERSION not visible on npm yet, retrying in 30s ($i/10)"
+            echo "$PKG@$VERSION not visible on npm yet, retrying in 30s ($i/30)"
             sleep 30
           done
           echo "$PKG@$VERSION did not appear on npm"
