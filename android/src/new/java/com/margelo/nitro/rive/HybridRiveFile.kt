@@ -23,6 +23,10 @@ class HybridRiveFile(
 
   private val weakViews = mutableListOf<WeakReference<HybridRiveView>>()
 
+  // The finalizer calls dispose() again, and a second release would unregister
+  // assets that a newer file registered under the same names.
+  @Volatile private var disposed = false
+
   // Deprecated: Use getViewModelNamesAsync instead
   override val viewModelCount: Double?
     get() {
@@ -208,9 +212,18 @@ class HybridRiveFile(
   }
 
   override fun dispose() {
+    if (disposed) return
+    disposed = true
     weakViews.clear()
     registeredAssets.forEach { it.release() }
     riveFile?.close()
     riveFile = null
+  }
+
+  // React before 19.3 gives no unmount signal for a hidden subtree (#448), and
+  // only close() frees a RiveFile's native memory.
+  protected fun finalize() {
+    runCatching { dispose() }
+      .onFailure { RiveLog.e(TAG, "Closing the file failed: ${it.message}") }
   }
 }
