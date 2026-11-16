@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.15](https://github.com/rive-app/rive-nitro-react-native/compare/v0.5.14...v0.5.15) (2026-11-16)
+
+
+### Bug Fixes
+
+* **android:** survive running out of heap for image decoding ([#451](https://github.com/rive-app/rive-nitro-react-native/issues/451)) ([30c5923](https://github.com/rive-app/rive-nitro-react-native/commit/30c5923139adf6908e5fd011eed1a0a52581930b))
+
 ## [0.5.14](https://github.com/rive-app/rive-nitro-react-native/compare/v0.5.13...v0.5.14) (2026-11-12)
 
 
