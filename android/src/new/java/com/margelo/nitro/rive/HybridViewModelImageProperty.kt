@@ -3,6 +3,7 @@ package com.margelo.nitro.rive
 import android.util.Log
 import androidx.annotation.Keep
 import app.rive.ImageAsset
+import app.rive.ViewModelInstance
 import app.rive.core.CommandQueue
 import com.facebook.proguard.annotations.DoNotStrip
 import kotlinx.coroutines.CoroutineScope
@@ -23,14 +24,12 @@ internal class ImagePropertySequencer {
 @Keep
 @DoNotStrip
 class HybridViewModelImageProperty internal constructor(
-  private val owner: HybridViewModelInstance,
+  private val instance: ViewModelInstance,
   private val path: String,
   private val riveWorker: CommandQueue,
   private val sequencer: ImagePropertySequencer
 ) : HybridViewModelImagePropertySpec(),
   BaseHybridViewModelProperty<Unit> by BaseHybridViewModelPropertyImpl() {
-  private val instance get() = owner.viewModelInstance
-
   companion object {
     private const val TAG = "HybridViewModelImageProperty"
   }

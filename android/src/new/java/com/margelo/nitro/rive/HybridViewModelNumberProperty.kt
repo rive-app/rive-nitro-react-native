@@ -1,6 +1,7 @@
 package com.margelo.nitro.rive
 
 import androidx.annotation.Keep
+import app.rive.ViewModelInstance
 import com.facebook.proguard.annotations.DoNotStrip
 import com.margelo.nitro.core.Promise
 import kotlinx.coroutines.flow.first
@@ -10,12 +11,10 @@ import com.rive.RiveReactNativeView
 @Keep
 @DoNotStrip
 class HybridViewModelNumberProperty(
-  private val owner: HybridViewModelInstance,
+  private val instance: ViewModelInstance,
   private val path: String
 ) : HybridViewModelNumberPropertySpec(),
   BaseHybridViewModelProperty<Float> by BaseHybridViewModelPropertyImpl() {
-  private val instance get() = owner.viewModelInstance
-
   companion object {
     private const val TAG = "HybridViewModelNumberProperty"
   }
