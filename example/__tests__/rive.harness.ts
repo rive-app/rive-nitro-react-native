@@ -92,7 +92,7 @@ describe('ViewModel', () => {
 describe('RiveImages', () => {
   it('loadFromURLAsync loads an image', async () => {
     const image = await RiveImages.loadFromURLAsync(
-      'https://picsum.photos/id/237/100/100'
+      'https://raw.githubusercontent.com/rive-app/rive-nitro-react-native/test-assets/images/a.jpg'
     );
     expect(image).toBeDefined();
     expect(image.byteSize).toBeGreaterThan(0);
