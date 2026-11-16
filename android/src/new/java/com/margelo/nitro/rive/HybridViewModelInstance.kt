@@ -27,7 +27,7 @@ class HybridViewModelInstance(
 
   private val imageSequencers = ConcurrentHashMap<String, ImagePropertySequencer>()
 
-  private var closed = false
+  @Volatile private var closed = false
 
   private fun closeInstance() {
     if (!ownsInstance || closed) return

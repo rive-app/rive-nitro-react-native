@@ -21,7 +21,7 @@ class HybridViewModel(
   private val vmSource: ViewModelSource,
   // Artboard created solely to resolve this view model (DefaultForArtboard
   // sources) — owned by this wrapper and closed with it.
-  private var ownedArtboard: Artboard? = null
+  @Volatile private var ownedArtboard: Artboard? = null
 ) : HybridViewModelSpec() {
   companion object {
     private const val TAG = "HybridViewModel"
