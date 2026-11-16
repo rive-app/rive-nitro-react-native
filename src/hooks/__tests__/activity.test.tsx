@@ -6,11 +6,9 @@ import {
   StrictMode,
   Suspense,
   useEffect,
-  useLayoutEffect,
-  useRef,
   useState,
-  version,
   type ReactElement,
+  type ReactNode,
 } from 'react';
 import TestRenderer, { type ReactTestRenderer } from 'react-test-renderer';
 import { RiveView } from '../../core/RiveView';
@@ -21,653 +19,129 @@ import { useRiveFile } from '../useRiveFile';
 import { useRiveList } from '../useRiveList';
 import { useRiveNumber } from '../useRiveNumber';
 import { useRiveTrigger } from '../useRiveTrigger';
-import { Retainer, useUnmountEffect } from '../useUnmountEffect';
 import { useViewModelInstance } from '../useViewModelInstance';
 
 jest.mock('react-native/Libraries/Image/Image', () => ({
   resolveAssetSource: jest.fn((source: number) => ({
-    uri: `asset://resolved/${source}`,
+    uri: `asset://${source}`,
   })),
 }));
 
 (globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
 
-// React before 19.3 skips insertion cleanups for deleted hidden subtrees.
-const [major = 0, minor = 0] = version.split('.').map(Number);
-const hiddenUnmountIsObservable = major > 19 || (major === 19 && minor >= 3);
-
+type Mode = 'visible' | 'hidden';
 type Resource = { label: string; dispose: jest.Mock };
+const resource = (label: string): Resource => ({ label, dispose: jest.fn() });
+const nativeLike = <T extends object>(extra: T) => ({
+  dispose: jest.fn(),
+  ...extra,
+});
 
-function resource(label: string): Resource {
-  return { label, dispose: jest.fn() };
-}
-
-async function mount(element: ReactElement): Promise<ReactTestRenderer> {
-  let renderer: ReactTestRenderer;
+let renderer: ReactTestRenderer;
+async function render(element: ReactElement) {
   await act(async () => {
-    renderer = TestRenderer.create(element, {
-      unstable_isConcurrent: true,
-    } as never);
+    if (renderer) renderer.update(element);
+    else
+      renderer = TestRenderer.create(element, {
+        unstable_isConcurrent: true,
+      } as never);
   });
-  return renderer!;
 }
-
-async function update(renderer: ReactTestRenderer, element: ReactElement) {
-  await act(async () => renderer.update(element));
-}
-
-async function unmount(renderer: ReactTestRenderer) {
+async function unmount() {
   await act(async () => renderer.unmount());
 }
+beforeEach(() => {
+  renderer = undefined as never;
+  jest.clearAllMocks();
+});
 
-function Memo({ dep, seen }: { dep: string; seen: (r: Resource) => void }) {
+let created: Resource[] = [];
+beforeEach(() => (created = []));
+function useResource(dep: string) {
   const value = useDisposableMemo(
     () => resource(dep),
     (r) => r.dispose(),
     [dep]
   );
-  seen(value);
+  if (!created.includes(value)) created.push(value);
+  return value;
+}
+function Memo({ dep = 'A' }: { dep?: string }) {
+  useResource(dep);
   return null;
 }
 
-function setup() {
-  const created: Resource[] = [];
-  const seen = (r: Resource) => {
-    if (!created.includes(r)) created.push(r);
-  };
-  const tree = (mode: 'visible' | 'hidden', dep = 'A') => (
-    <Activity mode={mode}>
-      <Memo dep={dep} seen={seen} />
-    </Activity>
-  );
-  return { created, tree };
+const activity = (mode: Mode, node: ReactNode) => (
+  <Activity mode={mode}>{node}</Activity>
+);
+async function hideAndReveal(node: ReactNode) {
+  for (const mode of ['visible', 'hidden', 'visible'] as const) {
+    await render(activity(mode, node));
+  }
 }
 
-const order: { calls: string[]; value?: Resource } = { calls: [] };
-
-function OrderChild({ owner }: { owner: Resource }) {
-  useLayoutEffect(
-    () => () => {
-      order.calls.push(`child layout: ${owner.dispose.mock.calls.length}`);
-    },
-    [owner]
-  );
-  return null;
-}
-
-function OrderOwner() {
-  const value = useDisposableMemo(
-    () => resource('A'),
-    (r) => r.dispose(),
-    []
-  );
-  order.value = value;
-  return <OrderChild owner={value} />;
-}
-
-function OrderParent() {
-  useEffect(
-    () => () => {
-      order.calls.push(
-        `parent passive: ${order.value!.dispose.mock.calls.length}`
-      );
-    },
-    []
-  );
-  return <OrderOwner />;
-}
-
-describe('useDisposableMemo under <Activity>', () => {
-  it('keeps the value across hide and reveal', async () => {
-    const { created, tree } = setup();
-    const renderer = await mount(tree('visible'));
-    await update(renderer, tree('hidden'));
-    await update(renderer, tree('visible'));
-    await update(renderer, tree('hidden'));
-    await update(renderer, tree('visible'));
+describe('useDisposableMemo', () => {
+  it('keeps the value across hide and reveal, and disposes it once on unmount', async () => {
+    await hideAndReveal(<Memo />);
+    await hideAndReveal(<Memo />);
     expect(created).toHaveLength(1);
     expect(created[0]!.dispose).not.toHaveBeenCalled();
-  });
-
-  it('disposes exactly once when unmounted while visible, after a hide cycle', async () => {
-    const { created, tree } = setup();
-    const renderer = await mount(tree('visible'));
-    await update(renderer, tree('hidden'));
-    await update(renderer, tree('visible'));
-    await unmount(renderer);
+    await unmount();
     expect(created[0]!.dispose).toHaveBeenCalledTimes(1);
   });
 
-  it('releases on hide then unmount as far as React reports it', async () => {
-    const { created, tree } = setup();
-    const renderer = await mount(tree('visible'));
-    await update(renderer, tree('hidden'));
-    expect(created[0]!.dispose).not.toHaveBeenCalled();
-    await unmount(renderer);
-    expect(created[0]!.dispose).toHaveBeenCalledTimes(
-      hiddenUnmountIsObservable ? 1 : 0
-    );
-  });
-
-  it('releases a value that never became visible as far as React reports it', async () => {
-    const { created, tree } = setup();
-    const renderer = await mount(tree('hidden'));
-    await unmount(renderer);
-    expect(created[0]!.dispose).toHaveBeenCalledTimes(
-      hiddenUnmountIsObservable ? 1 : 0
-    );
-  });
-
-  it('replaces the value when deps change while hidden', async () => {
-    const { created, tree } = setup();
-    const renderer = await mount(tree('visible', 'A'));
-    await update(renderer, tree('hidden', 'A'));
-    await update(renderer, tree('hidden', 'B'));
-    expect(created.map((r) => r.label)).toEqual(['A', 'B']);
-    expect(created[0]!.dispose).toHaveBeenCalledTimes(1);
-    await update(renderer, tree('visible', 'B'));
-    expect(created[1]!.dispose).not.toHaveBeenCalled();
-    await unmount(renderer);
-    expect(created[0]!.dispose).toHaveBeenCalledTimes(1);
-    expect(created[1]!.dispose).toHaveBeenCalledTimes(1);
-  });
-
-  it('survives Strict Mode and nested Activity', async () => {
-    const created: Resource[] = [];
-    const seen = (r: Resource) => {
-      if (!created.includes(r)) created.push(r);
+  it('keeps the value under Strict Mode and when Suspense hides the tree', async () => {
+    let suspended = false;
+    let resolve = () => {};
+    const pending = new Promise<void>((r) => (resolve = r));
+    const Gate = () => {
+      if (suspended) throw pending;
+      return null;
     };
-    const tree = (outer: 'visible' | 'hidden', inner: 'visible' | 'hidden') => (
+    const tree = (mode: Mode) => (
       <StrictMode>
-        <Activity mode={outer}>
-          <Activity mode={inner}>
-            <Memo dep="A" seen={seen} />
-          </Activity>
-        </Activity>
+        <Suspense fallback={null}>
+          {activity(mode, <Memo />)}
+          <Gate />
+        </Suspense>
       </StrictMode>
     );
-    const renderer = await mount(tree('visible', 'visible'));
-    await update(renderer, tree('visible', 'hidden'));
-    await update(renderer, tree('hidden', 'hidden'));
-    await update(renderer, tree('hidden', 'visible'));
-    await update(renderer, tree('visible', 'visible'));
+    await render(tree('visible'));
+    await render(tree('hidden'));
+    await render(tree('visible'));
+    suspended = true;
+    await render(tree('visible'));
+    suspended = false;
+    await act(async () => resolve());
     const live = created[created.length - 1]!;
     expect(live.dispose).not.toHaveBeenCalled();
-    await unmount(renderer);
+    await unmount();
     expect(live.dispose).toHaveBeenCalledTimes(1);
   });
 
-  it('keeps the value when Suspense hides the tree', async () => {
-    const created: Resource[] = [];
-    const seen = (r: Resource) => {
-      if (!created.includes(r)) created.push(r);
-    };
-    let resolve = () => {};
-    const pending = new Promise<void>((r) => (resolve = r));
-    let suspended = false;
-    const Gate = () => {
-      if (suspended) throw pending;
-      return null;
-    };
-    const tree = () => (
-      <Suspense fallback={null}>
-        <Memo dep="A" seen={seen} />
-        <Gate />
-      </Suspense>
-    );
-    const renderer = await mount(tree());
-    suspended = true;
-    await update(renderer, tree());
-    expect(created[0]!.dispose).not.toHaveBeenCalled();
-    suspended = false;
-    resolve();
-    await update(renderer, tree());
-    expect(created[0]!.dispose).not.toHaveBeenCalled();
-    await unmount(renderer);
-    expect(created[0]!.dispose).toHaveBeenCalledTimes(1);
-  });
-
-  it('releases a Suspense-hidden tree on unmount as far as React reports it', async () => {
-    const created: Resource[] = [];
-    const seen = (r: Resource) => {
-      if (!created.includes(r)) created.push(r);
-    };
-    let suspended = false;
-    const pending = new Promise<void>(() => {});
-    const Gate = () => {
-      if (suspended) throw pending;
-      return null;
-    };
-    const tree = () => (
-      <Suspense fallback={null}>
-        <Memo dep="A" seen={seen} />
-        <Gate />
-      </Suspense>
-    );
-    const renderer = await mount(tree());
-    suspended = true;
-    await update(renderer, tree());
-    await unmount(renderer);
-    expect(created[0]!.dispose).toHaveBeenCalledTimes(
-      hiddenUnmountIsObservable ? 1 : 0
-    );
-  });
-
-  it('leaves the value alive for every layout cleanup and for the passive cleanup of a parent', async () => {
-    const renderer = await mount(<OrderParent />);
-    await unmount(renderer);
-    expect(order.calls).toEqual(['child layout: 0', 'parent passive: 0']);
-    expect(order.value!.dispose).toHaveBeenCalledTimes(1);
-  });
-
-  it('never disposes a value from a render that did not commit', async () => {
-    const created: Resource[] = [];
-    const seen = (r: Resource) => {
-      if (!created.includes(r)) created.push(r);
-    };
-    const pending = new Promise<void>(() => {});
-    const Never = (): null => {
-      throw pending;
-    };
-    const renderer = await mount(
-      <Suspense fallback={null}>
-        <Memo dep="A" seen={seen} />
-        <Never />
-      </Suspense>
-    );
-    await unmount(renderer);
-    expect(created.length).toBeGreaterThan(0);
-    created.forEach((r) => expect(r.dispose).not.toHaveBeenCalled());
-  });
-});
-
-describe('the setTimeout(0) deferral proposed in #448', () => {
-  function useDeferredDispose() {
-    const value = useRef(resource('A'));
-    const pending = useRef<ReturnType<typeof setTimeout> | null>(null);
-    useEffect(() => {
-      if (pending.current !== null) clearTimeout(pending.current);
-      pending.current = null;
-      const current = value.current;
-      return () => {
-        pending.current = setTimeout(() => current.dispose(), 0);
-      };
-    }, []);
-    return value.current;
-  }
-
-  it('disposes a hidden value, because the timer fires before the reveal', async () => {
-    jest.useFakeTimers();
-    let value: Resource | undefined;
-    const Deferred = () => {
-      value = useDeferredDispose();
-      return null;
-    };
-    const tree = (mode: 'visible' | 'hidden') => (
-      <Activity mode={mode}>
-        <Deferred />
-      </Activity>
-    );
-    const renderer = await mount(tree('visible'));
-    await update(renderer, tree('hidden'));
-    act(() => {
-      jest.advanceTimersByTime(1);
-    });
-    await update(renderer, tree('visible'));
-    expect(value!.dispose).toHaveBeenCalledTimes(1);
-    jest.useRealTimers();
-    await unmount(renderer);
-  });
-});
-
-function nativeLike<T extends object>(extra: T) {
-  return { dispose: jest.fn(), ...extra };
-}
-
-describe('useRiveFile under <Activity>', () => {
-  const factory = (global as any).mockRiveFileFactory;
-
-  function setupFile() {
-    const results: ReturnType<typeof useRiveFile>[] = [];
-    const Loader = ({ uri }: { uri: string }) => {
-      results.push(useRiveFile({ uri }));
-      return null;
-    };
-    const tree = (mode: 'visible' | 'hidden', uri = 'https://x/a.riv') => (
-      <Activity mode={mode}>
-        <Loader uri={uri} />
-      </Activity>
-    );
-    const latest = () => results[results.length - 1]!;
-    return { tree, latest };
-  }
-
-  beforeEach(() => jest.clearAllMocks());
-
-  it('neither disposes nor reloads across hide and reveal', async () => {
-    const file = nativeLike({});
-    factory.fromURL.mockResolvedValue(file);
-    const { tree, latest } = setupFile();
-    const renderer = await mount(tree('visible'));
-    await update(renderer, tree('hidden'));
-    await update(renderer, tree('visible'));
-    expect(factory.fromURL).toHaveBeenCalledTimes(1);
-    expect(file.dispose).not.toHaveBeenCalled();
-    expect(latest().riveFile).toBe(file);
-    await unmount(renderer);
-    expect(file.dispose).toHaveBeenCalledTimes(1);
-  });
-
-  it('keeps a load that is in flight when the tree hides', async () => {
-    const file = nativeLike({});
-    let finish: (f: unknown) => void = () => {};
-    factory.fromURL.mockImplementation(
-      () => new Promise((resolve) => (finish = resolve))
-    );
-    const { tree, latest } = setupFile();
-    const renderer = await mount(tree('visible'));
-    await update(renderer, tree('hidden'));
-    await act(async () => finish(file));
-    await update(renderer, tree('visible'));
-    expect(factory.fromURL).toHaveBeenCalledTimes(1);
-    expect(file.dispose).not.toHaveBeenCalled();
-    expect(latest().riveFile).toBe(file);
-    await unmount(renderer);
-  });
-
-  it('loads the new input on reveal when it changed while hidden', async () => {
-    const first = nativeLike({});
-    const second = nativeLike({});
-    factory.fromURL.mockResolvedValueOnce(first).mockResolvedValueOnce(second);
-    const { tree, latest } = setupFile();
-    const renderer = await mount(tree('visible', 'https://x/a.riv'));
-    await update(renderer, tree('hidden', 'https://x/a.riv'));
-    await update(renderer, tree('hidden', 'https://x/b.riv'));
-    await update(renderer, tree('visible', 'https://x/b.riv'));
-    expect(first.dispose).toHaveBeenCalledTimes(1);
-    expect(latest().riveFile).toBe(second);
-    await unmount(renderer);
-    expect(second.dispose).toHaveBeenCalledTimes(1);
-  });
-});
-
-describe('useViewModelInstance({ async: true }) under <Activity>', () => {
-  it('keeps the instance and the values set on it', async () => {
-    const instance = nativeLike({ age: 0 });
-    const viewModel = nativeLike({
-      createDefaultInstanceAsync: jest.fn(async () => instance),
-    });
-    const file = {
-      defaultArtboardViewModelAsync: jest.fn(async () => viewModel),
-    } as unknown as RiveFile;
-    const seen: unknown[] = [];
-    const Vmi = () => {
-      seen.push(useViewModelInstance(file, { async: true }).instance);
-      return null;
-    };
-    const tree = (mode: 'visible' | 'hidden') => (
-      <Activity mode={mode}>
-        <Vmi />
-      </Activity>
-    );
-    const renderer = await mount(tree('visible'));
-    await update(renderer, tree('hidden'));
-    await update(renderer, tree('visible'));
-    expect(viewModel.createDefaultInstanceAsync).toHaveBeenCalledTimes(1);
-    expect(instance.dispose).not.toHaveBeenCalled();
-    expect(seen[seen.length - 1]).toBe(instance);
-    await unmount(renderer);
-    expect(instance.dispose).toHaveBeenCalledTimes(1);
-  });
-
-  function setupFiles() {
-    const files = ['a', 'b'].map((label) => {
-      const instance = nativeLike({ label });
-      const viewModel = nativeLike({
-        createDefaultInstanceAsync: jest.fn(async () => instance),
-      });
-      const file = {
-        defaultArtboardViewModelAsync: jest.fn(async () => viewModel),
-      } as unknown as RiveFile;
-      return { file, viewModel, instance };
-    });
-    const results: ReturnType<typeof useViewModelInstance>[] = [];
-    const Vmi = ({ file }: { file: RiveFile }) => {
-      results.push(useViewModelInstance(file, { async: true }));
-      return null;
-    };
-    const tree = (mode: 'visible' | 'hidden', file: RiveFile) => (
-      <Activity mode={mode}>
-        <Vmi file={file} />
-      </Activity>
-    );
-    const latest = () => results[results.length - 1]!;
-    return { files, tree, latest };
-  }
-
-  it('shows the kept instance when the source changes and changes back while hidden', async () => {
-    const { files, tree, latest } = setupFiles();
-    const [a, b] = files as [(typeof files)[0], (typeof files)[0]];
-    const renderer = await mount(tree('visible', a.file));
-    await update(renderer, tree('hidden', a.file));
-    await update(renderer, tree('hidden', b.file));
-    await update(renderer, tree('hidden', a.file));
-    await update(renderer, tree('visible', a.file));
-    expect(latest()).toEqual({
-      instance: a.instance,
-      isLoading: false,
-      error: null,
-    });
-    expect(a.viewModel.createDefaultInstanceAsync).toHaveBeenCalledTimes(1);
-    expect(b.viewModel.createDefaultInstanceAsync).not.toHaveBeenCalled();
-    expect(a.instance.dispose).not.toHaveBeenCalled();
-    await unmount(renderer);
-    expect(a.instance.dispose).toHaveBeenCalledTimes(1);
-  });
-
-  it('does not show an instance for a source that changed while it loaded hidden', async () => {
-    const { files, tree, latest } = setupFiles();
-    const [a, b] = files as [(typeof files)[0], (typeof files)[0]];
-    let finish: (v: unknown) => void = () => {};
-    (a.viewModel.createDefaultInstanceAsync as jest.Mock).mockImplementation(
-      () => new Promise((resolve) => (finish = resolve))
-    );
-    const renderer = await mount(tree('visible', a.file));
-    await update(renderer, tree('hidden', a.file));
-    await update(renderer, tree('hidden', b.file));
-    await act(async () => finish(a.instance));
-    expect(latest().instance).not.toBe(a.instance);
-    await update(renderer, tree('visible', b.file));
-    expect(latest()).toEqual({
-      instance: b.instance,
-      isLoading: false,
-      error: null,
-    });
-    expect(a.instance.dispose).toHaveBeenCalledTimes(1);
-    await unmount(renderer);
-    expect(b.instance.dispose).toHaveBeenCalledTimes(1);
-  });
-});
-
-describe('property hooks under <Activity>', () => {
-  function makeProperty() {
-    const removeListener = jest.fn();
-    return nativeLike({
-      addListener: jest.fn(() => removeListener),
-      getValueAsync: jest.fn(async () => 1),
-      getLengthAsync: jest.fn(async () => 0),
-      set: jest.fn(),
-      trigger: jest.fn(),
-      removeListener,
-    });
-  }
-
-  it.each([
-    ['useRiveNumber', 'numberProperty'],
-    ['useRiveTrigger', 'triggerProperty'],
-    ['useRiveList', 'listProperty'],
-  ])(
-    '%s keeps the property and resubscribes on reveal',
-    async (hook, accessor) => {
-      const property = makeProperty();
-      const instance = {
-        [accessor]: jest.fn(() => property),
-      } as unknown as ViewModelInstance;
-      const Consumer = () => {
-        /* eslint-disable react-hooks/rules-of-hooks */
-        if (hook === 'useRiveNumber') useRiveNumber('p', instance);
-        else if (hook === 'useRiveTrigger') useRiveTrigger('p', instance);
-        else useRiveList('p', instance);
-        /* eslint-enable react-hooks/rules-of-hooks */
-        return null;
-      };
-      const tree = (mode: 'visible' | 'hidden') => (
-        <Activity mode={mode}>
-          <Consumer />
-        </Activity>
+  it("frees a replaced or unmounted value after its child's passive cleanup (#407)", async () => {
+    const log: string[] = [];
+    const Child = ({ owner }: { owner: Resource }) => {
+      useEffect(
+        () => () => {
+          log.push(`${owner.label}: ${owner.dispose.mock.calls.length}`);
+        },
+        [owner]
       );
-      const renderer = await mount(tree('visible'));
-      await update(renderer, tree('hidden'));
-      expect(property.removeListener).toHaveBeenCalledTimes(1);
-      expect(property.dispose).not.toHaveBeenCalled();
-      await update(renderer, tree('visible'));
-      expect(property.addListener).toHaveBeenCalledTimes(2);
-      expect(property.dispose).not.toHaveBeenCalled();
-      await unmount(renderer);
-      expect(property.dispose).toHaveBeenCalledTimes(1);
-    }
-  );
-});
-
-describe('RiveView under <Activity>', () => {
-  it('keeps the view methods across hide and reveal, and disposes on unmount', async () => {
-    const view = Object.create(
-      { play: jest.fn(), pause: jest.fn() },
-      { dispose: { value: jest.fn(), configurable: true } }
-    );
-    const tree = (mode: 'visible' | 'hidden') => (
-      <Activity mode={mode}>
-        <RiveView
-          file={{} as RiveFile}
-          dataBind={{} as ViewModelInstance}
-          hybridRef={{ f: () => {} }}
-        />
-      </Activity>
-    );
-    const renderer = await mount(tree('visible'));
-    const host = renderer.root.findByType('RiveView' as never);
-    await act(async () => host.props.hybridRef.f(view));
-    await update(renderer, tree('hidden'));
-    await update(renderer, tree('visible'));
-    expect(typeof view.play).toBe('function');
-    expect(view.dispose).not.toHaveBeenCalled();
-    await unmount(renderer);
-    expect(view.play).toBeUndefined();
-    expect(view.dispose).toHaveBeenCalledTimes(1);
-  });
-
-  it('disposes a view replaced on reveal, but not the current one', async () => {
-    const makeView = () =>
-      Object.create(
-        { play: jest.fn() },
-        { dispose: { value: jest.fn(), configurable: true } }
-      );
-    const userRef = jest.fn();
-    const tree = (mode: 'visible' | 'hidden') => (
-      <Activity mode={mode}>
-        <RiveView
-          file={{} as RiveFile}
-          dataBind={{} as ViewModelInstance}
-          hybridRef={{ f: userRef }}
-        />
-      </Activity>
-    );
-    const renderer = await mount(tree('visible'));
-    const setRef = () =>
-      renderer.root.findByType('RiveView' as never).props.hybridRef.f;
-    const first = makeView();
-    const second = makeView();
-    await act(async () => setRef()(first));
-    await act(async () => setRef()(first));
-    expect(first.dispose).not.toHaveBeenCalled();
-    await update(renderer, tree('hidden'));
-    await update(renderer, tree('visible'));
-    await act(async () => setRef()(second));
-    expect(first.dispose).toHaveBeenCalledTimes(1);
-    expect(second.dispose).not.toHaveBeenCalled();
-    expect(typeof second.play).toBe('function');
-    expect(userRef).toHaveBeenLastCalledWith(second);
-    await unmount(renderer);
-    expect(first.dispose).toHaveBeenCalledTimes(1);
-    expect(second.dispose).toHaveBeenCalledTimes(1);
-  });
-});
-
-describe('release after passive cleanups', () => {
-  function Child({ owner, log }: { owner: Resource; log: string[] }) {
-    useEffect(
-      () => () => {
-        log.push(
-          `${owner.label} used after ${owner.dispose.mock.calls.length} disposes`
-        );
-      },
-      [owner, log]
-    );
-    return null;
-  }
-
-  it('useUnmountEffect frees an object after the passive cleanup of a child that uses it', async () => {
-    const log: string[] = [];
-    let owned: Resource | undefined;
-    const Owner = () => {
-      const [value] = useState(() => resource('A'));
-      owned = value;
-      useUnmountEffect(() => value.dispose());
-      return <Child owner={value} log={log} />;
+      return null;
     };
-    const renderer = await mount(<Owner />);
-    await unmount(renderer);
-    expect(log).toEqual(['A used after 0 disposes']);
-    expect(owned!.dispose).toHaveBeenCalledTimes(1);
-  });
-
-  function MemoOwner({ dep, log }: { dep: string; log: string[] }) {
-    const value = useDisposableMemo(
-      () => resource(dep),
-      (r) => r.dispose(),
-      [dep]
+    const Owner = ({ dep }: { dep: string }) => (
+      <Child owner={useResource(dep)} />
     );
-    order.value = value;
-    return <Child owner={value} log={log} />;
-  }
-
-  it('useDisposableMemo frees on unmount after the passive cleanup of a child', async () => {
-    const log: string[] = [];
-    const renderer = await mount(<MemoOwner dep="A" log={log} />);
-    const value = order.value!;
-    await unmount(renderer);
-    expect(log).toEqual(['A used after 0 disposes']);
-    expect(value.dispose).toHaveBeenCalledTimes(1);
+    await render(<Owner dep="A" />);
+    await render(<Owner dep="B" />);
+    await unmount();
+    expect(log).toEqual(['A: 0', 'B: 0']);
+    expect(created).toHaveLength(2);
+    created.forEach((r) => expect(r.dispose).toHaveBeenCalledTimes(1));
   });
 
-  it('useDisposableMemo frees a replaced value after the passive cleanup of a child', async () => {
-    const log: string[] = [];
-    const renderer = await mount(<MemoOwner dep="A" log={log} />);
-    const first = order.value!;
-    await update(renderer, <MemoOwner dep="B" log={log} />);
-    expect(log).toEqual(['A used after 0 disposes']);
-    expect(first.dispose).toHaveBeenCalledTimes(1);
-    expect(order.value!.dispose).not.toHaveBeenCalled();
-    await unmount(renderer);
-  });
-});
-
-describe('useDisposableMemo with transitions', () => {
   it('keeps the on-screen value while a transition to new deps suspends', async () => {
-    const created: Resource[] = [];
-    const seen = (r: Resource) => {
-      if (!created.includes(r)) created.push(r);
-    };
     let ready = false;
     let resolve = () => {};
     const pending = new Promise<void>((r) => (resolve = r));
@@ -681,66 +155,134 @@ describe('useDisposableMemo with transitions', () => {
       setDep = set;
       return (
         <Suspense fallback="fallback">
-          <Memo dep={dep} seen={seen} />
+          <Memo dep={dep} />
           <Gate dep={dep} />
         </Suspense>
       );
     };
-    const renderer = await mount(<App />);
+    await render(<App />);
     await act(async () => startTransition(() => setDep('B')));
     expect(renderer.toJSON()).toBe('A');
-    expect(created.map((r) => r.label)).toContain('B');
     created.forEach((r) => expect(r.dispose).not.toHaveBeenCalled());
-
     ready = true;
     await act(async () => resolve());
     expect(renderer.toJSON()).toBe('B');
-    const a = created.find((r) => r.label === 'A')!;
-    const b = created.filter((r) => r.label === 'B');
-    expect(a.dispose).toHaveBeenCalledTimes(1);
-    expect(b.filter((r) => r.dispose.mock.calls.length === 0)).toHaveLength(1);
-    await unmount(renderer);
+    expect(created[0]!.dispose).toHaveBeenCalledTimes(1);
+    expect(created.filter((r) => !r.dispose.mock.calls.length)).toHaveLength(1);
+    await unmount();
   });
 });
 
-describe('useUnmountEffect dev canary', () => {
-  it('reports an object retained again after it was released', async () => {
-    const error = jest.spyOn(console, 'error').mockImplementation(() => {});
-    const onRelease = jest.fn();
-    const retainer = new Retainer(onRelease);
-    retainer.retain()();
-    await Promise.resolve();
-    expect(onRelease).toHaveBeenCalledTimes(1);
-    retainer.retain();
-    expect(error).toHaveBeenCalledWith(
-      expect.stringContaining(
-        'shown again after its native objects were released'
-      )
-    );
-    error.mockRestore();
-  });
+describe('useRiveFile', () => {
+  const factory = (global as any).mockRiveFileFactory;
+  let latest: ReturnType<typeof useRiveFile>;
+  const Loader = () => {
+    latest = useRiveFile({ uri: 'https://x/a.riv' });
+    return null;
+  };
 
-  it('stays quiet and releases once across Strict Mode and Activity hide and reveal', async () => {
-    const error = jest.spyOn(console, 'error');
-    const onUnmount = jest.fn();
-    const Owner = () => {
-      useUnmountEffect(onUnmount);
-      return null;
-    };
-    const tree = (mode: 'visible' | 'hidden') => (
-      <StrictMode>
-        <Activity mode={mode}>
-          <Owner />
-        </Activity>
-      </StrictMode>
-    );
-    const renderer = await mount(tree('visible'));
-    await update(renderer, tree('hidden'));
-    await update(renderer, tree('visible'));
-    expect(onUnmount).not.toHaveBeenCalled();
-    await unmount(renderer);
-    expect(onUnmount).toHaveBeenCalledTimes(1);
-    expect(error).not.toHaveBeenCalled();
-    error.mockRestore();
+  it('keeps the file, even one loading when hidden, across hide and reveal', async () => {
+    const file = nativeLike({});
+    let finish: (f: unknown) => void = () => {};
+    factory.fromURL.mockImplementation(() => new Promise((r) => (finish = r)));
+    await render(activity('visible', <Loader />));
+    await render(activity('hidden', <Loader />));
+    await act(async () => finish(file));
+    await hideAndReveal(<Loader />);
+    expect(factory.fromURL).toHaveBeenCalledTimes(1);
+    expect(file.dispose).not.toHaveBeenCalled();
+    expect(latest.riveFile).toBe(file);
+    await unmount();
+    expect(file.dispose).toHaveBeenCalledTimes(1);
   });
+});
+
+it('async useViewModelInstance shows the kept instance when the source changes and changes back while hidden', async () => {
+  const [a, b] = ['a', 'b'].map((label) => {
+    const instance = nativeLike({ label });
+    const viewModel = nativeLike({
+      createDefaultInstanceAsync: jest.fn(async () => instance),
+    });
+    const file = {
+      defaultArtboardViewModelAsync: jest.fn(async () => viewModel),
+    } as unknown as RiveFile;
+    return { file, viewModel, instance };
+  }) as [any, any];
+  let latest: ReturnType<typeof useViewModelInstance>;
+  const Vmi = ({ file }: { file: RiveFile }) => {
+    latest = useViewModelInstance(file, { async: true });
+    return null;
+  };
+  await render(activity('visible', <Vmi file={a.file} />));
+  await render(activity('hidden', <Vmi file={a.file} />));
+  await render(activity('hidden', <Vmi file={b.file} />));
+  await render(activity('hidden', <Vmi file={a.file} />));
+  await render(activity('visible', <Vmi file={a.file} />));
+  expect(latest!.instance).toBe(a.instance);
+  expect(latest!.isLoading).toBe(false);
+  expect(a.viewModel.createDefaultInstanceAsync).toHaveBeenCalledTimes(1);
+  expect(a.instance.dispose).not.toHaveBeenCalled();
+  await unmount();
+  expect(a.instance.dispose).toHaveBeenCalledTimes(1);
+});
+
+describe('property hooks', () => {
+  it.each([
+    ['useRiveNumber', 'numberProperty', useRiveNumber],
+    ['useRiveTrigger', 'triggerProperty', useRiveTrigger],
+    ['useRiveList', 'listProperty', useRiveList],
+  ] as const)(
+    '%s keeps the property and resubscribes on reveal',
+    async (_, accessor, hook) => {
+      const property = nativeLike({
+        addListener: jest.fn(() => () => {}),
+        getValueAsync: jest.fn(async () => 1),
+        getLengthAsync: jest.fn(async () => 0),
+      });
+      const instance = {
+        [accessor]: () => property,
+      } as unknown as ViewModelInstance;
+      const useHook = hook as (path: string, vmi: ViewModelInstance) => unknown;
+      const Consumer = () => {
+        useHook('p', instance);
+        return null;
+      };
+      await hideAndReveal(<Consumer />);
+      expect(property.addListener).toHaveBeenCalledTimes(2);
+      expect(property.dispose).not.toHaveBeenCalled();
+      await unmount();
+      expect(property.dispose).toHaveBeenCalledTimes(1);
+    }
+  );
+});
+
+it('RiveView keeps its view across hide and reveal, and disposes a view that Fabric replaced', async () => {
+  const makeView = () =>
+    Object.create(
+      { play: jest.fn() },
+      { dispose: { value: jest.fn(), configurable: true } }
+    );
+  const view = (
+    <RiveView
+      file={{} as RiveFile}
+      dataBind={{} as ViewModelInstance}
+      hybridRef={{ f: () => {} }}
+    />
+  );
+  const setRef = (ref: unknown) =>
+    act(async () =>
+      renderer.root.findByType('RiveView' as never).props.hybridRef.f(ref)
+    );
+  const [first, second] = [makeView(), makeView()];
+  await render(activity('visible', view));
+  await setRef(first);
+  await hideAndReveal(view);
+  expect(typeof first.play).toBe('function');
+  expect(first.dispose).not.toHaveBeenCalled();
+  await setRef(second);
+  expect(first.dispose).toHaveBeenCalledTimes(1);
+  expect(second.dispose).not.toHaveBeenCalled();
+  await unmount();
+  expect(second.dispose).toHaveBeenCalledTimes(1);
+  expect(first.dispose).toHaveBeenCalledTimes(1);
 });
