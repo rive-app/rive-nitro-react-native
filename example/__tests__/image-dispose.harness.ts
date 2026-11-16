@@ -60,14 +60,8 @@ describe('RiveImage disposal', () => {
     file.dispose();
   });
 
-  it('disposing an image frees its bytes', async () => {
-    // Only the new Android backend keeps the bytes and decodes them later.
-    if (
-      Platform.OS !== 'android' ||
-      RiveFileFactory.getBackend() !== 'experimental'
-    ) {
-      return;
-    }
+  it("loading and disposing many large images doesn't run out of heap", async () => {
+    if (!keepsImageBytes()) return;
     // 600 MB in total, more than any Android Java heap limit.
     const bytes = new ArrayBuffer(10 * 1024 * 1024);
     for (let i = 0; i < 60; i++) {
@@ -76,4 +70,21 @@ describe('RiveImage disposal', () => {
       image.dispose();
     }
   });
+
+  it("loading many large images without disposing them doesn't run out of heap", async () => {
+    if (!keepsImageBytes()) return;
+    // Only the reported memory size makes Hermes collect these in time.
+    const bytes = new ArrayBuffer(10 * 1024 * 1024);
+    for (let i = 0; i < 60; i++) {
+      const image = await RiveImages.loadFromBytesAsync(bytes);
+      expect(image.byteSize).toBe(bytes.byteLength);
+    }
+  });
 });
+
+// Only the new Android backend keeps the bytes and decodes them later.
+function keepsImageBytes() {
+  return (
+    Platform.OS === 'android' && RiveFileFactory.getBackend() === 'experimental'
+  );
+}
