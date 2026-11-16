@@ -565,6 +565,42 @@ describe('RiveView under <Activity>', () => {
     expect(view.play).toBeUndefined();
     expect(view.dispose).toHaveBeenCalledTimes(1);
   });
+
+  it('disposes a view replaced on reveal, but not the current one', async () => {
+    const makeView = () =>
+      Object.create(
+        { play: jest.fn() },
+        { dispose: { value: jest.fn(), configurable: true } }
+      );
+    const userRef = jest.fn();
+    const tree = (mode: 'visible' | 'hidden') => (
+      <Activity mode={mode}>
+        <RiveView
+          file={{} as RiveFile}
+          dataBind={{} as ViewModelInstance}
+          hybridRef={{ f: userRef }}
+        />
+      </Activity>
+    );
+    const renderer = await mount(tree('visible'));
+    const setRef = () =>
+      renderer.root.findByType('RiveView' as never).props.hybridRef.f;
+    const first = makeView();
+    const second = makeView();
+    await act(async () => setRef()(first));
+    await act(async () => setRef()(first));
+    expect(first.dispose).not.toHaveBeenCalled();
+    await update(renderer, tree('hidden'));
+    await update(renderer, tree('visible'));
+    await act(async () => setRef()(second));
+    expect(first.dispose).toHaveBeenCalledTimes(1);
+    expect(second.dispose).not.toHaveBeenCalled();
+    expect(typeof second.play).toBe('function');
+    expect(userRef).toHaveBeenLastCalledWith(second);
+    await unmount(renderer);
+    expect(first.dispose).toHaveBeenCalledTimes(1);
+    expect(second.dispose).toHaveBeenCalledTimes(1);
+  });
 });
 
 describe('release after passive cleanups', () => {

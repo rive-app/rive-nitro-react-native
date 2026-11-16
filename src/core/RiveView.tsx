@@ -85,6 +85,11 @@ export function RiveView<
   });
 
   const setRef = (ref: RiveViewRef) => {
+    // Fabric on iOS creates a new native view when an `<Activity>` reveals
+    // this component; the view it replaced is gone from the screen.
+    if (viewRef.current && viewRef.current !== ref) {
+      callDispose(viewRef.current);
+    }
     viewRef.current = ref;
     if (userHybridRef?.f) {
       userHybridRef.f(ref);
