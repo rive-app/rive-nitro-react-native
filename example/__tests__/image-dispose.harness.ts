@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'react-native-harness';
+import { Platform } from 'react-native';
 import { RiveFileFactory, RiveImages } from '@rive-app/react-native';
 
 const DATABINDING_IMAGES = require('../assets/rive/databinding_images.riv');
