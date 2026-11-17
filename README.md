@@ -51,6 +51,8 @@ Your agent installs the [Rive CLI](https://rive.app/agents), writes the scene, a
   end
   ```
 
+- The hooks and `RiveView` keep Rive files, view model instances and views alive while an `<Activity mode="hidden">` hides them, and dispose them on unmount.
+
 ## Installation
 
 ```sh
