@@ -25,7 +25,6 @@ class HybridViewModelArtboardProperty(
     try {
       val newArtboard = Artboard.fromFile(sourceFile, hybridArtboard.artboardName)
       instance.setArtboard(path, newArtboard)
-      owner.retainArtboardSource(path, hybridArtboard.file)
       RiveReactNativeView.onViewModelChanged()
     } catch (e: Exception) {
       Log.e(TAG, "Failed to set artboard for path '$path'", e)
