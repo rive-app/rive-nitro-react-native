@@ -58,7 +58,7 @@ class HybridViewModelListProperty(
     if (idx < 0 || idx >= size) return null
     val source = ViewModelInstanceSource.ReferenceListItem(instance, path, idx)
     val vmi = ViewModelInstance.fromFile(file, source)
-    return HybridViewModelInstance(vmi, riveWorker, parentFile)
+    return HybridViewModelInstance(vmi, riveWorker, parentFile, owner = owner)
   }
 
   // Deprecated: Use getInstanceAtAsync instead

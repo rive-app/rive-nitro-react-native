@@ -20,8 +20,8 @@ class HybridViewModelInstance(
   // False for wrappers that alias an instance owned elsewhere (e.g. the
   // view's bound instance returned by RiveView.getViewModelInstance()).
   private val ownsInstance: Boolean = true,
-  // Held by an alias so the owning wrapper's finalizer can't close the
-  // instance while the alias, or a view it was bound to, still uses it.
+  // The owning wrapper of an alias, or the parent of a nested or list-item instance; held so its
+  // finalizer can't close the instance while this wrapper, or a view it was bound to, uses it.
   private val owner: HybridViewModelInstance? = null
 ) : HybridViewModelInstanceSpec() {
   companion object {
@@ -38,8 +38,11 @@ class HybridViewModelInstance(
   // so that file's wrapper must not be finalized while the instance uses it.
   private val artboardSources = ConcurrentHashMap<String, HybridRiveFile>()
 
+  private val root: HybridViewModelInstance
+    get() = owner?.root ?: this
+
   internal fun retainArtboardSource(path: String, file: HybridRiveFile) {
-    (owningWrapper ?: this).artboardSources[path] = file
+    root.artboardSources[path] = file
   }
 
   private fun closeInstance() {
@@ -136,7 +139,7 @@ class HybridViewModelInstance(
     val file = parentFile.riveFile ?: return null
     val source = ViewModelInstanceSource.Reference(viewModelInstance, path)
     val childVmi = ViewModelInstance.fromFile(file, source)
-    return HybridViewModelInstance(childVmi, riveWorker, parentFile)
+    return HybridViewModelInstance(childVmi, riveWorker, parentFile, owner = this)
   }
 
   // Deprecated: Use viewModelAsync instead
