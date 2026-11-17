@@ -20,6 +20,8 @@ import {
 } from '@rive-app/react-native';
 
 const QUICK_START = require('../assets/rive/quick_start.riv');
+const DATABINDING = require('../assets/rive/databinding.riv');
+const DATABINDING_LISTS = require('../assets/rive/databinding_lists.riv');
 
 // Only the new Android backend frees native objects from JVM finalizers.
 const isAndroidExperimental = () =>
@@ -78,6 +80,37 @@ async function bindAndRebindAlias(
   );
   ref.bindViewModelInstance(alias!);
   return alias!;
+}
+
+// Created outside the helpers below: a callback created inside one shares its scope, which would keep the
+// child instance reachable from the native listener.
+const pushTo = (values: string[]) => (value: string) => {
+  values.push(value);
+};
+
+// Return only unsubscribe functions, so JS holds no reference to the child instance or its properties.
+async function listenOnPet(
+  parent: ViewModelInstance,
+  names: string[],
+  types: string[]
+): Promise<Array<() => void>> {
+  const pet = (await parent.viewModelAsync('pet'))!;
+  return [
+    pet.stringProperty('name')!.addListener(pushTo(names)),
+    pet.enumProperty('type')!.addListener(pushTo(types)),
+  ];
+}
+
+async function listenOnListItemName(
+  parent: ViewModelInstance,
+  names: string[]
+): Promise<Array<() => void>> {
+  const item = (await parent.listProperty('team')!.getInstanceAtAsync(0))!;
+  return [item.stringProperty('name')!.addListener(pushTo(names))];
+}
+
+async function expectToReceive(values: string[], expected: string) {
+  await waitFor(() => expect(values).toContain(expected), { timeout: 5000 });
 }
 
 async function loadUnreferencedFile() {
@@ -145,6 +178,61 @@ describe('JVM finalizers keep in-use native objects open', () => {
       expect(error).toBeNull();
     } finally {
       cleanup();
+    }
+  });
+});
+
+describe('JVM finalizers keep instances with property listeners open', () => {
+  it('a listener on a nested instance keeps firing after GC', async () => {
+    if (!isAndroidExperimental()) return;
+
+    const file = await RiveFileFactory.fromSource(DATABINDING, undefined);
+    const parent = file
+      .viewModelByName('Person')!
+      .createInstanceByName('Gordon')!;
+    const names: string[] = [];
+    const types: string[] = [];
+    const unsubscribers = await listenOnPet(parent, names, types);
+    try {
+      const name = parent.stringProperty('pet/name')!;
+      const type = parent.enumProperty('pet/type')!;
+      name.set('Before GC');
+      await expectToReceive(names, 'Before GC');
+
+      await collectGarbage();
+
+      name.set('After GC');
+      type.set('owl');
+      await expectToReceive(names, 'After GC');
+      await expectToReceive(types, 'owl');
+    } finally {
+      unsubscribers.forEach((unsubscribe) => unsubscribe());
+    }
+  });
+
+  it('a listener on a list item keeps firing after GC', async () => {
+    if (!isAndroidExperimental()) return;
+
+    const file = await RiveFileFactory.fromSource(DATABINDING_LISTS, undefined);
+    const parent = file.viewModelByName('DevRel')!.createDefaultInstance()!;
+    const names: string[] = [];
+    const unsubscribers = await listenOnListItemName(parent, names);
+    try {
+      const list = parent.listProperty('team')!;
+      const setFirstName = async (value: string) =>
+        (await list.getInstanceAtAsync(0))!
+          .stringProperty('name')!
+          .setValueAsync(value);
+
+      await setFirstName('Before GC');
+      await expectToReceive(names, 'Before GC');
+
+      await collectGarbage();
+
+      await setFirstName('After GC');
+      await expectToReceive(names, 'After GC');
+    } finally {
+      unsubscribers.forEach((unsubscribe) => unsubscribe());
     }
   });
 });
