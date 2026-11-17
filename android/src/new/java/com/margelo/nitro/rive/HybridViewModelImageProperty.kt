@@ -13,15 +13,26 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import com.rive.RiveReactNativeView
+import java.util.WeakHashMap
 import java.util.concurrent.atomic.AtomicInteger
 
-// Shared by every wrapper for one instance path, since JS may look the property up again per set.
+// Shared per native instance and path, since JS can reach one instance through several wrappers,
+// e.g. the one RiveView.getViewModelInstance() returns.
 internal class ImagePropertySequencer {
   // Single-threaded so a clear cannot run between the generation check and setImage.
   val scope = CoroutineScope(Dispatchers.Default.limitedParallelism(1))
 
   // Decoding suspends, so a decode that finishes after a newer set or clear must be dropped.
   val generation = AtomicInteger()
+
+  companion object {
+    private val registry = WeakHashMap<ViewModelInstance, MutableMap<String, ImagePropertySequencer>>()
+
+    fun shared(instance: ViewModelInstance, path: String): ImagePropertySequencer =
+      synchronized(registry) {
+        registry.getOrPut(instance) { HashMap() }.getOrPut(path) { ImagePropertySequencer() }
+      }
+  }
 }
 
 @Keep

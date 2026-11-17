@@ -1,6 +1,18 @@
-import { describe, it, expect } from 'react-native-harness';
-import { Platform } from 'react-native';
-import { RiveFileFactory, RiveImages } from '@rive-app/react-native';
+import {
+  describe,
+  it,
+  expect,
+  render,
+  waitFor,
+  cleanup,
+} from 'react-native-harness';
+import { Platform, View } from 'react-native';
+import {
+  RiveFileFactory,
+  RiveImages,
+  RiveView,
+  type RiveViewRef,
+} from '@rive-app/react-native';
 
 const DATABINDING_IMAGES = require('../assets/rive/databinding_images.riv');
 
@@ -135,5 +147,40 @@ describe('ViewModelImageProperty.setAsync', () => {
     prop.dispose();
     instance.dispose();
     file.dispose();
+  });
+
+  it('resolves a call superseded through the view-obtained instance', async () => {
+    const { file, instance, prop } = await loadImageInstance();
+    const view: { ref: RiveViewRef | null } = { ref: null };
+    await render(
+      <View style={{ width: 100, height: 100 }}>
+        <RiveView
+          hybridRef={{
+            f: (ref: RiveViewRef | null) => {
+              view.ref = ref;
+            },
+          }}
+          style={{ flex: 1 }}
+          file={file}
+          dataBind={instance}
+        />
+      </View>
+    );
+    await waitFor(
+      () => expect(view.ref?.getViewModelInstance()).toBeDefined(),
+      { timeout: 5000 }
+    );
+    const viewProp = view
+      .ref!.getViewModelInstance()!
+      .imageProperty('bound_image')!;
+    const image = await RiveImages.loadFromBytesAsync(pngBytes());
+
+    const older = prop.setAsync(image);
+    const clear = viewProp.setAsync(undefined);
+
+    await expect(older).resolves.toBeUndefined();
+    await expect(clear).resolves.toBeUndefined();
+
+    cleanup();
   });
 });

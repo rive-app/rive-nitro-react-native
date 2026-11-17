@@ -1,8 +1,32 @@
 import RiveRuntime
 import NitroModules
 
-// Shared by every wrapper for one instance path, since JS may look the property up again per set.
+// Shared per native instance and path, since JS can reach one instance through several wrappers,
+// e.g. the one RiveView.getViewModelInstance() returns.
 final class ImagePropertySequencer {
+  private final class PathSequencers {
+    var byPath: [String: ImagePropertySequencer] = [:]
+  }
+
+  private static let registryLock = NSLock()
+  private static let registry = NSMapTable<ViewModelInstance, PathSequencers>.weakToStrongObjects()
+
+  static func shared(by instance: ViewModelInstance, path: String) -> ImagePropertySequencer {
+    registryLock.lock()
+    defer { registryLock.unlock() }
+    let paths: PathSequencers
+    if let existing = registry.object(forKey: instance) {
+      paths = existing
+    } else {
+      paths = PathSequencers()
+      registry.setObject(paths, forKey: instance)
+    }
+    if let sequencer = paths.byPath[path] { return sequencer }
+    let sequencer = ImagePropertySequencer()
+    paths.byPath[path] = sequencer
+    return sequencer
+  }
+
   private let lock = NSLock()
   private var generation: UInt64 = 0
 
