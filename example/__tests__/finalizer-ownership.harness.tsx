@@ -11,6 +11,7 @@ import {
   RiveView,
   RiveFileFactory,
   RiveImages,
+  RiveLog,
   DataBindMode,
   Fit,
   type RiveFile,
@@ -24,7 +25,12 @@ const QUICK_START = require('../assets/rive/quick_start.riv');
 const isAndroidExperimental = () =>
   Platform.OS === 'android' && RiveFileFactory.getBackend() === 'experimental';
 
-const jsGC = () => (globalThis as { gc?: () => void }).gc?.();
+function jsGC() {
+  const gc = (globalThis as { gc?: () => void }).gc;
+  if (!gc)
+    throw new Error('global.gc is unavailable, so nothing gets collected');
+  gc();
+}
 
 // Hermes' gc() drops the JNI references of unreachable wrappers; the large image
 // buffers are copied onto the Java heap, which makes ART collect and finalize them.
@@ -74,7 +80,38 @@ async function bindAndRebindAlias(
   return alias!;
 }
 
+async function loadUnreferencedFile() {
+  await RiveFileFactory.fromSource(QUICK_START, undefined);
+}
+
 describe('JVM finalizers keep in-use native objects open', () => {
+  // Control: without it the test below also passes when nothing is ever finalized.
+  it('an unreferenced file is finalized', async () => {
+    if (!isAndroidExperimental()) return;
+
+    const messages: string[] = [];
+    RiveLog.setLogLevel('debug');
+    RiveLog.setHandler((_level, tag, message) => {
+      if (tag === 'HybridRiveFile') messages.push(message);
+    });
+    try {
+      await loadUnreferencedFile();
+      await collectGarbage();
+      await waitFor(
+        () =>
+          expect(
+            messages.some((m) =>
+              m.includes('garbage collected without dispose')
+            )
+          ).toBe(true),
+        { timeout: 5000 }
+      );
+    } finally {
+      RiveLog.resetHandler();
+      RiveLog.setLogLevel('warn');
+    }
+  });
+
   it('a rebound view alias keeps the original instance open', async () => {
     if (!isAndroidExperimental()) return;
 
