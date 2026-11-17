@@ -141,9 +141,18 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
   override fun getViewModelInstance(): HybridViewModelInstanceSpec? {
     val vmi = view.getViewModelInstance() ?: return null
     val hybridFile = file as? HybridRiveFile ?: return null
+    val dataBindInstance = dataBind?.asFirstOrNull() as? HybridViewModelInstance
+    val bound = listOfNotNull(boundViewModelInstance, dataBindInstance)
+      .firstOrNull { it.viewModelInstance === vmi }
     // The view owns (or JS-side dataBind owns) this instance — the wrapper
     // must not close it on dispose.
-    return HybridViewModelInstance(vmi, hybridFile.riveWorker, hybridFile, ownsInstance = false)
+    return HybridViewModelInstance(
+      vmi,
+      hybridFile.riveWorker,
+      hybridFile,
+      ownsInstance = false,
+      owner = bound?.owningWrapper
+    )
   }
 
   override fun play(): Promise<Unit> = Promise.async { view.play() }

@@ -19,11 +19,18 @@ class HybridViewModelInstance(
   private val _instanceName: String? = null,
   // False for wrappers that alias an instance owned elsewhere (e.g. the
   // view's bound instance returned by RiveView.getViewModelInstance()).
-  private val ownsInstance: Boolean = true
+  private val ownsInstance: Boolean = true,
+  // Held by an alias so the owning wrapper's finalizer can't close the
+  // instance while the alias, or a view it was bound to, still uses it.
+  private val owner: HybridViewModelInstance? = null
 ) : HybridViewModelInstanceSpec() {
   companion object {
     private const val TAG = "HybridViewModelInstance"
   }
+
+  /** The wrapper that closes this instance, or null when a view owns it. */
+  internal val owningWrapper: HybridViewModelInstance?
+    get() = if (ownsInstance) this else owner
 
   private val imageSequencers = ConcurrentHashMap<String, ImagePropertySequencer>()
 
