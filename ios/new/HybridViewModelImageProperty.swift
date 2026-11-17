@@ -1,60 +1,25 @@
 import RiveRuntime
 import NitroModules
 
-// Shared per native instance and path, since JS can reach one instance through several wrappers,
-// e.g. the one RiveView.getViewModelInstance() returns.
-final class ImagePropertySequencer {
-  private final class PathSequencers {
-    var byPath: [String: ImagePropertySequencer] = [:]
-  }
-
-  private static let registryLock = NSLock()
-  private static let registry = NSMapTable<ViewModelInstance, PathSequencers>.weakToStrongObjects()
-
-  static func shared(by instance: ViewModelInstance, path: String) -> ImagePropertySequencer {
-    registryLock.lock()
-    defer { registryLock.unlock() }
-    let paths: PathSequencers
-    if let existing = registry.object(forKey: instance) {
-      paths = existing
-    } else {
-      paths = PathSequencers()
-      registry.setObject(paths, forKey: instance)
-    }
-    if let sequencer = paths.byPath[path] { return sequencer }
-    let sequencer = ImagePropertySequencer()
-    paths.byPath[path] = sequencer
-    return sequencer
-  }
-
-  private let lock = NSLock()
-  private var generation: UInt64 = 0
-
-  func next() -> UInt64 {
-    lock.lock()
-    defer { lock.unlock() }
-    generation &+= 1
-    return generation
-  }
-
-  // Decoding suspends, so a decode that finishes after a newer set or clear must be dropped.
-  func isCurrent(_ candidate: UInt64) -> Bool {
-    lock.lock()
-    defer { lock.unlock() }
-    return generation == candidate
-  }
-}
-
 class HybridViewModelImageProperty: HybridViewModelImagePropertySpec {
+  private typealias Write = @MainActor () async -> Void
+
+  // Every image write runs to completion in call order, so a clear cannot overtake a pending decode.
+  private static let writes: AsyncStream<Write>.Continuation = {
+    let (stream, continuation) = AsyncStream.makeStream(of: Write.self)
+    Task { @MainActor in
+      for await write in stream { await write() }
+    }
+    return continuation
+  }()
+
   private var instance: ViewModelInstance?
   private var prop: ImageProperty?
   private var worker: Worker?
-  private var sequencer: ImagePropertySequencer?
-  init(instance: ViewModelInstance, path: String, worker: Worker, sequencer: ImagePropertySequencer) {
+  init(instance: ViewModelInstance, path: String, worker: Worker) {
     self.instance = instance
     self.prop = ImageProperty(path: path)
     self.worker = worker
-    self.sequencer = sequencer
     super.init()
   }
 
@@ -63,47 +28,37 @@ class HybridViewModelImageProperty: HybridViewModelImagePropertySpec {
   }
 
   func set(image: (any HybridRiveImageSpec)?) throws {
-    let applied = try applyImage(image)
-    Task {
-      do {
-        try await applied.value
-      } catch {
-        RCTLogError("HybridViewModelImageProperty: Failed to decode/set image: \(error)")
-      }
+    _ = try setAsync(image: image).catch { error in
+      RCTLogError("HybridViewModelImageProperty: Failed to decode/set image: \(error)")
     }
   }
 
   func setAsync(image: (any HybridRiveImageSpec)?) throws -> Promise<Void> {
-    let applied = try applyImage(image)
-    return Promise.async { try await applied.value }
-  }
-
-  private func applyImage(_ image: (any HybridRiveImageSpec)?) throws -> Task<Void, Error> {
-    guard let instance = instance, let prop = prop, let worker = worker, let sequencer = sequencer else {
+    guard let instance = instance, let prop = prop, let worker = worker else {
       throw RuntimeError.error(withMessage: "ImageProperty not properly initialized")
     }
-    var hybridImage: HybridRiveImage?
+    var data: Data?
     if let image = image {
-      guard let validImage = image as? HybridRiveImage else {
+      guard let hybridImage = image as? HybridRiveImage else {
         throw RuntimeError.error(withMessage: "Invalid image type - expected HybridRiveImage")
       }
-      hybridImage = validImage
+      data = hybridImage.rawData
     }
 
-    let generation = sequencer.next()
-    return Task { @MainActor [hybridImage] in
+    let promise = Promise<Void>()
+    Self.writes.yield { [data] in
       do {
         var decoded: Image?
-        if let hybridImage = hybridImage {
-          decoded = try await worker.decodeImage(from: hybridImage.rawData)
+        if let data = data {
+          decoded = try await worker.decodeImage(from: data)
         }
-        if sequencer.isCurrent(generation) {
-          instance.setValue(of: prop, to: decoded)
-        }
-      } catch where !sequencer.isCurrent(generation) {
-        RCTLogWarn("HybridViewModelImageProperty: Ignoring failure of superseded image: \(error)")
+        instance.setValue(of: prop, to: decoded)
+        promise.resolve()
+      } catch {
+        promise.reject(withError: error)
       }
     }
+    return promise
   }
 
   func addListener(onChanged: @escaping () -> Void) throws -> () -> Void {

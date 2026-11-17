@@ -65,9 +65,7 @@ class HybridViewModelInstance: HybridViewModelInstanceSpec {
   }
 
   func imageProperty(path: String) throws -> (any HybridViewModelImagePropertySpec)? {
-    return HybridViewModelImageProperty(
-      instance: viewModelInstance, path: path, worker: worker,
-      sequencer: .shared(by: viewModelInstance, path: path))
+    return HybridViewModelImageProperty(instance: viewModelInstance, path: path, worker: worker)
   }
 
   func listProperty(path: String) throws -> (any HybridViewModelListPropertySpec)? {

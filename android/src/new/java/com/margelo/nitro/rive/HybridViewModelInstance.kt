@@ -78,8 +78,7 @@ class HybridViewModelInstance(
 
   override fun imageProperty(path: String): HybridViewModelImagePropertySpec? {
     return try {
-      val sequencer = ImagePropertySequencer.shared(viewModelInstance, path)
-      HybridViewModelImageProperty(viewModelInstance, path, riveWorker, sequencer)
+      HybridViewModelImageProperty(viewModelInstance, path, riveWorker)
     } catch (e: Exception) {
       Log.e(TAG, "imageProperty failed for path '$path'", e)
       null

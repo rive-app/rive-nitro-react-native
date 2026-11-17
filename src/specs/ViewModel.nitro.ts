@@ -238,11 +238,9 @@ export interface ViewModelImageProperty
   /**
    * Set the image property value, or clear it by passing undefined.
    *
-   * Resolves once the image is decoded and handed to the instance. It does not wait for a draw,
-   * so the image may not be on screen yet. Rejects if decoding fails. A call replaced by a newer
-   * set, setAsync or clear still resolves, although its image is not applied.
-   *
-   * In 0.6.0, set() will return this promise and setAsync becomes a deprecated alias.
+   * Resolves when this image has been applied to the instance. It does not wait for a draw,
+   * so the image may not be on screen yet. Rejects if decoding this image fails. Calls are
+   * applied in order, so the last call wins.
    */
   setAsync(image: RiveImage | undefined): Promise<void>;
   /** Add a listener to the view model image property. Returns a function to remove the listener. */

@@ -3,98 +3,63 @@ package com.margelo.nitro.rive
 import android.util.Log
 import androidx.annotation.Keep
 import app.rive.ImageAsset
+import app.rive.Result
 import app.rive.ViewModelInstance
 import app.rive.core.CommandQueue
 import com.facebook.proguard.annotations.DoNotStrip
 import com.margelo.nitro.core.Promise
-import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import com.rive.RiveReactNativeView
-import java.util.WeakHashMap
-import java.util.concurrent.atomic.AtomicInteger
-
-// Shared per native instance and path, since JS can reach one instance through several wrappers,
-// e.g. the one RiveView.getViewModelInstance() returns.
-internal class ImagePropertySequencer {
-  // Single-threaded so a clear cannot run between the generation check and setImage.
-  val scope = CoroutineScope(Dispatchers.Default.limitedParallelism(1))
-
-  // Decoding suspends, so a decode that finishes after a newer set or clear must be dropped.
-  val generation = AtomicInteger()
-
-  companion object {
-    private val registry = WeakHashMap<ViewModelInstance, MutableMap<String, ImagePropertySequencer>>()
-
-    fun shared(instance: ViewModelInstance, path: String): ImagePropertySequencer =
-      synchronized(registry) {
-        registry.getOrPut(instance) { HashMap() }.getOrPut(path) { ImagePropertySequencer() }
-      }
-  }
-}
 
 @Keep
 @DoNotStrip
-class HybridViewModelImageProperty internal constructor(
+class HybridViewModelImageProperty(
   private val instance: ViewModelInstance,
   private val path: String,
-  private val riveWorker: CommandQueue,
-  private val sequencer: ImagePropertySequencer
+  private val riveWorker: CommandQueue
 ) : HybridViewModelImagePropertySpec(),
   BaseHybridViewModelProperty<Unit> by BaseHybridViewModelPropertyImpl() {
   companion object {
     private const val TAG = "HybridViewModelImageProperty"
+
+    // Every image write runs to completion in call order, so a clear cannot overtake a pending decode.
+    private val writes = Channel<suspend () -> Unit>(Channel.UNLIMITED).also { queue ->
+      CoroutineScope(Dispatchers.Default).launch { for (write in queue) write() }
+    }
   }
 
   override fun set(image: HybridRiveImageSpec?) {
-    applyImage(image).invokeOnCompletion { error ->
-      if (error != null) Log.e(TAG, "Failed to set image for path '$path'", error)
-    }
+    setAsync(image).catch { Log.e(TAG, "Failed to set image for path '$path'", it) }
   }
 
   override fun setAsync(image: HybridRiveImageSpec?): Promise<Unit> {
-    val applied = applyImage(image)
-    return Promise.async { applied.await() }
-  }
-
-  private fun applyImage(image: HybridRiveImageSpec?): Deferred<Unit> {
-    val hybridImage = image as? HybridRiveImage
-    // Read now, since JS may dispose the image while the decode is still queued.
-    val bytes = hybridImage?.let {
+    // Read now, since JS may dispose the image while the write is still queued.
+    val bytes = (image as? HybridRiveImage)?.let {
       it.rawData ?: throw IllegalStateException("RiveImage has been disposed")
     }
-    val gen = sequencer.generation.incrementAndGet()
-    val applied = CompletableDeferred<Unit>()
-    sequencer.scope.launch {
+    val promise = Promise<Unit>()
+    writes.trySend {
       try {
         if (bytes == null) {
-          writeIfCurrent(gen, null)
+          instance.setImage(path, null)
         } else {
           when (val result = ImageAsset.fromBytes(riveWorker, bytes)) {
             // The property keeps its own ref, so close ours right away.
-            is app.rive.Result.Success -> result.value.use { writeIfCurrent(gen, it) }
+            is Result.Success -> result.value.use { instance.setImage(path, it) }
+            is Result.Error -> throw result.throwable
             else -> throw IllegalStateException("Failed to decode image")
           }
         }
-        applied.complete(Unit)
-      } catch (e: Exception) {
-        if (sequencer.generation.get() == gen) {
-          applied.completeExceptionally(e)
-        } else {
-          Log.w(TAG, "Ignoring failure of superseded image for path '$path'", e)
-          applied.complete(Unit)
-        }
+        RiveReactNativeView.onViewModelChanged()
+        promise.resolve(Unit)
+      } catch (e: Throwable) {
+        promise.reject(e)
       }
     }
-    return applied
-  }
-
-  private fun writeIfCurrent(gen: Int, image: ImageAsset?) {
-    if (sequencer.generation.get() != gen) return
-    instance.setImage(path, image)
-    RiveReactNativeView.onViewModelChanged()
+    return promise
   }
 
   override fun addListener(onChanged: () -> Unit): () -> Unit {

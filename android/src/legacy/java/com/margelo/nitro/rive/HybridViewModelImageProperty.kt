@@ -30,12 +30,8 @@ class HybridViewModelImageProperty(private val viewModelImage: ViewModelImagePro
   }
 
   override fun setAsync(image: HybridRiveImageSpec?): Promise<Unit> {
-    return try {
-      set(image)
-      Promise.resolved(Unit)
-    } catch (e: Exception) {
-      Promise.rejected(e)
-    }
+    set(image)
+    return Promise.resolved(Unit)
   }
 
   override fun addListener(onChanged: () -> Unit): () -> Unit {
