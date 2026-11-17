@@ -46,10 +46,11 @@ class HybridRiveFile(
       }
     }
 
+  // The async methods read riveFile inside the coroutine, so it holds this wrapper and the
+  // finalizer can't close the file before the call completes.
   override fun getViewModelNamesAsync(): Promise<Array<String>> {
-    val file = riveFile ?: return Promise.resolved(emptyArray())
-    return asyncRetaining(this) {
-      file.getViewModelNames().toTypedArray()
+    return Promise.async {
+      riveFile?.getViewModelNames()?.toTypedArray() ?: emptyArray()
     }
   }
 
@@ -158,9 +159,8 @@ class HybridRiveFile(
     }
 
   override fun getArtboardCountAsync(): Promise<Double> {
-    val file = riveFile ?: return Promise.resolved(0.0)
-    return asyncRetaining(this) {
-      file.getArtboardNames().size.toDouble()
+    return Promise.async {
+      riveFile?.getArtboardNames()?.size?.toDouble() ?: 0.0
     }
   }
 
@@ -178,9 +178,8 @@ class HybridRiveFile(
     }
 
   override fun getArtboardNamesAsync(): Promise<Array<String>> {
-    val file = riveFile ?: return Promise.resolved(emptyArray())
-    return asyncRetaining(this) {
-      file.getArtboardNames().toTypedArray()
+    return Promise.async {
+      riveFile?.getArtboardNames()?.toTypedArray() ?: emptyArray()
     }
   }
 
@@ -189,9 +188,8 @@ class HybridRiveFile(
   }
 
   override fun getEnums(): Promise<Array<RiveEnumDefinition>> {
-    val file = riveFile ?: return Promise.resolved(emptyArray())
-    return asyncRetaining(this) {
-      val enums = file.getEnums()
+    return Promise.async {
+      val enums = riveFile?.getEnums() ?: return@async emptyArray()
       enums
         .map { enum ->
         RiveEnumDefinition(
