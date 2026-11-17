@@ -42,11 +42,8 @@ class HybridViewModelInstance(
     (owningWrapper ?: this).artboardSources[path] = file
   }
 
-  @Volatile private var closed = false
-
   private fun closeInstance() {
-    if (!ownsInstance || closed) return
-    closed = true
+    if (!ownsInstance || viewModelInstance.closed) return
     runCatching { viewModelInstance.close() }
       .onFailure { RiveLog.e(TAG, "Closing the instance failed: ${it.message}") }
   }

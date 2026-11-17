@@ -24,8 +24,7 @@ class HybridRiveFile(
 
   private val weakViews = mutableListOf<WeakReference<HybridRiveView>>()
 
-  // The finalizer calls dispose() again, and a second release would unregister
-  // assets that a newer file registered under the same names.
+  // A second dispose() from JS must not unregister assets that a newer file registered under the same names.
   @Volatile private var disposed = false
 
   // Hermes can't see the native file, so without this hint it collects dropped
