@@ -58,6 +58,7 @@ describe('useRiveList', () => {
     await act(async () => {});
     expect(property.dispose).not.toHaveBeenCalled();
     unmount();
+    await act(async () => {});
 
     expect(property.dispose).toHaveBeenCalled();
     expect(property.callsAfterDispose).toEqual([]);
