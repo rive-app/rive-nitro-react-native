@@ -66,24 +66,30 @@ describe('plain useInsertionEffect', () => {
   });
 
   it('runs no insertion cleanup when Suspense hides and reveals', async () => {
-    let suspended = false;
+    let loaded = false;
     let resolve = () => {};
-    const pending = new Promise<void>((r) => (resolve = r));
-    const Gate = () => {
-      if (suspended) throw pending;
-      return null;
+    const pending = new Promise<void>((r) => (resolve = r)).then(() => {
+      loaded = true;
+    });
+    const Gate = ({ suspend }: { suspend: boolean }) => {
+      if (suspend && !loaded) throw pending;
+      return 'content';
     };
-    const tree = (
-      <Suspense fallback={null}>
+    const tree = (suspend: boolean) => (
+      <Suspense fallback="fallback">
         <Probe name="suspense" />
-        <Gate />
+        <Gate suspend={suspend} />
       </Suspense>
     );
-    await render(tree);
-    suspended = true;
-    await render(tree);
-    suspended = false;
-    await act(async () => resolve());
+    await render(tree(false));
+    expect(renderer.toJSON()).toBe('content');
+    await render(tree(true));
+    expect(renderer.toJSON()).toBe('fallback');
+    await act(async () => {
+      resolve();
+      await pending;
+    });
+    expect(renderer.toJSON()).toBe('content');
     expectNoInsertionCleanup();
   });
 
