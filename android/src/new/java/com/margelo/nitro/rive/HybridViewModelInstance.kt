@@ -34,6 +34,14 @@ class HybridViewModelInstance(
 
   private val imageSequencers = ConcurrentHashMap<String, ImagePropertySequencer>()
 
+  // An artboard set on a property is created from another file's native handle,
+  // so that file's wrapper must not be finalized while the instance uses it.
+  private val artboardSources = ConcurrentHashMap<String, HybridRiveFile>()
+
+  internal fun retainArtboardSource(path: String, file: HybridRiveFile) {
+    (owningWrapper ?: this).artboardSources[path] = file
+  }
+
   @Volatile private var closed = false
 
   private fun closeInstance() {
