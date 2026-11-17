@@ -1,0 +1,96 @@
+<Rive version="1" kind="fragment">
+    <!-- Host has two nested Slot instances, `first` and `second`, each with an
+         `icon` artboard property at the same relative path. Mounted in a
+         slot, FirstTicker and SecondTicker inherit the host's data context and
+         write their looping Dot x into `firstTick` and `secondTick`, so JS can
+         tell that each mounted artboard is advancing. -->
+    <Artboard defaultStateMachineId="0:7" viewModelId="0:40" width="200" height="100" name="Host" id="0:2">
+        <Fill name="Background">
+            <SolidColor colorValue="FF16181D" name="Color"/>
+        </Fill>
+        <NestedArtboard x="0" y="0" name="First">
+            <DataBindContext sourcePathIds="0:40-0:45-0:52" propertyKey="197"/>
+        </NestedArtboard>
+        <NestedArtboard x="100" y="0" name="Second">
+            <DataBindContext sourcePathIds="0:40-0:46-0:52" propertyKey="197"/>
+        </NestedArtboard>
+        <StateMachine name="State Machine 1" id="0:7">
+            <StateMachineLayer name="Layer 1" id="0:8">
+                <AnyState x="200" y="-120"/>
+                <ExitState x="400" y="-120"/>
+                <EntryState x="0" y="0"/>
+            </StateMachineLayer>
+        </StateMachine>
+    </Artboard>
+
+    <Artboard isComponent="true" defaultStateMachineId="0:107" viewModelId="0:40" width="100" height="100" name="FirstTicker" id="0:102">
+        <Shape x="20" y="50" name="Dot" id="0:120">
+            <DataBindContext sourcePathIds="0:40-0:47" propertyKey="13" direction="true"/>
+            <Ellipse width="30" height="30" originX="0.5" originY="0.5" name="Path"/>
+            <Fill name="Fill"><SolidColor colorValue="FFE8B04B" name="Color"/></Fill>
+        </Shape>
+        <LinearAnimation loopValue="pingPong" fps="60" duration="60" name="Sweep" id="0:130">
+            <KeyedObject objectId="0:120">
+                <KeyedProperty propertyKey="13">
+                    <KeyFrameDouble value="20" frame="0" interpolationType="linear"/>
+                    <KeyFrameDouble value="80" frame="60" interpolationType="linear"/>
+                </KeyedProperty>
+            </KeyedObject>
+        </LinearAnimation>
+        <StateMachine name="State Machine 1" id="0:107">
+            <StateMachineLayer name="Layer 1" id="0:108">
+                <AnyState x="200" y="-120"/>
+                <ExitState x="400" y="-120"/>
+                <EntryState x="0" y="0"><StateTransition stateToId="0:112"/></EntryState>
+                <AnimationState x="200" y="0" animationId="0:130" id="0:112"/>
+            </StateMachineLayer>
+        </StateMachine>
+    </Artboard>
+
+    <Artboard isComponent="true" defaultStateMachineId="0:207" viewModelId="0:40" width="100" height="100" name="SecondTicker" id="0:202">
+        <Shape x="20" y="50" name="Dot" id="0:220">
+            <DataBindContext sourcePathIds="0:40-0:48" propertyKey="13" direction="true"/>
+            <Ellipse width="30" height="30" originX="0.5" originY="0.5" name="Path"/>
+            <Fill name="Fill"><SolidColor colorValue="FFE8B04B" name="Color"/></Fill>
+        </Shape>
+        <LinearAnimation loopValue="pingPong" fps="60" duration="60" name="Sweep" id="0:230">
+            <KeyedObject objectId="0:220">
+                <KeyedProperty propertyKey="13">
+                    <KeyFrameDouble value="20" frame="0" interpolationType="linear"/>
+                    <KeyFrameDouble value="80" frame="60" interpolationType="linear"/>
+                </KeyedProperty>
+            </KeyedObject>
+        </LinearAnimation>
+        <StateMachine name="State Machine 1" id="0:207">
+            <StateMachineLayer name="Layer 1" id="0:208">
+                <AnyState x="200" y="-120"/>
+                <ExitState x="400" y="-120"/>
+                <EntryState x="0" y="0"><StateTransition stateToId="0:212"/></EntryState>
+                <AnimationState x="200" y="0" animationId="0:230" id="0:212"/>
+            </StateMachineLayer>
+        </StateMachine>
+    </Artboard>
+
+    <ViewModel defaultInstanceId="0:51" name="Slot" id="0:50">
+        <ViewModelPropertyArtboard name="icon" id="0:52"/>
+        <ViewModelInstance exports="true" name="First" id="0:51">
+            <ViewModelInstanceArtboard viewModelPropertyId="0:52"/>
+        </ViewModelInstance>
+        <ViewModelInstance exports="true" name="Second" id="0:53">
+            <ViewModelInstanceArtboard viewModelPropertyId="0:52"/>
+        </ViewModelInstance>
+    </ViewModel>
+
+    <ViewModel defaultInstanceId="0:41" name="Host" id="0:40">
+        <ViewModelPropertyViewModel viewModelReferenceId="0:50" name="first" id="0:45"/>
+        <ViewModelPropertyViewModel viewModelReferenceId="0:50" name="second" id="0:46"/>
+        <ViewModelPropertyNumber name="firstTick" id="0:47"/>
+        <ViewModelPropertyNumber name="secondTick" id="0:48"/>
+        <ViewModelInstance exports="true" name="Instance" id="0:41">
+            <ViewModelInstanceViewModel propertyValue="0:51" viewModelPropertyId="0:45"/>
+            <ViewModelInstanceViewModel propertyValue="0:53" viewModelPropertyId="0:46"/>
+            <ViewModelInstanceNumber propertyValue="0" viewModelPropertyId="0:47"/>
+            <ViewModelInstanceNumber propertyValue="0" viewModelPropertyId="0:48"/>
+        </ViewModelInstance>
+    </ViewModel>
+</Rive>

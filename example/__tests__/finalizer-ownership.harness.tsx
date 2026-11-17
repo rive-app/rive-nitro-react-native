@@ -22,6 +22,7 @@ import {
 const QUICK_START = require('../assets/rive/quick_start.riv');
 const DATABINDING = require('../assets/rive/databinding.riv');
 const DATABINDING_LISTS = require('../assets/rive/databinding_lists.riv');
+const ARTBOARD_SLOTS = require('../assets/rive/artboard_slots.riv');
 
 // Only the new Android backend frees native objects from JVM finalizers.
 const isAndroidExperimental = () =>
@@ -115,6 +116,49 @@ async function expectToReceive(values: string[], expected: string) {
 
 async function loadUnreferencedFile() {
   await RiveFileFactory.fromSource(QUICK_START, undefined);
+}
+
+function countFileFinalizations() {
+  const counter = { count: 0 };
+  RiveLog.setLogLevel('debug');
+  RiveLog.setHandler((_level, tag, message) => {
+    if (
+      tag === 'HybridRiveFile' &&
+      message.includes('garbage collected without dispose')
+    )
+      counter.count++;
+  });
+  return counter;
+}
+
+// Both slots have an `icon` property at the same relative path. Kept in a helper so JS holds no
+// reference to the source files, the nested instances or their properties.
+async function setTickersFromTwoFiles(host: ViewModelInstance) {
+  const fileA = await RiveFileFactory.fromSource(ARTBOARD_SLOTS, undefined);
+  const fileB = await RiveFileFactory.fromSource(ARTBOARD_SLOTS, undefined);
+  (await host.viewModelAsync('first'))!
+    .artboardProperty('icon')!
+    .set(fileA.getBindableArtboard('FirstTicker'));
+  (await host.viewModelAsync('second'))!
+    .artboardProperty('icon')!
+    .set(fileB.getBindableArtboard('SecondTicker'));
+}
+
+async function expectBothSlotsToTick(host: ViewModelInstance) {
+  const readTicks = () =>
+    Promise.all([
+      host.numberProperty('firstTick')!.getValueAsync(),
+      host.numberProperty('secondTick')!.getValueAsync(),
+    ]);
+  const [first, second] = await readTicks();
+  await waitFor(
+    async () => {
+      const [nextFirst, nextSecond] = await readTicks();
+      expect(nextFirst).not.toBe(first);
+      expect(nextSecond).not.toBe(second);
+    },
+    { timeout: 5000 }
+  );
 }
 
 describe('JVM finalizers keep in-use native objects open', () => {
@@ -227,6 +271,57 @@ describe('JVM finalizers keep instances with property listeners open', () => {
       await expectToReceive(names, 'After GC');
     } finally {
       unsubscribers.forEach((unsubscribe) => unsubscribe());
+    }
+  });
+});
+
+describe('JVM finalizers and bound artboards', () => {
+  it('artboards on two nested instances outlive their finalized files', async () => {
+    if (!isAndroidExperimental()) return;
+
+    const file = await RiveFileFactory.fromSource(ARTBOARD_SLOTS, undefined);
+    const host = file.viewModelByName('Host')!.createDefaultInstance()!;
+    let error: string | null = null;
+    const renderHost = () =>
+      render(
+        <View style={{ width: 200, height: 100 }}>
+          <RiveView
+            style={{ flex: 1 }}
+            file={file}
+            dataBind={host}
+            fit={Fit.Contain}
+            onError={(e) => (error = e.message)}
+          />
+        </View>
+      );
+
+    const finalizations = countFileFinalizations();
+    // Files dropped by earlier tests may still be waiting for their finalizers.
+    await collectGarbage();
+    finalizations.count = 0;
+    try {
+      await setTickersFromTwoFiles(host);
+      await renderHost();
+      await expectBothSlotsToTick(host);
+
+      // Both source files and the control file must be closed, or this passes without
+      // a bound artboard whose file was closed.
+      await loadUnreferencedFile();
+      await collectGarbage(() => finalizations.count >= 3);
+      await waitFor(() => expect(finalizations.count).toBe(3), {
+        timeout: 5000,
+      });
+      await expectBothSlotsToTick(host);
+
+      // A new view instances both bound artboards again.
+      cleanup();
+      await renderHost();
+      await expectBothSlotsToTick(host);
+      expect(error).toBeNull();
+    } finally {
+      cleanup();
+      RiveLog.resetHandler();
+      RiveLog.setLogLevel('warn');
     }
   });
 });

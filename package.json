@@ -43,6 +43,7 @@
     "nitrogen": "nitrogen && npx tsx scripts/nitrogen-postprocess.ts",
     "rive-gen-types": "node scripts/rive-gen-types.ts",
     "build:settle-probe": "rive example/assets/rive-src/settle_probe --once && cp example/assets/rive-src/settle_probe/build/settle_probe.riv example/assets/rive/ && node scripts/rive-gen-types.ts example/assets/rive/settle_probe.riv",
+    "build:artboard-slots": "rive example/assets/rive-src/artboard_slots --once && cp example/assets/rive-src/artboard_slots/build/artboard_slots.riv example/assets/rive/ && node scripts/rive-gen-types.ts example/assets/rive/artboard_slots.riv",
     "release": "release-it",
     "dev:ios": "cd example && xed ios",
     "dev:android": "cd example && open -a \"/Applications/Android Studio.app\" ./android",
