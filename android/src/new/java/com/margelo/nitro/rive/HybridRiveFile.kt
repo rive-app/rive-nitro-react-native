@@ -15,7 +15,8 @@ import kotlinx.coroutines.runBlocking
 class HybridRiveFile(
   internal var riveFile: RiveFile?,
   internal val riveWorker: CommandQueue,
-  private val registeredAssets: List<RegisteredAsset> = emptyList()
+  private val registeredAssets: List<RegisteredAsset> = emptyList(),
+  private val sourceByteSize: Int = 0
 ) : HybridRiveFileSpec() {
   companion object {
     private const val TAG = "HybridRiveFile"
@@ -26,6 +27,11 @@ class HybridRiveFile(
   // The finalizer calls dispose() again, and a second release would unregister
   // assets that a newer file registered under the same names.
   @Volatile private var disposed = false
+
+  // Hermes can't see the native file, so without this hint it collects dropped
+  // wrappers too rarely for their finalizers to free the file.
+  override val memorySize: Long
+    get() = sourceByteSize.toLong()
 
   // Deprecated: Use getViewModelNamesAsync instead
   override val viewModelCount: Double?
