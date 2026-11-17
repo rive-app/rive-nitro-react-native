@@ -74,7 +74,8 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
   private var registeredFile: HybridRiveFile? = null
 
   // The view keeps only the raw instance, which the wrapper closes when collected.
-  private var boundViewModelInstance: HybridViewModelInstance? = null
+  // Set on the UI thread and read by getViewModelInstance() on the JS thread.
+  @Volatile private var boundViewModelInstance: HybridViewModelInstance? = null
 
   override var artboardName: String? = null
     set(value) {
@@ -220,6 +221,10 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
         bindData = dataBind.toBindData()
       )
       view.configure(config, dataBindingChanged = dataBindingChanged, needsReload, initialUpdate = initialUpdate)
+      // Auto binding swaps the instance asynchronously, so keep the wrapper until the view lets go of it.
+      if (boundViewModelInstance?.viewModelInstance !== view.getViewModelInstance()) {
+        boundViewModelInstance = null
+      }
 
       if (needsReload && hybridFile != null) {
         hybridFile.registerView(this)
