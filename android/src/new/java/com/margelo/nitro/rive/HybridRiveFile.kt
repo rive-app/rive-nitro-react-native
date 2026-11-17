@@ -42,7 +42,7 @@ class HybridRiveFile(
 
   override fun getViewModelNamesAsync(): Promise<Array<String>> {
     val file = riveFile ?: return Promise.resolved(emptyArray())
-    return Promise.async {
+    return asyncRetaining(this) {
       file.getViewModelNames().toTypedArray()
     }
   }
@@ -153,7 +153,7 @@ class HybridRiveFile(
 
   override fun getArtboardCountAsync(): Promise<Double> {
     val file = riveFile ?: return Promise.resolved(0.0)
-    return Promise.async {
+    return asyncRetaining(this) {
       file.getArtboardNames().size.toDouble()
     }
   }
@@ -173,7 +173,7 @@ class HybridRiveFile(
 
   override fun getArtboardNamesAsync(): Promise<Array<String>> {
     val file = riveFile ?: return Promise.resolved(emptyArray())
-    return Promise.async {
+    return asyncRetaining(this) {
       file.getArtboardNames().toTypedArray()
     }
   }
@@ -184,7 +184,7 @@ class HybridRiveFile(
 
   override fun getEnums(): Promise<Array<RiveEnumDefinition>> {
     val file = riveFile ?: return Promise.resolved(emptyArray())
-    return Promise.async {
+    return asyncRetaining(this) {
       val enums = file.getEnums()
       enums
         .map { enum ->

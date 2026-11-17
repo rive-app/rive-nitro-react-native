@@ -65,7 +65,7 @@ class HybridViewModelInstance(
     )
     val file = parentFile.riveFile
       ?: return Promise.rejected(RuntimeException("The RiveFile backing this instance was disposed"))
-    return Promise.async {
+    return asyncRetaining(parentFile) {
       file
         .getViewModelProperties(name)
         .map { prop ->
