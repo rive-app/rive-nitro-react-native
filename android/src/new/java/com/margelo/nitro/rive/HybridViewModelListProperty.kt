@@ -18,7 +18,7 @@ class HybridViewModelListProperty(
   private val riveWorker: CommandQueue,
   private val parentFile: HybridRiveFile
 ) : HybridViewModelListPropertySpec(),
-  BaseHybridViewModelProperty<Unit> by BaseHybridViewModelPropertyImpl() {
+  BaseHybridViewModelProperty<Unit> by BaseHybridViewModelPropertyImpl(owner) {
   private val instance get() = owner.viewModelInstance
 
   companion object {

@@ -28,7 +28,7 @@ class HybridViewModelImageProperty internal constructor(
   private val riveWorker: CommandQueue,
   private val sequencer: ImagePropertySequencer
 ) : HybridViewModelImagePropertySpec(),
-  BaseHybridViewModelProperty<Unit> by BaseHybridViewModelPropertyImpl() {
+  BaseHybridViewModelProperty<Unit> by BaseHybridViewModelPropertyImpl(owner) {
   private val instance get() = owner.viewModelInstance
 
   companion object {

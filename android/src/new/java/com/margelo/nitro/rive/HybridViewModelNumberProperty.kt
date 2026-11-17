@@ -13,7 +13,7 @@ class HybridViewModelNumberProperty(
   private val owner: HybridViewModelInstance,
   private val path: String
 ) : HybridViewModelNumberPropertySpec(),
-  BaseHybridViewModelProperty<Float> by BaseHybridViewModelPropertyImpl() {
+  BaseHybridViewModelProperty<Float> by BaseHybridViewModelPropertyImpl(owner) {
   private val instance get() = owner.viewModelInstance
 
   companion object {

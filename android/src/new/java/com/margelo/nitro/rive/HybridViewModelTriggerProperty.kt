@@ -10,7 +10,7 @@ class HybridViewModelTriggerProperty(
   private val owner: HybridViewModelInstance,
   private val path: String
 ) : HybridViewModelTriggerPropertySpec(),
-  BaseHybridViewModelProperty<Unit> by BaseHybridViewModelPropertyImpl() {
+  BaseHybridViewModelProperty<Unit> by BaseHybridViewModelPropertyImpl(owner) {
   private val instance get() = owner.viewModelInstance
 
   override fun trigger() {

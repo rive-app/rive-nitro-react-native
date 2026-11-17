@@ -13,7 +13,7 @@ class HybridViewModelBooleanProperty(
   private val owner: HybridViewModelInstance,
   private val path: String
 ) : HybridViewModelBooleanPropertySpec(),
-  BaseHybridViewModelProperty<Boolean> by BaseHybridViewModelPropertyImpl() {
+  BaseHybridViewModelProperty<Boolean> by BaseHybridViewModelPropertyImpl(owner) {
   private val instance get() = owner.viewModelInstance
 
   companion object {

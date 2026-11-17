@@ -13,7 +13,7 @@ class HybridViewModelColorProperty(
   private val owner: HybridViewModelInstance,
   private val path: String
 ) : HybridViewModelColorPropertySpec(),
-  BaseHybridViewModelProperty<Int> by BaseHybridViewModelPropertyImpl() {
+  BaseHybridViewModelProperty<Int> by BaseHybridViewModelPropertyImpl(owner) {
   private val instance get() = owner.viewModelInstance
 
   companion object {

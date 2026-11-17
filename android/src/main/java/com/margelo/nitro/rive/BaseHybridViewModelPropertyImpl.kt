@@ -16,7 +16,11 @@ import java.util.concurrent.ConcurrentHashMap
 
 @Keep
 @DoNotStrip
-class BaseHybridViewModelPropertyImpl<T> : BaseHybridViewModelProperty<T> {
+class BaseHybridViewModelPropertyImpl<T>(
+  // The collecting coroutine references this delegate, so a listener keeps the owner (and the
+  // native instance it would close when finalized) alive until it is removed.
+  @Suppress("unused") private val owner: Any? = null
+) : BaseHybridViewModelProperty<T> {
   override var scope: CoroutineScope? = null
   override var job: Job? = null
   override val listeners = ConcurrentHashMap<String, (T) -> Unit>()

@@ -13,7 +13,7 @@ class HybridViewModelEnumProperty(
   private val owner: HybridViewModelInstance,
   private val path: String
 ) : HybridViewModelEnumPropertySpec(),
-  BaseHybridViewModelProperty<String> by BaseHybridViewModelPropertyImpl() {
+  BaseHybridViewModelProperty<String> by BaseHybridViewModelPropertyImpl(owner) {
   private val instance get() = owner.viewModelInstance
 
   companion object {
