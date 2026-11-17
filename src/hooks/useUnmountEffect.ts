@@ -34,22 +34,28 @@ export class Retainer {
 }
 
 /**
+ * Holds `retainer` from commit until a real unmount: hiding runs no insertion
+ * cleanup, and the passive retain delays the release past a deletion's passive
+ * cleanups, which run after its insertion cleanups.
+ */
+export function useRetain(retainer: Retainer): void {
+  useInsertionEffect(() => retainer.retain(), [retainer]);
+  useEffect(() => retainer.retain(), [retainer]);
+}
+
+/**
  * Runs `onUnmount` on a real unmount, not on the passive cleanups of an
  * `<Activity>` hide, Strict Mode or Fast Refresh, which keep the component's
  * refs and values (#448).
  *
- * Hiding runs no insertion cleanup, so the insertion effect holds the component
- * until it is deleted. React before 19.3 runs no cleanup for a deleted hidden
- * subtree, nor an insertion cleanup for a Suspense-hidden one, so those cases
- * wait for GC.
+ * React Native's renderer before React 19.3 runs no cleanup when a hidden
+ * `<Activity>` subtree is deleted, nor insertion cleanups when a subtree that
+ * Suspense hides is deleted while suspended, so those cases wait for GC.
  */
 export function useUnmountEffect(onUnmount: () => void): void {
   const onUnmountRef = useRef(onUnmount);
   onUnmountRef.current = onUnmount;
   const retainerRef = useRef<Retainer | null>(null);
   retainerRef.current ??= new Retainer(() => onUnmountRef.current());
-  const retainer = retainerRef.current;
-
-  useInsertionEffect(() => retainer.retain(), [retainer]);
-  useEffect(() => retainer.retain(), [retainer]);
+  useRetain(retainerRef.current);
 }

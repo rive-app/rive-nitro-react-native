@@ -106,12 +106,7 @@ export function useRiveProperty<P extends ViewModelProperty, T>(
 
     return () => {
       cancelled = true;
-      try {
-        removeListener();
-      } catch {
-        // Property may already be disposed by useDisposableMemo (deps change).
-        // Native dispose() handles listener cleanup, so this is safe to ignore.
-      }
+      removeListener();
     };
   }, [property, path]);
 

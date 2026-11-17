@@ -1,11 +1,10 @@
 import {
-  useEffect,
   useInsertionEffect,
   useRef,
   type DependencyList,
   type RefObject,
 } from 'react';
-import { Retainer } from './useUnmountEffect';
+import { Retainer, useRetain } from './useUnmountEffect';
 
 export function depsEqual(a: DependencyList, b: DependencyList): boolean {
   if (a.length !== b.length) return false;
@@ -93,9 +92,8 @@ export function useDisposableMemo<T>(
   useInsertionEffect(() => {
     state.current.committed = committed;
     if (liveRefRef.current) liveRefRef.current.current = committed.value;
-    return committed.retainer.retain();
   }, [committed]);
-  useEffect(() => committed.retainer.retain(), [committed]);
+  useRetain(committed.retainer);
 
   return entry.value;
 }
