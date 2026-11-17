@@ -36,8 +36,8 @@ function jsGC() {
 
 // Hermes' gc() drops the JNI references of unreachable wrappers; the large image
 // buffers are copied onto the Java heap, which makes ART collect and finalize them.
-async function collectGarbage() {
-  for (let round = 0; round < 4; round++) {
+async function collectGarbage(done: () => boolean = () => false) {
+  for (let round = 0; round < 4 && !done(); round++) {
     jsGC();
     for (let i = 0; i < 8; i++) {
       const image = await RiveImages.loadFromBytesAsync(
@@ -128,17 +128,11 @@ describe('JVM finalizers keep in-use native objects open', () => {
       if (tag === 'HybridRiveFile') messages.push(message);
     });
     try {
+      const finalized = () =>
+        messages.some((m) => m.includes('garbage collected without dispose'));
       await loadUnreferencedFile();
-      await collectGarbage();
-      await waitFor(
-        () =>
-          expect(
-            messages.some((m) =>
-              m.includes('garbage collected without dispose')
-            )
-          ).toBe(true),
-        { timeout: 5000 }
-      );
+      await collectGarbage(finalized);
+      await waitFor(() => expect(finalized()).toBe(true), { timeout: 5000 });
     } finally {
       RiveLog.resetHandler();
       RiveLog.setLogLevel('warn');
