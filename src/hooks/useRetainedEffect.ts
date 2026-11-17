@@ -17,11 +17,14 @@ export function useRetainedEffect(
   } | null>(null);
 
   useEffect(() => {
-    if (run.current) {
-      if (depsEqual(run.current.deps, deps)) return;
-      run.current.teardown?.();
+    const previous = run.current;
+    if (previous && depsEqual(previous.deps, deps)) return;
+    run.current = null;
+    try {
+      previous?.teardown?.();
+    } finally {
+      run.current = { deps, teardown: effect() };
     }
-    run.current = { deps, teardown: effect() };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
 
