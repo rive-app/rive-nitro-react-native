@@ -27,9 +27,21 @@ class HybridViewModel(
     private const val TAG = "HybridViewModel"
   }
 
+  private fun closeArtboard() {
+    val artboard = ownedArtboard ?: return
+    if (artboard.closed) return
+    runCatching { artboard.close() }
+      .onFailure { RiveLog.e(TAG, "Closing the artboard failed: ${it.message}") }
+  }
+
   override fun dispose() {
-    ownedArtboard?.let { runCatching { it.close() } }
+    closeArtboard()
     super.dispose()
+  }
+
+  // The deprecated synchronous instance path never disposes this wrapper.
+  protected fun finalize() {
+    closeArtboard()
   }
 
   override fun getPropertiesAsync(): Promise<Array<ViewModelPropertyInfo>> {

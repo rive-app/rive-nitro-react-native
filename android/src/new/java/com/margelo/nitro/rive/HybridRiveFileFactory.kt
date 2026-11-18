@@ -115,7 +115,7 @@ class HybridRiveFileFactory : HybridRiveFileFactorySpec() {
       else -> throw RuntimeException("Failed to load Rive file: unexpected result")
     }
 
-    return HybridRiveFile(riveFile, worker, registeredAssets)
+    return HybridRiveFile(riveFile, worker, registeredAssets, data.size)
   }
 
   override fun fromURL(url: String, loadCdn: Boolean, referencedAssets: ReferencedAssetsType?): Promise<HybridRiveFileSpec> {

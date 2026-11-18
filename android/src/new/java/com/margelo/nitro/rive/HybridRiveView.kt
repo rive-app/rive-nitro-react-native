@@ -73,6 +73,10 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
   private var initialUpdate = true
   private var registeredFile: HybridRiveFile? = null
 
+  // The view keeps only the raw instance, which the wrapper closes when collected.
+  // Set on the UI thread and read by getViewModelInstance() on the JS thread.
+  @Volatile private var boundViewModelInstance: HybridViewModelInstance? = null
+
   override var artboardName: String? = null
     set(value) {
       changed(field, value) { field = it }
@@ -131,15 +135,25 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
   override fun bindViewModelInstance(viewModelInstance: HybridViewModelInstanceSpec) =
     executeOnUiThread {
       val hybridVmi = viewModelInstance as? HybridViewModelInstance ?: return@executeOnUiThread
+      boundViewModelInstance = hybridVmi
       view.bindViewModelInstance(hybridVmi.viewModelInstance)
     }
 
   override fun getViewModelInstance(): HybridViewModelInstanceSpec? {
     val vmi = view.getViewModelInstance() ?: return null
     val hybridFile = file as? HybridRiveFile ?: return null
+    val dataBindInstance = dataBind?.asFirstOrNull() as? HybridViewModelInstance
+    val bound = listOfNotNull(boundViewModelInstance, dataBindInstance)
+      .firstOrNull { it.viewModelInstance === vmi }
     // The view owns (or JS-side dataBind owns) this instance — the wrapper
     // must not close it on dispose.
-    return HybridViewModelInstance(vmi, hybridFile.riveWorker, hybridFile, ownsInstance = false)
+    return HybridViewModelInstance(
+      vmi,
+      hybridFile.riveWorker,
+      hybridFile,
+      ownsInstance = false,
+      owner = bound?.owningWrapper
+    )
   }
 
   override fun play(): Promise<Unit> = Promise.async { view.play() }
@@ -207,6 +221,10 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
         bindData = dataBind.toBindData()
       )
       view.configure(config, dataBindingChanged = dataBindingChanged, needsReload, initialUpdate = initialUpdate)
+      // Auto binding swaps the instance asynchronously, so keep the wrapper until the view lets go of it.
+      if (boundViewModelInstance?.viewModelInstance !== view.getViewModelInstance()) {
+        boundViewModelInstance = null
+      }
 
       if (needsReload && hybridFile != null) {
         hybridFile.registerView(this)
