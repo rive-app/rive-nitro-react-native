@@ -29,7 +29,7 @@ class HybridViewModelImageProperty(private val viewModelImage: ViewModelImagePro
       ?: throw IllegalStateException("RiveImage has been disposed")
   }
 
-  override fun setAsync(image: HybridRiveImageSpec?): Promise<Unit> {
+  override fun setValueAsync(image: HybridRiveImageSpec?): Promise<Unit> {
     set(image)
     return Promise.resolved(Unit)
   }

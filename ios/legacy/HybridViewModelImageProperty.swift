@@ -32,7 +32,7 @@ class HybridViewModelImageProperty: HybridViewModelImagePropertySpec, ValuedProp
     }
   }
 
-  func setAsync(image: HybridRiveImageSpec?) throws -> Promise<Void> {
+  func setValueAsync(image: HybridRiveImageSpec?) throws -> Promise<Void> {
     try set(image: image)
     return Promise.resolved(withResult: ())
   }

@@ -58,8 +58,8 @@ namespace margelo::nitro::rive {
     static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<JHybridRiveImageSpec::JavaPart> /* image */)>("set");
     method(_javaPart, image.has_value() ? std::dynamic_pointer_cast<JHybridRiveImageSpec>(image.value())->getJavaPart() : nullptr);
   }
-  std::shared_ptr<Promise<void>> JHybridViewModelImagePropertySpec::setAsync(const std::optional<std::shared_ptr<HybridRiveImageSpec>>& image) {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<JHybridRiveImageSpec::JavaPart> /* image */)>("setAsync");
+  std::shared_ptr<Promise<void>> JHybridViewModelImagePropertySpec::setValueAsync(const std::optional<std::shared_ptr<HybridRiveImageSpec>>& image) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<JHybridRiveImageSpec::JavaPart> /* image */)>("setValueAsync");
     auto __result = method(_javaPart, image.has_value() ? std::dynamic_pointer_cast<JHybridRiveImageSpec>(image.value())->getJavaPart() : nullptr);
     return [&]() {
       auto __promise = Promise<void>::create();

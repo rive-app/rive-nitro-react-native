@@ -16,7 +16,7 @@ function pngBytes(): ArrayBuffer {
 }
 
 // Only the new Android backend defers decoding to the property, so elsewhere
-// RiveImages rejects these bytes before they can reach setAsync.
+// RiveImages rejects these bytes before they can reach setValueAsync.
 const decodesInProperty =
   Platform.OS === 'android' && RiveFileFactory.getBackend() === 'experimental';
 
@@ -30,24 +30,24 @@ async function loadImageInstance() {
   return { file, instance: instance!, prop: prop! };
 }
 
-describe('ViewModelImageProperty.setAsync', () => {
+describe('ViewModelImageProperty.setValueAsync', () => {
   it('resolves once the image is applied', async () => {
     const { file, instance, prop } = await loadImageInstance();
     const image = await RiveImages.loadFromBytesAsync(pngBytes());
 
-    await expect(prop.setAsync(image)).resolves.toBeUndefined();
+    await expect(prop.setValueAsync(image)).resolves.toBeUndefined();
 
     prop.dispose();
     instance.dispose();
     file.dispose();
   });
 
-  it('resolves a call superseded by a newer setAsync', async () => {
+  it('resolves a call superseded by a newer setValueAsync', async () => {
     const { file, instance, prop } = await loadImageInstance();
     const image = await RiveImages.loadFromBytesAsync(pngBytes());
 
-    const older = prop.setAsync(image);
-    const newer = prop.setAsync(image);
+    const older = prop.setValueAsync(image);
+    const newer = prop.setValueAsync(image);
 
     await expect(older).resolves.toBeUndefined();
     await expect(newer).resolves.toBeUndefined();
@@ -62,7 +62,7 @@ describe('ViewModelImageProperty.setAsync', () => {
     const image = await RiveImages.loadFromBytesAsync(pngBytes());
     const samePath = instance.imageProperty('bound_image')!;
 
-    const older = prop.setAsync(image);
+    const older = prop.setValueAsync(image);
     samePath.set(image);
 
     await expect(older).resolves.toBeUndefined();
@@ -77,8 +77,8 @@ describe('ViewModelImageProperty.setAsync', () => {
     const { file, instance, prop } = await loadImageInstance();
     const image = await RiveImages.loadFromBytesAsync(pngBytes());
 
-    const older = prop.setAsync(image);
-    const clear = prop.setAsync(undefined);
+    const older = prop.setValueAsync(image);
+    const clear = prop.setValueAsync(undefined);
 
     await expect(older).resolves.toBeUndefined();
     await expect(clear).resolves.toBeUndefined();
@@ -92,8 +92,8 @@ describe('ViewModelImageProperty.setAsync', () => {
     const { file, instance, prop } = await loadImageInstance();
     const image = await RiveImages.loadFromBytesAsync(pngBytes());
 
-    await prop.setAsync(image);
-    await expect(prop.setAsync(undefined)).resolves.toBeUndefined();
+    await prop.setValueAsync(image);
+    await expect(prop.setValueAsync(undefined)).resolves.toBeUndefined();
 
     prop.dispose();
     instance.dispose();
@@ -107,11 +107,11 @@ describe('ViewModelImageProperty.setAsync', () => {
       new Uint8Array([1, 2, 3, 4]).buffer
     );
 
-    await expect(prop.setAsync(corrupt)).rejects.toBeDefined();
+    await expect(prop.setValueAsync(corrupt)).rejects.toBeDefined();
 
     // A failed decode must not stop later sets from being processed.
     const image = await RiveImages.loadFromBytesAsync(pngBytes());
-    await expect(prop.setAsync(image)).resolves.toBeUndefined();
+    await expect(prop.setValueAsync(image)).resolves.toBeUndefined();
 
     prop.dispose();
     instance.dispose();
@@ -126,8 +126,8 @@ describe('ViewModelImageProperty.setAsync', () => {
     );
     const image = await RiveImages.loadFromBytesAsync(pngBytes());
 
-    const older = prop.setAsync(corrupt);
-    const newer = prop.setAsync(image);
+    const older = prop.setValueAsync(corrupt);
+    const newer = prop.setValueAsync(image);
 
     await expect(older).rejects.toBeDefined();
     await expect(newer).resolves.toBeUndefined();
@@ -144,8 +144,8 @@ describe('ViewModelImageProperty.setAsync', () => {
     const order: string[] = [];
 
     await Promise.all([
-      prop.setAsync(image).then(() => order.push('set')),
-      samePath.setAsync(undefined).then(() => order.push('clear')),
+      prop.setValueAsync(image).then(() => order.push('set')),
+      samePath.setValueAsync(undefined).then(() => order.push('clear')),
     ]);
 
     expect(order).toEqual(['set', 'clear']);

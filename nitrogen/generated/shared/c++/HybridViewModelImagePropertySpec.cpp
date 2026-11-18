@@ -16,7 +16,7 @@ namespace margelo::nitro::rive {
     // load custom methods/properties
     registerHybrids(this, [](Prototype& prototype) {
       prototype.registerHybridMethod("set", &HybridViewModelImagePropertySpec::set);
-      prototype.registerHybridMethod("setAsync", &HybridViewModelImagePropertySpec::setAsync);
+      prototype.registerHybridMethod("setValueAsync", &HybridViewModelImagePropertySpec::setValueAsync);
       prototype.registerHybridMethod("addListener", &HybridViewModelImagePropertySpec::addListener);
       prototype.registerHybridMethod("removeListeners", &HybridViewModelImagePropertySpec::removeListeners);
     });

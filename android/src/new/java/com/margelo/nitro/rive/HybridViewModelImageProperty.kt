@@ -32,10 +32,10 @@ class HybridViewModelImageProperty(
   }
 
   override fun set(image: HybridRiveImageSpec?) {
-    setAsync(image).catch { Log.e(TAG, "Failed to set image for path '$path'", it) }
+    setValueAsync(image).catch { Log.e(TAG, "Failed to set image for path '$path'", it) }
   }
 
-  override fun setAsync(image: HybridRiveImageSpec?): Promise<Unit> {
+  override fun setValueAsync(image: HybridRiveImageSpec?): Promise<Unit> {
     // Read now, since JS may dispose the image while the write is still queued.
     val bytes = (image as? HybridRiveImage)?.let {
       it.rawData ?: throw IllegalStateException("RiveImage has been disposed")

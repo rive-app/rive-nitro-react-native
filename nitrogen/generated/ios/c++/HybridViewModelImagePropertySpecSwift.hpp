@@ -81,8 +81,8 @@ namespace margelo::nitro::rive {
         std::rethrow_exception(__result.error());
       }
     }
-    inline std::shared_ptr<Promise<void>> setAsync(const std::optional<std::shared_ptr<HybridRiveImageSpec>>& image) override {
-      auto __result = _swiftPart.setAsync(image);
+    inline std::shared_ptr<Promise<void>> setValueAsync(const std::optional<std::shared_ptr<HybridRiveImageSpec>>& image) override {
+      auto __result = _swiftPart.setValueAsync(image);
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }

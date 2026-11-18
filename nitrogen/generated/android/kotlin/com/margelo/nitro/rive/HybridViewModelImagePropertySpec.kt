@@ -36,7 +36,7 @@ abstract class HybridViewModelImagePropertySpec: HybridViewModelPropertySpec() {
   
   @DoNotStrip
   @Keep
-  abstract fun setAsync(image: HybridRiveImageSpec?): Promise<Unit>
+  abstract fun setValueAsync(image: HybridRiveImageSpec?): Promise<Unit>
   
   abstract fun addListener(onChanged: () -> Unit): () -> Unit
   

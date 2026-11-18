@@ -28,12 +28,12 @@ class HybridViewModelImageProperty: HybridViewModelImagePropertySpec {
   }
 
   func set(image: (any HybridRiveImageSpec)?) throws {
-    _ = try setAsync(image: image).catch { error in
+    _ = try setValueAsync(image: image).catch { error in
       RCTLogError("HybridViewModelImageProperty: Failed to decode/set image: \(error)")
     }
   }
 
-  func setAsync(image: (any HybridRiveImageSpec)?) throws -> Promise<Void> {
+  func setValueAsync(image: (any HybridRiveImageSpec)?) throws -> Promise<Void> {
     guard let instance = instance, let prop = prop, let worker = worker else {
       throw RuntimeError.error(withMessage: "ImageProperty not properly initialized")
     }

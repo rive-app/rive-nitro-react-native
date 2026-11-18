@@ -150,9 +150,9 @@ open class HybridViewModelImagePropertySpec_cxx : HybridViewModelPropertySpec_cx
   }
   
   @inline(__always)
-  public final func setAsync(image: bridge.std__optional_std__shared_ptr_HybridRiveImageSpec__) -> bridge.Result_std__shared_ptr_Promise_void___ {
+  public final func setValueAsync(image: bridge.std__optional_std__shared_ptr_HybridRiveImageSpec__) -> bridge.Result_std__shared_ptr_Promise_void___ {
     do {
-      let __result = try self.__implementation.setAsync(image: { () -> (any HybridRiveImageSpec)? in
+      let __result = try self.__implementation.setValueAsync(image: { () -> (any HybridRiveImageSpec)? in
         if bridge.has_value_std__optional_std__shared_ptr_HybridRiveImageSpec__(image) {
           let __unwrapped = bridge.get_std__optional_std__shared_ptr_HybridRiveImageSpec__(image)
           return { () -> any HybridRiveImageSpec in
