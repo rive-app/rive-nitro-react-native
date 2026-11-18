@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.annotation.Keep
 import app.rive.ImageAsset
 import app.rive.Result
+import app.rive.RiveResourceClosedException
 import app.rive.ViewModelInstance
 import app.rive.core.CommandQueue
 import com.facebook.proguard.annotations.DoNotStrip
@@ -43,6 +44,11 @@ class HybridViewModelImageProperty(
     val promise = Promise<Unit>()
     writes.trySend {
       try {
+        // A write queued before the instance was disposed has nothing left to apply to.
+        if (instance.closed) {
+          promise.resolve(Unit)
+          return@trySend
+        }
         if (bytes == null) {
           instance.setImage(path, null)
         } else {
@@ -55,6 +61,9 @@ class HybridViewModelImageProperty(
         }
         RiveReactNativeView.onViewModelChanged()
         promise.resolve(Unit)
+      } catch (e: RiveResourceClosedException) {
+        // JS can dispose the instance while the decode runs, after the check above.
+        if (instance.closed) promise.resolve(Unit) else promise.reject(e)
       } catch (e: Throwable) {
         promise.reject(e)
       }
