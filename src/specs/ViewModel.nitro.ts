@@ -233,7 +233,11 @@ export interface ViewModelTriggerProperty
 export interface ViewModelImageProperty
   extends ViewModelProperty,
     ObservableProperty {
-  /** Set the image property value */
+  /**
+   * Set the image property value.
+   *
+   * Pass undefined to clear the property back to its unset state and release the bound image.
+   */
   set(image: RiveImage | undefined): void;
   /** Add a listener to the view model image property. Returns a function to remove the listener. */
   addListener(onChanged: () => void): () => void;
