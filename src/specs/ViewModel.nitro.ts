@@ -239,9 +239,9 @@ export interface ViewModelImageProperty
    * Set the image property value, or clear it by passing undefined.
    *
    * Resolves when this image has been applied to the instance. It does not wait for a draw,
-   * so the image may not be on screen yet. Rejects if decoding this image fails. On the new
-   * backends the path is not checked, so a write to a missing path also resolves. Calls are
-   * applied in order, so the last call wins.
+   * so the image may not be on screen yet. Rejects if decoding this image fails. The path
+   * is not checked, so a write to a missing path also resolves. Calls are applied in order,
+   * so the last call wins.
    */
   setValueAsync(image: RiveImage | undefined): Promise<void>;
   /** Add a listener to the view model image property. Returns a function to remove the listener. */
