@@ -2,6 +2,17 @@ import RiveRuntime
 import NitroModules
 
 class HybridViewModelImageProperty: HybridViewModelImagePropertySpec {
+  private typealias Write = @MainActor () async -> Void
+
+  // Every image write runs to completion in call order, so a clear cannot overtake a pending decode.
+  private static let writes: AsyncStream<Write>.Continuation = {
+    let (stream, continuation) = AsyncStream.makeStream(of: Write.self)
+    Task { @MainActor in
+      for await write in stream { await write() }
+    }
+    return continuation
+  }()
+
   private var instance: ViewModelInstance?
   private var prop: ImageProperty?
   private var worker: Worker?
@@ -17,21 +28,37 @@ class HybridViewModelImageProperty: HybridViewModelImagePropertySpec {
   }
 
   func set(image: (any HybridRiveImageSpec)?) throws {
+    _ = try setValueAsync(image: image).catch { error in
+      RCTLogError("HybridViewModelImageProperty: Failed to decode/set image: \(error)")
+    }
+  }
+
+  func setValueAsync(image: (any HybridRiveImageSpec)?) throws -> Promise<Void> {
     guard let instance = instance, let prop = prop, let worker = worker else {
       throw RuntimeError.error(withMessage: "ImageProperty not properly initialized")
     }
-    guard let hybridImage = image as? HybridRiveImage else {
-      throw RuntimeError.error(withMessage: "Invalid image type - expected HybridRiveImage")
+    var data: Data?
+    if let image = image {
+      guard let hybridImage = image as? HybridRiveImage else {
+        throw RuntimeError.error(withMessage: "Invalid image type - expected HybridRiveImage")
+      }
+      data = hybridImage.rawData
     }
 
-    Task { @MainActor in
+    let promise = Promise<Void>()
+    Self.writes.yield { [data] in
       do {
-        let experimentalImage = try await worker.decodeImage(from: hybridImage.rawData)
-        instance.setValue(of: prop, to: experimentalImage)
+        var decoded: Image?
+        if let data = data {
+          decoded = try await worker.decodeImage(from: data)
+        }
+        instance.setValue(of: prop, to: decoded)
+        promise.resolve()
       } catch {
-        RCTLogError("HybridViewModelImageProperty: Failed to decode/set image: \(error)")
+        promise.reject(withError: error)
       }
     }
+    return promise
   }
 
   func addListener(onChanged: @escaping () -> Void) throws -> () -> Void {

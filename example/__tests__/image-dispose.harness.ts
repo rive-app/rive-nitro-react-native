@@ -35,13 +35,7 @@ describe('RiveImage disposal', () => {
     const second = await RiveImages.loadFromBytesAsync(pngBytes());
     prop.set(second);
     second.dispose();
-    // The new iOS runtime can't clear image properties yet (#360)
-    if (
-      Platform.OS !== 'ios' ||
-      RiveFileFactory.getBackend() !== 'experimental'
-    ) {
-      prop.set(undefined);
-    }
+    prop.set(undefined);
 
     prop.dispose();
     instance.dispose();

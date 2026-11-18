@@ -7,7 +7,6 @@ import app.rive.ViewModelInstanceSource
 import app.rive.core.CommandQueue
 import com.facebook.proguard.annotations.DoNotStrip
 import com.margelo.nitro.core.Promise
-import java.util.concurrent.ConcurrentHashMap
 
 @Keep
 @DoNotStrip
@@ -31,8 +30,6 @@ class HybridViewModelInstance(
   /** The wrapper that closes this instance, or null when a view owns it. */
   internal val owningWrapper: HybridViewModelInstance?
     get() = if (ownsInstance) this else owner
-
-  private val imageSequencers = ConcurrentHashMap<String, ImagePropertySequencer>()
 
   private fun closeInstance() {
     if (!ownsInstance || viewModelInstance.closed) return
@@ -98,8 +95,7 @@ class HybridViewModelInstance(
 
   override fun imageProperty(path: String): HybridViewModelImagePropertySpec? {
     return try {
-      val sequencer = imageSequencers.getOrPut(path) { ImagePropertySequencer() }
-      HybridViewModelImageProperty(this, path, riveWorker, sequencer)
+      HybridViewModelImageProperty(this, path, riveWorker)
     } catch (e: Exception) {
       Log.e(TAG, "imageProperty failed for path '$path'", e)
       null
