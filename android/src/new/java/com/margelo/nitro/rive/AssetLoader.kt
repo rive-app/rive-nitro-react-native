@@ -10,6 +10,8 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.Dispatchers
 
+private const val TAG = "AssetLoader"
+
 /** An asset registered on the shared command queue on behalf of one file. */
 class RegisteredAsset(
   private val name: String,
@@ -17,13 +19,13 @@ class RegisteredAsset(
 ) {
   fun release() {
     runCatching { asset.unregister(name) }
+      .onFailure { RiveLog.e(TAG, "Unregistering '$name' failed: ${it.message}") }
     runCatching { asset.close() }
+      .onFailure { RiveLog.e(TAG, "Closing '$name' failed: ${it.message}") }
   }
 }
 
 object AssetLoader {
-  private const val TAG = "AssetLoader"
-
   /**
    * Registers the referenced assets and returns them so the owning file can
    * release (unregister + close) them on dispose — registration is global

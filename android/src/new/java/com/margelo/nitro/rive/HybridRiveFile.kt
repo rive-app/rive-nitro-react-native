@@ -15,13 +15,22 @@ import kotlinx.coroutines.runBlocking
 class HybridRiveFile(
   internal var riveFile: RiveFile?,
   internal val riveWorker: CommandQueue,
-  private val registeredAssets: List<RegisteredAsset> = emptyList()
+  private val registeredAssets: List<RegisteredAsset> = emptyList(),
+  private val sourceByteSize: Int = 0
 ) : HybridRiveFileSpec() {
   companion object {
     private const val TAG = "HybridRiveFile"
   }
 
   private val weakViews = mutableListOf<WeakReference<HybridRiveView>>()
+
+  // A second dispose() from JS must not unregister assets that a newer file registered under the same names.
+  @Volatile private var disposed = false
+
+  // Hermes can't see the native file, so without this hint it collects dropped
+  // wrappers too rarely for their finalizers to free the file.
+  override val memorySize: Long
+    get() = sourceByteSize.toLong()
 
   // Deprecated: Use getViewModelNamesAsync instead
   override val viewModelCount: Double?
@@ -36,10 +45,11 @@ class HybridRiveFile(
       }
     }
 
+  // The async methods read riveFile inside the coroutine, so it holds this wrapper and the
+  // finalizer can't close the file before the call completes.
   override fun getViewModelNamesAsync(): Promise<Array<String>> {
-    val file = riveFile ?: return Promise.resolved(emptyArray())
     return Promise.async {
-      file.getViewModelNames().toTypedArray()
+      riveFile?.getViewModelNames()?.toTypedArray() ?: emptyArray()
     }
   }
 
@@ -148,9 +158,8 @@ class HybridRiveFile(
     }
 
   override fun getArtboardCountAsync(): Promise<Double> {
-    val file = riveFile ?: return Promise.resolved(0.0)
     return Promise.async {
-      file.getArtboardNames().size.toDouble()
+      riveFile?.getArtboardNames()?.size?.toDouble() ?: 0.0
     }
   }
 
@@ -168,9 +177,8 @@ class HybridRiveFile(
     }
 
   override fun getArtboardNamesAsync(): Promise<Array<String>> {
-    val file = riveFile ?: return Promise.resolved(emptyArray())
     return Promise.async {
-      file.getArtboardNames().toTypedArray()
+      riveFile?.getArtboardNames()?.toTypedArray() ?: emptyArray()
     }
   }
 
@@ -179,9 +187,8 @@ class HybridRiveFile(
   }
 
   override fun getEnums(): Promise<Array<RiveEnumDefinition>> {
-    val file = riveFile ?: return Promise.resolved(emptyArray())
     return Promise.async {
-      val enums = file.getEnums()
+      val enums = riveFile?.getEnums() ?: return@async emptyArray()
       enums
         .map { enum ->
         RiveEnumDefinition(
@@ -208,9 +215,20 @@ class HybridRiveFile(
   }
 
   override fun dispose() {
+    if (disposed) return
+    disposed = true
     weakViews.clear()
     registeredAssets.forEach { it.release() }
     riveFile?.close()
     riveFile = null
+  }
+
+  // React before 19.3 gives no unmount signal for a hidden subtree (#448), and
+  // only close() frees a RiveFile's native memory.
+  protected fun finalize() {
+    if (disposed || riveFile == null) return
+    RiveLog.d(TAG, "Closing a file that was garbage collected without dispose()")
+    runCatching { dispose() }
+      .onFailure { RiveLog.e(TAG, "Closing the file failed: ${it.message}") }
   }
 }

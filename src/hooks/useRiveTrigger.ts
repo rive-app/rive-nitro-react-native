@@ -62,7 +62,7 @@ export function useRiveTrigger(
     liveRef
   );
 
-  if (liveRef.current) {
+  if (property) {
     wasEverLive.current = true;
   }
 
@@ -88,11 +88,7 @@ export function useRiveTrigger(
     });
 
     return () => {
-      try {
-        removeListener();
-      } catch {
-        // Property may already be disposed by useDisposableMemo (deps change).
-      }
+      removeListener();
     };
   }, [property]);
 

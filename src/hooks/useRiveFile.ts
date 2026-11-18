@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo, useRef } from 'react';
 import { Image } from 'react-native';
 import { RiveFileFactory } from '../core/RiveFile';
 import { callDispose } from '../core/callDispose';
+import { useRetainedEffect } from './useRetainedEffect';
 import type {
   RiveFile,
   ResolvedReferencedAsset,
@@ -135,7 +136,7 @@ export function useRiveFile(
   const inputKind = isUriInput(input) ? 'uri' : 'primitive';
   const inputValue = isUriInput(input) ? input.uri : input;
 
-  useEffect(() => {
+  useRetainedEffect(() => {
     let currentFile: RiveFile | null = null;
     let cancelled = false;
 

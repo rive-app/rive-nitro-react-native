@@ -1,0 +1,6 @@
+# Test fixture authored in RML. Rebuild with `yarn build:artboard-slots`
+# (needs the Rive CLI: https://rive.app/docs/cli/getting-started).
+name: artboard_slots
+logs:
+  file: build/rive.log
+  problems: build/problems.log

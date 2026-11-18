@@ -5,7 +5,6 @@ import androidx.annotation.Keep
 import app.rive.ImageAsset
 import app.rive.Result
 import app.rive.RiveResourceClosedException
-import app.rive.ViewModelInstance
 import app.rive.core.CommandQueue
 import com.facebook.proguard.annotations.DoNotStrip
 import com.margelo.nitro.core.Promise
@@ -17,12 +16,14 @@ import com.rive.RiveReactNativeView
 
 @Keep
 @DoNotStrip
-class HybridViewModelImageProperty(
-  private val instance: ViewModelInstance,
+class HybridViewModelImageProperty internal constructor(
+  private val owner: HybridViewModelInstance,
   private val path: String,
   private val riveWorker: CommandQueue
 ) : HybridViewModelImagePropertySpec(),
-  BaseHybridViewModelProperty<Unit> by BaseHybridViewModelPropertyImpl() {
+  BaseHybridViewModelProperty<Unit> by BaseHybridViewModelPropertyImpl(owner) {
+  private val instance get() = owner.viewModelInstance
+
   companion object {
     private const val TAG = "HybridViewModelImageProperty"
 

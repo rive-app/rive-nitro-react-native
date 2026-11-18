@@ -348,7 +348,7 @@ describe('useRiveProperty', () => {
       };
     };
 
-    it('setter captured before a path change writes to the current property, not the disposed one', () => {
+    it('setter captured before a path change writes to the current property, not the disposed one', async () => {
       const oldProperty = createDisposeTrackingProperty('old');
       const newProperty = createDisposeTrackingProperty('new');
       const mockInstance = createMockViewModelInstance({
@@ -368,8 +368,8 @@ describe('useRiveProperty', () => {
 
       const staleSetter = result.current[1];
 
-      // Deps change → useDisposableMemo disposes oldProperty during render
       rerender({ path: 'drinks/coffee' });
+      await act(async () => {});
       expect(oldProperty.dispose).toHaveBeenCalled();
 
       act(() => {
@@ -399,7 +399,6 @@ describe('useRiveProperty', () => {
         const staleSetter = result.current[1];
 
         unmount();
-        // In __DEV__, useDisposableMemo defers unmount disposal via setTimeout(0)
         act(() => {
           jest.runAllTimers();
         });

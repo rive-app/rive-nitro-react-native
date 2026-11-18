@@ -18,17 +18,34 @@ class HybridViewModelInstance(
   private val _instanceName: String? = null,
   // False for wrappers that alias an instance owned elsewhere (e.g. the
   // view's bound instance returned by RiveView.getViewModelInstance()).
-  private val ownsInstance: Boolean = true
+  private val ownsInstance: Boolean = true,
+  // Held by an alias so the owning wrapper's finalizer can't close the
+  // instance while the alias, or a view it was bound to, still uses it.
+  private val owner: HybridViewModelInstance? = null
 ) : HybridViewModelInstanceSpec() {
   companion object {
     private const val TAG = "HybridViewModelInstance"
   }
 
+  /** The wrapper that closes this instance, or null when a view owns it. */
+  internal val owningWrapper: HybridViewModelInstance?
+    get() = if (ownsInstance) this else owner
+
+  private fun closeInstance() {
+    if (!ownsInstance || viewModelInstance.closed) return
+    runCatching { viewModelInstance.close() }
+      .onFailure { RiveLog.e(TAG, "Closing the instance failed: ${it.message}") }
+  }
+
   override fun dispose() {
-    if (ownsInstance) {
-      runCatching { viewModelInstance.close() }
-    }
+    closeInstance()
     super.dispose()
+  }
+
+  // Properties and views keep this wrapper reachable while they use the
+  // instance, so it can't be collected out from under them.
+  protected fun finalize() {
+    closeInstance()
   }
 
   // TODO: Workaround — rive-android experimental SDK doesn't expose ViewModelInstance.name.
@@ -47,9 +64,9 @@ class HybridViewModelInstance(
           "ViewModel it was created from instead."
       )
     )
-    val file = parentFile.riveFile
-      ?: return Promise.rejected(RuntimeException("The RiveFile backing this instance was disposed"))
     return Promise.async {
+      val file = parentFile.riveFile
+        ?: throw RuntimeException("The RiveFile backing this instance was disposed")
       file
         .getViewModelProperties(name)
         .map { prop ->
@@ -59,26 +76,26 @@ class HybridViewModelInstance(
   }
 
   override fun numberProperty(path: String) =
-    HybridViewModelNumberProperty(viewModelInstance, path)
+    HybridViewModelNumberProperty(this, path)
 
   override fun stringProperty(path: String) =
-    HybridViewModelStringProperty(viewModelInstance, path)
+    HybridViewModelStringProperty(this, path)
 
   override fun booleanProperty(path: String) =
-    HybridViewModelBooleanProperty(viewModelInstance, path)
+    HybridViewModelBooleanProperty(this, path)
 
   override fun colorProperty(path: String) =
-    HybridViewModelColorProperty(viewModelInstance, path)
+    HybridViewModelColorProperty(this, path)
 
   override fun enumProperty(path: String) =
-    HybridViewModelEnumProperty(viewModelInstance, path)
+    HybridViewModelEnumProperty(this, path)
 
   override fun triggerProperty(path: String) =
-    HybridViewModelTriggerProperty(viewModelInstance, path)
+    HybridViewModelTriggerProperty(this, path)
 
   override fun imageProperty(path: String): HybridViewModelImagePropertySpec? {
     return try {
-      HybridViewModelImageProperty(viewModelInstance, path, riveWorker)
+      HybridViewModelImageProperty(this, path, riveWorker)
     } catch (e: Exception) {
       Log.e(TAG, "imageProperty failed for path '$path'", e)
       null
@@ -87,7 +104,7 @@ class HybridViewModelInstance(
 
   override fun listProperty(path: String): HybridViewModelListPropertySpec? {
     return try {
-      HybridViewModelListProperty(viewModelInstance, path, riveWorker, parentFile)
+      HybridViewModelListProperty(this, path, riveWorker, parentFile)
     } catch (e: Exception) {
       Log.e(TAG, "listProperty failed for path '$path'", e)
       null
@@ -96,7 +113,7 @@ class HybridViewModelInstance(
 
   override fun artboardProperty(path: String): HybridViewModelArtboardPropertySpec? {
     return try {
-      HybridViewModelArtboardProperty(viewModelInstance, path, parentFile)
+      HybridViewModelArtboardProperty(this, path, parentFile)
     } catch (e: Exception) {
       Log.e(TAG, "artboardProperty failed for path '$path'", e)
       null

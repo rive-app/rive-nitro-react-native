@@ -265,6 +265,7 @@ describe('useRiveFile - disposal', () => {
       expect(result.current.riveFile).toBe(file);
     });
     unmount();
+    await act(async () => {});
 
     expect(file.dispose).toHaveBeenCalledTimes(1);
   });
