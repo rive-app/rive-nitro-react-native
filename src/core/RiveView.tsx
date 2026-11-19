@@ -22,9 +22,18 @@ export interface RiveViewProps<
   A extends SchemaOf<T>['artboards'] = SchemaOf<T>['defaultArtboard'],
 > extends Omit<
     NitroRiveViewProps,
-    'onError' | 'file' | 'artboardName' | 'stateMachineName'
+    'onError' | 'file' | 'artboardName' | 'stateMachineName' | 'renderEnabled'
   > {
   onError?: (error: RiveError) => void;
+  /**
+   * Manual control over rendering, for occlusion the view cannot detect
+   * itself (e.g. a screen pushed over it by a JS stack navigator, a Modal, or
+   * a bottom sheet): false skips draws while the state machine keeps
+   * advancing (Android only), 'pause' also stops advancing — like an
+   * imperative pause() that composes with the ref methods. Defaults to true.
+   * New runtimes only.
+   */
+  renderEnabled?: boolean | 'pause';
   file: TypedRiveFile<T>;
   /** Name of the artboard to display. When using a generated schema, only valid artboard names are accepted. */
   artboardName?: A;
@@ -62,6 +71,7 @@ const defaultOnError = (error: RiveError) =>
  * @property {Alignment} [alignment] - How the Rive graphic should be aligned within its container
  * @property {Fit} [fit] - How the Rive graphic should fit within its container
  * @property {number | FrameRateRange} [frameRate] - Preferred frame rate for the render loop (new runtimes only)
+ * @property {boolean | 'pause'} [renderEnabled=true] - false skips drawing while the state machine keeps advancing (Android only); 'pause' also stops advancing, for views covered by UI the view can't detect (new runtimes only)
  * @property {Object} [style] - React Native style object for container customization
  * @property {(error: RiveError) => void} [onError] - Callback function that is called when an error occurs
  *

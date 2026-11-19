@@ -37,6 +37,10 @@ import kotlinx.coroutines.withContext
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.nanoseconds
 
+// The renderEnabled prop (boolean | 'pause'): draw normally, keep advancing
+// but skip draws, or stop both.
+enum class RenderMode { Enabled, SkipDraws, Paused }
+
 sealed class BindData {
   data object None : BindData()
   data object Auto : BindData()
@@ -90,6 +94,9 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
     }
 
   private var framePacer = framePacer(null)
+
+  // Main thread only; set through setRenderMode().
+  private var renderMode = RenderMode.Enabled
 
   private fun framePacer(fps: Double?) = RiveFramePacer(
     fps?.takeIf { it.isFinite() && it > 0 }?.let { RiveFrameRate.Capped(it.toFloat()) } ?: RiveFrameRate.Unbounded
@@ -241,18 +248,22 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
       lastFrameTimeNs = frameTimeNanos
 
       try {
-        if (!paused && !settled) {
+        if (isAdvancing()) {
           worker.advanceStateMachine(sm, deltaTime)
         } else if (layoutAdvancePending) {
           worker.advanceStateMachine(sm, Duration.ZERO)
         }
         layoutAdvancePending = false
-        worker.draw(art, sm, rs, activeFit)
-        needsRedraw = false
-        frameCount++
-        val isFirstFrame = frameCount == 1L
-        if (isFirstFrame) {
-          viewReadyDeferred.complete(true)
+        // needsRedraw still draws so pending content (first frame, resize,
+        // rebinding) isn't lost while renderEnabled is off.
+        if (renderMode == RenderMode.Enabled || needsRedraw) {
+          worker.draw(art, sm, rs, activeFit)
+          needsRedraw = false
+          frameCount++
+          val isFirstFrame = frameCount == 1L
+          if (isFirstFrame) {
+            viewReadyDeferred.complete(true)
+          }
         }
       } catch (e: Exception) {
         Log.e(TAG, "Render loop error", e)
@@ -266,7 +277,9 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
     }
   }
 
-  private fun hasWork() = needsRedraw || (!paused && !settled)
+  private fun isAdvancing() = !paused && renderMode != RenderMode.Paused && !settled
+
+  private fun hasWork() = needsRedraw || isAdvancing()
 
   private fun canRender() = isAttachedToWindow && windowVisibility == View.VISIBLE && isShown
 
@@ -345,7 +358,9 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
   private fun updateFrameRateHint() {
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.VANILLA_ICE_CREAM) return
     UiThreadUtil.runOnUiThread {
-      val fps = frameRate?.takeIf { it > 0 && !disposed && !paused }
+      val fps = frameRate?.takeIf {
+        it > 0 && !disposed && !paused && renderMode == RenderMode.Enabled
+      }
       textureView.requestedFrameRate =
         fps?.toFloat() ?: View.REQUESTED_FRAME_RATE_CATEGORY_NO_PREFERENCE
     }
@@ -562,6 +577,19 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
       unsettle()
     } else {
       Log.w(TAG, "Cannot bind VMI: worker or state machine handle not available")
+    }
+  }
+
+  fun setRenderMode(mode: RenderMode) {
+    UiThreadUtil.runOnUiThread {
+      val previous = renderMode
+      if (disposed || mode == previous) return@runOnUiThread
+      renderMode = mode
+      updateFrameRateHint()
+      // Like pause(): don't let a delayed callback advance over the paused span.
+      if (mode == RenderMode.Paused || previous == RenderMode.Paused) cancelFrame()
+      if (mode == RenderMode.Enabled) needsRedraw = true
+      postFrame()
     }
   }
 

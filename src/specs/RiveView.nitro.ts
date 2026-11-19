@@ -64,6 +64,29 @@ export interface RiveViewProps extends HybridViewProps {
    */
   frameRate?: number | FrameRateRange;
   /**
+   * Manual control over rendering, for occlusion the view cannot detect
+   * itself — e.g. a screen pushed over it by a JS stack navigator, a Modal,
+   * or a bottom sheet. Defaults to true.
+   *
+   * - true (default): render normally.
+   * - false: stop drawing frames while the state machine keeps advancing
+   *   (events, data binding, and playback time stay live). The view repaints
+   *   on the next frame after re-enabling. Android only; on iOS the upstream
+   *   runtime couples advancing and drawing, so false behaves like true.
+   * - 'pause': also stop advancing the state machine, like an imperative
+   *   pause(); playback resumes where it left off when the prop changes
+   *   back. Unlike pause()/play() this doesn't touch the playback state the
+   *   ref methods control — the two combine.
+   *
+   * Only supported on the new (default) runtimes; the legacy backends ignore
+   * it.
+   *
+   * Typed as `boolean | string` because Nitro cannot mix string literals
+   * into a variant; the public RiveView component narrows it to
+   * `boolean | 'pause'`. Strings other than 'pause' render normally.
+   */
+  renderEnabled?: boolean | string;
+  /**
    * Exposes accessibility semantics authored in the Rive editor to the
    * platform screen reader (VoiceOver). Defaults to Semantics.Off.
    *

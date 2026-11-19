@@ -17,6 +17,7 @@ struct ViewConfiguration {
   let fit: RiveRuntime.Fit
   let semantics: RiveRuntime.Semantics
   let frameRate: RiveRuntime.FrameRate
+  let renderPaused: Bool
   let bindData: BindData
 }
 
@@ -39,6 +40,19 @@ class RiveReactNativeView: UIView {
     didSet { riveUIView?.frameRate = frameRate }
   }
   var autoPlay: Bool = true
+
+  // Kept apart from isPaused so renderEnabled='pause' composes with the
+  // pause()/play() ref methods instead of overwriting their state.
+  private var renderPaused = false {
+    didSet {
+      guard renderPaused != oldValue else { return }
+      applyPauseState()
+    }
+  }
+
+  private func applyPauseState() {
+    riveUIView?.isPaused = isPaused || renderPaused
+  }
 
   /// Configure failures are reported here (wired to the onError prop).
   var onLoadError: ((String) -> Void)?
@@ -65,6 +79,7 @@ class RiveReactNativeView: UIView {
 
     semantics = config.semantics
     frameRate = config.frameRate
+    renderPaused = config.renderPaused
 
     if reload {
       cleanup()
@@ -172,12 +187,12 @@ class RiveReactNativeView: UIView {
 
   func play() {
     isPaused = false
-    riveUIView?.isPaused = false
+    applyPauseState()
   }
 
   func pause() {
     isPaused = true
-    riveUIView?.isPaused = true
+    applyPauseState()
   }
 
   func reset() {
@@ -188,7 +203,7 @@ class RiveReactNativeView: UIView {
   func playIfNeeded() {
     if isPaused {
       isPaused = false
-      riveUIView?.isPaused = false
+      applyPauseState()
     }
   }
 
@@ -244,11 +259,11 @@ class RiveReactNativeView: UIView {
       // reconfigure, which previously caused orphaned draw calls ("state machine
       // not found") from the old MTKView after removeFromSuperview.
       existing.rive = rive
-      existing.isPaused = isPaused
+      existing.isPaused = isPaused || renderPaused
       existing.semantics = semantics
       existing.frameRate = frameRate
     } else {
-      let uiView = RiveUIView(rive: rive, isPaused: isPaused)
+      let uiView = RiveUIView(rive: rive, isPaused: isPaused || renderPaused)
       uiView.semantics = semantics
       uiView.frameRate = frameRate
       uiView.translatesAutoresizingMaskIntoConstraints = false
