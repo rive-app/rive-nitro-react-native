@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.5.16](https://github.com/rive-app/rive-nitro-react-native/compare/v0.5.15...v0.5.16) (2026-11-18)
+
+
+### Features
+
+* add setValueAsync to ViewModelImageProperty ([#447](https://github.com/rive-app/rive-nitro-react-native/issues/447)) ([f3bde90](https://github.com/rive-app/rive-nitro-react-native/commit/f3bde90bded7d5f557bfb580f25c76aafd8b9ad7))
+
+
+### Bug Fixes
+
+* **android:** free native objects when their wrappers are garbage collected ([#466](https://github.com/rive-app/rive-nitro-react-native/issues/466)) ([2b47837](https://github.com/rive-app/rive-nitro-react-native/commit/2b478379bdcad2a0307b4170b325d13e65a31dbb))
+* keep native objects alive across Activity hide and reveal ([#449](https://github.com/rive-app/rive-nitro-react-native/issues/449)) ([3d4392c](https://github.com/rive-app/rive-nitro-react-native/commit/3d4392cad6b9f779cb7e515c5827dff2d0468b78))
+
 ## [0.5.15](https://github.com/rive-app/rive-nitro-react-native/compare/v0.5.14...v0.5.15) (2026-11-16)
 
 
