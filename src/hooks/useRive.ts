@@ -15,6 +15,10 @@ export function useRive() {
   const setRef = useCallback((node: RiveViewRef | null) => {
     if (riveRef.current !== node) {
       riveRef.current = node;
+      // RiveView has just disposed the view this node replaces (#473).
+      setRiveViewRef(undefined);
+      // Only the latest node may publish; an older one can settle after it.
+      const isCurrent = () => riveRef.current === node;
 
       // Clear any existing timeout
       if (timeoutRef.current) {
@@ -31,6 +35,7 @@ export function useRive() {
       // or add this timeout natively and return false
       Promise.race([node?.awaitViewReady(), timeout])
         .then((result) => {
+          if (!isCurrent()) return;
           if (result === true) {
             setRiveViewRef(node);
           } else {
@@ -39,12 +44,13 @@ export function useRive() {
           }
         })
         .catch((error) => {
+          if (!isCurrent()) return;
           console.warn('Failed to initialize Rive view:', error);
           setRiveViewRef(null);
         })
         .finally(() => {
           // Clear the timeout in both success and error cases
-          if (timeoutRef.current) {
+          if (isCurrent() && timeoutRef.current) {
             clearTimeout(timeoutRef.current);
             timeoutRef.current = null;
           }
