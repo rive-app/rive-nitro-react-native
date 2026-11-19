@@ -109,6 +109,8 @@ class HybridRiveView: HybridRiveViewSpec {
   // Accepted for API parity; frame-rate control is only implemented on the
   // experimental backends.
   var frameRate: Variant_Double_FrameRateRange?
+  // Accepted for API parity; only implemented on the new runtime.
+  var paused: Bool?
   // Accepted for API parity; semantics are only available in the new Rive
   // runtime (the experimental backend).
   var semantics: Semantics?

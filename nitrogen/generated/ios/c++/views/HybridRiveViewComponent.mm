@@ -131,6 +131,11 @@ using namespace margelo::nitro::rive::views;
     swiftPart.setFrameRate(newViewProps.frameRate.value);
     newViewProps.frameRate.isDirty = false;
   }
+  // paused: optional
+  if (force || newViewProps.paused.isDirty) {
+    swiftPart.setPaused(newViewProps.paused.value);
+    newViewProps.paused.isDirty = false;
+  }
   // semantics: optional
   if (force || newViewProps.semantics.isDirty) {
     swiftPart.setSemantics(newViewProps.semantics.value);

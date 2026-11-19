@@ -174,6 +174,15 @@ namespace margelo::nitro::rive {
     static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<JVariant_Double_FrameRateRange> /* frameRate */)>("setFrameRate");
     method(_javaPart, frameRate.has_value() ? JVariant_Double_FrameRateRange::fromCpp(frameRate.value()) : nullptr);
   }
+  std::optional<bool> JHybridRiveViewSpec::getPaused() {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<jni::JBoolean>()>("getPaused");
+    auto __result = method(_javaPart);
+    return __result != nullptr ? std::make_optional(static_cast<bool>(__result->value())) : std::nullopt;
+  }
+  void JHybridRiveViewSpec::setPaused(std::optional<bool> paused) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<jni::JBoolean> /* paused */)>("setPaused");
+    method(_javaPart, paused.has_value() ? jni::JBoolean::valueOf(paused.value()) : nullptr);
+  }
   std::optional<Semantics> JHybridRiveViewSpec::getSemantics() {
     static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JSemantics>()>("getSemantics");
     auto __result = method(_javaPart);

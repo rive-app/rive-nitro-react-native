@@ -60,6 +60,7 @@ namespace margelo::nitro::rive::views {
     CachedProp<std::optional<Fit>> fit;
     CachedProp<std::optional<double>> layoutScaleFactor;
     CachedProp<std::optional<std::variant<double, FrameRateRange>>> frameRate;
+    CachedProp<std::optional<bool>> paused;
     CachedProp<std::optional<Semantics>> semantics;
     CachedProp<std::optional<std::variant<std::shared_ptr<HybridViewModelInstanceSpec>, DataBindMode, DataBindByName>>> dataBind;
     CachedProp<std::function<void(const RiveError& /* error */)>> onError;

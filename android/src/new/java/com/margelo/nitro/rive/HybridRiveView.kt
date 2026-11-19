@@ -112,6 +112,12 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
       )
     }
 
+  override var paused: Boolean? = null
+    set(value) {
+      field = value
+      view.setPausedByProp(value == true)
+    }
+
   // Accepted for API parity; semantics support is pending in the upstream
   // rive-android runtime (iOS-only for now).
   override var semantics: Semantics? = null

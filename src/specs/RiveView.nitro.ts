@@ -64,6 +64,16 @@ export interface RiveViewProps extends HybridViewProps {
    */
   frameRate?: number | FrameRateRange;
   /**
+   * Stops advancing and drawing while true; false resumes where it left off.
+   * The view runs only when neither this nor pause() pauses it,
+   * autoPlay={false} still waits for play(), and view model listeners and
+   * triggers on the view don't fire while paused.
+   *
+   * Only supported on the new (default) runtimes; the legacy backends ignore
+   * it. Defaults to false.
+   */
+  paused?: boolean;
+  /**
    * Exposes accessibility semantics authored in the Rive editor to the
    * platform screen reader (VoiceOver). Defaults to Semantics.Off.
    *

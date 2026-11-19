@@ -69,6 +69,10 @@ void JHybridRiveViewStateUpdater::updateViewProps(jni::alias_ref<jni::JClass> /*
     hybridView->setFrameRate(props->frameRate.value);
     props->frameRate.isDirty = false;
   }
+  if (props->paused.isDirty) {
+    hybridView->setPaused(props->paused.value);
+    props->paused.isDirty = false;
+  }
   if (props->semantics.isDirty) {
     hybridView->setSemantics(props->semantics.value);
     props->semantics.isDirty = false;

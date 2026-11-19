@@ -89,6 +89,8 @@ function App() {
 }
 ```
 
+Set `paused` to stop a view from advancing and drawing while it's covered by something it can't detect itself, such as a screen pushed by a JS stack navigator (e.g. `paused={!isFocused}`); it combines with the ref's `play()`/`pause()` (new runtimes only).
+
 ## Native SDK Version Customization
 
 > **⚠️ Advanced Usage:** Customizing native SDK versions is intended for advanced users only. Using non-default versions may cause build-time errors, or compatibility issues. Always review and update custom versions when upgrading @rive-app/react-native.
