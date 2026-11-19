@@ -66,6 +66,8 @@ namespace margelo::nitro::rive {
     void setLayoutScaleFactor(std::optional<double> layoutScaleFactor) override;
     std::optional<std::variant<double, FrameRateRange>> getFrameRate() override;
     void setFrameRate(const std::optional<std::variant<double, FrameRateRange>>& frameRate) override;
+    std::optional<OffscreenBehavior> getOffscreenBehavior() override;
+    void setOffscreenBehavior(std::optional<OffscreenBehavior> offscreenBehavior) override;
     std::optional<std::variant<bool, std::string>> getRenderEnabled() override;
     void setRenderEnabled(const std::optional<std::variant<bool, std::string>>& renderEnabled) override;
     std::optional<Semantics> getSemantics() override;

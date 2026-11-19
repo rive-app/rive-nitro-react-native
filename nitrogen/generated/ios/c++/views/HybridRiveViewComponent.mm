@@ -131,6 +131,11 @@ using namespace margelo::nitro::rive::views;
     swiftPart.setFrameRate(newViewProps.frameRate.value);
     newViewProps.frameRate.isDirty = false;
   }
+  // offscreenBehavior: optional
+  if (force || newViewProps.offscreenBehavior.isDirty) {
+    swiftPart.setOffscreenBehavior(newViewProps.offscreenBehavior.value);
+    newViewProps.offscreenBehavior.isDirty = false;
+  }
   // renderEnabled: optional
   if (force || newViewProps.renderEnabled.isDirty) {
     swiftPart.setRenderEnabled(newViewProps.renderEnabled.value);

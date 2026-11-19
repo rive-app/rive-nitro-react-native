@@ -99,6 +99,7 @@ class HybridRiveView: HybridRiveViewSpec {
   var fit: Fit?
   var layoutScaleFactor: Double?
   var frameRate: Variant_Double_FrameRateRange?
+  var offscreenBehavior: OffscreenBehavior?
   // Only 'pause' is honored: the upstream iOS runtime couples advancing and
   // drawing, so false behaves like true.
   var renderEnabled: Variant_Bool_String?
@@ -216,6 +217,7 @@ class HybridRiveView: HybridRiveViewSpec {
         fit: toRiveFit(fit, alignment: alignment, layoutScaleFactor: layoutScaleFactor),
         semantics: toRiveSemantics(semantics),
         frameRate: toRiveFrameRate(frameRate),
+        offscreenBehavior: offscreenBehavior ?? .none,
         renderPaused: toRenderPaused(renderEnabled),
         bindData: try dataBind.toBindData()
       )

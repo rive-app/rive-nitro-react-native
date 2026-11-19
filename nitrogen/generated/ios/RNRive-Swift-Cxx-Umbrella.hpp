@@ -68,6 +68,8 @@ namespace margelo::nitro::rive { class HybridViewModelSpec; }
 namespace margelo::nitro::rive { class HybridViewModelStringPropertySpec; }
 // Forward declaration of `HybridViewModelTriggerPropertySpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridViewModelTriggerPropertySpec; }
+// Forward declaration of `OffscreenBehavior` to properly resolve imports.
+namespace margelo::nitro::rive { enum class OffscreenBehavior; }
 // Forward declaration of `ReferencedAssetsType` to properly resolve imports.
 namespace margelo::nitro::rive { struct ReferencedAssetsType; }
 // Forward declaration of `ResolvedReferencedAsset` to properly resolve imports.
@@ -122,6 +124,7 @@ namespace margelo::nitro::rive { enum class ViewModelPropertyType; }
 #include "HybridViewModelSpec.hpp"
 #include "HybridViewModelStringPropertySpec.hpp"
 #include "HybridViewModelTriggerPropertySpec.hpp"
+#include "OffscreenBehavior.hpp"
 #include "ReferencedAssetsType.hpp"
 #include "ResolvedReferencedAsset.hpp"
 #include "RiveAssetType.hpp"
