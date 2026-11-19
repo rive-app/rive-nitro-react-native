@@ -6,6 +6,7 @@ import com.facebook.react.bridge.UiThreadUtil
 import com.facebook.react.uimanager.ThemedReactContext
 import com.margelo.nitro.core.Promise
 import com.rive.BindData
+import com.rive.RenderMode
 import com.rive.RiveReactNativeView
 import com.rive.ViewConfiguration
 import app.rive.Fit as RiveFit
@@ -109,6 +110,18 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
       view.frameRate = value?.match(
         first = { it },
         second = { range -> range.preferred ?: range.maximum }
+      )
+    }
+
+  override var renderEnabled: Variant_Boolean_String? = null
+    set(value) {
+      field = value
+      view.setRenderMode(
+        when {
+          value?.asSecondOrNull() == "pause" -> RenderMode.Paused
+          value?.asFirstOrNull() == false -> RenderMode.SkipDraws
+          else -> RenderMode.Enabled
+        }
       )
     }
 

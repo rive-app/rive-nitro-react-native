@@ -159,6 +159,13 @@ namespace margelo::nitro::rive {
     inline void setFrameRate(const std::optional<std::variant<double, FrameRateRange>>& frameRate) noexcept override {
       _swiftPart.setFrameRate(frameRate);
     }
+    inline std::optional<std::variant<bool, std::string>> getRenderEnabled() noexcept override {
+      auto __result = _swiftPart.getRenderEnabled();
+      return __result;
+    }
+    inline void setRenderEnabled(const std::optional<std::variant<bool, std::string>>& renderEnabled) noexcept override {
+      _swiftPart.setRenderEnabled(renderEnabled);
+    }
     inline std::optional<Semantics> getSemantics() noexcept override {
       auto __result = _swiftPart.getSemantics();
       return __result;

@@ -12,6 +12,7 @@
     "fit": true,
     "layoutScaleFactor": true,
     "frameRate": true,
+    "renderEnabled": true,
     "semantics": true,
     "dataBind": true,
     "onError": true,

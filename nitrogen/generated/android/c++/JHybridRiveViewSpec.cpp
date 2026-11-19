@@ -45,6 +45,7 @@ namespace margelo::nitro::rive { enum class RiveEventType; }
 #include <variant>
 #include "JVariant_Double_FrameRateRange.hpp"
 #include "JFrameRateRange.hpp"
+#include "JVariant_Boolean_String.hpp"
 #include "Semantics.hpp"
 #include "JSemantics.hpp"
 #include "HybridViewModelInstanceSpec.hpp"
@@ -173,6 +174,15 @@ namespace margelo::nitro::rive {
   void JHybridRiveViewSpec::setFrameRate(const std::optional<std::variant<double, FrameRateRange>>& frameRate) {
     static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<JVariant_Double_FrameRateRange> /* frameRate */)>("setFrameRate");
     method(_javaPart, frameRate.has_value() ? JVariant_Double_FrameRateRange::fromCpp(frameRate.value()) : nullptr);
+  }
+  std::optional<std::variant<bool, std::string>> JHybridRiveViewSpec::getRenderEnabled() {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JVariant_Boolean_String>()>("getRenderEnabled");
+    auto __result = method(_javaPart);
+    return __result != nullptr ? std::make_optional(__result->toCpp()) : std::nullopt;
+  }
+  void JHybridRiveViewSpec::setRenderEnabled(const std::optional<std::variant<bool, std::string>>& renderEnabled) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<JVariant_Boolean_String> /* renderEnabled */)>("setRenderEnabled");
+    method(_javaPart, renderEnabled.has_value() ? JVariant_Boolean_String::fromCpp(renderEnabled.value()) : nullptr);
   }
   std::optional<Semantics> JHybridRiveViewSpec::getSemantics() {
     static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JSemantics>()>("getSemantics");
