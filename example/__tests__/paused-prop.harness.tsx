@@ -28,6 +28,7 @@ function expectDefined<T>(value: T): asserts value is NonNullable<T> {
 }
 
 type TestContext = {
+  file: RiveFile;
   ref: RiveViewRef | null;
   setPaused: ((paused: boolean) => void) | null;
   updates: number;
@@ -54,6 +55,7 @@ function PausedView({
     });
     return () => {
       remove?.();
+      phase?.dispose();
       context.setPaused = null;
     };
   }, [context, instance]);
@@ -83,7 +85,12 @@ async function renderTicker(initialPaused: boolean) {
   expectDefined(vm);
   const instance = await vm.createDefaultInstanceAsync();
   expectDefined(instance);
-  const context: TestContext = { ref: null, setPaused: null, updates: 0 };
+  const context: TestContext = {
+    file,
+    ref: null,
+    setPaused: null,
+    updates: 0,
+  };
   await render(
     <PausedView
       file={file}
@@ -166,6 +173,21 @@ describe('paused prop', () => {
 
     context.setPaused!(false);
     await waitForUpdates(context);
+
+    cleanup();
+  });
+
+  it('applies paused after the file wrapper is disposed', async () => {
+    if (!supported()) return;
+    const context = await renderTicker(false);
+    await waitForUpdates(context);
+
+    // Throws after disposing because dev builds freeze props (nitro#1083).
+    try {
+      context.file.dispose();
+    } catch {}
+    context.setPaused!(true);
+    expect(await updatesWithin(context)).toBe(0);
 
     cleanup();
   });

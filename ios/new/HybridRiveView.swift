@@ -99,7 +99,13 @@ class HybridRiveView: HybridRiveViewSpec {
   var fit: Fit?
   var layoutScaleFactor: Double?
   var frameRate: Variant_Double_FrameRateRange?
-  var paused: Bool?
+  // Set here, not in afterUpdate, so it still applies while the file is disposed.
+  var paused: Bool? {
+    didSet {
+      let value = paused == true
+      try? onMainSync { try getRiveView().pausedByProp = value }
+    }
+  }
   var semantics: Semantics?
   var onError: (RiveError) -> Void = { _ in }
 
@@ -214,7 +220,6 @@ class HybridRiveView: HybridRiveViewSpec {
         fit: toRiveFit(fit, alignment: alignment, layoutScaleFactor: layoutScaleFactor),
         semantics: toRiveSemantics(semantics),
         frameRate: toRiveFrameRate(frameRate),
-        paused: paused ?? false,
         bindData: try dataBind.toBindData()
       )
 

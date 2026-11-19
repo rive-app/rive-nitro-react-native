@@ -30,10 +30,15 @@ function Home({
     artboardName: 'Ticker',
   });
 
-  useEffect(
-    () => instance?.numberProperty('phase')?.addListener(onPhase),
-    [instance, onPhase]
-  );
+  useEffect(() => {
+    // iOS stops a property's listeners once the property is collected.
+    const phase = instance?.numberProperty('phase');
+    const remove = phase?.addListener(onPhase);
+    return () => {
+      remove?.();
+      phase?.dispose();
+    };
+  }, [instance, onPhase]);
 
   return (
     <View style={styles.screen}>

@@ -17,7 +17,6 @@ struct ViewConfiguration {
   let fit: RiveRuntime.Fit
   let semantics: RiveRuntime.Semantics
   let frameRate: RiveRuntime.FrameRate
-  let paused: Bool
   let bindData: BindData
 }
 
@@ -42,7 +41,7 @@ class RiveReactNativeView: UIView {
   var autoPlay: Bool = true
 
   // The paused prop; kept apart from isPaused (play()/pause()) so the two combine.
-  private var pausedByProp = false {
+  var pausedByProp = false {
     didSet {
       if pausedByProp != oldValue { applyPauseState() }
     }
@@ -79,7 +78,6 @@ class RiveReactNativeView: UIView {
 
     semantics = config.semantics
     frameRate = config.frameRate
-    pausedByProp = config.paused
 
     if reload {
       cleanup()
