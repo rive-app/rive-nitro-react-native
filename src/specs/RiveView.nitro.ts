@@ -64,13 +64,9 @@ export interface RiveViewProps extends HybridViewProps {
    */
   frameRate?: number | FrameRateRange;
   /**
-   * Stops advancing and drawing while true; false resumes where it left off.
-   * The view runs only when neither this nor pause() pauses it,
-   * autoPlay={false} still waits for play(), and view model listeners and
-   * triggers on the view don't fire while paused.
-   *
-   * Only supported on the new (default) runtimes; the legacy backends ignore
-   * it. Defaults to false.
+   * Stops advancing and drawing while true. The view runs only when neither
+   * this nor pause() pauses it. View model listeners and triggers on the view
+   * don't fire while paused. Ignored by the legacy backends.
    */
   paused?: boolean;
   /**

@@ -89,7 +89,7 @@ function App() {
 }
 ```
 
-Set `paused` to stop a view from advancing and drawing while it's covered by something it can't detect itself, such as a screen pushed by a JS stack navigator (e.g. `paused={!isFocused}`); it combines with the ref's `play()`/`pause()` (new runtimes only).
+To stop a view covered by a screen it can't detect, such as one pushed by a JS stack navigator, set `paused={!isFocused}`.
 
 ## Native SDK Version Customization
 
