@@ -25,6 +25,7 @@ import app.rive.runtime.kotlin.core.errors.ViewModelException
 import com.margelo.nitro.rive.EventPropertiesOutput
 import com.margelo.nitro.rive.EventPropertiesOutputExtensions as EPO
 import com.margelo.nitro.rive.RiveEventType
+import com.margelo.nitro.rive.dropExtraNativeRef
 import com.margelo.nitro.rive.UnifiedRiveEvent as RNEvent
 import kotlinx.coroutines.CompletableDeferred
 
@@ -409,7 +410,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
           } catch (e: ViewModelException) {
             null
           }?.let {
-            val instance = it.createDefaultInstance()
+            val instance = it.createDefaultInstance().dropExtraNativeRef()
             stateMachine.viewModelInstance = instance
           }
         }
@@ -422,7 +423,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
         val file = riveAnimationView?.controller?.file
         if (artboard != null && file != null) {
           val viewModel = file.defaultViewModelForArtboard(artboard)
-          val instance = viewModel.createInstanceFromName(bindData.name)
+          val instance = viewModel.createInstanceFromName(bindData.name).dropExtraNativeRef()
           stateMachine.viewModelInstance = instance
         }
       }
