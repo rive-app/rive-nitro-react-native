@@ -30,6 +30,12 @@ export interface FrameRateRange {
 }
 
 /**
+ * What to do while the view is outside the visible viewport (scrolled out of
+ * view, hidden, or detached from a window). See RiveViewProps.offscreenBehavior.
+ */
+export type OffscreenBehavior = 'none' | 'skip-draws' | 'pause';
+
+/**
  * Props interface for the RiveView component.
  * Extends HybridViewProps to include Rive-specific properties.
  */
@@ -63,6 +69,26 @@ export interface RiveViewProps extends HybridViewProps {
    * @see https://rive.app/docs/runtimes/apple/apple#frame-rate
    */
   frameRate?: number | FrameRateRange;
+  /**
+   * What to do while the view is outside the visible viewport (scrolled out
+   * of view, hidden, or detached from a window). Views covered by other UI
+   * in the same window (a Modal, a screen pushed by a JS stack navigator, an
+   * opaque sibling) still count as visible — use renderEnabled for those.
+   *
+   * - 'none' (default): keep advancing and drawing regardless of visibility.
+   * - 'skip-draws': keep advancing the state machine but skip drawing frames
+   *   while offscreen. Events, data binding and playback time stay live.
+   *   Android only; on iOS the upstream runtime couples advancing and
+   *   drawing, so it behaves like 'none' there.
+   * - 'pause': stop advancing and drawing while offscreen; playback resumes
+   *   from where it left off when the view becomes visible again. Don't use
+   *   it when data-binding consumers rely on the state machine advancing
+   *   regardless of visibility.
+   *
+   * Only supported on the new (default) runtimes; the legacy backends ignore
+   * it.
+   */
+  offscreenBehavior?: OffscreenBehavior;
   /**
    * Manual control over rendering, for occlusion the view cannot detect
    * itself — e.g. a screen pushed over it by a JS stack navigator, a Modal,

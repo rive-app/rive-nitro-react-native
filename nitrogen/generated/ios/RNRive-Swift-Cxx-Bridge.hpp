@@ -66,6 +66,8 @@ namespace margelo::nitro::rive { class HybridViewModelSpec; }
 namespace margelo::nitro::rive { class HybridViewModelStringPropertySpec; }
 // Forward declaration of `HybridViewModelTriggerPropertySpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridViewModelTriggerPropertySpec; }
+// Forward declaration of `OffscreenBehavior` to properly resolve imports.
+namespace margelo::nitro::rive { enum class OffscreenBehavior; }
 // Forward declaration of `ReferencedAssetsType` to properly resolve imports.
 namespace margelo::nitro::rive { struct ReferencedAssetsType; }
 // Forward declaration of `ResolvedReferencedAsset` to properly resolve imports.
@@ -165,6 +167,7 @@ namespace RNRive { class HybridViewModelTriggerPropertySpec_cxx; }
 #include "HybridViewModelSpec.hpp"
 #include "HybridViewModelStringPropertySpec.hpp"
 #include "HybridViewModelTriggerPropertySpec.hpp"
+#include "OffscreenBehavior.hpp"
 #include "ReferencedAssetsType.hpp"
 #include "ResolvedReferencedAsset.hpp"
 #include "RiveAssetType.hpp"
@@ -1002,6 +1005,21 @@ namespace margelo::nitro::rive::bridge::swift {
     return optional.has_value();
   }
   inline std::variant<double, FrameRateRange> get_std__optional_std__variant_double__FrameRateRange__(const std::optional<std::variant<double, FrameRateRange>>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::optional<OffscreenBehavior>
+  /**
+   * Specialized version of `std::optional<OffscreenBehavior>`.
+   */
+  using std__optional_OffscreenBehavior_ = std::optional<OffscreenBehavior>;
+  inline std::optional<OffscreenBehavior> create_std__optional_OffscreenBehavior_(const OffscreenBehavior& value) noexcept {
+    return std::optional<OffscreenBehavior>(value);
+  }
+  inline bool has_value_std__optional_OffscreenBehavior_(const std::optional<OffscreenBehavior>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline OffscreenBehavior get_std__optional_OffscreenBehavior_(const std::optional<OffscreenBehavior>& optional) noexcept {
     return optional.value();
   }
   

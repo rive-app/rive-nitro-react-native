@@ -17,6 +17,7 @@ struct ViewConfiguration {
   let fit: RiveRuntime.Fit
   let semantics: RiveRuntime.Semantics
   let frameRate: RiveRuntime.FrameRate
+  let offscreenBehavior: OffscreenBehavior
   let renderPaused: Bool
   let bindData: BindData
 }
@@ -50,8 +51,64 @@ class RiveReactNativeView: UIView {
     }
   }
 
+  // Only .pause is implementable: the upstream runtime couples advancing and
+  // drawing, so .skipDraws behaves like .none. Scrolling produces no callback
+  // on this view, so visibility is polled while opted in.
+  private var offscreenBehavior: OffscreenBehavior = .none {
+    didSet {
+      guard offscreenBehavior != oldValue else { return }
+      updateVisibilityPolling()
+    }
+  }
+  private var isOffscreen = false {
+    didSet {
+      guard isOffscreen != oldValue else { return }
+      applyPauseState()
+    }
+  }
+  private var visibilityTimer: Timer?
+
+  private var effectivePaused: Bool {
+    isPaused || renderPaused || (offscreenBehavior == .pause && isOffscreen)
+  }
+
   private func applyPauseState() {
-    riveUIView?.isPaused = isPaused || renderPaused
+    riveUIView?.isPaused = effectivePaused
+  }
+
+  private func updateVisibilityPolling() {
+    visibilityTimer?.invalidate()
+    visibilityTimer = nil
+    guard offscreenBehavior == .pause else {
+      isOffscreen = false
+      return
+    }
+    guard window != nil else {
+      isOffscreen = true
+      return
+    }
+    isOffscreen = !isInVisibleViewport()
+    let timer = Timer(timeInterval: 0.25, repeats: true) { [weak self] _ in
+      MainActor.assumeIsolated {
+        guard let self else { return }
+        self.isOffscreen = !self.isInVisibleViewport()
+      }
+    }
+    // .common keeps polling while a scroll view is being dragged.
+    RunLoop.main.add(timer, forMode: .common)
+    visibilityTimer = timer
+  }
+
+  private func isInVisibleViewport() -> Bool {
+    guard let window, !isHidden, alpha > 0, bounds.width > 0, bounds.height > 0 else {
+      return false
+    }
+    return convert(bounds, to: window).intersects(window.bounds)
+  }
+
+  override func didMoveToWindow() {
+    super.didMoveToWindow()
+    updateVisibilityPolling()
   }
 
   /// Configure failures are reported here (wired to the onError prop).
@@ -80,6 +137,7 @@ class RiveReactNativeView: UIView {
     semantics = config.semantics
     frameRate = config.frameRate
     renderPaused = config.renderPaused
+    offscreenBehavior = config.offscreenBehavior
 
     if reload {
       cleanup()
@@ -259,11 +317,11 @@ class RiveReactNativeView: UIView {
       // reconfigure, which previously caused orphaned draw calls ("state machine
       // not found") from the old MTKView after removeFromSuperview.
       existing.rive = rive
-      existing.isPaused = isPaused || renderPaused
+      existing.isPaused = effectivePaused
       existing.semantics = semantics
       existing.frameRate = frameRate
     } else {
-      let uiView = RiveUIView(rive: rive, isPaused: isPaused || renderPaused)
+      let uiView = RiveUIView(rive: rive, isPaused: effectivePaused)
       uiView.semantics = semantics
       uiView.frameRate = frameRate
       uiView.translatesAutoresizingMaskIntoConstraints = false
@@ -316,6 +374,8 @@ class RiveReactNativeView: UIView {
   /// awaitViewReady() callers so their promises (which retain this view)
   /// don't hang forever.
   func detach() {
+    visibilityTimer?.invalidate()
+    visibilityTimer = nil
     resumeViewReadyContinuations(false)
     cleanup()
   }
@@ -327,12 +387,15 @@ class RiveReactNativeView: UIView {
     let task = configTask
     let bindTask = bindTask
     let uiView = riveUIView
+    let timer = visibilityTimer
     if Thread.isMainThread {
+      timer?.invalidate()
       task?.cancel()
       bindTask?.cancel()
       uiView?.removeFromSuperview()
     } else {
       DispatchQueue.main.async {
+        timer?.invalidate()
         task?.cancel()
         bindTask?.cancel()
         uiView?.removeFromSuperview()

@@ -1,6 +1,7 @@
 package com.rive
 
 import android.annotation.SuppressLint
+import android.graphics.Rect
 import android.graphics.SurfaceTexture
 import android.os.Build
 import android.util.Log
@@ -8,6 +9,7 @@ import android.view.Choreographer
 import android.view.MotionEvent
 import android.view.TextureView
 import android.view.View
+import android.view.ViewTreeObserver
 import android.widget.FrameLayout
 import com.facebook.react.bridge.UiThreadUtil
 import app.rive.Artboard
@@ -24,6 +26,7 @@ import app.rive.core.RiveSurface
 import app.rive.core.StateMachineHandle
 import app.rive.core.SurfaceTextureSurface
 import com.facebook.react.uimanager.ThemedReactContext
+import com.margelo.nitro.rive.OffscreenBehavior
 import com.margelo.nitro.rive.RiveErrorLogger
 import com.margelo.nitro.rive.RiveLog
 import kotlinx.coroutines.CompletableDeferred
@@ -97,6 +100,19 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
 
   // Main thread only; set through setRenderMode().
   private var renderMode = RenderMode.Enabled
+
+  // Main thread only; set through setOffscreenBehavior(). Overlays in the
+  // same window (a Modal, a JS stack screen, an opaque sibling) don't count
+  // as offscreen.
+  private var offscreenBehavior = OffscreenBehavior.NONE
+  private var offscreen = false
+  private val visibleRectBuffer = Rect()
+
+  // A scroll or layout change moves no frame for an offscreen-paused view, so
+  // these re-check visibility to resume it.
+  private val scrollChangedListener = ViewTreeObserver.OnScrollChangedListener { updateOffscreen() }
+  private val globalLayoutListener = ViewTreeObserver.OnGlobalLayoutListener { updateOffscreen() }
+  private var visibilityListenersAdded = false
 
   private fun framePacer(fps: Double?) = RiveFramePacer(
     fps?.takeIf { it.isFinite() && it > 0 }?.let { RiveFrameRate.Capped(it.toFloat()) } ?: RiveFrameRate.Unbounded
@@ -219,6 +235,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
   private val renderCallback = object : Choreographer.FrameCallback {
     override fun doFrame(frameTimeNanos: Long) {
       frameScheduled = false
+      updateOffscreen()
       if (disposed || !canRender() || !hasWork()) {
         resetTimebase()
         return
@@ -256,7 +273,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
         layoutAdvancePending = false
         // needsRedraw still draws so pending content (first frame, resize,
         // rebinding) isn't lost while renderEnabled is off.
-        if (renderMode == RenderMode.Enabled || needsRedraw) {
+        if ((renderMode == RenderMode.Enabled && !offscreen) || needsRedraw) {
           worker.draw(art, sm, rs, activeFit)
           needsRedraw = false
           frameCount++
@@ -277,7 +294,40 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
     }
   }
 
-  private fun isAdvancing() = !paused && renderMode != RenderMode.Paused && !settled
+  private fun isAdvancing() =
+    !paused &&
+      renderMode != RenderMode.Paused &&
+      !(offscreen && offscreenBehavior == OffscreenBehavior.PAUSE) &&
+      !settled
+
+  private fun isInVisibleViewport() = isShown && getGlobalVisibleRect(visibleRectBuffer)
+
+  private fun updateOffscreen() {
+    if (disposed) return
+    val now = offscreenBehavior != OffscreenBehavior.NONE && !isInVisibleViewport()
+    if (now == offscreen) return
+    offscreen = now
+    if (now) {
+      // Don't let a delayed callback advance over the offscreen span.
+      if (offscreenBehavior == OffscreenBehavior.PAUSE) cancelFrame()
+    } else {
+      needsRedraw = true
+    }
+    postFrame()
+  }
+
+  private fun updateVisibilityListeners() {
+    val wanted = isAttachedToWindow && !disposed && offscreenBehavior != OffscreenBehavior.NONE
+    if (wanted == visibilityListenersAdded) return
+    visibilityListenersAdded = wanted
+    if (wanted) {
+      viewTreeObserver.addOnScrollChangedListener(scrollChangedListener)
+      viewTreeObserver.addOnGlobalLayoutListener(globalLayoutListener)
+    } else {
+      viewTreeObserver.removeOnScrollChangedListener(scrollChangedListener)
+      viewTreeObserver.removeOnGlobalLayoutListener(globalLayoutListener)
+    }
+  }
 
   private fun hasWork() = needsRedraw || isAdvancing()
 
@@ -318,11 +368,13 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
 
   override fun onAttachedToWindow() {
     super.onAttachedToWindow()
+    updateVisibilityListeners()
     onVisibilityMaybeChanged()
   }
 
   override fun onDetachedFromWindow() {
     cancelFrame()
+    updateVisibilityListeners()
     super.onDetachedFromWindow()
   }
 
@@ -593,6 +645,19 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
     }
   }
 
+  fun setOffscreenBehavior(behavior: OffscreenBehavior) {
+    UiThreadUtil.runOnUiThread {
+      if (disposed || behavior == offscreenBehavior) return@runOnUiThread
+      offscreenBehavior = behavior
+      updateVisibilityListeners()
+      // A changed behavior applies to an unchanged offscreen state too.
+      offscreen = false
+      needsRedraw = true
+      updateOffscreen()
+      postFrame()
+    }
+  }
+
   fun play() {
     paused = false
     updateFrameRateHint()
@@ -660,6 +725,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
     RiveErrorLogger.removeListener(errorListener)
     liveViews.remove(this)
     cancelFrame()
+    updateVisibilityListeners()
     updateFrameRateHint()
     // The command queue is FIFO, so deletes enqueued here run after any
     // still-pending draw commands that reference these handles.

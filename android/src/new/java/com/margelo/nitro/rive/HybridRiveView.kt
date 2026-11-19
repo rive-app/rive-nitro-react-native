@@ -113,6 +113,12 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
       )
     }
 
+  override var offscreenBehavior: OffscreenBehavior? = null
+    set(value) {
+      field = value
+      view.setOffscreenBehavior(value ?: OffscreenBehavior.NONE)
+    }
+
   override var renderEnabled: Variant_Boolean_String? = null
     set(value) {
       field = value
