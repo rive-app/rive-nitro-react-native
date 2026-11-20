@@ -97,8 +97,17 @@ type VMNameArg<S extends RiveFileSchema> =
     ? string
     : Extract<keyof S['viewModels'], string>;
 
+/** The instance type for ViewModel `N`; untyped when the schema doesn't know it. */
+type FileInstance<S extends RiveFileSchema, N extends string> =
+  IsBaseSchema<S> extends true
+    ? ViewModelInstance
+    : N extends Extract<keyof S['viewModels'], string>
+      ? TypedViewModelInstance<S, N>
+      : ViewModelInstance;
+
 /**
- * File params whose `viewModelName` is constrained to the file's schema.
+ * File params whose `viewModelName` is constrained to the file's schema, and
+ * whose `onInit` receives the instance type the hook returns.
  * Intersecting `N` with the valid names (instead of constraining `N` itself)
  * makes an invalid name a hard error inside this overload rather than a
  * constraint failure that would silently fall through to another overload.
@@ -106,12 +115,24 @@ type VMNameArg<S extends RiveFileSchema> =
 type UseViewModelInstanceFileParamsFor<
   S extends RiveFileSchema,
   N extends string,
-> =
-  | UseViewModelInstanceFileDefault
-  | UseViewModelInstanceFileByArtboard
-  | (Omit<UseViewModelInstanceFileByViewModelName, 'viewModelName'> & {
+> = (
+  | Omit<UseViewModelInstanceFileDefault, 'onInit'>
+  | Omit<UseViewModelInstanceFileByArtboard, 'onInit'>
+  | (Omit<
+      UseViewModelInstanceFileByViewModelName,
+      'onInit' | 'viewModelName'
+    > & {
       viewModelName: N & VMNameArg<S>;
-    });
+    })
+) & {
+  /**
+   * Called when a new instance is created, before the hook exposes it —
+   * synchronously during render without `async: true`, or right after the
+   * instance resolves (before it is published) with `async: true`.
+   * Note: This callback is excluded from deps - changing it won't recreate the instance.
+   */
+  onInit?: (instance: FileInstance<S, N>) => void;
+};
 
 export interface UseViewModelInstanceViewModelParams
   extends UseViewModelInstanceBaseParams {
