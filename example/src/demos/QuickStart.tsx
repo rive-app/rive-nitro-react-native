@@ -17,11 +17,10 @@ import {
   Fit,
 } from '@rive-app/react-native';
 import type { Metadata } from '../shared/metadata';
+import quickStartRiv from '../../assets/rive/quick_start.riv';
 
 export default function QuickStart() {
-  const { riveFile, error: fileError } = useRiveFile(
-    require('../../assets/rive/quick_start.riv')
-  );
+  const { riveFile, error: fileError } = useRiveFile(quickStartRiv);
   const { riveViewRef, setHybridRef } = useRive();
   const { instance: viewModelInstance, error } = useViewModelInstance(
     riveFile,

@@ -19,11 +19,10 @@ import {
   useViewModelInstance,
 } from '@rive-app/react-native';
 import { type Metadata } from '../shared/metadata';
+import listsDemoRiv from '../../assets/lists_demo.riv';
 
 export default function MenuListExample() {
-  const { riveFile, isLoading, error } = useRiveFile(
-    require('../../assets/lists_demo.riv')
-  );
+  const { riveFile, isLoading, error } = useRiveFile(listsDemoRiv);
 
   return (
     <View style={styles.container}>

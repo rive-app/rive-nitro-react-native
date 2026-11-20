@@ -13,6 +13,7 @@ import {
 } from '@react-navigation/native-stack';
 import { RiveView, useRiveFile, Fit } from '@rive-app/react-native';
 import { type Metadata } from '../shared/metadata';
+import rewardsRiv from '../../assets/rive/rewards.riv';
 
 /**
  * Reproducer for issue #356: the Rive content disappeared part-way through an
@@ -60,7 +61,7 @@ function AnimationScreen({
 }: {
   navigation: NativeStackNavigationProp<ParamList, 'Issue356Animation'>;
 }) {
-  const { riveFile } = useRiveFile(require('../../assets/rive/rewards.riv'));
+  const { riveFile } = useRiveFile(rewardsRiv);
   const markerX = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {

@@ -1,7 +1,7 @@
 import { describe, it, expect, waitFor, cleanup } from 'react-native-harness';
 import { RiveFileFactory, RiveLog } from '@rive-app/react-native';
 
-const BOUNCING_BALL = require('../assets/rive/bouncing_ball.riv');
+import BOUNCING_BALL from '../assets/rive/bouncing_ball.riv';
 const isExperimental = RiveFileFactory.getBackend() === 'experimental';
 
 type LogEntry = { level: string; tag: string; message: string };

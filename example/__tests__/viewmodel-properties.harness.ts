@@ -3,7 +3,7 @@ import { Platform } from 'react-native';
 import type { ViewModelInstance } from '@rive-app/react-native';
 import { RiveFileFactory } from '@rive-app/react-native';
 
-const DATABINDING = require('../assets/rive/databinding.riv');
+import DATABINDING from '../assets/rive/databinding.riv';
 
 function isExperimental() {
   return RiveFileFactory.getBackend() === 'experimental';

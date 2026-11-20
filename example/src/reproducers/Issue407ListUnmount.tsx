@@ -7,6 +7,7 @@ import {
   type ViewModelInstance,
 } from '@rive-app/react-native';
 import { type Metadata } from '../shared/metadata';
+import databindingListsRiv from '../../assets/rive/databinding_lists.riv';
 
 /**
  * Issue #407: useRiveList's cleanup called a method on a list property that
@@ -31,9 +32,7 @@ function TeamList({ instance }: { instance: ViewModelInstance }) {
 }
 
 export default function Issue407ListUnmount() {
-  const { riveFile } = useRiveFile(
-    require('../../assets/rive/databinding_lists.riv')
-  );
+  const { riveFile } = useRiveFile(databindingListsRiv);
   const { instance } = useViewModelInstance(riveFile, {
     viewModelName: 'DevRel',
     async: true,

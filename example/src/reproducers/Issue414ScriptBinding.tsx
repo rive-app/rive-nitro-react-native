@@ -9,6 +9,7 @@ import {
   type ViewModelInstance,
 } from '@rive-app/react-native';
 import { type Metadata } from '../shared/metadata';
+import scriptBindingProbeRiv from '../../assets/rive/script_binding_probe.riv';
 
 /**
  * Issue #414: a script that caches context:viewModel() in init must see the
@@ -20,9 +21,7 @@ import { type Metadata } from '../shared/metadata';
  */
 
 function Probe({ instance }: { instance: ViewModelInstance }) {
-  const { riveFile } = useRiveFile(
-    require('../../assets/rive/script_binding_probe.riv')
-  );
+  const { riveFile } = useRiveFile(scriptBindingProbeRiv);
   const { value: seed } = useRiveNumber('seed', instance);
   const { value: isReady } = useRiveNumber('isReady', instance);
   const { value: observedSeed } = useRiveNumber('observedSeed', instance);
@@ -53,9 +52,7 @@ function Probe({ instance }: { instance: ViewModelInstance }) {
 }
 
 export default function Issue414ScriptBinding() {
-  const { riveFile, error } = useRiveFile(
-    require('../../assets/rive/script_binding_probe.riv')
-  );
+  const { riveFile, error } = useRiveFile(scriptBindingProbeRiv);
   const onInit = useCallback((vmi: ViewModelInstance) => {
     vmi.numberProperty('seed')?.set(42);
   }, []);

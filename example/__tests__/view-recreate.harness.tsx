@@ -31,7 +31,7 @@ import type { ViewModelInstance } from '@rive-app/react-native';
  * ref JS holds kept pointing at the dead view. See PR #365.
  */
 
-const QUICK_START = require('../assets/rive/quick_start.riv');
+import QUICK_START from '../assets/rive/quick_start.riv';
 
 function expectDefined<T>(value: T): asserts value is NonNullable<T> {
   expect(value).toBeDefined();

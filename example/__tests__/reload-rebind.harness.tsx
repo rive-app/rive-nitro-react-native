@@ -16,7 +16,7 @@ import {
   type ViewModelInstance,
 } from '@rive-app/react-native';
 
-const BOUNCING_BALL = require('../assets/rive/bouncing_ball.riv');
+import BOUNCING_BALL from '../assets/rive/bouncing_ball.riv';
 
 const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
 

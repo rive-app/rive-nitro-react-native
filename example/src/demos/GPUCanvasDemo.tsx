@@ -9,7 +9,7 @@ import {
 import type { Metadata } from '../shared/metadata';
 
 // ore.riv is the GPU Canvas sample shipped with rive-android's example app.
-const ORE = require('../../assets/rive/ore.riv');
+import ORE from '../../assets/rive/ore.riv';
 
 type Status = 'enabled' | 'ignored' | 'unavailable';
 

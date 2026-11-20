@@ -16,7 +16,7 @@ import {
   type RiveViewRef,
 } from '@rive-app/react-native';
 
-const BOUNCING_BALL = require('../assets/rive/bouncing_ball.riv');
+import BOUNCING_BALL from '../assets/rive/bouncing_ball.riv';
 const isExperimental = RiveFileFactory.getBackend() === 'experimental';
 
 type TestContext = {

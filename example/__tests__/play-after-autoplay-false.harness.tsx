@@ -19,7 +19,7 @@ import {
 
 // rating.riv: single artboard with state machine "State Machine 1" and a
 // number input "rating".
-const RATING = require('../assets/rive/rating.riv');
+import RATING from '../assets/rive/rating.riv';
 
 // Issue #332 follow-up: play() on a view mounted with autoPlay={false} must
 // start the *configured* state machine and leave its inputs writable. On

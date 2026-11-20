@@ -5,10 +5,10 @@ import type {
 } from '@rive-app/react-native';
 import { RiveFileFactory } from '@rive-app/react-native';
 
-const DATABINDING = require('../assets/rive/databinding.riv');
-const DATABINDING_LISTS = require('../assets/rive/databinding_lists.riv');
-const DATABINDING_IMAGES = require('../assets/rive/databinding_images.riv');
-const ARTBOARD_DB_TEST = require('../assets/rive/artboard_db_test.riv');
+import DATABINDING from '../assets/rive/databinding.riv';
+import DATABINDING_LISTS from '../assets/rive/databinding_lists.riv';
+import DATABINDING_IMAGES from '../assets/rive/databinding_images.riv';
+import ARTBOARD_DB_TEST from '../assets/rive/artboard_db_test.riv';
 
 function expectDefined<T>(value: T): asserts value is NonNullable<T> {
   expect(value).toBeDefined();

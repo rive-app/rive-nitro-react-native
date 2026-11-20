@@ -19,7 +19,7 @@ import { type Metadata } from '../../shared/metadata';
  * If the vehicles stop animating, rendering depends on that thread.
  */
 
-const VEHICLES_URL = require('../../../assets/rive/rewards.riv');
+import VEHICLES_URL from '../../../assets/rive/rewards.riv';
 
 const JS_BLOCK_MS = 10_000;
 const JS_ROUNDS = 6;

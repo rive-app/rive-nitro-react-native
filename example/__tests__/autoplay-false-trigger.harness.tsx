@@ -21,8 +21,8 @@ import type { ViewModelInstance } from '@rive-app/react-native';
 //   - "health" number property (default 50)
 //   - "gameOver" trigger property
 //   - state machine named "State Machine 1"
-const QUICK_START = require('../assets/rive/quick_start.riv');
-const RATING = require('../assets/rive/rating.riv');
+import QUICK_START from '../assets/rive/quick_start.riv';
+import RATING from '../assets/rive/rating.riv';
 
 function expectDefined<T>(value: T): asserts value is NonNullable<T> {
   expect(value).toBeDefined();

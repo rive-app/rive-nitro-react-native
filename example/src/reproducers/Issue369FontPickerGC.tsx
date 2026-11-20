@@ -16,6 +16,7 @@ import {
   useViewModelInstance,
 } from '@rive-app/react-native';
 import { type Metadata } from '../shared/metadata';
+import fontFallbackRiv from '../../assets/rive/font_fallback.riv';
 
 /**
  * Issue #369: on Android, rive-android keeps the fallback-font picker only in a
@@ -116,9 +117,7 @@ export default function Issue369FontPickerGC() {
 
 function ThaiText() {
   const { riveViewRef, setHybridRef } = useRive();
-  const { riveFile } = useRiveFile(
-    require('../../assets/rive/font_fallback.riv')
-  );
+  const { riveFile } = useRiveFile(fontFallbackRiv);
   const { instance } = useViewModelInstance(riveFile, { async: true });
   const { setValue } = useRiveString('text', instance);
 

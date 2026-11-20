@@ -5,8 +5,10 @@ import {
   useRiveFile,
   Fit,
   type RiveViewRef,
+  type RiveFileSchema,
 } from '@rive-app/react-native';
 import { type Metadata } from '../shared/metadata';
+import quickStartRiv from '../../assets/rive/quick_start.riv';
 
 /**
  * Reproducer for review finding H2 (iOS experimental backend).
@@ -19,9 +21,7 @@ import { type Metadata } from '../shared/metadata';
 const AWAIT_TIMEOUT_MS = 6000;
 
 export default function LoadErrorPath() {
-  const { riveFile } = useRiveFile(
-    require('../../assets/rive/quick_start.riv')
-  );
+  const { riveFile } = useRiveFile<RiveFileSchema>(quickStartRiv);
   const [mounted, setMounted] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
   const [readyResult, setReadyResult] = useState('not started');

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { RiveView, useRiveFile, Semantics } from '@rive-app/react-native';
 import type { Metadata } from '../shared/metadata';
+import tabtestRiv from '../../assets/rive/tabtest.riv';
 
 /*
   Semantics — editor-authored accessibility exposed to VoiceOver.
@@ -20,9 +21,7 @@ const MODES: { label: string; value: Semantics }[] = [
 ];
 
 export default function SemanticsExample() {
-  const { riveFile, error } = useRiveFile(
-    require('../../assets/rive/tabtest.riv')
-  );
+  const { riveFile, error } = useRiveFile(tabtestRiv);
   const [semantics, setSemantics] = useState(Semantics.On);
 
   if (error) {
