@@ -57,6 +57,8 @@ export default {
   appRegistryComponentName: 'RiveExample',
   metroPort: Number(process.env.HARNESS_METRO_PORT) || 8081,
   bridgeTimeout: 90000,
+  // Harness defaults this to 5s and ignores jest's --testTimeout.
+  testTimeout: 120000,
   maxAppRestarts: 3,
   forwardClientLogs: true,
   runners: [
