@@ -62,7 +62,7 @@ const defaultOnError = (error: RiveError) =>
  * @property {Alignment} [alignment] - How the Rive graphic should be aligned within its container
  * @property {Fit} [fit] - How the Rive graphic should fit within its container
  * @property {number | FrameRateRange} [frameRate] - Preferred frame rate for the render loop (new runtimes only)
- * @property {boolean} [paused=false] - Stops advancing and drawing, combined with pause()/play() (new runtimes only)
+ * @property {boolean} [paused=false] - Suspends continuous playback, combined with pause()/play() (new runtimes only)
  * @property {Object} [style] - React Native style object for container customization
  * @property {(error: RiveError) => void} [onError] - Callback function that is called when an error occurs
  *
