@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.18](https://github.com/rive-app/rive-nitro-react-native/compare/v0.5.17...v0.5.18) (2026-11-20)
+
+
+### Features
+
+* add paused prop to RiveView ([#472](https://github.com/rive-app/rive-nitro-react-native/issues/472)) ([6d77b78](https://github.com/rive-app/rive-nitro-react-native/commit/6d77b783dee6db3cbaf7ba30788eb90cdd8a08c4))
+
 ## [0.5.17](https://github.com/rive-app/rive-nitro-react-native/compare/v0.5.16...v0.5.17) (2026-11-19)
 
 
