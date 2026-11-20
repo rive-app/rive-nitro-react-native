@@ -64,6 +64,12 @@ export interface RiveViewProps extends HybridViewProps {
    */
   frameRate?: number | FrameRateRange;
   /**
+   * Suspends continuous playback while true. Clearing `paused` resumes playback
+   * if the view would otherwise be playing. View model listeners and triggers
+   * on the view don't fire while paused. Ignored by legacy backends.
+   */
+  paused?: boolean;
+  /**
    * Exposes accessibility semantics authored in the Rive editor to the
    * platform screen reader (VoiceOver). Defaults to Semantics.Off.
    *

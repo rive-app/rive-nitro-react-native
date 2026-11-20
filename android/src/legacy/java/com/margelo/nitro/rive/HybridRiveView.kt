@@ -94,6 +94,9 @@ class HybridRiveView(val context: ThemedReactContext) : HybridRiveViewSpec() {
   // experimental backends.
   override var frameRate: Variant_Double_FrameRateRange? = null
 
+  // Accepted for API parity; only implemented on the new runtime.
+  override var paused: Boolean? = null
+
   // Accepted for API parity; semantics are only available in the new Rive
   // runtime, and Android support is pending upstream (iOS-only for now).
   override var semantics: Semantics? = null

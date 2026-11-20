@@ -122,6 +122,17 @@ namespace margelo::nitro::rive::views {
         throw std::runtime_error(std::string("RiveView.frameRate: ") + exc.what());
       }
     }()),
+    paused([&]() -> CachedProp<std::optional<bool>> {
+      try {
+        const react::RawValue* rawValue = rawProps.at("paused", nullptr, nullptr);
+        if (rawValue == nullptr) return sourceProps.paused;
+        const auto& [runtime, value] = (std::pair<jsi::Runtime*, jsi::Value>)*rawValue;
+        if (value.isNull()) return CachedProp<std::optional<bool>>::fromRawValue(*runtime, jsi::Value::undefined(), sourceProps.paused);
+        return CachedProp<std::optional<bool>>::fromRawValue(*runtime, value, sourceProps.paused);
+      } catch (const std::exception& exc) {
+        throw std::runtime_error(std::string("RiveView.paused: ") + exc.what());
+      }
+    }()),
     semantics([&]() -> CachedProp<std::optional<Semantics>> {
       try {
         const react::RawValue* rawValue = rawProps.at("semantics", nullptr, nullptr);
@@ -175,6 +186,7 @@ namespace margelo::nitro::rive::views {
       case hashString("fit"): return true;
       case hashString("layoutScaleFactor"): return true;
       case hashString("frameRate"): return true;
+      case hashString("paused"): return true;
       case hashString("semantics"): return true;
       case hashString("dataBind"): return true;
       case hashString("onError"): return true;

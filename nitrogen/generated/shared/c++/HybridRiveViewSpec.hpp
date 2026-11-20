@@ -94,6 +94,8 @@ namespace margelo::nitro::rive {
       virtual void setLayoutScaleFactor(std::optional<double> layoutScaleFactor) = 0;
       virtual std::optional<std::variant<double, FrameRateRange>> getFrameRate() = 0;
       virtual void setFrameRate(const std::optional<std::variant<double, FrameRateRange>>& frameRate) = 0;
+      virtual std::optional<bool> getPaused() = 0;
+      virtual void setPaused(std::optional<bool> paused) = 0;
       virtual std::optional<Semantics> getSemantics() = 0;
       virtual void setSemantics(std::optional<Semantics> semantics) = 0;
       virtual std::optional<std::variant<std::shared_ptr<HybridViewModelInstanceSpec>, DataBindMode, DataBindByName>> getDataBind() = 0;

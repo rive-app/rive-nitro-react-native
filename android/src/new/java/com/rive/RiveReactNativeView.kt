@@ -154,6 +154,9 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
   @Volatile
   private var paused = false
 
+  // The paused prop; kept apart from paused (play()/pause()) so the two combine. Main thread only.
+  private var pausedByProp = false
+
   private val viewScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
 
   private val textureView = TextureView(context).apply {
@@ -241,7 +244,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
       lastFrameTimeNs = frameTimeNanos
 
       try {
-        if (!paused && !settled) {
+        if (isAdvancing()) {
           worker.advanceStateMachine(sm, deltaTime)
         } else if (layoutAdvancePending) {
           worker.advanceStateMachine(sm, Duration.ZERO)
@@ -266,7 +269,9 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
     }
   }
 
-  private fun hasWork() = needsRedraw || (!paused && !settled)
+  private fun isAdvancing() = !paused && !pausedByProp && !settled
+
+  private fun hasWork() = needsRedraw || isAdvancing()
 
   private fun canRender() = isAttachedToWindow && windowVisibility == View.VISIBLE && isShown
 
@@ -345,7 +350,7 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
   private fun updateFrameRateHint() {
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.VANILLA_ICE_CREAM) return
     UiThreadUtil.runOnUiThread {
-      val fps = frameRate?.takeIf { it > 0 && !disposed && !paused }
+      val fps = frameRate?.takeIf { it > 0 && !disposed && !paused && !pausedByProp }
       textureView.requestedFrameRate =
         fps?.toFloat() ?: View.REQUESTED_FRAME_RATE_CATEGORY_NO_PREFERENCE
     }
@@ -562,6 +567,17 @@ class RiveReactNativeView(context: ThemedReactContext) : FrameLayout(context) {
       unsettle()
     } else {
       Log.w(TAG, "Cannot bind VMI: worker or state machine handle not available")
+    }
+  }
+
+  fun setPausedByProp(value: Boolean) {
+    UiThreadUtil.runOnUiThread {
+      if (disposed || value == pausedByProp) return@runOnUiThread
+      pausedByProp = value
+      updateFrameRateHint()
+      // Like pause(): don't let a delayed callback advance over the paused span.
+      cancelFrame()
+      postFrame()
     }
   }
 

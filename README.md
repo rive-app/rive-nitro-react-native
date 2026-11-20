@@ -89,6 +89,8 @@ function App() {
 }
 ```
 
+To stop a view covered by a screen it can't detect, such as one pushed by a JS stack navigator, set `paused={!isFocused}`.
+
 ## Native SDK Version Customization
 
 > **⚠️ Advanced Usage:** Customizing native SDK versions is intended for advanced users only. Using non-default versions may cause build-time errors, or compatibility issues. Always review and update custom versions when upgrading @rive-app/react-native.

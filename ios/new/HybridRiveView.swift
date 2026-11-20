@@ -99,6 +99,13 @@ class HybridRiveView: HybridRiveViewSpec {
   var fit: Fit?
   var layoutScaleFactor: Double?
   var frameRate: Variant_Double_FrameRateRange?
+  // Set here, not in afterUpdate, so it still applies while the file is disposed.
+  var paused: Bool? {
+    didSet {
+      let value = paused == true
+      try? onMainSync { try getRiveView().pausedByProp = value }
+    }
+  }
   var semantics: Semantics?
   var onError: (RiveError) -> Void = { _ in }
 

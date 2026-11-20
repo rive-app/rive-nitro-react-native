@@ -40,6 +40,19 @@ class RiveReactNativeView: UIView {
   }
   var autoPlay: Bool = true
 
+  // The paused prop; kept apart from isPaused (play()/pause()) so the two combine.
+  var pausedByProp = false {
+    didSet {
+      if pausedByProp != oldValue { applyPauseState() }
+    }
+  }
+
+  private var effectivelyPaused: Bool { isPaused || pausedByProp }
+
+  private func applyPauseState() {
+    riveUIView?.isPaused = effectivelyPaused
+  }
+
   /// Configure failures are reported here (wired to the onError prop).
   var onLoadError: ((String) -> Void)?
 
@@ -172,12 +185,12 @@ class RiveReactNativeView: UIView {
 
   func play() {
     isPaused = false
-    riveUIView?.isPaused = false
+    applyPauseState()
   }
 
   func pause() {
     isPaused = true
-    riveUIView?.isPaused = true
+    applyPauseState()
   }
 
   func reset() {
@@ -188,7 +201,7 @@ class RiveReactNativeView: UIView {
   func playIfNeeded() {
     if isPaused {
       isPaused = false
-      riveUIView?.isPaused = false
+      applyPauseState()
     }
   }
 
@@ -244,11 +257,11 @@ class RiveReactNativeView: UIView {
       // reconfigure, which previously caused orphaned draw calls ("state machine
       // not found") from the old MTKView after removeFromSuperview.
       existing.rive = rive
-      existing.isPaused = isPaused
+      existing.isPaused = effectivelyPaused
       existing.semantics = semantics
       existing.frameRate = frameRate
     } else {
-      let uiView = RiveUIView(rive: rive, isPaused: isPaused)
+      let uiView = RiveUIView(rive: rive, isPaused: effectivelyPaused)
       uiView.semantics = semantics
       uiView.frameRate = frameRate
       uiView.translatesAutoresizingMaskIntoConstraints = false
