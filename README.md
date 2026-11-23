@@ -41,17 +41,6 @@ Your agent installs the [Rive CLI](https://rive.app/agents), writes the scene, a
 
 - Error messages on Android in React Native 0.78-0.79 may not be descriptive, this is a [known issue](https://github.com/mrousavy/nitro/issues/382) in React Native and is fixed in RN 0.80
 - On Android, a Rive file or view model instance that is garbage collected without `dispose()` has its native memory freed by a finalizer, which runs only after a later Java heap collection. The legacy Android backend (`USE_RIVE_LEGACY=true`) has no such finalizers, so these objects leak unless disposed.
-- Apps built with Xcode 27 using `use_frameworks! :linkage => :dynamic` crash at launch on iOS 17 and older with `Symbol not found: __ZNSt13exception_ptr31__from_native_exception_pointerEPv` ([margelo/nitro#1652](https://github.com/margelo/nitro/issues/1652)). Static linkage, the default, is handled by this library. For dynamic frameworks, add this to your Podfile's `post_install` until Nitro ships the fix:
-
-  ```ruby
-  installer.pods_project.targets.each do |target|
-    next unless target.name == 'NitroModules'
-    target.build_configurations.each do |config|
-      config.build_settings['SWIFT_ENABLE_EXPLICIT_MODULES'] = 'NO'
-    end
-  end
-  ```
-
 - With `react-native-nitro-modules` 0.37 on React Native 0.83 and older without `use_frameworks!`, the iOS build fails in the `NitroModules` pod with `import of module 'glog.glog.log_severity' appears within namespace 'google'` ([margelo/nitro#1573](https://github.com/margelo/nitro/issues/1573)). Until Nitro ships the fix, add this to your Podfile's `post_install`, after `react_native_post_install`. It installs the textual glog modulemap that React Native 0.84+ ships:
 
   ```ruby
