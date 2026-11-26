@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.20](https://github.com/rive-app/rive-nitro-react-native/compare/v0.5.19...v0.5.20) (2026-11-26)
+
+
+### Bug Fixes
+
+* allow react-native-nitro-modules 0.37 ([#479](https://github.com/rive-app/rive-nitro-react-native/issues/479)) ([9c77f9d](https://github.com/rive-app/rive-nitro-react-native/commit/9c77f9db4bb83582660665bdad56b8e3ae720842)), closes [#467](https://github.com/rive-app/rive-nitro-react-native/issues/467)
+
 ## [0.5.19](https://github.com/rive-app/rive-nitro-react-native/compare/v0.5.18...v0.5.19) (2026-11-25)
 
 
