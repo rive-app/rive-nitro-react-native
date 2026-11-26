@@ -58,5 +58,20 @@ target 'RiveExample' do
       # :ccache_enabled => true
     )
 
+    # Nitro 0.37 fails to build against RN <= 0.83's glog clang module (margelo/nitro#1573), so install RN 0.84+'s textual modulemap.
+    glog_modulemap = File.join(installer.sandbox.public_headers.root, 'glog', 'glog.modulemap')
+    if File.exist?(glog_modulemap)
+      File.delete(glog_modulemap)
+      File.write(glog_modulemap, <<~MODULEMAP)
+        module glog {
+          textual header "glog/log_severity.h"
+          textual header "glog/logging.h"
+          textual header "glog/raw_logging.h"
+          textual header "glog/stl_logging.h"
+          textual header "glog/vlog_is_on.h"
+          export *
+        }
+      MODULEMAP
+    end
   end
 end
