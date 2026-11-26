@@ -15,6 +15,7 @@ import {
 import { useState, useEffect } from 'react';
 import { downloadFileAsArrayBuffer } from '../shared/fileHelpers';
 import { type Metadata } from '../shared/metadata';
+import ratingRiv from '../../assets/rive/rating.riv';
 
 const LOADING_METHODS = {
   SOURCE: 'Source',
@@ -44,7 +45,7 @@ const getInputForMethod = async (
       const arrayBuffer = await downloadFileAsArrayBuffer(networkGraphicURL);
       return arrayBuffer || undefined;
     case LOADING_METHODS.SOURCE:
-      return require('../../assets/rive/rating.riv');
+      return ratingRiv;
     default:
       return undefined;
   }

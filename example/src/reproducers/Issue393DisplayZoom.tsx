@@ -13,6 +13,7 @@ import {
   type RiveFile,
 } from '@rive-app/react-native';
 import { type Metadata } from '../shared/metadata';
+import rewardsRiv from '../../assets/rive/rewards.riv';
 
 /**
  * Issue #393: on iOS devices where UIScreen.nativeScale != scale (Display
@@ -51,9 +52,7 @@ function Cell({
 }
 
 export default function Issue393DisplayZoom() {
-  const { riveFile, error } = useRiveFile(
-    require('../../assets/rive/rewards.riv')
-  );
+  const { riveFile, error } = useRiveFile(rewardsRiv);
   const [generation, setGeneration] = useState(0);
   const [zeroScaled, setZeroScaled] = useState(true);
   const [resized, setResized] = useState(false);

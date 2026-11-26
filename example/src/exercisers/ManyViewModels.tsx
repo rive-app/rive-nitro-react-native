@@ -9,6 +9,7 @@ import {
   RiveImages,
   type RiveViewRef,
 } from '@rive-app/react-native';
+import manyViewmodelsRiv from '../../assets/rive/many_viewmodels.riv';
 
 type BindModeOption =
   | 'none'
@@ -75,9 +76,7 @@ function getDataBindValue(
 }
 
 export default function ManyViewModels() {
-  const { riveFile } = useRiveFile(
-    require('../../assets/rive/many_viewmodels.riv')
-  );
+  const { riveFile } = useRiveFile(manyViewmodelsRiv);
   const [bindMode, setBindMode] = useState<BindModeOption>('none');
   const [isLoadingImage, setIsLoadingImage] = useState(false);
   const [imageError, setImageError] = useState<string | null>(null);

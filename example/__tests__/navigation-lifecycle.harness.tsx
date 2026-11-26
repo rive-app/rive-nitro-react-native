@@ -17,7 +17,7 @@ import {
 } from '@rive-app/react-native';
 import type { ViewModelInstance } from '@rive-app/react-native';
 
-const QUICK_START = require('../assets/rive/quick_start.riv');
+import QUICK_START from '../assets/rive/quick_start.riv';
 
 const SCREEN_INACTIVE = 0 as const;
 const SCREEN_ACTIVE = 2 as const;

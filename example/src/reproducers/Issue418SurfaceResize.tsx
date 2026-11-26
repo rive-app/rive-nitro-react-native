@@ -2,6 +2,7 @@ import { useCallback, useRef, useState } from 'react';
 import { Animated, Pressable, Text, View, StyleSheet } from 'react-native';
 import { Fit, RiveView, useRiveFile } from '@rive-app/react-native';
 import { type Metadata } from '../shared/metadata';
+import layoutTestRiv from '../../assets/rive/layout_test.riv';
 
 /**
  * Issue #418: on the Android new backend, resizing a mounted RiveView kept
@@ -16,9 +17,7 @@ const SHORT = 200;
 const TALL = 400;
 
 export default function Issue418SurfaceResize() {
-  const { riveFile, error } = useRiveFile(
-    require('../../assets/rive/layout_test.riv')
-  );
+  const { riveFile, error } = useRiveFile(layoutTestRiv);
   const [height] = useState(() => new Animated.Value(SHORT));
   const tall = useRef(false);
   const [isTall, setIsTall] = useState(false);

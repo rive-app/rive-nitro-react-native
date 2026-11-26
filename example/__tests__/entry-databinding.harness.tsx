@@ -20,7 +20,7 @@ import {
 //   - input: value we set before mount (default -1)
 //   - inputOnEntry: state machine copies input into this on Entry transition (default -100)
 // Source: https://rive.app/community/files/27852-52628-on-entry-actions-reproducer
-const ON_ENTRY_TEST = require('../assets/rive/on_entry_test.riv');
+import ON_ENTRY_TEST from '../assets/rive/on_entry_test.riv';
 
 async function loadFile() {
   const file = await RiveFileFactory.fromSource(ON_ENTRY_TEST, undefined);

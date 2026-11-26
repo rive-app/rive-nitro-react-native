@@ -9,14 +9,13 @@ import {
   Fit,
 } from '@rive-app/react-native';
 import type { Metadata } from '../shared/metadata';
+import finishedTriggerRiv from '../../assets/rive/finished_trigger.riv';
 
 // One-shot animation whose state machine fires the 'finished' view-model
 // trigger via an exit-time transition action — the data-binding way to react
 // to playback completing (e.g. navigate away from a splash screen).
 export default function FinishedTriggerDemo() {
-  const { riveFile } = useRiveFile(
-    require('../../assets/rive/finished_trigger.riv')
-  );
+  const { riveFile } = useRiveFile(finishedTriggerRiv);
   const { riveViewRef, setHybridRef } = useRive();
   const { instance } = useViewModelInstance(riveFile, { async: true });
 

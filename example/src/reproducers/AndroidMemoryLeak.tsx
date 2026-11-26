@@ -19,6 +19,7 @@ import {
   type ViewModelImageProperty,
 } from '@rive-app/react-native';
 import { type Metadata } from '../shared/metadata';
+import databindingImagesRiv from '../../assets/rive/databinding_images.riv';
 
 /**
  * Reproducer for the Android memory growth reported against 0.4.11 with
@@ -68,9 +69,7 @@ function forceGC() {
 }
 
 export default function AndroidMemoryLeak() {
-  const { riveFile } = useRiveFile(
-    require('../../assets/rive/databinding_images.riv')
-  );
+  const { riveFile } = useRiveFile(databindingImagesRiv);
   const [scenario, setScenario] = useState<Scenario>('mount');
   const [running, setRunning] = useState(false);
   const [disposeOld, setDisposeOld] = useState(true);
@@ -197,9 +196,7 @@ function MountedScene({
   withView: boolean;
   clearOnUnmount: boolean;
 }) {
-  const { riveFile } = useRiveFile(
-    require('../../assets/rive/databinding_images.riv')
-  );
+  const { riveFile } = useRiveFile(databindingImagesRiv);
   const { instance } = useViewModelInstance(riveFile, { async: true });
 
   useEffect(() => {

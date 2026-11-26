@@ -20,6 +20,7 @@ import {
   type FallbackFont,
 } from '@rive-app/react-native';
 import { type Metadata } from '../shared/metadata';
+import fontFallbackRiv from '../../assets/rive/font_fallback.riv';
 
 const TEXT_PROPERTY = 'text';
 
@@ -256,7 +257,7 @@ function MountedView({ text }: { text: string }) {
   const { riveViewRef, setHybridRef } = useRive();
   const { riveFile, isLoading, error } = useRiveFile(
     // https://rive.app/marketplace/26480-49641-simple-test-text-property/
-    require('../../assets/rive/font_fallback.riv')
+    fontFallbackRiv
   );
   const { instance } = useViewModelInstance(riveFile, { async: true });
 

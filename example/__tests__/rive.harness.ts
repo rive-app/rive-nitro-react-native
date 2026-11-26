@@ -2,8 +2,8 @@ import { describe, it, expect } from 'react-native-harness';
 import { Platform } from 'react-native';
 import { RiveFileFactory, RiveImages, RiveLog } from '@rive-app/react-native';
 
-const QUICK_START = require('../assets/rive/quick_start.riv');
-const VIEWMODEL = require('../assets/rive/viewmodelproperty.riv');
+import QUICK_START from '../assets/rive/quick_start.riv';
+import VIEWMODEL from '../assets/rive/viewmodelproperty.riv';
 
 describe('RiveFile Loading', () => {
   it('fromSource with require() works', async () => {

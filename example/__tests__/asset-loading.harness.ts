@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'react-native-harness';
 import { RiveFileFactory } from '@rive-app/react-native';
 
-const OUT_OF_BAND = require('../assets/rive/out_of_band.riv');
+import OUT_OF_BAND from '../assets/rive/out_of_band.riv';
 
 function isExperimental() {
   return RiveFileFactory.getBackend() === 'experimental';

@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Pressable, Platform } from 'react-native';
 import { RiveView, useRiveFile, Fit } from '@rive-app/react-native';
 import { getDebugUtils } from 'rive-debug-utils';
 import { type Metadata } from '../shared/metadata';
+import quickStartRiv from '../../assets/rive/quick_start.riv';
 
 /**
  * Reproducer for the disposed-file re-attach crash reported in production.
@@ -24,9 +25,7 @@ const RIVE_VIEW_CLASS = 'com.rive.RiveReactNativeView';
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 function RiveContent() {
-  const { riveFile } = useRiveFile(
-    require('../../assets/rive/quick_start.riv')
-  );
+  const { riveFile } = useRiveFile(quickStartRiv);
   if (!riveFile) return <Text>Loading...</Text>;
   return (
     <RiveView

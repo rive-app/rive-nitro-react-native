@@ -19,7 +19,7 @@ import {
  * (HARNESS_TSAN=1) TSan reports the race on the unfixed runtime and is clean on the
  * fixed one.
  */
-const DATABINDING = require('../../assets/rive/databinding.riv');
+import DATABINDING from '../../assets/rive/databinding.riv';
 const ROUNDS = 80;
 
 type Ctx = {

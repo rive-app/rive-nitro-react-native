@@ -18,7 +18,7 @@ import {
   type ViewModelInstance,
 } from '@rive-app/react-native';
 
-const QUICK_START = require('../assets/rive/quick_start.riv');
+import QUICK_START from '../assets/rive/quick_start.riv';
 
 type DataBind = ViewModelInstance | DataBindMode;
 type TestContext = { ref: RiveViewRef | null; error: string | null };

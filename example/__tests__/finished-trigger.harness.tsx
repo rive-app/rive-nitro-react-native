@@ -20,7 +20,7 @@ import {
 // One-shot animation that fires the 'finished' view-model trigger when it
 // completes (state machine exit-time transition action) — the data-binding
 // replacement for the removed onStop prop.
-const FINISHED_TRIGGER = require('../assets/rive/finished_trigger.riv');
+import FINISHED_TRIGGER from '../assets/rive/finished_trigger.riv';
 
 const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
 

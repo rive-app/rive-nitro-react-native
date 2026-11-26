@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { useEffect } from 'react';
 import { Fit, RiveView, useRive, useRiveFile } from '@rive-app/react-native';
 import { type Metadata } from '../shared/metadata';
+import helloWorldTextRiv from '../../assets/rive/hello_world_text.riv';
 
 /**
  * @deprecated Setting text run values is deprecated. Use data binding instead.
@@ -13,9 +14,7 @@ import { type Metadata } from '../shared/metadata';
  */
 export default function TextRunExample() {
   const { riveViewRef, setHybridRef } = useRive();
-  const { riveFile, isLoading, error } = useRiveFile(
-    require('../../assets/rive/hello_world_text.riv')
-  );
+  const { riveFile, isLoading, error } = useRiveFile(helloWorldTextRiv);
 
   useEffect(() => {
     if (riveViewRef) {

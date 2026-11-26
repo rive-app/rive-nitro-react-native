@@ -6,8 +6,10 @@ import {
   useRiveNumber,
   useViewModelInstance,
   Fit,
+  type RiveFileSchema,
 } from '@rive-app/react-native';
 import { type Metadata } from '../shared/metadata';
+import quickStartRiv from '../../assets/rive/quick_start.riv';
 
 /**
  * Reproducer for review finding H3 (Android experimental backend).
@@ -23,9 +25,7 @@ import { type Metadata } from '../shared/metadata';
  */
 
 export default function ReloadRebind() {
-  const { riveFile } = useRiveFile(
-    require('../../assets/rive/quick_start.riv')
-  );
+  const { riveFile } = useRiveFile<RiveFileSchema>(quickStartRiv);
   // eslint-disable-next-line @typescript-eslint/no-deprecated -- intentionally exercises the deprecated sync creation path
   const { instance: viewModelInstance } = useViewModelInstance(riveFile, {
     onInit: (vmi) => vmi.numberProperty('health')!.set(50),

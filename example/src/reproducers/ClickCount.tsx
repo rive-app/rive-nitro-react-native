@@ -1,11 +1,10 @@
 import { View, StyleSheet } from 'react-native';
 import { RiveView, useRiveFile, Fit } from '@rive-app/react-native';
 import type { Metadata } from '../shared/metadata';
+import clickCountRiv from '../../assets/rive/click-count.riv';
 
 export default function ClickCount() {
-  const { riveFile } = useRiveFile(
-    require('../../assets/rive/click-count.riv')
-  );
+  const { riveFile } = useRiveFile(clickCountRiv);
 
   return (
     <View style={styles.container}>

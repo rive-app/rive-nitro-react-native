@@ -7,6 +7,7 @@ import {
   Fit,
 } from '@rive-app/react-native';
 import { type Metadata } from '../shared/metadata';
+import quickStartRiv from '../../assets/rive/quick_start.riv';
 
 /**
  * Reproducer for review finding H5 (iOS experimental backend).
@@ -28,9 +29,7 @@ const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 declare const global: { gc?: () => void };
 
 function RiveContent({ raw }: { raw: boolean }) {
-  const { riveFile } = useRiveFile(
-    require('../../assets/rive/quick_start.riv')
-  );
+  const { riveFile } = useRiveFile(quickStartRiv);
   if (!riveFile) return <Text>Loading...</Text>;
   if (raw) {
     // Raw host component: no dispose-on-unmount, so the Swift HybridRiveView
