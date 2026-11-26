@@ -275,14 +275,27 @@ jobs:
     # iPhone 16 Pro / iOS >=26 simulator, so the boot step fails intermittently.
     runs-on: macos-15
     timeout-minutes: 85
+    strategy:
+      fail-fast: false
+      matrix:
+        nitro: ['0.36.5', '0.37.2']
     env:
       XCODE_VERSION: 26.3
+      NITRO_CACHE_VARIANT: ${{ matrix.nitro != '0.36.5' && format('-nitro{0}', matrix.nitro) || '' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Setup
         uses: ./.github/actions/setup
+
+      - name: Use react-native-nitro-modules ${{ matrix.nitro }}
+        if: matrix.nitro != '0.36.5'
+        env:
+          YARN_ENABLE_IMMUTABLE_INSTALLS: 'false'
+        run: |
+          npm pkg set resolutions.react-native-nitro-modules=${{ matrix.nitro }}
+          yarn install
 
       - name: Use appropriate Xcode version
         uses: maxim-lobanov/setup-xcode@v1
@@ -298,9 +311,9 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: expo57-example/ios/build
-          key: ${{ runner.os }}-ios-build-expo57-${{ env.XCODE_VERSION }}-${{ hashFiles('package.json', 'yarn.lock', 'ios/**', 'nitrogen/generated/ios/**', '*.podspec', 'src/specs/*.nitro.ts', 'expo57-example/package.json', 'expo57-example/app.json', 'expo57-example/app.config.js', 'expo57-example/assets/**', 'expo57-example/app/**', 'expo57-example/babel.config.js', 'expo57-example/metro.config.js') }}
+          key: ${{ runner.os }}-ios-build-expo57${{ env.NITRO_CACHE_VARIANT }}-${{ env.XCODE_VERSION }}-${{ hashFiles('package.json', 'yarn.lock', 'ios/**', 'nitrogen/generated/ios/**', '*.podspec', 'src/specs/*.nitro.ts', 'expo57-example/package.json', 'expo57-example/app.json', 'expo57-example/app.config.js', 'expo57-example/assets/**', 'expo57-example/app/**', 'expo57-example/babel.config.js', 'expo57-example/metro.config.js') }}
           restore-keys: |
-            ${{ runner.os }}-ios-build-expo57-${{ env.XCODE_VERSION }}-
+            ${{ runner.os }}-ios-build-expo57${{ env.NITRO_CACHE_VARIANT }}-${{ env.XCODE_VERSION }}-
 
       - name: Restore cocoapods
         if: steps.ios-build-cache.outputs.cache-hit != 'true'
@@ -308,9 +321,9 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: expo57-example/ios/Pods
-          key: ${{ runner.os }}-cocoapods-expo57-${{ hashFiles('package.json', 'yarn.lock', '*.podspec', 'expo57-example/package.json') }}
+          key: ${{ runner.os }}-cocoapods-expo57${{ env.NITRO_CACHE_VARIANT }}-${{ hashFiles('package.json', 'yarn.lock', '*.podspec', 'expo57-example/package.json') }}
           restore-keys: |
-            ${{ runner.os }}-cocoapods-expo57-
+            ${{ runner.os }}-cocoapods-expo57${{ env.NITRO_CACHE_VARIANT }}-
 
       - name: Install cocoapods
         if: steps.ios-build-cache.outputs.cache-hit != 'true'
@@ -500,21 +513,34 @@ jobs:
         if: failure() || cancelled()
         uses: actions/upload-artifact@v4
         with:
-          name: ios-harness-crash-reports
+          name: ios-harness-crash-reports-nitro-${{ matrix.nitro }}
           path: crash-reports/
           if-no-files-found: ignore
 
   test-harness-android:
     runs-on: ubuntu-latest
     timeout-minutes: 50
+    strategy:
+      fail-fast: false
+      matrix:
+        nitro: ['0.36.5', '0.37.2']
     env:
       ANDROID_API_LEVEL: 35
+      NITRO_CACHE_VARIANT: ${{ matrix.nitro != '0.36.5' && format('-nitro{0}', matrix.nitro) || '' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Setup
         uses: ./.github/actions/setup
+
+      - name: Use react-native-nitro-modules ${{ matrix.nitro }}
+        if: matrix.nitro != '0.36.5'
+        env:
+          YARN_ENABLE_IMMUTABLE_INSTALLS: 'false'
+        run: |
+          npm pkg set resolutions.react-native-nitro-modules=${{ matrix.nitro }}
+          yarn install
 
       - name: Install JDK
         uses: actions/setup-java@v4
@@ -551,9 +577,9 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: expo57-example/android/app/build
-          key: ${{ runner.os }}-android-build-expo57-${{ env.ANDROID_API_LEVEL }}-${{ hashFiles('package.json', 'yarn.lock', 'android/**', 'nitrogen/generated/android/**', 'expo57-example/package.json', 'expo57-example/app.json', 'expo57-example/app.config.js', 'expo57-example/assets/**') }}
+          key: ${{ runner.os }}-android-build-expo57${{ env.NITRO_CACHE_VARIANT }}-${{ env.ANDROID_API_LEVEL }}-${{ hashFiles('package.json', 'yarn.lock', 'android/**', 'nitrogen/generated/android/**', 'expo57-example/package.json', 'expo57-example/app.json', 'expo57-example/app.config.js', 'expo57-example/assets/**') }}
           restore-keys: |
-            ${{ runner.os }}-android-build-expo57-${{ env.ANDROID_API_LEVEL }}-
+            ${{ runner.os }}-android-build-expo57${{ env.NITRO_CACHE_VARIANT }}-${{ env.ANDROID_API_LEVEL }}-
 
       - name: Build Android app
         if: steps.android-build-cache.outputs.cache-hit != 'true'
@@ -594,7 +620,7 @@ jobs:
         if: failure() || cancelled()
         uses: actions/upload-artifact@v4
         with:
-          name: android-harness-crash-logs
+          name: android-harness-crash-logs-nitro-${{ matrix.nitro }}
           path: crash-logs/
           if-no-files-found: ignore
 

@@ -52,6 +52,25 @@ Your agent installs the [Rive CLI](https://rive.app/agents), writes the scene, a
   end
   ```
 
+- With `react-native-nitro-modules` 0.37 on React Native 0.83 and older without `use_frameworks!`, the iOS build fails in the `NitroModules` pod with `import of module 'glog.glog.log_severity' appears within namespace 'google'` ([margelo/nitro#1573](https://github.com/margelo/nitro/issues/1573)). Until Nitro ships the fix, add this to your Podfile's `post_install`, after `react_native_post_install`. It installs the textual glog modulemap that React Native 0.84+ ships:
+
+  ```ruby
+  glog_modulemap = File.join(installer.sandbox.public_headers.root, 'glog', 'glog.modulemap')
+  if File.exist?(glog_modulemap)
+    File.delete(glog_modulemap)
+    File.write(glog_modulemap, <<~MODULEMAP)
+      module glog {
+        textual header "glog/log_severity.h"
+        textual header "glog/logging.h"
+        textual header "glog/raw_logging.h"
+        textual header "glog/stl_logging.h"
+        textual header "glog/vlog_is_on.h"
+        export *
+      }
+    MODULEMAP
+  end
+  ```
+
 - The hooks and `RiveView` keep Rive files, view model instances and views alive while an `<Activity mode="hidden">` hides them, and dispose them on unmount.
 
 ## Installation

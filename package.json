@@ -126,7 +126,7 @@
     "@rive-app/canvas": "^2.39.0",
     "react": "*",
     "react-native": "*",
-    "react-native-nitro-modules": ">=0.35.10 <0.37"
+    "react-native-nitro-modules": ">=0.35.10 <0.38"
   },
   "workspaces": [
     "example",
