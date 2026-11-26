@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.19](https://github.com/rive-app/rive-nitro-react-native/compare/v0.5.18...v0.5.19) (2026-11-25)
+
+
+### Bug Fixes
+
+* **ios:** bump rive-ios to 6.31.0 ([#478](https://github.com/rive-app/rive-nitro-react-native/issues/478)) ([85d6736](https://github.com/rive-app/rive-nitro-react-native/commit/85d67365554a7eba3cdd8359d87d85ac212b109a))
+
 ## [0.5.18](https://github.com/rive-app/rive-nitro-react-native/compare/v0.5.17...v0.5.18) (2026-11-20)
 
 
