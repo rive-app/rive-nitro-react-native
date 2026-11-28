@@ -21,7 +21,10 @@ def reactNativeArchitectures() {
 }
 
 apply plugin: "com.android.library"
-apply plugin: "kotlin-android"
+// AGP 9's built-in Kotlin already registers the `kotlin` extension; applying kotlin-android again fails.
+if (project.extensions.findByName('kotlin') == null) {
+  apply plugin: "kotlin-android"
+}
 apply from: '../nitrogen/generated/android/RiveDebugUtils+autolinking.gradle'
 
 android {
@@ -65,6 +68,14 @@ android {
   compileOptions {
     sourceCompatibility JavaVersion.VERSION_1_8
     targetCompatibility JavaVersion.VERSION_1_8
+  }
+
+  sourceSets {
+    main {
+      // AGP 9 built-in Kotlin only compiles kotlin.srcDirs, so register the
+      // Nitrogen-generated Kotlin added to java.srcDirs by RiveDebugUtils+autolinking.gradle.
+      kotlin.srcDirs += ["${project.projectDir}/../nitrogen/generated/android/kotlin"]
+    }
   }
 }
 
