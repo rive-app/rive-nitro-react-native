@@ -359,12 +359,9 @@ describe('imperative playback control (play/pause/reset)', () => {
 
 describe('Auto dataBind with no default ViewModel (issue #189)', () => {
   it('auto-binds default ViewModel when one exists', async () => {
-    // getViewModelInstance() returns null on Android experimental — auto-bind
-    // doesn't expose the VMI handle to JS yet
-    const isAndroidExperimental =
-      Platform.OS === 'android' &&
-      RiveFileFactory.getBackend() === 'experimental';
-    if (isAndroidExperimental) return;
+    // getViewModelInstance() returns null on Android — auto-bind doesn't
+    // expose the VMI handle to JS yet
+    if (Platform.OS === 'android') return;
 
     const file = await RiveFileFactory.fromSource(BOUNCING_BALL, undefined);
 

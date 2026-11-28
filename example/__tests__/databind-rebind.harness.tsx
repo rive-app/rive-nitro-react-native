@@ -23,9 +23,6 @@ const QUICK_START = require('../assets/rive/quick_start.riv');
 type DataBind = ViewModelInstance | DataBindMode;
 type TestContext = { ref: RiveViewRef | null; error: string | null };
 
-const isIOSExperimental = () =>
-  Platform.OS === 'ios' && RiveFileFactory.getBackend() === 'experimental';
-
 async function createInstance(
   file: RiveFile,
   health: number
@@ -78,7 +75,7 @@ function TestView({
 
 describe('getViewModelInstance after rebinding', () => {
   it('follows bindViewModelInstance and dataBind prop changes', async () => {
-    if (!isIOSExperimental()) return;
+    if (Platform.OS !== 'ios') return;
 
     const file = await RiveFileFactory.fromSource(QUICK_START, undefined);
     const a = await createInstance(file, 11);
@@ -126,7 +123,7 @@ describe('getViewModelInstance after rebinding', () => {
   });
 
   it('returns an instance bound before the view was ready', async () => {
-    if (!isIOSExperimental()) return;
+    if (Platform.OS !== 'ios') return;
 
     const file = await RiveFileFactory.fromSource(QUICK_START, undefined);
     const a = await createInstance(file, 11);

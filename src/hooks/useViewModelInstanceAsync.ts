@@ -34,10 +34,9 @@ type CreateInstanceResult = {
 
 // The message stays clean and stable ("… not found"); when the native call
 // *rejected* the runtime error is attached as `cause` so its diagnostic is
-// preserved without leaking into the message. Only some backends reject on a
-// bad name (the new iOS backend throws `invalidViewModelInstance`); the
-// legacy backends and Android's pre-check resolve null instead, so a missing
-// `cause` is normal. See #305.
+// preserved without leaking into the message. iOS rejects on a bad name
+// (`invalidViewModelInstance`) while Android's pre-check resolves null, so a
+// missing `cause` is normal. See #305.
 function instanceNotFoundError(instanceName: string, cause?: unknown): Error {
   return new Error(
     `ViewModel instance '${instanceName}' not found`,
@@ -97,10 +96,10 @@ async function createInstanceAsync(
           artboardName ? ArtboardByName(artboardName) : undefined
         );
       } catch (e) {
-        // The new backend *throws* on an unknown artboard name (iOS
-        // `createArtboard`, Android `Artboard.fromFile`) while the legacy
-        // backend resolves undefined — map the rejection to the same
-        // not-found error below, preserving the native diagnostic as `cause`.
+        // The runtime *throws* on an unknown artboard name (iOS
+        // `createArtboard`, Android `Artboard.fromFile`) — map the rejection
+        // to the same not-found error as an undefined result, preserving the
+        // native diagnostic as `cause`.
         // Without a name a rejection is a real error.
         if (!artboardName) throw e;
         artboardCause = e;

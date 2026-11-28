@@ -91,7 +91,7 @@ class HybridRiveFile: HybridRiveFileSpec {
     let artboard = try await file.createArtboard(artboardName)
     // getDefaultViewModelInfo throws when the artboard has no default
     // ViewModel — a normal state for VM-less files (issue #189 fixture), not
-    // a failure. Resolve nil like the legacy backend so callers get the
+    // a failure. Resolve nil so callers get the
     // documented "no ViewModel" result — but propagate cancellation and log
     // what was swallowed so a genuine failure (disposed file, dead worker)
     // isn't a silently blank screen.

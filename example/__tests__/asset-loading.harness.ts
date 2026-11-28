@@ -3,15 +3,8 @@ import { RiveFileFactory } from '@rive-app/react-native';
 
 const OUT_OF_BAND = require('../assets/rive/out_of_band.riv');
 
-function isExperimental() {
-  return RiveFileFactory.getBackend() === 'experimental';
-}
-
 describe('Asset loading with referencedAssets', () => {
-  // referencedAssets with raw ResolvedReferencedAsset objects only works
-  // on the new runtime; legacy uses a different resolution path.
   it('loads file with font asset (type: font)', async () => {
-    if (!isExperimental()) return;
     const file = await RiveFileFactory.fromSource(OUT_OF_BAND, {
       'Inter-594377': {
         sourceAssetId: 'Inter-594377.ttf',
@@ -23,7 +16,6 @@ describe('Asset loading with referencedAssets', () => {
   });
 
   it('loads file with image asset via URL (type: image)', async () => {
-    if (!isExperimental()) return;
     const file = await RiveFileFactory.fromSource(OUT_OF_BAND, {
       'referenced-image-2929282': {
         sourceUrl:
@@ -36,7 +28,6 @@ describe('Asset loading with referencedAssets', () => {
   });
 
   it('loads file with multiple asset types', async () => {
-    if (!isExperimental()) return;
     const file = await RiveFileFactory.fromSource(OUT_OF_BAND, {
       'Inter-594377': {
         sourceAssetId: 'Inter-594377.ttf',

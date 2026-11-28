@@ -98,11 +98,8 @@ describe('Scripts see the dataBind instance (issue #414)', () => {
     ['byName', { byName: 'Default' }],
   ] as const) {
     it(`script runs against the ${label} instance returned by getViewModelInstance()`, async () => {
-      // getViewModelInstance() isn't exposed for view-created instances on Android experimental
-      if (
-        Platform.OS === 'android' &&
-        RiveFileFactory.getBackend() === 'experimental'
-      ) {
+      // getViewModelInstance() isn't exposed for view-created instances on Android
+      if (Platform.OS === 'android') {
         return;
       }
       const file = await RiveFileFactory.fromSource(

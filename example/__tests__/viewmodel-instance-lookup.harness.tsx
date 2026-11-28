@@ -20,11 +20,9 @@ import {
 } from '@rive-app/react-native';
 import type { ViewModelInstance } from '@rive-app/react-native';
 
-// rive-android experimental SDK doesn't expose the ViewModel name from
-// DefaultForArtboard yet — pending rive-app/rive-android#443 which adds
-// getDefaultViewModelInfo(). Once merged and released, remove these guards.
-const isAndroidExperimental =
-  Platform.OS === 'android' && RiveFileFactory.getBackend() === 'experimental';
+// rive-android doesn't expose the ViewModel name from DefaultForArtboard yet —
+// pending rive-app/rive-android#443 which adds getDefaultViewModelInfo().
+const isAndroid = Platform.OS === 'android';
 
 const MULTI_AB = require('../assets/rive/arbtboards-models-instances.riv');
 
@@ -78,7 +76,7 @@ describe('Multi-artboard file: direct API', () => {
     const file = await loadFile();
     const vm = file.defaultArtboardViewModel(ArtboardByName('artboard1'));
     expectDefined(vm);
-    if (!isAndroidExperimental) {
+    if (!isAndroid) {
       expect(vm.modelName).toBe('viewmodel1');
     }
   });
@@ -87,7 +85,7 @@ describe('Multi-artboard file: direct API', () => {
     const file = await loadFile();
     const vm = file.defaultArtboardViewModel(ArtboardByName('artboard2'));
     expectDefined(vm);
-    if (!isAndroidExperimental) {
+    if (!isAndroid) {
       expect(vm.modelName).toBe('viewmodel2');
     }
   });
@@ -96,7 +94,7 @@ describe('Multi-artboard file: direct API', () => {
     const file = await loadFile();
     const vm = file.defaultArtboardViewModel(ArtboardByName('artboard3'));
     expectDefined(vm);
-    if (!isAndroidExperimental) {
+    if (!isAndroid) {
       expect(vm.modelName).toBe('viewmodel3');
     }
   });
@@ -105,7 +103,7 @@ describe('Multi-artboard file: direct API', () => {
     const file = await loadFile();
     const vm = file.defaultArtboardViewModel();
     expectDefined(vm);
-    if (!isAndroidExperimental) {
+    if (!isAndroid) {
       expect(vm.modelName).toBe('viewmodel1');
     }
   });
@@ -533,7 +531,7 @@ function ByNameView({
 
 describe('dataBind byName uses artboard default ViewModel', () => {
   it('artboard2 + byName("vmi1") → _id="vm2.vmi1.id" (not vm1)', async () => {
-    if (!isAndroidExperimental) {
+    if (!isAndroid) {
       return;
     }
     const file = await loadFile();

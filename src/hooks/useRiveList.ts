@@ -9,8 +9,8 @@ import { useDisposableMemo } from './useDisposableMemo';
 /**
  * Hook for interacting with list ViewModel instance properties.
  *
- * All operations go through the async native API — on the experimental
- * backend the sync accessors would block the JS thread on the command queue.
+ * All operations go through the async native API — the sync accessors
+ * would block the JS thread on the command queue.
  *
  * @param path - The path to the list property
  * @param viewModelInstance - The ViewModelInstance containing the list property
@@ -89,9 +89,8 @@ export function useRiveList(
     };
   }, [property, path, revision]);
 
-  // The new runtime has no native list-change notifications
-  // (addListener is a no-op there) — refresh after our own mutations so
-  // `length` stays live on both backends.
+  // The runtime has no native list-change notifications (addListener is a
+  // no-op) — refresh after our own mutations so `length` stays live.
   const afterMutation = useCallback(<T>(op: Promise<T>): Promise<T> => {
     return op.then((result) => {
       setRevision((r) => r + 1);

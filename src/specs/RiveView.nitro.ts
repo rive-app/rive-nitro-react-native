@@ -57,8 +57,7 @@ export interface RiveViewProps extends HybridViewProps {
    * screens). Capping limits frame production, not animation time — playback
    * still advances by the real elapsed time between frames.
    *
-   * Only supported on the new (default) runtimes; the legacy
-   * backends ignore it. Undefined = render at the display refresh rate.
+   * Undefined = render at the display refresh rate.
    *
    * @see https://rive.app/docs/runtimes/apple/apple#frame-rate
    */
@@ -66,7 +65,7 @@ export interface RiveViewProps extends HybridViewProps {
   /**
    * Suspends continuous playback while true. Clearing `paused` resumes playback
    * if the view would otherwise be playing. View model listeners and triggers
-   * on the view don't fire while paused. Ignored by legacy backends.
+   * on the view don't fire while paused.
    */
   paused?: boolean;
   /**

@@ -127,11 +127,8 @@ async function waitForUpdates(context: TestContext) {
   );
 }
 
-const supported = () => RiveFileFactory.getBackend() === 'experimental';
-
 describe('paused prop', () => {
   it('stops updates while paused and resumes when unpaused', async () => {
-    if (!supported()) return;
     const context = await renderTicker(false);
     await waitForUpdates(context);
 
@@ -145,7 +142,6 @@ describe('paused prop', () => {
   });
 
   it('wins over play() and does not undo an earlier pause()', async () => {
-    if (!supported()) return;
     const context = await renderTicker(false);
     await waitForUpdates(context);
 
@@ -165,7 +161,6 @@ describe('paused prop', () => {
   });
 
   it('resolves view ready when mounted paused, then resumes', async () => {
-    if (!supported()) return;
     const context = await renderTicker(true);
 
     expect(await context.ref!.awaitViewReady()).toBe(true);
@@ -178,7 +173,6 @@ describe('paused prop', () => {
   });
 
   it('applies paused after the file wrapper is disposed', async () => {
-    if (!supported()) return;
     const context = await renderTicker(false);
     await waitForUpdates(context);
 

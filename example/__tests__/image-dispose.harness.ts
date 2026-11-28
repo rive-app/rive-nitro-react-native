@@ -76,9 +76,7 @@ describe('RiveImage disposal', () => {
   });
 });
 
-// Only the new Android backend keeps the bytes and decodes them later.
+// Only Android keeps the bytes and decodes them later.
 function keepsImageBytes() {
-  return (
-    Platform.OS === 'android' && RiveFileFactory.getBackend() === 'experimental'
-  );
+  return Platform.OS === 'android';
 }

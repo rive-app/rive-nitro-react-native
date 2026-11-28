@@ -53,7 +53,7 @@ class HybridViewModelListProperty(
     val file = parentFile.riveFile ?: return null
     val idx = index.toInt()
     // The command server hands out a handle for any index — probe the size
-    // so out-of-range lookups return null like the legacy backend.
+    // so out-of-range lookups return null.
     val size = instance.getListSize(path)
     if (idx < 0 || idx >= size) return null
     val source = ViewModelInstanceSource.ReferenceListItem(instance, path, idx)

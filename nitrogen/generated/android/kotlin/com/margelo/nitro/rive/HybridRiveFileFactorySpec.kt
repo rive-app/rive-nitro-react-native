@@ -28,9 +28,7 @@ import com.margelo.nitro.core.HybridObject
 )
 abstract class HybridRiveFileFactorySpec: HybridObject() {
   // Properties
-  @get:DoNotStrip
-  @get:Keep
-  abstract val backend: String
+  
 
   // Methods
   @DoNotStrip

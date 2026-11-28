@@ -17,7 +17,6 @@ import {
 } from '@rive-app/react-native';
 
 const BOUNCING_BALL = require('../assets/rive/bouncing_ball.riv');
-const isExperimental = RiveFileFactory.getBackend() === 'experimental';
 
 type TestContext = {
   ref: RiveViewRef | null;
@@ -96,11 +95,9 @@ describe('RiveView methods', () => {
   });
 });
 
-// The headline behavioral break of the new runtime: the deprecated
-// SMI-input / text-run / event methods throw instead of being implemented.
-// Guards the documented contract (specs say "Throws on the experimental
-// backend") — if an implementation lands, update the docs and these tests.
-describe('deprecated RiveView methods throw on the new runtime', () => {
+// The deprecated SMI-input / text-run / event methods throw instead of being
+// implemented — if an implementation lands, update the docs and these tests.
+describe('deprecated RiveView methods throw', () => {
   const mountView = async () => {
     const file = await RiveFileFactory.fromSource(BOUNCING_BALL, undefined);
     const context: TestContext = { ref: null, error: null };
@@ -111,24 +108,19 @@ describe('deprecated RiveView methods throw on the new runtime', () => {
     return context;
   };
 
-  (isExperimental ? it : it.skip)(
-    'state machine input methods throw',
-    async () => {
-      const context = await mountView();
-      expect(() =>
-        context.ref!.setNumberInputValue('x', 1, undefined)
-      ).toThrow();
-      expect(() => context.ref!.getNumberInputValue('x', undefined)).toThrow();
-      expect(() =>
-        context.ref!.setBooleanInputValue('x', true, undefined)
-      ).toThrow();
-      expect(() => context.ref!.getBooleanInputValue('x', undefined)).toThrow();
-      expect(() => context.ref!.triggerInput('x', undefined)).toThrow();
-      cleanup();
-    }
-  );
+  it('state machine input methods throw', async () => {
+    const context = await mountView();
+    expect(() => context.ref!.setNumberInputValue('x', 1, undefined)).toThrow();
+    expect(() => context.ref!.getNumberInputValue('x', undefined)).toThrow();
+    expect(() =>
+      context.ref!.setBooleanInputValue('x', true, undefined)
+    ).toThrow();
+    expect(() => context.ref!.getBooleanInputValue('x', undefined)).toThrow();
+    expect(() => context.ref!.triggerInput('x', undefined)).toThrow();
+    cleanup();
+  });
 
-  (isExperimental ? it : it.skip)('text run methods throw', async () => {
+  it('text run methods throw', async () => {
     const context = await mountView();
     expect(() =>
       context.ref!.setTextRunValue('run', 'text', undefined)
@@ -137,7 +129,7 @@ describe('deprecated RiveView methods throw on the new runtime', () => {
     cleanup();
   });
 
-  (isExperimental ? it : it.skip)('event listener methods throw', async () => {
+  it('event listener methods throw', async () => {
     const context = await mountView();
     expect(() => context.ref!.onEventListener(() => {})).toThrow();
     expect(() => context.ref!.removeEventListeners()).toThrow();

@@ -30,8 +30,7 @@ describe('useRiveProperty', () => {
       getValueAsync: jest.fn(() => Promise.resolve(currentValue)),
       addListener: jest.fn((callback: (value: string) => void) => {
         listener = callback;
-        // Emit the current value immediately on subscribe, matching native behaviour:
-        // iOS legacy emits synchronously; new runtime emits via valueStream.
+        // Emit the current value on subscribe, as the native valueStream does.
         callback(currentValue);
         return () => {
           listener = null;
@@ -54,7 +53,7 @@ describe('useRiveProperty', () => {
 
   it('should return initial value delivered via listener (not from a sync read)', () => {
     // Hooks always start undefined; the listener emits the current value immediately
-    // on subscribe (synchronously for legacy, via stream for experimental).
+    // on subscribe.
     const mockProperty = createMockProperty('Tea');
     const mockInstance = createMockViewModelInstance({
       'favDrink/type': mockProperty,

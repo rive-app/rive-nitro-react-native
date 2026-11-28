@@ -24,14 +24,8 @@ let _warnedLoadCdnUnsupported = false;
  * assets must be supplied via `referencedAssets` instead. Callers that don't
  * pass `loadCdn` (the common case) are not warned.
  */
-function warnLoadCdnUnsupportedOnExperimental(
-  loadCdn: boolean | undefined
-): void {
-  if (
-    loadCdn === true &&
-    !_warnedLoadCdnUnsupported &&
-    RiveFileInternal.backend === 'experimental'
-  ) {
+function warnLoadCdnUnsupported(loadCdn: boolean | undefined): void {
+  if (loadCdn === true && !_warnedLoadCdnUnsupported) {
     _warnedLoadCdnUnsupported = true;
     console.warn(
       '[Rive] `loadCdn: true` is not supported on the new runtime and is ignored. ' +
@@ -47,18 +41,6 @@ function warnLoadCdnUnsupportedOnExperimental(
  */
 export namespace RiveFileFactory {
   /**
-   * Which runtime is in use — `'experimental'` is the new (CommandQueue-based)
-   * runtime, `'legacy'` the previous one.
-   *
-   * @internal For internal testing only. The legacy runtime exists for
-   * behavior comparison during the rollout; it and this API will be removed
-   * in a future release once the new runtime has fully proven out.
-   */
-  export function getBackend(): 'legacy' | 'experimental' {
-    return RiveFileInternal.backend as 'legacy' | 'experimental';
-  }
-
-  /**
    * Creates a RiveFile instance from a URL.
    * @param url - The URL of the Rive (.riv) file
    * @param loadCdn - Whether to fetch CDN-referenced assets (default: true).
@@ -70,7 +52,7 @@ export namespace RiveFileFactory {
     referencedAssets: ResolvedReferencedAssets | undefined,
     loadCdn?: boolean
   ): Promise<TypedRiveFile<T>> {
-    warnLoadCdnUnsupportedOnExperimental(loadCdn);
+    warnLoadCdnUnsupported(loadCdn);
     return RiveFileInternal.fromURL(
       url,
       loadCdn ?? true,
@@ -90,7 +72,7 @@ export namespace RiveFileFactory {
     referencedAssets: ResolvedReferencedAssets | undefined = undefined,
     loadCdn?: boolean
   ): Promise<TypedRiveFile<T>> {
-    warnLoadCdnUnsupportedOnExperimental(loadCdn);
+    warnLoadCdnUnsupported(loadCdn);
     return RiveFileInternal.fromFileURL(
       fileURL,
       loadCdn ?? true,
@@ -110,7 +92,7 @@ export namespace RiveFileFactory {
     referencedAssets: ResolvedReferencedAssets | undefined,
     loadCdn?: boolean
   ): Promise<TypedRiveFile<T>> {
-    warnLoadCdnUnsupportedOnExperimental(loadCdn);
+    warnLoadCdnUnsupported(loadCdn);
     return RiveFileInternal.fromResource(
       resource,
       loadCdn ?? true,
@@ -130,7 +112,7 @@ export namespace RiveFileFactory {
     referencedAssets: ResolvedReferencedAssets | undefined,
     loadCdn?: boolean
   ): Promise<TypedRiveFile<T>> {
-    warnLoadCdnUnsupportedOnExperimental(loadCdn);
+    warnLoadCdnUnsupported(loadCdn);
     return RiveFileInternal.fromBytes(
       bytes,
       loadCdn ?? true,

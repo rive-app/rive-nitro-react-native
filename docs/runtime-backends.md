@@ -1,37 +1,8 @@
-# Runtime backends (contributor guide)
+# Runtime notes (contributor guide)
 
-The library ships two native backends and uses the **new** Rive
-runtime backend (Rive's CommandQueue-based async API) by default. The
-previous implementation is kept as the **legacy** backend **for development
-and behavior comparison only** — it is not a supported end-user
-configuration and will be removed once the new runtime has fully
-proven out. Select it at build time:
-
-- **iOS** — set the Podfile global before `pod install`:
-
-  ```ruby
-  # Podfile (before the target block)
-  $UseRiveLegacy = true
-  ```
-
-  (`USE_RIVE_LEGACY=1 pod install` also works, but the env var only applies
-  to that invocation — any plain `pod install` afterwards silently switches
-  the project back to the new runtime, so prefer the Podfile
-  global.)
-
-- **Android** — set the Gradle property, e.g. in `android/gradle.properties`:
-
-  ```properties
-  USE_RIVE_LEGACY=true
-  ```
-
-You can check which backend is active at runtime via
-`RiveFileFactory.getBackend()` (`'experimental' | 'legacy'`, where
-`'experimental'` is the new runtime). This API is for internal testing only —
-it and the legacy runtime will be removed in a future release once the new
-runtime has fully proven out (not necessarily 0.6).
-
-Behavioral differences on the new runtime:
+The library is built on Rive's CommandQueue-based async runtime on both
+platforms. Behaviors worth knowing when comparing against the Rive SDKs or
+older versions of this library:
 
 - The deprecated state-machine-input, text-run, and Rive-event view methods
   throw — use [data binding](https://rive.app/docs/runtimes/data-binding)
@@ -41,9 +12,9 @@ Behavioral differences on the new runtime:
   `useRive*` hooks' `error` result instead of an `undefined` return.
 - `updateReferencedAssets` (runtime asset swapping) is not supported.
 
-## Android render backend (new runtime only)
+## Android render backend
 
-The new Android runtime renders with OpenGL by default. Vulkan can
+Android renders with OpenGL by default. Vulkan can
 be opted into per process:
 
 ```ts
@@ -56,9 +27,9 @@ Call it before loading any Rive files — the choice is fixed once the shared
 render worker is created (a later call logs a warning and is ignored).
 Vulkan requires Android 10 (API 29) or newer; rive-android automatically
 falls back to OpenGL when Vulkan is unavailable or fails to initialize. The
-call is a no-op on iOS and on the legacy Android backend.
+call is a no-op on iOS.
 
-## GPU Canvas (new runtime only)
+## GPU Canvas
 
 Rive's GPU Canvas renderer is required for 3D content and is disabled by
 default. Opt in per process, before loading any Rive files:
@@ -78,4 +49,4 @@ fails to compile. On Android it maps to rive-android's experimental deferred
 worker, `CommandQueue(enableGPUCanvas = true)`, which upstream describes as
 temporary scaffolding on its way to becoming the default; it needs rive-android
 11.14.2 or newer, and an older `Rive_RiveRuntimeAndroidVersion` override fails to
-compile. The call is a no-op on the legacy runtime.
+compile.

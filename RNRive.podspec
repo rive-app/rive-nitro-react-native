@@ -28,16 +28,6 @@ if !rive_ios_version
   raise "Internal Error: Failed to determine Rive iOS SDK version. Please ensure package.json contains 'runtimeVersions.ios'"
 end
 
-# The experimental runtime backend is used by default. Set USE_RIVE_LEGACY=1
-# (or $UseRiveLegacy = true in Podfile) to fall back to the legacy backend.
-use_legacy = ['1', 'true'].include?(ENV['USE_RIVE_LEGACY']) || (defined?($UseRiveLegacy) && $UseRiveLegacy)
-
-if use_legacy
-  Pod::UI.puts "@rive-app/react-native: Using legacy Rive runtime backend (iOS SDK #{rive_ios_version})"
-else
-  Pod::UI.puts "@rive-app/react-native: Using experimental Rive runtime backend"
-end
-
 require_relative 'ios/rive_spm_embed'
 
 Pod::Spec.new do |s|
@@ -52,12 +42,6 @@ Pod::Spec.new do |s|
   s.source       = { :git => "https://github.com/rive-app/rive-nitro-react-native.git", :tag => "#{s.version}" }
 
   s.source_files = "ios/**/*.{h,m,mm,swift}"
-
-  if use_legacy
-    s.exclude_files = ["ios/new/**"]
-  else
-    s.exclude_files = ["ios/legacy/**"]
-  end
 
   s.public_header_files = ['ios/RCTSwiftLog.h']
   load 'nitrogen/generated/ios/RNRive+autolinking.rb'
@@ -80,7 +64,4 @@ Pod::Spec.new do |s|
   }
 
  install_modules_dependencies(s)
-
-  unless use_legacy
-  end
 end

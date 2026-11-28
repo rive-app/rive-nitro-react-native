@@ -112,16 +112,12 @@ describe('Async ViewModel Metadata', () => {
     const vm = file.viewModelByName('Person');
     expectDefined(vm);
 
-    try {
-      const props = await vm.getPropertiesAsync();
-      expect(props.length).toBeGreaterThan(0);
-      props.forEach((prop) => {
-        expect(typeof prop.name).toBe('string');
-        expect(typeof prop.type).toBe('string');
-      });
-    } catch {
-      // getPropertiesAsync is not supported on the legacy backend
-    }
+    const props = await vm.getPropertiesAsync();
+    expect(props.length).toBeGreaterThan(0);
+    props.forEach((prop) => {
+      expect(typeof prop.name).toBe('string');
+      expect(typeof prop.type).toBe('string');
+    });
   });
 
   it('getPropertyCountAsync matches getPropertiesAsync length', async () => {
@@ -129,13 +125,9 @@ describe('Async ViewModel Metadata', () => {
     const vm = file.viewModelByName('Person');
     expectDefined(vm);
 
-    try {
-      const count = await vm.getPropertyCountAsync();
-      const props = await vm.getPropertiesAsync();
-      expect(count).toBe(props.length);
-    } catch {
-      // getPropertiesAsync is not supported on the legacy backend
-    }
+    const count = await vm.getPropertyCountAsync();
+    const props = await vm.getPropertiesAsync();
+    expect(count).toBe(props.length);
   });
 
   it('getInstanceCountAsync returns a non-negative number', async () => {
@@ -266,32 +258,15 @@ describe('Async ViewModelInstance Methods', () => {
     expect(name).toBe('Jameson');
   });
 
-  it('viewModelAsync with non-existent path returns undefined or throws', async () => {
-    const instance = createGordonInstance(await loadFile(DATABINDING));
-    try {
-      const result = await instance.viewModelAsync('nonexistent');
-      // Legacy returns undefined, experimental may return a wrapper or throw
-      if (RiveFileFactory.getBackend() !== 'experimental') {
-        expect(result).toBeUndefined();
-      }
-    } catch {
-      // new runtime may throw
-    }
-  });
-
   it('getPropertiesAsync on ViewModelInstance returns property info', async () => {
     const file = await loadFile(DATABINDING);
     const instance = createGordonInstance(file);
 
-    try {
-      const props = await instance.getPropertiesAsync();
-      expect(props.length).toBeGreaterThan(0);
-      const propNames = props.map((p) => p.name);
-      expect(propNames).toContain('age');
-      expect(propNames).toContain('name');
-    } catch {
-      // getPropertiesAsync is not supported on the legacy backend
-    }
+    const props = await instance.getPropertiesAsync();
+    expect(props.length).toBeGreaterThan(0);
+    const propNames = props.map((p) => p.name);
+    expect(propNames).toContain('age');
+    expect(propNames).toContain('name');
   });
 });
 

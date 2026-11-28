@@ -46,7 +46,7 @@ class HybridViewModelListProperty: HybridViewModelListPropertySpec {
 
   private func fetchInstance(at index: Double) async throws -> (any HybridViewModelInstanceSpec)? {
     // The command server hands out a handle for any index — probe the size
-    // so out-of-range lookups return nil like the legacy backend.
+    // so out-of-range lookups return nil.
     let idx = Int32(index)
     let size = try await Int32(vmiInstance.size(of: prop))
     if idx < 0 || idx >= size { return nil }

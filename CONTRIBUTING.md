@@ -135,8 +135,7 @@ When you're sending a pull request:
 - Follow the pull request template when opening a pull request.
 - For pull requests that change the API or implementation, discuss with maintainers first by opening an issue.
 
-## Runtime backends
+## Runtime notes
 
-The legacy backend exists for behavior comparison during the new-runtime
-rollout — see [docs/runtime-backends.md](docs/runtime-backends.md) for how to
-select it and the behavioral differences to compare against.
+See [docs/runtime-backends.md](docs/runtime-backends.md) for runtime behavior
+notes and the Android render backend and GPU Canvas options.

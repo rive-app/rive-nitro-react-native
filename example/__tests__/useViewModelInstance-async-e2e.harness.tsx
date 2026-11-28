@@ -22,9 +22,8 @@ import {
 } from '@rive-app/react-native';
 
 // These run against the real native runtime on purpose: the Jest unit tests
-// mock the *Async APIs, but the backends genuinely diverge — the new backend
-// *rejects* on a bad artboard/instance name while the legacy backend resolves
-// null/undefined. These pin the hook's contract across both.
+// mock the *Async APIs, while the natives may either reject or resolve
+// null/undefined on a bad artboard/instance name. These pin the hook's contract.
 const MULTI_AB = require('../assets/rive/arbtboards-models-instances.riv');
 // ViewModels exist but no artboard default (issue #189 fixture).
 const NO_DEFAULT_VM = require('../assets/rive/nodefaultbouncing.riv');
@@ -182,9 +181,9 @@ function FileErrorProbe({
 }
 
 // ── #1: unknown artboard name maps to the friendly not-found error ───
-// The new backend throws (iOS `createArtboard`, Android `Artboard.fromFile`)
-// while the legacy backend resolves undefined; the hook must map both to the
-// same friendly error instead of leaking a raw native message.
+// The runtime throws (iOS `createArtboard`, Android `Artboard.fromFile`); the
+// hook must map that to the same friendly error as an undefined result
+// instead of leaking a raw native message.
 
 describe('useViewModelInstance async: unknown artboard name', () => {
   it('surfaces the friendly "not found" error instead of the raw native message', async () => {
@@ -304,9 +303,8 @@ describe('useViewModelInstance async: null vs undefined source', () => {
 // ── Instance creation failure keeps a clean message + native cause ───
 // The stable contract is the message: always "… not found", never a raw
 // native error. `cause` is an optional diagnostic — present when the backend
-// *rejects* (the new iOS backend throws `invalidViewModelInstance`), absent
-// when the lookup resolves null (the legacy backends, and Android's
-// `contains()` pre-check). Asserting a cause per-platform would pin that
+// *rejects* (iOS throws `invalidViewModelInstance`), absent when the lookup
+// resolves null (Android's `contains()` pre-check). Asserting a cause per-platform would pin that
 // accidental divergence, so only its shape is checked when present.
 
 describe('useViewModelInstance async: instance creation failure', () => {
@@ -416,14 +414,11 @@ function EagerRefConsumer({ file, ctx }: { file: RiveFile; ctx: AsyncCtx }) {
 
 describe('useViewModelInstance async: RiveViewRef source', () => {
   it('resolves the auto-bound instance from a useRive view ref', async () => {
-    // getViewModelInstance() returns null on Android experimental — auto-bind
-    // doesn't expose the VMI handle to JS yet (same skip as autoplay.harness).
-    const isAndroidExperimental =
-      Platform.OS === 'android' &&
-      RiveFileFactory.getBackend() === 'experimental';
-    if (isAndroidExperimental) {
+    // getViewModelInstance() returns null on Android — auto-bind doesn't
+    // expose the VMI handle to JS yet (same skip as autoplay.harness).
+    if (Platform.OS === 'android') {
       console.warn(
-        'SKIP: android-experimental — getViewModelInstance() does not expose the auto-bound VMI yet'
+        'SKIP: android — getViewModelInstance() does not expose the auto-bound VMI yet'
       );
       return;
     }
@@ -438,12 +433,9 @@ describe('useViewModelInstance async: RiveViewRef source', () => {
   });
 
   it('resolves the auto-bound instance from a raw hybridRef (pre-bind window)', async () => {
-    const isAndroidExperimental =
-      Platform.OS === 'android' &&
-      RiveFileFactory.getBackend() === 'experimental';
-    if (isAndroidExperimental) {
+    if (Platform.OS === 'android') {
       console.warn(
-        'SKIP: android-experimental — getViewModelInstance() does not expose the auto-bound VMI yet'
+        'SKIP: android — getViewModelInstance() does not expose the auto-bound VMI yet'
       );
       return;
     }
@@ -459,11 +451,11 @@ describe('useViewModelInstance async: RiveViewRef source', () => {
 });
 
 // ── A VM-less default artboard is "no ViewModel", not an error ───────
-// The new backend's getDefaultViewModelInfo throws when the artboard has no
+// The runtime's getDefaultViewModelInfo throws when the artboard has no
 // default ViewModel, which would surface a raw native error for a perfectly
-// valid file (the issue #189 fixture); the legacy backend resolves null. The
-// natives normalize this to resolve-null so the hook's documented
-// { instance: null, error: null } state is reachable on every backend.
+// valid file (the issue #189 fixture). The natives normalize this to
+// resolve-null so the hook's documented { instance: null, error: null } state
+// is reachable.
 
 describe('useViewModelInstance async: file without a default ViewModel', () => {
   it('resolves null with no error', async () => {

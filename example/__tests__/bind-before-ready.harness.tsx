@@ -27,11 +27,8 @@ const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 describe('bindViewModelInstance before view ready', () => {
   it('bind called before configure completes is applied', async () => {
-    // The race only exists on the new iOS runtime — riveInstance is set async
-    if (
-      Platform.OS !== 'ios' ||
-      RiveFileFactory.getBackend() !== 'experimental'
-    ) {
+    // The race only exists on iOS — riveInstance is set async
+    if (Platform.OS !== 'ios') {
       return;
     }
 

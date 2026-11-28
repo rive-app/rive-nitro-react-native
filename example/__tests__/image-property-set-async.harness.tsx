@@ -78,10 +78,9 @@ function blankPngBytes(size: number): ArrayBuffer {
 }
 /* eslint-enable no-bitwise */
 
-// Only the new Android backend defers decoding to the property, so elsewhere
-// RiveImages rejects these bytes before they can reach setValueAsync.
-const decodesInProperty =
-  Platform.OS === 'android' && RiveFileFactory.getBackend() === 'experimental';
+// Only Android defers decoding to the property; on iOS RiveImages rejects
+// these bytes before they can reach setValueAsync.
+const decodesInProperty = Platform.OS === 'android';
 
 async function loadImageInstance() {
   const file = await RiveFileFactory.fromSource(DATABINDING_IMAGES, undefined);

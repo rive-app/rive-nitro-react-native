@@ -24,9 +24,7 @@ const DATABINDING = require('../assets/rive/databinding.riv');
 const DATABINDING_LISTS = require('../assets/rive/databinding_lists.riv');
 const ARTBOARD_SLOTS = require('../assets/rive/artboard_slots.riv');
 
-// Only the new Android backend frees native objects from JVM finalizers.
-const isAndroidExperimental = () =>
-  Platform.OS === 'android' && RiveFileFactory.getBackend() === 'experimental';
+// Only Android frees native objects from JVM finalizers.
 
 function jsGC() {
   const gc = (globalThis as { gc?: () => void }).gc;
@@ -164,7 +162,7 @@ async function expectBothSlotsToTick(host: ViewModelInstance) {
 describe('JVM finalizers keep in-use native objects open', () => {
   // Control: without it the test below also passes when nothing is ever finalized.
   it('an unreferenced file is finalized', async () => {
-    if (!isAndroidExperimental()) return;
+    if (Platform.OS !== 'android') return;
 
     const messages: string[] = [];
     RiveLog.setLogLevel('debug');
@@ -184,7 +182,7 @@ describe('JVM finalizers keep in-use native objects open', () => {
   });
 
   it('a rebound view alias keeps the original instance open', async () => {
-    if (!isAndroidExperimental()) return;
+    if (Platform.OS !== 'android') return;
 
     const file = await RiveFileFactory.fromSource(QUICK_START, undefined);
     let ref: RiveViewRef | null = null;
@@ -222,7 +220,7 @@ describe('JVM finalizers keep in-use native objects open', () => {
 
 describe('JVM finalizers keep instances with property listeners open', () => {
   it('a listener on a nested instance keeps firing after GC', async () => {
-    if (!isAndroidExperimental()) return;
+    if (Platform.OS !== 'android') return;
 
     const file = await RiveFileFactory.fromSource(DATABINDING, undefined);
     const parent = file
@@ -249,7 +247,7 @@ describe('JVM finalizers keep instances with property listeners open', () => {
   });
 
   it('a listener on a list item keeps firing after GC', async () => {
-    if (!isAndroidExperimental()) return;
+    if (Platform.OS !== 'android') return;
 
     const file = await RiveFileFactory.fromSource(DATABINDING_LISTS, undefined);
     const parent = file.viewModelByName('DevRel')!.createDefaultInstance()!;
@@ -277,7 +275,7 @@ describe('JVM finalizers keep instances with property listeners open', () => {
 
 describe('JVM finalizers and bound artboards', () => {
   it('artboards on two nested instances outlive their finalized files', async () => {
-    if (!isAndroidExperimental()) return;
+    if (Platform.OS !== 'android') return;
 
     const file = await RiveFileFactory.fromSource(ARTBOARD_SLOTS, undefined);
     const host = file.viewModelByName('Host')!.createDefaultInstance()!;

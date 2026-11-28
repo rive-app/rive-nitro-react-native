@@ -121,12 +121,7 @@ open class HybridRiveFileFactorySpec_cxx {
   }
 
   // Properties
-  public final var backend: std.string {
-    @inline(__always)
-    get {
-      return std.string(self.__implementation.backend)
-    }
-  }
+  
 
   // Methods
   @inline(__always)

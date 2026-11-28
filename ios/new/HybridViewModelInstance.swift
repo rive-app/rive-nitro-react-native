@@ -36,9 +36,7 @@ class HybridViewModelInstance: HybridViewModelInstanceSpec {
     }
   }
 
-  // Note: Unlike legacy API, experimental API can't sync-validate if property exists
-  // Non-existent properties return wrapper objects that fail on getValue()
-  // This is a known limitation documented in EXPERIMENTAL_IOS_API.md
+  // The runtime can't sync-validate that a property exists; a bad path fails on getValue().
 
   func numberProperty(path: String) throws -> (any HybridViewModelNumberPropertySpec)? {
     return HybridViewModelNumberProperty(instance: viewModelInstance, path: path)

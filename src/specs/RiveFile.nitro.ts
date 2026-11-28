@@ -89,9 +89,6 @@ export interface RiveFile
   /**
    * Get all enums defined in this Rive file.
    * Useful for debugging and building dynamic UIs.
-   *
-   * Backend note: implemented on the new (default) runtime and on
-   * legacy Android; legacy iOS rejects (not supported there).
    */
   getEnums(): Promise<RiveEnumDefinition[]>;
 }
@@ -101,8 +98,6 @@ export interface RiveFileFactory
     ios: 'swift';
     android: 'kotlin';
   }> {
-  /** @internal Which runtime is in use ("experimental" = the new CommandQueue-based one). For internal testing; will be removed together with the legacy runtime in a future release. */
-  readonly backend: string;
   fromURL(
     url: string,
     loadCdn: boolean,

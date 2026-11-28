@@ -71,13 +71,7 @@ describe('File Enums', () => {
   it('getEnums() returns Pets enum with expected values', async () => {
     const file = await loadFile(DATABINDING);
 
-    // getEnums throws on the legacy backend
-    let enums;
-    try {
-      enums = await file.getEnums();
-    } catch {
-      return;
-    }
+    const enums = await file.getEnums();
     expect(enums.length).toBeGreaterThan(0);
 
     const petsEnum = enums.find((e) => e.name === 'Pets');
@@ -116,12 +110,11 @@ describe('ViewModel Creation Variants', () => {
     const vm = file.viewModelByName('Person');
     expectDefined(vm);
 
-    // Legacy returns undefined, experimental throws
     try {
       const instance = vm.createInstanceByName('DoesNotExist');
       expect(instance).toBeUndefined();
     } catch {
-      // new runtime throws - that's fine
+      // throwing is also fine
     }
   });
 
@@ -140,7 +133,6 @@ describe('ViewModel Creation Variants', () => {
     const vm = file.viewModelByName('Person');
     expectDefined(vm);
 
-    // Legacy returns undefined, experimental returns an empty instance
     vm.createInstanceByIndex(100);
     expect(true).toBe(true);
   });

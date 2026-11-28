@@ -52,9 +52,8 @@ function ReloadableView({
 }
 
 // Regression guard for review finding H3: a reload (artboardName /
-// stateMachineName / file change) creates a fresh state machine, and the
-// experimental Android backend used to skip applyDataBinding unless the
-// dataBind prop itself changed — leaving the new state machine unbound.
+// stateMachineName / file change) creates a fresh state machine, which must
+// be re-bound even when the dataBind prop itself didn't change.
 // bouncing_ball's state machine continuously writes `ypos` into the bound
 // instance, so a live binding is observable as a stream of listener events.
 describe('RiveView reload re-bind', () => {

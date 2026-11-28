@@ -1,13 +1,8 @@
 import { describe, it, expect } from 'react-native-harness';
-import { Platform } from 'react-native';
 import type { ViewModelInstance } from '@rive-app/react-native';
 import { RiveFileFactory } from '@rive-app/react-native';
 
 const DATABINDING = require('../assets/rive/databinding.riv');
-
-function isExperimental() {
-  return RiveFileFactory.getBackend() === 'experimental';
-}
 
 function expectDefined<T>(value: T): asserts value is NonNullable<T> {
   expect(value).toBeDefined();
@@ -33,12 +28,6 @@ function getRGB(color: number): { r: number; g: number; b: number } {
 /* eslint-enable no-bitwise */
 
 describe('ViewModel Properties', () => {
-  it('backend property is accessible', () => {
-    const backend = RiveFileFactory.getBackend();
-    expect(typeof backend).toBe('string');
-    expect(['legacy', 'experimental']).toContain(backend);
-  });
-
   it('numberProperty get/set works', async () => {
     const instance = await createGordonInstance();
     const ageProperty = instance.numberProperty('age');
@@ -92,17 +81,8 @@ describe('ViewModel Properties', () => {
     expect(enumProperty.value).toBe('cat');
 
     enumProperty.value = 'snakeLizard';
-    // Most backends reject invalid enum values; the value should revert to 'cat'
-    // Android legacy SDK accepts them (reads back 'snakeLizard')
-    const val = enumProperty.value;
-    if (
-      Platform.OS === 'android' &&
-      RiveFileFactory.getBackend() === 'legacy'
-    ) {
-      expect(val === 'cat' || val === 'snakeLizard').toBe(true);
-    } else {
-      expect(val).toBe('cat');
-    }
+    // Invalid enum values are rejected; the value reverts to 'cat'
+    expect(enumProperty.value).toBe('cat');
   });
 
   it('triggerProperty can be triggered', async () => {
@@ -148,29 +128,7 @@ describe('ViewModel Properties', () => {
     expect(nestedEnumProperty.value).toBe('owl');
   });
 
-  it('non-existent properties return undefined', async () => {
-    if (isExperimental()) {
-      // Experimental backends return wrapper objects for any path — validity is
-      // checked lazily when a value is read (getValueAsync throws).
-      return;
-    }
-
-    const instance = await createGordonInstance();
-
-    expect(instance.numberProperty('nonexistent')).toBeUndefined();
-    expect(instance.stringProperty('nonexistent')).toBeUndefined();
-    expect(instance.booleanProperty('nonexistent')).toBeUndefined();
-    expect(instance.colorProperty('nonexistent')).toBeUndefined();
-    expect(instance.enumProperty('nonexistent')).toBeUndefined();
-    expect(instance.triggerProperty('nonexistent')).toBeUndefined();
-    expect(await instance.viewModelAsync('nonexistent')).toBeUndefined();
-  });
-
-  it('experimental: getValueAsync throws for non-existent property path', async () => {
-    if (!isExperimental()) {
-      return;
-    }
-
+  it('getValueAsync throws for non-existent property path', async () => {
     const instance = await createGordonInstance();
 
     await expect(
@@ -294,11 +252,9 @@ describe('Property Listeners', () => {
 
 const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-describe('Listener callback invocation (experimental only)', () => {
-  // The new runtime emits the current value on addListener;
-  // legacy only fires on subsequent changes — these tests would hang.
+describe('Listener callback invocation', () => {
+  // The runtime emits the current value on addListener.
   it('numberProperty listener emits current value', async () => {
-    if (!isExperimental()) return;
     const instance = await createGordonInstance();
     const prop = instance.numberProperty('age');
     expectDefined(prop);
@@ -312,7 +268,6 @@ describe('Listener callback invocation (experimental only)', () => {
   });
 
   it('stringProperty listener emits current value', async () => {
-    if (!isExperimental()) return;
     const instance = await createGordonInstance();
     const prop = instance.stringProperty('name');
     expectDefined(prop);
@@ -326,7 +281,6 @@ describe('Listener callback invocation (experimental only)', () => {
   });
 
   it('booleanProperty listener emits current value', async () => {
-    if (!isExperimental()) return;
     const instance = await createGordonInstance();
     const prop = instance.booleanProperty('likes_popcorn');
     expectDefined(prop);
@@ -340,7 +294,6 @@ describe('Listener callback invocation (experimental only)', () => {
   });
 
   it('colorProperty listener emits current value', async () => {
-    if (!isExperimental()) return;
     const instance = await createGordonInstance();
     const prop = instance.colorProperty('favourite_color');
     expectDefined(prop);
@@ -355,7 +308,6 @@ describe('Listener callback invocation (experimental only)', () => {
   });
 
   it('enumProperty listener emits current value', async () => {
-    if (!isExperimental()) return;
     const instance = await createGordonInstance();
     const prop = instance.enumProperty('favourite_pet');
     expectDefined(prop);
@@ -457,11 +409,6 @@ describe('set() + getValueAsync() round-trip', () => {
 
 describe('setValueAsync() updates value', () => {
   it('numberProperty setValueAsync updates value', async () => {
-    // setValueAsync hangs on iOS legacy due to listener notification
-    // dispatching back to the JS thread while it's awaiting the promise
-    if (Platform.OS === 'ios' && RiveFileFactory.getBackend() === 'legacy') {
-      return;
-    }
     const instance = await createGordonInstance();
     const prop = instance.numberProperty('age');
     expectDefined(prop);
@@ -470,9 +417,6 @@ describe('setValueAsync() updates value', () => {
   });
 
   it('stringProperty setValueAsync updates value', async () => {
-    if (Platform.OS === 'ios' && RiveFileFactory.getBackend() === 'legacy') {
-      return;
-    }
     const instance = await createGordonInstance();
     const prop = instance.stringProperty('name');
     expectDefined(prop);
@@ -481,9 +425,6 @@ describe('setValueAsync() updates value', () => {
   });
 
   it('booleanProperty setValueAsync updates value', async () => {
-    if (Platform.OS === 'ios' && RiveFileFactory.getBackend() === 'legacy') {
-      return;
-    }
     const instance = await createGordonInstance();
     const prop = instance.booleanProperty('likes_popcorn');
     expectDefined(prop);
@@ -492,9 +433,6 @@ describe('setValueAsync() updates value', () => {
   });
 
   it('colorProperty setValueAsync updates value', async () => {
-    if (Platform.OS === 'ios' && RiveFileFactory.getBackend() === 'legacy') {
-      return;
-    }
     const instance = await createGordonInstance();
     const prop = instance.colorProperty('favourite_color');
     expectDefined(prop);
@@ -504,9 +442,6 @@ describe('setValueAsync() updates value', () => {
   });
 
   it('enumProperty setValueAsync updates value', async () => {
-    if (Platform.OS === 'ios' && RiveFileFactory.getBackend() === 'legacy') {
-      return;
-    }
     const instance = await createGordonInstance();
     const prop = instance.enumProperty('favourite_pet');
     expectDefined(prop);

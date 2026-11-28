@@ -19,11 +19,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        backend: [experimental, legacy]
-        nitro: ['0.36.5']
-        include:
-          - backend: experimental
-            nitro: '0.37.2'
+        nitro: ['0.36.5', '0.37.2']
     env:
       XCODE_VERSION: 26.3
     steps:
@@ -51,14 +47,12 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: example/ios/Pods
-          key: ${{ runner.os }}-bare-cocoapods-${{ matrix.backend }}-nitro${{ matrix.nitro }}-${{ hashFiles('package.json', '*.podspec', 'example/ios/Podfile') }}
+          key: ${{ runner.os }}-bare-cocoapods-nitro${{ matrix.nitro }}-${{ hashFiles('package.json', '*.podspec', 'example/ios/Podfile') }}
           restore-keys: |
-            ${{ runner.os }}-bare-cocoapods-${{ matrix.backend }}-nitro${{ matrix.nitro }}-
+            ${{ runner.os }}-bare-cocoapods-nitro${{ matrix.nitro }}-
 
       - name: Install cocoapods
         working-directory: example
-        env:
-          USE_RIVE_LEGACY: ${{ matrix.backend == 'legacy' && '1' || '' }}
         run: |
           bundle install
           rm -f ios/Podfile.lock ios/Pods/Manifest.lock
@@ -89,11 +83,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        backend: [experimental, legacy]
-        nitro: ['0.36.5']
-        include:
-          - backend: experimental
-            nitro: '0.37.2'
+        nitro: ['0.36.5', '0.37.2']
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -123,11 +113,6 @@ jobs:
             echo "NDK install attempt $i failed, retrying..."
             sleep 10
           done
-
-      - name: Enable legacy Rive backend
-        if: matrix.backend == 'legacy'
-        run: |
-          printf '\nUSE_RIVE_LEGACY=true\n' >> example/android/gradle.properties
 
       - name: Cache Gradle
         uses: actions/cache@v4

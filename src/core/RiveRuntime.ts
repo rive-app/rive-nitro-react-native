@@ -25,13 +25,13 @@ export namespace RiveRuntime {
   }
 
   /**
-   * Selects the render backend used by the experimental Android backend.
+   * Selects the Android render backend.
    * Applies process-wide and must be called before any Rive file is loaded —
    * once the shared render worker exists the choice is fixed.
    *
    * Vulkan requires Android 10 (API 29) or newer; the runtime automatically
    * falls back to OpenGL when Vulkan is unavailable or fails to initialize.
-   * No-op on iOS and on the legacy Android backend.
+   * No-op on iOS.
    */
   export function setAndroidRenderBackend(backend: AndroidRenderBackend) {
     RiveRuntimeInternal.setAndroidRenderBackend(backend);
@@ -44,8 +44,7 @@ export namespace RiveRuntime {
    * later call is ignored with a warning.
    *
    * Disabled by default. Backed by `Worker(configuration:)` on iOS and by
-   * rive-android's experimental deferred renderer on Android. No-op on the
-   * legacy runtime.
+   * rive-android's experimental deferred renderer on Android.
    */
   export function setGPUCanvasEnabled(enabled: boolean) {
     RiveRuntimeInternal.setGPUCanvasEnabled(enabled);

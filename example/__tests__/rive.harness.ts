@@ -48,24 +48,14 @@ describe('ViewModel', () => {
     expect(vm1).toBeDefined();
     expect(vm2).toBeDefined();
 
-    // Experimental backends don't validate nested VM paths — the SDK returns
-    // a handle even for nonexistent paths instead of null.
-    const isExperimental = RiveFileFactory.getBackend() === 'experimental';
-    if (!isExperimental) {
-      expect(await instance?.viewModelAsync('nonexistent')).toBeUndefined();
-    }
-
     expect(vm1?.instanceName).toBeDefined();
     expect(typeof vm1?.instanceName).toBe('string');
     expect(vm1?.stringProperty('name')).toBeDefined();
   });
 
   it('replaceViewModel() replaces and shares state', async () => {
-    // replaceViewModel is a no-op on Android experimental (not yet implemented)
-    const isAndroidExperimental =
-      Platform.OS === 'android' &&
-      RiveFileFactory.getBackend() === 'experimental';
-    if (isAndroidExperimental) return;
+    // replaceViewModel is a no-op on Android (not yet implemented)
+    if (Platform.OS === 'android') return;
 
     const file = await RiveFileFactory.fromSource(VIEWMODEL, undefined);
     const vm = file.defaultArtboardViewModel();

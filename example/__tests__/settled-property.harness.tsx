@@ -36,10 +36,6 @@ async function waitForNumber(
 
 describe('Settled state machine', () => {
   it('applies a view model property set from JS after it has settled', async () => {
-    // Legacy Android also drops writes made after the state machine settles.
-    if (RiveFileFactory.getBackend() !== 'experimental') {
-      return;
-    }
     const file = await RiveFileFactory.fromSource(SETTLE_PROBE, undefined);
     const vm = await file.viewModelByNameAsync('Probe');
     expectDefined(vm);
