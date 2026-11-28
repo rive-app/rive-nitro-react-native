@@ -7040,12 +7040,12 @@ __metadata:
     eslint-plugin-prettier: ^5.2.3
     expect: 29.7.0
     jest: ^29.7.0
-    nitrogen: 0.36.5
+    nitrogen: 0.37.2
     prettier: ^3.0.3
     react: 19.2.3
     react-native: 0.79.2
     react-native-builder-bob: ^0.40.10
-    react-native-nitro-modules: 0.36.5
+    react-native-nitro-modules: 0.37.2
     react-test-renderer: 19.2.3
     release-it: ^17.10.0
     tsd: ^0.33.0
@@ -7055,7 +7055,7 @@ __metadata:
     "@rive-app/canvas": ^2.39.0
     react: "*"
     react-native: "*"
-    react-native-nitro-modules: ">=0.35.10 <0.38"
+    react-native-nitro-modules: ">=0.37.2 <0.38"
   peerDependenciesMeta:
     "@rive-app/canvas":
       optional: true
@@ -12053,7 +12053,7 @@ __metadata:
     react-dom: 19.1.0
     react-native: 0.81.5
     react-native-gesture-handler: 2.29.1
-    react-native-nitro-modules: 0.36.5
+    react-native-nitro-modules: 0.37.2
     react-native-reanimated: 4.1.5
     react-native-safe-area-context: ~5.6.0
     react-native-screens: ~4.16.0
@@ -12868,7 +12868,7 @@ __metadata:
     react-dom: 19.2.0
     react-native: 0.83.4
     react-native-gesture-handler: ~2.29.0
-    react-native-nitro-modules: 0.36.5
+    react-native-nitro-modules: 0.37.2
     react-native-reanimated: 4.2.1
     react-native-safe-area-context: ~5.6.2
     react-native-screens: ~4.23.0
@@ -12912,7 +12912,7 @@ __metadata:
     react-native: 0.86.0
     react-native-gesture-handler: ~2.32.0
     react-native-harness: 1.4.0-rc.1
-    react-native-nitro-modules: 0.36.5
+    react-native-nitro-modules: 0.37.2
     react-native-reanimated: 4.5.0
     react-native-safe-area-context: ~5.7.0
     react-native-screens: 4.25.2
@@ -17885,18 +17885,25 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nitrogen@npm:0.36.5":
-  version: 0.36.5
-  resolution: "nitrogen@npm:0.36.5"
+"nitro-core@npm:0.37.2":
+  version: 0.37.2
+  resolution: "nitro-core@npm:0.37.2"
+  checksum: f0a065396a79ce680215afa8bcc8108c042b7d229aa307bf9f8380c7f67e82101dde1f409a44063b6dfcc32f7ba61c21e8179f957836a956a7a2b6115eef3c1f
+  languageName: node
+  linkType: hard
+
+"nitrogen@npm:0.37.2":
+  version: 0.37.2
+  resolution: "nitrogen@npm:0.37.2"
   dependencies:
     chalk: ^5.3.0
-    react-native-nitro-modules: ^0.36.5
+    nitro-core: 0.37.2
     ts-morph: ^28.0.0
     yargs: ^18.0.0
     zod: ^4.4.3
   bin:
     nitrogen: lib/index.js
-  checksum: 11d56be81f6eb2fca665a6693f626ae9a3210ef8d6bdbe6a68f814aa9649cf409b1f1ca64bf7bfa19119e51ac81805eb5ce36f98a029a23bc4eb23618efd4290
+  checksum: 61cb55c7c34fd8257a9b7fd364c8a632b5e1087ef3440ab7750ad664fc7705c153899c7a2c6160523be6b446a10d2204802a4b243076f30b4620bf36f54135f9
   languageName: node
   linkType: hard
 
@@ -19391,13 +19398,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-nitro-modules@npm:0.36.5, react-native-nitro-modules@npm:^0.36.5":
-  version: 0.36.5
-  resolution: "react-native-nitro-modules@npm:0.36.5"
+"react-native-nitro-modules@npm:0.37.2":
+  version: 0.37.2
+  resolution: "react-native-nitro-modules@npm:0.37.2"
+  dependencies:
+    nitro-core: 0.37.2
   peerDependencies:
     react: "*"
     react-native: "*"
-  checksum: 4739190a0ffd2a11ed8d506b24fb168fd7d5070617a2a0734e5ac8aa26df5d5a49be6c55b7bf94b8eac8439d896c1c6257f3b04cbfbca06d7d8f0c186c97f2e3
+  checksum: 094a4d87c0b57c7046c5f602e0be49d11d4d0f714e4151a45e0a7fe4dc6c2cd86d9ae14b4be46458cf528efa5b91d0624bdd5271cd2c494c57fa68c0a1e7217f
   languageName: node
   linkType: hard
 
@@ -19473,7 +19482,7 @@ __metadata:
     react-native-builder-bob: ^0.40.10
     react-native-gesture-handler: 2.29.1
     react-native-harness: 1.4.0-rc.1
-    react-native-nitro-modules: 0.36.5
+    react-native-nitro-modules: 0.37.2
     react-native-reanimated: 4.1.5
     react-native-safe-area-context: ^5.4.0
     react-native-screens: ~4.18.0

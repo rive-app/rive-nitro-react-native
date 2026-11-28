@@ -8,7 +8,7 @@ PODS:
   - hermes-engine (0.80.3):
     - hermes-engine/Pre-built (= 0.80.3)
   - hermes-engine/Pre-built (0.80.3)
-  - NitroModules (0.36.5):
+  - NitroModules (0.37.2):
     - boost
     - DoubleConversion
     - fast_float
@@ -2421,7 +2421,7 @@ PODS:
     - RNWorklets
     - SocketRocket
     - Yoga
-  - RNRive (0.5.9):
+  - RNRive (0.5.18):
     - boost
     - DoubleConversion
     - fast_float
@@ -2866,7 +2866,7 @@ SPEC CHECKSUMS:
   fmt: 530618a01105dae0fa3a2f27c81ae11fa8f67eac
   glog: 5683914934d5b6e4240e497e0f4a3b42d1854183
   hermes-engine: fff23161928673afcd95f63146e651726f68b384
-  NitroModules: 68f9257e35a979b27f386e9e240c6f2c00e9f9ca
+  NitroModules: f7b66ae041ed5745984fd7bb6954f95e376b1a6c
   RCT-Folly: b29feb752b08042c62badaef7d453f3bb5e6ae23
   RCTDeprecation: 2ebc9cc0329ede460c5d52956ce5e1ab715c2c2c
   RCTRequired: b83daef658afafdc68d85b97ed082f4497a8ffa4
@@ -2936,12 +2936,12 @@ SPEC CHECKSUMS:
   RNCPicker: a0b804b489974349cde24b41b654ce9d5eefa504
   RNGestureHandler: 5b17f2ffba1909187924a248aaca7d077673d857
   RNReanimated: d9b3c88b7a722ce8129ca8c96abd06d822ed315e
-  RNRive: 93acd507eac0e8518a5e60220cf2f49d901ba54e
+  RNRive: d1749e58a7af8330cbb2a25b7c84e0a4ed6b2d66
   RNScreens: f35bcc83b6e3a871635b1c28728e63c9560f159a
   RNWorklets: 7fb44cd32a491df4a4832cce2f3b0aaaf813956d
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   Yoga: fb21153542336c6e7c4855022f4a93a286865259
 
-PODFILE CHECKSUM: f01b6ae30c9193dc3199067b3d06a8ba385d28d1
+PODFILE CHECKSUM: fed3fde173e9da41d921ac9be0f1dde17d80788f
 
 COCOAPODS: 1.16.2
