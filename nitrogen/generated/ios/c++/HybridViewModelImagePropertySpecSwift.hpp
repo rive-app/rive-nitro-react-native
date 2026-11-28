@@ -17,10 +17,10 @@ namespace margelo::nitro::rive { class HybridRiveImageSpec; }
 // Forward declaration of `HybridViewModelPropertySpecSwift` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridViewModelPropertySpecSwift; }
 
+#include <NitroModules/Promise.hpp>
 #include <memory>
 #include "HybridRiveImageSpec.hpp"
 #include <optional>
-#include <NitroModules/Promise.hpp>
 #include <functional>
 #include "HybridViewModelPropertySpecSwift.hpp"
 
@@ -75,11 +75,13 @@ namespace margelo::nitro::rive {
 
   public:
     // Methods
-    inline void set(const std::optional<std::shared_ptr<HybridRiveImageSpec>>& image) override {
+    inline std::shared_ptr<Promise<void>> set(const std::optional<std::shared_ptr<HybridRiveImageSpec>>& image) override {
       auto __result = _swiftPart.set(image);
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }
+      auto __value = std::move(__result.value());
+      return __value;
     }
     inline std::shared_ptr<Promise<void>> setValueAsync(const std::optional<std::shared_ptr<HybridRiveImageSpec>>& image) override {
       auto __result = _swiftPart.setValueAsync(image);

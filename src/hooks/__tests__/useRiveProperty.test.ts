@@ -26,6 +26,7 @@ describe('useRiveProperty', () => {
       set: jest.fn((newValue: string) => {
         currentValue = newValue;
         listener?.(newValue);
+        return Promise.resolve();
       }),
       getValueAsync: jest.fn(() => Promise.resolve(currentValue)),
       addListener: jest.fn((callback: (value: string) => void) => {
@@ -293,6 +294,56 @@ describe('useRiveProperty', () => {
     rerender({ instance: mockInstance2 });
 
     expect(result.current[0]).toBe('Instance2Value');
+  });
+
+  describe('setValue promise', () => {
+    const renderWith = (property: ReturnType<typeof createMockProperty>) =>
+      renderHook(() =>
+        useRiveProperty<any, string>(
+          createMockViewModelInstance({ text: property }),
+          'text',
+          (vmi: any, p: string) => vmi.stringProperty(p)
+        )
+      );
+
+    it('settles with the native write', async () => {
+      const property = createMockProperty('initial');
+      let finishWrite!: () => void;
+      property.set.mockImplementationOnce(
+        () => new Promise<void>((resolve) => (finishWrite = resolve))
+      );
+      const { result } = renderWith(property);
+
+      let settled = false;
+      const write = result.current[1]('Hello').then(() => (settled = true));
+      await Promise.resolve();
+      expect(settled).toBe(false);
+
+      finishWrite();
+      await write;
+      expect(property.set).toHaveBeenCalledWith('Hello');
+    });
+
+    it('rejects when the native write fails', async () => {
+      const property = createMockProperty('initial');
+      property.set.mockImplementationOnce(() =>
+        Promise.reject(new Error('decode failed'))
+      );
+      const { result } = renderWith(property);
+
+      await expect(result.current[1]('Hello')).rejects.toThrow('decode failed');
+    });
+
+    it('resolves without writing when the property is not available', async () => {
+      const { result } = renderHook(() =>
+        useRiveProperty<any, string>(undefined, 'text', (vmi: any, p) =>
+          vmi.stringProperty(p)
+        )
+      );
+
+      await expect(result.current[1]('Hello')).resolves.toBeUndefined();
+      expect(console.warn).toHaveBeenCalled();
+    });
   });
 
   // A setter captured in a stale closure (e.g. an async callback) can fire

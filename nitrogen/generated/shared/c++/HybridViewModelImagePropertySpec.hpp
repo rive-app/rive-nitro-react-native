@@ -18,10 +18,10 @@ namespace margelo::nitro::rive { class HybridRiveImageSpec; }
 // Forward declaration of `HybridViewModelPropertySpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridViewModelPropertySpec; }
 
+#include <NitroModules/Promise.hpp>
 #include <memory>
 #include "HybridRiveImageSpec.hpp"
 #include <optional>
-#include <NitroModules/Promise.hpp>
 #include <functional>
 #include "HybridViewModelPropertySpec.hpp"
 
@@ -56,7 +56,7 @@ namespace margelo::nitro::rive {
 
     public:
       // Methods
-      virtual void set(const std::optional<std::shared_ptr<HybridRiveImageSpec>>& image) = 0;
+      virtual std::shared_ptr<Promise<void>> set(const std::optional<std::shared_ptr<HybridRiveImageSpec>>& image) = 0;
       virtual std::shared_ptr<Promise<void>> setValueAsync(const std::optional<std::shared_ptr<HybridRiveImageSpec>>& image) = 0;
       virtual std::function<void()> addListener(const std::function<void()>& onChanged) = 0;
       virtual void removeListeners() = 0;

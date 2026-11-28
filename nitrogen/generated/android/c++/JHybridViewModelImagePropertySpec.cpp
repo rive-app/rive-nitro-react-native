@@ -54,9 +54,20 @@ namespace margelo::nitro::rive {
   
 
   // Methods
-  void JHybridViewModelImagePropertySpec::set(const std::optional<std::shared_ptr<HybridRiveImageSpec>>& image) {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<JHybridRiveImageSpec::JavaPart> /* image */)>("set");
-    method(_javaPart, image.has_value() ? std::dynamic_pointer_cast<JHybridRiveImageSpec>(image.value())->getJavaPart() : nullptr);
+  std::shared_ptr<Promise<void>> JHybridViewModelImagePropertySpec::set(const std::optional<std::shared_ptr<HybridRiveImageSpec>>& image) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<JHybridRiveImageSpec::JavaPart> /* image */)>("set");
+    auto __result = method(_javaPart, image.has_value() ? std::dynamic_pointer_cast<JHybridRiveImageSpec>(image.value())->getJavaPart() : nullptr);
+    return [&]() {
+      auto __promise = Promise<void>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& /* unit */) {
+        __promise->resolve();
+      });
+      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
+        jni::JniException __jniError(__throwable);
+        __promise->reject(std::make_exception_ptr(__jniError));
+      });
+      return __promise;
+    }();
   }
   std::shared_ptr<Promise<void>> JHybridViewModelImagePropertySpec::setValueAsync(const std::optional<std::shared_ptr<HybridRiveImageSpec>>& image) {
     static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<JHybridRiveImageSpec::JavaPart> /* image */)>("setValueAsync");

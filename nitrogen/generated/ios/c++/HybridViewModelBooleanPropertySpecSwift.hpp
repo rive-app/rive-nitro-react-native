@@ -83,11 +83,13 @@ namespace margelo::nitro::rive {
       auto __value = std::move(__result.value());
       return __value;
     }
-    inline void set(bool value) override {
+    inline std::shared_ptr<Promise<void>> set(bool value) override {
       auto __result = _swiftPart.set(std::forward<decltype(value)>(value));
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }
+      auto __value = std::move(__result.value());
+      return __value;
     }
     inline std::shared_ptr<Promise<void>> setValueAsync(bool value) override {
       auto __result = _swiftPart.setValueAsync(std::forward<decltype(value)>(value));

@@ -40,7 +40,7 @@ abstract class HybridViewModelEnumPropertySpec: HybridViewModelPropertySpec() {
   
   @DoNotStrip
   @Keep
-  abstract fun set(value: String): Unit
+  abstract fun set(value: String): Promise<Unit>
   
   @DoNotStrip
   @Keep

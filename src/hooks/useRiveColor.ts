@@ -17,7 +17,7 @@ const getColorProperty = (vmi: ViewModelInstance, p: string) =>
 
 export interface UseRiveColorResult {
   value: RiveColor | undefined;
-  setValue: (value: RiveColor | string) => void;
+  setValue: (value: RiveColor | string) => Promise<void>;
   error: Error | null;
 }
 
@@ -57,7 +57,7 @@ export function useRiveColor(
         typeof newValue === 'string'
           ? RiveColor.fromHexString(newValue)
           : newValue;
-      setRawValue(color.toInt());
+      return setRawValue(color.toInt());
     },
     [setRawValue]
   );

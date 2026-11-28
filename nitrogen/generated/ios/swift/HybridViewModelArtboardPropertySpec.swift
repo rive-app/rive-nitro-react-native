@@ -13,7 +13,7 @@ public protocol HybridViewModelArtboardPropertySpec_protocol: HybridObject, Hybr
   
 
   // Methods
-  func set(artboard: (any HybridBindableArtboardSpec)?) throws -> Void
+  func set(artboard: (any HybridBindableArtboardSpec)?) throws -> Promise<Void>
 }
 
 public extension HybridViewModelArtboardPropertySpec_protocol {

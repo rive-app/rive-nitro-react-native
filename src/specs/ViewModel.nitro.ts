@@ -158,8 +158,9 @@ export interface ViewModelNumberProperty
   value: number;
   /** Get the current value of the number property */
   getValueAsync(): Promise<number>;
-  set(value: number): void;
-  /** Set the value asynchronously — awaitable, errors propagate, writes are ordered. */
+  /** Set the value — awaitable, errors propagate, writes are ordered. */
+  set(value: number): Promise<void>;
+  /** @deprecated Use set() instead; removed in 0.7. */
   setValueAsync(value: number): Promise<void>;
   /** Add a listener to the view model number property. Returns a function to remove the listener. */
   addListener(onChanged: (value: number) => void): () => void;
@@ -172,8 +173,9 @@ export interface ViewModelStringProperty
   value: string;
   /** Get the current value of the string property */
   getValueAsync(): Promise<string>;
-  set(value: string): void;
-  /** Set the value asynchronously — awaitable, errors propagate, writes are ordered. */
+  /** Set the value — awaitable, errors propagate, writes are ordered. */
+  set(value: string): Promise<void>;
+  /** @deprecated Use set() instead; removed in 0.7. */
   setValueAsync(value: string): Promise<void>;
   /** Add a listener to the view model string property. Returns a function to remove the listener. */
   addListener(onChanged: (value: string) => void): () => void;
@@ -186,8 +188,9 @@ export interface ViewModelBooleanProperty
   value: boolean;
   /** Get the current value of the boolean property */
   getValueAsync(): Promise<boolean>;
-  set(value: boolean): void;
-  /** Set the value asynchronously — awaitable, errors propagate, writes are ordered. */
+  /** Set the value — awaitable, errors propagate, writes are ordered. */
+  set(value: boolean): Promise<void>;
+  /** @deprecated Use set() instead; removed in 0.7. */
   setValueAsync(value: boolean): Promise<void>;
   /** Add a listener to the view model boolean property. Returns a function to remove the listener. */
   addListener(onChanged: (value: boolean) => void): () => void;
@@ -200,8 +203,9 @@ export interface ViewModelColorProperty
   value: number;
   /** Get the current value of the color property */
   getValueAsync(): Promise<number>;
-  set(value: number): void;
-  /** Set the value asynchronously — awaitable, errors propagate, writes are ordered. */
+  /** Set the value — awaitable, errors propagate, writes are ordered. */
+  set(value: number): Promise<void>;
+  /** @deprecated Use set() instead; removed in 0.7. */
   setValueAsync(value: number): Promise<void>;
   /** Add a listener to the view model color property. Returns a function to remove the listener. */
   addListener(onChanged: (value: number) => void): () => void;
@@ -214,8 +218,9 @@ export interface ViewModelEnumProperty
   value: string;
   /** Get the current value of the enum property */
   getValueAsync(): Promise<string>;
-  set(value: string): void;
-  /** Set the value asynchronously — awaitable, errors propagate, writes are ordered. */
+  /** Set the value — awaitable, errors propagate, writes are ordered. */
+  set(value: string): Promise<void>;
+  /** @deprecated Use set() instead; removed in 0.7. */
   setValueAsync(value: string): Promise<void>;
   /** Add a listener to the view model enum property. Returns a function to remove the listener. */
   addListener(onChanged: (value: string) => void): () => void;
@@ -233,8 +238,6 @@ export interface ViewModelTriggerProperty
 export interface ViewModelImageProperty
   extends ViewModelProperty,
     ObservableProperty {
-  /** Set the image property value */
-  set(image: RiveImage | undefined): void;
   /**
    * Set the image property value, or clear it by passing undefined.
    *
@@ -243,6 +246,8 @@ export interface ViewModelImageProperty
    * is not checked, so a write to a missing path also resolves. Calls are applied in order,
    * so the last call wins.
    */
+  set(image: RiveImage | undefined): Promise<void>;
+  /** @deprecated Use set() instead; removed in 0.7. */
   setValueAsync(image: RiveImage | undefined): Promise<void>;
   /** Add a listener to the view model image property. Returns a function to remove the listener. */
   addListener(onChanged: () => void): () => void;
@@ -296,6 +301,7 @@ export interface ViewModelArtboardProperty extends ViewModelProperty {
   /**
    * Set the artboard for this property.
    * Pass undefined to clear the currently bound artboard.
+   * Rejects if the artboard can't be created.
    */
-  set(artboard: BindableArtboard | undefined): void;
+  set(artboard: BindableArtboard | undefined): Promise<void>;
 }

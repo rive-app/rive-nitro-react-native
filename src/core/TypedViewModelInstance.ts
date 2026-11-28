@@ -63,7 +63,8 @@ export interface TypedViewModelEnumProperty<Values extends string = string>
   /** @deprecated Use getValueAsync (read) or set(value) (write) instead */
   value: Values;
   getValueAsync(): Promise<Values>;
-  set(value: Values): void;
+  set(value: Values): Promise<void>;
+  /** @deprecated Use set() instead; removed in 0.7. */
   setValueAsync(value: Values): Promise<void>;
   addListener(onChanged: (value: Values) => void): () => void;
 }

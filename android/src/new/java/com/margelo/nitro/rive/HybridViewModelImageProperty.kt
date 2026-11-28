@@ -1,6 +1,5 @@
 package com.margelo.nitro.rive
 
-import android.util.Log
 import androidx.annotation.Keep
 import app.rive.ImageAsset
 import app.rive.Result
@@ -25,19 +24,15 @@ class HybridViewModelImageProperty internal constructor(
   private val instance get() = owner.viewModelInstance
 
   companion object {
-    private const val TAG = "HybridViewModelImageProperty"
-
     // Every image write runs to completion in call order, so a clear cannot overtake a pending decode.
     private val writes = Channel<suspend () -> Unit>(Channel.UNLIMITED).also { queue ->
       CoroutineScope(Dispatchers.Default).launch { for (write in queue) write() }
     }
   }
 
-  override fun set(image: HybridRiveImageSpec?) {
-    setValueAsync(image).catch { Log.e(TAG, "Failed to set image for path '$path'", it) }
-  }
+  override fun setValueAsync(image: HybridRiveImageSpec?): Promise<Unit> = set(image)
 
-  override fun setValueAsync(image: HybridRiveImageSpec?): Promise<Unit> {
+  override fun set(image: HybridRiveImageSpec?): Promise<Unit> {
     // Read now, since JS may dispose the image while the write is still queued.
     val bytes = (image as? HybridRiveImage)?.let {
       it.rawData ?: throw IllegalStateException("RiveImage has been disposed")

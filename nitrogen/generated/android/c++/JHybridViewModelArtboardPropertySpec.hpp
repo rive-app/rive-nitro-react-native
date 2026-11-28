@@ -56,7 +56,7 @@ namespace margelo::nitro::rive {
 
   public:
     // Methods
-    void set(const std::optional<std::shared_ptr<HybridBindableArtboardSpec>>& artboard) override;
+    std::shared_ptr<Promise<void>> set(const std::optional<std::shared_ptr<HybridBindableArtboardSpec>>& artboard) override;
 
   private:
     jni::global_ref<JHybridViewModelArtboardPropertySpec::JavaPart> _javaPart;

@@ -12,20 +12,16 @@ class HybridViewModelArtboardProperty: HybridViewModelArtboardPropertySpec {
     super.init()
   }
 
-  func set(artboard: (any HybridBindableArtboardSpec)?) throws {
+  func set(artboard: (any HybridBindableArtboardSpec)?) throws -> Promise<Void> {
     guard let hybridArtboard = artboard as? HybridBindableArtboard else {
       RCTLogWarn("[ArtboardProperty] set called with nil or incompatible artboard")
-      return
+      return Promise.resolved()
     }
 
-    Task { @MainActor in
-      do {
-        let newArtboard = try await hybridArtboard.file.createArtboard(hybridArtboard.artboardName)
-        self.currentArtboard = newArtboard
-        self.instance.setValue(of: self.prop, to: newArtboard)
-      } catch {
-        RCTLogError("[ArtboardProperty] Failed to set artboard '\(hybridArtboard.artboardName)': \(error)")
-      }
+    return Promise.async { @MainActor in
+      let newArtboard = try await hybridArtboard.file.createArtboard(hybridArtboard.artboardName)
+      self.currentArtboard = newArtboard
+      self.instance.setValue(of: self.prop, to: newArtboard)
     }
   }
 }

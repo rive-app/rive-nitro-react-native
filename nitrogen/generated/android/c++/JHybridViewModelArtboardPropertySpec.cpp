@@ -10,6 +10,9 @@
 // Forward declaration of `HybridBindableArtboardSpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridBindableArtboardSpec; }
 
+#include <NitroModules/Promise.hpp>
+#include <NitroModules/JPromise.hpp>
+#include <NitroModules/JUnit.hpp>
 #include <memory>
 #include "HybridBindableArtboardSpec.hpp"
 #include <optional>
@@ -48,9 +51,20 @@ namespace margelo::nitro::rive {
   
 
   // Methods
-  void JHybridViewModelArtboardPropertySpec::set(const std::optional<std::shared_ptr<HybridBindableArtboardSpec>>& artboard) {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<JHybridBindableArtboardSpec::JavaPart> /* artboard */)>("set");
-    method(_javaPart, artboard.has_value() ? std::dynamic_pointer_cast<JHybridBindableArtboardSpec>(artboard.value())->getJavaPart() : nullptr);
+  std::shared_ptr<Promise<void>> JHybridViewModelArtboardPropertySpec::set(const std::optional<std::shared_ptr<HybridBindableArtboardSpec>>& artboard) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<JHybridBindableArtboardSpec::JavaPart> /* artboard */)>("set");
+    auto __result = method(_javaPart, artboard.has_value() ? std::dynamic_pointer_cast<JHybridBindableArtboardSpec>(artboard.value())->getJavaPart() : nullptr);
+    return [&]() {
+      auto __promise = Promise<void>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& /* unit */) {
+        __promise->resolve();
+      });
+      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
+        jni::JniException __jniError(__throwable);
+        __promise->reject(std::make_exception_ptr(__jniError));
+      });
+      return __promise;
+    }();
   }
 
 } // namespace margelo::nitro::rive

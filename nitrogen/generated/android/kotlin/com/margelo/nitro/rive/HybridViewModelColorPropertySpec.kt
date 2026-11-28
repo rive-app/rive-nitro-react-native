@@ -40,7 +40,7 @@ abstract class HybridViewModelColorPropertySpec: HybridViewModelPropertySpec() {
   
   @DoNotStrip
   @Keep
-  abstract fun set(value: Double): Unit
+  abstract fun set(value: Double): Promise<Unit>
   
   @DoNotStrip
   @Keep

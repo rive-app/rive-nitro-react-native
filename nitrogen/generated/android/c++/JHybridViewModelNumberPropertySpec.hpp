@@ -58,7 +58,7 @@ namespace margelo::nitro::rive {
   public:
     // Methods
     std::shared_ptr<Promise<double>> getValueAsync() override;
-    void set(double value) override;
+    std::shared_ptr<Promise<void>> set(double value) override;
     std::shared_ptr<Promise<void>> setValueAsync(double value) override;
     std::function<void()> addListener(const std::function<void(double /* value */)>& onChanged) override;
     void removeListeners() override;

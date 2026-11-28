@@ -40,7 +40,7 @@ abstract class HybridViewModelBooleanPropertySpec: HybridViewModelPropertySpec()
   
   @DoNotStrip
   @Keep
-  abstract fun set(value: Boolean): Unit
+  abstract fun set(value: Boolean): Promise<Unit>
   
   @DoNotStrip
   @Keep

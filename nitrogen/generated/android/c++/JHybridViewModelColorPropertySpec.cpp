@@ -74,9 +74,20 @@ namespace margelo::nitro::rive {
       return __promise;
     }();
   }
-  void JHybridViewModelColorPropertySpec::set(double value) {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<void(double /* value */)>("set");
-    method(_javaPart, value);
+  std::shared_ptr<Promise<void>> JHybridViewModelColorPropertySpec::set(double value) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(double /* value */)>("set");
+    auto __result = method(_javaPart, value);
+    return [&]() {
+      auto __promise = Promise<void>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& /* unit */) {
+        __promise->resolve();
+      });
+      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
+        jni::JniException __jniError(__throwable);
+        __promise->reject(std::make_exception_ptr(__jniError));
+      });
+      return __promise;
+    }();
   }
   std::shared_ptr<Promise<void>> JHybridViewModelColorPropertySpec::setValueAsync(double value) {
     static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(double /* value */)>("setValueAsync");

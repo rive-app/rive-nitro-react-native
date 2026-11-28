@@ -5,7 +5,6 @@ import com.facebook.proguard.annotations.DoNotStrip
 import com.margelo.nitro.core.Promise
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
-import com.rive.RiveReactNativeView
 
 @Keep
 @DoNotStrip
@@ -35,14 +34,11 @@ class HybridViewModelEnumProperty(
       set(value)
     }
 
-  override fun set(value: String) {
+  override fun set(value: String): Promise<Unit> = writeProperty {
     instance.setEnum(path, value)
-    RiveReactNativeView.onViewModelChanged()
   }
 
-  override fun setValueAsync(value: String): Promise<Unit> {
-    return Promise.async { set(value) }
-  }
+  override fun setValueAsync(value: String): Promise<Unit> = set(value)
 
   override fun getValueAsync(): Promise<String> {
     return Promise.async { instance.getEnumFlow(path).first() }

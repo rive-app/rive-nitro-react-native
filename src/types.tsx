@@ -15,8 +15,11 @@ export interface UseRivePropertyResult<T> {
    * @example
    * setValue(10) // Set to 10
    * setValue((prev) => (prev ?? 0) + 5) // Increment by 5
+   *
+   * Resolves once the write is applied and rejects if it fails. Resolves
+   * without writing (and warns) when the property isn't available.
    */
-  setValue: (value: SetValueAction<T>) => void;
+  setValue: (value: SetValueAction<T>) => Promise<void>;
   /**
    * The error if the property is not found.
    */

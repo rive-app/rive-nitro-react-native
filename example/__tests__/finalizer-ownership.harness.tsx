@@ -256,9 +256,7 @@ describe('JVM finalizers keep instances with property listeners open', () => {
     try {
       const list = parent.listProperty('team')!;
       const setFirstName = async (value: string) =>
-        (await list.getInstanceAtAsync(0))!
-          .stringProperty('name')!
-          .setValueAsync(value);
+        (await list.getInstanceAtAsync(0))!.stringProperty('name')!.set(value);
 
       await setFirstName('Before GC');
       await expectToReceive(names, 'Before GC');

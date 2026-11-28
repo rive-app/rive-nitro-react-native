@@ -60,12 +60,12 @@ describe('Settled state machine', () => {
 
     const input = instance.numberProperty('input');
     expectDefined(input);
-    await input.setValueAsync(1);
+    await input.set(1);
 
     expect(await waitForNumber(instance, 'output', 77)).toBe(77);
 
     await new Promise((resolve) => setTimeout(resolve, 1000));
-    await input.setValueAsync(0);
+    await input.set(0);
 
     expect(await waitForNumber(instance, 'output', 10)).toBe(10);
 

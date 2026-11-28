@@ -318,7 +318,7 @@ describe('Artboard Properties', () => {
     expect(bindable.artboardName).toBe(artboardNames[0]);
   });
 
-  it('artboardProperty.set(bindable) does not throw', async () => {
+  it('artboardProperty.set(bindable) resolves', async () => {
     const file = await loadFile(ARTBOARD_DB_TEST);
     const vm = file.defaultArtboardViewModel();
     expectDefined(vm);
@@ -331,7 +331,7 @@ describe('Artboard Properties', () => {
     const artboardNames = file.artboardNames;
     const bindable = file.getBindableArtboard(artboardNames[0]!);
 
-    expect(() => artboardProp.set(bindable)).not.toThrow();
+    await expect(artboardProp.set(bindable)).resolves.toBeUndefined();
   });
 });
 

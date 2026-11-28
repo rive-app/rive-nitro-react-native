@@ -74,9 +74,20 @@ namespace margelo::nitro::rive {
       return __promise;
     }();
   }
-  void JHybridViewModelBooleanPropertySpec::set(bool value) {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jboolean /* value */)>("set");
-    method(_javaPart, value);
+  std::shared_ptr<Promise<void>> JHybridViewModelBooleanPropertySpec::set(bool value) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jboolean /* value */)>("set");
+    auto __result = method(_javaPart, value);
+    return [&]() {
+      auto __promise = Promise<void>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& /* unit */) {
+        __promise->resolve();
+      });
+      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
+        jni::JniException __jniError(__throwable);
+        __promise->reject(std::make_exception_ptr(__jniError));
+      });
+      return __promise;
+    }();
   }
   std::shared_ptr<Promise<void>> JHybridViewModelBooleanPropertySpec::setValueAsync(bool value) {
     static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jboolean /* value */)>("setValueAsync");

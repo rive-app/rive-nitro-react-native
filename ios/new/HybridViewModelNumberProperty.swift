@@ -23,25 +23,20 @@ class HybridViewModelNumberProperty: HybridViewModelNumberPropertySpec {
         return 0
       }
     }
-    set { try? set(value: newValue) }
+    set { _ = try? set(value: newValue) }
   }
 
-  func set(value: Double) throws {
+  func set(value: Double) throws -> Promise<Void> {
     let inst = instance
     let p = prop
     let v = Float(value)
-    Task { @MainActor in
+    return mainActorWrite {
       inst.setValue(of: p, to: v)
     }
   }
 
   func setValueAsync(value: Double) throws -> Promise<Void> {
-    let inst = instance
-    let p = prop
-    let v = Float(value)
-    return Promise.async { @MainActor in
-      inst.setValue(of: p, to: v)
-    }
+    try set(value: value)
   }
 
   func getValueAsync() throws -> Promise<Double> {

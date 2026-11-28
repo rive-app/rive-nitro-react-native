@@ -24,6 +24,10 @@ import type { RiveFile } from '../../src/specs/RiveFile.nitro';
 import type { UseRivePropertyResult } from '../../src/types';
 import { useRiveNumber } from '../../src/hooks/useRiveNumber';
 import { useRiveEnum } from '../../src/hooks/useRiveEnum';
+import { useRiveString } from '../../src/hooks/useRiveString';
+import { useRiveBoolean } from '../../src/hooks/useRiveBoolean';
+import { useRiveColor } from '../../src/hooks/useRiveColor';
+import type { BindableArtboard } from '../../src/specs/BindableArtboard.nitro';
 import { useViewModelInstance } from '../../src/hooks/useViewModelInstance';
 import { RiveView, type RiveViewProps } from '../../src/core/RiveView';
 import { useRiveFile } from '../../src/hooks/useRiveFile';
@@ -250,10 +254,55 @@ expectType<TypedViewModelEnumProperty<'normal' | 'multiplier'> | undefined>(
 
 // All enum property setters are narrowed to the declared values
 declare const pegTypeProp: TypedViewModelEnumProperty<'normal' | 'multiplier'>;
-pegTypeProp.set('normal');
+expectType<Promise<void>>(pegTypeProp.set('normal'));
 expectType<Promise<void>>(pegTypeProp.setValueAsync('multiplier'));
+expectDeprecated(pegTypeProp.setValueAsync);
 expectError(pegTypeProp.set('bogus'));
 expectError(pegTypeProp.setValueAsync('bogus'));
+
+// --- set() is awaitable on every writable property; setValueAsync is a deprecated alias ---
+
+declare const anyInstance: ViewModelInstance;
+declare const setImage: RiveImage;
+declare const bindable: BindableArtboard;
+const numberProp = anyInstance.numberProperty('n')!;
+const stringProp = anyInstance.stringProperty('s')!;
+const booleanProp = anyInstance.booleanProperty('b')!;
+const colorProp = anyInstance.colorProperty('c')!;
+const enumProp = anyInstance.enumProperty('e')!;
+const imageProp = anyInstance.imageProperty('i')!;
+const artboardProp = anyInstance.artboardProperty('a')!;
+expectType<Promise<void>>(numberProp.set(1));
+expectType<Promise<void>>(stringProp.set('x'));
+expectType<Promise<void>>(booleanProp.set(true));
+expectType<Promise<void>>(colorProp.set(0xff000000));
+expectType<Promise<void>>(enumProp.set('cat'));
+expectType<Promise<void>>(imageProp.set(setImage));
+expectType<Promise<void>>(imageProp.set(undefined));
+expectType<Promise<void>>(artboardProp.set(bindable));
+expectNotDeprecated(numberProp.set);
+expectType<Promise<void>>(numberProp.setValueAsync(1));
+expectType<Promise<void>>(stringProp.setValueAsync('x'));
+expectType<Promise<void>>(booleanProp.setValueAsync(true));
+expectType<Promise<void>>(colorProp.setValueAsync(0xff000000));
+expectType<Promise<void>>(enumProp.setValueAsync('cat'));
+expectType<Promise<void>>(imageProp.setValueAsync(setImage));
+expectDeprecated(numberProp.setValueAsync);
+expectDeprecated(imageProp.setValueAsync);
+
+// Callers that ignore the result keep compiling.
+const fireAndForget: () => void = () => numberProp.set(1);
+fireAndForget();
+
+// Hook setters return the same promise.
+expectType<Promise<void>>(useRiveNumber('n', anyInstance).setValue(1));
+expectType<Promise<void>>(
+  useRiveNumber('n', anyInstance).setValue((prev) => (prev ?? 0) + 1)
+);
+expectType<Promise<void>>(useRiveString('s', anyInstance).setValue('x'));
+expectType<Promise<void>>(useRiveBoolean('b', anyInstance).setValue(true));
+expectType<Promise<void>>(useRiveEnum('e', anyInstance).setValue('cat'));
+expectType<Promise<void>>(useRiveColor('c', anyInstance).setValue('#ff0000'));
 
 // --- Named enums are addressable by name ---
 

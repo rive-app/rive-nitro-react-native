@@ -58,7 +58,7 @@ namespace margelo::nitro::rive {
   public:
     // Methods
     std::shared_ptr<Promise<bool>> getValueAsync() override;
-    void set(bool value) override;
+    std::shared_ptr<Promise<void>> set(bool value) override;
     std::shared_ptr<Promise<void>> setValueAsync(bool value) override;
     std::function<void()> addListener(const std::function<void(bool /* value */)>& onChanged) override;
     void removeListeners() override;

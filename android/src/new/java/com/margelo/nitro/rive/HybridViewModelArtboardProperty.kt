@@ -1,10 +1,9 @@
 package com.margelo.nitro.rive
 
-import android.util.Log
 import androidx.annotation.Keep
 import app.rive.Artboard
 import com.facebook.proguard.annotations.DoNotStrip
-import com.rive.RiveReactNativeView
+import com.margelo.nitro.core.Promise
 
 @Keep
 @DoNotStrip
@@ -15,19 +14,9 @@ class HybridViewModelArtboardProperty(
 ) : HybridViewModelArtboardPropertySpec() {
   private val instance get() = owner.viewModelInstance
 
-  companion object {
-    private const val TAG = "HybridViewModelArtboardProperty"
-  }
-
-  override fun set(artboard: HybridBindableArtboardSpec?) {
-    val hybridArtboard = artboard as? HybridBindableArtboard ?: return
-    val sourceFile = hybridArtboard.file.riveFile ?: return
-    try {
-      val newArtboard = Artboard.fromFile(sourceFile, hybridArtboard.artboardName)
-      instance.setArtboard(path, newArtboard)
-      RiveReactNativeView.onViewModelChanged()
-    } catch (e: Exception) {
-      Log.e(TAG, "Failed to set artboard for path '$path'", e)
-    }
+  override fun set(artboard: HybridBindableArtboardSpec?): Promise<Unit> = writeProperty {
+    val hybridArtboard = artboard as? HybridBindableArtboard ?: return@writeProperty
+    val sourceFile = hybridArtboard.file.riveFile ?: return@writeProperty
+    instance.setArtboard(path, Artboard.fromFile(sourceFile, hybridArtboard.artboardName))
   }
 }

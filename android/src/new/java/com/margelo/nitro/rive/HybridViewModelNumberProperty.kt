@@ -5,7 +5,6 @@ import com.facebook.proguard.annotations.DoNotStrip
 import com.margelo.nitro.core.Promise
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
-import com.rive.RiveReactNativeView
 
 @Keep
 @DoNotStrip
@@ -35,14 +34,11 @@ class HybridViewModelNumberProperty(
       set(value)
     }
 
-  override fun set(value: Double) {
+  override fun set(value: Double): Promise<Unit> = writeProperty {
     instance.setNumber(path, value.toFloat())
-    RiveReactNativeView.onViewModelChanged()
   }
 
-  override fun setValueAsync(value: Double): Promise<Unit> {
-    return Promise.async { set(value) }
-  }
+  override fun setValueAsync(value: Double): Promise<Unit> = set(value)
 
   override fun getValueAsync(): Promise<Double> {
     return Promise.async { instance.getNumberFlow(path).first().toDouble() }

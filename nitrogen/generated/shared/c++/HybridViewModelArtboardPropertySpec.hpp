@@ -18,6 +18,7 @@ namespace margelo::nitro::rive { class HybridBindableArtboardSpec; }
 // Forward declaration of `HybridViewModelPropertySpec` to properly resolve imports.
 namespace margelo::nitro::rive { class HybridViewModelPropertySpec; }
 
+#include <NitroModules/Promise.hpp>
 #include <memory>
 #include "HybridBindableArtboardSpec.hpp"
 #include <optional>
@@ -54,7 +55,7 @@ namespace margelo::nitro::rive {
 
     public:
       // Methods
-      virtual void set(const std::optional<std::shared_ptr<HybridBindableArtboardSpec>>& artboard) = 0;
+      virtual std::shared_ptr<Promise<void>> set(const std::optional<std::shared_ptr<HybridBindableArtboardSpec>>& artboard) = 0;
 
     protected:
       // Hybrid Setup

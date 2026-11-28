@@ -23,23 +23,19 @@ class HybridViewModelEnumProperty: HybridViewModelEnumPropertySpec {
         return ""
       }
     }
-    set { try? set(value: newValue) }
+    set { _ = try? set(value: newValue) }
   }
 
-  func set(value: String) throws {
+  func set(value: String) throws -> Promise<Void> {
     let inst = instance
     let p = prop
-    Task { @MainActor in
+    return mainActorWrite {
       inst.setValue(of: p, to: value)
     }
   }
 
   func setValueAsync(value: String) throws -> Promise<Void> {
-    let inst = instance
-    let p = prop
-    return Promise.async { @MainActor in
-      inst.setValue(of: p, to: value)
-    }
+    try set(value: value)
   }
 
   func getValueAsync() throws -> Promise<String> {

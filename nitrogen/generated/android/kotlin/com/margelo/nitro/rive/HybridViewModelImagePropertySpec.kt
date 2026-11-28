@@ -32,7 +32,7 @@ abstract class HybridViewModelImagePropertySpec: HybridViewModelPropertySpec() {
   // Methods
   @DoNotStrip
   @Keep
-  abstract fun set(image: HybridRiveImageSpec?): Unit
+  abstract fun set(image: HybridRiveImageSpec?): Promise<Unit>
   
   @DoNotStrip
   @Keep

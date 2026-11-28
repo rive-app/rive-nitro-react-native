@@ -69,7 +69,7 @@ describe('Scripts see the dataBind instance (issue #414)', () => {
     expectDefined(vm);
     const instance = await vm.createDefaultInstanceAsync();
     expectDefined(instance);
-    await number(instance, 'seed').setValueAsync(42);
+    await number(instance, 'seed').set(42);
 
     await render(
       <View style={{ width: 160, height: 160 }}>
@@ -140,7 +140,7 @@ describe('Scripts see the dataBind instance (issue #414)', () => {
       expect(await waitForValues(instance, { isReady: 1 })).toEqual({
         isReady: 1,
       });
-      await number(instance, 'seed').setValueAsync(42);
+      await number(instance, 'seed').set(42);
       expect(await waitForValues(instance, { observedSeed: 42 })).toEqual({
         observedSeed: 42,
       });

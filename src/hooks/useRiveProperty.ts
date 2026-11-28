@@ -27,7 +27,7 @@ export function useRiveProperty<P extends ViewModelProperty, T>(
   getProperty: (vm: ViewModelInstance, path: string) => P | undefined
 ): [
   T | undefined,
-  (value: T | ((prevValue: T | undefined) => T)) => void,
+  (value: T | ((prevValue: T | undefined) => T)) => Promise<void>,
   Error | null,
   P | undefined,
 ] {
@@ -133,14 +133,13 @@ export function useRiveProperty<P extends ViewModelProperty, T>(
               'The viewModelInstance may still be loading.'
           );
         }
-        return;
-      } else {
-        const newValue =
-          typeof valueOrUpdater === 'function'
-            ? (valueOrUpdater as (prevValue: T | undefined) => T)(value)
-            : valueOrUpdater;
-        liveProperty.set(newValue);
+        return Promise.resolve();
       }
+      const newValue =
+        typeof valueOrUpdater === 'function'
+          ? (valueOrUpdater as (prevValue: T | undefined) => T)(value)
+          : valueOrUpdater;
+      return liveProperty.set(newValue);
     },
     // `property` kept in deps so the setter identity changes with the
     // property — consumers' effects keyed on the setter re-fire (see
@@ -164,5 +163,5 @@ interface ObservableViewModelProperty<T>
     ObservableProperty {
   addListener: (onChanged: (value: T) => void) => () => void;
   getValueAsync(): Promise<T>;
-  set(value: T): void;
+  set(value: T): Promise<void>;
 }
